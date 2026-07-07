@@ -1,7 +1,7 @@
 [project]
 name = "finance-forecast-agent"
-version = "0.1.0"
-description = "Finance-first autonomous forecasting research harness with reproducibility gates."
+version = "0.2.0"
+description = "Finance-first autonomous forecasting research harness with reproducibility gates, ReplayLLM, real market data adapters, MLflow/DVC hooks, and US-equity paper fixtures."
 requires-python = ">=3.10"
 dependencies = [
   "numpy",
@@ -9,13 +9,19 @@ dependencies = [
   "scikit-learn",
   "plotly",
   "torch",
+  "requests",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "ruff"]
 ui = ["streamlit"]
 tracking = ["mlflow", "dvc"]
+data = ["yfinance", "pandas-datareader"]
+all = ["pytest", "ruff", "streamlit", "mlflow", "dvc", "yfinance", "pandas-datareader"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
