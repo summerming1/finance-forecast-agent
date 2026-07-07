@@ -8,16 +8,17 @@ py -3.11 -m venv .venv
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 python -m pip install -U pip
-pip install -e ".[dev,ui,tracking,data]"
+pip install -e ".[dev,ui,tracking,data,pdf]"
 ```
 
-如果 PyTorch 安装较慢，可先用 CPU 版默认安装；当前测试只使用小模型。
+如果 PyTorch 安装较慢，可先用 CPU 版默认安装；当前测试只使用小模型。`pdf` 额外依赖会安装 `pypdf`，用于 MethodCardAgent 读取 PDF。
 
 ## 方案 B：conda
 
 ```powershell
 conda env create -f environment.yml
 conda activate finance-forecast-agent
+pip install -e ".[pdf]"
 ```
 
 ## 检查环境
@@ -25,9 +26,20 @@ conda activate finance-forecast-agent
 ```powershell
 $env:PYTHONPATH="src"
 python -m pytest tests -q
-python scripts/run_finance_agent.py
 python scripts/generate_replay_fixtures.py
+python scripts/generate_methodcard_fixtures.py
+python scripts/extract_method_cards.py --papers-dir projects/finance_agent/papers/text --out-dir projects/finance_agent/method_cards --write-paper-specs
+python scripts/run_finance_agent.py
 ```
+
+## MethodCardAgent / 无 key LLM 回放
+
+```powershell
+python scripts/generate_methodcard_fixtures.py
+python scripts/extract_method_cards.py --papers-dir projects/finance_agent/papers/text --out-dir projects/finance_agent/method_cards --write-paper-specs
+```
+
+如果要读取真实 PDF，请把 PDF 放进 `projects/finance_agent/papers/`，并安装 `pypdf`。无 fixture 时默认失败；调试时可以加 `--allow-rule-fallback`，但 fallback 结果会标记 `approval_required=true`。
 
 ## DVC / MLflow
 
