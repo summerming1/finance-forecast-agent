@@ -1,0 +1,4 @@
+{
+  "backend": "local_fallback",
+  "tracked_path": "projects/finance_agent/data/us_equity_plotly_weekly.csv"
+}

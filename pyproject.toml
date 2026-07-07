@@ -1,0 +1,21 @@
+[project]
+name = "finance-forecast-agent"
+version = "0.1.0"
+description = "Finance-first autonomous forecasting research harness with reproducibility gates."
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "pandas",
+  "scikit-learn",
+  "plotly",
+  "torch",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+ui = ["streamlit"]
+tracking = ["mlflow", "dvc"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
