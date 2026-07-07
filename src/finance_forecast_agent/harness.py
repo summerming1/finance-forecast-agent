@@ -16,13 +16,13 @@ from .models import make_model
 from .papers import built_in_paper_specs
 from .registry import PaperDatasetRegistry
 from .replay_llm import ReplayLLM
-from .schemas import CandidateSpec, ReproductionAudit
+from .schemas import CandidateSpec, PaperSpecCard, ReproductionAudit
 from .splitters import make_splits
 from .tracking import DVCDataTracker, MLflowTracker
 
 
-def write_default_fixtures(llm: ReplayLLM) -> None:
-    for paper in built_in_paper_specs():
+def write_default_fixtures(llm: ReplayLLM, paper_specs: list[PaperSpecCard] | None = None) -> None:
+    for paper in paper_specs or built_in_paper_specs():
         cost = {'commission_bps': 1.0, 'half_spread_bps': 2.0, 'market_impact_bps': 1.0, 'latency_penalty_bps': 0.0}
         candidates = [
             CandidateSpec(f'cand_{paper.paper_id}_paper', 'closest paper model', paper.required_model_families[0], paper.required_feature_groups, 'purged_walk_forward', cost, 'small', 'offline_replay_llm', 'closest paper-family candidate', False),
@@ -70,7 +70,7 @@ def audit(paper, comp, candidate: CandidateSpec, result) -> ReproductionAudit:
     return ReproductionAudit(paper.paper_id, candidate.candidate_id, 'strict_reproduction' if strict else comp.proposed_mode, strict, candidate.proxy_used, comp.comparability_score, blockers, warnings, candidate.candidate_id)
 
 
-def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4, max_papers: int | None = None) -> dict[str, Any]:
+def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4, max_papers: int | None = None, paper_specs: list[PaperSpecCard] | None = None, report_name: str = 'finance_agent_report.json') -> dict[str, Any]:
     project_dir.mkdir(parents=True, exist_ok=True)
     data_path = project_dir / 'data' / 'us_equity_plotly_weekly.csv'
     df = load_or_create_us_equity_dataset(data_path)
@@ -79,11 +79,12 @@ def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4, max_pap
     dvc_info = dvc.track(data_path)
     tracker = MLflowTracker(project_dir / 'mlruns')
     llm = ReplayLLM(project_dir / 'llm_fixtures')
-    write_default_fixtures(llm)
+    selected_papers = paper_specs if paper_specs is not None else built_in_paper_specs()
+    selected_papers = selected_papers[:max_papers] if max_papers is not None else selected_papers
+    write_default_fixtures(llm, selected_papers)
     registry = PaperDatasetRegistry(project_dir / 'registry' / 'paper_dataset_registry.json')
     reports = []
-    paper_specs = built_in_paper_specs()[:max_papers] if max_papers is not None else built_in_paper_specs()
-    for paper in paper_specs:
+    for paper in selected_papers:
         registry.register(paper.paper_id, {'paper_url': paper.paper_url, 'dataset_id': dataset.dataset_id, 'strict_dataset_available': False, 'local_substitute': dataset.source_name, 'mode': 'exploratory_real_data_reproduction'})
         comp = compare_paper_and_dataset(paper, dataset, split_method='purged_walk_forward')
         candidates = load_candidates(llm, paper.paper_id)[:max_candidates_per_paper]
@@ -98,7 +99,7 @@ def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4, max_pap
         best = max(candidate_reports, key=lambda r: r['result']['metrics']['net_return'])
         reports.append({'paper_spec': paper.to_dict(), 'dataset_card': dataset.to_dict(), 'comparability_report': comp.to_dict(), 'best_candidate_id': best['candidate']['candidate_id'], 'candidate_reports': candidate_reports})
     payload = {'project_name': 'finance-forecast-agent', 'llm_live_api_used': False, 'dataset_card': dataset.to_dict(), 'dvc': dvc_info, 'paper_dataset_registry': registry.load_all(), 'reports': reports}
-    out = project_dir / 'reports' / 'finance_agent_report.json'
+    out = project_dir / 'reports' / report_name
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
     return payload
