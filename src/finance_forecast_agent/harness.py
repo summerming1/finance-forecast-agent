@@ -70,7 +70,7 @@ def audit(paper, comp, candidate: CandidateSpec, result) -> ReproductionAudit:
     return ReproductionAudit(paper.paper_id, candidate.candidate_id, 'strict_reproduction' if strict else comp.proposed_mode, strict, candidate.proxy_used, comp.comparability_score, blockers, warnings, candidate.candidate_id)
 
 
-def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4) -> dict[str, Any]:
+def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4, max_papers: int | None = None) -> dict[str, Any]:
     project_dir.mkdir(parents=True, exist_ok=True)
     data_path = project_dir / 'data' / 'us_equity_plotly_weekly.csv'
     df = load_or_create_us_equity_dataset(data_path)
@@ -82,7 +82,8 @@ def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4) -> dict
     write_default_fixtures(llm)
     registry = PaperDatasetRegistry(project_dir / 'registry' / 'paper_dataset_registry.json')
     reports = []
-    for paper in built_in_paper_specs():
+    paper_specs = built_in_paper_specs()[:max_papers] if max_papers is not None else built_in_paper_specs()
+    for paper in paper_specs:
         registry.register(paper.paper_id, {'paper_url': paper.paper_url, 'dataset_id': dataset.dataset_id, 'strict_dataset_available': False, 'local_substitute': dataset.source_name, 'mode': 'exploratory_real_data_reproduction'})
         comp = compare_paper_and_dataset(paper, dataset, split_method='purged_walk_forward')
         candidates = load_candidates(llm, paper.paper_id)[:max_candidates_per_paper]
