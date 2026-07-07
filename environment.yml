@@ -1,0 +1,15 @@
+name: finance-forecast-agent
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - scikit-learn
+  - plotly
+  - requests
+  - pytorch
+  - pip:
+      - -e .[dev,ui,tracking,data]
