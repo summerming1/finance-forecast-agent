@@ -16,13 +16,15 @@ def main() -> None:
     parser.add_argument('--papers-dir', default='projects/finance_agent/papers/text')
     parser.add_argument('--out-dir', default='projects/finance_agent/method_cards')
     parser.add_argument('--fixture-dir', default='projects/finance_agent/llm_fixtures')
+    parser.add_argument('--pattern', action='append', default=None, help='Glob pattern relative to papers-dir. Can be passed multiple times.')
     parser.add_argument('--allow-rule-fallback', action='store_true')
     parser.add_argument('--write-paper-specs', action='store_true')
     args = parser.parse_args()
 
     papers_dir = Path(args.papers_dir)
     out_dir = Path(args.out_dir)
-    paths = sorted([*papers_dir.glob('*.txt'), *papers_dir.glob('*.md'), *papers_dir.glob('*.pdf')])
+    patterns = args.pattern or ['*.txt', '*.md', '*.pdf']
+    paths = sorted({path for pattern in patterns for path in papers_dir.glob(pattern)})
     if not paths:
         raise SystemExit(f'No paper files found in {papers_dir}')
     agent = MethodCardAgent(ReplayLLM(args.fixture_dir), allow_rule_fallback=args.allow_rule_fallback)

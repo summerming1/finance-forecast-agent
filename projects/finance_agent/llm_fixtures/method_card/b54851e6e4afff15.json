@@ -1,0 +1,80 @@
+{
+  "prompt_hash": "b54851e6e4afff15",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "method_fischer_krauss_lstm_sp500",
+    "paper_id": "fischer_krauss_lstm_sp500",
+    "title": "Deep learning with long short-term memory networks for financial market predictions",
+    "venue_or_source": "European Journal of Operational Research / S&P 500 stock universe",
+    "paper_url": "https://doi.org/10.1016/j.ejor.2017.11.054",
+    "task_type": "financial_return_forecasting",
+    "target_asset": "AAPL",
+    "asset_universe": [
+      "AAPL",
+      "MSFT",
+      "SPY",
+      "S&P500"
+    ],
+    "frequency": "daily",
+    "horizon": "next_return_direction",
+    "label_definition": "next_return",
+    "data_requirements": [
+      "paper_original_or_licensed_mirror",
+      "point_in_time_safe",
+      "survivorship_bias_audited"
+    ],
+    "feature_groups": [
+      "sequence_window_features",
+      "return_momentum_features"
+    ],
+    "model_families": [
+      "lstm_regressor"
+    ],
+    "training_protocol": "time_ordered_training_no_shuffle",
+    "evaluation_protocol": "purged_walk_forward",
+    "metrics": [
+      "directional_accuracy",
+      "net_return",
+      "sharpe"
+    ],
+    "cost_assumptions": "transaction costs must be included for tradable metrics; paper assumptions unknown unless explicit",
+    "reported_results": {},
+    "strict_requirements": [
+      "match original asset universe",
+      "match frequency",
+      "match sample period",
+      "match label",
+      "match evaluation protocol"
+    ],
+    "unknowns": [],
+    "evidence_spans": [
+      {
+        "source_id": "fischer_krauss_lstm_sp500",
+        "section": "protocol",
+        "quote": "Model: lstm_regressor",
+        "summary": "Paper-family model extracted from curated protocol."
+      },
+      {
+        "source_id": "fischer_krauss_lstm_sp500",
+        "section": "data",
+        "quote": "Data: AAPL, MSFT, SPY, S&P500",
+        "summary": "Asset universe and frequency extracted from protocol."
+      },
+      {
+        "source_id": "fischer_krauss_lstm_sp500",
+        "section": "evaluation",
+        "quote": "Evaluation: purged_walk_forward",
+        "summary": "Evaluation split protocol extracted from protocol."
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "offline_assistant_fixture",
+      "document_text_sha": "ec0c5c43ca5ee86c",
+      "live_llm_api_used": false
+    },
+    "approval_required": false
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

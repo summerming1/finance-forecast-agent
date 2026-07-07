@@ -1,0 +1,81 @@
+{
+  "prompt_hash": "14b1f7f6cc730967",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "method_ghosh_neufeld_sahoo_intraday_lstm_rf",
+    "paper_id": "ghosh_neufeld_sahoo_intraday_lstm_rf",
+    "title": "Forecasting directional movements of stock prices for intraday trading using LSTM and random forests",
+    "venue_or_source": "arXiv / S&P 500 intraday direction prediction",
+    "paper_url": "https://arxiv.org/abs/2004.10178",
+    "task_type": "financial_return_forecasting",
+    "target_asset": "AAPL",
+    "asset_universe": [
+      "AAPL",
+      "MSFT",
+      "S&P500"
+    ],
+    "frequency": "intraday",
+    "horizon": "intraday_direction",
+    "label_definition": "next_return",
+    "data_requirements": [
+      "paper_original_or_licensed_mirror",
+      "point_in_time_safe",
+      "survivorship_bias_audited"
+    ],
+    "feature_groups": [
+      "sequence_window_features",
+      "return_momentum_features",
+      "volatility_features"
+    ],
+    "model_families": [
+      "lstm_regressor",
+      "random_forest_regressor"
+    ],
+    "training_protocol": "time_ordered_training_no_shuffle",
+    "evaluation_protocol": "purged_walk_forward",
+    "metrics": [
+      "directional_accuracy",
+      "net_return",
+      "turnover"
+    ],
+    "cost_assumptions": "transaction costs must be included for tradable metrics; paper assumptions unknown unless explicit",
+    "reported_results": {},
+    "strict_requirements": [
+      "match original asset universe",
+      "match frequency",
+      "match sample period",
+      "match label",
+      "match evaluation protocol"
+    ],
+    "unknowns": [],
+    "evidence_spans": [
+      {
+        "source_id": "ghosh_neufeld_sahoo_intraday_lstm_rf",
+        "section": "protocol",
+        "quote": "Model: lstm_regressor, random_forest_regressor",
+        "summary": "Paper-family model extracted from curated protocol."
+      },
+      {
+        "source_id": "ghosh_neufeld_sahoo_intraday_lstm_rf",
+        "section": "data",
+        "quote": "Data: AAPL, MSFT, S&P500",
+        "summary": "Asset universe and frequency extracted from protocol."
+      },
+      {
+        "source_id": "ghosh_neufeld_sahoo_intraday_lstm_rf",
+        "section": "evaluation",
+        "quote": "Evaluation: purged_walk_forward",
+        "summary": "Evaluation split protocol extracted from protocol."
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "offline_assistant_fixture",
+      "document_text_sha": "bd8dfccfe12cf9a6",
+      "live_llm_api_used": false
+    },
+    "approval_required": false
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

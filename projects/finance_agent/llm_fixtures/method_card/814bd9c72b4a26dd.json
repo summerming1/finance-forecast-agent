@@ -1,0 +1,73 @@
+{
+  "prompt_hash": "814bd9c72b4a26dd",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "rf_lstm_stock_forecast",
+    "paper_id": "arxiv_2306_03620",
+    "title": "Forecasting the Performance of US Stock Market Indices During COVID-19: RF vs LSTM",
+    "venue_or_source": "arxiv",
+    "paper_url": "unknown",
+    "task_type": "Forecasting",
+    "target_asset": [
+      "S&P 500",
+      "Russell 2000 (RUT)"
+    ],
+    "asset_universe": [
+      "US stock market indices"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "index returns",
+    "data_requirements": [
+      "Data on historical prices after the big recession"
+    ],
+    "feature_groups": [
+      "price_lag_features"
+    ],
+    "model_families": [
+      "random_forest_regressor",
+      "lstm_regressor"
+    ],
+    "training_protocol": "cross-validation, hyperparameter optimizing, regularization (dropouts and weight decays), preprocessing",
+    "evaluation_protocol": "rolling window",
+    "metrics": [
+      "mae",
+      "rmse",
+      "r2",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {
+      "raw": "unknown"
+    },
+    "strict_requirements": [
+      "data cleaning, normalization, hyperparameter optimizing, regularization"
+    ],
+    "unknowns": [
+      "frequency",
+      "horizon",
+      "paper_url",
+      "reported_results",
+      "cost_assumptions"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2306_03620",
+        "section": "unknown",
+        "quote": "",
+        "summary": "LLM-provided evidence span."
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "LLM",
+      "raw_paper_id": "arxiv_2306.03620",
+      "document_text_sha": "1524aaf9d549e2ad",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2306.03620.pdf"
+    },
+    "approval_required": false
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

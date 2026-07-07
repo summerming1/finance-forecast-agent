@@ -1,0 +1,82 @@
+{
+  "prompt_hash": "6c7d295d50e30e28",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "method_gu_kelly_xiu_deep_learning_asset_pricing",
+    "paper_id": "gu_kelly_xiu_deep_learning_asset_pricing",
+    "title": "Deep Learning in Asset Pricing",
+    "venue_or_source": "asset pricing / deep learning research line",
+    "paper_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3350138",
+    "task_type": "financial_return_forecasting",
+    "target_asset": "AAPL",
+    "asset_universe": [
+      "AAPL",
+      "MSFT",
+      "SPY",
+      "US equities"
+    ],
+    "frequency": "monthly",
+    "horizon": "next_return",
+    "label_definition": "next_return",
+    "data_requirements": [
+      "paper_original_or_licensed_mirror",
+      "point_in_time_safe",
+      "survivorship_bias_audited"
+    ],
+    "feature_groups": [
+      "sequence_window_features",
+      "return_momentum_features",
+      "cross_asset_features"
+    ],
+    "model_families": [
+      "transformer_regressor",
+      "lstm_regressor"
+    ],
+    "training_protocol": "time_ordered_training_no_shuffle",
+    "evaluation_protocol": "purged_walk_forward",
+    "metrics": [
+      "r2",
+      "net_return",
+      "sharpe"
+    ],
+    "cost_assumptions": "transaction costs must be included for tradable metrics; paper assumptions unknown unless explicit",
+    "reported_results": {},
+    "strict_requirements": [
+      "match original asset universe",
+      "match frequency",
+      "match sample period",
+      "match label",
+      "match evaluation protocol"
+    ],
+    "unknowns": [],
+    "evidence_spans": [
+      {
+        "source_id": "gu_kelly_xiu_deep_learning_asset_pricing",
+        "section": "protocol",
+        "quote": "Model: transformer_regressor, lstm_regressor",
+        "summary": "Paper-family model extracted from curated protocol."
+      },
+      {
+        "source_id": "gu_kelly_xiu_deep_learning_asset_pricing",
+        "section": "data",
+        "quote": "Data: AAPL, MSFT, SPY, US equities",
+        "summary": "Asset universe and frequency extracted from protocol."
+      },
+      {
+        "source_id": "gu_kelly_xiu_deep_learning_asset_pricing",
+        "section": "evaluation",
+        "quote": "Evaluation: purged_walk_forward",
+        "summary": "Evaluation split protocol extracted from protocol."
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "offline_assistant_fixture",
+      "document_text_sha": "99e4be9904410c08",
+      "live_llm_api_used": false
+    },
+    "approval_required": false
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

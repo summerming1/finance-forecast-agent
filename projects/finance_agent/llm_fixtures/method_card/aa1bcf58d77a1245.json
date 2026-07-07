@@ -1,0 +1,116 @@
+{
+  "prompt_hash": "aa1bcf58d77a1245",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "ghosh_2021_lstm_rf_intraday",
+    "paper_id": "arxiv_2004_10178v2",
+    "title": "Forecasting directional movements of stock prices for intraday trading using LSTM and random forests",
+    "venue_or_source": "arXiv:2004.10178v2 [cs.LG] 30 Jun 2021",
+    "paper_url": "https://arxiv.org/abs/2004.10178",
+    "task_type": "directional movement classification (binary/ternary outperformance vs market)",
+    "target_asset": "S&P 500 constituent stocks",
+    "asset_universe": [
+      "S&P 500 constituent stocks"
+    ],
+    "frequency": "daily (intraday returns computed at daily resolution)",
+    "horizon": "1 trading day (intraday)",
+    "label_definition": "Directional movement: whether a stock outperforms the market in terms of intraday returns",
+    "data_requirements": [
+      "S&P 500 constituent stocks from January 1990 until December 2018 sourced from Bloomberg; stocks with zero volume on a given day excluded from trading that day"
+    ],
+    "feature_groups": [
+      "price_lag_features",
+      "return_momentum_features",
+      "sequence_window_features"
+    ],
+    "model_families": [
+      "random_forest_regressor",
+      "lstm_regressor"
+    ],
+    "training_protocol": "Rolling-window scheme following Krauss et al. (2017) & Fischer & Krauss (2018): 4-year window with 1-year stride; each study period split into ~756 days (~3 years) training and ~252 days (~1 year) trading; 26 study periods with non-overlapping trading parts",
+    "evaluation_protocol": "Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
+    "metrics": [
+      "mae",
+      "rmse",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "Returns reported prior to transaction costs",
+    "reported_results": {
+      "multi_feature_LSTM_daily_return": "0.64%",
+      "multi_feature_RF_daily_return": "0.54%",
+      "single_feature_LSTM_daily_return": "0.41%",
+      "single_feature_RF_daily_return": "0.39%",
+      "benchmark_Fischer_Krauss_2018": "0.46%",
+      "benchmark_Krauss_et_al_2017": "0.43%"
+    },
+    "strict_requirements": [
+      "Buy 10 stocks with highest probability and sell short 10 stocks with lowest probability each trading day",
+      "Equal monetary weight across long and short positions",
+      "Exclude stocks with zero volume on a given day"
+    ],
+    "unknowns": [
+      "exact label threshold definition (binary vs ternary)",
+      "lookback window length for LSTM input sequence",
+      "random forest hyperparameters",
+      "LSTM architecture details (layers, units, dropout)",
+      "transaction cost model",
+      "train/validation split within training period"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2004_10178v2",
+        "section": "unknown",
+        "quote": "We employ both random forests and LSTM networks (more precisely CuDNNLSTM) as training methodologies to analyze their eﬀectiveness in forecasting out-of-sample directional movements of constituent stocks of the S&P 500 from January 1993 till December 2018 for intraday trading.",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2004_10178v2",
+        "section": "unknown",
+        "quote": "We introduce a multi-feature setting consisting not only of the returns with respect to the closing prices, but also with respect to the opening prices and intraday returns.",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2004_10178v2",
+        "section": "unknown",
+        "quote": "On each trading day, we buy the 10 stocks with the highest probability and sell short the 10 stocks with the lowest probability to outperform the market in terms of intraday returns – all with equal monetary weight.",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2004_10178v2",
+        "section": "unknown",
+        "quote": "Our empirical results show that the multi-feature setting provides a daily return, prior to transaction costs, of 0.64% using LSTM networks, and 0.54% using random forests.",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2004_10178v2",
+        "section": "unknown",
+        "quote": "we divide the dataset consisting of 29 years starting from January 1990 till December 2018, using a 4-year window and 1-year stride, where each study period is divided into a training period of approximately 756 days (≈ 3 years) and a trading period of approximately 252 days (≈ 1 year). As a consequence, we obtain 26 study periods with non-overlapping trading part.",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2004_10178v2",
+        "section": "unknown",
+        "quote": "stocks of the S&P 500 from the period of January 1990 until December 2018 using Bloomberg. For each day, stocks with zero volume were not considered for trading at this day.",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2004_10178v2",
+        "section": "unknown",
+        "quote": "All experiments were executed in a NVIDIA Tesla V100 with 30 GB memory. The codes and simulations were implemented using Python 3.6.5 with a dependency of TensorFlow 1.14.0 and scikit-learn 0.20.4.",
+        "summary": "LLM-provided evidence span."
+      }
+    ],
+    "extraction_metadata": {
+      "schema_version": "method_card_v1",
+      "extracted_from_text_sha": "fae585867c07144f",
+      "raw_paper_id": "arXiv:2004.10178v2",
+      "document_text_sha": "fae585867c07144f",
+      "source_path": "projects\\finance_agent\\papers\\local\\Forecasting directional movements of stock prices for intraday trading.pdf"
+    },
+    "approval_required": false
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

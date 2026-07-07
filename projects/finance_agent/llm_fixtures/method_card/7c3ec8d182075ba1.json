@@ -1,0 +1,76 @@
+{
+  "prompt_hash": "7c3ec8d182075ba1",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "ghosh_2021_lstm_rf_intraday",
+    "paper_id": "arXiv:2004.10178v2",
+    "title": "Forecasting directional movements of stock prices for intraday trading using LSTM and random forests",
+    "venue_or_source": "arXiv [cs.LG]",
+    "paper_url": "unknown",
+    "task_type": "directional movement forecasting for intraday trading",
+    "target_asset": "S&P 500 constituent stocks",
+    "asset_universe": "S&P 500 constituent stocks",
+    "frequency": "daily (intraday returns computed from daily open and close prices)",
+    "horizon": "1 trading day (intraday)",
+    "label_definition": "binary: whether a stock outperforms the market in terms of intraday returns",
+    "data_requirements": "S&P 500 constituent stocks from January 1990 until December 2018 via Bloomberg; stocks with zero volume excluded for that day",
+    "feature_groups": [
+      "daily returns with respect to closing prices",
+      "daily returns with respect to opening prices",
+      "intraday returns"
+    ],
+    "model_families": [
+      "random forest",
+      "LSTM (CuDNNLSTM)"
+    ],
+    "training_protocol": "4-year rolling window with 1-year stride; each study period split into ~756 training days (~3 years) and ~252 trading days (~1 year); 26 non-overlapping study periods total",
+    "evaluation_protocol": "non-overlapping out-of-sample trading periods; on each trading day, buy 10 stocks with highest predicted probability and sell short 10 stocks with lowest predicted probability, all with equal monetary weight",
+    "metrics": [
+      "daily return (prior to transaction costs)"
+    ],
+    "cost_assumptions": "returns reported prior to transaction costs; no explicit transaction cost model specified",
+    "reported_results": {
+      "multi_feature_LSTM_daily_return": "0.64%",
+      "multi_feature_RF_daily_return": "0.54%",
+      "single_feature_LSTM_daily_return": "0.41%",
+      "single_feature_RF_daily_return": "0.39%"
+    },
+    "strict_requirements": {
+      "hardware": "NVIDIA Tesla V100 with 30 GB memory",
+      "software": "Python 3.6.5, TensorFlow 1.14.0, scikit-learn 0.20.4, MATLAB R2016b (visualization/statistics)"
+    },
+    "unknowns": [
+      "paper_url",
+      "exact label construction details (threshold for outperformance)",
+      "transaction cost assumptions beyond 'prior to transaction costs'",
+      "random forest hyperparameters",
+      "LSTM architecture details (layers, units, dropout, etc.)"
+    ],
+    "evidence_spans": {
+      "task_type": "forecasting out-of-sample directional movements of constituent stocks of the S&P 500 from January 1993 till December 2018 for intraday trading",
+      "target_asset": "constituent stocks of the S&P 500",
+      "asset_universe": "stocks of the S&P 500 from the period of January 1990 until December 2018 using Bloomberg",
+      "frequency": "intraday trading",
+      "horizon": "On each trading day, we buy the 10 stocks with the highest probability and sell short the 10 stocks with the lowest probability to outperform the market in terms of intraday returns",
+      "label_definition": "outperform the market in terms of intraday returns",
+      "data_requirements": "stocks of the S&P 500 from the period of January 1990 until December 2018 using Bloomberg. For each day, stocks with zero volume were not considered for trading at this day.",
+      "feature_groups": "a multi-feature setting consisting not only of the returns with respect to the closing prices, but also with respect to the opening prices and intraday returns",
+      "model_families": "both random forests and LSTM networks (more precisely CuDNNLSTM) as training methodologies",
+      "training_protocol": "divide the dataset consisting of 29 years starting from January 1990 till December 2018, using a 4-year window and 1-year stride, where each study period is divided into a training period of approximately 756 days (≈ 3 years) and a trading period of approximately 252 days (≈ 1 year). As a consequence, we obtain 26 study periods with non-overlapping trading part.",
+      "evaluation_protocol": "On each trading day, we buy the 10 stocks with the highest probability and sell short the 10 stocks with the lowest probability to outperform the market in terms of intraday returns – all with equal monetary weight.",
+      "metrics": "daily return, prior to transaction costs",
+      "cost_assumptions": "prior to transaction costs",
+      "reported_results": "the multi-feature setting provides a daily return, prior to transaction costs, of 0.64% using LSTM networks, and 0.54% using random forests. Hence we outperform the single-feature setting in Fischer & Krauss (2018) and Krauss et al. (2017) consisting only of the daily returns with respect to the closing prices, having corresponding daily returns of 0.41% and of 0.39% with respect to LSTM and random forests, respectively.",
+      "strict_requirements": "All experiments were executed in a NVIDIA Tesla V100 with 30 GB memory. The codes and simulations were implemented using Python 3.6.5 with a dependency of TensorFlow 1.14.0 and scikit-learn 0.20.4."
+    },
+    "extraction_metadata": {
+      "extractor": "method_card_v1",
+      "document_id": "Forecasting directional movements of stock prices for intraday trading",
+      "text_sha": "fae585867c07144f"
+    },
+    "approval_required": false
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

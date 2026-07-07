@@ -1,0 +1,770 @@
+{
+  "paper_specs": [
+    {
+      "paper_id": "arxiv_1706_10059",
+      "title": "Deep Portfolio Management: A Deep Reinforcement Learning Framework for the Financial Portfolio Management Problem",
+      "venue_or_source": "arXiv:1706.10059v2 [q-fin.CP]",
+      "paper_url": "https://arxiv.org/abs/1706.10059",
+      "target_asset": "cryptocurrencies",
+      "asset_universe": [
+        "cryptocurrency market"
+      ],
+      "frequency": "30 minutes",
+      "horizon": "50 days",
+      "label_definition": "explicit reward function based on portfolio growth; the evaluation score of each asset is discounted by the size of its intentional weight change",
+      "required_feature_groups": [
+        "price_lag_features",
+        "cross_asset_features"
+      ],
+      "required_model_families": [
+        "lstm_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "required_split": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
+      "min_rows": 500,
+      "original_dataset_required": true,
+      "exact_model_required": true,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_1706_10059",
+          "section": "unknown",
+          "quote": "This paper presents a ﬁnancial-model-free Reinforcement Learning framework to provide a deep machine learning solution to the portfolio management problem.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1706_10059",
+          "section": "unknown",
+          "quote": "The framework consists of the Ensemble of Identical Independent Evaluators (EIIE) topology, a Portfolio-Vector Memory (PVM), an Online Stochastic Batch Learning (OSBL) scheme, and a fully exploiting and explicit reward function.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1706_10059",
+          "section": "unknown",
+          "quote": "This framework is realized in three instants in this work with a Convolutional Neural Network (CNN), a basic Recurrent Neural Network (RNN), and a Long Short-Term Memory (LSTM).",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1706_10059",
+          "section": "unknown",
+          "quote": "examined in three back-test experiments with a trading period of 30 minutes in a cryptocurrency market",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1706_10059",
+          "section": "unknown",
+          "quote": "All three instances of the framework monopolize the top three positions in all experiments, outdistancing other compared trading algorithms.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1706_10059",
+          "section": "unknown",
+          "quote": "Although with a high commission rate of 0.25% in the back-tests, the framework is able to achieve at least 4-fold returns in 50 days.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1706_10059",
+          "section": "unknown",
+          "quote": "An IIE is a neural network whose job is to inspect the history of an asset and evaluate its potential growth for the immediate future.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1706_10059",
+          "section": "unknown",
+          "quote": "The evaluation score of each asset is discounted by the size of its intentional weight change for the asset in the portfolio and is presented to a softmax layer, whose outcome will be the new portfolio weights for the coming trading period.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1706_10059",
+          "section": "unknown",
+          "quote": "a dedicated Portfolio-Vector Memory (PVM), is introduced to store the network outputs.",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_1904_00745",
+      "title": "Deep Learning in Asset Pricing",
+      "venue_or_source": "arxiv",
+      "paper_url": "unknown",
+      "target_asset": "individual stock returns",
+      "asset_universe": [
+        "individual stock returns"
+      ],
+      "frequency": "unknown",
+      "horizon": "unknown",
+      "label_definition": "expected returns",
+      "required_feature_groups": [
+        "cross_asset_features",
+        "sequence_window_features"
+      ],
+      "required_model_families": [
+        "ridge_regression"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "r2",
+        "directional_accuracy",
+        "net_return",
+        "sharpe"
+      ],
+      "required_split": "out-of-sample",
+      "min_rows": 250,
+      "original_dataset_required": true,
+      "exact_model_required": false,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "Deep Learning in Asset Pricing",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "estimate an asset pricing model for individual stock returns",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "vast amount of conditioning information",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "many macroeconomic time series",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "deep neural networks",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "non-linear factor model",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "min ω,ht max g,hg t L(ω|ˆg,hg t,ht,It,i)",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "Dropout",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "adaptive learning rate",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "ensemble learning",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "outperforms out-of-sample all benchmark approaches in terms of Sharpe ratio, explained variation and pricing errors",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "Sharpe ratio, explained variation and pricing errors",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "XS-R2",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_1904_00745",
+          "section": "unknown",
+          "quote": "use the fundamental no-arbitrage condition as criterion function, to construct the most informative test assets with an adversarial approach and to extract the states of the economy from many macroeconomic time series",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_2004_10178v2",
+      "title": "Forecasting directional movements of stock prices for intraday trading using LSTM and random forests",
+      "venue_or_source": "arXiv:2004.10178v2 [cs.LG] 30 Jun 2021",
+      "paper_url": "https://arxiv.org/abs/2004.10178",
+      "target_asset": "S&P 500 constituent stocks",
+      "asset_universe": [
+        "S&P 500 constituent stocks"
+      ],
+      "frequency": "daily (intraday returns computed at daily resolution)",
+      "horizon": "1 trading day (intraday)",
+      "label_definition": "Directional movement: whether a stock outperforms the market in terms of intraday returns",
+      "required_feature_groups": [
+        "price_lag_features",
+        "return_momentum_features",
+        "sequence_window_features"
+      ],
+      "required_model_families": [
+        "random_forest_regressor",
+        "lstm_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "required_split": "Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
+      "min_rows": 500,
+      "original_dataset_required": true,
+      "exact_model_required": true,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2004_10178v2",
+          "section": "unknown",
+          "quote": "We employ both random forests and LSTM networks (more precisely CuDNNLSTM) as training methodologies to analyze their eﬀectiveness in forecasting out-of-sample directional movements of constituent stocks of the S&P 500 from January 1993 till December 2018 for intraday trading.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2004_10178v2",
+          "section": "unknown",
+          "quote": "We introduce a multi-feature setting consisting not only of the returns with respect to the closing prices, but also with respect to the opening prices and intraday returns.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2004_10178v2",
+          "section": "unknown",
+          "quote": "On each trading day, we buy the 10 stocks with the highest probability and sell short the 10 stocks with the lowest probability to outperform the market in terms of intraday returns – all with equal monetary weight.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2004_10178v2",
+          "section": "unknown",
+          "quote": "Our empirical results show that the multi-feature setting provides a daily return, prior to transaction costs, of 0.64% using LSTM networks, and 0.54% using random forests.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2004_10178v2",
+          "section": "unknown",
+          "quote": "we divide the dataset consisting of 29 years starting from January 1990 till December 2018, using a 4-year window and 1-year stride, where each study period is divided into a training period of approximately 756 days (≈ 3 years) and a trading period of approximately 252 days (≈ 1 year). As a consequence, we obtain 26 study periods with non-overlapping trading part.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2004_10178v2",
+          "section": "unknown",
+          "quote": "stocks of the S&P 500 from the period of January 1990 until December 2018 using Bloomberg. For each day, stocks with zero volume were not considered for trading at this day.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2004_10178v2",
+          "section": "unknown",
+          "quote": "All experiments were executed in a NVIDIA Tesla V100 with 30 GB memory. The codes and simulations were implemented using Python 3.6.5 with a dependency of TensorFlow 1.14.0 and scikit-learn 0.20.4.",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_2108_10826",
+      "title": "S&P 500 STOCK PRICE PREDICTION USING TECHNICAL, FUNDAMENTAL AND TEXT DATA",
+      "venue_or_source": "arXiv",
+      "paper_url": "unknown",
+      "target_asset": [
+        "S&P 500 index",
+        "individual S&P 500 stocks"
+      ],
+      "asset_universe": [
+        "518 different common stocks issued by current and former S&P 500 large-cap companies, from January 1, 2000 to December 31, 2019"
+      ],
+      "frequency": "weekly (weeks ending on Fridays)",
+      "horizon": "unknown",
+      "label_definition": "directional prediction of stock price movement (up/down)",
+      "required_feature_groups": [
+        "cross_asset_features"
+      ],
+      "required_model_families": [
+        "random_forest_regressor",
+        "gradient_boosting_regressor",
+        "lstm_regressor",
+        "ridge_regression"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "required_split": "Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
+      "min_rows": 500,
+      "original_dataset_required": true,
+      "exact_model_required": true,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "title",
+          "quote": "S&P 500 S TOCK PRICE PREDICTION USING TECHNICAL , FUNDAMENTAL AND TEXT DATA",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "task_type",
+          "quote": "A 66.18% accuracy in S&P 500 index directional prediction and 62.09% accuracy in individual stock directional prediction was achieved by combining different machine learning models such as Random Forest and LSTM together into state-of-the-art ensemble models.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "target_asset",
+          "quote": "A 66.18% accuracy in S&P 500 index directional prediction and 62.09% accuracy in individual stock directional prediction",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "asset_universe",
+          "quote": "518 different common stocks issued by current and former S&P 500 large-cap companies, from January 1, 2000 to December 31, 2019",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "frequency",
+          "quote": "we took the median sentiment each week for each company (with weeks ending on Fridays) as the sentiment variables in our weekly data",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "feature_groups",
+          "quote": "combined them with technical indices, fundamental characteristics and text-based sentiment data to predict S&P stock prices",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "model_families",
+          "quote": "combining different machine learning models such as Random Forest and LSTM together into state-of-the-art ensemble models",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "model_families",
+          "quote": "we chose the \"bert-base-uncased\" tokenizer to clean the text",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "model_families",
+          "quote": "Linear Regression models trained together using all stock's data",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "training_protocol",
+          "quote": "We used three years of information as training data. After two years of training data were input, the individual model predicts future observations iteratively, calculates the prediction errors and updates the model at the end of each year based on these errors. Also starting from the third year, the ensemble models were fitted using past years' prediction outputs as inputs to the ensemble model.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "strict_requirements",
+          "quote": "carefully selecting the corresponding predictor variables to control the number of input variables; training the machine learning algorithm across different stocks simultaneously then fine-tuning on each individual stock; creating an ensemble of models trained with different groups of stocks; and allowing multiple input and output periods for the LSTM model for more recursive training",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "reported_results",
+          "quote": "A 66.18% accuracy in S&P 500 index directional prediction and 62.09% accuracy in individual stock directional prediction",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "data_requirements",
+          "quote": "The data we use contains weekly historical prices, finance reports, and text information from news items associated with 518 different common stocks",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "data_requirements",
+          "quote": "In our dataset which contains over 500 stocks and 3.2 million news items",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "data_requirements",
+          "quote": "Of the 170,779 extracted articles, 23,469 were positive, 37,426 were negative, and 109,884 were neutral.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2108_10826",
+          "section": "label_definition",
+          "quote": "directional prediction",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_2212_01048",
+      "title": "Empirical Asset Pricing via Ensemble Gaussian Process Regression",
+      "venue_or_source": "arXiv:2212.01048v3 [q-fin.RM] 7 Mar 2026",
+      "paper_url": "unknown",
+      "target_asset": "US stocks",
+      "asset_universe": [
+        "large cross-section of US stocks from 1962 to 2016"
+      ],
+      "frequency": "monthly",
+      "horizon": "1 month",
+      "label_definition": "excess return",
+      "required_feature_groups": [
+        "cross_asset_features"
+      ],
+      "required_model_families": [
+        "gradient_boosting_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "r2",
+        "directional_accuracy",
+        "net_return",
+        "sharpe"
+      ],
+      "required_split": "out-of-sample test using rolling and expanding schemes",
+      "min_rows": 1000,
+      "original_dataset_required": true,
+      "exact_model_required": false,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2212_01048",
+          "section": "unknown",
+          "quote": "",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_2306_03620",
+      "title": "Forecasting the Performance of US Stock Market Indices During COVID-19: RF vs LSTM",
+      "venue_or_source": "arxiv",
+      "paper_url": "unknown",
+      "target_asset": [
+        "S&P 500",
+        "Russell 2000 (RUT)"
+      ],
+      "asset_universe": [
+        "US stock market indices"
+      ],
+      "frequency": "unknown",
+      "horizon": "unknown",
+      "label_definition": "index returns",
+      "required_feature_groups": [
+        "price_lag_features"
+      ],
+      "required_model_families": [
+        "random_forest_regressor",
+        "lstm_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "r2",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "required_split": "rolling window",
+      "min_rows": 500,
+      "original_dataset_required": true,
+      "exact_model_required": true,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2306_03620",
+          "section": "unknown",
+          "quote": "",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_2405_03151",
+      "title": "Time Series Stock Price Forecasting Based on Genetic Algorithm (GA)-Long Short-Term Memory Network (LSTM) Optimization",
+      "venue_or_source": "arxiv",
+      "paper_url": "https://arxiv.org/abs/2405.03151",
+      "target_asset": "stock prices",
+      "asset_universe": [
+        "unknown"
+      ],
+      "frequency": "unknown",
+      "horizon": "unknown",
+      "label_definition": "stock prices",
+      "required_feature_groups": [
+        "price_lag_features"
+      ],
+      "required_model_families": [
+        "ga_lstm_regressor",
+        "lstm_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "r2",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "required_split": "model was evaluated using MSE, MAE and MAPE",
+      "min_rows": 500,
+      "original_dataset_required": true,
+      "exact_model_required": true,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2405_03151",
+          "section": "unknown",
+          "quote": "",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_2409_08426",
+      "title": "A DEEP REINFORCEMENT LEARNING FRAMEWORK FOR FINANCIAL PORTFOLIO MANAGEMENT",
+      "venue_or_source": "arXiv:2409.08426v1 [q-fin.PM] 3 Sep 2024",
+      "paper_url": "unknown",
+      "target_asset": "cryptocurrency, stocks",
+      "asset_universe": [
+        "cryptocurrency market, equity market"
+      ],
+      "frequency": "unknown",
+      "horizon": "unknown",
+      "label_definition": "fully exploiting and explicit reward function",
+      "required_feature_groups": [
+        "return_momentum_features"
+      ],
+      "required_model_families": [
+        "lstm_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "required_split": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+      "min_rows": 500,
+      "original_dataset_required": true,
+      "exact_model_required": true,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2409_08426",
+          "section": "unknown",
+          "quote": "",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_2411_05790",
+      "title": "Comparative Analysis of LSTM, GRU, and Transformer Models for Stock Price Prediction",
+      "venue_or_source": "arxiv",
+      "paper_url": "https://arxiv.org/abs/2411.05790",
+      "target_asset": "Tesla stock",
+      "asset_universe": [
+        "Tesla"
+      ],
+      "frequency": "unknown",
+      "horizon": "unknown",
+      "label_definition": "stock price trend",
+      "required_feature_groups": [
+        "return_momentum_features"
+      ],
+      "required_model_families": [
+        "transformer_regressor",
+        "lstm_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "required_split": "Use test sets to evaluate final model performance and deploy models in real-world applications.",
+      "min_rows": 500,
+      "original_dataset_required": true,
+      "exact_model_required": true,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2411_05790",
+          "section": "unknown",
+          "quote": "",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_2412_15448",
+      "title": "Risk-Adjusted Performance of Random Forest Models in High-Frequency Trading",
+      "venue_or_source": "arXiv (q-fin.CP)",
+      "paper_url": "https://arxiv.org/abs/2412.15448",
+      "target_asset": "SPY",
+      "asset_universe": [
+        "SPY"
+      ],
+      "frequency": "minute-level",
+      "horizon": "minute-level",
+      "label_definition": "unknown",
+      "required_feature_groups": [
+        "price_lag_features"
+      ],
+      "required_model_families": [
+        "random_forest_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "r2",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "required_split": "in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
+      "min_rows": 250,
+      "original_dataset_required": true,
+      "exact_model_required": false,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2412_15448",
+          "section": "unknown",
+          "quote": "This study evaluates the integration of traditional technical indicators with random forest regression models using minute-level SPY data, analyzing 13 distinct model configurations.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2412_15448",
+          "section": "unknown",
+          "quote": "Our empirical results reveal a stark contrast between in-sample and out-of-sample performance, with R2 values deteriorating from 0.749–0.812 during training to negative values in testing.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2412_15448",
+          "section": "unknown",
+          "quote": "A feature importance analysis demonstrates that primary price-based features dominate the predictions made by the model, accounting for over 60% of the importance, while established technical indicators, such as RSI and Bollinger Bands, account for only 14%–15%.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2412_15448",
+          "section": "unknown",
+          "quote": "Although the indicator-enhanced models achieved superior risk-adjusted metrics, with Rachev ratios between 0.919 and 0.961, they consistently underperformed a simple buy-and-hold strategy, generating returns ranging from -2.4% to -3.9%.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2412_15448",
+          "section": "unknown",
+          "quote": "our study employs advanced risk–reward measures, including the Rachev ratio and the gains–loss ratio, offering a more comprehensive evaluation in high-frequency contexts of trading strategies based on machine learning",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2412_15448",
+          "section": "unknown",
+          "quote": "None, however, surpassed the buy-and-hold benchmark in absolute returns. That RFR-based strategies behave worse than the buy-and-hold benchmark can be attributed to transaction costs and market noise, which diminish the effectiveness of short-term trading strategies.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2412_15448",
+          "section": "unknown",
+          "quote": "ML models, such as random forest regression (RFR), support vector regression (SVR), and gradient boosting, have demonstrated improved predictive performance in financial applications",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    },
+    {
+      "paper_id": "arxiv_2501_17366",
+      "title": "Forecasting S&P 500 Using LSTM Models",
+      "venue_or_source": "arXiv",
+      "paper_url": "https://arxiv.org/abs/2501.17366",
+      "target_asset": "S&P 500 index",
+      "asset_universe": [
+        "S&P 500 index (single benchmark)"
+      ],
+      "frequency": "unknown",
+      "horizon": "unknown",
+      "label_definition": "Predicting the S&P 500 index value using historical price data and technical indicators",
+      "required_feature_groups": [
+        "price_lag_features"
+      ],
+      "required_model_families": [
+        "lstm_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "rmse",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "required_split": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
+      "min_rows": 500,
+      "original_dataset_required": true,
+      "exact_model_required": true,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2501_17366",
+          "section": "unknown",
+          "quote": "In this report, we compare ARIMA and LSTM models in predicting the S&P 500 index, one of the most popular financial benchmarks.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2501_17366",
+          "section": "unknown",
+          "quote": "Using historical price data and technical indicators, we evaluated these models using the Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE) metrics.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2501_17366",
+          "section": "unknown",
+          "quote": "The ARIMA model showcased reasonable performance with an MAE of 462.1, RMSE of 614, and an accuracy of 89.8%.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2501_17366",
+          "section": "unknown",
+          "quote": "The LSTM model, with favorable features, achieved an MAE of 369.32, RMSE of 412.84, and an accuracy of 92.46%, capturing both short- and long-term dependencies.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2501_17366",
+          "section": "unknown",
+          "quote": "The LSTM model without features outperformed the version with all features, achieving an MAE of 175.9, RMSE of 207.34, and an accuracy of 96.41%, which showcased its ability to handle market data.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2501_17366",
+          "section": "unknown",
+          "quote": "Traditional models like ARIMA and GARCH were observed to be good with linear data. However, the stock market data involves non-linear dependencies and intricate patterns that are better handled by machine learning and deep learning approaches.",
+          "summary": "LLM-provided evidence span."
+        },
+        {
+          "source_id": "arxiv_2501_17366",
+          "section": "unknown",
+          "quote": "Taking that a step further to patch hyper-parameter tuning and computational complexity that machine learning lacks, we get deep learning models like Long Short-Term Memory (LSTM) networks.",
+          "summary": "LLM-provided evidence span."
+        }
+      ]
+    }
+  ]
+}

@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -68,8 +68,8 @@ class MethodCard:
 
     @staticmethod
     def from_dict(payload: dict[str, Any]) -> "MethodCard":
-        spans = [EvidenceSpan(**span) for span in payload.get("evidence_spans", [])]
-        data = dict(payload)
+        data = _normalize_method_card_payload(payload)
+        spans = [EvidenceSpan(**span) for span in data.get("evidence_spans", [])]
         data["evidence_spans"] = spans
         return MethodCard(**data)
 
@@ -80,7 +80,7 @@ def method_card_prompt(document: PaperDocument) -> dict[str, Any]:
         "document_id": document.document_id,
         "title": document.title,
         "text_sha": document.text_sha,
-        "text_excerpt": document.text[:12000],
+        "text_excerpt": _focused_method_context(document.text),
         "schema": {
             "required": [
                 "method_id",
@@ -101,7 +101,33 @@ def method_card_prompt(document: PaperDocument) -> dict[str, Any]:
                 "unknowns",
                 "evidence_spans",
             ],
-            "rule": "Use unknowns instead of guessing. Every key model/data/evaluation field should have an evidence span when possible.",
+            "all_fields": [
+                "method_id",
+                "paper_id",
+                "title",
+                "venue_or_source",
+                "paper_url",
+                "task_type",
+                "target_asset",
+                "asset_universe",
+                "frequency",
+                "horizon",
+                "label_definition",
+                "data_requirements",
+                "feature_groups",
+                "model_families",
+                "training_protocol",
+                "evaluation_protocol",
+                "metrics",
+                "cost_assumptions",
+                "reported_results",
+                "strict_requirements",
+                "unknowns",
+                "evidence_spans",
+                "extraction_metadata",
+                "approval_required",
+            ],
+            "rule": "Return one JSON object with exactly these MethodCard fields. Use unknowns instead of guessing. Every key model/data/evaluation field should have an evidence span when possible. Do not wrap the JSON in Markdown.",
         },
     }
 
@@ -144,6 +170,10 @@ class MethodCardAgent:
                 raise
             response = rule_based_method_card(document).to_dict()
         card = MethodCard.from_dict(response)
+        metadata = dict(card.extraction_metadata)
+        metadata.setdefault("document_text_sha", document.text_sha)
+        metadata.setdefault("source_path", document.source_path)
+        card = replace(card, extraction_metadata=metadata)
         validate_method_card(card)
         if out_dir:
             path = Path(out_dir) / f"{card.paper_id}.json"
@@ -168,6 +198,148 @@ def validate_method_card(card: MethodCard) -> None:
         raise ValueError("MethodCard requires at least one feature group")
     if card.approval_required and not card.unknowns:
         raise ValueError("Approval-required MethodCards should explain unknowns")
+
+
+def _normalize_method_card_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    data = dict(payload)
+    defaults: dict[str, Any] = {
+        "method_id": f"method_{_slug(str(data.get('paper_id') or data.get('title') or 'unknown_paper'))}",
+        "paper_id": _slug(str(data.get("paper_id") or data.get("title") or "unknown_paper")),
+        "title": str(data.get("title") or "unknown"),
+        "venue_or_source": "unknown",
+        "paper_url": "unknown",
+        "task_type": "financial_return_forecasting",
+        "target_asset": "unknown",
+        "asset_universe": ["unknown"],
+        "frequency": "unknown",
+        "horizon": "next_return",
+        "label_definition": "unknown",
+        "data_requirements": ["unknown"],
+        "feature_groups": ["return_momentum_features"],
+        "model_families": ["ridge_regression"],
+        "training_protocol": "time_ordered_training_no_shuffle",
+        "evaluation_protocol": "purged_walk_forward",
+        "metrics": ["mae", "rmse", "directional_accuracy", "net_return"],
+        "cost_assumptions": "unknown",
+        "reported_results": {},
+        "strict_requirements": ["unknown"],
+        "unknowns": [],
+        "evidence_spans": [],
+        "extraction_metadata": {},
+        "approval_required": False,
+    }
+    for key, value in defaults.items():
+        if key not in data or data[key] in (None, ""):
+            data[key] = value
+    original_paper_id = str(data.get("paper_id") or "")
+    data["paper_id"] = _slug(original_paper_id or str(data.get("title") or "unknown_paper"))
+    data["method_id"] = _slug(str(data.get("method_id") or f"method_{data['paper_id']}"))
+    for key in [
+        "asset_universe",
+        "data_requirements",
+        "feature_groups",
+        "model_families",
+        "metrics",
+        "strict_requirements",
+        "unknowns",
+    ]:
+        data[key] = _as_string_list(data.get(key), defaults[key])
+    data["model_families"] = _canonical_model_families(data["model_families"])
+    data["feature_groups"] = _canonical_feature_groups(data["feature_groups"])
+    data["metrics"] = _canonical_metrics(data["metrics"])
+    if not isinstance(data.get("reported_results"), dict):
+        data["reported_results"] = {"raw": data.get("reported_results")}
+    if not isinstance(data.get("extraction_metadata"), dict):
+        data["extraction_metadata"] = {"raw": data.get("extraction_metadata")}
+    if original_paper_id and original_paper_id != data["paper_id"]:
+        data["extraction_metadata"]["raw_paper_id"] = original_paper_id
+    data["evidence_spans"] = _normalize_evidence_spans(data.get("evidence_spans"), source_id=str(data["paper_id"]))
+    data["approval_required"] = bool(data.get("approval_required"))
+    return data
+
+
+def _as_string_list(value: Any, fallback: list[str]) -> list[str]:
+    if isinstance(value, list):
+        result = [str(item).strip() for item in value if str(item).strip()]
+        return result or fallback
+    if isinstance(value, str) and value.strip():
+        return [value.strip()]
+    return fallback
+
+
+def _normalize_evidence_spans(value: Any, *, source_id: str) -> list[dict[str, str]]:
+    if not isinstance(value, list):
+        value = [value] if value else []
+    spans: list[dict[str, str]] = []
+    for item in value:
+        if isinstance(item, dict):
+            spans.append(
+                {
+                    "source_id": str(item.get("source_id") or item.get("document_id") or source_id),
+                    "section": str(item.get("section") or item.get("field") or "unknown"),
+                    "quote": str(item.get("quote") or item.get("text") or item.get("span") or "")[:1000],
+                    "summary": str(item.get("summary") or item.get("rationale") or "LLM-provided evidence span.")[:1000],
+                }
+            )
+        elif item:
+            text = str(item)
+            spans.append({"source_id": source_id, "section": "unknown", "quote": text[:1000], "summary": "LLM-provided evidence span."})
+    return spans
+
+
+def _canonical_model_families(values: list[str]) -> list[str]:
+    out: list[str] = []
+    joined = " ".join(values).lower()
+    rules = [
+        ("random_forest_regressor", ["random_forest_regressor", "random forest", "rf"]),
+        ("gradient_boosting_regressor", ["gradient_boosting_regressor", "gradient boosting", "gbt", "xgboost", "boost"]),
+        ("transformer_regressor", ["transformer_regressor", "transformer"]),
+        ("ga_lstm_regressor", ["ga_lstm_regressor", "ga-lstm", "genetic algorithm", "genetic"]),
+        ("lstm_regressor", ["lstm_regressor", "lstm", "cudnnlstm"]),
+        ("ridge_regression", ["ridge_regression", "ridge", "linear", "lasso", "elastic net", "ols"]),
+        ("gradient_boosting_regressor", ["gaussian process", "gpr", "ensemble", "mixture-of-experts"]),
+    ]
+    for family, tokens in rules:
+        if any(token in joined for token in tokens) and family not in out:
+            out.append(family)
+    return out or ["ridge_regression"]
+
+
+def _canonical_feature_groups(values: list[str]) -> list[str]:
+    out: list[str] = []
+    joined = " ".join(values).lower()
+    rules = [
+        ("price_lag_features", ["price", "close", "open", "lag"]),
+        ("return_momentum_features", ["return", "momentum", "directional", "intraday"]),
+        ("volatility_features", ["volatility", "risk", "variance", "standard deviation"]),
+        ("cross_asset_features", ["macro", "characteristic", "cross", "market", "industry", "asset"]),
+        ("sequence_window_features", ["lstm", "sequence", "window", "time series", "intraday"]),
+        ("liquidity_proxy_features", ["volume", "liquidity", "turnover"]),
+    ]
+    for group, tokens in rules:
+        if any(token in joined for token in tokens) and group not in out:
+            out.append(group)
+    return out or ["return_momentum_features"]
+
+
+def _canonical_metrics(values: list[str]) -> list[str]:
+    out: list[str] = []
+    joined = " ".join(values).lower()
+    rules = [
+        ("mae", ["mae", "mean absolute"]),
+        ("rmse", ["rmse", "root mean"]),
+        ("r2", ["r-squared", "r2", "r^2"]),
+        ("directional_accuracy", ["accuracy", "direction", "hit rate"]),
+        ("net_return", ["return", "sharpe", "portfolio", "trading"]),
+        ("sharpe", ["sharpe"]),
+    ]
+    for metric, tokens in rules:
+        if any(token in joined for token in tokens) and metric not in out:
+            out.append(metric)
+    for metric in ["mae", "rmse", "directional_accuracy", "net_return"]:
+        if metric not in out:
+            out.append(metric)
+    return out
 
 
 def method_card_to_paper_spec(card: MethodCard) -> PaperSpecCard:
@@ -304,6 +476,47 @@ def _guess_title(text: str, fallback: str) -> str:
         if 8 <= len(line) <= 180 and not line.lower().startswith(("abstract", "introduction")):
             return line
     return fallback.replace("_", " ").replace("-", " ").title()
+
+
+def _focused_method_context(text: str, *, max_chars: int = 7000) -> str:
+    normalized = re.sub(r"\s+", " ", text).strip()
+    if len(normalized) <= max_chars:
+        return normalized
+    sections: list[str] = []
+    head_budget = min(2600, max_chars // 2)
+    sections.append(normalized[:head_budget])
+    keywords = [
+        "data",
+        "dataset",
+        "sample",
+        "method",
+        "model",
+        "training",
+        "evaluation",
+        "experiment",
+        "empirical",
+        "results",
+        "transaction cost",
+        "random forest",
+        "lstm",
+        "gaussian process",
+    ]
+    per_section = 700
+    seen: set[int] = set()
+    lower = normalized.lower()
+    for keyword in keywords:
+        idx = lower.find(keyword)
+        if idx < 0:
+            continue
+        start = max(0, idx - 180)
+        if any(abs(start - prev) < 500 for prev in seen):
+            continue
+        seen.add(start)
+        sections.append(normalized[start : start + per_section])
+        if sum(len(section) for section in sections) >= max_chars:
+            break
+    context = "\n\n--- excerpt ---\n\n".join(sections)
+    return context[:max_chars]
 
 
 def _slug(value: str) -> str:

@@ -1,0 +1,64 @@
+{
+  "prompt_hash": "5efd63b21cde6b0d",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "ensemble_gpr",
+    "paper_id": "2212.01048",
+    "title": "Empirical Asset Pricing via Ensemble Gaussian Process Regression",
+    "venue_or_source": "arXiv",
+    "paper_url": "https://arxiv.org/abs/2212.01048",
+    "task_type": "predicting conditional expected stock returns",
+    "target_asset": "US stocks",
+    "asset_universe": "large cross-section of US stocks from 1962 to 2016",
+    "frequency": "monthly",
+    "horizon": "1 month",
+    "label_definition": "excess return",
+    "data_requirements": "stock-level and macro-economic information",
+    "feature_groups": [
+      "asset i-specific characteristics",
+      "common macro-economic variables"
+    ],
+    "model_families": [
+      "Gaussian Process Regression (GPR)",
+      "Ensemble learning",
+      "Mixture-of-experts"
+    ],
+    "training_protocol": "partition the large training sample into subsets, apply individual GPRs on all subsets in parallel, and obtain a predictive distribution conditional on the full training data by mixing the predictive distributions over the subsets. Rolling scheme (K_t = K) and expanding scheme (K_t = t).",
+    "evaluation_protocol": "predictive performance evaluation using out-of-sample test and validation period",
+    "metrics": [
+      "out-of-sample pooled R-squared (R2_pool)",
+      "Sharpe ratio"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": "dominates existing machine learning models statistically and economically in terms of out-of-sample R-squared and Sharpe ratio of prediction-sorted portfolios",
+    "strict_requirements": "gamma-exponential kernel outperformed the others in terms of R2_pool",
+    "unknowns": [
+      "cost_assumptions"
+    ],
+    "evidence_spans": {
+      "title": "Empirical Asset Pricing via Ensemble Gaussian Process Regression",
+      "task_type": "predicting conditional expected stock returns given stock-level and macro-economic information",
+      "target_asset": "US stocks",
+      "asset_universe": "large cross-section of US stocks from 1962 to 2016",
+      "frequency": "discrete time t=0,1,2, . . ., where t represents the end of a month",
+      "horizon": "period [t, t+ 1]",
+      "label_definition": "r i,t+1 the excess return",
+      "data_requirements": "stock-level and macro-economic information",
+      "feature_groups": "asset i-specific characteristics and common macro-economic variables",
+      "model_families": "ensemble learning method based on Gaussian Process Regression (GPR)",
+      "training_protocol": "partition the large training sample into subsets, apply individual GPRs on all subsets in parallel, and obtain a predictive distribution conditional on the full training data by mixing the predictive distributions over the subsets",
+      "evaluation_protocol": "predictive performance evaluation",
+      "metrics": "out-of-sample R-squared and Sharpe ratio",
+      "reported_results": "dominates existing machine learning models statistically and economically in terms of out-of-sample R-squared and Sharpe ratio of prediction-sorted portfolios",
+      "strict_requirements": "gamma-exponential kernel outperformed the others in terms of R 2 pool"
+    },
+    "extraction_metadata": {
+      "extraction_date": "2023-10-25",
+      "extractor": "LLM"
+    },
+    "approval_required": false
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

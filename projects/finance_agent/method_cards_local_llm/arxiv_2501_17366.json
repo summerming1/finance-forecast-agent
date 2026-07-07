@@ -1,0 +1,117 @@
+{
+  "method_id": "lstm_sp500_pilla2025",
+  "paper_id": "arxiv_2501_17366",
+  "title": "Forecasting S&P 500 Using LSTM Models",
+  "venue_or_source": "arXiv",
+  "paper_url": "https://arxiv.org/abs/2501.17366",
+  "task_type": "stock_price_forecasting",
+  "target_asset": "S&P 500 index",
+  "asset_universe": [
+    "S&P 500 index (single benchmark)"
+  ],
+  "frequency": "unknown",
+  "horizon": "unknown",
+  "label_definition": "Predicting the S&P 500 index value using historical price data and technical indicators",
+  "data_requirements": [
+    "Historical price data and technical indicators for the S&P 500"
+  ],
+  "feature_groups": [
+    "price_lag_features"
+  ],
+  "model_families": [
+    "lstm_regressor"
+  ],
+  "training_protocol": "unknown",
+  "evaluation_protocol": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
+  "metrics": [
+    "mae",
+    "rmse",
+    "directional_accuracy",
+    "net_return"
+  ],
+  "cost_assumptions": "unknown",
+  "reported_results": {
+    "ARIMA": {
+      "MAE": 462.1,
+      "RMSE": 614,
+      "accuracy": "89.8%"
+    },
+    "LSTM_with_features": {
+      "MAE": 369.32,
+      "RMSE": 412.84,
+      "accuracy": "92.46%"
+    },
+    "LSTM_without_features": {
+      "MAE": 175.9,
+      "RMSE": 207.34,
+      "accuracy": "96.41%"
+    }
+  },
+  "strict_requirements": [
+    "unknown"
+  ],
+  "unknowns": [
+    "frequency",
+    "horizon",
+    "training_protocol",
+    "cost_assumptions",
+    "strict_requirements",
+    "data_time_range",
+    "train_test_split_ratio",
+    "hyperparameter_details"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2501_17366",
+      "section": "unknown",
+      "quote": "In this report, we compare ARIMA and LSTM models in predicting the S&P 500 index, one of the most popular financial benchmarks.",
+      "summary": "LLM-provided evidence span."
+    },
+    {
+      "source_id": "arxiv_2501_17366",
+      "section": "unknown",
+      "quote": "Using historical price data and technical indicators, we evaluated these models using the Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE) metrics.",
+      "summary": "LLM-provided evidence span."
+    },
+    {
+      "source_id": "arxiv_2501_17366",
+      "section": "unknown",
+      "quote": "The ARIMA model showcased reasonable performance with an MAE of 462.1, RMSE of 614, and an accuracy of 89.8%.",
+      "summary": "LLM-provided evidence span."
+    },
+    {
+      "source_id": "arxiv_2501_17366",
+      "section": "unknown",
+      "quote": "The LSTM model, with favorable features, achieved an MAE of 369.32, RMSE of 412.84, and an accuracy of 92.46%, capturing both short- and long-term dependencies.",
+      "summary": "LLM-provided evidence span."
+    },
+    {
+      "source_id": "arxiv_2501_17366",
+      "section": "unknown",
+      "quote": "The LSTM model without features outperformed the version with all features, achieving an MAE of 175.9, RMSE of 207.34, and an accuracy of 96.41%, which showcased its ability to handle market data.",
+      "summary": "LLM-provided evidence span."
+    },
+    {
+      "source_id": "arxiv_2501_17366",
+      "section": "unknown",
+      "quote": "Traditional models like ARIMA and GARCH were observed to be good with linear data. However, the stock market data involves non-linear dependencies and intricate patterns that are better handled by machine learning and deep learning approaches.",
+      "summary": "LLM-provided evidence span."
+    },
+    {
+      "source_id": "arxiv_2501_17366",
+      "section": "unknown",
+      "quote": "Taking that a step further to patch hyper-parameter tuning and computational complexity that machine learning lacks, we get deep learning models like Long Short-Term Memory (LSTM) networks.",
+      "summary": "LLM-provided evidence span."
+    }
+  ],
+  "extraction_metadata": {
+    "extraction_date": "2025-01-30",
+    "extractor": "method_card_v1",
+    "confidence": "high",
+    "notes": "Paper is an arXiv preprint. Several implementation details (frequency, horizon, training protocol) not specified in the provided excerpts.",
+    "raw_paper_id": "arxiv_2501.17366",
+    "document_text_sha": "6de424b4258d212b",
+    "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2501.17366.pdf"
+  },
+  "approval_required": false
+}
