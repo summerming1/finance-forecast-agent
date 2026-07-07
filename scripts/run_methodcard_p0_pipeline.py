@@ -10,12 +10,18 @@ from finance_forecast_agent.harness import run_harness
 from finance_forecast_agent.method_cards import MethodCard, method_card_to_paper_spec
 
 
+SKIP_JSON = {'method_card_catalog.json', 'paper_specs_from_method_cards.json'}
+
+
 def load_method_cards(cards_dir: Path) -> list[MethodCard]:
     cards = []
     for path in sorted(cards_dir.glob('*.json')):
-        if path.name == 'method_card_catalog.json':
+        if path.name in SKIP_JSON:
             continue
-        cards.append(MethodCard.from_dict(json.loads(path.read_text(encoding='utf-8'))))
+        payload = json.loads(path.read_text(encoding='utf-8'))
+        if 'method_id' not in payload or 'paper_id' not in payload:
+            continue
+        cards.append(MethodCard.from_dict(payload))
     if not cards:
         raise SystemExit(f'No MethodCard JSON files found in {cards_dir}. Run scripts/generate_methodcard_fixtures.py and scripts/extract_method_cards.py first.')
     return cards
