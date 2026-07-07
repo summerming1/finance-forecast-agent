@@ -1,0 +1,21 @@
+name: finance-forecast-agent
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.11
+  - pip>=24
+  - numpy
+  - pandas
+  - scikit-learn
+  - plotly
+  - pytorch
+  - cpuonly
+  - pip:
+      - pytest
+      - streamlit
+      - mlflow
+      - dvc
+      - yfinance
+      - pandas-datareader
