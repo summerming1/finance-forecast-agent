@@ -1,15 +1,29 @@
 # Finance Forecast Agent
 
-A standalone finance-first autonomous ML research harness. It separates paper protocol, local real data, comparability, candidate contracts, execution manifests, time-series validation, transaction-cost evaluation, fixed ReplayLLM advice, PaperDatasetRegistry, DVC/MLflow tracking adapters, and reproducibility audits.
+A standalone finance-first autonomous ML research harness. It separates paper protocol, local real data, comparability, candidate contracts, execution manifests, time-series validation, transaction-cost evaluation, fixed ReplayLLM advice, PaperDatasetRegistry, DVC/MLflow tracking adapters, reproducibility audits, and P0.5 MethodCard extraction.
 
 ## Quick start
 
 ```bash
-pip install -e ".[dev,ui,tracking,data]"
+pip install -e ".[dev,ui,tracking,data,pdf]"
 PYTHONPATH=src python scripts/generate_replay_fixtures.py
+PYTHONPATH=src python scripts/generate_methodcard_fixtures.py
+PYTHONPATH=src python scripts/extract_method_cards.py --papers-dir projects/finance_agent/papers/text --out-dir projects/finance_agent/method_cards --write-paper-specs
 PYTHONPATH=src python scripts/run_finance_agent.py
 PYTHONPATH=src python -m pytest tests -q
 ```
+
+## P0.5 MethodCardAgent
+
+The project now supports:
+
+```text
+PDF / TXT / MD -> PaperTextLoader -> MethodCardAgent -> MethodCard JSON -> PaperSpecCard -> P0 Harness
+```
+
+No LLM key is required for tests. `scripts/generate_methodcard_fixtures.py` creates deterministic MethodCard fixtures from the built-in paper catalog. `scripts/extract_method_cards.py` then replays those fixtures and lands MethodCard JSON under `projects/finance_agent/method_cards/`.
+
+See [`docs/METHODCARD_AGENT.md`](docs/METHODCARD_AGENT.md) and [`docs/CODEX_TASKS_P05_METHODCARD.md`](docs/CODEX_TASKS_P05_METHODCARD.md).
 
 ## Environment
 
