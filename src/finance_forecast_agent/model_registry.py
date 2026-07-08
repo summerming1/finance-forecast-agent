@@ -26,10 +26,10 @@ MODEL_ALIASES: list[tuple[str, list[str]]] = [
     ("ga_lstm_regressor", ["ga_lstm_regressor", "ga-lstm", "genetic algorithm", "genetic"]),
     ("lstm_regressor", ["lstm_regressor", "lstm", "cudnnlstm"]),
     ("gru_regressor", ["gru_regressor", "gru"]),
-    ("cnn_sequence_regressor", ["cnn", "convolutional neural"]),
-    ("gaussian_process_regressor", ["gaussian process", "gpr"]),
-    ("rl_portfolio_policy", ["reinforcement learning", "portfolio-vector memory", "pvm", "deep portfolio", "portfolio management"]),
-    ("dnn_asset_pricing_model", ["deep neural network", "dnn", "no-arbitrage", "adversarial"]),
+    ("cnn_sequence_regressor", ["cnn_sequence_regressor", "cnn", "convolutional neural"]),
+    ("gaussian_process_regressor", ["gaussian_process_regressor", "gaussian process", "gpr"]),
+    ("rl_portfolio_policy", ["rl_portfolio_policy", "reinforcement learning", "portfolio-vector memory", "pvm", "deep portfolio", "portfolio management"]),
+    ("dnn_asset_pricing_model", ["dnn_asset_pricing_model", "deep neural network", "dnn", "no-arbitrage", "adversarial"]),
     ("ridge_regression", ["ridge_regression", "ridge", "linear", "lasso", "elastic net", "ols"]),
 ]
 
