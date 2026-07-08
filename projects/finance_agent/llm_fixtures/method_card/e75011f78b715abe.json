@@ -1,0 +1,194 @@
+{
+  "prompt_hash": "e75011f78b715abe",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "zhong_hitchcock_2021_sp500_ensemble",
+    "paper_id": "arxiv_2108_10826",
+    "title": "S&P 500 STOCK PRICE PREDICTION USING TECHNICAL, FUNDAMENTAL AND TEXT DATA",
+    "venue_or_source": "arXiv",
+    "paper_url": "unknown",
+    "task_type": "stock_price_directional_prediction",
+    "target_asset": "S&P 500 index",
+    "asset_universe": [
+      "S&P 500 index",
+      "individual S&P 500 stocks",
+      "518 different common stocks issued by current and former S&P 500 large-cap companies, from January 1, 2000 to December 31, 2019"
+    ],
+    "frequency": "weekly (weeks ending on Fridays)",
+    "horizon": "unknown",
+    "label_definition": "directional prediction of stock price movement (up/down)",
+    "data_requirements": [
+      "weekly historical prices, finance reports, text information from news items; over 500 stocks and 3.2 million news items; 170,779 extracted articles (23,469 positive, 37,426 negative, 109,884 neutral)"
+    ],
+    "feature_groups": [
+      "cross_asset_features"
+    ],
+    "model_families": [
+      "random_forest_regressor",
+      "gradient_boosting_regressor",
+      "lstm_regressor",
+      "ridge_regression"
+    ],
+    "training_protocol": "Three years of information as training data; after two years of training data input, individual model predicts future observations iteratively, calculates prediction errors and updates model at end of each year; starting from third year, ensemble models fitted using past years' prediction outputs as inputs; training across different stocks simultaneously then fine-tuning on each individual stock; allowing multiple input and output periods for LSTM model",
+    "evaluation_protocol": "Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
+    "metrics": [
+      "mae",
+      "rmse",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {
+      "sp500_index_directional_accuracy": "66.18%",
+      "individual_stock_directional_accuracy": "62.09%"
+    },
+    "strict_requirements": [
+      "carefully selecting corresponding predictor variables to control the number of input variables",
+      "training the machine learning algorithm across different stocks simultaneously then fine-tuning on each individual stock",
+      "creating an ensemble of models trained with different groups of stocks",
+      "allowing multiple input and output periods for the LSTM model for more recursive training"
+    ],
+    "unknowns": [
+      "exact prediction horizon (number of weeks ahead)",
+      "paper URL",
+      "cost assumptions",
+      "approval requirements",
+      "detailed evaluation metric definitions beyond accuracy",
+      "horizon"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "title",
+        "quote": "S&P 500 S TOCK PRICE PREDICTION USING TECHNICAL , FUNDAMENTAL AND TEXT DATA",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "task_type",
+        "quote": "A 66.18% accuracy in S&P 500 index directional prediction and 62.09% accuracy in individual stock directional prediction was achieved by combining different machine learning models such as Random Forest and LSTM together into state-of-the-art ensemble models.",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "target_asset",
+        "quote": "A 66.18% accuracy in S&P 500 index directional prediction and 62.09% accuracy in individual stock directional prediction",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "asset_universe",
+        "quote": "518 different common stocks issued by current and former S&P 500 large-cap companies, from January 1, 2000 to December 31, 2019",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "frequency",
+        "quote": "we took the median sentiment each week for each company (with weeks ending on Fridays) as the sentiment variables in our weekly data",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "feature_groups",
+        "quote": "combined them with technical indices, fundamental characteristics and text-based sentiment data to predict S&P stock prices",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "model_families",
+        "quote": "combining different machine learning models such as Random Forest and LSTM together into state-of-the-art ensemble models",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "model_families",
+        "quote": "we chose the \"bert-base-uncased\" tokenizer to clean the text",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "model_families",
+        "quote": "Linear Regression models trained together using all stock's data",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "training_protocol",
+        "quote": "We used three years of information as training data. After two years of training data were input, the individual model predicts future observations iteratively, calculates the prediction errors and updates the model at the end of each year based on these errors. Also starting from the third year, the ensemble models were fitted using past years' prediction outputs as inputs to the ensemble model.",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "strict_requirements",
+        "quote": "carefully selecting the corresponding predictor variables to control the number of input variables; training the machine learning algorithm across different stocks simultaneously then fine-tuning on each individual stock; creating an ensemble of models trained with different groups of stocks; and allowing multiple input and output periods for the LSTM model for more recursive training",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "reported_results",
+        "quote": "A 66.18% accuracy in S&P 500 index directional prediction and 62.09% accuracy in individual stock directional prediction",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "data_requirements",
+        "quote": "The data we use contains weekly historical prices, finance reports, and text information from news items associated with 518 different common stocks",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "data_requirements",
+        "quote": "In our dataset which contains over 500 stocks and 3.2 million news items",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "data_requirements",
+        "quote": "Of the 170,779 extracted articles, 23,469 were positive, 37,426 were negative, and 109,884 were neutral.",
+        "summary": "LLM-provided evidence span."
+      },
+      {
+        "source_id": "arxiv_2108_10826",
+        "section": "label_definition",
+        "quote": "directional prediction",
+        "summary": "LLM-provided evidence span."
+      }
+    ],
+    "extraction_metadata": {
+      "extracted_from": "text excerpts provided",
+      "extraction_date": "2025-01-01",
+      "notes": "Prediction horizon not explicitly stated in provided excerpts; marked as unknown. Multiple input and output periods for LSTM mentioned but specific values not given.",
+      "raw_paper_id": "arxiv_2108.10826",
+      "document_text_sha": "8e06b2891ad00348",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2108.10826.pdf",
+      "quality_report": {
+        "method_id": "zhong_hitchcock_2021_sp500_ensemble",
+        "paper_id": "arxiv_2108_10826",
+        "quality_score": 0.82,
+        "approval_required": true,
+        "critical_missing_fields": [
+          "horizon"
+        ],
+        "type_errors": [],
+        "unsupported_models": [],
+        "warnings": [
+          "evaluation protocol could not be mapped to a supported protocol type",
+          "horizon is unknown"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
+      "frequency_type": "daily",
+      "horizon_type": "unknown"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "unknown",
+    "evaluation_protocol_description": "Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
+    "frequency_type": "daily",
+    "horizon_type": "unknown"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

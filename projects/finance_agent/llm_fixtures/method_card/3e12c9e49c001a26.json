@@ -1,0 +1,94 @@
+{
+  "prompt_hash": "3e12c9e49c001a26",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "lstm_gru_transformer_stock_prediction",
+    "paper_id": "arxiv_2411_05790",
+    "title": "Comparative Analysis of LSTM, GRU, and Transformer Models for Stock Price Prediction",
+    "venue_or_source": "arxiv",
+    "paper_url": "https://arxiv.org/abs/2411.05790",
+    "task_type": "stock price trend prediction",
+    "target_asset": "Tesla stock",
+    "asset_universe": [
+      "Tesla"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "stock price trend",
+    "data_requirements": [
+      "model training data set of famous Tesla cars from 2015 to 2024"
+    ],
+    "feature_groups": [
+      "return_momentum_features"
+    ],
+    "model_families": [
+      "transformer_regressor",
+      "lstm_regressor"
+    ],
+    "training_protocol": "Model training using training data sets, adjusting model parameters through backpropagation and optimisers to minimize loss functions. Use validation sets to evaluate model performance and adjust hyperparameters (e.g., learning rate, number of hidden units) to improve model generalisation.",
+    "evaluation_protocol": "Use test sets to evaluate final model performance and deploy models in real-world applications.",
+    "metrics": [
+      "mae",
+      "rmse",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {
+      "raw": "accuracy of the LSTM model is 94%"
+    },
+    "strict_requirements": [
+      "unknown"
+    ],
+    "unknowns": [
+      "frequency",
+      "horizon",
+      "cost_assumptions",
+      "strict_requirements"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2411_05790",
+        "section": "unknown",
+        "quote": "",
+        "summary": "LLM-provided evidence span."
+      }
+    ],
+    "extraction_metadata": {
+      "extractor_version": "1.0",
+      "raw_paper_id": "arxiv_2411.05790",
+      "document_text_sha": "b7edbb63e48cfdaf",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2411.05790.pdf",
+      "quality_report": {
+        "method_id": "lstm_gru_transformer_stock_prediction",
+        "paper_id": "arxiv_2411_05790",
+        "quality_score": 0.67,
+        "approval_required": true,
+        "critical_missing_fields": [
+          "frequency",
+          "horizon"
+        ],
+        "type_errors": [],
+        "unsupported_models": [],
+        "warnings": [
+          "evaluation protocol could not be mapped to a supported protocol type",
+          "frequency is unknown",
+          "horizon is unknown"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "Use test sets to evaluate final model performance and deploy models in real-world applications.",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "unknown",
+    "evaluation_protocol_description": "Use test sets to evaluate final model performance and deploy models in real-world applications.",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

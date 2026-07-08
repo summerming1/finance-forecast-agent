@@ -1,0 +1,94 @@
+{
+  "prompt_hash": "962dfdb29db7add8",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "arxiv_2409_08426_method",
+    "paper_id": "arxiv_2409_08426",
+    "title": "A DEEP REINFORCEMENT LEARNING FRAMEWORK FOR FINANCIAL PORTFOLIO MANAGEMENT",
+    "venue_or_source": "arXiv:2409.08426v1 [q-fin.PM] 3 Sep 2024",
+    "paper_url": "unknown",
+    "task_type": "Financial Portfolio Management",
+    "target_asset": "cryptocurrency, stocks",
+    "asset_universe": [
+      "cryptocurrency market, equity market"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "fully exploiting and explicit reward function",
+    "data_requirements": [
+      "stock market data, dataset different from the original paper"
+    ],
+    "feature_groups": [
+      "return_momentum_features"
+    ],
+    "model_families": [
+      "lstm_regressor"
+    ],
+    "training_protocol": "Ensemble of Identical Independent Evaluators (EIIE) topology, Portfolio-Vector Memory (PVM), Online Stochastic Batch Learning (OSBL) scheme",
+    "evaluation_protocol": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+    "metrics": [
+      "mae",
+      "rmse",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {
+      "raw": "cryptocurrency market experiment achieves superior returns consistent with original paper; does not perform as well in the stock market"
+    },
+    "strict_requirements": [
+      "financial-model-free reinforcement learning framework"
+    ],
+    "unknowns": [
+      "frequency",
+      "horizon",
+      "feature_groups",
+      "cost_assumptions",
+      "paper_url"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2409_08426",
+        "section": "unknown",
+        "quote": "",
+        "summary": "LLM-provided evidence span."
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "system",
+      "raw_paper_id": "arxiv_2409.08426",
+      "document_text_sha": "cc13523dd035c43c",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2409.08426.pdf",
+      "quality_report": {
+        "method_id": "arxiv_2409_08426_method",
+        "paper_id": "arxiv_2409_08426",
+        "quality_score": 0.67,
+        "approval_required": true,
+        "critical_missing_fields": [
+          "frequency",
+          "horizon"
+        ],
+        "type_errors": [],
+        "unsupported_models": [],
+        "warnings": [
+          "evaluation protocol could not be mapped to a supported protocol type",
+          "frequency is unknown",
+          "horizon is unknown"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "unknown",
+    "evaluation_protocol_description": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

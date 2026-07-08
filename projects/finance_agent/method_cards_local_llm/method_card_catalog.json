@@ -112,9 +112,28 @@
         "document_id": "arxiv_1706.10059",
         "raw_paper_id": "arxiv_1706.10059",
         "document_text_sha": "3eacf876a150e5dd",
-        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1706.10059.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1706.10059.pdf",
+        "quality_report": {
+          "method_id": "deep_portfolio_management_eiie",
+          "paper_id": "arxiv_1706_10059",
+          "quality_score": 1.0,
+          "approval_required": false,
+          "critical_missing_fields": [],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [],
+          "recommended_action": "ready_for_exploratory_p0_harness"
+        },
+        "evaluation_protocol_type": "purged_walk_forward",
+        "evaluation_protocol_description": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
+        "frequency_type": "intraday",
+        "horizon_type": "next_return"
       },
-      "approval_required": false
+      "approval_required": false,
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
+      "frequency_type": "intraday",
+      "horizon_type": "next_return"
     },
     {
       "method_id": "arxiv_1904_00745",
@@ -252,9 +271,34 @@
       "extraction_metadata": {
         "raw_paper_id": "arxiv_1904.00745",
         "document_text_sha": "94f948d7b0af7046",
-        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1904.00745.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1904.00745.pdf",
+        "quality_report": {
+          "method_id": "arxiv_1904_00745",
+          "paper_id": "arxiv_1904_00745",
+          "quality_score": 0.7,
+          "approval_required": true,
+          "critical_missing_fields": [
+            "frequency",
+            "horizon"
+          ],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [
+            "frequency is unknown",
+            "horizon is unknown"
+          ],
+          "recommended_action": "human_review_required_fix_method_card_fields"
+        },
+        "evaluation_protocol_type": "purged_walk_forward",
+        "evaluation_protocol_description": "out-of-sample",
+        "frequency_type": "unknown",
+        "horizon_type": "unknown"
       },
-      "approval_required": false
+      "approval_required": true,
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "out-of-sample",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
     },
     {
       "method_id": "ghosh_2021_lstm_rf_intraday",
@@ -361,9 +405,28 @@
         "extracted_from_text_sha": "fae585867c07144f",
         "raw_paper_id": "arXiv:2004.10178v2",
         "document_text_sha": "fae585867c07144f",
-        "source_path": "projects\\finance_agent\\papers\\local\\Forecasting directional movements of stock prices for intraday trading.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\Forecasting directional movements of stock prices for intraday trading.pdf",
+        "quality_report": {
+          "method_id": "ghosh_2021_lstm_rf_intraday",
+          "paper_id": "arxiv_2004_10178v2",
+          "quality_score": 1.0,
+          "approval_required": false,
+          "critical_missing_fields": [],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [],
+          "recommended_action": "ready_for_exploratory_p0_harness"
+        },
+        "evaluation_protocol_type": "purged_walk_forward",
+        "evaluation_protocol_description": "Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
+        "frequency_type": "intraday",
+        "horizon_type": "intraday_direction"
       },
-      "approval_required": false
+      "approval_required": false,
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
+      "frequency_type": "intraday",
+      "horizon_type": "intraday_direction"
     },
     {
       "method_id": "zhong_hitchcock_2021_sp500_ensemble",
@@ -372,11 +435,10 @@
       "venue_or_source": "arXiv",
       "paper_url": "unknown",
       "task_type": "stock_price_directional_prediction",
-      "target_asset": [
-        "S&P 500 index",
-        "individual S&P 500 stocks"
-      ],
+      "target_asset": "S&P 500 index",
       "asset_universe": [
+        "S&P 500 index",
+        "individual S&P 500 stocks",
         "518 different common stocks issued by current and former S&P 500 large-cap companies, from January 1, 2000 to December 31, 2019"
       ],
       "frequency": "weekly (weeks ending on Fridays)",
@@ -418,7 +480,8 @@
         "paper URL",
         "cost assumptions",
         "approval requirements",
-        "detailed evaluation metric definitions beyond accuracy"
+        "detailed evaluation metric definitions beyond accuracy",
+        "horizon"
       ],
       "evidence_spans": [
         {
@@ -524,9 +587,33 @@
         "notes": "Prediction horizon not explicitly stated in provided excerpts; marked as unknown. Multiple input and output periods for LSTM mentioned but specific values not given.",
         "raw_paper_id": "arxiv_2108.10826",
         "document_text_sha": "8e06b2891ad00348",
-        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2108.10826.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2108.10826.pdf",
+        "quality_report": {
+          "method_id": "zhong_hitchcock_2021_sp500_ensemble",
+          "paper_id": "arxiv_2108_10826",
+          "quality_score": 0.82,
+          "approval_required": true,
+          "critical_missing_fields": [
+            "horizon"
+          ],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [
+            "evaluation protocol could not be mapped to a supported protocol type",
+            "horizon is unknown"
+          ],
+          "recommended_action": "human_review_required_fix_method_card_fields"
+        },
+        "evaluation_protocol_type": "unknown",
+        "evaluation_protocol_description": "Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
+        "frequency_type": "daily",
+        "horizon_type": "unknown"
       },
-      "approval_required": true
+      "approval_required": true,
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
+      "frequency_type": "daily",
+      "horizon_type": "unknown"
     },
     {
       "method_id": "ensemble_gpr_filipovic_pasricha",
@@ -584,9 +671,28 @@
         "extraction_date": "2023-10-25",
         "raw_paper_id": "arxiv_2212.01048",
         "document_text_sha": "45040c1200839f60",
-        "source_path": "projects\\finance_agent\\papers\\local\\Empirical Asset Pricing via Ensemble Gaussian Process Regression.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\Empirical Asset Pricing via Ensemble Gaussian Process Regression.pdf",
+        "quality_report": {
+          "method_id": "ensemble_gpr_filipovic_pasricha",
+          "paper_id": "arxiv_2212_01048",
+          "quality_score": 1.0,
+          "approval_required": false,
+          "critical_missing_fields": [],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [],
+          "recommended_action": "ready_for_exploratory_p0_harness"
+        },
+        "evaluation_protocol_type": "rolling_origin",
+        "evaluation_protocol_description": "out-of-sample test using rolling and expanding schemes",
+        "frequency_type": "monthly",
+        "horizon_type": "next_month_return"
       },
-      "approval_required": false
+      "approval_required": false,
+      "evaluation_protocol_type": "rolling_origin",
+      "evaluation_protocol_description": "out-of-sample test using rolling and expanding schemes",
+      "frequency_type": "monthly",
+      "horizon_type": "next_month_return"
     },
     {
       "method_id": "rf_lstm_stock_forecast",
@@ -595,11 +701,10 @@
       "venue_or_source": "arxiv",
       "paper_url": "unknown",
       "task_type": "Forecasting",
-      "target_asset": [
-        "S&P 500",
-        "Russell 2000 (RUT)"
-      ],
+      "target_asset": "S&P 500",
       "asset_universe": [
+        "S&P 500",
+        "Russell 2000 (RUT)",
         "US stock market indices"
       ],
       "frequency": "unknown",
@@ -650,9 +755,34 @@
         "extractor": "LLM",
         "raw_paper_id": "arxiv_2306.03620",
         "document_text_sha": "1524aaf9d549e2ad",
-        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2306.03620.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2306.03620.pdf",
+        "quality_report": {
+          "method_id": "rf_lstm_stock_forecast",
+          "paper_id": "arxiv_2306_03620",
+          "quality_score": 0.7,
+          "approval_required": true,
+          "critical_missing_fields": [
+            "frequency",
+            "horizon"
+          ],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [
+            "frequency is unknown",
+            "horizon is unknown"
+          ],
+          "recommended_action": "human_review_required_fix_method_card_fields"
+        },
+        "evaluation_protocol_type": "rolling_origin",
+        "evaluation_protocol_description": "rolling window",
+        "frequency_type": "unknown",
+        "horizon_type": "unknown"
       },
-      "approval_required": false
+      "approval_required": true,
+      "evaluation_protocol_type": "rolling_origin",
+      "evaluation_protocol_description": "rolling window",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
     },
     {
       "method_id": "ga_lstm_stock_forecast",
@@ -713,9 +843,36 @@
         "schema": "method_card_v1",
         "raw_paper_id": "arxiv_2405.03151",
         "document_text_sha": "a30f261604918754",
-        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2405.03151.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2405.03151.pdf",
+        "quality_report": {
+          "method_id": "ga_lstm_stock_forecast",
+          "paper_id": "arxiv_2405_03151",
+          "quality_score": 0.55,
+          "approval_required": true,
+          "critical_missing_fields": [
+            "asset_universe",
+            "frequency",
+            "horizon"
+          ],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [
+            "evaluation protocol could not be mapped to a supported protocol type",
+            "frequency is unknown",
+            "horizon is unknown"
+          ],
+          "recommended_action": "human_review_required_fix_method_card_fields"
+        },
+        "evaluation_protocol_type": "unknown",
+        "evaluation_protocol_description": "model was evaluated using MSE, MAE and MAPE",
+        "frequency_type": "unknown",
+        "horizon_type": "unknown"
       },
-      "approval_required": false
+      "approval_required": true,
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "model was evaluated using MSE, MAE and MAPE",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
     },
     {
       "method_id": "arxiv_2409_08426_method",
@@ -774,9 +931,35 @@
         "extractor": "system",
         "raw_paper_id": "arxiv_2409.08426",
         "document_text_sha": "cc13523dd035c43c",
-        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2409.08426.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2409.08426.pdf",
+        "quality_report": {
+          "method_id": "arxiv_2409_08426_method",
+          "paper_id": "arxiv_2409_08426",
+          "quality_score": 0.67,
+          "approval_required": true,
+          "critical_missing_fields": [
+            "frequency",
+            "horizon"
+          ],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [
+            "evaluation protocol could not be mapped to a supported protocol type",
+            "frequency is unknown",
+            "horizon is unknown"
+          ],
+          "recommended_action": "human_review_required_fix_method_card_fields"
+        },
+        "evaluation_protocol_type": "unknown",
+        "evaluation_protocol_description": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+        "frequency_type": "unknown",
+        "horizon_type": "unknown"
       },
-      "approval_required": false
+      "approval_required": true,
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
     },
     {
       "method_id": "lstm_gru_transformer_stock_prediction",
@@ -835,9 +1018,35 @@
         "extractor_version": "1.0",
         "raw_paper_id": "arxiv_2411.05790",
         "document_text_sha": "b7edbb63e48cfdaf",
-        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2411.05790.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2411.05790.pdf",
+        "quality_report": {
+          "method_id": "lstm_gru_transformer_stock_prediction",
+          "paper_id": "arxiv_2411_05790",
+          "quality_score": 0.67,
+          "approval_required": true,
+          "critical_missing_fields": [
+            "frequency",
+            "horizon"
+          ],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [
+            "evaluation protocol could not be mapped to a supported protocol type",
+            "frequency is unknown",
+            "horizon is unknown"
+          ],
+          "recommended_action": "human_review_required_fix_method_card_fields"
+        },
+        "evaluation_protocol_type": "unknown",
+        "evaluation_protocol_description": "Use test sets to evaluate final model performance and deploy models in real-world applications.",
+        "frequency_type": "unknown",
+        "horizon_type": "unknown"
       },
-      "approval_required": false
+      "approval_required": true,
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "Use test sets to evaluate final model performance and deploy models in real-world applications.",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
     },
     {
       "method_id": "rfr_hft_spy_minute",
@@ -891,7 +1100,8 @@
         "number of trees and tree depth",
         "exact list of all 13 model configurations",
         "data date range",
-        "specific feature engineering pipeline details"
+        "specific feature engineering pipeline details",
+        "label_definition"
       ],
       "evidence_spans": [
         {
@@ -942,9 +1152,30 @@
         "notes": "Paper focuses on RFR with technical indicators at minute-level frequency for SPY. Key finding is that technical indicators are more relevant to risk management than return prediction in HFT contexts.",
         "raw_paper_id": "arxiv_2412.15448",
         "document_text_sha": "269720716d91e4fb",
-        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2412.15448.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2412.15448.pdf",
+        "quality_report": {
+          "method_id": "rfr_hft_spy_minute",
+          "paper_id": "arxiv_2412_15448",
+          "quality_score": 0.88,
+          "approval_required": true,
+          "critical_missing_fields": [
+            "label_definition"
+          ],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [],
+          "recommended_action": "human_review_required_fix_method_card_fields"
+        },
+        "evaluation_protocol_type": "purged_walk_forward",
+        "evaluation_protocol_description": "in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
+        "frequency_type": "intraday",
+        "horizon_type": "minute-level"
       },
-      "approval_required": false
+      "approval_required": true,
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
+      "frequency_type": "intraday",
+      "horizon_type": "minute-level"
     },
     {
       "method_id": "lstm_sp500_pilla2025",
@@ -1059,9 +1290,35 @@
         "notes": "Paper is an arXiv preprint. Several implementation details (frequency, horizon, training protocol) not specified in the provided excerpts.",
         "raw_paper_id": "arxiv_2501.17366",
         "document_text_sha": "6de424b4258d212b",
-        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2501.17366.pdf"
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2501.17366.pdf",
+        "quality_report": {
+          "method_id": "lstm_sp500_pilla2025",
+          "paper_id": "arxiv_2501_17366",
+          "quality_score": 0.67,
+          "approval_required": true,
+          "critical_missing_fields": [
+            "frequency",
+            "horizon"
+          ],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [
+            "evaluation protocol could not be mapped to a supported protocol type",
+            "frequency is unknown",
+            "horizon is unknown"
+          ],
+          "recommended_action": "human_review_required_fix_method_card_fields"
+        },
+        "evaluation_protocol_type": "unknown",
+        "evaluation_protocol_description": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
+        "frequency_type": "unknown",
+        "horizon_type": "unknown"
       },
-      "approval_required": false
+      "approval_required": true,
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
     }
   ]
 }

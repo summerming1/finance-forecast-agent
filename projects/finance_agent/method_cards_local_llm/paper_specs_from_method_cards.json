@@ -9,8 +9,8 @@
       "asset_universe": [
         "cryptocurrency market"
       ],
-      "frequency": "30 minutes",
-      "horizon": "50 days",
+      "frequency": "intraday",
+      "horizon": "next_return",
       "label_definition": "explicit reward function based on portfolio growth; the evaluation score of each asset is discounted by the size of its intentional weight change",
       "required_feature_groups": [
         "price_lag_features",
@@ -25,11 +25,11 @@
         "directional_accuracy",
         "net_return"
       ],
-      "required_split": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
-      "min_rows": 500,
+      "required_split": "purged_walk_forward",
+      "min_rows": 2000,
       "original_dataset_required": true,
       "exact_model_required": true,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
       "evidence_spans": [
         {
           "source_id": "arxiv_1706_10059",
@@ -114,11 +114,11 @@
         "net_return",
         "sharpe"
       ],
-      "required_split": "out-of-sample",
+      "required_split": "purged_walk_forward",
       "min_rows": 250,
       "original_dataset_required": true,
       "exact_model_required": false,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=out-of-sample",
       "evidence_spans": [
         {
           "source_id": "arxiv_1904_00745",
@@ -215,8 +215,8 @@
       "asset_universe": [
         "S&P 500 constituent stocks"
       ],
-      "frequency": "daily (intraday returns computed at daily resolution)",
-      "horizon": "1 trading day (intraday)",
+      "frequency": "intraday",
+      "horizon": "intraday_direction",
       "label_definition": "Directional movement: whether a stock outperforms the market in terms of intraday returns",
       "required_feature_groups": [
         "price_lag_features",
@@ -233,11 +233,11 @@
         "directional_accuracy",
         "net_return"
       ],
-      "required_split": "Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
-      "min_rows": 500,
+      "required_split": "purged_walk_forward",
+      "min_rows": 2000,
       "original_dataset_required": true,
       "exact_model_required": true,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
       "evidence_spans": [
         {
           "source_id": "arxiv_2004_10178v2",
@@ -288,14 +288,13 @@
       "title": "S&P 500 STOCK PRICE PREDICTION USING TECHNICAL, FUNDAMENTAL AND TEXT DATA",
       "venue_or_source": "arXiv",
       "paper_url": "unknown",
-      "target_asset": [
-        "S&P 500 index",
-        "individual S&P 500 stocks"
-      ],
+      "target_asset": "S&P 500 index",
       "asset_universe": [
+        "S&P 500 index",
+        "individual S&P 500 stocks",
         "518 different common stocks issued by current and former S&P 500 large-cap companies, from January 1, 2000 to December 31, 2019"
       ],
-      "frequency": "weekly (weeks ending on Fridays)",
+      "frequency": "daily",
       "horizon": "unknown",
       "label_definition": "directional prediction of stock price movement (up/down)",
       "required_feature_groups": [
@@ -313,11 +312,11 @@
         "directional_accuracy",
         "net_return"
       ],
-      "required_split": "Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
+      "required_split": "unknown",
       "min_rows": 500,
       "original_dataset_required": true,
       "exact_model_required": true,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
       "evidence_spans": [
         {
           "source_id": "arxiv_2108_10826",
@@ -427,7 +426,7 @@
         "large cross-section of US stocks from 1962 to 2016"
       ],
       "frequency": "monthly",
-      "horizon": "1 month",
+      "horizon": "next_month_return",
       "label_definition": "excess return",
       "required_feature_groups": [
         "cross_asset_features"
@@ -443,11 +442,11 @@
         "net_return",
         "sharpe"
       ],
-      "required_split": "out-of-sample test using rolling and expanding schemes",
+      "required_split": "rolling_origin",
       "min_rows": 1000,
       "original_dataset_required": true,
       "exact_model_required": false,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=out-of-sample test using rolling and expanding schemes",
       "evidence_spans": [
         {
           "source_id": "arxiv_2212_01048",
@@ -462,11 +461,10 @@
       "title": "Forecasting the Performance of US Stock Market Indices During COVID-19: RF vs LSTM",
       "venue_or_source": "arxiv",
       "paper_url": "unknown",
-      "target_asset": [
-        "S&P 500",
-        "Russell 2000 (RUT)"
-      ],
+      "target_asset": "S&P 500",
       "asset_universe": [
+        "S&P 500",
+        "Russell 2000 (RUT)",
         "US stock market indices"
       ],
       "frequency": "unknown",
@@ -486,11 +484,11 @@
         "directional_accuracy",
         "net_return"
       ],
-      "required_split": "rolling window",
+      "required_split": "rolling_origin",
       "min_rows": 500,
       "original_dataset_required": true,
       "exact_model_required": true,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=rolling window",
       "evidence_spans": [
         {
           "source_id": "arxiv_2306_03620",
@@ -526,11 +524,11 @@
         "directional_accuracy",
         "net_return"
       ],
-      "required_split": "model was evaluated using MSE, MAE and MAPE",
+      "required_split": "unknown",
       "min_rows": 500,
       "original_dataset_required": true,
       "exact_model_required": true,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=model was evaluated using MSE, MAE and MAPE",
       "evidence_spans": [
         {
           "source_id": "arxiv_2405_03151",
@@ -564,11 +562,11 @@
         "directional_accuracy",
         "net_return"
       ],
-      "required_split": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+      "required_split": "unknown",
       "min_rows": 500,
       "original_dataset_required": true,
       "exact_model_required": true,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
       "evidence_spans": [
         {
           "source_id": "arxiv_2409_08426",
@@ -603,11 +601,11 @@
         "directional_accuracy",
         "net_return"
       ],
-      "required_split": "Use test sets to evaluate final model performance and deploy models in real-world applications.",
+      "required_split": "unknown",
       "min_rows": 500,
       "original_dataset_required": true,
       "exact_model_required": true,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=Use test sets to evaluate final model performance and deploy models in real-world applications.",
       "evidence_spans": [
         {
           "source_id": "arxiv_2411_05790",
@@ -626,7 +624,7 @@
       "asset_universe": [
         "SPY"
       ],
-      "frequency": "minute-level",
+      "frequency": "intraday",
       "horizon": "minute-level",
       "label_definition": "unknown",
       "required_feature_groups": [
@@ -642,11 +640,11 @@
         "directional_accuracy",
         "net_return"
       ],
-      "required_split": "in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
-      "min_rows": 250,
+      "required_split": "purged_walk_forward",
+      "min_rows": 2000,
       "original_dataset_required": true,
       "exact_model_required": false,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
       "evidence_spans": [
         {
           "source_id": "arxiv_2412_15448",
@@ -716,11 +714,11 @@
         "directional_accuracy",
         "net_return"
       ],
-      "required_split": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
+      "required_split": "unknown",
       "min_rows": 500,
       "original_dataset_required": true,
       "exact_model_required": true,
-      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval.",
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
       "evidence_spans": [
         {
           "source_id": "arxiv_2501_17366",

@@ -26,8 +26,18 @@ load_env_file()
 SKIP_JSON = {"method_card_catalog.json", "paper_specs_from_method_cards.json"}
 
 
-def _paper_paths(papers_dir: Path) -> list[Path]:
-    return sorted([*papers_dir.glob("*.txt"), *papers_dir.glob("*.md"), *papers_dir.glob("*.pdf")])
+def _pattern_list(patterns: str) -> list[str]:
+    values = [item.strip() for item in patterns.replace(";", ",").split(",")]
+    return [item for item in values if item] or ["*.txt", "*.md", "*.pdf"]
+
+
+def _paper_paths(papers_dir: Path, patterns: str = "*.txt,*.md,*.pdf") -> list[Path]:
+    paths: dict[Path, None] = {}
+    for pattern in _pattern_list(patterns):
+        for path in papers_dir.glob(pattern):
+            if path.suffix.lower() in {".txt", ".md", ".pdf"} and path.is_file():
+                paths[path] = None
+    return sorted(paths)
 
 
 def _default_cards_dir(project_dir: Path) -> Path:
@@ -73,10 +83,10 @@ def _load_report(project_dir: Path, report_name: str) -> dict[str, Any] | None:
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
-def _extract_method_cards(*, papers_dir: Path, out_dir: Path, fixture_dir: Path, mode: str, write_paper_specs: bool) -> dict[str, object]:
-    paths = _paper_paths(papers_dir)
+def _extract_method_cards(*, papers_dir: Path, out_dir: Path, fixture_dir: Path, mode: str, write_paper_specs: bool, paper_patterns: str) -> dict[str, object]:
+    paths = _paper_paths(papers_dir, paper_patterns)
     if not paths:
-        raise FileNotFoundError(f"No PDF/TXT/MD files found in {papers_dir}")
+        raise FileNotFoundError(f"No PDF/TXT/MD files matching {paper_patterns!r} found in {papers_dir}")
     loader = PaperTextLoader()
     cards: list[MethodCard] = []
     replay_agent = MethodCardAgent(ReplayLLM(fixture_dir))
@@ -86,7 +96,7 @@ def _extract_method_cards(*, papers_dir: Path, out_dir: Path, fixture_dir: Path,
     reused = 0
     for path in paths:
         document = loader.load(path)
-        card = _load_existing_card(out_dir, document) if mode == "live_reuse" else None
+        card = _load_existing_card(out_dir, document) if mode in {"replay", "live_reuse"} else None
         if card is not None:
             replay.write_fixture(prompt_payload=method_card_prompt(document), schema_name="method_card", response=card.to_dict())
             reused += 1
@@ -190,7 +200,10 @@ with tabs[0]:
     with left:
         st.markdown("### Candidate Leaderboard")
         rows = candidate_leaderboard(report)
-        st.dataframe(rows[:20], use_container_width=True, hide_index=True) if rows else st.info("还没有运行报告。")
+        if rows:
+            st.dataframe(rows[:20], use_container_width=True, hide_index=True)
+        else:
+            st.info("还没有运行报告。")
     with right:
         st.markdown("### Blockers & Warnings")
         blockers = collect_blockers(report)
@@ -229,12 +242,16 @@ with tabs[2]:
             papers_dir.mkdir(parents=True, exist_ok=True)
             for upload in uploads: (papers_dir / upload.name).write_bytes(upload.getvalue())
             st.success(f"Saved {len(uploads)} file(s) to {papers_dir}")
-        st.write({"papers_dir": str(papers_dir), "file_count": len(_paper_paths(papers_dir))})
+        paper_patterns = st.text_input("Paper file patterns", "arxiv_*.pdf,*.txt,*.md", help="Comma-separated glob patterns. Use *.pdf,*.txt,*.md to process every local paper file.")
+        matching_papers = _paper_paths(papers_dir, paper_patterns)
+        st.write({"papers_dir": str(papers_dir), "patterns": paper_patterns, "file_count": len(matching_papers)})
+        if matching_papers:
+            st.caption(", ".join(path.name for path in matching_papers[:8]) + (" ..." if len(matching_papers) > 8 else ""))
         mode_label = st.radio("Extraction mode", ["Replay fixtures", "Live LLM", "Live LLM, reuse existing"], horizontal=True)
         mode = {"Replay fixtures": "replay", "Live LLM": "live", "Live LLM, reuse existing": "live_reuse"}[mode_label]
         if st.button("Extract MethodCards", type="primary"):
             try:
-                st.json(_extract_method_cards(papers_dir=papers_dir, out_dir=cards_dir, fixture_dir=fixture_dir, mode=mode, write_paper_specs=True))
+                st.json(_extract_method_cards(papers_dir=papers_dir, out_dir=cards_dir, fixture_dir=fixture_dir, mode=mode, write_paper_specs=True, paper_patterns=paper_patterns))
             except Exception as exc:
                 st.error(str(exc))
     with c2:
@@ -277,4 +294,7 @@ with tabs[4]:
         st.json([card.to_dict() for card in cards[:20]])
     with right:
         st.markdown("### Report")
-        st.json(report) if report else st.info("No report loaded.")
+        if report:
+            st.json(report)
+        else:
+            st.info("No report loaded.")
