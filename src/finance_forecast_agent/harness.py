@@ -12,6 +12,7 @@ from .comparability import compare_paper_and_dataset
 from .contracts import compile_contract, manifest_from_contract
 from .data import dataset_card_from_frame, load_or_create_us_equity_dataset
 from .evaluation import CostModel, cost_scenarios, evaluate_sign_strategy
+from .model_registry import fallback_implemented_model, model_support
 from .models import make_model
 from .papers import built_in_paper_specs
 from .registry import PaperDatasetRegistry
@@ -24,13 +25,15 @@ from .tracking import DVCDataTracker, MLflowTracker
 def write_default_fixtures(llm: ReplayLLM, paper_specs: list[PaperSpecCard] | None = None) -> None:
     for paper in paper_specs or built_in_paper_specs():
         cost = {'commission_bps': 1.0, 'half_spread_bps': 2.0, 'market_impact_bps': 1.0, 'latency_penalty_bps': 0.0}
+        closest = fallback_implemented_model(paper.required_model_families)
+        uses_fallback = bool(paper.required_model_families and paper.required_model_families[0] != closest)
         candidates = [
-            CandidateSpec(f'cand_{paper.paper_id}_paper', 'closest paper model', paper.required_model_families[0], paper.required_feature_groups, 'purged_walk_forward', cost, 'small', 'offline_replay_llm', 'closest paper-family candidate', False),
+            CandidateSpec(f'cand_{paper.paper_id}_paper', 'closest executable paper model', closest, paper.required_feature_groups, 'purged_walk_forward', cost, 'small', 'offline_replay_llm', 'closest executable paper-family candidate; unsupported paper models are flagged in audit', uses_fallback, uses_fallback),
             CandidateSpec(f'cand_{paper.paper_id}_rf', 'random forest baseline', 'random_forest_regressor', list(dict.fromkeys([*paper.required_feature_groups, 'cross_asset_features'])), 'purged_walk_forward', cost, 'small', 'offline_replay_llm', 'tree non-linear baseline', False),
             CandidateSpec(f'cand_{paper.paper_id}_gb', 'gradient boosting baseline', 'gradient_boosting_regressor', list(dict.fromkeys([*paper.required_feature_groups, 'cross_asset_features'])), 'purged_walk_forward', cost, 'small', 'offline_replay_llm', 'boosted tree baseline', False),
             CandidateSpec(f'cand_{paper.paper_id}_ridge', 'ridge sanity baseline', 'ridge_regression', ['price_lag_features','return_momentum_features'], 'purged_walk_forward', cost, 'tiny', 'offline_replay_llm', 'cheap linear baseline', False),
         ]
-        llm.write_fixture(prompt_payload={'paper_id': paper.paper_id, 'task': 'initial_candidates_v2'}, schema_name='research_advice', response={'candidates': [c.to_dict() for c in candidates], 'human_approval_required': False})
+        llm.write_fixture(prompt_payload={'paper_id': paper.paper_id, 'task': 'initial_candidates_v2'}, schema_name='research_advice', response={'candidates': [c.to_dict() for c in candidates], 'human_approval_required': uses_fallback})
 
 
 def load_candidates(llm: ReplayLLM, paper_id: str) -> list[CandidateSpec]:
@@ -64,6 +67,9 @@ def audit(paper, comp, candidate: CandidateSpec, result) -> ReproductionAudit:
     warnings = list(comp.warnings)
     if candidate.proxy_used:
         blockers.append('proxy model used')
+    support = model_support(candidate.model_family)
+    if not support.implemented:
+        blockers.append('unsupported model adapter: ' + candidate.model_family)
     if candidate.model_family not in paper.required_model_families:
         warnings.append('candidate model differs from paper protocol')
     strict = comp.strict_allowed and not candidate.proxy_used and not blockers
@@ -92,7 +98,16 @@ def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4, max_pap
         for cand in candidates:
             contract = compile_contract(cand, paper_id=paper.paper_id, dataset=dataset, mode=comp.proposed_mode)
             manifest = manifest_from_contract(contract, dataset=dataset)
-            result = train_evaluate(df, manifest)
+            if not model_support(cand.model_family).implemented:
+                result = {
+                    'status': 'blocked_unsupported_model',
+                    'metrics': {'mae': 0.0, 'rmse': 0.0, 'r2': 0.0, 'directional_accuracy': 0.0, 'net_return': 0.0, 'gross_return': 0.0, 'cost_paid': 0.0, 'turnover': 0.0, 'buy_hold_return': 0.0, 'excess_return': 0.0, 'sharpe': 0.0},
+                    'cost_scenarios': {},
+                    'prediction_count': 0,
+                    'blocked_reason': 'unsupported model adapter: ' + cand.model_family,
+                }
+            else:
+                result = train_evaluate(df, manifest)
             audit_report = audit(paper, comp, cand, result)
             tracking = tracker.log_run(cand.candidate_id, params={'paper_id': paper.paper_id, 'model_family': cand.model_family, 'contract_hash': contract.contract_hash}, metrics=result['metrics'], artifacts={'manifest': manifest.to_dict(), 'audit': audit_report.to_dict()})
             candidate_reports.append({'candidate': cand.to_dict(), 'contract': contract.to_dict(), 'manifest': manifest.to_dict(), 'result': result, 'audit': audit_report.to_dict(), 'tracking': tracking})
