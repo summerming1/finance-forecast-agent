@@ -1,17 +1,27 @@
 # P0.9 Review State + Adapter Backlog + Golden Sets + Run Timeline
 
-## 目标
+## 版本定位
 
-P0.8 已经能解释 MethodCard 后续每一步发生了什么。P0.9 在此基础上加入“研究流程管理”能力，让前端不只是看流程，还能管理流程：
+P0.8 已经能够解释 MethodCard 提取后，系统依次经过 PaperSpec、数据可比性、候选执行、训练评估和复现审计时发生了什么。
 
-1. MethodCard approve / reject / needs_revision 持久化。
-2. Flow Trace 中支持点击标记某篇方法卡是否通过。
-3. 自动生成 model adapter backlog。
-4. 把 unsupported model 显示成开发任务。
-5. Golden MethodCard 分目录：`us_equity` / `cross_market` / `unsupported`。
-6. 每次运行生成 Run Timeline，保存历史运行记录。
+P0.9 在此基础上增加“研究流程管理”能力，让前端不仅能够查看研究流水线，还能够对方法卡进行审批、管理未实现模型任务、维护 Golden MethodCard 集合并保存每次运行历史。
 
-## 新增模块
+P0.9 属于 **P1 之前的治理与可观测性增强版本**。它与 `PROJECT_ROADMAP.md` 中 P1 的 Approvals、Memory、Registry 方向一致，但当前尚未实现 ExperimentMemory 驱动的候选排序。
+
+## 本版本完成的功能
+
+1. MethodCard `approve / reject / needs_revision / pending` 状态持久化。
+2. MethodCard Review 和 Flow Trace 页面支持直接更新审批状态。
+3. 审批状态可通过 `approved-only` 模式真实影响后续实验执行。
+4. 自动生成 model adapter backlog。
+5. unsupported model 在前端显示为可管理的开发任务。
+6. Golden MethodCard 自动分为 `us_equity / cross_market / unsupported`。
+7. Golden 集合可限制为只包含已批准的方法卡。
+8. 每次 MethodCard -> P0 Harness 运行生成独立 Run Timeline。
+9. Tasks & Timeline 页面展示 adapter backlog、Golden 集合和运行历史。
+10. 保留 replay / live / live_reuse / rule_fallback 四种方法卡提取模式。
+
+## 新增与调整模块
 
 ```text
 src/finance_forecast_agent/review_state.py
@@ -19,9 +29,22 @@ src/finance_forecast_agent/adapter_backlog.py
 src/finance_forecast_agent/golden_sets.py
 src/finance_forecast_agent/run_timeline.py
 src/finance_forecast_agent/streamlit_p09.py
+scripts/run_methodcard_p0_pipeline.py
 ```
 
-## 产物目录
+前端入口仍然是：
+
+```text
+apps/streamlit_app.py
+```
+
+该入口委托给：
+
+```python
+finance_forecast_agent.streamlit_p09.render_app()
+```
+
+## 持久化产物
 
 运行 P0.9 后会生成：
 
@@ -36,54 +59,116 @@ projects/finance_agent/run_timelines/<run_id>.json
 projects/finance_agent/run_timelines/run_timeline_index.json
 ```
 
-## 前端新增内容
+## 前端页面
 
-`apps/streamlit_app.py` 现在委托给 `finance_forecast_agent.streamlit_p09.render_app()`。
+当前 Streamlit 前端包含：
 
-前端新增：
+1. **Control Tower**：MethodCard、审批状态、候选执行、最佳结果和阻塞项总览。
+2. **MethodCard Review**：检查质量分、unknowns、未实现模型，并更新审批状态。
+3. **Flow Trace**：查看单篇方法卡从抽取到审计的完整执行链路，并可直接审批。
+4. **Workflow Runner**：提取方法卡、运行全量或 approved-only 方法卡流程。
+5. **Tasks & Timeline**：管理 adapter backlog、查看 Golden 集合和运行历史。
+6. **Audit Explorer**：查看 ComparabilityReport、strict blockers 和候选结果。
+7. **Raw JSON**：保留底层结构，便于审计和工程排查。
 
-- MethodCard Review 页面中的 review state 控件。
-- Flow Trace 页面中的 review state 控件。
-- Tasks & Timeline 页面：展示 adapter backlog、golden sets、run timelines。
-- Workflow Runner 每次运行后自动写入 backlog、golden sets 和 timeline。
-- 保留 Codex 的 replay / live / live_reuse / rule_fallback 方法卡提取流程。
+## 验证过程中修复的问题
 
-## 本地命令
+P0.9 初版完成后进行了完整边界验证，并在本版本文档中统一记录以下修复；不再为同版本的小修复单独维护新的版本 MD 文件。
 
-```bash
-PYTHONPATH=src OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python scripts/run_methodcard_p0_pipeline.py \
-  --cards-dir projects/finance_agent/method_cards_local_llm \
-  --max-papers 11 \
-  --max-candidates-per-paper 2 \
-  --report-name methodcard_p0_report_p09.json
-```
+1. Review state JSON 改为防御性读取和原子写入，避免损坏文件导致前端启动失败。
+2. Control Tower 不再把 `pending` 方法卡统计成已审核。
+3. 新增命令行 `--approved-only` 和对应前端开关，审批结果真实影响运行范围。
+4. 未批准任何方法卡时，approved-only 模式明确停止，不会静默回退到全量运行。
+5. Golden 集合重新生成前会清理旧分类文件，避免陈旧和重复 JSON。
+6. Golden 集合支持 `approved-only`，并在 index 中记录未写入的方法卡及原因。
+7. Adapter backlog 重新生成时保留人工维护的 `status / assignee / notes / updated_at`。
+8. Tasks & Timeline 页面支持编辑 adapter task 状态、负责人和备注。
+9. Run Timeline ID 使用微秒时间戳和 UUID 后缀，避免同一秒运行发生覆盖。
+10. Timeline 索引保存项目内相对路径，前端通过 `project_dir` 稳定解析。
+11. Timeline 同时记录可用 MethodCard 数量和实际选择的 paper 数量。
+12. Timeline index 最多保留最近 200 条索引记录，避免无限增长。
 
-前端：
+## 自动化验证结果
 
-```bash
-PYTHONPATH=src python -m streamlit run apps/streamlit_app.py
-```
-
-侧边栏设置：
+当前 P0.9 验证结果：
 
 ```text
-MethodCards directory = projects/finance_agent/method_cards_local_llm
-Report file = methodcard_p0_report_p09.json
+31 pytest tests passed
+Python compileall passed
+11 MethodCards -> 11 PaperSpecs -> 22 candidate runs -> 22 success
+approved-only integration: 1 approved card -> 1 report -> 1 golden card
 ```
 
-## 测试
+## 完整运行命令
 
-```bash
-PYTHONPATH=src OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 python -m pytest tests -q
-PYTHONPATH=src python -m compileall -q src scripts apps tests
+PowerShell：
+
+```powershell
+$env:PYTHONPATH="src"
+$env:OMP_NUM_THREADS="1"
+$env:MKL_NUM_THREADS="1"
+
+python -m pytest tests -q
+python -m compileall -q src scripts apps tests
+
+python scripts/run_methodcard_p0_pipeline.py `
+  --cards-dir projects/finance_agent/method_cards_local_llm `
+  --max-papers 11 `
+  --max-candidates-per-paper 2 `
+  --report-name methodcard_p0_report_p09_validated.json
 ```
 
-## 下一步
+## 只运行已批准方法卡
 
-P1 建议开始接入：
+先在 MethodCard Review 或 Flow Trace 中批准至少一张方法卡，再执行：
 
-- ExperimentMemory。
-- ResearchAdvisor 根据 Memory 改变候选排序。
-- MethodCard diff/version history。
+```powershell
+python scripts/run_methodcard_p0_pipeline.py `
+  --cards-dir projects/finance_agent/method_cards_local_llm `
+  --approved-only `
+  --golden-approved-only `
+  --max-papers 11 `
+  --max-candidates-per-paper 2 `
+  --report-name methodcard_p0_report_p09_approved.json
+```
+
+如果没有任何方法卡被批准，程序会明确退出并提示原因。
+
+## 前端启动
+
+```powershell
+python -m streamlit run apps/streamlit_app.py
+```
+
+推荐侧边栏配置：
+
+```text
+Project directory: projects/finance_agent
+MethodCards directory: projects/finance_agent/method_cards_local_llm
+Papers directory: projects/finance_agent/papers/local
+Replay fixtures directory: projects/finance_agent/llm_fixtures
+Report file: methodcard_p0_report_p09_validated.json
+```
+
+## 建议人工验收顺序
+
+1. 在 MethodCard Review 中执行 Approve、Reject、Needs revision，刷新页面确认状态持久化。
+2. 在 Flow Trace 中修改同一张卡的状态，确认两个页面状态同步。
+3. 在 Workflow Runner 中启用 `Run approved MethodCards only`，确认报告仅包含已批准方法卡。
+4. 在 Tasks & Timeline 中重新生成 adapter backlog，编辑任务后再次生成，确认任务状态未丢失。
+5. 启用 approved-only Golden 集合，确认目录中只包含已批准方法卡。
+6. 连续运行两次 workflow，确认生成两个不同的 Timeline 记录。
+
+## 与大迭代方向的关系
+
+P0.9 已完成 P1 之前需要的审批、任务治理、Golden 资产和运行历史基础，使后续 ExperimentMemory 能够建立在可审核、可追踪的实验数据之上。
+
+下一大版本应进入 P1，优先实现：
+
+- ExperimentMemoryStore。
+- Memory 对 ResearchAdvisor / Scheduler 候选排序的真实影响。
+- PaperDatasetRegistry 字段映射、许可和替代数据说明增强。
+- MethodCard diff / version history。
 - 异步任务队列，避免 Streamlit 长时间阻塞。
-- Adapter backlog 与 GitHub issue / Codex task 自动联动。
+
+以上方向与 `PROJECT_ROADMAP.md` 当前路线一致，不需要修改项目总体方向。
