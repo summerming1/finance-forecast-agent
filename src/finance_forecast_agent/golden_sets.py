@@ -6,6 +6,7 @@ from typing import Any
 
 from .method_cards import MethodCard
 from .method_card_quality import assess_method_card
+from .review_state import review_for_paper
 
 GOLDEN_GROUPS = {"us_equity", "cross_market", "unsupported"}
 
@@ -22,26 +23,81 @@ def classify_method_card(card: MethodCard) -> str:
     return "cross_market"
 
 
-def write_golden_methodcard_sets(project_dir: str | Path, cards: list[MethodCard]) -> Path:
+def _clean_group_dirs(root: Path) -> None:
+    for group in GOLDEN_GROUPS:
+        directory = root / group
+        directory.mkdir(parents=True, exist_ok=True)
+        for path in directory.glob("*.json"):
+            path.unlink()
+
+
+def write_golden_methodcard_sets(
+    project_dir: str | Path,
+    cards: list[MethodCard],
+    *,
+    reviews: dict[str, dict[str, Any]] | None = None,
+    approved_only: bool = False,
+) -> Path:
     root = Path(project_dir) / "golden_method_cards"
     root.mkdir(parents=True, exist_ok=True)
+    _clean_group_dirs(root)
     counts = {group: 0 for group in sorted(GOLDEN_GROUPS)}
     assignments: dict[str, str] = {}
-    for group in GOLDEN_GROUPS:
-        (root / group).mkdir(parents=True, exist_ok=True)
+    skipped: dict[str, str] = {}
+    reviews = reviews or {}
     for card in cards:
+        review_status = review_for_paper(reviews, card.paper_id).get("status")
+        if approved_only and review_status != "approved":
+            skipped[card.paper_id] = f"review_status={review_status}"
+            continue
         group = classify_method_card(card)
         counts[group] += 1
         assignments[card.paper_id] = group
-        (root / group / f"{card.paper_id}.json").write_text(json.dumps(card.to_dict(), indent=2, ensure_ascii=False), encoding="utf-8")
-    index = {"schema_version": "v1", "counts": counts, "assignments": assignments}
+        payload = card.to_dict()
+        payload["golden_metadata"] = {
+            "group": group,
+            "review_status": review_status,
+            "approved_only_materialization": approved_only,
+        }
+        (root / group / f"{card.paper_id}.json").write_text(
+            json.dumps(payload, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+    index = {
+        "schema_version": "v2",
+        "approved_only": approved_only,
+        "counts": counts,
+        "materialized_count": sum(counts.values()),
+        "assignments": assignments,
+        "skipped": skipped,
+    }
     index_path = root / "golden_method_cards_index.json"
-    index_path.write_text(json.dumps(index, indent=2, ensure_ascii=False), encoding="utf-8")
+    tmp = index_path.with_suffix(index_path.suffix + ".tmp")
+    tmp.write_text(json.dumps(index, indent=2, ensure_ascii=False), encoding="utf-8")
+    tmp.replace(index_path)
     return index_path
 
 
 def load_golden_index(project_dir: str | Path) -> dict[str, Any]:
     path = Path(project_dir) / "golden_method_cards" / "golden_method_cards_index.json"
     if not path.exists():
-        return {"schema_version": "v1", "counts": {}, "assignments": {}}
-    return json.loads(path.read_text(encoding="utf-8"))
+        return {
+            "schema_version": "v2",
+            "approved_only": False,
+            "counts": {},
+            "materialized_count": 0,
+            "assignments": {},
+            "skipped": {},
+        }
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {
+            "schema_version": "v2",
+            "approved_only": False,
+            "counts": {},
+            "materialized_count": 0,
+            "assignments": {},
+            "skipped": {},
+        }
+    return payload if isinstance(payload, dict) else {}
