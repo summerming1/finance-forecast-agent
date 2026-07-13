@@ -100,7 +100,8 @@ class ResearchContract:
     proxy_used: bool
     contract_hash: str = ''
     def with_hash(self) -> 'ResearchContract':
-        payload = asdict(self); payload.pop('contract_hash', None)
+        payload = asdict(self)
+        payload.pop('contract_hash', None)
         digest = hashlib.sha256(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()[:16]
         return ResearchContract(**{**payload, 'contract_hash': digest})
     def to_dict(self) -> dict[str, Any]: return asdict(self)

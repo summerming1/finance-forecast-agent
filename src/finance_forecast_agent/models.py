@@ -19,7 +19,9 @@ except Exception:  # pragma: no cover
 
 class SklearnWrapper:
     def __init__(self, model): self.model = model
-    def fit(self, X, y): self.model.fit(X, y); return self
+    def fit(self, X, y):
+        self.model.fit(X, y)
+        return self
     def predict(self, X): return self.model.predict(X)
 
 

@@ -5,7 +5,6 @@ from pathlib import Path
 from statistics import mean
 from typing import Any
 
-import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from .comparability import compare_paper_and_dataset

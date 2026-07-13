@@ -93,11 +93,27 @@ P0.9 初版完成后进行了完整边界验证，并在本版本文档中统一
 当前 P0.9 验证结果：
 
 ```text
-31 pytest tests passed
+38 pytest tests passed
 Python compileall passed
+Ruff static checks passed
 11 MethodCards -> 11 PaperSpecs -> 22 candidate runs -> 22 success
 approved-only integration: 1 approved card -> 1 report -> 1 golden card
 ```
+
+## 2026-07-13 前端回归与修复
+
+本次使用独立临时项目从 Streamlit 页面执行了规则提取、人工批准、approved-only 运行、Golden 集合生成和 Timeline 读取，并逐页验证 Control Tower、MethodCard Review、Flow Trace、Workflow Runner、Tasks & Timeline、Audit Explorer 和 Raw JSON。
+
+修复内容：
+
+1. 前端运行现在始终限制在当前加载的 MethodCard 集合内，避免 PaperSpec 文件包含陈旧或无关论文。
+2. approved-only 模式下即使 PaperSpec JSON 不存在，也会从已批准 MethodCard 重新编译 PaperSpec，不会退回内置论文集。
+3. PaperSpec 与当前所选 MethodCard 完全不匹配时明确停止并提示重新提取或检查路径。
+4. 输出报告名只接受不带目录的 `.json` 文件名，上传只接受安全的 PDF/TXT/MD 文件名。
+5. 论文标题、paper ID 和流程摘要在进入自定义 HTML 前统一转义。
+6. Streamlit 表格改用 `width="stretch"`，移除已弃用的 `use_container_width`。
+
+浏览器实测结果：1 个临时文档生成 1 张 MethodCard，审批从 pending 持久化为 approved，approved-only 运行得到 1 个报告和 1 个成功候选；运行报告、backlog、Golden index 和 run timeline 均可由后续页面读取，浏览器控制台无应用错误。
 
 ## 完整运行命令
 

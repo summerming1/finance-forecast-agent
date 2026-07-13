@@ -266,6 +266,8 @@ apps/streamlit_app.py
 6. **Audit Explorer**：ComparabilityReport、blockers、候选结果。
 7. **Raw JSON**：底层数据和审计结构。
 
+完整前端操作顺序、字段说明和验收标准见 `docs/FRONTEND_USER_GUIDE.md`。
+
 ## Tracking 与 Registry
 
 - PaperDatasetRegistry 已可用。
@@ -276,11 +278,15 @@ apps/streamlit_app.py
 ## 当前验证状态
 
 ```text
-31 pytest tests passed
+38 pytest tests passed
 Python compileall passed
+Ruff static checks passed
 11 MethodCards -> 11 PaperSpecs -> 22 candidate runs -> 22 success
 approved-only integration: 1 approved card -> 1 report -> 1 golden card
+Streamlit browser smoke test: all 7 views rendered, extraction/review/run/timeline flow passed
 ```
+
+2026-07-13 回归验证同时确认：前端运行范围严格限定为当前加载的方法卡；PaperSpec JSON 缺失时会从所选方法卡重新编译；报告名和上传文件名不允许包含目录路径；论文或 LLM 生成的动态文本在进入自定义 HTML 前会转义。
 
 ## 当前技术边界
 

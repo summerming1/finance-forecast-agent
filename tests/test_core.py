@@ -50,7 +50,8 @@ def test_contract_manifest_and_replay(tmp_path: Path):
     assert contract.contract_hash == manifest.contract_hash
     assert manifest.feature_columns
     llm = ReplayLLM(tmp_path/'fixtures')
-    prompt = {'p': 'x'}; resp = {'candidates': []}
+    prompt = {'p': 'x'}
+    resp = {'candidates': []}
     llm.write_fixture(prompt_payload=prompt, schema_name='research_advice', response=resp)
     assert llm.complete_json(prompt_payload=prompt, schema_name='research_advice') == resp
 
@@ -63,5 +64,6 @@ def test_registry_and_tracking_fallback(tmp_path: Path):
     out = tracker.log_run('run', params={'a':1}, metrics={'m':1.0}, artifacts={})
     assert out['backend'] in {'mlflow','local_json_fallback'}
     dvc = DVCDataTracker(tmp_path)
-    data = tmp_path/'x.csv'; data.write_text('a\n1\n')
+    data = tmp_path/'x.csv'
+    data.write_text('a\n1\n')
     assert dvc.track(data)['tracked'] is True
