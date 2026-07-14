@@ -9,7 +9,10 @@ IMPLEMENTED_MODEL_FAMILIES = {
     "lstm_regressor",
     "transformer_regressor",
     "ga_lstm_regressor",
+    "dlinear_forecaster",
 }
+
+BENCHMARK_COMPATIBLE_MODEL_FAMILIES = IMPLEMENTED_MODEL_FAMILIES - {"dlinear_forecaster"}
 
 UNSUPPORTED_MODEL_FAMILIES = {
     "gaussian_process_regressor",
@@ -17,9 +20,12 @@ UNSUPPORTED_MODEL_FAMILIES = {
     "cnn_sequence_regressor",
     "rl_portfolio_policy",
     "dnn_asset_pricing_model",
+    "arima_regressor",
 }
 
 MODEL_ALIASES: list[tuple[str, list[str]]] = [
+    ("dlinear_forecaster", ["dlinear_forecaster", "dlinear", "decomposition-linear"]),
+    ("arima_regressor", ["arima_regressor", "arima", "autoregressive integrated moving average"]),
     ("random_forest_regressor", ["random_forest_regressor", "random forest", "random forests", "rf"]),
     ("gradient_boosting_regressor", ["gradient_boosting_regressor", "gradient boosting", "gbt", "xgboost", "boosted tree", "lightgbm"]),
     ("transformer_regressor", ["transformer_regressor", "transformer"]),
@@ -30,7 +36,7 @@ MODEL_ALIASES: list[tuple[str, list[str]]] = [
     ("gaussian_process_regressor", ["gaussian_process_regressor", "gaussian process", "gpr"]),
     ("rl_portfolio_policy", ["rl_portfolio_policy", "reinforcement learning", "portfolio-vector memory", "pvm", "deep portfolio", "portfolio management"]),
     ("dnn_asset_pricing_model", ["dnn_asset_pricing_model", "deep neural network", "dnn", "no-arbitrage", "adversarial"]),
-    ("ridge_regression", ["ridge_regression", "ridge", "linear", "lasso", "elastic net", "ols"]),
+    ("ridge_regression", ["ridge_regression", "linear_regression", "linear regression", "ridge", "lasso", "elastic net", "ols"]),
 ]
 
 
@@ -60,6 +66,8 @@ def canonical_model_families(values: list[str]) -> list[str]:
 
 
 def model_support(model_family: str) -> ModelSupport:
+    if model_family == "dlinear_forecaster":
+        return ModelSupport(model_family, True, True, "implemented by the dedicated native DLinear protocol runner")
     if model_family in IMPLEMENTED_MODEL_FAMILIES:
         return ModelSupport(model_family, True, False, "implemented")
     return ModelSupport(model_family, False, True, "unsupported model adapter; do not proxy silently")
@@ -71,6 +79,10 @@ def implemented_model_families(values: list[str]) -> list[str]:
 
 def unsupported_model_families(values: list[str]) -> list[str]:
     return [family for family in values if not model_support(family).implemented]
+
+
+def benchmark_compatible(model_family: str) -> bool:
+    return model_family in BENCHMARK_COMPATIBLE_MODEL_FAMILIES
 
 
 def fallback_implemented_model(values: list[str]) -> str:

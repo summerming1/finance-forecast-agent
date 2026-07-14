@@ -1,12 +1,49 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from .schemas import DatasetCard
+
+
+def load_yahoo_chart_weekly_dataset(raw_path: Path, output_path: Path) -> pd.DataFrame:
+    """Build a frozen weekly AAPL benchmark from a saved Yahoo Finance chart response."""
+    if output_path.exists():
+        return pd.read_csv(output_path)
+    payload = json.loads(raw_path.read_text(encoding="utf-8"))
+    result = payload["chart"]["result"][0]
+    timestamps = pd.to_datetime(result["timestamp"], unit="s", utc=True).tz_convert("America/New_York")
+    quote = result["indicators"]["quote"][0]
+    adjusted = result["indicators"].get("adjclose", [{}])[0].get("adjclose") or quote["close"]
+    daily = pd.DataFrame(
+        {
+            "timestamp": timestamps.tz_localize(None),
+            "aapl_close": adjusted,
+            "aapl_volume": quote["volume"],
+        }
+    ).dropna(subset=["aapl_close"])
+    weekly = (
+        daily.set_index("timestamp")
+        .resample("W-FRI")
+        .agg({"aapl_close": "last", "aapl_volume": "sum"})
+        .dropna()
+        .reset_index()
+    )
+    weekly["timestamp"] = weekly["timestamp"].dt.strftime("%Y-%m-%d")
+    weekly["aapl_return_1"] = weekly["aapl_close"].pct_change()
+    for lag in range(1, 13):
+        weekly[f"sequence_lag_{lag}"] = weekly["aapl_return_1"].shift(lag)
+    weekly["aapl_volatility_12"] = weekly["aapl_return_1"].rolling(12).std()
+    weekly["aapl_volume_change_1"] = weekly["aapl_volume"].pct_change().replace([np.inf, -np.inf], np.nan)
+    weekly["label"] = weekly["aapl_close"].shift(-1) / weekly["aapl_close"] - 1.0
+    weekly = weekly.dropna().reset_index(drop=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    weekly.to_csv(output_path, index=False)
+    return weekly
 
 
 def load_or_create_us_equity_dataset(path: Path) -> pd.DataFrame:

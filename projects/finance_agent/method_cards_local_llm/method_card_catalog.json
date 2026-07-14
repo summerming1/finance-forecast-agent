@@ -1,5 +1,5 @@
 {
-  "method_card_count": 11,
+  "method_card_count": 14,
   "method_cards": [
     {
       "method_id": "deep_portfolio_management_eiie",
@@ -29,6 +29,7 @@
       "evaluation_protocol": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
@@ -113,27 +114,36 @@
         "raw_paper_id": "arxiv_1706.10059",
         "document_text_sha": "3eacf876a150e5dd",
         "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1706.10059.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "deep_portfolio_management_eiie",
           "paper_id": "arxiv_1706_10059",
-          "quality_score": 1.0,
-          "approval_required": false,
+          "quality_score": 0.82,
+          "approval_required": true,
           "critical_missing_fields": [],
           "type_errors": [],
           "unsupported_models": [],
-          "warnings": [],
-          "recommended_action": "ready_for_exploratory_p0_harness"
+          "warnings": [
+            "9/9 evidence spans have no source section"
+          ],
+          "recommended_action": "human_review_recommended"
         },
         "evaluation_protocol_type": "purged_walk_forward",
         "evaluation_protocol_description": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
         "frequency_type": "intraday",
-        "horizon_type": "next_return"
+        "horizon_type": "50_day"
       },
-      "approval_required": false,
+      "approval_required": true,
       "evaluation_protocol_type": "purged_walk_forward",
       "evaluation_protocol_description": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
       "frequency_type": "intraday",
-      "horizon_type": "next_return"
+      "horizon_type": "50_day",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "arxiv_1904_00745",
@@ -163,6 +173,7 @@
       "evaluation_protocol": "out-of-sample",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -272,10 +283,11 @@
         "raw_paper_id": "arxiv_1904.00745",
         "document_text_sha": "94f948d7b0af7046",
         "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1904.00745.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "arxiv_1904_00745",
           "paper_id": "arxiv_1904_00745",
-          "quality_score": 0.7,
+          "quality_score": 0.52,
           "approval_required": true,
           "critical_missing_fields": [
             "frequency",
@@ -285,7 +297,8 @@
           "unsupported_models": [],
           "warnings": [
             "frequency is unknown",
-            "horizon is unknown"
+            "horizon is unknown",
+            "14/14 evidence spans have no source section"
           ],
           "recommended_action": "human_review_required_fix_method_card_fields"
         },
@@ -298,7 +311,13 @@
       "evaluation_protocol_type": "purged_walk_forward",
       "evaluation_protocol_description": "out-of-sample",
       "frequency_type": "unknown",
-      "horizon_type": "unknown"
+      "horizon_type": "unknown",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "ghosh_2021_lstm_rf_intraday",
@@ -330,6 +349,7 @@
       "evaluation_protocol": "Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
@@ -406,27 +426,36 @@
         "raw_paper_id": "arXiv:2004.10178v2",
         "document_text_sha": "fae585867c07144f",
         "source_path": "projects\\finance_agent\\papers\\local\\Forecasting directional movements of stock prices for intraday trading.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "ghosh_2021_lstm_rf_intraday",
           "paper_id": "arxiv_2004_10178v2",
-          "quality_score": 1.0,
-          "approval_required": false,
+          "quality_score": 0.83,
+          "approval_required": true,
           "critical_missing_fields": [],
           "type_errors": [],
           "unsupported_models": [],
-          "warnings": [],
-          "recommended_action": "ready_for_exploratory_p0_harness"
+          "warnings": [
+            "7/7 evidence spans have no source section"
+          ],
+          "recommended_action": "human_review_recommended"
         },
         "evaluation_protocol_type": "purged_walk_forward",
         "evaluation_protocol_description": "Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
         "frequency_type": "intraday",
         "horizon_type": "intraday_direction"
       },
-      "approval_required": false,
+      "approval_required": true,
       "evaluation_protocol_type": "purged_walk_forward",
       "evaluation_protocol_description": "Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
       "frequency_type": "intraday",
-      "horizon_type": "intraday_direction"
+      "horizon_type": "intraday_direction",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "zhong_hitchcock_2021_sp500_ensemble",
@@ -460,6 +489,7 @@
       "evaluation_protocol": "Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
@@ -588,6 +618,7 @@
         "raw_paper_id": "arxiv_2108.10826",
         "document_text_sha": "8e06b2891ad00348",
         "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2108.10826.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "zhong_hitchcock_2021_sp500_ensemble",
           "paper_id": "arxiv_2108_10826",
@@ -613,7 +644,408 @@
       "evaluation_protocol_type": "unknown",
       "evaluation_protocol_description": "Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
       "frequency_type": "daily",
-      "horizon_type": "unknown"
+      "horizon_type": "unknown",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
+    },
+    {
+      "method_id": "method_arxiv_2205_13504_dlinear_exchange",
+      "paper_id": "arxiv_2205_13504",
+      "title": "Are Transformers Effective for Time Series Forecasting?",
+      "venue_or_source": "AAAI 2023 / arXiv",
+      "paper_url": "https://arxiv.org/abs/2205.13504",
+      "task_type": "multivariate_long_term_time_series_forecasting",
+      "target_asset": "eight exchange-rate series",
+      "asset_universe": [
+        "Australia",
+        "British",
+        "Canada",
+        "Switzerland",
+        "China",
+        "Japan",
+        "New Zealand",
+        "Singapore"
+      ],
+      "frequency": "daily",
+      "horizon": "96 days",
+      "label_definition": "next 96 standardized values for all eight exchange-rate channels",
+      "data_requirements": [
+        "LTSF Exchange-Rate benchmark",
+        "7588 daily observations",
+        "eight variates",
+        "official train-validation-test boundaries"
+      ],
+      "feature_groups": [
+        "cross_asset_features",
+        "sequence_window_features"
+      ],
+      "model_families": [
+        "dlinear_forecaster"
+      ],
+      "training_protocol": "official LTSF-Linear exchange protocol: sequence length 336, prediction length 96, 70/10/20 chronological split, batch size 8, 10 epochs with patience 3, Adam and MSE loss, seed 2021",
+      "evaluation_protocol": "fixed chronological 70/10/20 train-validation-test split with 336-step context overlap",
+      "metrics": [
+        "mae",
+        "mse"
+      ],
+      "cost_assumptions": "not applicable: forecast-only benchmark",
+      "reported_results": {
+        "mse": 0.081,
+        "mae": 0.203
+      },
+      "strict_requirements": [
+        "exact Exchange-Rate benchmark snapshot",
+        "sequence length 336",
+        "prediction length 96",
+        "shared-weight DLinear",
+        "train-only StandardScaler",
+        "official chronological split and seed"
+      ],
+      "unknowns": [],
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "target_asset",
+          "quote": "Exchange-Rate is an eight-variate financial time series benchmark.",
+          "summary": "Defines the multivariate target."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "asset_universe",
+          "quote": "The Exchange-Rate dataset contains eight foreign-exchange channels.",
+          "summary": "Defines the channel universe."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "frequency",
+          "quote": "Exchange-Rate has 7,588 timesteps at one-day granularity.",
+          "summary": "Defines sample count and frequency."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "horizon",
+          "quote": "The Exchange benchmark reports prediction length 96.",
+          "summary": "Defines the tested horizon."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "label_definition",
+          "quote": "Long-term forecasting predicts future values of every variate from a historical input sequence.",
+          "summary": "Defines the output label."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "data_requirements",
+          "quote": "Exchange-Rate contains 7,588 daily timesteps and eight variates.",
+          "summary": "Defines the required dataset."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "feature_groups",
+          "quote": "The model receives a multivariate look-back window as input.",
+          "summary": "Defines sequence features."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "model_families",
+          "quote": "DLinear combines seasonal and trend linear projections after decomposition.",
+          "summary": "Defines the model family."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "training_protocol",
+          "quote": "The official exchange script uses input length 336 and prediction length 96.",
+          "summary": "Official repository protocol."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "preprocessing_protocol",
+          "quote": "The official loader standardizes using statistics fitted on the training partition.",
+          "summary": "Defines leakage-safe scaling."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "hyperparameters",
+          "quote": "The official script uses batch 8, learning rate 0.0005, ten epochs and seed 2021.",
+          "summary": "Defines executable hyperparameters."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "evaluation_protocol",
+          "quote": "The official loader applies chronological train, validation and test partitions.",
+          "summary": "Defines evaluation split."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "metrics",
+          "quote": "Mean Squared Error and Mean Absolute Error are the core metrics.",
+          "summary": "Defines evaluation metrics."
+        }
+      ],
+      "extraction_metadata": {
+        "extractor": "curated_from_primary_paper_and_official_repository",
+        "live_llm_api_used": false,
+        "source_path": "projects/finance_agent/papers/local/arxiv_2205.13504.pdf",
+        "experiment_type": "forecast_only",
+        "preprocessing_protocol": "StandardScaler fitted on the first 70% training partition and applied to validation/test",
+        "hyperparameters": {
+          "seq_len": 336,
+          "pred_len": 96,
+          "batch_size": 8,
+          "learning_rate": 0.0005,
+          "train_epochs": 10,
+          "patience": 3,
+          "seed": 2021,
+          "moving_average_kernel": 25,
+          "individual": false
+        },
+        "required_start_date": "1990-01-01",
+        "required_end_date": "2016-11-10",
+        "dataset_sha256": "0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f",
+        "quality_report": {
+          "method_id": "method_arxiv_2205_13504_dlinear_exchange",
+          "paper_id": "arxiv_2205_13504",
+          "quality_score": 0.97,
+          "approval_required": false,
+          "critical_missing_fields": [],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [
+            "evaluation protocol could not be mapped to a supported protocol type"
+          ],
+          "recommended_action": "ready_for_exploratory_p0_harness"
+        },
+        "evaluation_protocol_type": "unknown",
+        "evaluation_protocol_description": "fixed chronological 70/10/20 train-validation-test split with 336-step context overlap",
+        "frequency_type": "daily",
+        "horizon_type": "96_day"
+      },
+      "approval_required": false,
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "fixed chronological 70/10/20 train-validation-test split with 336-step context overlap",
+      "frequency_type": "daily",
+      "horizon_type": "96_day",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "StandardScaler fitted on the first 70% training partition and applied to validation/test",
+      "hyperparameters": {
+        "seq_len": 336,
+        "pred_len": 96,
+        "batch_size": 8,
+        "learning_rate": 0.0005,
+        "train_epochs": 10,
+        "patience": 3,
+        "seed": 2021,
+        "moving_average_kernel": 25,
+        "individual": false
+      },
+      "required_start_date": "1990-01-01",
+      "required_end_date": "2016-11-10",
+      "schema_version": "method_card_v2"
+    },
+    {
+      "method_id": "method_arxiv_2209_02407_arima_lstm",
+      "paper_id": "arxiv_2209_02407",
+      "title": "Predict Stock Prices with ARIMA and LSTM",
+      "venue_or_source": "arXiv",
+      "paper_url": "https://arxiv.org/abs/2209.02407",
+      "task_type": "daily_stock_high_price_forecasting",
+      "target_asset": "daily high price",
+      "asset_universe": [
+        "50 Yahoo Finance listed companies",
+        "Google",
+        "Apple",
+        "Amazon",
+        "Netflix"
+      ],
+      "frequency": "daily trading days",
+      "horizon": "next trading day",
+      "label_definition": "next-day unscaled high price from a 60-day history window",
+      "data_requirements": [
+        "Yahoo Finance daily high prices",
+        "2010-01-01 through 2018-12-31",
+        "same company universe"
+      ],
+      "feature_groups": [
+        "price_lag_features",
+        "sequence_window_features"
+      ],
+      "model_families": [
+        "arima_regressor",
+        "lstm_regressor"
+      ],
+      "training_protocol": "ARIMA trains on 2016-2017 with order (1,0,1); LSTM trains on 2010-2015, validates on 2016-2017, uses 60-day windows, three 100-unit LSTM layers, dropout 0.1 and Adam",
+      "evaluation_protocol": "fixed out-of-sample calendar split; both models test on 2018",
+      "metrics": [
+        "mae",
+        "mse",
+        "rmse"
+      ],
+      "cost_assumptions": "not applicable: price forecast-only experiment",
+      "reported_results": {
+        "arima_mae": 3.041,
+        "arima_mse": 16.831,
+        "arima_rmse": 4.102,
+        "lstm_mae": 2.386,
+        "lstm_mse": 7.272,
+        "lstm_rmse": 2.695
+      },
+      "strict_requirements": [
+        "same Yahoo Finance high-price snapshot",
+        "same 50-company universe",
+        "same calendar splits",
+        "same 60-day window",
+        "exact ARIMA and LSTM protocols"
+      ],
+      "unknowns": [
+        "complete list of all 50 tickers is not structured in the paper text",
+        "arima_regressor"
+      ],
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "target_asset",
+          "quote": "The dataset consists of the highest price on transaction days.",
+          "summary": "Defines the forecast target."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "asset_universe",
+          "quote": "Fifty listed-company stocks from Yahoo Finance are selected.",
+          "summary": "Defines the paper universe."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "frequency",
+          "quote": "Observations are stock highs on transaction days.",
+          "summary": "Defines daily trading frequency."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "horizon",
+          "quote": "Sixty days of data are used to predict the next day.",
+          "summary": "Defines window and horizon."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "label_definition",
+          "quote": "The models predict the next transaction day's high price.",
+          "summary": "Defines the label."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "data_requirements",
+          "quote": "The sample spans 1 January 2010 through 31 December 2018.",
+          "summary": "Defines the sample period."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "feature_groups",
+          "quote": "Each prediction uses a sixty-day historical price sequence.",
+          "summary": "Defines input features."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "model_families",
+          "quote": "The study compares ARIMA and LSTM stock-price forecasts.",
+          "summary": "Defines model families."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "training_protocol",
+          "quote": "LSTM trains on 2010-2015 and validates on 2016-2017.",
+          "summary": "Defines LSTM training windows."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "preprocessing_protocol",
+          "quote": "The LSTM experiment converts sixty-day histories into supervised sequences.",
+          "summary": "Defines sequence preprocessing; scaling details require code confirmation."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "hyperparameters",
+          "quote": "The selected LSTM has three layers, one hundred nodes and dropout 0.1.",
+          "summary": "Defines key hyperparameters."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "evaluation_protocol",
+          "quote": "Both models use calendar year 2018 as the test set.",
+          "summary": "Defines fixed out-of-sample evaluation."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "metrics",
+          "quote": "The study evaluates MAE, MSE and RMSE.",
+          "summary": "Defines evaluation metrics."
+        }
+      ],
+      "extraction_metadata": {
+        "extractor": "curated_from_primary_paper",
+        "live_llm_api_used": false,
+        "source_path": "projects/finance_agent/papers/local/arxiv_2209.02407.pdf",
+        "experiment_type": "forecast_only",
+        "preprocessing_protocol": "60-day supervised sequences; exact scaler behavior not independently verified",
+        "hyperparameters": {
+          "arima_order": [
+            1,
+            0,
+            1
+          ],
+          "lstm_layers": 3,
+          "lstm_units": 100,
+          "dropout": 0.1,
+          "optimizer": "Adam",
+          "lookback_days": 60
+        },
+        "required_start_date": "2010-01-01",
+        "required_end_date": "2018-12-31",
+        "quality_report": {
+          "method_id": "method_arxiv_2209_02407_arima_lstm",
+          "paper_id": "arxiv_2209_02407",
+          "quality_score": 0.89,
+          "approval_required": true,
+          "critical_missing_fields": [],
+          "type_errors": [],
+          "unsupported_models": [
+            "arima_regressor"
+          ],
+          "warnings": [
+            "unsupported model adapters required: arima_regressor"
+          ],
+          "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+        },
+        "evaluation_protocol_type": "purged_walk_forward",
+        "evaluation_protocol_description": "fixed out-of-sample calendar split; both models test on 2018",
+        "frequency_type": "daily",
+        "horizon_type": "next_return"
+      },
+      "approval_required": true,
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "fixed out-of-sample calendar split; both models test on 2018",
+      "frequency_type": "daily",
+      "horizon_type": "next_return",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "60-day supervised sequences; exact scaler behavior not independently verified",
+      "hyperparameters": {
+        "arima_order": [
+          1,
+          0,
+          1
+        ],
+        "lstm_layers": 3,
+        "lstm_units": 100,
+        "dropout": 0.1,
+        "optimizer": "Adam",
+        "lookback_days": 60
+      },
+      "required_start_date": "2010-01-01",
+      "required_end_date": "2018-12-31",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "ensemble_gpr_filipovic_pasricha",
@@ -642,6 +1074,7 @@
       "evaluation_protocol": "out-of-sample test using rolling and expanding schemes",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -672,27 +1105,36 @@
         "raw_paper_id": "arxiv_2212.01048",
         "document_text_sha": "45040c1200839f60",
         "source_path": "projects\\finance_agent\\papers\\local\\Empirical Asset Pricing via Ensemble Gaussian Process Regression.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "ensemble_gpr_filipovic_pasricha",
           "paper_id": "arxiv_2212_01048",
-          "quality_score": 1.0,
-          "approval_required": false,
+          "quality_score": 0.95,
+          "approval_required": true,
           "critical_missing_fields": [],
           "type_errors": [],
           "unsupported_models": [],
-          "warnings": [],
-          "recommended_action": "ready_for_exploratory_p0_harness"
+          "warnings": [
+            "1/1 evidence spans have no source section"
+          ],
+          "recommended_action": "human_review_recommended"
         },
         "evaluation_protocol_type": "rolling_origin",
         "evaluation_protocol_description": "out-of-sample test using rolling and expanding schemes",
         "frequency_type": "monthly",
         "horizon_type": "next_month_return"
       },
-      "approval_required": false,
+      "approval_required": true,
       "evaluation_protocol_type": "rolling_origin",
       "evaluation_protocol_description": "out-of-sample test using rolling and expanding schemes",
       "frequency_type": "monthly",
-      "horizon_type": "next_month_return"
+      "horizon_type": "next_month_return",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "rf_lstm_stock_forecast",
@@ -724,6 +1166,7 @@
       "evaluation_protocol": "rolling window",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -756,10 +1199,11 @@
         "raw_paper_id": "arxiv_2306.03620",
         "document_text_sha": "1524aaf9d549e2ad",
         "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2306.03620.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "rf_lstm_stock_forecast",
           "paper_id": "arxiv_2306_03620",
-          "quality_score": 0.7,
+          "quality_score": 0.65,
           "approval_required": true,
           "critical_missing_fields": [
             "frequency",
@@ -769,7 +1213,8 @@
           "unsupported_models": [],
           "warnings": [
             "frequency is unknown",
-            "horizon is unknown"
+            "horizon is unknown",
+            "1/1 evidence spans have no source section"
           ],
           "recommended_action": "human_review_required_fix_method_card_fields"
         },
@@ -782,7 +1227,180 @@
       "evaluation_protocol_type": "rolling_origin",
       "evaluation_protocol_description": "rolling window",
       "frequency_type": "unknown",
-      "horizon_type": "unknown"
+      "horizon_type": "unknown",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
+    },
+    {
+      "method_id": "method_arxiv_2310_16855_jpx_direction",
+      "paper_id": "arxiv_2310_16855",
+      "title": "Predicting Directional Bias in the Japanese Stock Market with Machine Learning",
+      "venue_or_source": "arXiv",
+      "paper_url": "https://arxiv.org/abs/2310.16855",
+      "task_type": "daily_stock_direction_classification",
+      "target_asset": "Sony daily direction",
+      "asset_universe": [
+        "Sony",
+        "JPX Tokyo Stock Exchange Prediction dataset"
+      ],
+      "frequency": "daily trading days",
+      "horizon": "next trading day direction",
+      "label_definition": "1 when next close exceeds current close, otherwise 0",
+      "data_requirements": [
+        "JPX Tokyo Stock Exchange Prediction dataset",
+        "Sony rows",
+        "Date Open High Low Close Volume"
+      ],
+      "feature_groups": [
+        "price_lag_features",
+        "liquidity_proxy_features"
+      ],
+      "model_families": [
+        "random_forest_regressor"
+      ],
+      "training_protocol": "random forest classifier with 250 trees, five maximum features, depth 100, minimum split 100, bootstrap sampling and out-of-bag diagnostics",
+      "evaluation_protocol": "paper validation split; exact chronological boundary is not reported clearly",
+      "metrics": [
+        "f1",
+        "directional_accuracy"
+      ],
+      "cost_assumptions": "not applicable: direction classification without trading backtest",
+      "reported_results": {
+        "random_forest_accuracy": 0.63,
+        "random_forest_f1": 0.74
+      },
+      "strict_requirements": [
+        "same JPX competition snapshot",
+        "same Sony filter",
+        "same target construction",
+        "same classifier hyperparameters",
+        "recover exact split boundary"
+      ],
+      "unknowns": [
+        "exact train-validation date boundary",
+        "class weighting",
+        "software version"
+      ],
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "target_asset",
+          "quote": "The assessment filters the JPX dataset to Sony price data.",
+          "summary": "Defines the target asset."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "asset_universe",
+          "quote": "The study uses the JPX Tokyo Stock Exchange Prediction dataset.",
+          "summary": "Defines the source universe."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "frequency",
+          "quote": "The target compares today's close with the following trading day.",
+          "summary": "Defines daily frequency."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "horizon",
+          "quote": "The Next column contains the following trading day's close.",
+          "summary": "Defines the forecast horizon."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "label_definition",
+          "quote": "Target is one for an increase and zero for a decrease.",
+          "summary": "Defines binary direction."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "data_requirements",
+          "quote": "Inputs include Date, Open, High, Low, Close and Volume.",
+          "summary": "Defines required columns."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "feature_groups",
+          "quote": "Open, High, Low, Close and Volume are used as model features.",
+          "summary": "Defines price and liquidity features."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "model_families",
+          "quote": "Logistic regression, decision tree and random forest are compared.",
+          "summary": "Defines model families; this card selects RF."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "training_protocol",
+          "quote": "Random forest uses 250 trees, depth 100 and bootstrap sampling.",
+          "summary": "Defines training protocol."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "evaluation_protocol",
+          "quote": "Validation accuracy compares predictions with true target values.",
+          "summary": "Split boundary remains unresolved."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "metrics",
+          "quote": "Random forest reports accuracy 0.63 and F1 score 0.74.",
+          "summary": "Defines reported results."
+        }
+      ],
+      "extraction_metadata": {
+        "extractor": "curated_from_primary_paper",
+        "live_llm_api_used": false,
+        "source_path": "projects/finance_agent/papers/local/arxiv_2310.16855.pdf",
+        "experiment_type": "forecast_only",
+        "preprocessing_protocol": "construct Next and binary Target from Close; exact missing-value and scaling protocol not reported",
+        "hyperparameters": {
+          "n_estimators": 250,
+          "max_features": 5,
+          "max_depth": 100,
+          "min_samples_split": 100,
+          "bootstrap": true
+        },
+        "quality_report": {
+          "method_id": "method_arxiv_2310_16855_jpx_direction",
+          "paper_id": "arxiv_2310_16855",
+          "quality_score": 0.97,
+          "approval_required": true,
+          "critical_missing_fields": [],
+          "type_errors": [],
+          "unsupported_models": [],
+          "warnings": [
+            "evaluation protocol could not be mapped to a supported protocol type"
+          ],
+          "recommended_action": "human_review_recommended"
+        },
+        "evaluation_protocol_type": "unknown",
+        "evaluation_protocol_description": "paper validation split; exact chronological boundary is not reported clearly",
+        "frequency_type": "daily",
+        "horizon_type": "next_return"
+      },
+      "approval_required": true,
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "paper validation split; exact chronological boundary is not reported clearly",
+      "frequency_type": "daily",
+      "horizon_type": "next_return",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "construct Next and binary Target from Close; exact missing-value and scaling protocol not reported",
+      "hyperparameters": {
+        "n_estimators": 250,
+        "max_features": 5,
+        "max_depth": 100,
+        "min_samples_split": 100,
+        "bootstrap": true
+      },
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "ga_lstm_stock_forecast",
@@ -812,6 +1430,7 @@
       "evaluation_protocol": "model was evaluated using MSE, MAE and MAPE",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -844,10 +1463,11 @@
         "raw_paper_id": "arxiv_2405.03151",
         "document_text_sha": "a30f261604918754",
         "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2405.03151.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "ga_lstm_stock_forecast",
           "paper_id": "arxiv_2405_03151",
-          "quality_score": 0.55,
+          "quality_score": 0.5,
           "approval_required": true,
           "critical_missing_fields": [
             "asset_universe",
@@ -859,7 +1479,8 @@
           "warnings": [
             "evaluation protocol could not be mapped to a supported protocol type",
             "frequency is unknown",
-            "horizon is unknown"
+            "horizon is unknown",
+            "1/1 evidence spans have no source section"
           ],
           "recommended_action": "human_review_required_fix_method_card_fields"
         },
@@ -872,7 +1493,13 @@
       "evaluation_protocol_type": "unknown",
       "evaluation_protocol_description": "model was evaluated using MSE, MAE and MAPE",
       "frequency_type": "unknown",
-      "horizon_type": "unknown"
+      "horizon_type": "unknown",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "arxiv_2409_08426_method",
@@ -901,6 +1528,7 @@
       "evaluation_protocol": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
@@ -932,10 +1560,11 @@
         "raw_paper_id": "arxiv_2409.08426",
         "document_text_sha": "cc13523dd035c43c",
         "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2409.08426.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "arxiv_2409_08426_method",
           "paper_id": "arxiv_2409_08426",
-          "quality_score": 0.67,
+          "quality_score": 0.62,
           "approval_required": true,
           "critical_missing_fields": [
             "frequency",
@@ -946,7 +1575,8 @@
           "warnings": [
             "evaluation protocol could not be mapped to a supported protocol type",
             "frequency is unknown",
-            "horizon is unknown"
+            "horizon is unknown",
+            "1/1 evidence spans have no source section"
           ],
           "recommended_action": "human_review_required_fix_method_card_fields"
         },
@@ -959,7 +1589,13 @@
       "evaluation_protocol_type": "unknown",
       "evaluation_protocol_description": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
       "frequency_type": "unknown",
-      "horizon_type": "unknown"
+      "horizon_type": "unknown",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "lstm_gru_transformer_stock_prediction",
@@ -989,6 +1625,7 @@
       "evaluation_protocol": "Use test sets to evaluate final model performance and deploy models in real-world applications.",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
@@ -1019,10 +1656,11 @@
         "raw_paper_id": "arxiv_2411.05790",
         "document_text_sha": "b7edbb63e48cfdaf",
         "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2411.05790.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "lstm_gru_transformer_stock_prediction",
           "paper_id": "arxiv_2411_05790",
-          "quality_score": 0.67,
+          "quality_score": 0.62,
           "approval_required": true,
           "critical_missing_fields": [
             "frequency",
@@ -1033,7 +1671,8 @@
           "warnings": [
             "evaluation protocol could not be mapped to a supported protocol type",
             "frequency is unknown",
-            "horizon is unknown"
+            "horizon is unknown",
+            "1/1 evidence spans have no source section"
           ],
           "recommended_action": "human_review_required_fix_method_card_fields"
         },
@@ -1046,7 +1685,13 @@
       "evaluation_protocol_type": "unknown",
       "evaluation_protocol_description": "Use test sets to evaluate final model performance and deploy models in real-world applications.",
       "frequency_type": "unknown",
-      "horizon_type": "unknown"
+      "horizon_type": "unknown",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "rfr_hft_spy_minute",
@@ -1075,6 +1720,7 @@
       "evaluation_protocol": "in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -1153,17 +1799,20 @@
         "raw_paper_id": "arxiv_2412.15448",
         "document_text_sha": "269720716d91e4fb",
         "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2412.15448.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "rfr_hft_spy_minute",
           "paper_id": "arxiv_2412_15448",
-          "quality_score": 0.88,
+          "quality_score": 0.71,
           "approval_required": true,
           "critical_missing_fields": [
             "label_definition"
           ],
           "type_errors": [],
           "unsupported_models": [],
-          "warnings": [],
+          "warnings": [
+            "7/7 evidence spans have no source section"
+          ],
           "recommended_action": "human_review_required_fix_method_card_fields"
         },
         "evaluation_protocol_type": "purged_walk_forward",
@@ -1175,7 +1824,13 @@
       "evaluation_protocol_type": "purged_walk_forward",
       "evaluation_protocol_description": "in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
       "frequency_type": "intraday",
-      "horizon_type": "minute-level"
+      "horizon_type": "minute-level",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     },
     {
       "method_id": "lstm_sp500_pilla2025",
@@ -1204,6 +1859,7 @@
       "evaluation_protocol": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
       "metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
@@ -1291,10 +1947,11 @@
         "raw_paper_id": "arxiv_2501.17366",
         "document_text_sha": "6de424b4258d212b",
         "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2501.17366.pdf",
+        "migrated_from_schema_version": "method_card_v1",
         "quality_report": {
           "method_id": "lstm_sp500_pilla2025",
           "paper_id": "arxiv_2501_17366",
-          "quality_score": 0.67,
+          "quality_score": 0.5,
           "approval_required": true,
           "critical_missing_fields": [
             "frequency",
@@ -1305,7 +1962,8 @@
           "warnings": [
             "evaluation protocol could not be mapped to a supported protocol type",
             "frequency is unknown",
-            "horizon is unknown"
+            "horizon is unknown",
+            "7/7 evidence spans have no source section"
           ],
           "recommended_action": "human_review_required_fix_method_card_fields"
         },
@@ -1318,7 +1976,13 @@
       "evaluation_protocol_type": "unknown",
       "evaluation_protocol_description": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
       "frequency_type": "unknown",
-      "horizon_type": "unknown"
+      "horizon_type": "unknown",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "hyperparameters": {},
+      "required_start_date": "unknown",
+      "required_end_date": "unknown",
+      "schema_version": "method_card_v2"
     }
   ]
 }

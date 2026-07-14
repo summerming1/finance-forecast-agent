@@ -1,0 +1,2 @@
+projects/finance_agent/data/external/exchange_rate/exchange_rate.txt binary
+projects/finance_agent/data/external/yahoo/*.json binary

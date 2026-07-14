@@ -1,0 +1,2831 @@
+{
+  "schema_version": "p1_validation_v1",
+  "native": {
+    "run_mode": "native_reproduction",
+    "paper_id": "arxiv_2205_13504",
+    "claim_id": "dlinear_exchange_rate_336_96",
+    "dataset": {
+      "path": "projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.txt",
+      "sha256": "0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f",
+      "rows": 7588,
+      "channels": 8,
+      "source": "official LTSF Exchange-Rate benchmark file"
+    },
+    "protocol": {
+      "seq_len": 336,
+      "pred_len": 96,
+      "train_ratio": 0.7,
+      "test_ratio": 0.2,
+      "batch_size": 8,
+      "learning_rate": 0.0005,
+      "train_epochs": 10,
+      "patience": 3,
+      "seed": 2021,
+      "reported_mse": 0.081,
+      "reported_mae": 0.203,
+      "result_tolerance": 0.01,
+      "expected_dataset_sha256": "0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f"
+    },
+    "protocol_fidelity": {
+      "data_split": "matched",
+      "scaling": "matched",
+      "model_architecture": "matched",
+      "optimizer": "matched",
+      "seed": "matched",
+      "strict_reproduction_allowed": true
+    },
+    "metrics": {
+      "mse": 0.08107952773571014,
+      "mae": 0.20609062910079956,
+      "rmse": 0.28474467112785473
+    },
+    "reported_metrics": {
+      "mse": 0.081,
+      "mae": 0.203
+    },
+    "result_reproduced_within_tolerance": true,
+    "training_history": [
+      {
+        "epoch": 1.0,
+        "train_mse": 0.16302004971342987,
+        "validation_mse": 0.18619638277464604
+      },
+      {
+        "epoch": 2.0,
+        "train_mse": 0.1261432792502837,
+        "validation_mse": 0.3195153853620391
+      },
+      {
+        "epoch": 3.0,
+        "train_mse": 0.11956781980688455,
+        "validation_mse": 0.16744334690542106
+      },
+      {
+        "epoch": 4.0,
+        "train_mse": 0.11747181247003743,
+        "validation_mse": 0.1630061933075089
+      },
+      {
+        "epoch": 5.0,
+        "train_mse": 0.11605507272799484,
+        "validation_mse": 0.1892247162310474
+      },
+      {
+        "epoch": 6.0,
+        "train_mse": 0.11562277597115665,
+        "validation_mse": 0.16344611705785775
+      },
+      {
+        "epoch": 7.0,
+        "train_mse": 0.11538840007097995,
+        "validation_mse": 0.17186573910785008
+      }
+    ],
+    "report_path": "projects\\finance_agent\\reports\\native_dlinear_exchange_336_96.json",
+    "governance": {
+      "methodcard_approved": true,
+      "reproduction_plan_hash": "c618653297e0dbae",
+      "reproduction_plan_strict_ready": true
+    },
+    "complete_reproduction_allowed": true
+  },
+  "common_benchmark": {
+    "run_mode": "common_benchmark",
+    "reproduction_claim": "benchmark_adaptation",
+    "task": {
+      "task_id": "aapl_weekly_next_return_12lag_v1",
+      "dataset_id": "yahoo_aapl_snapshot_20100101_20260714",
+      "dataset_path": "projects\\finance_agent\\data\\external\\yahoo\\aapl_weekly_20100101_20260714.csv",
+      "entity_id": "AAPL",
+      "timestamp_column": "timestamp",
+      "feature_columns": [
+        "sequence_lag_12",
+        "sequence_lag_11",
+        "sequence_lag_10",
+        "sequence_lag_9",
+        "sequence_lag_8",
+        "sequence_lag_7",
+        "sequence_lag_6",
+        "sequence_lag_5",
+        "sequence_lag_4",
+        "sequence_lag_3",
+        "sequence_lag_2",
+        "sequence_lag_1"
+      ],
+      "label_column": "label",
+      "frequency": "weekly",
+      "horizon": "next_return",
+      "label_definition": "next_return",
+      "split_method": "purged_walk_forward",
+      "primary_metric": "directional_accuracy",
+      "metrics": [
+        "mae",
+        "rmse",
+        "r2",
+        "directional_accuracy"
+      ],
+      "comparison_track": "model_only",
+      "cost_model": {},
+      "seed": 42,
+      "schema_version": "benchmark_task_v1",
+      "task_fingerprint": "8e4a283b33c57761"
+    },
+    "shared_fold_signature": [
+      {
+        "fold_id": 0,
+        "train_start": 0,
+        "train_end": 59,
+        "test_start": 61,
+        "test_end": 76
+      },
+      {
+        "fold_id": 1,
+        "train_start": 101,
+        "train_end": 160,
+        "test_start": 162,
+        "test_end": 177
+      },
+      {
+        "fold_id": 2,
+        "train_start": 202,
+        "train_end": 261,
+        "test_start": 263,
+        "test_end": 278
+      },
+      {
+        "fold_id": 3,
+        "train_start": 303,
+        "train_end": 362,
+        "test_start": 364,
+        "test_end": 379
+      },
+      {
+        "fold_id": 4,
+        "train_start": 404,
+        "train_end": 463,
+        "test_start": 465,
+        "test_end": 480
+      },
+      {
+        "fold_id": 5,
+        "train_start": 505,
+        "train_end": 564,
+        "test_start": 566,
+        "test_end": 581
+      },
+      {
+        "fold_id": 6,
+        "train_start": 606,
+        "train_end": 665,
+        "test_start": 667,
+        "test_end": 682
+      },
+      {
+        "fold_id": 7,
+        "train_start": 707,
+        "train_end": 766,
+        "test_start": 768,
+        "test_end": 783
+      }
+    ],
+    "reports": [
+      {
+        "method_id": "arxiv_2209_02407",
+        "model_family": "lstm_regressor",
+        "metrics": {
+          "mae": 0.029923929180794423,
+          "rmse": 0.03909580786641297,
+          "r2": -0.0820958282753701,
+          "directional_accuracy": 0.484375
+        },
+        "prediction_count": 128,
+        "prediction_artifact": {
+          "schema_version": "prediction_artifact_v1",
+          "task_id": "aapl_weekly_next_return_12lag_v1",
+          "task_fingerprint": "8e4a283b33c57761",
+          "method_id": "arxiv_2209_02407",
+          "model_family": "lstm_regressor",
+          "adapter_protocol": {
+            "input_columns": [
+              "sequence_lag_12",
+              "sequence_lag_11",
+              "sequence_lag_10",
+              "sequence_lag_9",
+              "sequence_lag_8",
+              "sequence_lag_7",
+              "sequence_lag_6",
+              "sequence_lag_5",
+              "sequence_lag_4",
+              "sequence_lag_3",
+              "sequence_lag_2",
+              "sequence_lag_1"
+            ],
+            "representation": "ordered_sequence",
+            "sequence_length": 12
+          },
+          "rows": [
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-06-10",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0173060968656179,
+              "y_pred": 0.0067804050631821156,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-06-17",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0190158506704185,
+              "y_pred": 0.009838325902819633,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-06-24",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.051815274658197,
+              "y_pred": 0.00961347110569477,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-01",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.047923289770503,
+              "y_pred": 0.007346366532146931,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-08",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0144833849888563,
+              "y_pred": 0.004038302693516016,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-15",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0777707520219466,
+              "y_pred": 0.0034622205421328545,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-22",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0071699705107554,
+              "y_pred": 0.005925617180764675,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-29",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0431778540280775,
+              "y_pred": 0.001548917032778263,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-08-05",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.009019873343355,
+              "y_pred": 0.006847790442407131,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-08-12",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.055598094671989,
+              "y_pred": 0.009793750941753387,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-08-19",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0773813198897959,
+              "y_pred": 0.00820879079401493,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-08-26",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0248453230225037,
+              "y_pred": 0.010389273054897785,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-09-02",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0091703050445919,
+              "y_pred": 0.00326911685988307,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-09-09",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0609828492646344,
+              "y_pred": 0.007892485707998276,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-09-16",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.009488430993229,
+              "y_pred": 0.007447876501828432,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-09-23",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0568391096419107,
+              "y_pred": 0.0033332412131130695,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-05-17",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0274430530931948,
+              "y_pred": -0.004129728302359581,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-05-24",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0102887459882767,
+              "y_pred": -0.00024012313224375248,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-05-31",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0176105846170404,
+              "y_pred": -0.0030117351561784744,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-06-07",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0266178862798702,
+              "y_pred": -0.0029312563128769398,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-06-14",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0384836324303312,
+              "y_pred": -0.001389531884342432,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-06-21",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.041039936028258,
+              "y_pred": -0.0005081593990325928,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-06-28",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0526819866115388,
+              "y_pred": 0.00031368620693683624,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-07-05",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.021776379528966,
+              "y_pred": 0.0006886539049446583,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-07-12",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0036574899387583,
+              "y_pred": -0.005341184325516224,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-07-19",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0377456032561345,
+              "y_pred": -0.0047284201718866825,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-07-26",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0488670865741009,
+              "y_pred": -0.002782396739348769,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-02",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0110030825811744,
+              "y_pred": -0.004651146475225687,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-09",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.1053584953307531,
+              "y_pred": -0.005577013362199068,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-16",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0026076730647319,
+              "y_pred": -0.0021969981025904417,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-23",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0275438628170899,
+              "y_pred": -0.00847489945590496,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-30",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0225766318890354,
+              "y_pred": -0.003113070037215948,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-04-24",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0102088084178959,
+              "y_pred": 0.01001389417797327,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-01",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0061801791100744,
+              "y_pred": 0.008741169236600399,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-08",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0090111275228332,
+              "y_pred": 0.009578579105436802,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-15",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0292769466960178,
+              "y_pred": 0.009842172265052795,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-22",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0170513530688545,
+              "y_pred": 0.009521509520709515,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-29",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0125116202300452,
+              "y_pred": 0.008883454836905003,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-06-05",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0115040483717789,
+              "y_pred": 0.009790807962417603,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-06-12",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0044822767932989,
+              "y_pred": 0.010065590962767601,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-06-19",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0011849782363408,
+              "y_pred": 0.010152378119528294,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-06-26",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0024458721194524,
+              "y_pred": 0.01001387182623148,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-03",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0249921052507013,
+              "y_pred": 0.009835940785706043,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-10",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0514276615003039,
+              "y_pred": 0.009873650036752224,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-17",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0394999023762157,
+              "y_pred": 0.010489276610314846,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-24",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0257030018792133,
+              "y_pred": 0.008793055079877377,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-31",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0433396019211764,
+              "y_pred": 0.010376292280852795,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-08-07",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0038091624285538,
+              "y_pred": 0.01074658241122961,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-03-31",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0022277873170465,
+              "y_pred": 0.007049080915749073,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-04-07",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0159759062177999,
+              "y_pred": 0.0070955101400613785,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-04-14",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0086495141846836,
+              "y_pred": 0.007036014925688505,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-04-21",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0096997121824951,
+              "y_pred": 0.0070909857749938965,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-04-28",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0369651198486216,
+              "y_pred": 0.007196011021733284,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-05-05",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0522576999070876,
+              "y_pred": 0.007186930160969496,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-05-12",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0194748815906681,
+              "y_pred": 0.007231344468891621,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-05-19",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0035935885816416,
+              "y_pred": 0.0072601428255438805,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-05-26",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0119781232753604,
+              "y_pred": 0.006972841918468475,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-02",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0416212999651591,
+              "y_pred": 0.007197677623480558,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-09",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0450392961783622,
+              "y_pred": 0.0071656424552202225,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-16",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0281861410955068,
+              "y_pred": 0.0070523847825825214,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-23",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0154498442347992,
+              "y_pred": 0.007380950264632702,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-30",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0011107088706354,
+              "y_pred": 0.0073454235680401325,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-07-07",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0337077203786064,
+              "y_pred": 0.007182997651398182,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-07-14",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0082527789750503,
+              "y_pred": 0.007329729385674,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-03-08",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0763981301016472,
+              "y_pred": 0.0029231514781713486,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-03-15",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0264883886597944,
+              "y_pred": 0.0024715871550142765,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-03-22",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0057576243839511,
+              "y_pred": 0.0025547014083713293,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-03-29",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0371149118042977,
+              "y_pred": 0.0034304074943065643,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-04-05",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0094922791124025,
+              "y_pred": 0.0033424426801502705,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-04-12",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0250919549445727,
+              "y_pred": 0.003283028956502676,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-04-19",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0021583795936732,
+              "y_pred": 0.003197572659701109,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-04-26",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0364659534579392,
+              "y_pred": 0.0031572366133332253,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-03",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0652215199012802,
+              "y_pred": 0.0029487437568604946,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-10",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0414849836912966,
+              "y_pred": 0.002977132797241211,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-17",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0530688295976332,
+              "y_pred": 0.0021591857075691223,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-24",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0217913474758941,
+              "y_pred": 0.0013672588393092155,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-31",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0861369892562644,
+              "y_pred": 0.0005994042730890214,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-06-07",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0136211563830126,
+              "y_pred": 8.433533366769552e-05,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-06-14",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0313372301223713,
+              "y_pred": 0.0003233529278077185,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-06-21",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0043264176063623,
+              "y_pred": 0.0019525056704878807,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-02-12",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0406294925965657,
+              "y_pred": 0.013510103337466717,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-02-19",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0662969943796941,
+              "y_pred": 0.013730937615036964,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-02-26",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0013194552700008,
+              "y_pred": 0.013578411191701889,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-03-05",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.003211801037772,
+              "y_pred": 0.013270498253405094,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-03-12",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0085930476446757,
+              "y_pred": 0.01226869784295559,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-03-19",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0101675691611897,
+              "y_pred": 0.01222543977200985,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-03-26",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0147677322976185,
+              "y_pred": 0.012439440004527569,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-02",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0813006647942569,
+              "y_pred": 0.012527537532150745,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-09",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0087220770095062,
+              "y_pred": 0.012824798002839088,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-16",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.001192642782565,
+              "y_pred": 0.013025534339249134,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-23",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0212921023867285,
+              "y_pred": 0.014392859302461147,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-30",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0078265853412702,
+              "y_pred": 0.01448099035769701,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-05-07",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0211966472669479,
+              "y_pred": 0.014145190827548504,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-05-14",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0158493155555861,
+              "y_pred": 0.01354463305324316,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-05-21",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0065375485334945,
+              "y_pred": 0.013197269290685654,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-05-28",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0102722231145024,
+              "y_pred": 0.012844172306358814,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-01-20",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0584610141349311,
+              "y_pred": -0.0022005331702530384,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-01-27",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0587267502064532,
+              "y_pred": -0.0015130017418414354,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-02-03",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0210966247409186,
+              "y_pred": -0.0013262610882520676,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-02-10",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0101979348648362,
+              "y_pred": -0.0006641915533691645,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-02-17",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0382824790448683,
+              "y_pred": 2.822175156325102e-05,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-02-24",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0294455600425904,
+              "y_pred": -0.0005283625796437263,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-03",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0167514484371753,
+              "y_pred": -0.000545965158380568,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-10",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0437708003170604,
+              "y_pred": -0.0016230044420808554,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-17",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0338712255471695,
+              "y_pred": -0.0013182051479816437,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-24",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0290170538630265,
+              "y_pred": -0.0018865272868424654,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-31",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0014552622887589,
+              "y_pred": -0.0014418106293305755,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-04-07",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0033402755383862,
+              "y_pred": -0.0010169721208512783,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-04-14",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0011501707108803,
+              "y_pred": -0.0006920867599546909,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-04-21",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0282387654815488,
+              "y_pred": -0.0009039920405484736,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-04-28",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.022925767980263,
+              "y_pred": -0.0010943419765681028,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-05-05",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0043862327138547,
+              "y_pred": -0.0014877215726301074,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2024-12-27",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0478501360880225,
+              "y_pred": 0.007976488210260868,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-03",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0267503782436558,
+              "y_pred": 0.008477174676954746,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-10",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0290056964429973,
+              "y_pred": 0.00956239178776741,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-17",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0313070944291529,
+              "y_pred": 0.008955515921115875,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-24",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0593410049008018,
+              "y_pred": 0.008597642183303833,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-31",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0354661056679828,
+              "y_pred": 0.008425040170550346,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-02-07",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0757322296259801,
+              "y_pred": 0.005980088375508785,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-02-14",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0038838943120689,
+              "y_pred": 0.008322658948600292,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-02-21",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0151089629338428,
+              "y_pred": 0.006128593347966671,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-02-28",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0114537544965654,
+              "y_pred": 0.008085701614618301,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-03-07",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.1069980301363916,
+              "y_pred": 0.008831623010337353,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-03-14",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0223898388114969,
+              "y_pred": 0.008619903586804867,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-03-21",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0016951572938146,
+              "y_pred": 0.010736298747360706,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-03-28",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.1354749660283739,
+              "y_pred": 0.007934069260954857,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-04-04",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0518631426025522,
+              "y_pred": 0.007766499649733305,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-04-11",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0059046101307639,
+              "y_pred": 0.010960061103105545,
+              "model_family": "lstm_regressor",
+              "method_id": "arxiv_2209_02407"
+            }
+          ]
+        }
+      },
+      {
+        "method_id": "arxiv_2310_16855",
+        "model_family": "random_forest_regressor",
+        "metrics": {
+          "mae": 0.0326516577763457,
+          "rmse": 0.041490816446405496,
+          "r2": -0.21873504913187136,
+          "directional_accuracy": 0.484375
+        },
+        "prediction_count": 128,
+        "prediction_artifact": {
+          "schema_version": "prediction_artifact_v1",
+          "task_id": "aapl_weekly_next_return_12lag_v1",
+          "task_fingerprint": "8e4a283b33c57761",
+          "method_id": "arxiv_2310_16855",
+          "model_family": "random_forest_regressor",
+          "adapter_protocol": {
+            "input_columns": [
+              "sequence_lag_12",
+              "sequence_lag_11",
+              "sequence_lag_10",
+              "sequence_lag_9",
+              "sequence_lag_8",
+              "sequence_lag_7",
+              "sequence_lag_6",
+              "sequence_lag_5",
+              "sequence_lag_4",
+              "sequence_lag_3",
+              "sequence_lag_2",
+              "sequence_lag_1"
+            ],
+            "representation": "tabular"
+          },
+          "rows": [
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-06-10",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0173060968656179,
+              "y_pred": 0.016329394323163406,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-06-17",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0190158506704185,
+              "y_pred": 0.015090720429341514,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-06-24",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.051815274658197,
+              "y_pred": 0.009077718178810996,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-01",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.047923289770503,
+              "y_pred": -0.004725738485110724,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-08",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0144833849888563,
+              "y_pred": 0.0009785933488597888,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-15",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0777707520219466,
+              "y_pred": 0.016243342098955373,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-22",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0071699705107554,
+              "y_pred": 0.037183763034327806,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-07-29",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0431778540280775,
+              "y_pred": -0.027061248834199615,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-08-05",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.009019873343355,
+              "y_pred": 0.03891717074501789,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-08-12",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.055598094671989,
+              "y_pred": 0.0007885699739484234,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-08-19",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0773813198897959,
+              "y_pred": 0.011982822697943605,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-08-26",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0248453230225037,
+              "y_pred": 0.005602576314845278,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-09-02",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0091703050445919,
+              "y_pred": 0.001085235347258684,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-09-09",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.0609828492646344,
+              "y_pred": 0.038996022247200356,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-09-16",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": 0.009488430993229,
+              "y_pred": -0.00784969914175669,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2011-09-23",
+              "horizon": "next_return",
+              "fold_id": 0,
+              "y_true": -0.0568391096419107,
+              "y_pred": -0.002379878391282339,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-05-17",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0274430530931948,
+              "y_pred": -0.0031121225079237917,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-05-24",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0102887459882767,
+              "y_pred": -0.0027737134373238452,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-05-31",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0176105846170404,
+              "y_pred": -0.004539229729855371,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-06-07",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0266178862798702,
+              "y_pred": 0.04016478279367089,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-06-14",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0384836324303312,
+              "y_pred": -0.025962533230911505,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-06-21",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.041039936028258,
+              "y_pred": -0.03490691936180779,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-06-28",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0526819866115388,
+              "y_pred": -0.016270190738905545,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-07-05",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.021776379528966,
+              "y_pred": -0.017181780034144726,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-07-12",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0036574899387583,
+              "y_pred": 0.004223359975207689,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-07-19",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0377456032561345,
+              "y_pred": -0.016781274819917678,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-07-26",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0488670865741009,
+              "y_pred": 0.0004398800072779041,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-02",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0110030825811744,
+              "y_pred": -0.03270796900689492,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-09",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.1053584953307531,
+              "y_pred": 0.021737715175431306,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-16",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0026076730647319,
+              "y_pred": 0.02927129561633488,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-23",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": -0.0275438628170899,
+              "y_pred": -0.020137490385641478,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2013-08-30",
+              "horizon": "next_return",
+              "fold_id": 1,
+              "y_true": 0.0225766318890354,
+              "y_pred": -0.004934537521123424,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-04-24",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0102088084178959,
+              "y_pred": 0.02659462570689518,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-01",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0061801791100744,
+              "y_pred": -0.0015776871964149307,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-08",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0090111275228332,
+              "y_pred": 0.03223419364200712,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-15",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0292769466960178,
+              "y_pred": 0.006646818795119051,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-22",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0170513530688545,
+              "y_pred": 0.005481298156072138,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-05-29",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0125116202300452,
+              "y_pred": -0.0016882271591642222,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-06-05",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0115040483717789,
+              "y_pred": 0.005788644247468927,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-06-12",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0044822767932989,
+              "y_pred": 0.0012584483159428874,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-06-19",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0011849782363408,
+              "y_pred": -0.0007078186788105637,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-06-26",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0024458721194524,
+              "y_pred": 0.0324230451590176,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-03",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0249921052507013,
+              "y_pred": 0.014845155817991304,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-10",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0514276615003039,
+              "y_pred": 0.002879302377776513,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-17",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0394999023762157,
+              "y_pred": 0.020897918243531894,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-24",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0257030018792133,
+              "y_pred": 0.009974803764460156,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-07-31",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": -0.0433396019211764,
+              "y_pred": 0.016492125150440334,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2015-08-07",
+              "horizon": "next_return",
+              "fold_id": 2,
+              "y_true": 0.0038091624285538,
+              "y_pred": 0.017159815439566885,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-03-31",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0022277873170465,
+              "y_pred": 0.010497493597634303,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-04-07",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0159759062177999,
+              "y_pred": 0.017738236866523798,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-04-14",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0086495141846836,
+              "y_pred": 0.009449452134292052,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-04-21",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0096997121824951,
+              "y_pred": 0.01861179217465512,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-04-28",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0369651198486216,
+              "y_pred": 0.017324855149041078,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-05-05",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0522576999070876,
+              "y_pred": 0.009181359824280737,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-05-12",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0194748815906681,
+              "y_pred": 0.009669270539073585,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-05-19",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0035935885816416,
+              "y_pred": 0.010288267478718586,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-05-26",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0119781232753604,
+              "y_pred": 0.011268581439378311,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-02",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0416212999651591,
+              "y_pred": 0.008015594607148865,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-09",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0450392961783622,
+              "y_pred": 0.004008623688170821,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-16",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0281861410955068,
+              "y_pred": 0.003700297078796935,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-23",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": -0.0154498442347992,
+              "y_pred": 0.016154451673659052,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-06-30",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0011107088706354,
+              "y_pred": 0.012469928331291945,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-07-07",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0337077203786064,
+              "y_pred": 0.033174849830843525,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2017-07-14",
+              "horizon": "next_return",
+              "fold_id": 3,
+              "y_true": 0.0082527789750503,
+              "y_pred": 0.02128238195576867,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-03-08",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0763981301016472,
+              "y_pred": 0.0037496791480793115,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-03-15",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0264883886597944,
+              "y_pred": 0.014299991328530316,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-03-22",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0057576243839511,
+              "y_pred": 0.0031325380720320277,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-03-29",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0371149118042977,
+              "y_pred": 0.009798989781775722,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-04-05",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0094922791124025,
+              "y_pred": 0.008499160733635148,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-04-12",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0250919549445727,
+              "y_pred": -0.004228238281084031,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-04-19",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0021583795936732,
+              "y_pred": -0.008463833287327362,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-04-26",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0364659534579392,
+              "y_pred": -0.007973610640136953,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-03",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0652215199012802,
+              "y_pred": -0.02269754314172443,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-10",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0414849836912966,
+              "y_pred": 0.0148057394913249,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-17",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0530688295976332,
+              "y_pred": -0.00864893273536316,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-24",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0217913474758941,
+              "y_pred": 0.022473339844938083,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-05-31",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0861369892562644,
+              "y_pred": -0.02569342343512489,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-06-07",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0136211563830126,
+              "y_pred": 0.0009912411730082643,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-06-14",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": 0.0313372301223713,
+              "y_pred": -0.0004596114688440872,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2019-06-21",
+              "horizon": "next_return",
+              "fold_id": 4,
+              "y_true": -0.0043264176063623,
+              "y_pred": -0.010377235755628562,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-02-12",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0406294925965657,
+              "y_pred": 0.01319533863038031,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-02-19",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0662969943796941,
+              "y_pred": 0.01434633261373706,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-02-26",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0013194552700008,
+              "y_pred": 0.03434338594467955,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-03-05",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.003211801037772,
+              "y_pred": 0.019071577785274362,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-03-12",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0085930476446757,
+              "y_pred": 0.022032785393296818,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-03-19",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0101675691611897,
+              "y_pred": 0.03943001646761077,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-03-26",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0147677322976185,
+              "y_pred": 0.01288843243169711,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-02",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0813006647942569,
+              "y_pred": 0.0009407475111477527,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-09",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0087220770095062,
+              "y_pred": 0.016214963175215848,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-16",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.001192642782565,
+              "y_pred": 0.027138274855369394,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-23",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0212921023867285,
+              "y_pred": 0.0005509285020612366,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-04-30",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0078265853412702,
+              "y_pred": 0.03631764451205652,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-05-07",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0211966472669479,
+              "y_pred": 0.02236174109397674,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-05-14",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0158493155555861,
+              "y_pred": 0.01329276878204384,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-05-21",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": -0.0065375485334945,
+              "y_pred": 0.009680148613485165,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2021-05-28",
+              "horizon": "next_return",
+              "fold_id": 5,
+              "y_true": 0.0102722231145024,
+              "y_pred": 0.005072509711007808,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-01-20",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0584610141349311,
+              "y_pred": 0.0013876293133324902,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-01-27",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0587267502064532,
+              "y_pred": -0.006627145577526909,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-02-03",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0210966247409186,
+              "y_pred": -0.010903134870022414,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-02-10",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0101979348648362,
+              "y_pred": -0.0036909297044520175,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-02-17",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0382824790448683,
+              "y_pred": 0.0005040346263517264,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-02-24",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0294455600425904,
+              "y_pred": -0.01551377413684735,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-03",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0167514484371753,
+              "y_pred": -0.006918786965617143,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-10",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0437708003170604,
+              "y_pred": -0.02478725754903508,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-17",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0338712255471695,
+              "y_pred": -0.010129733180074178,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-24",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0290170538630265,
+              "y_pred": -0.01457637205256424,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-03-31",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0014552622887589,
+              "y_pred": -0.003378258135272298,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-04-07",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0033402755383862,
+              "y_pred": -0.0037404095363011486,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-04-14",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0011501707108803,
+              "y_pred": -0.01743270211822829,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-04-21",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.0282387654815488,
+              "y_pred": -0.012597673749017848,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-04-28",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": 0.022925767980263,
+              "y_pred": 0.021486605350406234,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2023-05-05",
+              "horizon": "next_return",
+              "fold_id": 6,
+              "y_true": -0.0043862327138547,
+              "y_pred": -0.022499400821623577,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2024-12-27",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0478501360880225,
+              "y_pred": 0.0035163657486807776,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-03",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0267503782436558,
+              "y_pred": 0.005028182756866043,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-10",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0290056964429973,
+              "y_pred": -0.012428533510426472,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-17",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0313070944291529,
+              "y_pred": -0.00020702834406439974,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-24",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0593410049008018,
+              "y_pred": 0.0002599909920276172,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-01-31",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0354661056679828,
+              "y_pred": -0.004424697295055666,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-02-07",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0757322296259801,
+              "y_pred": 0.00035309461144284306,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-02-14",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0038838943120689,
+              "y_pred": -0.0034598056427269245,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-02-21",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0151089629338428,
+              "y_pred": 0.008864426482181526,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-02-28",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0114537544965654,
+              "y_pred": 0.0030690291055453876,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-03-07",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.1069980301363916,
+              "y_pred": -0.002222369681705406,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-03-14",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0223898388114969,
+              "y_pred": -0.005897825294438057,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-03-21",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0016951572938146,
+              "y_pred": 0.02178629958632818,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-03-28",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.1354749660283739,
+              "y_pred": 0.03186168771605916,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-04-04",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": 0.0518631426025522,
+              "y_pred": 0.0027735798517094234,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            },
+            {
+              "entity_id": "AAPL",
+              "timestamp": "2025-04-11",
+              "horizon": "next_return",
+              "fold_id": 7,
+              "y_true": -0.0059046101307639,
+              "y_pred": 0.036175799128324755,
+              "model_family": "random_forest_regressor",
+              "method_id": "arxiv_2310_16855"
+            }
+          ]
+        }
+      }
+    ],
+    "best_method_id": "arxiv_2209_02407",
+    "report_path": "projects\\finance_agent\\reports\\benchmark_aapl_weekly_next_return_12lag_v1_8e4a283b33c57761.json"
+  }
+}

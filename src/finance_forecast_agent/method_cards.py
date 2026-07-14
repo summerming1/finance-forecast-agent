@@ -7,7 +7,7 @@ from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
-from .method_card_quality import apply_quality_gate
+from .method_card_quality import apply_quality_gate, is_unknown
 from .model_registry import canonical_model_families
 from .protocol_normalizer import normalize_evaluation_protocol, normalize_frequency, normalize_horizon
 from .replay_llm import ReplayLLM
@@ -67,6 +67,12 @@ class MethodCard:
     evaluation_protocol_description: str = "unknown"
     frequency_type: str = "unknown"
     horizon_type: str = "unknown"
+    experiment_type: str = "forecast_only"
+    preprocessing_protocol: str = "unknown"
+    hyperparameters: dict[str, Any] = field(default_factory=dict)
+    required_start_date: str = "unknown"
+    required_end_date: str = "unknown"
+    schema_version: str = "method_card_v2"
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -129,11 +135,17 @@ def method_card_prompt(document: PaperDocument) -> dict[str, Any]:
                 "metrics",
                 "cost_assumptions",
                 "reported_results",
+                "experiment_type",
+                "preprocessing_protocol",
+                "hyperparameters",
+                "required_start_date",
+                "required_end_date",
                 "strict_requirements",
                 "unknowns",
                 "evidence_spans",
                 "extraction_metadata",
                 "approval_required",
+                "schema_version",
             ],
             "rule": (
                 "Return one JSON object. Use unknowns instead of guessing. Preserve quoted evidence spans. "
@@ -218,6 +230,7 @@ def validate_method_card(card: MethodCard) -> None:
 
 def _normalize_method_card_payload(payload: dict[str, Any]) -> dict[str, Any]:
     data = dict(payload)
+    source_schema_version = str(data.get("schema_version") or "method_card_v1")
     defaults: dict[str, Any] = {
         "method_id": f"method_{_slug(str(data.get('paper_id') or data.get('title') or 'unknown_paper'))}",
         "paper_id": _slug(str(data.get("paper_id") or data.get("title") or "unknown_paper")),
@@ -243,6 +256,12 @@ def _normalize_method_card_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "evidence_spans": [],
         "extraction_metadata": {},
         "approval_required": False,
+        "experiment_type": "forecast_only",
+        "preprocessing_protocol": "unknown",
+        "hyperparameters": {},
+        "required_start_date": "unknown",
+        "required_end_date": "unknown",
+        "schema_version": "method_card_v2",
     }
     filled_defaults: list[str] = []
     for key, value in defaults.items():
@@ -277,6 +296,20 @@ def _normalize_method_card_payload(payload: dict[str, Any]) -> dict[str, Any]:
         data["reported_results"] = {"raw": data.get("reported_results")}
     if not isinstance(data.get("extraction_metadata"), dict):
         data["extraction_metadata"] = {"raw": data.get("extraction_metadata")}
+    metadata = data["extraction_metadata"]
+    if is_unknown(data.get("preprocessing_protocol")):
+        data["preprocessing_protocol"] = str(metadata.get("preprocessing_protocol") or "unknown")
+    if not data.get("hyperparameters") and isinstance(metadata.get("hyperparameters"), dict):
+        data["hyperparameters"] = dict(metadata["hyperparameters"])
+    data["experiment_type"] = str(
+        payload.get("experiment_type") or metadata.get("experiment_type") or "forecast_only"
+    )
+    for field_name in ("required_start_date", "required_end_date"):
+        if is_unknown(data.get(field_name)):
+            data[field_name] = str(metadata.get(field_name) or "unknown")
+    data["schema_version"] = "method_card_v2"
+    if source_schema_version != "method_card_v2":
+        metadata.setdefault("migrated_from_schema_version", source_schema_version)
     if original_paper_id and original_paper_id != data["paper_id"]:
         data["extraction_metadata"]["raw_paper_id"] = original_paper_id
     if filled_defaults:
@@ -339,7 +372,9 @@ def _canonical_metrics(values: list[str]) -> list[str]:
     joined = " ".join(values).lower()
     rules = [
         ("mae", ["mae", "mean absolute"]),
+        ("mse", ["mse", "mean squared"]),
         ("rmse", ["rmse", "root mean"]),
+        ("f1", ["f1", "f-score"]),
         ("r2", ["r-squared", "r2", "r^2", "xs-r2"]),
         ("directional_accuracy", ["accuracy", "direction", "hit rate"]),
         ("net_return", ["return", "portfolio", "trading"]),
@@ -349,10 +384,12 @@ def _canonical_metrics(values: list[str]) -> list[str]:
     for metric, tokens in rules:
         if any(token in joined for token in tokens) and metric not in out:
             out.append(metric)
-    for metric in ["mae", "rmse", "directional_accuracy", "net_return"]:
-        if metric not in out:
-            out.append(metric)
-    return out
+    return out or [str(value).strip().lower().replace(" ", "_") for value in values if not is_unknown(value)]
+
+
+def _requires_original_dataset(card: MethodCard) -> bool:
+    text = " ".join([*card.strict_requirements, *card.data_requirements]).lower()
+    return any(token in text for token in ("original dataset", "same dataset", "licensed mirror", "paper data"))
 
 
 def method_card_to_paper_spec(card: MethodCard) -> PaperSpecCard:
@@ -372,13 +409,20 @@ def method_card_to_paper_spec(card: MethodCard) -> PaperSpecCard:
         required_metrics=card.metrics,
         required_split=protocol.protocol_type,
         min_rows=_infer_min_rows(card),
-        original_dataset_required=True,
+        original_dataset_required=_requires_original_dataset(card),
         exact_model_required=any(model in {"lstm_regressor", "transformer_regressor", "ga_lstm_regressor"} for model in card.model_families),
         notes=(
             "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. "
             f"evaluation_protocol_description={card.evaluation_protocol_description or card.evaluation_protocol}"
         ),
         evidence_spans=[span.to_dict() for span in card.evidence_spans],
+        experiment_type=card.experiment_type,
+        preprocessing_protocol=card.preprocessing_protocol,
+        training_protocol=card.training_protocol,
+        cost_assumptions=card.cost_assumptions,
+        strict_requirements=card.strict_requirements,
+        required_start_date=card.required_start_date,
+        required_end_date=card.required_end_date,
     )
 
 

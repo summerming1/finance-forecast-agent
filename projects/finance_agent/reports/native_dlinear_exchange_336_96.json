@@ -1,0 +1,89 @@
+{
+  "run_mode": "native_reproduction",
+  "paper_id": "arxiv_2205_13504",
+  "claim_id": "dlinear_exchange_rate_336_96",
+  "dataset": {
+    "path": "projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.txt",
+    "sha256": "0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f",
+    "rows": 7588,
+    "channels": 8,
+    "source": "official LTSF Exchange-Rate benchmark file"
+  },
+  "protocol": {
+    "seq_len": 336,
+    "pred_len": 96,
+    "train_ratio": 0.7,
+    "test_ratio": 0.2,
+    "batch_size": 8,
+    "learning_rate": 0.0005,
+    "train_epochs": 10,
+    "patience": 3,
+    "seed": 2021,
+    "reported_mse": 0.081,
+    "reported_mae": 0.203,
+    "result_tolerance": 0.01,
+    "expected_dataset_sha256": "0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f"
+  },
+  "protocol_fidelity": {
+    "data_split": "matched",
+    "scaling": "matched",
+    "model_architecture": "matched",
+    "optimizer": "matched",
+    "seed": "matched",
+    "strict_reproduction_allowed": true
+  },
+  "metrics": {
+    "mse": 0.08107952773571014,
+    "mae": 0.20609062910079956,
+    "rmse": 0.28474467112785473
+  },
+  "reported_metrics": {
+    "mse": 0.081,
+    "mae": 0.203
+  },
+  "result_reproduced_within_tolerance": true,
+  "training_history": [
+    {
+      "epoch": 1.0,
+      "train_mse": 0.16302004971342987,
+      "validation_mse": 0.18619638277464604
+    },
+    {
+      "epoch": 2.0,
+      "train_mse": 0.1261432792502837,
+      "validation_mse": 0.3195153853620391
+    },
+    {
+      "epoch": 3.0,
+      "train_mse": 0.11956781980688455,
+      "validation_mse": 0.16744334690542106
+    },
+    {
+      "epoch": 4.0,
+      "train_mse": 0.11747181247003743,
+      "validation_mse": 0.1630061933075089
+    },
+    {
+      "epoch": 5.0,
+      "train_mse": 0.11605507272799484,
+      "validation_mse": 0.1892247162310474
+    },
+    {
+      "epoch": 6.0,
+      "train_mse": 0.11562277597115665,
+      "validation_mse": 0.16344611705785775
+    },
+    {
+      "epoch": 7.0,
+      "train_mse": 0.11538840007097995,
+      "validation_mse": 0.17186573910785008
+    }
+  ],
+  "report_path": "projects\\finance_agent\\reports\\native_dlinear_exchange_336_96.json",
+  "governance": {
+    "methodcard_approved": true,
+    "reproduction_plan_hash": "c618653297e0dbae",
+    "reproduction_plan_strict_ready": true
+  },
+  "complete_reproduction_allowed": true
+}

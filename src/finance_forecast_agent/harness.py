@@ -13,6 +13,7 @@ from .data import dataset_card_from_frame, load_or_create_us_equity_dataset
 from .evaluation import CostModel, cost_scenarios, evaluate_sign_strategy
 from .model_registry import fallback_implemented_model, model_support
 from .models import make_model
+from .p1_protocol import ReproductionPlan
 from .papers import built_in_paper_specs
 from .registry import PaperDatasetRegistry
 from .replay_llm import ReplayLLM
@@ -61,21 +62,52 @@ def train_evaluate(df, manifest) -> dict[str, Any]:
     return {'status': 'success', 'metrics': metrics, 'cost_scenarios': cost_scenarios(actual, preds), 'prediction_count': len(preds)}
 
 
-def audit(paper, comp, candidate: CandidateSpec, result) -> ReproductionAudit:
+def audit(
+    paper,
+    comp,
+    candidate: CandidateSpec,
+    result,
+    reproduction_plan: ReproductionPlan | None = None,
+) -> ReproductionAudit:
     blockers = list(comp.blockers)
     warnings = list(comp.warnings)
     if candidate.proxy_used:
         blockers.append('proxy model used')
     support = model_support(candidate.model_family)
-    if not support.implemented:
-        blockers.append('unsupported model adapter: ' + candidate.model_family)
+    if not support.implemented or support.requires_adapter:
+        blockers.append('general harness adapter unavailable: ' + candidate.model_family)
     if candidate.model_family not in paper.required_model_families:
-        warnings.append('candidate model differs from paper protocol')
+        blockers.append('candidate model differs from paper protocol')
+    if candidate.split_method != paper.required_split:
+        blockers.append('candidate split differs from paper protocol')
+    missing_metrics = sorted(set(paper.required_metrics) - set(result.get('metrics', {})))
+    if missing_metrics:
+        blockers.append('required metrics were not produced: ' + ', '.join(missing_metrics))
+    if paper.experiment_type in {'signal_backtest', 'portfolio_rl'} and paper.cost_assumptions in {
+        '',
+        'unknown',
+        'not specified',
+    }:
+        blockers.append('trading experiment has no paper cost assumptions')
+    if reproduction_plan is None:
+        blockers.append('no structured ReproductionPlan was attached')
+    elif not reproduction_plan.execution_ready:
+        blockers.append('ReproductionPlan is not execution-ready')
+    elif not reproduction_plan.strict_ready:
+        blockers.append('ReproductionPlan contains non-paper assumptions')
     strict = comp.strict_allowed and not candidate.proxy_used and not blockers
     return ReproductionAudit(paper.paper_id, candidate.candidate_id, 'strict_reproduction' if strict else comp.proposed_mode, strict, candidate.proxy_used, comp.comparability_score, blockers, warnings, candidate.candidate_id)
 
 
-def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4, max_papers: int | None = None, paper_specs: list[PaperSpecCard] | None = None, report_name: str = 'finance_agent_report.json') -> dict[str, Any]:
+def run_harness(
+    project_dir: Path,
+    *,
+    max_candidates_per_paper: int = 4,
+    max_papers: int | None = None,
+    paper_specs: list[PaperSpecCard] | None = None,
+    report_name: str = 'finance_agent_report.json',
+    reproduction_plans: dict[str, ReproductionPlan] | None = None,
+) -> dict[str, Any]:
     project_dir.mkdir(parents=True, exist_ok=True)
     data_path = project_dir / 'data' / 'us_equity_plotly_weekly.csv'
     df = load_or_create_us_equity_dataset(data_path)
@@ -90,28 +122,45 @@ def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4, max_pap
     registry = PaperDatasetRegistry(project_dir / 'registry' / 'paper_dataset_registry.json')
     reports = []
     for paper in selected_papers:
+        plan = (reproduction_plans or {}).get(paper.paper_id)
         registry.register(paper.paper_id, {'paper_url': paper.paper_url, 'dataset_id': dataset.dataset_id, 'strict_dataset_available': False, 'local_substitute': dataset.source_name, 'mode': 'exploratory_real_data_reproduction'})
         comp = compare_paper_and_dataset(paper, dataset, split_method='purged_walk_forward')
         candidates = load_candidates(llm, paper.paper_id)[:max_candidates_per_paper]
         candidate_reports = []
         for cand in candidates:
-            contract = compile_contract(cand, paper_id=paper.paper_id, dataset=dataset, mode=comp.proposed_mode)
+            contract = compile_contract(
+                cand,
+                paper_id=paper.paper_id,
+                dataset=dataset,
+                mode=comp.proposed_mode,
+                reproduction_plan=plan,
+            )
             manifest = manifest_from_contract(contract, dataset=dataset)
-            if not model_support(cand.model_family).implemented:
+            support = model_support(cand.model_family)
+            if not support.implemented or support.requires_adapter:
                 result = {
                     'status': 'blocked_unsupported_model',
                     'metrics': {'mae': 0.0, 'rmse': 0.0, 'r2': 0.0, 'directional_accuracy': 0.0, 'net_return': 0.0, 'gross_return': 0.0, 'cost_paid': 0.0, 'turnover': 0.0, 'buy_hold_return': 0.0, 'excess_return': 0.0, 'sharpe': 0.0},
                     'cost_scenarios': {},
                     'prediction_count': 0,
-                    'blocked_reason': 'unsupported model adapter: ' + cand.model_family,
+                    'blocked_reason': 'general harness adapter unavailable: ' + cand.model_family,
                 }
             else:
                 result = train_evaluate(df, manifest)
-            audit_report = audit(paper, comp, cand, result)
+            audit_report = audit(paper, comp, cand, result, plan)
             tracking = tracker.log_run(cand.candidate_id, params={'paper_id': paper.paper_id, 'model_family': cand.model_family, 'contract_hash': contract.contract_hash}, metrics=result['metrics'], artifacts={'manifest': manifest.to_dict(), 'audit': audit_report.to_dict()})
             candidate_reports.append({'candidate': cand.to_dict(), 'contract': contract.to_dict(), 'manifest': manifest.to_dict(), 'result': result, 'audit': audit_report.to_dict(), 'tracking': tracking})
         best = max(candidate_reports, key=lambda r: r['result']['metrics']['net_return'])
-        reports.append({'paper_spec': paper.to_dict(), 'dataset_card': dataset.to_dict(), 'comparability_report': comp.to_dict(), 'best_candidate_id': best['candidate']['candidate_id'], 'candidate_reports': candidate_reports})
+        reports.append(
+            {
+                'paper_spec': paper.to_dict(),
+                'reproduction_plan': plan.to_dict() if plan else None,
+                'dataset_card': dataset.to_dict(),
+                'comparability_report': comp.to_dict(),
+                'best_candidate_id': best['candidate']['candidate_id'],
+                'candidate_reports': candidate_reports,
+            }
+        )
     payload = {'project_name': 'finance-forecast-agent', 'llm_live_api_used': False, 'dataset_card': dataset.to_dict(), 'dvc': dvc_info, 'paper_dataset_registry': registry.load_all(), 'reports': reports}
     out = project_dir / 'reports' / report_name
     out.parent.mkdir(parents=True, exist_ok=True)

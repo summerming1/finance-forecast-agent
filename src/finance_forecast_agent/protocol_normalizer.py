@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 SUPPORTED_SPLIT_TYPES = {"purged_walk_forward", "rolling_origin"}
@@ -55,6 +56,11 @@ def normalize_horizon(value: object) -> str:
     text = str(value or "").strip().lower()
     if not text or text == "unknown":
         return "unknown"
+    count_match = re.search(r"\b(\d+)\s*[- ]?(trading\s+)?(day|days|week|weeks|month|months|step|steps)\b", text)
+    if count_match and int(count_match.group(1)) > 1:
+        count = int(count_match.group(1))
+        unit = count_match.group(3).rstrip("s")
+        return f"{count}_{unit}"
     if "intraday" in text:
         return "intraday_direction"
     if "day" in text or "trading day" in text or "1d" in text:

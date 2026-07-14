@@ -27,6 +27,13 @@ class PaperSpecCard:
     exact_model_required: bool = False
     notes: str = ''
     evidence_spans: list[dict[str, str]] = field(default_factory=list)
+    experiment_type: str = 'forecast_only'
+    preprocessing_protocol: str = 'unknown'
+    training_protocol: str = 'unknown'
+    cost_assumptions: str = 'not_applicable'
+    strict_requirements: list[str] = field(default_factory=list)
+    required_start_date: str = 'unknown'
+    required_end_date: str = 'unknown'
     def to_dict(self) -> dict[str, Any]: return asdict(self)
 
 @dataclass(frozen=True)

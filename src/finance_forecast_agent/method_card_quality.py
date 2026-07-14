@@ -43,6 +43,8 @@ def is_unknown(value: object) -> bool:
         return value.strip().lower() in UNKNOWN_VALUES
     if isinstance(value, list):
         return not value or all(is_unknown(item) for item in value)
+    if isinstance(value, dict):
+        return not value or all(is_unknown(item) for item in value.values())
     return False
 
 
@@ -68,9 +70,34 @@ def assess_method_card(card) -> MethodCardQualityReport:
     unsupported = unsupported_model_families(card.model_families)
     if unsupported:
         warnings.append("unsupported model adapters required: " + ", ".join(unsupported))
-    deductions = 0.12 * len(critical_missing) + 0.15 * len(type_errors) + 0.08 * len(unsupported) + 0.03 * len(warnings)
+    evidence_spans = list(getattr(card, "evidence_spans", []) or [])
+    unknown_evidence_sections = sum(
+        1 for span in evidence_spans if is_unknown(getattr(span, "section", None))
+    )
+    if unknown_evidence_sections:
+        warnings.append(
+            f"{unknown_evidence_sections}/{len(evidence_spans)} evidence spans have no source section"
+        )
+    evidence_deduction = min(0.15, 0.02 * unknown_evidence_sections)
+    deductions = (
+        0.12 * len(critical_missing)
+        + 0.15 * len(type_errors)
+        + 0.08 * len(unsupported)
+        + 0.03 * len(warnings)
+        + evidence_deduction
+    )
     score = max(0.0, round(1.0 - deductions, 4))
-    approval = bool(card.approval_required or critical_missing or type_errors or unsupported or score < 0.80)
+    all_evidence_sections_unknown = bool(
+        evidence_spans and unknown_evidence_sections == len(evidence_spans)
+    )
+    approval = bool(
+        card.approval_required
+        or critical_missing
+        or type_errors
+        or unsupported
+        or all_evidence_sections_unknown
+        or score < 0.80
+    )
     if type_errors or critical_missing:
         action = "human_review_required_fix_method_card_fields"
     elif unsupported:

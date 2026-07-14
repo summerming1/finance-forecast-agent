@@ -32,6 +32,7 @@ class TorchSeqRegressor:
         self.kind, self.hidden_size, self.epochs, self.lr, self.seed = kind, hidden_size, epochs, lr, seed
         self.model = None
         self.scaler = StandardScaler()
+        self.target_scaler = StandardScaler()
 
     def _build(self, n_features: int):
         torch.manual_seed(self.seed)
@@ -40,11 +41,16 @@ class TorchSeqRegressor:
         return _LSTMRegressor(n_features, self.hidden_size)
 
     def fit(self, X, y):
-        Xs = self.scaler.fit_transform(np.asarray(X, dtype=np.float32))
-        y = np.asarray(y, dtype=np.float32).reshape(-1, 1)
-        xt = torch.tensor(Xs[:, None, :], dtype=torch.float32)
+        raw = np.asarray(X, dtype=np.float32)
+        if raw.ndim == 3:
+            shape = raw.shape
+            Xs = self.scaler.fit_transform(raw.reshape(-1, shape[-1])).reshape(shape)
+        else:
+            Xs = self.scaler.fit_transform(raw)[:, None, :]
+        y = self.target_scaler.fit_transform(np.asarray(y, dtype=np.float32).reshape(-1, 1))
+        xt = torch.tensor(Xs, dtype=torch.float32)
         yt = torch.tensor(y, dtype=torch.float32)
-        self.model = self._build(Xs.shape[1])
+        self.model = self._build(Xs.shape[-1])
         opt = torch.optim.Adam(self.model.parameters(), lr=self.lr)
         loss_fn = torch.nn.MSELoss()
         self.model.train()
@@ -56,11 +62,17 @@ class TorchSeqRegressor:
         return self
 
     def predict(self, X):
-        Xs = self.scaler.transform(np.asarray(X, dtype=np.float32))
-        xt = torch.tensor(Xs[:, None, :], dtype=torch.float32)
+        raw = np.asarray(X, dtype=np.float32)
+        if raw.ndim == 3:
+            shape = raw.shape
+            Xs = self.scaler.transform(raw.reshape(-1, shape[-1])).reshape(shape)
+        else:
+            Xs = self.scaler.transform(raw)[:, None, :]
+        xt = torch.tensor(Xs, dtype=torch.float32)
         self.model.eval()
         with torch.no_grad():
-            return self.model(xt).cpu().numpy().ravel()
+            scaled = self.model(xt).cpu().numpy()
+            return self.target_scaler.inverse_transform(scaled).ravel()
 
 
 if nn is not None:
@@ -92,12 +104,14 @@ def make_model(model_family: str):
     if model_family == 'gradient_boosting_regressor':
         return SklearnWrapper(GradientBoostingRegressor(n_estimators=10, learning_rate=0.05, max_depth=2, random_state=42))
     if model_family == 'lstm_regressor':
-        return TorchSeqRegressor(kind='lstm', hidden_size=12, epochs=1, lr=0.01)
+        return TorchSeqRegressor(kind='lstm', hidden_size=12, epochs=5, lr=0.01)
     if model_family == 'transformer_regressor':
         return TorchSeqRegressor(kind='transformer', hidden_size=12, epochs=1, lr=0.01)
     if model_family == 'ga_lstm_regressor':
         return GALSTMRegressor()
-    return SklearnWrapper(make_pipeline(StandardScaler(), Ridge(alpha=1.0)))
+    if model_family == 'ridge_regression':
+        return SklearnWrapper(make_pipeline(StandardScaler(), Ridge(alpha=1.0)))
+    raise ValueError(f'No general-purpose model adapter is registered for {model_family}')
 
 
 @dataclass

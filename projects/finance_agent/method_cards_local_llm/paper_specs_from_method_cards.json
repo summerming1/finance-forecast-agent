@@ -10,7 +10,7 @@
         "cryptocurrency market"
       ],
       "frequency": "intraday",
-      "horizon": "next_return",
+      "horizon": "50_day",
       "label_definition": "explicit reward function based on portfolio growth; the evaluation score of each asset is discounted by the size of its intentional weight change",
       "required_feature_groups": [
         "price_lag_features",
@@ -21,13 +21,14 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
       ],
       "required_split": "purged_walk_forward",
       "min_rows": 2000,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": true,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
       "evidence_spans": [
@@ -85,7 +86,20 @@
           "quote": "a dedicated Portfolio-Vector Memory (PVM), is introduced to store the network outputs.",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "Online Stochastic Batch Learning (OSBL) scheme; Portfolio-Vector Memory (PVM) stores network outputs inspired by experience replay memory",
+      "cost_assumptions": "commission rate of 0.25%",
+      "strict_requirements": [
+        "Ensemble of Identical Independent Evaluators (EIIE) topology",
+        "Portfolio-Vector Memory (PVM)",
+        "Online Stochastic Batch Learning (OSBL) scheme",
+        "fully exploiting and explicit reward function",
+        "financial-model-free"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     },
     {
       "paper_id": "arxiv_1904_00745",
@@ -108,6 +122,7 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -116,7 +131,7 @@
       ],
       "required_split": "purged_walk_forward",
       "min_rows": 250,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": false,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=out-of-sample",
       "evidence_spans": [
@@ -204,7 +219,16 @@
           "quote": "use the fundamental no-arbitrage condition as criterion function, to construct the most informative test assets with an adversarial approach and to extract the states of the economy from many macroeconomic time series",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "min ω,ht max g,hg t L(ω|ˆg,hg t,ht,It,i), Dropout, adaptive learning rate, ensemble learning",
+      "cost_assumptions": "unknown",
+      "strict_requirements": [
+        "use the fundamental no-arbitrage condition as criterion function, to construct the most informative test assets with an adversarial approach and to extract the states of the economy from many macroeconomic time series"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     },
     {
       "paper_id": "arxiv_2004_10178v2",
@@ -229,13 +253,14 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
       ],
       "required_split": "purged_walk_forward",
       "min_rows": 2000,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": true,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=Out-of-sample backtest over 26 non-overlapping trading periods; on each trading day buy the 10 stocks with highest predicted probability and sell short the 10 with lowest probability, equal monetary weight; benchmark against Krauss et al. (2017) and Fischer & Krauss (2018) single-feature setting",
       "evidence_spans": [
@@ -281,7 +306,18 @@
           "quote": "All experiments were executed in a NVIDIA Tesla V100 with 30 GB memory. The codes and simulations were implemented using Python 3.6.5 with a dependency of TensorFlow 1.14.0 and scikit-learn 0.20.4.",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "Rolling-window scheme following Krauss et al. (2017) & Fischer & Krauss (2018): 4-year window with 1-year stride; each study period split into ~756 days (~3 years) training and ~252 days (~1 year) trading; 26 study periods with non-overlapping trading parts",
+      "cost_assumptions": "Returns reported prior to transaction costs",
+      "strict_requirements": [
+        "Buy 10 stocks with highest probability and sell short 10 stocks with lowest probability each trading day",
+        "Equal monetary weight across long and short positions",
+        "Exclude stocks with zero volume on a given day"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     },
     {
       "paper_id": "arxiv_2108_10826",
@@ -308,13 +344,14 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
       ],
       "required_split": "unknown",
       "min_rows": 500,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": true,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=Training and test data separated: three years training with iterative prediction and yearly model updates; ensemble models fitted from third year onward using past prediction outputs as inputs",
       "evidence_spans": [
@@ -414,7 +451,277 @@
           "quote": "directional prediction",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "Three years of information as training data; after two years of training data input, individual model predicts future observations iteratively, calculates prediction errors and updates model at end of each year; starting from third year, ensemble models fitted using past years' prediction outputs as inputs; training across different stocks simultaneously then fine-tuning on each individual stock; allowing multiple input and output periods for LSTM model",
+      "cost_assumptions": "unknown",
+      "strict_requirements": [
+        "carefully selecting corresponding predictor variables to control the number of input variables",
+        "training the machine learning algorithm across different stocks simultaneously then fine-tuning on each individual stock",
+        "creating an ensemble of models trained with different groups of stocks",
+        "allowing multiple input and output periods for the LSTM model for more recursive training"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
+    },
+    {
+      "paper_id": "arxiv_2205_13504",
+      "title": "Are Transformers Effective for Time Series Forecasting?",
+      "venue_or_source": "AAAI 2023 / arXiv",
+      "paper_url": "https://arxiv.org/abs/2205.13504",
+      "target_asset": "eight exchange-rate series",
+      "asset_universe": [
+        "Australia",
+        "British",
+        "Canada",
+        "Switzerland",
+        "China",
+        "Japan",
+        "New Zealand",
+        "Singapore"
+      ],
+      "frequency": "daily",
+      "horizon": "96_day",
+      "label_definition": "next 96 standardized values for all eight exchange-rate channels",
+      "required_feature_groups": [
+        "cross_asset_features",
+        "sequence_window_features"
+      ],
+      "required_model_families": [
+        "dlinear_forecaster"
+      ],
+      "required_metrics": [
+        "mae",
+        "mse"
+      ],
+      "required_split": "unknown",
+      "min_rows": 250,
+      "original_dataset_required": false,
+      "exact_model_required": false,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=fixed chronological 70/10/20 train-validation-test split with 336-step context overlap",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "target_asset",
+          "quote": "Exchange-Rate is an eight-variate financial time series benchmark.",
+          "summary": "Defines the multivariate target."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "asset_universe",
+          "quote": "The Exchange-Rate dataset contains eight foreign-exchange channels.",
+          "summary": "Defines the channel universe."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "frequency",
+          "quote": "Exchange-Rate has 7,588 timesteps at one-day granularity.",
+          "summary": "Defines sample count and frequency."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "horizon",
+          "quote": "The Exchange benchmark reports prediction length 96.",
+          "summary": "Defines the tested horizon."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "label_definition",
+          "quote": "Long-term forecasting predicts future values of every variate from a historical input sequence.",
+          "summary": "Defines the output label."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "data_requirements",
+          "quote": "Exchange-Rate contains 7,588 daily timesteps and eight variates.",
+          "summary": "Defines the required dataset."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "feature_groups",
+          "quote": "The model receives a multivariate look-back window as input.",
+          "summary": "Defines sequence features."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "model_families",
+          "quote": "DLinear combines seasonal and trend linear projections after decomposition.",
+          "summary": "Defines the model family."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "training_protocol",
+          "quote": "The official exchange script uses input length 336 and prediction length 96.",
+          "summary": "Official repository protocol."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "preprocessing_protocol",
+          "quote": "The official loader standardizes using statistics fitted on the training partition.",
+          "summary": "Defines leakage-safe scaling."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "hyperparameters",
+          "quote": "The official script uses batch 8, learning rate 0.0005, ten epochs and seed 2021.",
+          "summary": "Defines executable hyperparameters."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "evaluation_protocol",
+          "quote": "The official loader applies chronological train, validation and test partitions.",
+          "summary": "Defines evaluation split."
+        },
+        {
+          "source_id": "arxiv_2205.13504",
+          "section": "metrics",
+          "quote": "Mean Squared Error and Mean Absolute Error are the core metrics.",
+          "summary": "Defines evaluation metrics."
+        }
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "StandardScaler fitted on the first 70% training partition and applied to validation/test",
+      "training_protocol": "official LTSF-Linear exchange protocol: sequence length 336, prediction length 96, 70/10/20 chronological split, batch size 8, 10 epochs with patience 3, Adam and MSE loss, seed 2021",
+      "cost_assumptions": "not applicable: forecast-only benchmark",
+      "strict_requirements": [
+        "exact Exchange-Rate benchmark snapshot",
+        "sequence length 336",
+        "prediction length 96",
+        "shared-weight DLinear",
+        "train-only StandardScaler",
+        "official chronological split and seed"
+      ],
+      "required_start_date": "1990-01-01",
+      "required_end_date": "2016-11-10"
+    },
+    {
+      "paper_id": "arxiv_2209_02407",
+      "title": "Predict Stock Prices with ARIMA and LSTM",
+      "venue_or_source": "arXiv",
+      "paper_url": "https://arxiv.org/abs/2209.02407",
+      "target_asset": "daily high price",
+      "asset_universe": [
+        "50 Yahoo Finance listed companies",
+        "Google",
+        "Apple",
+        "Amazon",
+        "Netflix"
+      ],
+      "frequency": "daily",
+      "horizon": "next_return",
+      "label_definition": "next-day unscaled high price from a 60-day history window",
+      "required_feature_groups": [
+        "price_lag_features",
+        "sequence_window_features"
+      ],
+      "required_model_families": [
+        "arima_regressor",
+        "lstm_regressor"
+      ],
+      "required_metrics": [
+        "mae",
+        "mse",
+        "rmse"
+      ],
+      "required_split": "purged_walk_forward",
+      "min_rows": 500,
+      "original_dataset_required": false,
+      "exact_model_required": true,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=fixed out-of-sample calendar split; both models test on 2018",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "target_asset",
+          "quote": "The dataset consists of the highest price on transaction days.",
+          "summary": "Defines the forecast target."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "asset_universe",
+          "quote": "Fifty listed-company stocks from Yahoo Finance are selected.",
+          "summary": "Defines the paper universe."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "frequency",
+          "quote": "Observations are stock highs on transaction days.",
+          "summary": "Defines daily trading frequency."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "horizon",
+          "quote": "Sixty days of data are used to predict the next day.",
+          "summary": "Defines window and horizon."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "label_definition",
+          "quote": "The models predict the next transaction day's high price.",
+          "summary": "Defines the label."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "data_requirements",
+          "quote": "The sample spans 1 January 2010 through 31 December 2018.",
+          "summary": "Defines the sample period."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "feature_groups",
+          "quote": "Each prediction uses a sixty-day historical price sequence.",
+          "summary": "Defines input features."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "model_families",
+          "quote": "The study compares ARIMA and LSTM stock-price forecasts.",
+          "summary": "Defines model families."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "training_protocol",
+          "quote": "LSTM trains on 2010-2015 and validates on 2016-2017.",
+          "summary": "Defines LSTM training windows."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "preprocessing_protocol",
+          "quote": "The LSTM experiment converts sixty-day histories into supervised sequences.",
+          "summary": "Defines sequence preprocessing; scaling details require code confirmation."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "hyperparameters",
+          "quote": "The selected LSTM has three layers, one hundred nodes and dropout 0.1.",
+          "summary": "Defines key hyperparameters."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "evaluation_protocol",
+          "quote": "Both models use calendar year 2018 as the test set.",
+          "summary": "Defines fixed out-of-sample evaluation."
+        },
+        {
+          "source_id": "arxiv_2209.02407",
+          "section": "metrics",
+          "quote": "The study evaluates MAE, MSE and RMSE.",
+          "summary": "Defines evaluation metrics."
+        }
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "60-day supervised sequences; exact scaler behavior not independently verified",
+      "training_protocol": "ARIMA trains on 2016-2017 with order (1,0,1); LSTM trains on 2010-2015, validates on 2016-2017, uses 60-day windows, three 100-unit LSTM layers, dropout 0.1 and Adam",
+      "cost_assumptions": "not applicable: price forecast-only experiment",
+      "strict_requirements": [
+        "same Yahoo Finance high-price snapshot",
+        "same 50-company universe",
+        "same calendar splits",
+        "same 60-day window",
+        "exact ARIMA and LSTM protocols"
+      ],
+      "required_start_date": "2010-01-01",
+      "required_end_date": "2018-12-31"
     },
     {
       "paper_id": "arxiv_2212_01048",
@@ -436,6 +743,7 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -444,7 +752,7 @@
       ],
       "required_split": "rolling_origin",
       "min_rows": 1000,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": false,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=out-of-sample test using rolling and expanding schemes",
       "evidence_spans": [
@@ -454,7 +762,16 @@
           "quote": "",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "partition the large training sample into subsets, apply individual GPRs on all subsets in parallel, and obtain a predictive distribution conditional on the full training data by mixing the predictive distributions over the subsets",
+      "cost_assumptions": "fundamental time complexity of the order O(N^3), where N is the size of the training sample",
+      "strict_requirements": [
+        "gamma-exponential kernel outperformed others in terms of R2_pool"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     },
     {
       "paper_id": "arxiv_2306_03620",
@@ -479,6 +796,7 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -486,7 +804,7 @@
       ],
       "required_split": "rolling_origin",
       "min_rows": 500,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": true,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=rolling window",
       "evidence_spans": [
@@ -496,7 +814,127 @@
           "quote": "",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "cross-validation, hyperparameter optimizing, regularization (dropouts and weight decays), preprocessing",
+      "cost_assumptions": "unknown",
+      "strict_requirements": [
+        "data cleaning, normalization, hyperparameter optimizing, regularization"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
+    },
+    {
+      "paper_id": "arxiv_2310_16855",
+      "title": "Predicting Directional Bias in the Japanese Stock Market with Machine Learning",
+      "venue_or_source": "arXiv",
+      "paper_url": "https://arxiv.org/abs/2310.16855",
+      "target_asset": "Sony daily direction",
+      "asset_universe": [
+        "Sony",
+        "JPX Tokyo Stock Exchange Prediction dataset"
+      ],
+      "frequency": "daily",
+      "horizon": "next_return",
+      "label_definition": "1 when next close exceeds current close, otherwise 0",
+      "required_feature_groups": [
+        "price_lag_features",
+        "liquidity_proxy_features"
+      ],
+      "required_model_families": [
+        "random_forest_regressor"
+      ],
+      "required_metrics": [
+        "f1",
+        "directional_accuracy"
+      ],
+      "required_split": "unknown",
+      "min_rows": 250,
+      "original_dataset_required": false,
+      "exact_model_required": false,
+      "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=paper validation split; exact chronological boundary is not reported clearly",
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "target_asset",
+          "quote": "The assessment filters the JPX dataset to Sony price data.",
+          "summary": "Defines the target asset."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "asset_universe",
+          "quote": "The study uses the JPX Tokyo Stock Exchange Prediction dataset.",
+          "summary": "Defines the source universe."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "frequency",
+          "quote": "The target compares today's close with the following trading day.",
+          "summary": "Defines daily frequency."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "horizon",
+          "quote": "The Next column contains the following trading day's close.",
+          "summary": "Defines the forecast horizon."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "label_definition",
+          "quote": "Target is one for an increase and zero for a decrease.",
+          "summary": "Defines binary direction."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "data_requirements",
+          "quote": "Inputs include Date, Open, High, Low, Close and Volume.",
+          "summary": "Defines required columns."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "feature_groups",
+          "quote": "Open, High, Low, Close and Volume are used as model features.",
+          "summary": "Defines price and liquidity features."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "model_families",
+          "quote": "Logistic regression, decision tree and random forest are compared.",
+          "summary": "Defines model families; this card selects RF."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "training_protocol",
+          "quote": "Random forest uses 250 trees, depth 100 and bootstrap sampling.",
+          "summary": "Defines training protocol."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "evaluation_protocol",
+          "quote": "Validation accuracy compares predictions with true target values.",
+          "summary": "Split boundary remains unresolved."
+        },
+        {
+          "source_id": "arxiv_2310.16855",
+          "section": "metrics",
+          "quote": "Random forest reports accuracy 0.63 and F1 score 0.74.",
+          "summary": "Defines reported results."
+        }
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "construct Next and binary Target from Close; exact missing-value and scaling protocol not reported",
+      "training_protocol": "random forest classifier with 250 trees, five maximum features, depth 100, minimum split 100, bootstrap sampling and out-of-bag diagnostics",
+      "cost_assumptions": "not applicable: direction classification without trading backtest",
+      "strict_requirements": [
+        "same JPX competition snapshot",
+        "same Sony filter",
+        "same target construction",
+        "same classifier hyperparameters",
+        "recover exact split boundary"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     },
     {
       "paper_id": "arxiv_2405_03151",
@@ -519,6 +957,7 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -526,7 +965,7 @@
       ],
       "required_split": "unknown",
       "min_rows": 500,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": true,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=model was evaluated using MSE, MAE and MAPE",
       "evidence_spans": [
@@ -536,7 +975,16 @@
           "quote": "",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "Epoch was set to 100 and run using Python 3.10. LSTM model is first initialized or tuned using genetic algorithm to find a better initial solution. Then, during the training process, the hyperparameters can be continuously tuned to optimize the LSTM network structure according to the genetic algorithm, and the best individuals can be selected for updating in each iteration.",
+      "cost_assumptions": "unknown",
+      "strict_requirements": [
+        "unknown"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     },
     {
       "paper_id": "arxiv_2409_08426",
@@ -558,13 +1006,14 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
       ],
       "required_split": "unknown",
       "min_rows": 500,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": true,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
       "evidence_spans": [
@@ -574,7 +1023,16 @@
           "quote": "",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "Ensemble of Identical Independent Evaluators (EIIE) topology, Portfolio-Vector Memory (PVM), Online Stochastic Batch Learning (OSBL) scheme",
+      "cost_assumptions": "unknown",
+      "strict_requirements": [
+        "financial-model-free reinforcement learning framework"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     },
     {
       "paper_id": "arxiv_2411_05790",
@@ -597,13 +1055,14 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
       ],
       "required_split": "unknown",
       "min_rows": 500,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": true,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=Use test sets to evaluate final model performance and deploy models in real-world applications.",
       "evidence_spans": [
@@ -613,7 +1072,16 @@
           "quote": "",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "Model training using training data sets, adjusting model parameters through backpropagation and optimisers to minimize loss functions. Use validation sets to evaluate model performance and adjust hyperparameters (e.g., learning rate, number of hidden units) to improve model generalisation.",
+      "cost_assumptions": "unknown",
+      "strict_requirements": [
+        "unknown"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     },
     {
       "paper_id": "arxiv_2412_15448",
@@ -635,6 +1103,7 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "r2",
         "directional_accuracy",
@@ -642,7 +1111,7 @@
       ],
       "required_split": "purged_walk_forward",
       "min_rows": 2000,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": false,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
       "evidence_spans": [
@@ -688,7 +1157,16 @@
           "quote": "ML models, such as random forest regression (RFR), support vector regression (SVR), and gradient boosting, have demonstrated improved predictive performance in financial applications",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "unknown",
+      "cost_assumptions": "transaction costs acknowledged; high turnover rates increase trading costs",
+      "strict_requirements": [
+        "unknown"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     },
     {
       "paper_id": "arxiv_2501_17366",
@@ -710,13 +1188,14 @@
       ],
       "required_metrics": [
         "mae",
+        "mse",
         "rmse",
         "directional_accuracy",
         "net_return"
       ],
       "required_split": "unknown",
       "min_rows": 500,
-      "original_dataset_required": true,
+      "original_dataset_required": false,
       "exact_model_required": true,
       "notes": "Generated from MethodCardAgent output. Strict claims still require DatasetCard/Comparability approval. evaluation_protocol_description=Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
       "evidence_spans": [
@@ -762,7 +1241,16 @@
           "quote": "Taking that a step further to patch hyper-parameter tuning and computational complexity that machine learning lacks, we get deep learning models like Long Short-Term Memory (LSTM) networks.",
           "summary": "LLM-provided evidence span."
         }
-      ]
+      ],
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "unknown",
+      "training_protocol": "unknown",
+      "cost_assumptions": "unknown",
+      "strict_requirements": [
+        "unknown"
+      ],
+      "required_start_date": "unknown",
+      "required_end_date": "unknown"
     }
   ]
 }

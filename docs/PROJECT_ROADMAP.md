@@ -13,7 +13,7 @@
 
 ## 当前进展
 
-当前最新实现是 **P0.9 validated**。
+当前最新实现是 **P1.6 validated**；总体 P1 仍在进行中。
 
 已完成：
 
@@ -24,18 +24,22 @@ P0.6  MethodCard 质量门控、协议归一化、模型注册表
 P0.7  Research Control Tower + MethodCard Review
 P0.8  Flow Trace，展示方法卡到执行审计的完整过程
 P0.9  审批状态、Adapter Backlog、Golden 集合、Run Timeline
+P1.0-P1.6  MethodCard v2、ReproductionPlan、双轨评估、PredictionArtifact、ExperimentMemory 和真实验证
 ```
 
-当前已具备进入 P1 的前置基础：
+当前已具备 P1 复现协议和实验记忆基础：
 
 - 方法卡可以抽取、规范化、质量评估和人工审批。
 - 审批状态可以真实限制后续实验执行。
 - 未实现模型会进入 adapter backlog，不会静默代理。
 - 方法卡可以分类为 `us_equity / cross_market / unsupported` Golden 集合。
 - 每次运行会保存 Timeline，能够追踪实验范围、候选执行和审计结果。
-- 前端能够查看 Control Tower、MethodCard Review、Flow Trace、Tasks & Timeline 和 Audit。
+- 前端能够按五步流程完成文献选择、方法审核、复现配置、双轨运行和结果审计。
+- DLinear Exchange-Rate 的具体 claim 已通过真实完整复现。
+- 不同论文方法可以在共享 BenchmarkTask 下生成可比较 PredictionArtifact。
+- ExperimentMemory 已按任务 fingerprint 和运行模式隔离。
 
-尚未完成的 P1 核心是 ExperimentMemory 对候选生成和调度的真实反馈。
+尚未完成的 P1 核心是 ExperimentMemory 对候选生成和调度的真实反馈，以及 Registry 增强和 MethodCard diff/history。
 
 ## P0：可信研究内核
 
@@ -88,6 +92,8 @@ P0.9  审批状态、Adapter Backlog、Golden 集合、Run Timeline
 - Run Timeline 运行历史。
 
 ## P1：研究记忆与数据注册增强
+
+2026-07-14 进度：P1.0-P1.6 的复现协议子路线已完成，包括 MethodCard v2、ReproductionPlan、原生/统一基准双轨、标准预测产物和按任务/模式隔离的 ExperimentMemory。Memory 驱动候选 prior、Registry 增强和 MethodCard diff/history 尚未完成，因此总体 P1 仍为进行中。
 
 - ExperimentMemoryStore 保存候选、运行结果、失败原因、审计状态和上下文。
 - ExperimentMemoryStore 参与 Scheduler prior。

@@ -1,6 +1,6 @@
 # Finance Forecast Agent
 
-A standalone finance-first autonomous ML research harness. It separates paper protocol, local real data, comparability, candidate contracts, execution manifests, time-series validation, transaction-cost evaluation, fixed ReplayLLM advice, PaperDatasetRegistry, DVC/MLflow tracking adapters, reproducibility audits, and P0.5 MethodCard extraction.
+A finance-first automated research harness with MethodCard extraction, evidence-bound ReproductionPlans, native paper reproduction, shared-task benchmarking, standard prediction artifacts, isolated ExperimentMemory, and auditable DVC/MLflow hooks.
 
 ## Quick start
 
@@ -10,20 +10,21 @@ PYTHONPATH=src python scripts/generate_replay_fixtures.py
 PYTHONPATH=src python scripts/generate_methodcard_fixtures.py
 PYTHONPATH=src python scripts/extract_method_cards.py --papers-dir projects/finance_agent/papers/text --out-dir projects/finance_agent/method_cards --write-paper-specs
 PYTHONPATH=src python scripts/run_finance_agent.py
+PYTHONPATH=src python scripts/run_p1_validation.py
 PYTHONPATH=src python -m pytest tests -q
 ```
 
-## P0.5 MethodCardAgent
+## P1.6 validated workflow
 
 The project now supports:
 
 ```text
-PDF / TXT / MD -> PaperTextLoader -> MethodCardAgent -> MethodCard JSON -> PaperSpecCard -> P0 Harness
+PDF / TXT / MD -> MethodCard v2 -> Review -> ReproductionPlan -> Native reproduction or common benchmark -> Audit + ExperimentMemory
 ```
 
 No LLM key is required for tests. `scripts/generate_methodcard_fixtures.py` creates deterministic MethodCard fixtures from the built-in paper catalog. `scripts/extract_method_cards.py` then replays those fixtures and lands MethodCard JSON under `projects/finance_agent/method_cards/`.
 
-See [`docs/METHODCARD_AGENT.md`](docs/METHODCARD_AGENT.md) and [`docs/CODEX_TASKS_P05_METHODCARD.md`](docs/CODEX_TASKS_P05_METHODCARD.md).
+See [`docs/P1_REPRODUCTION_BENCHMARK_MEMORY.md`](docs/P1_REPRODUCTION_BENCHMARK_MEMORY.md) and [`docs/FRONTEND_USER_GUIDE.md`](docs/FRONTEND_USER_GUIDE.md).
 
 ## Environment
 

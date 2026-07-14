@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .p1_protocol import ReproductionPlan
 from .schemas import CandidateSpec, DatasetCard, ExecutionManifest, ResearchContract, ReproductionMode
 
 FEATURE_GROUP_COLUMNS = {
@@ -19,12 +20,29 @@ def select_feature_columns(feature_groups: list[str], available: list[str]) -> l
                 out.append(col)
     return out or [c for c in available if c.startswith('aapl_') and c != 'aapl_close'][:4]
 
-def compile_contract(candidate: CandidateSpec, *, paper_id: str, dataset: DatasetCard, mode: ReproductionMode) -> ResearchContract:
+def compile_contract(
+    candidate: CandidateSpec,
+    *,
+    paper_id: str,
+    dataset: DatasetCard,
+    mode: ReproductionMode,
+    reproduction_plan: ReproductionPlan | None = None,
+) -> ResearchContract:
+    resolutions = reproduction_plan.resolutions if reproduction_plan else {}
+    preprocessing = resolutions.get('preprocessing_protocol')
+    hyperparameters = resolutions.get('hyperparameters')
     return ResearchContract(
         contract_id=f'contract_{candidate.candidate_id}', paper_id=paper_id, dataset_id=dataset.dataset_id, candidate_id=candidate.candidate_id,
         target_spec={'target_asset': dataset.target_asset, 'label_column': 'label', 'label_definition': dataset.label_definition},
-        feature_spec={'feature_groups': candidate.feature_groups},
-        model_spec={'model_family': candidate.model_family, 'proxy_used': candidate.proxy_used},
+        feature_spec={
+            'feature_groups': candidate.feature_groups,
+            'preprocessing_protocol': preprocessing.value if preprocessing and preprocessing.resolved else None,
+        },
+        model_spec={
+            'model_family': candidate.model_family,
+            'proxy_used': candidate.proxy_used,
+            'hyperparameters': hyperparameters.value if hyperparameters and hyperparameters.resolved else {},
+        },
         split_spec={'split_method': candidate.split_method},
         cost_spec=candidate.cost_model,
         baseline_spec={'baselines': ['buy_hold','ridge','random_forest']},

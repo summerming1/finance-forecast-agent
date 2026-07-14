@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import date
+
 from .protocol_normalizer import normalize_evaluation_protocol, normalize_frequency, normalize_horizon
 from .schemas import ComparabilityReport, DatasetCard, PaperSpecCard
 
@@ -36,6 +38,24 @@ def _target_score(paper: PaperSpecCard, dataset: DatasetCard) -> float:
     return 0.0
 
 
+def _period_score(paper: PaperSpecCard, dataset: DatasetCard) -> float:
+    if paper.required_start_date == 'unknown' or paper.required_end_date == 'unknown':
+        return 0.4
+    try:
+        required_start = date.fromisoformat(paper.required_start_date)
+        required_end = date.fromisoformat(paper.required_end_date)
+        actual_start = date.fromisoformat(dataset.start_date)
+        actual_end = date.fromisoformat(dataset.end_date)
+    except ValueError:
+        return 0.0
+    overlap_start = max(required_start, actual_start)
+    overlap_end = min(required_end, actual_end)
+    if overlap_end < overlap_start:
+        return 0.0
+    required_days = max((required_end - required_start).days, 1)
+    return min((overlap_end - overlap_start).days / required_days, 1.0)
+
+
 def compare_paper_and_dataset(paper: PaperSpecCard, dataset: DatasetCard, *, split_method: str) -> ComparabilityReport:
     available_groups = infer_feature_groups(dataset.feature_columns)
     req = set(paper.required_feature_groups)
@@ -57,9 +77,15 @@ def compare_paper_and_dataset(paper: PaperSpecCard, dataset: DatasetCard, *, spl
         'horizon_match': 1.0 if paper_horizon == dataset_horizon else 0.4 if paper_horizon == 'unknown' else 0.0,
         'label_definition_match': 1.0 if paper.label_definition == dataset.label_definition else 0.3,
         'feature_availability_match': len(matched) / max(len(req), 1),
-        'sample_period_overlap': min(dataset.row_count / max(paper.min_rows, 1), 1.0),
+        'sample_size_match': min(dataset.row_count / max(paper.min_rows, 1), 1.0),
+        'sample_period_overlap': _period_score(paper, dataset),
         'evaluation_protocol_match': eval_match,
-        'cost_model_match': 1.0,
+        'source_equivalence': 1.0 if dataset.source_type in {'paper_original', 'licensed_mirror'} else 0.0,
+        'cost_model_match': (
+            1.0
+            if paper.experiment_type == 'forecast_only' or paper.cost_assumptions == 'not_applicable'
+            else 0.0 if paper.cost_assumptions in {'', 'unknown', 'not specified'} else 1.0
+        ),
     }
     score = round(
         0.15 * components['universe_match']
@@ -68,7 +94,8 @@ def compare_paper_and_dataset(paper: PaperSpecCard, dataset: DatasetCard, *, spl
         + 0.15 * components['horizon_match']
         + 0.10 * components['label_definition_match']
         + 0.15 * components['feature_availability_match']
-        + 0.10 * components['sample_period_overlap']
+        + 0.05 * components['sample_size_match']
+        + 0.05 * components['sample_period_overlap']
         + 0.10 * components['evaluation_protocol_match']
         + 0.05 * components['cost_model_match'],
         4,
@@ -81,14 +108,22 @@ def compare_paper_and_dataset(paper: PaperSpecCard, dataset: DatasetCard, *, spl
         blockers.append(f'evaluation protocol differs from paper protocol (paper={paper_protocol.protocol_type}, runtime={runtime_protocol.protocol_type})')
     if components['universe_match'] < 0.8:
         blockers.append('asset universe differs from paper protocol')
+    if components['target_match'] < 0.8:
+        blockers.append('target asset differs from paper protocol')
     if components['frequency_match'] < 1.0:
-        warnings.append(f'frequency differs or is unknown (paper={paper_frequency}, dataset={dataset_frequency})')
+        blockers.append(f'frequency differs or is unknown (paper={paper_frequency}, dataset={dataset_frequency})')
     if components['horizon_match'] < 1.0:
-        warnings.append(f'horizon differs or is unknown (paper={paper_horizon}, dataset={dataset_horizon})')
+        blockers.append(f'horizon differs or is unknown (paper={paper_horizon}, dataset={dataset_horizon})')
+    if components['label_definition_match'] < 1.0:
+        blockers.append('label definition differs from paper protocol')
     if missing:
-        warnings.append('missing feature groups: ' + ', '.join(missing))
+        blockers.append('missing feature groups: ' + ', '.join(missing))
     if dataset.row_count < paper.min_rows:
-        warnings.append(f'row_count={dataset.row_count} below paper min_rows={paper.min_rows}')
+        blockers.append(f'row_count={dataset.row_count} below paper min_rows={paper.min_rows}')
+    if components['sample_period_overlap'] < 1.0:
+        warnings.append('paper sample period is unknown or not fully covered by the dataset')
+    if not dataset.point_in_time_safe:
+        blockers.append('dataset is not point-in-time safe')
     if not dataset.survivorship_bias_free:
         warnings.append('dataset is not explicitly survivorship-bias free')
     strict = not blockers and score >= 0.92

@@ -1,0 +1,298 @@
+{
+  "schema_version": "reproduction_plan_v1",
+  "paper_id": "arxiv_2205_13504",
+  "experiment_type": "forecast_only",
+  "plan_mode": "native_reproduction",
+  "resolutions": {
+    "target_asset": {
+      "status": "specified",
+      "value": "eight exchange-rate series",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "Exchange-Rate is an eight-variate financial time series benchmark."
+      ]
+    },
+    "asset_universe": {
+      "status": "specified",
+      "value": [
+        "Australia",
+        "British",
+        "Canada",
+        "Switzerland",
+        "China",
+        "Japan",
+        "New Zealand",
+        "Singapore"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "The Exchange-Rate dataset contains eight foreign-exchange channels."
+      ]
+    },
+    "frequency": {
+      "status": "specified",
+      "value": "daily",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "Exchange-Rate has 7,588 timesteps at one-day granularity."
+      ]
+    },
+    "horizon": {
+      "status": "specified",
+      "value": "96 days",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "The Exchange benchmark reports prediction length 96."
+      ]
+    },
+    "label_definition": {
+      "status": "specified",
+      "value": "next 96 standardized values for all eight exchange-rate channels",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "Long-term forecasting predicts future values of every variate from a historical input sequence."
+      ]
+    },
+    "data_requirements": {
+      "status": "specified",
+      "value": [
+        "LTSF Exchange-Rate benchmark",
+        "7588 daily observations",
+        "eight variates",
+        "official train-validation-test boundaries"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "Exchange-Rate contains 7,588 daily timesteps and eight variates."
+      ]
+    },
+    "feature_groups": {
+      "status": "specified",
+      "value": [
+        "cross_asset_features",
+        "sequence_window_features"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "The model receives a multivariate look-back window as input."
+      ]
+    },
+    "model_families": {
+      "status": "specified",
+      "value": [
+        "dlinear_forecaster"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "DLinear combines seasonal and trend linear projections after decomposition."
+      ]
+    },
+    "training_protocol": {
+      "status": "specified",
+      "value": "official LTSF-Linear exchange protocol: sequence length 336, prediction length 96, 70/10/20 chronological split, batch size 8, 10 epochs with patience 3, Adam and MSE loss, seed 2021",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "The official exchange script uses input length 336 and prediction length 96."
+      ]
+    },
+    "evaluation_protocol": {
+      "status": "specified",
+      "value": "fixed chronological 70/10/20 train-validation-test split with 336-step context overlap",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "The official loader applies chronological train, validation and test partitions."
+      ]
+    },
+    "metrics": {
+      "status": "specified",
+      "value": [
+        "mae",
+        "mse"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "Mean Squared Error and Mean Absolute Error are the core metrics."
+      ]
+    },
+    "cost_assumptions": {
+      "status": "specified",
+      "value": "not applicable: forecast-only benchmark",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": []
+    },
+    "preprocessing_protocol": {
+      "status": "specified",
+      "value": "StandardScaler fitted on the first 70% training partition and applied to validation/test",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "The official loader standardizes using statistics fitted on the training partition."
+      ]
+    },
+    "hyperparameters": {
+      "status": "specified",
+      "value": {
+        "seq_len": 336,
+        "pred_len": 96,
+        "batch_size": 8,
+        "learning_rate": 0.0005,
+        "train_epochs": 10,
+        "patience": 3,
+        "seed": 2021,
+        "moving_average_kernel": 25,
+        "individual": false
+      },
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "The official script uses batch 8, learning rate 0.0005, ten epochs and seed 2021."
+      ]
+    },
+    "portfolio_formation": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "event_window": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "action_spec": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "rebalance_rule": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "inference_protocol": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "weighting_rule": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "event_definition": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "portfolio_constraints": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "estimation_window": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "backtest_protocol": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "signal_rule": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "reward_spec": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "position_rule": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "state_spec": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    }
+  },
+  "claims": [
+    {
+      "claim_id": "arxiv_2205_13504_primary",
+      "description": "Reproduce the primary reported result for Are Transformers Effective for Time Series Forecasting?",
+      "primary_metrics": [
+        "mse",
+        "mae"
+      ],
+      "reported_values": {
+        "mse": 0.081,
+        "mae": 0.203
+      },
+      "acceptance_tolerance": {}
+    }
+  ],
+  "approved_for_execution": true,
+  "updated_at": "2026-07-14T08:20:26.943259+00:00",
+  "required_fields": [
+    "asset_universe",
+    "data_requirements",
+    "evaluation_protocol",
+    "feature_groups",
+    "frequency",
+    "horizon",
+    "hyperparameters",
+    "label_definition",
+    "metrics",
+    "model_families",
+    "preprocessing_protocol",
+    "target_asset",
+    "training_protocol"
+  ],
+  "unresolved_required_fields": [],
+  "execution_ready": true,
+  "strict_ready": true,
+  "plan_hash": "c618653297e0dbae"
+}

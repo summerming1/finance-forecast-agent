@@ -3,7 +3,7 @@ from __future__ import annotations
 from finance_forecast_agent.method_card_quality import assess_method_card
 from finance_forecast_agent.method_cards import MethodCard, method_card_to_paper_spec
 from finance_forecast_agent.model_registry import canonical_model_families, model_support
-from finance_forecast_agent.protocol_normalizer import normalize_evaluation_protocol
+from finance_forecast_agent.protocol_normalizer import normalize_evaluation_protocol, normalize_horizon
 
 
 def test_methodcard_quality_gate_marks_unknown_critical_fields_for_approval() -> None:
@@ -80,7 +80,88 @@ def test_model_registry_does_not_map_gpr_to_gbdt() -> None:
     assert model_support(families[0]).implemented is False
 
 
+def test_dlinear_alias_does_not_leak_into_ridge() -> None:
+    families = canonical_model_families(["DLinear"])
+    assert families == ["dlinear_forecaster"]
+    assert model_support(families[0]).requires_adapter is True
+
+
 def test_protocol_normalizer_maps_backtest_to_supported_type() -> None:
     info = normalize_evaluation_protocol("26 non-overlapping out-of-sample backtest periods")
     assert info.protocol_type == "purged_walk_forward"
     assert info.description
+
+
+def test_quality_gate_requires_review_when_all_evidence_sections_are_unknown() -> None:
+    card = MethodCard.from_dict(
+        {
+            "method_id": "m",
+            "paper_id": "p",
+            "title": "Paper",
+            "venue_or_source": "arxiv",
+            "paper_url": "https://example.com",
+            "task_type": "financial_return_forecasting",
+            "target_asset": "AAPL",
+            "asset_universe": ["AAPL"],
+            "frequency": "daily",
+            "horizon": "1 trading day",
+            "label_definition": "next_return",
+            "data_requirements": ["paper_original"],
+            "feature_groups": ["returns"],
+            "model_families": ["linear_regression"],
+            "training_protocol": "time ordered",
+            "evaluation_protocol": "purged walk-forward",
+            "metrics": ["MAE"],
+            "cost_assumptions": "transaction costs",
+            "reported_results": {},
+            "strict_requirements": ["paper data"],
+            "unknowns": [],
+            "evidence_spans": [
+                {
+                    "source_id": "p",
+                    "section": "unknown",
+                    "quote": "We train the model on daily returns.",
+                    "summary": "Training frequency",
+                }
+            ],
+        }
+    )
+    report = assess_method_card(card)
+    assert report.approval_required is True
+    assert report.quality_score < 1.0
+    assert "1/1 evidence spans have no source section" in report.warnings
+
+
+def test_multi_step_horizon_preserves_length() -> None:
+    assert normalize_horizon("96 days") == "96_day"
+    assert normalize_horizon("60 steps") == "60_step"
+    assert normalize_horizon("next trading day") == "next_return"
+
+
+def test_v1_methodcard_metadata_migrates_to_structured_v2_fields() -> None:
+    card = MethodCard.from_dict(
+        {
+            "paper_id": "migration",
+            "title": "Migration",
+            "target_asset": "AAPL",
+            "asset_universe": ["AAPL"],
+            "frequency": "daily",
+            "horizon": "next day",
+            "label_definition": "next_return",
+            "feature_groups": ["returns"],
+            "model_families": ["lstm"],
+            "training_protocol": "time ordered",
+            "evaluation_protocol": "rolling origin",
+            "metrics": ["mae"],
+            "extraction_metadata": {
+                "preprocessing_protocol": "train-only scaling",
+                "hyperparameters": {"lookback": 20},
+                "required_start_date": "2020-01-01",
+            },
+        }
+    )
+    assert card.schema_version == "method_card_v2"
+    assert card.preprocessing_protocol == "train-only scaling"
+    assert card.hyperparameters == {"lookback": 20}
+    assert card.required_start_date == "2020-01-01"
+    assert card.extraction_metadata["migrated_from_schema_version"] == "method_card_v1"
