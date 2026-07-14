@@ -35,7 +35,7 @@ MODEL_ALIASES: list[tuple[str, list[str]]] = [
     ("cnn_sequence_regressor", ["cnn_sequence_regressor", "cnn", "convolutional neural"]),
     ("gaussian_process_regressor", ["gaussian_process_regressor", "gaussian process", "gpr"]),
     ("rl_portfolio_policy", ["rl_portfolio_policy", "reinforcement learning", "portfolio-vector memory", "pvm", "deep portfolio", "portfolio management"]),
-    ("dnn_asset_pricing_model", ["dnn_asset_pricing_model", "deep neural network", "dnn", "no-arbitrage", "adversarial"]),
+    ("dnn_asset_pricing_model", ["dnn_asset_pricing_model", "deep neural network", "deep learning in asset pricing", "dnn", "no-arbitrage", "adversarial"]),
     ("ridge_regression", ["ridge_regression", "linear_regression", "linear regression", "ridge", "lasso", "elastic net", "ols"]),
 ]
 
@@ -57,12 +57,16 @@ class ModelSupport:
 
 
 def canonical_model_families(values: list[str]) -> list[str]:
+    return referenced_model_families(values) or ["ridge_regression"]
+
+
+def referenced_model_families(values: list[str]) -> list[str]:
     joined = " ".join(str(v) for v in values).lower()
     out: list[str] = []
     for family, tokens in MODEL_ALIASES:
         if any(token in joined for token in tokens) and family not in out:
             out.append(family)
-    return out or ["ridge_regression"]
+    return out
 
 
 def model_support(model_family: str) -> ModelSupport:

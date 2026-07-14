@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -192,18 +193,25 @@ def classify_experiment_type(card: MethodCard) -> ExperimentType:
     text = " ".join(
         [
             str(card.task_type),
+            str(card.title),
             str(card.training_protocol),
             str(card.evaluation_protocol),
             " ".join(str(model) for model in card.model_families),
+            json.dumps(card.reported_results, ensure_ascii=False),
+            " ".join(card.strict_requirements),
         ]
     ).lower()
-    if any(token in text for token in ("reinforcement", "portfolio management", "portfolio-vector", "reward")):
+
+    def has_any(*phrases: str) -> bool:
+        return any(re.search(rf"(?<!\w){re.escape(phrase)}(?!\w)", text) for phrase in phrases)
+
+    if has_any("reinforcement", "portfolio management", "portfolio-vector", "reward"):
         return "portfolio_rl"
-    if "event study" in text:
+    if has_any("event study"):
         return "event_study"
-    if any(token in text for token in ("cross-sectional", "cross sectional", "asset pricing", "portfolio sort")):
+    if has_any("cross-sectional", "cross sectional", "asset pricing", "portfolio sort"):
         return "cross_sectional"
-    if any(token in text for token in ("trading strategy", "backtest", "back-test", "position", "portfolio return")):
+    if has_any("trading strategy", "backtest", "back-test", "position", "portfolio return"):
         return "signal_backtest"
     return "forecast_only"
 

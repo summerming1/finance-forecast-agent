@@ -3,7 +3,7 @@ from __future__ import annotations
 from finance_forecast_agent.method_card_quality import assess_method_card
 from finance_forecast_agent.method_cards import MethodCard, method_card_to_paper_spec
 from finance_forecast_agent.model_registry import canonical_model_families, model_support
-from finance_forecast_agent.p1_protocol import plan_from_method_card
+from finance_forecast_agent.p1_protocol import classify_experiment_type, plan_from_method_card
 from finance_forecast_agent.protocol_normalizer import normalize_evaluation_protocol, normalize_horizon
 
 
@@ -209,3 +209,56 @@ def test_fixed_chronological_holdout_normalizes_to_out_of_sample() -> None:
         "single chronological holdout with train/validation/test split"
     )
     assert protocol.protocol_type == "out_of_sample"
+
+
+def test_quality_gate_rejects_model_family_that_conflicts_with_paper_method() -> None:
+    card = MethodCard.from_dict(
+        {
+            "paper_id": "gpr-conflict",
+            "title": "Empirical Asset Pricing via Ensemble Gaussian Process Regression",
+            "task_type": "cross-sectional return prediction",
+            "target_asset": "US equities",
+            "asset_universe": ["US equities"],
+            "frequency": "monthly",
+            "horizon": "1 month",
+            "label_definition": "next month excess return",
+            "data_requirements": ["firm characteristics"],
+            "feature_groups": ["firm characteristics"],
+            "model_families": ["gradient_boosting_regressor"],
+            "training_protocol": "Fit individual Gaussian process regressors.",
+            "evaluation_protocol": "Sort stocks into portfolios by predicted returns.",
+            "metrics": ["out-of-sample R2"],
+            "cost_assumptions": "not applicable",
+            "strict_requirements": ["Use the ensemble GPR specification."],
+        }
+    )
+
+    report = assess_method_card(card)
+    assert report.semantic_conflicts
+    assert "gaussian_process_regressor" in report.semantic_conflicts[0]
+    assert report.approval_required is True
+    assert classify_experiment_type(card) == "cross_sectional"
+
+
+def test_prediction_word_does_not_trigger_position_signal_backtest() -> None:
+    card = MethodCard.from_dict(
+        {
+            "paper_id": "forecast",
+            "title": "Long-horizon prediction",
+            "task_type": "multivariate time series forecasting",
+            "target_asset": "exchange rates",
+            "asset_universe": ["exchange rates"],
+            "frequency": "daily",
+            "horizon": "96 steps",
+            "label_definition": "future values",
+            "data_requirements": ["exchange-rate dataset"],
+            "feature_groups": ["lag features"],
+            "model_families": ["dlinear_forecaster"],
+            "training_protocol": "Direct multi-step prediction.",
+            "evaluation_protocol": "Chronological holdout.",
+            "metrics": ["mse", "mae"],
+            "cost_assumptions": "not applicable",
+        }
+    )
+
+    assert classify_experiment_type(card) == "forecast_only"

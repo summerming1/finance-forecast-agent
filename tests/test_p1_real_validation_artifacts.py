@@ -50,8 +50,11 @@ def test_common_benchmark_artifact_uses_shared_task_and_equal_prediction_counts(
         for row in benchmark["reports"]
     }
     assert representations == {
+        "arxiv_2108_10826": "tabular",
         "arxiv_2209_02407": "ordered_sequence",
+        "arxiv_2306_03620": "tabular",
         "arxiv_2310_16855": "tabular",
+        "arxiv_2405_03151": "ordered_sequence",
     }
 
 

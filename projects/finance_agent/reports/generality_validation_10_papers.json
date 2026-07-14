@@ -1,0 +1,404 @@
+{
+  "schema_version": "generality_validation_v1",
+  "definition": "Generality means every supported or unsupported paper is parsed, classified and routed without crashing, guessing missing protocol, or silently substituting a different model.",
+  "aggregate": {
+    "paper_count": 10,
+    "all_papers_routed": true,
+    "native_strict_ready_count": 1,
+    "common_benchmark_candidate_count": 5,
+    "governed_block_count": 4,
+    "native_reproduction_passed": true,
+    "common_benchmark_comparison_passed": true,
+    "common_benchmark_executed_count": 5,
+    "common_benchmark_candidate_execution_covered": true,
+    "generality_contract_passed": true
+  },
+  "papers": [
+    {
+      "paper_id": "arxiv_1706_10059",
+      "title": "Deep Portfolio Management: A Deep Reinforcement Learning Framework for the Financial Portfolio Management Problem",
+      "category": "deep_reinforcement_learning_portfolio",
+      "experiment_type": "portfolio_rl",
+      "quality_score": 0.67,
+      "approval_required": true,
+      "semantic_conflicts": [
+        "model_families conflict with title/protocol references: expected one of rl_portfolio_policy"
+      ],
+      "unresolved_required_fields": [
+        "action_spec",
+        "backtest_protocol",
+        "hyperparameters",
+        "portfolio_constraints",
+        "preprocessing_protocol",
+        "reward_spec",
+        "state_spec"
+      ],
+      "implemented_models": [
+        "lstm_regressor"
+      ],
+      "unsupported_models": [],
+      "benchmark_models": [],
+      "adapter_gaps": [
+        "portfolio_rl_experiment_adapter"
+      ],
+      "strict_extraction_validated": false,
+      "strict_native_ready_after_approval": false,
+      "route": "method_card_revision_required",
+      "route_reasons": [
+        "model_families conflict with title/protocol references: expected one of rl_portfolio_policy"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    },
+    {
+      "paper_id": "arxiv_1904_00745",
+      "title": "Deep Learning in Asset Pricing",
+      "category": "deep_asset_pricing_cross_section",
+      "experiment_type": "cross_sectional",
+      "quality_score": 0.37,
+      "approval_required": true,
+      "semantic_conflicts": [
+        "model_families conflict with title/protocol references: expected one of dnn_asset_pricing_model"
+      ],
+      "unresolved_required_fields": [
+        "frequency",
+        "horizon",
+        "inference_protocol",
+        "portfolio_formation",
+        "rebalance_rule",
+        "weighting_rule"
+      ],
+      "implemented_models": [
+        "ridge_regression"
+      ],
+      "unsupported_models": [],
+      "benchmark_models": [],
+      "adapter_gaps": [
+        "cross_sectional_experiment_adapter"
+      ],
+      "strict_extraction_validated": false,
+      "strict_native_ready_after_approval": false,
+      "route": "method_card_revision_required",
+      "route_reasons": [
+        "model_families conflict with title/protocol references: expected one of dnn_asset_pricing_model"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    },
+    {
+      "paper_id": "arxiv_2004_10178v2",
+      "title": "Forecasting directional movements of stock prices for intraday trading using LSTM and random forests",
+      "category": "intraday_direction_signal_backtest",
+      "experiment_type": "signal_backtest",
+      "quality_score": 0.83,
+      "approval_required": true,
+      "semantic_conflicts": [],
+      "unresolved_required_fields": [
+        "backtest_protocol",
+        "hyperparameters",
+        "position_rule",
+        "preprocessing_protocol",
+        "signal_rule"
+      ],
+      "implemented_models": [
+        "random_forest_regressor",
+        "lstm_regressor"
+      ],
+      "unsupported_models": [],
+      "benchmark_models": [],
+      "adapter_gaps": [
+        "signal_backtest_experiment_adapter"
+      ],
+      "strict_extraction_validated": false,
+      "strict_native_ready_after_approval": false,
+      "route": "experiment_adapter_or_protocol_required",
+      "route_reasons": [
+        "backtest_protocol",
+        "hyperparameters",
+        "position_rule",
+        "preprocessing_protocol",
+        "signal_rule",
+        "signal_backtest_experiment_adapter"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    },
+    {
+      "paper_id": "arxiv_2108_10826",
+      "title": "S&P 500 STOCK PRICE PREDICTION USING TECHNICAL, FUNDAMENTAL AND TEXT DATA",
+      "category": "multimodal_stock_direction",
+      "experiment_type": "forecast_only",
+      "quality_score": 0.82,
+      "approval_required": true,
+      "semantic_conflicts": [],
+      "unresolved_required_fields": [
+        "horizon",
+        "hyperparameters",
+        "preprocessing_protocol"
+      ],
+      "implemented_models": [
+        "random_forest_regressor",
+        "gradient_boosting_regressor",
+        "lstm_regressor",
+        "ridge_regression"
+      ],
+      "unsupported_models": [],
+      "benchmark_models": [
+        "random_forest_regressor",
+        "gradient_boosting_regressor",
+        "lstm_regressor",
+        "ridge_regression"
+      ],
+      "adapter_gaps": [],
+      "strict_extraction_validated": false,
+      "strict_native_ready_after_approval": false,
+      "route": "common_benchmark_candidate",
+      "route_reasons": [
+        "at least one implemented forecast adapter can consume a frozen BenchmarkTask"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    },
+    {
+      "paper_id": "arxiv_2205_13504",
+      "title": "Are Transformers Effective for Time Series Forecasting?",
+      "category": "multivariate_long_horizon_forecast",
+      "experiment_type": "forecast_only",
+      "quality_score": 1.0,
+      "approval_required": false,
+      "semantic_conflicts": [],
+      "unresolved_required_fields": [],
+      "implemented_models": [
+        "dlinear_forecaster"
+      ],
+      "unsupported_models": [],
+      "benchmark_models": [],
+      "adapter_gaps": [],
+      "strict_extraction_validated": true,
+      "strict_native_ready_after_approval": true,
+      "route": "native_strict_ready",
+      "route_reasons": [
+        "strict evidence, claim consistency and dedicated native adapter passed"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    },
+    {
+      "paper_id": "arxiv_2209_02407",
+      "title": "Predict Stock Prices with ARIMA and LSTM",
+      "category": "arima_lstm_stock_price_forecast",
+      "experiment_type": "forecast_only",
+      "quality_score": 0.89,
+      "approval_required": true,
+      "semantic_conflicts": [],
+      "unresolved_required_fields": [],
+      "implemented_models": [
+        "lstm_regressor"
+      ],
+      "unsupported_models": [
+        "arima_regressor"
+      ],
+      "benchmark_models": [
+        "lstm_regressor"
+      ],
+      "adapter_gaps": [
+        "arima_regressor"
+      ],
+      "strict_extraction_validated": false,
+      "strict_native_ready_after_approval": false,
+      "route": "common_benchmark_candidate",
+      "route_reasons": [
+        "at least one implemented forecast adapter can consume a frozen BenchmarkTask",
+        "unsupported sibling model: arima_regressor"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    },
+    {
+      "paper_id": "arxiv_2212_01048",
+      "title": "Empirical Asset Pricing via Ensemble Gaussian Process Regression",
+      "category": "ensemble_gpr_asset_pricing",
+      "experiment_type": "cross_sectional",
+      "quality_score": 0.8,
+      "approval_required": true,
+      "semantic_conflicts": [
+        "model_families conflict with title/protocol references: expected one of gaussian_process_regressor"
+      ],
+      "unresolved_required_fields": [
+        "inference_protocol",
+        "portfolio_formation",
+        "rebalance_rule",
+        "weighting_rule"
+      ],
+      "implemented_models": [
+        "gradient_boosting_regressor"
+      ],
+      "unsupported_models": [],
+      "benchmark_models": [],
+      "adapter_gaps": [
+        "cross_sectional_experiment_adapter"
+      ],
+      "strict_extraction_validated": false,
+      "strict_native_ready_after_approval": false,
+      "route": "method_card_revision_required",
+      "route_reasons": [
+        "model_families conflict with title/protocol references: expected one of gaussian_process_regressor"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    },
+    {
+      "paper_id": "arxiv_2306_03620",
+      "title": "Forecasting the Performance of US Stock Market Indices During COVID-19: RF vs LSTM",
+      "category": "rf_lstm_index_forecast",
+      "experiment_type": "forecast_only",
+      "quality_score": 0.65,
+      "approval_required": true,
+      "semantic_conflicts": [],
+      "unresolved_required_fields": [
+        "frequency",
+        "horizon",
+        "hyperparameters",
+        "preprocessing_protocol"
+      ],
+      "implemented_models": [
+        "random_forest_regressor",
+        "lstm_regressor"
+      ],
+      "unsupported_models": [],
+      "benchmark_models": [
+        "random_forest_regressor",
+        "lstm_regressor"
+      ],
+      "adapter_gaps": [],
+      "strict_extraction_validated": false,
+      "strict_native_ready_after_approval": false,
+      "route": "common_benchmark_candidate",
+      "route_reasons": [
+        "at least one implemented forecast adapter can consume a frozen BenchmarkTask"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    },
+    {
+      "paper_id": "arxiv_2310_16855",
+      "title": "Predicting Directional Bias in the Japanese Stock Market with Machine Learning",
+      "category": "daily_stock_direction_classification",
+      "experiment_type": "forecast_only",
+      "quality_score": 1.0,
+      "approval_required": true,
+      "semantic_conflicts": [],
+      "unresolved_required_fields": [],
+      "implemented_models": [
+        "random_forest_regressor"
+      ],
+      "unsupported_models": [],
+      "benchmark_models": [
+        "random_forest_regressor"
+      ],
+      "adapter_gaps": [],
+      "strict_extraction_validated": false,
+      "strict_native_ready_after_approval": false,
+      "route": "common_benchmark_candidate",
+      "route_reasons": [
+        "at least one implemented forecast adapter can consume a frozen BenchmarkTask"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    },
+    {
+      "paper_id": "arxiv_2405_03151",
+      "title": "Time Series Stock Price Forecasting Based on Genetic Algorithm (GA)-Long Short-Term Memory Network (LSTM) Optimization",
+      "category": "ga_lstm_stock_price_optimization",
+      "experiment_type": "forecast_only",
+      "quality_score": 0.5,
+      "approval_required": true,
+      "semantic_conflicts": [],
+      "unresolved_required_fields": [
+        "asset_universe",
+        "frequency",
+        "horizon",
+        "hyperparameters",
+        "preprocessing_protocol"
+      ],
+      "implemented_models": [
+        "ga_lstm_regressor",
+        "lstm_regressor"
+      ],
+      "unsupported_models": [],
+      "benchmark_models": [
+        "ga_lstm_regressor",
+        "lstm_regressor"
+      ],
+      "adapter_gaps": [],
+      "strict_extraction_validated": false,
+      "strict_native_ready_after_approval": false,
+      "route": "common_benchmark_candidate",
+      "route_reasons": [
+        "at least one implemented forecast adapter can consume a frozen BenchmarkTask"
+      ],
+      "checks": {
+        "replay_passed": true,
+        "plan_generation_passed": true,
+        "experiment_type_matches": true,
+        "route_matches": true,
+        "no_silent_model_proxy": true
+      },
+      "passed": true
+    }
+  ]
+}

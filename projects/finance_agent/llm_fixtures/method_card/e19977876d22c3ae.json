@@ -1,0 +1,227 @@
+{
+  "prompt_hash": "e19977876d22c3ae",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "arxiv_1904_00745",
+    "paper_id": "arxiv_1904_00745",
+    "title": "Deep Learning in Asset Pricing",
+    "venue_or_source": "arxiv",
+    "paper_url": "unknown",
+    "task_type": "estimate an asset pricing model for individual stock returns",
+    "target_asset": "individual stock returns",
+    "asset_universe": [
+      "individual stock returns"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "expected returns",
+    "data_requirements": [
+      "vast amount of conditioning information, many macroeconomic time series"
+    ],
+    "feature_groups": [
+      "cross_asset_features",
+      "sequence_window_features"
+    ],
+    "model_families": [
+      "ridge_regression"
+    ],
+    "training_protocol": "min ω,ht max g,hg t L(ω|ˆg,hg t,ht,It,i), Dropout, adaptive learning rate, ensemble learning",
+    "evaluation_protocol": "out-of-sample",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse",
+      "r2",
+      "directional_accuracy",
+      "net_return",
+      "sharpe"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {
+      "raw": "outperforms out-of-sample all benchmark approaches in terms of Sharpe ratio, explained variation and pricing errors"
+    },
+    "strict_requirements": [
+      "use the fundamental no-arbitrage condition as criterion function, to construct the most informative test assets with an adversarial approach and to extract the states of the economy from many macroeconomic time series"
+    ],
+    "unknowns": [
+      "paper_url",
+      "frequency",
+      "horizon",
+      "cost_assumptions",
+      "model_families conflict with title/protocol references: expected one of dnn_asset_pricing_model"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "Deep Learning in Asset Pricing",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "estimate an asset pricing model for individual stock returns",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "vast amount of conditioning information",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "many macroeconomic time series",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "deep neural networks",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "non-linear factor model",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "min ω,ht max g,hg t L(ω|ˆg,hg t,ht,It,i)",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "Dropout",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "adaptive learning rate",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "ensemble learning",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "outperforms out-of-sample all benchmark approaches in terms of Sharpe ratio, explained variation and pricing errors",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "Sharpe ratio, explained variation and pricing errors",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "XS-R2",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1904_00745",
+        "section": "unknown",
+        "quote": "use the fundamental no-arbitrage condition as criterion function, to construct the most informative test assets with an adversarial approach and to extract the states of the economy from many macroeconomic time series",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "raw_paper_id": "arxiv_1904.00745",
+      "document_text_sha": "94f948d7b0af7046",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1904.00745.pdf",
+      "migrated_from_schema_version": "method_card_v1",
+      "quality_report": {
+        "method_id": "arxiv_1904_00745",
+        "paper_id": "arxiv_1904_00745",
+        "quality_score": 0.37,
+        "approval_required": true,
+        "critical_missing_fields": [
+          "frequency",
+          "horizon"
+        ],
+        "type_errors": [],
+        "semantic_conflicts": [
+          "model_families conflict with title/protocol references: expected one of dnn_asset_pricing_model"
+        ],
+        "unsupported_models": [],
+        "warnings": [
+          "frequency is unknown",
+          "horizon is unknown",
+          "14/14 evidence spans have no source section"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "out-of-sample",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "out-of-sample",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

@@ -1,0 +1,110 @@
+{
+  "prompt_hash": "3190c40428fc0e5d",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "ga_lstm_stock_forecast",
+    "paper_id": "arxiv_2405_03151",
+    "title": "Time Series Stock Price Forecasting Based on Genetic Algorithm (GA)-Long Short-Term Memory Network (LSTM) Optimization",
+    "venue_or_source": "arxiv",
+    "paper_url": "https://arxiv.org/abs/2405.03151",
+    "task_type": "stock price forecasting",
+    "target_asset": "stock prices",
+    "asset_universe": [
+      "unknown"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "stock prices",
+    "data_requirements": [
+      "data from 2016-2021 was selected as the training set and the data from 2021-2022 was selected as the test set"
+    ],
+    "feature_groups": [
+      "price_lag_features"
+    ],
+    "model_families": [
+      "ga_lstm_regressor",
+      "lstm_regressor"
+    ],
+    "training_protocol": "Epoch was set to 100 and run using Python 3.10. LSTM model is first initialized or tuned using genetic algorithm to find a better initial solution. Then, during the training process, the hyperparameters can be continuously tuned to optimize the LSTM network structure according to the genetic algorithm, and the best individuals can be selected for updating in each iteration.",
+    "evaluation_protocol": "model was evaluated using MSE, MAE and MAPE",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse",
+      "r2",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {
+      "raw": "MAE on the test set is 2.41, the MSE is 9.84, the RMSE is 3.13, and the R2 is 0.87. MAE of the model gradually decreases from 0.11 to 0.01."
+    },
+    "strict_requirements": [
+      "unknown"
+    ],
+    "unknowns": [
+      "asset_universe",
+      "frequency",
+      "horizon",
+      "cost_assumptions",
+      "strict_requirements"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2405_03151",
+        "section": "unknown",
+        "quote": "",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "schema": "method_card_v1",
+      "raw_paper_id": "arxiv_2405.03151",
+      "document_text_sha": "a30f261604918754",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2405.03151.pdf",
+      "migrated_from_schema_version": "method_card_v1",
+      "quality_report": {
+        "method_id": "ga_lstm_stock_forecast",
+        "paper_id": "arxiv_2405_03151",
+        "quality_score": 0.5,
+        "approval_required": true,
+        "critical_missing_fields": [
+          "asset_universe",
+          "frequency",
+          "horizon"
+        ],
+        "type_errors": [],
+        "semantic_conflicts": [],
+        "unsupported_models": [],
+        "warnings": [
+          "evaluation protocol could not be mapped to a supported protocol type",
+          "frequency is unknown",
+          "horizon is unknown",
+          "1/1 evidence spans have no source section"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "model was evaluated using MSE, MAE and MAPE",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "unknown",
+    "evaluation_protocol_description": "model was evaluated using MSE, MAE and MAPE",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

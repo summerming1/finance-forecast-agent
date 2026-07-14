@@ -1,0 +1,248 @@
+{
+  "prompt_hash": "87b65714b2c36326",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "method_arxiv_2209_02407_arima_lstm",
+    "paper_id": "arxiv_2209_02407",
+    "title": "Predict Stock Prices with ARIMA and LSTM",
+    "venue_or_source": "arXiv",
+    "paper_url": "https://arxiv.org/abs/2209.02407",
+    "task_type": "daily_stock_high_price_forecasting",
+    "target_asset": "daily high price",
+    "asset_universe": [
+      "50 Yahoo Finance listed companies",
+      "Google",
+      "Apple",
+      "Amazon",
+      "Netflix"
+    ],
+    "frequency": "daily trading days",
+    "horizon": "next trading day",
+    "label_definition": "next-day unscaled high price from a 60-day history window",
+    "data_requirements": [
+      "Yahoo Finance daily high prices",
+      "2010-01-01 through 2018-12-31",
+      "same company universe"
+    ],
+    "feature_groups": [
+      "price_lag_features",
+      "sequence_window_features"
+    ],
+    "model_families": [
+      "arima_regressor",
+      "lstm_regressor"
+    ],
+    "training_protocol": "ARIMA trains on 2016-2017 with order (1,0,1); LSTM trains on 2010-2015, validates on 2016-2017, uses 60-day windows, three 100-unit LSTM layers, dropout 0.1 and Adam",
+    "evaluation_protocol": "fixed out-of-sample calendar split; both models test on 2018",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse"
+    ],
+    "cost_assumptions": "not applicable: price forecast-only experiment",
+    "reported_results": {
+      "arima_mae": 3.041,
+      "arima_mse": 16.831,
+      "arima_rmse": 4.102,
+      "lstm_mae": 2.386,
+      "lstm_mse": 7.272,
+      "lstm_rmse": 2.695
+    },
+    "strict_requirements": [
+      "same Yahoo Finance high-price snapshot",
+      "same 50-company universe",
+      "same calendar splits",
+      "same 60-day window",
+      "exact ARIMA and LSTM protocols"
+    ],
+    "unknowns": [
+      "complete list of all 50 tickers is not structured in the paper text",
+      "arima_regressor"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "target_asset",
+        "quote": "The dataset consists of the highest price on transaction days.",
+        "summary": "Defines the forecast target.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "asset_universe",
+        "quote": "Fifty listed-company stocks from Yahoo Finance are selected.",
+        "summary": "Defines the paper universe.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "frequency",
+        "quote": "Observations are stock highs on transaction days.",
+        "summary": "Defines daily trading frequency.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "horizon",
+        "quote": "Sixty days of data are used to predict the next day.",
+        "summary": "Defines window and horizon.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "label_definition",
+        "quote": "The models predict the next transaction day's high price.",
+        "summary": "Defines the label.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "data_requirements",
+        "quote": "The sample spans 1 January 2010 through 31 December 2018.",
+        "summary": "Defines the sample period.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "feature_groups",
+        "quote": "Each prediction uses a sixty-day historical price sequence.",
+        "summary": "Defines input features.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "model_families",
+        "quote": "The study compares ARIMA and LSTM stock-price forecasts.",
+        "summary": "Defines model families.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "training_protocol",
+        "quote": "LSTM trains on 2010-2015 and validates on 2016-2017.",
+        "summary": "Defines LSTM training windows.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "preprocessing_protocol",
+        "quote": "The LSTM experiment converts sixty-day histories into supervised sequences.",
+        "summary": "Defines sequence preprocessing; scaling details require code confirmation.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "hyperparameters",
+        "quote": "The selected LSTM has three layers, one hundred nodes and dropout 0.1.",
+        "summary": "Defines key hyperparameters.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "evaluation_protocol",
+        "quote": "Both models use calendar year 2018 as the test set.",
+        "summary": "Defines fixed out-of-sample evaluation.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "metrics",
+        "quote": "The study evaluates MAE, MSE and RMSE.",
+        "summary": "Defines evaluation metrics.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "curated_from_primary_paper",
+      "live_llm_api_used": false,
+      "source_path": "projects/finance_agent/papers/local/arxiv_2209.02407.pdf",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "60-day supervised sequences; exact scaler behavior not independently verified",
+      "hyperparameters": {
+        "arima_order": [
+          1,
+          0,
+          1
+        ],
+        "lstm_layers": 3,
+        "lstm_units": 100,
+        "dropout": 0.1,
+        "optimizer": "Adam",
+        "lookback_days": 60
+      },
+      "required_start_date": "2010-01-01",
+      "required_end_date": "2018-12-31",
+      "quality_report": {
+        "method_id": "method_arxiv_2209_02407_arima_lstm",
+        "paper_id": "arxiv_2209_02407",
+        "quality_score": 0.89,
+        "approval_required": true,
+        "critical_missing_fields": [],
+        "type_errors": [],
+        "semantic_conflicts": [],
+        "unsupported_models": [
+          "arima_regressor"
+        ],
+        "warnings": [
+          "unsupported model adapters required: arima_regressor"
+        ],
+        "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+      },
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "fixed out-of-sample calendar split; both models test on 2018",
+      "frequency_type": "daily",
+      "horizon_type": "next_return"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "fixed out-of-sample calendar split; both models test on 2018",
+    "frequency_type": "daily",
+    "horizon_type": "next_return",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "60-day supervised sequences; exact scaler behavior not independently verified",
+    "hyperparameters": {
+      "arima_order": [
+        1,
+        0,
+        1
+      ],
+      "lstm_layers": 3,
+      "lstm_units": 100,
+      "dropout": 0.1,
+      "optimizer": "Adam",
+      "lookback_days": 60
+    },
+    "required_start_date": "2010-01-01",
+    "required_end_date": "2018-12-31",
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

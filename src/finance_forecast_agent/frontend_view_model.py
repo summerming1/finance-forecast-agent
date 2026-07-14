@@ -18,6 +18,7 @@ class MethodCardRow:
     quality_score: float
     approval_required: bool
     critical_missing_fields: list[str]
+    semantic_conflicts: list[str]
     unsupported_models: list[str]
     unknowns: list[str]
     model_families: list[str]
@@ -74,6 +75,7 @@ def method_card_row(card: MethodCard) -> MethodCardRow:
         quality_score=float(quality.get("quality_score", 0.0)),
         approval_required=bool(quality.get("approval_required", card.approval_required)),
         critical_missing_fields=list(quality.get("critical_missing_fields") or []),
+        semantic_conflicts=list(quality.get("semantic_conflicts") or []),
         unsupported_models=list(quality.get("unsupported_models") or []),
         unknowns=list(card.unknowns),
         model_families=list(card.model_families),

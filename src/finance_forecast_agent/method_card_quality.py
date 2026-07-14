@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, replace
 from typing import Any
 
-from .model_registry import unsupported_model_families
+from .model_registry import referenced_model_families, unsupported_model_families
 from .protocol_normalizer import normalize_evaluation_protocol, normalize_frequency, normalize_horizon
 
 CRITICAL_FIELDS = [
@@ -28,6 +28,7 @@ class MethodCardQualityReport:
     approval_required: bool
     critical_missing_fields: list[str]
     type_errors: list[str]
+    semantic_conflicts: list[str]
     unsupported_models: list[str]
     warnings: list[str]
     recommended_action: str
@@ -52,6 +53,7 @@ def assess_method_card(card) -> MethodCardQualityReport:
     critical_missing: list[str] = []
     type_errors: list[str] = []
     warnings: list[str] = []
+    semantic_conflicts: list[str] = []
     for field in CRITICAL_FIELDS:
         if is_unknown(getattr(card, field, None)):
             critical_missing.append(field)
@@ -68,6 +70,20 @@ def assess_method_card(card) -> MethodCardQualityReport:
     if normalize_horizon(card.horizon) == "unknown":
         warnings.append("horizon is unknown")
     unsupported = unsupported_model_families(card.model_families)
+    headline_models = set(referenced_model_families([card.title, card.task_type]))
+    protocol_models = set(
+        referenced_model_families(
+            [card.training_protocol, card.evaluation_protocol, *card.strict_requirements]
+        )
+    )
+    referenced_models = sorted(headline_models.intersection(protocol_models))
+    if not referenced_models and not headline_models:
+        referenced_models = sorted(protocol_models)
+    if referenced_models and not set(referenced_models).intersection(card.model_families):
+        semantic_conflicts.append(
+            "model_families conflict with title/protocol references: expected one of "
+            + ", ".join(referenced_models)
+        )
     if unsupported:
         warnings.append("unsupported model adapters required: " + ", ".join(unsupported))
     evidence_spans = list(getattr(card, "evidence_spans", []) or [])
@@ -82,6 +98,7 @@ def assess_method_card(card) -> MethodCardQualityReport:
     deductions = (
         0.12 * len(critical_missing)
         + 0.15 * len(type_errors)
+        + 0.15 * len(semantic_conflicts)
         + 0.08 * len(unsupported)
         + 0.03 * len(warnings)
         + evidence_deduction
@@ -94,11 +111,12 @@ def assess_method_card(card) -> MethodCardQualityReport:
         card.approval_required
         or critical_missing
         or type_errors
+        or semantic_conflicts
         or unsupported
         or all_evidence_sections_unknown
         or score < 0.80
     )
-    if type_errors or critical_missing:
+    if type_errors or critical_missing or semantic_conflicts:
         action = "human_review_required_fix_method_card_fields"
     elif unsupported:
         action = "add_model_adapter_or_mark_as_non_executable"
@@ -113,6 +131,7 @@ def assess_method_card(card) -> MethodCardQualityReport:
         approval_required=approval,
         critical_missing_fields=critical_missing,
         type_errors=type_errors,
+        semantic_conflicts=semantic_conflicts,
         unsupported_models=unsupported,
         warnings=warnings,
         recommended_action=action,
@@ -121,7 +140,17 @@ def assess_method_card(card) -> MethodCardQualityReport:
 
 def apply_quality_gate(card):
     report = assess_method_card(card)
-    unknowns = list(dict.fromkeys([*card.unknowns, *report.critical_missing_fields, *report.type_errors, *report.unsupported_models]))
+    unknowns = list(
+        dict.fromkeys(
+            [
+                *card.unknowns,
+                *report.critical_missing_fields,
+                *report.type_errors,
+                *report.semantic_conflicts,
+                *report.unsupported_models,
+            ]
+        )
+    )
     metadata = dict(card.extraction_metadata)
     metadata["quality_report"] = report.to_dict()
     metadata["evaluation_protocol_type"] = normalize_evaluation_protocol(card.evaluation_protocol).protocol_type

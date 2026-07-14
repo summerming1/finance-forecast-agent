@@ -17,6 +17,14 @@ from finance_forecast_agent.native_reproductions import (
 from finance_forecast_agent.p1_protocol import plan_from_method_card, save_reproduction_plan
 from finance_forecast_agent.review_state import update_methodcard_review
 
+COMMON_BENCHMARK_METHODS = [
+    ("arxiv_2108_10826", "gradient_boosting_regressor"),
+    ("arxiv_2209_02407", "lstm_regressor"),
+    ("arxiv_2306_03620", "random_forest_regressor"),
+    ("arxiv_2310_16855", "random_forest_regressor"),
+    ("arxiv_2405_03151", "ga_lstm_regressor"),
+]
+
 
 def _common_task(project_dir: Path) -> BenchmarkTask:
     data_path = project_dir / "data" / "external" / "yahoo" / "aapl_weekly_20100101_20260714.csv"
@@ -72,7 +80,7 @@ def _append_memory(project_dir: Path, result: dict) -> None:
 def run(project_dir: Path, *, skip_native: bool = False) -> dict:
     cards_dir = project_dir / "method_cards_local_llm"
     cards = {card.paper_id: card for card in load_method_cards(cards_dir)}
-    required = {"arxiv_2205_13504", "arxiv_2209_02407", "arxiv_2310_16855"}
+    required = {"arxiv_2205_13504", *(method_id for method_id, _ in COMMON_BENCHMARK_METHODS)}
     missing = sorted(required - set(cards))
     if missing:
         raise ValueError("Missing curated MethodCards: " + ", ".join(missing))
@@ -89,7 +97,7 @@ def run(project_dir: Path, *, skip_native: bool = False) -> dict:
         reviewer_note="Primary paper, official repository protocol and dataset checksum verified by P1 validation.",
         source="p1_validation",
     )
-    for paper_id in ["arxiv_2209_02407", "arxiv_2310_16855"]:
+    for paper_id, _ in COMMON_BENCHMARK_METHODS:
         update_methodcard_review(
             project_dir,
             paper_id=paper_id,
@@ -128,10 +136,7 @@ def run(project_dir: Path, *, skip_native: bool = False) -> dict:
 
     benchmark = run_common_benchmark(
         _common_task(project_dir),
-        [
-            ("arxiv_2209_02407", "lstm_regressor"),
-            ("arxiv_2310_16855", "random_forest_regressor"),
-        ],
+        COMMON_BENCHMARK_METHODS,
         output_dir=project_dir / "reports",
     )
     _append_memory(project_dir, benchmark)

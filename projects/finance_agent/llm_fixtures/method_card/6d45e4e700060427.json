@@ -1,0 +1,103 @@
+{
+  "prompt_hash": "6d45e4e700060427",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "ensemble_gpr_filipovic_pasricha",
+    "paper_id": "arxiv_2212_01048",
+    "title": "Empirical Asset Pricing via Ensemble Gaussian Process Regression",
+    "venue_or_source": "arXiv:2212.01048v3 [q-fin.RM] 7 Mar 2026",
+    "paper_url": "unknown",
+    "task_type": "return_prediction",
+    "target_asset": "US stocks",
+    "asset_universe": [
+      "large cross-section of US stocks from 1962 to 2016"
+    ],
+    "frequency": "monthly",
+    "horizon": "1 month",
+    "label_definition": "excess return",
+    "data_requirements": [
+      "stock-level characteristics and macro-economic variables"
+    ],
+    "feature_groups": [
+      "cross_asset_features"
+    ],
+    "model_families": [
+      "gradient_boosting_regressor"
+    ],
+    "training_protocol": "partition the large training sample into subsets, apply individual GPRs on all subsets in parallel, and obtain a predictive distribution conditional on the full training data by mixing the predictive distributions over the subsets",
+    "evaluation_protocol": "out-of-sample test using rolling and expanding schemes",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse",
+      "r2",
+      "directional_accuracy",
+      "net_return",
+      "sharpe"
+    ],
+    "cost_assumptions": "fundamental time complexity of the order O(N^3), where N is the size of the training sample",
+    "reported_results": {
+      "raw": "dominates existing machine learning models statistically and economically in terms of out-of-sample R-squared and Sharpe ratio of prediction-sorted portfolios"
+    },
+    "strict_requirements": [
+      "gamma-exponential kernel outperformed others in terms of R2_pool"
+    ],
+    "unknowns": [
+      "paper_url",
+      "model_families conflict with title/protocol references: expected one of gaussian_process_regressor"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2212_01048",
+        "section": "unknown",
+        "quote": "",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "extractor_version": "1.0",
+      "extraction_date": "2023-10-25",
+      "raw_paper_id": "arxiv_2212.01048",
+      "document_text_sha": "45040c1200839f60",
+      "source_path": "projects\\finance_agent\\papers\\local\\Empirical Asset Pricing via Ensemble Gaussian Process Regression.pdf",
+      "migrated_from_schema_version": "method_card_v1",
+      "quality_report": {
+        "method_id": "ensemble_gpr_filipovic_pasricha",
+        "paper_id": "arxiv_2212_01048",
+        "quality_score": 0.8,
+        "approval_required": true,
+        "critical_missing_fields": [],
+        "type_errors": [],
+        "semantic_conflicts": [
+          "model_families conflict with title/protocol references: expected one of gaussian_process_regressor"
+        ],
+        "unsupported_models": [],
+        "warnings": [
+          "1/1 evidence spans have no source section"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "rolling_origin",
+      "evaluation_protocol_description": "out-of-sample test using rolling and expanding schemes",
+      "frequency_type": "monthly",
+      "horizon_type": "next_month_return"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "rolling_origin",
+    "evaluation_protocol_description": "out-of-sample test using rolling and expanding schemes",
+    "frequency_type": "monthly",
+    "horizon_type": "next_month_return",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

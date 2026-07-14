@@ -349,6 +349,9 @@ def _render_method_review(project_dir: Path, cards: list[MethodCard], reviews: d
     cols[1].metric("未知项", len(card.unknowns))
     cols[2].metric("证据摘录", len(card.evidence_spans))
     cols[3].metric("未标注章节", sum(1 for span in card.evidence_spans if str(span.section).lower() == "unknown"))
+    semantic_conflicts = list(quality.get("semantic_conflicts") or [])
+    if semantic_conflicts:
+        st.error("方法卡语义冲突：" + "；".join(semantic_conflicts))
 
     st.subheader("预测方法摘要")
     st.dataframe(method_summary_rows(card), width="stretch", hide_index=True)

@@ -44,6 +44,8 @@ DLinear 正式卡已由当前 `.env` 的真实 LLM 严格抽取成功；PDF 同�
 
 审批只表示“接受当前方法卡内容”，不等于完整复现。旧卡 EvidenceSpan 的章节为 unknown 时，可继续用于探索，但不能通过 P1 strict 证据门禁。
 
+若页面显示“方法卡语义冲突”，表示论文标题/协议中识别到的模型与 `model_families` 不一致，例如 GPR 被错误写成 GBDT。此时应选择“需要修订”，不能批准后直接运行替代模型。
+
 ### 第 3 步：复现配置
 
 页面有三个独立状态：
@@ -97,7 +99,7 @@ python scripts/run_p1_validation.py
 
 ## 4. 测试统一基准
 
-推荐比较：
+快速比较可选择：
 
 - `arxiv_2209_02407` -> LSTM 序列适配；
 - `arxiv_2310_16855` -> Random Forest 表格适配。
@@ -111,6 +113,25 @@ python scripts/run_p1_validation.py
 5. 在结果审计确认 task fingerprint 相同、两个方法都产生 128 个预测、共享 8 个 folds。
 
 当前实测两种方法方向准确率均为 `0.484375`，朴素基线为 `0.4765625`，95% 区间约 `[0.3995, 0.5701]`，`p=0.791`，页面应显示“方向能力未显示”。LSTM 的 MAE/RMSE 略低。这一结果证明比较流程可运行，不证明策略可交易，也不证明模型在其他任务上无效。
+
+完整五篇通用性比较还包括：
+
+| MethodCard | 实际统一基准 adapter | 方向准确率 |
+|---|---|---:|
+| `arxiv_2108_10826` | Gradient Boosting | `0.4609375` |
+| `arxiv_2209_02407` | LSTM | `0.484375` |
+| `arxiv_2306_03620` | Random Forest | `0.484375` |
+| `arxiv_2310_16855` | Random Forest | `0.484375` |
+| `arxiv_2405_03151` | GA-LSTM | `0.4296875` |
+
+五种运行共享同一任务 fingerprint、8 个 folds 和 128 个目标行，完整性审计通过。两张 RF 卡产生相同结果是预期行为：它们在统一基准中规范化为同一个实际 adapter，不应为了制造差异而暗改算法。
+
+后端一键复核十篇路由和五篇执行：
+
+```powershell
+python scripts/run_p1_validation.py
+python scripts/run_generality_validation.py
+```
 
 ## 5. 人工缺口如何填写
 
