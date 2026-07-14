@@ -273,6 +273,20 @@ def _normalize_method_card_payload(payload: dict[str, Any]) -> dict[str, Any]:
     data["paper_id"] = _slug(original_paper_id or str(data.get("title") or "unknown_paper"))
     data["method_id"] = _slug(str(data.get("method_id") or f"method_{data['paper_id']}"))
 
+    for key in [
+        "title",
+        "venue_or_source",
+        "paper_url",
+        "task_type",
+        "frequency",
+        "horizon",
+        "label_definition",
+        "training_protocol",
+        "evaluation_protocol",
+        "cost_assumptions",
+    ]:
+        data[key] = _as_text(data.get(key), str(defaults[key]))
+
     target_asset_raw = data.get("target_asset")
     target_values = _as_string_list(target_asset_raw, ["unknown"])
     data["target_asset"] = target_values[0]
@@ -298,15 +312,24 @@ def _normalize_method_card_payload(payload: dict[str, Any]) -> dict[str, Any]:
         data["extraction_metadata"] = {"raw": data.get("extraction_metadata")}
     metadata = data["extraction_metadata"]
     if is_unknown(data.get("preprocessing_protocol")):
-        data["preprocessing_protocol"] = str(metadata.get("preprocessing_protocol") or "unknown")
-    if not data.get("hyperparameters") and isinstance(metadata.get("hyperparameters"), dict):
-        data["hyperparameters"] = dict(metadata["hyperparameters"])
-    data["experiment_type"] = str(
-        payload.get("experiment_type") or metadata.get("experiment_type") or "forecast_only"
+        data["preprocessing_protocol"] = metadata.get("preprocessing_protocol") or "unknown"
+    data["preprocessing_protocol"] = _as_text(data.get("preprocessing_protocol"), "unknown")
+    hyperparameters = data.get("hyperparameters")
+    if is_unknown(hyperparameters) and isinstance(metadata.get("hyperparameters"), dict):
+        hyperparameters = metadata["hyperparameters"]
+    if is_unknown(hyperparameters):
+        data["hyperparameters"] = {}
+    elif isinstance(hyperparameters, dict):
+        data["hyperparameters"] = dict(hyperparameters)
+    else:
+        data["hyperparameters"] = {"raw": hyperparameters}
+    data["experiment_type"] = _as_text(
+        payload.get("experiment_type") or metadata.get("experiment_type"), "forecast_only"
     )
     for field_name in ("required_start_date", "required_end_date"):
         if is_unknown(data.get(field_name)):
-            data[field_name] = str(metadata.get(field_name) or "unknown")
+            data[field_name] = metadata.get(field_name) or "unknown"
+        data[field_name] = _as_text(data.get(field_name), "unknown")
     data["schema_version"] = "method_card_v2"
     if source_schema_version != "method_card_v2":
         metadata.setdefault("migrated_from_schema_version", source_schema_version)
@@ -319,6 +342,16 @@ def _normalize_method_card_payload(payload: dict[str, Any]) -> dict[str, Any]:
     data["evidence_spans"] = _normalize_evidence_spans(data.get("evidence_spans"), source_id=str(data["paper_id"]))
     data["approval_required"] = bool(data.get("approval_required"))
     return data
+
+
+def _as_text(value: Any, fallback: str) -> str:
+    if value is None:
+        return fallback
+    if isinstance(value, str):
+        return value.strip() or fallback
+    if isinstance(value, (dict, list, tuple)):
+        return json.dumps(value, ensure_ascii=False, sort_keys=True)
+    return str(value).strip() or fallback
 
 
 def _as_string_list(value: Any, fallback: list[str]) -> list[str]:

@@ -115,7 +115,9 @@ python scripts/run_p1_validation.py --skip-native
 
 ## 已知边界
 
-- 在线 LLM 抽取仍取决于 `.env` 中 provider、base URL、模型和 key 是否匹配；本轮 live 请求返回 401，因此三张新增卡采用论文正文和官方仓库人工校核，不冒充在线 LLM 输出。
+- 2026-07-14 已使用新 `.env` 通过项目 `OpenAIJsonClient` 完成真实 JSON 请求，随后对三篇新增论文执行 live 抽取，传输与 JSON 解析均为 3/3 成功；对应 ReplayLLM fixture 也通过 3/3 离线回放。
+- 在线调用成功不等于方法卡可以直接进入严格复现。单轮 live 抽取中，DLinear 卡遗漏 DLinear 模型、频率、预测长度和精确表格数值；ARIMA/LSTM 卡仍缺预处理与超参数，且 ARIMA adapter 尚未实现；日本股票分类卡信息最完整，但原生切分定义仍需审核。正式验证继续使用论文正文和官方仓库校正后的 `method_cards_local_llm/`，live 输出隔离保存在本地测试目录，不覆盖已审核卡。
+- 真实 LLM 曾把 `training_protocol`、`evaluation_protocol` 或 `hyperparameters` 返回为嵌套对象/`"unknown"` 字符串。MethodCard v2 入库边界现已统一类型，复现规划不再因此中断。
 - ARIMA 尚无通用 adapter；ARIMA/LSTM 论文在统一基准中使用 LSTM 分支。
 - 日本论文原生 split 日期不明确，只批准用于统一基准适配。
 - Streamlit 长训练仍同步执行。

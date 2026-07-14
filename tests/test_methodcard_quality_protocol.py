@@ -3,6 +3,7 @@ from __future__ import annotations
 from finance_forecast_agent.method_card_quality import assess_method_card
 from finance_forecast_agent.method_cards import MethodCard, method_card_to_paper_spec
 from finance_forecast_agent.model_registry import canonical_model_families, model_support
+from finance_forecast_agent.p1_protocol import plan_from_method_card
 from finance_forecast_agent.protocol_normalizer import normalize_evaluation_protocol, normalize_horizon
 
 
@@ -165,3 +166,36 @@ def test_v1_methodcard_metadata_migrates_to_structured_v2_fields() -> None:
     assert card.hyperparameters == {"lookback": 20}
     assert card.required_start_date == "2020-01-01"
     assert card.extraction_metadata["migrated_from_schema_version"] == "method_card_v1"
+
+
+def test_live_llm_nested_protocol_fields_are_normalized_for_planning() -> None:
+    card = MethodCard.from_dict(
+        {
+            "paper_id": "nested-protocol",
+            "title": "Nested Protocol",
+            "target_asset": "AAPL",
+            "asset_universe": ["AAPL"],
+            "frequency": "daily",
+            "horizon": "next day",
+            "label_definition": "next close",
+            "feature_groups": ["price history"],
+            "model_families": ["arima", "lstm"],
+            "training_protocol": {
+                "lstm": {"train_period": "2010-2015", "window": 60},
+                "arima": {"train_period": "2016-2017", "window": 60},
+            },
+            "evaluation_protocol": {"test_period": "2018", "metrics": ["MAE", "RMSE"]},
+            "preprocessing_protocol": {"scaling": "train-only"},
+            "hyperparameters": "unknown",
+            "metrics": ["mae", "rmse"],
+        }
+    )
+
+    assert isinstance(card.training_protocol, str)
+    assert '"lstm"' in card.training_protocol
+    assert isinstance(card.evaluation_protocol, str)
+    assert card.preprocessing_protocol == '{"scaling": "train-only"}'
+    assert card.hyperparameters == {}
+    plan = plan_from_method_card(card)
+    assert plan.paper_id == "nested_protocol"
+    assert plan.resolutions["training_protocol"].status == "specified"

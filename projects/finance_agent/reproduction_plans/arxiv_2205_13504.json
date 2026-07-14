@@ -160,63 +160,7 @@
         "The official script uses batch 8, learning rate 0.0005, ten epochs and seed 2021."
       ]
     },
-    "portfolio_formation": {
-      "status": "not_applicable",
-      "value": null,
-      "source": "system_inference",
-      "rationale": "Not required for experiment type",
-      "evidence": []
-    },
-    "event_window": {
-      "status": "not_applicable",
-      "value": null,
-      "source": "system_inference",
-      "rationale": "Not required for experiment type",
-      "evidence": []
-    },
     "action_spec": {
-      "status": "not_applicable",
-      "value": null,
-      "source": "system_inference",
-      "rationale": "Not required for experiment type",
-      "evidence": []
-    },
-    "rebalance_rule": {
-      "status": "not_applicable",
-      "value": null,
-      "source": "system_inference",
-      "rationale": "Not required for experiment type",
-      "evidence": []
-    },
-    "inference_protocol": {
-      "status": "not_applicable",
-      "value": null,
-      "source": "system_inference",
-      "rationale": "Not required for experiment type",
-      "evidence": []
-    },
-    "weighting_rule": {
-      "status": "not_applicable",
-      "value": null,
-      "source": "system_inference",
-      "rationale": "Not required for experiment type",
-      "evidence": []
-    },
-    "event_definition": {
-      "status": "not_applicable",
-      "value": null,
-      "source": "system_inference",
-      "rationale": "Not required for experiment type",
-      "evidence": []
-    },
-    "portfolio_constraints": {
-      "status": "not_applicable",
-      "value": null,
-      "source": "system_inference",
-      "rationale": "Not required for experiment type",
-      "evidence": []
-    },
-    "estimation_window": {
       "status": "not_applicable",
       "value": null,
       "source": "system_inference",
@@ -230,14 +174,42 @@
       "rationale": "Not required for experiment type",
       "evidence": []
     },
-    "signal_rule": {
+    "estimation_window": {
       "status": "not_applicable",
       "value": null,
       "source": "system_inference",
       "rationale": "Not required for experiment type",
       "evidence": []
     },
-    "reward_spec": {
+    "event_definition": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "event_window": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "inference_protocol": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "portfolio_constraints": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "portfolio_formation": {
       "status": "not_applicable",
       "value": null,
       "source": "system_inference",
@@ -251,7 +223,35 @@
       "rationale": "Not required for experiment type",
       "evidence": []
     },
+    "rebalance_rule": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "reward_spec": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "signal_rule": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
     "state_spec": {
+      "status": "not_applicable",
+      "value": null,
+      "source": "system_inference",
+      "rationale": "Not required for experiment type",
+      "evidence": []
+    },
+    "weighting_rule": {
       "status": "not_applicable",
       "value": null,
       "source": "system_inference",
@@ -275,7 +275,7 @@
     }
   ],
   "approved_for_execution": true,
-  "updated_at": "2026-07-14T08:20:26.943259+00:00",
+  "updated_at": "2026-07-14T09:33:37.680704+00:00",
   "required_fields": [
     "asset_universe",
     "data_requirements",

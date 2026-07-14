@@ -185,10 +185,10 @@ class ReproductionPlan:
 def classify_experiment_type(card: MethodCard) -> ExperimentType:
     text = " ".join(
         [
-            card.task_type,
-            card.training_protocol,
-            card.evaluation_protocol,
-            " ".join(card.model_families),
+            str(card.task_type),
+            str(card.training_protocol),
+            str(card.evaluation_protocol),
+            " ".join(str(model) for model in card.model_families),
         ]
     ).lower()
     if any(token in text for token in ("reinforcement", "portfolio management", "portfolio-vector", "reward")):
@@ -233,7 +233,8 @@ def plan_from_method_card(card: MethodCard, *, mode: PlanMode = "native_reproduc
         for name, value in values.items()
     }
     experiment_type = classify_experiment_type(card)
-    for optional in set().union(*TYPE_REQUIREMENTS.values()) - TYPE_REQUIREMENTS[experiment_type]:
+    optional_fields = set().union(*TYPE_REQUIREMENTS.values()) - TYPE_REQUIREMENTS[experiment_type]
+    for optional in sorted(optional_fields):
         resolutions.setdefault(
             optional,
             FieldResolution("not_applicable", source="system_inference", rationale="Not required for experiment type"),

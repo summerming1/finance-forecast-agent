@@ -109,16 +109,18 @@ backlog/                 adapter 任务
 
 ```text
 Ruff: passed
-pytest: 64 passed
+pytest: 65 passed
 Streamlit AppTest: 五个阶段全部无异常
 DLinear real native protocol: complete reproduction passed
 Common benchmark: shared data/folds/prediction schema passed
 HTTP health: localhost:8501 and localhost:8502 returned 200
+Live LLM: JSON request 1/1、论文抽取 3/3、ReplayLLM 回放 3/3
 ```
 
 ## 当前边界
 
-- 本轮 live LLM 请求因 provider/key 401 未通过；新增三张卡来自主论文与官方仓库人工校核。
+- 新 `.env` 已通过真实 LLM JSON 请求和三篇论文 live 抽取（3/3），ReplayLLM 离线回放也为 3/3。单轮抽取质量仍不足以自动批准全部卡，正式复现使用人工校核版本；live 测试卡与 fixture 保留在本地隔离目录。
+- MethodCard v2 已兼容 LLM 返回的嵌套协议对象和字符串形式的未知超参数，避免后续 ReproductionPlan 类型错误。
 - ExperimentMemory 尚未自动改变 Scheduler/ResearchAdvisor 排序。
 - PaperDatasetRegistry 的许可、字段映射和可替代性说明仍需增强。
 - 缺少 MethodCard diff/version history、异步任务和取消/恢复能力。
