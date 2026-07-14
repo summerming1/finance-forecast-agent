@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import random
+import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,8 @@ import torch
 from sklearn.preprocessing import StandardScaler
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
+
+from .method_cards import MethodCard
 
 
 class _WindowDataset(Dataset):
@@ -49,9 +52,9 @@ class _MovingAverage(nn.Module):
 class DLinear(nn.Module):
     """Minimal Apache-2.0-compatible implementation of cure-lab/LTSF-Linear DLinear."""
 
-    def __init__(self, *, seq_len: int, pred_len: int):
+    def __init__(self, *, seq_len: int, pred_len: int, moving_average_kernel_size: int = 25):
         super().__init__()
-        self.moving_average = _MovingAverage(25)
+        self.moving_average = _MovingAverage(moving_average_kernel_size)
         self.seasonal = nn.Linear(seq_len, pred_len)
         self.trend = nn.Linear(seq_len, pred_len)
 
@@ -74,6 +77,8 @@ class DLinearProtocol:
     train_epochs: int = 10
     patience: int = 3
     seed: int = 2021
+    moving_average_kernel_size: int = 25
+    individual: bool = False
     reported_mse: float = 0.081
     reported_mae: float = 0.203
     result_tolerance: float = 0.01
@@ -81,6 +86,66 @@ class DLinearProtocol:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+def dlinear_protocol_from_method_card(card: MethodCard) -> DLinearProtocol:
+    if "dlinear_forecaster" not in card.model_families:
+        raise ValueError("MethodCard does not select the DLinear native adapter")
+    params = card.hyperparameters
+    required = {
+        "seq_len": int,
+        "pred_len": int,
+        "batch_size": int,
+        "learning_rate": float,
+        "train_epochs": int,
+        "patience": int,
+        "seed": int,
+    }
+    missing = [name for name in required if name not in params]
+    if missing:
+        raise ValueError("DLinear MethodCard is missing hyperparameters: " + ", ".join(missing))
+    if str(params.get("optimizer") or "Adam").lower() != "adam":
+        raise ValueError("DLinear native adapter currently requires the paper's Adam optimizer")
+    if str(params.get("loss") or "mse").lower() != "mse":
+        raise ValueError("DLinear native adapter currently requires the paper's MSE loss")
+    if bool(params.get("individual", False)):
+        raise ValueError("Selected strict claim requires shared-weight DLinear (individual=False)")
+    split_text = card.evaluation_protocol.lower()
+    train_match = re.search(r"num_train\s*=\s*int\(.{0,120}?\*\s*(0\.\d+)\)", split_text)
+    test_match = re.search(r"num_test\s*=\s*int\(.{0,120}?\*\s*(0\.\d+)\)", split_text)
+    if not train_match or not test_match:
+        raise ValueError("DLinear MethodCard must specify executable chronological train/test ratios")
+    dataset_revisions = [
+        span.source_revision
+        for span in card.evidence_spans
+        if span.source_type in {"dataset_manifest", "official_dataset"}
+        and span.source_revision.startswith("sha256:")
+    ]
+    if not dataset_revisions:
+        raise ValueError("DLinear MethodCard requires a pinned dataset SHA256 evidence span")
+    try:
+        reported_mse = float(card.reported_results["mse"])
+        reported_mae = float(card.reported_results["mae"])
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError("DLinear MethodCard requires numeric paper MSE and MAE") from exc
+    return DLinearProtocol(
+        seq_len=int(params["seq_len"]),
+        pred_len=int(params["pred_len"]),
+        train_ratio=float(train_match.group(1)),
+        test_ratio=float(test_match.group(1)),
+        batch_size=int(params["batch_size"]),
+        learning_rate=float(params["learning_rate"]),
+        train_epochs=int(params["train_epochs"]),
+        patience=int(params["patience"]),
+        seed=int(params["seed"]),
+        moving_average_kernel_size=int(
+            params.get("moving_average_kernel_size", params.get("moving_average_kernel", 25))
+        ),
+        individual=False,
+        reported_mse=reported_mse,
+        reported_mae=reported_mae,
+        expected_dataset_sha256=dataset_revisions[0].removeprefix("sha256:"),
+    )
 
 
 def _split_scaled(values: np.ndarray, protocol: DLinearProtocol):
@@ -142,7 +207,11 @@ def reproduce_dlinear_exchange_rate(
         drop_last=False,
         num_workers=0,
     )
-    model = DLinear(seq_len=protocol.seq_len, pred_len=protocol.pred_len)
+    model = DLinear(
+        seq_len=protocol.seq_len,
+        pred_len=protocol.pred_len,
+        moving_average_kernel_size=protocol.moving_average_kernel_size,
+    )
     optimizer = torch.optim.Adam(model.parameters(), lr=protocol.learning_rate)
     criterion = nn.MSELoss()
     best_loss = float("inf")

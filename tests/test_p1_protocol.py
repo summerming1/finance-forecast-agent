@@ -75,6 +75,27 @@ def test_paper_evidence_label_without_bound_spans_cannot_be_strict() -> None:
     assert ready.strict_ready is False
 
 
+def test_revision_pinned_primary_source_evidence_can_be_strict() -> None:
+    payload = _card().to_dict()
+    required_fields = plan_from_method_card(_card()).required_fields
+    payload["evidence_spans"] = [
+        {
+            "source_id": "official_repo_commit",
+            "source_type": "official_repository",
+            "source_url": "https://github.com/example/repo/blob/abc123/file.py",
+            "source_revision": "abc123",
+            "section": field_name,
+            "quote": f"official evidence for {field_name}",
+            "summary": "Pinned primary implementation evidence.",
+        }
+        for field_name in required_fields
+    ]
+    plan = plan_from_method_card(MethodCard.from_dict(payload))
+    ready = replace(plan, approved_for_execution=True)
+    assert ready.resolutions["training_protocol"].source == "primary_source_evidence"
+    assert ready.strict_ready is True
+
+
 def test_plan_round_trip_preserves_gate_state(tmp_path: Path) -> None:
     plan = plan_from_method_card(_card())
     resolutions = {

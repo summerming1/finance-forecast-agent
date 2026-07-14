@@ -57,55 +57,82 @@
           "source_id": "arxiv_1706_10059",
           "section": "unknown",
           "quote": "This paper presents a ﬁnancial-model-free Reinforcement Learning framework to provide a deep machine learning solution to the portfolio management problem.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1706_10059",
           "section": "unknown",
           "quote": "The framework consists of the Ensemble of Identical Independent Evaluators (EIIE) topology, a Portfolio-Vector Memory (PVM), an Online Stochastic Batch Learning (OSBL) scheme, and a fully exploiting and explicit reward function.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1706_10059",
           "section": "unknown",
           "quote": "This framework is realized in three instants in this work with a Convolutional Neural Network (CNN), a basic Recurrent Neural Network (RNN), and a Long Short-Term Memory (LSTM).",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1706_10059",
           "section": "unknown",
           "quote": "examined in three back-test experiments with a trading period of 30 minutes in a cryptocurrency market",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1706_10059",
           "section": "unknown",
           "quote": "All three instances of the framework monopolize the top three positions in all experiments, outdistancing other compared trading algorithms.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1706_10059",
           "section": "unknown",
           "quote": "Although with a high commission rate of 0.25% in the back-tests, the framework is able to achieve at least 4-fold returns in 50 days.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1706_10059",
           "section": "unknown",
           "quote": "An IIE is a neural network whose job is to inspect the history of an asset and evaluate its potential growth for the immediate future.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1706_10059",
           "section": "unknown",
           "quote": "The evaluation score of each asset is discounted by the size of its intentional weight change for the asset in the portfolio and is presented to a softmax layer, whose outcome will be the new portfolio weights for the coming trading period.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1706_10059",
           "section": "unknown",
           "quote": "a dedicated Portfolio-Vector Memory (PVM), is introduced to store the network outputs.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -198,85 +225,127 @@
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "Deep Learning in Asset Pricing",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "estimate an asset pricing model for individual stock returns",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "vast amount of conditioning information",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "many macroeconomic time series",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "deep neural networks",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "non-linear factor model",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "min ω,ht max g,hg t L(ω|ˆg,hg t,ht,It,i)",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "Dropout",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "adaptive learning rate",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "ensemble learning",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "outperforms out-of-sample all benchmark approaches in terms of Sharpe ratio, explained variation and pricing errors",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "Sharpe ratio, explained variation and pricing errors",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "XS-R2",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_1904_00745",
           "section": "unknown",
           "quote": "use the fundamental no-arbitrage condition as criterion function, to construct the most informative test assets with an adversarial approach and to extract the states of the economy from many macroeconomic time series",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -381,43 +450,64 @@
           "source_id": "arxiv_2004_10178v2",
           "section": "unknown",
           "quote": "We employ both random forests and LSTM networks (more precisely CuDNNLSTM) as training methodologies to analyze their eﬀectiveness in forecasting out-of-sample directional movements of constituent stocks of the S&P 500 from January 1993 till December 2018 for intraday trading.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2004_10178v2",
           "section": "unknown",
           "quote": "We introduce a multi-feature setting consisting not only of the returns with respect to the closing prices, but also with respect to the opening prices and intraday returns.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2004_10178v2",
           "section": "unknown",
           "quote": "On each trading day, we buy the 10 stocks with the highest probability and sell short the 10 stocks with the lowest probability to outperform the market in terms of intraday returns – all with equal monetary weight.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2004_10178v2",
           "section": "unknown",
           "quote": "Our empirical results show that the multi-feature setting provides a daily return, prior to transaction costs, of 0.64% using LSTM networks, and 0.54% using random forests.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2004_10178v2",
           "section": "unknown",
           "quote": "we divide the dataset consisting of 29 years starting from January 1990 till December 2018, using a 4-year window and 1-year stride, where each study period is divided into a training period of approximately 756 days (≈ 3 years) and a trading period of approximately 252 days (≈ 1 year). As a consequence, we obtain 26 study periods with non-overlapping trading part.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2004_10178v2",
           "section": "unknown",
           "quote": "stocks of the S&P 500 from the period of January 1990 until December 2018 using Bloomberg. For each day, stocks with zero volume were not considered for trading at this day.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2004_10178v2",
           "section": "unknown",
           "quote": "All experiments were executed in a NVIDIA Tesla V100 with 30 GB memory. The codes and simulations were implemented using Python 3.6.5 with a dependency of TensorFlow 1.14.0 and scikit-learn 0.20.4.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -518,97 +608,145 @@
           "source_id": "arxiv_2108_10826",
           "section": "title",
           "quote": "S&P 500 S TOCK PRICE PREDICTION USING TECHNICAL , FUNDAMENTAL AND TEXT DATA",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "task_type",
           "quote": "A 66.18% accuracy in S&P 500 index directional prediction and 62.09% accuracy in individual stock directional prediction was achieved by combining different machine learning models such as Random Forest and LSTM together into state-of-the-art ensemble models.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "target_asset",
           "quote": "A 66.18% accuracy in S&P 500 index directional prediction and 62.09% accuracy in individual stock directional prediction",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "asset_universe",
           "quote": "518 different common stocks issued by current and former S&P 500 large-cap companies, from January 1, 2000 to December 31, 2019",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "frequency",
           "quote": "we took the median sentiment each week for each company (with weeks ending on Fridays) as the sentiment variables in our weekly data",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "feature_groups",
           "quote": "combined them with technical indices, fundamental characteristics and text-based sentiment data to predict S&P stock prices",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "model_families",
           "quote": "combining different machine learning models such as Random Forest and LSTM together into state-of-the-art ensemble models",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "model_families",
           "quote": "we chose the \"bert-base-uncased\" tokenizer to clean the text",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "model_families",
           "quote": "Linear Regression models trained together using all stock's data",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "training_protocol",
           "quote": "We used three years of information as training data. After two years of training data were input, the individual model predicts future observations iteratively, calculates the prediction errors and updates the model at the end of each year based on these errors. Also starting from the third year, the ensemble models were fitted using past years' prediction outputs as inputs to the ensemble model.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "strict_requirements",
           "quote": "carefully selecting the corresponding predictor variables to control the number of input variables; training the machine learning algorithm across different stocks simultaneously then fine-tuning on each individual stock; creating an ensemble of models trained with different groups of stocks; and allowing multiple input and output periods for the LSTM model for more recursive training",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "reported_results",
           "quote": "A 66.18% accuracy in S&P 500 index directional prediction and 62.09% accuracy in individual stock directional prediction",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "data_requirements",
           "quote": "The data we use contains weekly historical prices, finance reports, and text information from news items associated with 518 different common stocks",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "data_requirements",
           "quote": "In our dataset which contains over 500 stocks and 3.2 million news items",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "data_requirements",
           "quote": "Of the 170,779 extracted articles, 23,469 were positive, 37,426 were negative, and 109,884 were neutral.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2108_10826",
           "section": "label_definition",
           "quote": "directional prediction",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -653,13 +791,13 @@
       "schema_version": "method_card_v2"
     },
     {
-      "method_id": "method_arxiv_2205_13504_dlinear_exchange",
+      "method_id": "arxiv_2205_13504_dlinear_exchange_rate_l336_h96_shared",
       "paper_id": "arxiv_2205_13504",
       "title": "Are Transformers Effective for Time Series Forecasting?",
-      "venue_or_source": "AAAI 2023 / arXiv",
+      "venue_or_source": "arXiv",
       "paper_url": "https://arxiv.org/abs/2205.13504",
-      "task_type": "multivariate_long_term_time_series_forecasting",
-      "target_asset": "eight exchange-rate series",
+      "task_type": "multivariate_time_series_forecasting",
+      "target_asset": "Exchange-Rate dataset future exchange-rate values for 8 channels",
       "asset_universe": [
         "Australia",
         "British",
@@ -671,176 +809,405 @@
         "Singapore"
       ],
       "frequency": "daily",
-      "horizon": "96 days",
-      "label_definition": "next 96 standardized values for all eight exchange-rate channels",
+      "horizon": "96 time steps (days)",
+      "label_definition": "Predict the next 96 time steps for all 8 exchange-rate channels from the prior 336-step multivariate input window.",
       "data_requirements": [
-        "LTSF Exchange-Rate benchmark",
-        "7588 daily observations",
-        "eight variates",
-        "official train-validation-test boundaries"
+        "Exchange-Rate dataset with 7,588 rows",
+        "8 multivariate daily exchange-rate channels",
+        "date column plus channels Australia, British, Canada, Switzerland, China, Japan, New Zealand, Singapore",
+        "chronologically ordered data from 1990-01-01 through 2016-11-10"
       ],
       "feature_groups": [
-        "cross_asset_features",
-        "sequence_window_features"
+        "return_momentum_features"
       ],
       "model_families": [
         "dlinear_forecaster"
       ],
-      "training_protocol": "official LTSF-Linear exchange protocol: sequence length 336, prediction length 96, 70/10/20 chronological split, batch size 8, 10 epochs with patience 3, Adam and MSE loss, seed 2021",
-      "evaluation_protocol": "fixed chronological 70/10/20 train-validation-test split with 336-step context overlap",
+      "training_protocol": "Train DLinear with shared weights (individual=False) on Exchange-Rate using input length 336 and prediction length 96. Seed is fixed to 2021. Optimizer is Adam with learning rate 0.0005. Loss is MSE. Batch size is 8. Defaults include train_epochs=10, patience=3, lradj=type1, use_amp=False. DLinear uses direct multi-step forecasting.",
+      "evaluation_protocol": "Chronological split from Dataset_Custom: num_train=int(len(df_raw)*0.7), num_test=int(len(df_raw)*0.2), num_vali=len(df_raw)-num_train-num_test. Borders are [0, num_train-seq_len, len(df_raw)-num_test-seq_len] to [num_train, num_train+num_vali, len(df_raw)]. Test metrics are computed by concatenating all prediction and truth batches, reshaping to (-1, pred_len, channels), and aggregating MSE and MAE over all test windows, prediction steps, and channels.",
       "metrics": [
         "mae",
         "mse"
       ],
-      "cost_assumptions": "not applicable: forecast-only benchmark",
+      "cost_assumptions": "not_applicable",
       "reported_results": {
         "mse": 0.081,
         "mae": 0.203
       },
       "strict_requirements": [
-        "exact Exchange-Rate benchmark snapshot",
-        "sequence length 336",
-        "prediction length 96",
-        "shared-weight DLinear",
-        "train-only StandardScaler",
-        "official chronological split and seed"
+        "Use the Exchange-Rate dataset.",
+        "Use DLinear, not DLinear-I; shared weights correspond to individual=False.",
+        "Use input length 336.",
+        "Use prediction length 96.",
+        "Use multivariate setting with enc_in=8 and features=M.",
+        "Use chronological 70/10/20 style split implemented as num_train=70%, num_test=20%, remainder validation, with seq_len-adjusted borders.",
+        "Fit StandardScaler on train data only.",
+        "Use moving-average decomposition kernel size 25.",
+        "Use Adam optimizer with learning rate 0.0005, batch size 8, MSE loss, seed 2021.",
+        "Report MSE and MAE aggregated over all test windows, forecast steps, and channels."
       ],
-      "unknowns": [],
+      "unknowns": [
+        "weight_decay",
+        "Adam beta parameters",
+        "dropout",
+        "device/GPU details for this selected run",
+        "whether early stopping was triggered before 10 epochs",
+        "exact validation fraction as percentage after integer rounding"
+      ],
       "evidence_spans": [
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "ltsf_linear_exchange_script_7f7a25b",
+          "section": "method_id",
+          "quote": "seq_len=336\nmodel_name=DLinear\npython -u run_longExp.py --is_training 1 --root_path ./dataset/ --data_path exchange_rate.csv --model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8 --des Exp --itr 1 --batch_size 8 --learning_rate 0.0005",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/scripts/EXP-LongForecasting/Linear/exchange_rate.sh",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "arxiv_2205_13504_table_2_exchange_96",
+          "section": "paper_id",
+          "quote": "The selected row is: Exchange 96 45.27% 0.082 0.207 0.089 0.208 0.081 0.203.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "https://arxiv.org/abs/2205.13504",
+          "source_revision": "text_sha:c611ce7852956016"
+        },
+        {
+          "source_id": "arxiv_2205_13504_table_2_exchange_96",
+          "section": "title",
+          "quote": "Table 2 column order is Linear MSE/MAE, NLinear MSE/MAE, DLinear MSE/MAE, followed by compared methods.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "https://arxiv.org/abs/2205.13504",
+          "source_revision": "text_sha:c611ce7852956016"
+        },
+        {
+          "source_id": "ltsf_linear_exchange_script_7f7a25b",
+          "section": "task_type",
+          "quote": "python -u run_longExp.py --is_training 1 --root_path ./dataset/ --data_path exchange_rate.csv --model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/scripts/EXP-LongForecasting/Linear/exchange_rate.sh",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "exchange_rate_dataset_manifest_local",
           "section": "target_asset",
-          "quote": "Exchange-Rate is an eight-variate financial time series benchmark.",
-          "summary": "Defines the multivariate target."
+          "quote": "Frozen local Exchange-Rate benchmark: 7,588 rows, 8 daily exchange-rate channels, date range 1990-01-01 through 2016-11-10. CSV columns are date, Australia, British, Canada, Switzerland, China, Japan, New Zealand, Singapore.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "dataset_manifest",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear",
+          "source_revision": "sha256:0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f"
         },
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "exchange_rate_dataset_manifest_local",
           "section": "asset_universe",
-          "quote": "The Exchange-Rate dataset contains eight foreign-exchange channels.",
-          "summary": "Defines the channel universe."
+          "quote": "CSV columns are date, Australia, British, Canada, Switzerland, China, Japan, New Zealand, Singapore.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "dataset_manifest",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear",
+          "source_revision": "sha256:0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f"
         },
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "exchange_rate_dataset_manifest_local",
           "section": "frequency",
-          "quote": "Exchange-Rate has 7,588 timesteps at one-day granularity.",
-          "summary": "Defines sample count and frequency."
+          "quote": "Frozen local Exchange-Rate benchmark: 7,588 rows, 8 daily exchange-rate channels, date range 1990-01-01 through 2016-11-10.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "dataset_manifest",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear",
+          "source_revision": "sha256:0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f"
         },
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "ltsf_linear_exchange_script_7f7a25b",
           "section": "horizon",
-          "quote": "The Exchange benchmark reports prediction length 96.",
-          "summary": "Defines the tested horizon."
+          "quote": "--model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/scripts/EXP-LongForecasting/Linear/exchange_rate.sh",
+          "source_revision": "7f7a25b"
         },
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "ltsf_linear_dlinear_model_7f7a25b",
           "section": "label_definition",
-          "quote": "Long-term forecasting predicts future values of every variate from a historical input sequence.",
-          "summary": "Defines the output label."
+          "quote": "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/models/DLinear.py",
+          "source_revision": "7f7a25b"
         },
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "exchange_rate_dataset_manifest_local",
           "section": "data_requirements",
-          "quote": "Exchange-Rate contains 7,588 daily timesteps and eight variates.",
-          "summary": "Defines the required dataset."
+          "quote": "Frozen local Exchange-Rate benchmark: 7,588 rows, 8 daily exchange-rate channels, date range 1990-01-01 through 2016-11-10. CSV columns are date, Australia, British, Canada, Switzerland, China, Japan, New Zealand, Singapore.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "dataset_manifest",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear",
+          "source_revision": "sha256:0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f"
         },
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "ltsf_linear_exchange_script_7f7a25b",
           "section": "feature_groups",
-          "quote": "The model receives a multivariate look-back window as input.",
-          "summary": "Defines sequence features."
+          "quote": "--data_path exchange_rate.csv --model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/scripts/EXP-LongForecasting/Linear/exchange_rate.sh",
+          "source_revision": "7f7a25b"
         },
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "ltsf_linear_dlinear_model_7f7a25b",
           "section": "model_families",
-          "quote": "DLinear combines seasonal and trend linear projections after decomposition.",
-          "summary": "Defines the model family."
+          "quote": "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/models/DLinear.py",
+          "source_revision": "7f7a25b"
         },
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "ltsf_linear_runner_defaults_7f7a25b",
           "section": "training_protocol",
-          "quote": "The official exchange script uses input length 336 and prediction length 96.",
-          "summary": "Official repository protocol."
+          "quote": "fix_seed = 2021; random.seed(fix_seed); torch.manual_seed(fix_seed); np.random.seed(fix_seed). Defaults: train_epochs=10, patience=3, loss=mse, lradj=type1, use_amp=False. The exchange script overrides batch_size=8 and learning_rate=0.0005.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/run_longExp.py",
+          "source_revision": "7f7a25b"
         },
         {
-          "source_id": "arxiv_2205.13504",
-          "section": "preprocessing_protocol",
-          "quote": "The official loader standardizes using statistics fitted on the training partition.",
-          "summary": "Defines leakage-safe scaling."
+          "source_id": "ltsf_linear_experiment_runner_7f7a25b",
+          "section": "training_protocol",
+          "quote": "Training uses optim.Adam(self.model.parameters(), lr=self.args.learning_rate) and nn.MSELoss().",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/exp/exp_main.py",
+          "source_revision": "7f7a25b"
         },
         {
-          "source_id": "arxiv_2205.13504",
-          "section": "hyperparameters",
-          "quote": "The official script uses batch 8, learning rate 0.0005, ten epochs and seed 2021.",
-          "summary": "Defines executable hyperparameters."
-        },
-        {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "ltsf_linear_data_loader_7f7a25b",
           "section": "evaluation_protocol",
-          "quote": "The official loader applies chronological train, validation and test partitions.",
-          "summary": "Defines evaluation split."
+          "quote": "Dataset_Custom computes num_train=int(len(df_raw)*0.7), num_test=int(len(df_raw)*0.2), num_vali=len(df_raw)-num_train-num_test. Borders are [0, num_train-seq_len, len(df_raw)-num_test-seq_len] to [num_train, num_train+num_vali, len(df_raw)]. StandardScaler is fitted only on df_data[0:num_train], then transforms all rows.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/data_provider/data_loader.py",
+          "source_revision": "7f7a25b"
         },
         {
-          "source_id": "arxiv_2205.13504",
+          "source_id": "ltsf_linear_experiment_runner_7f7a25b",
+          "section": "evaluation_protocol",
+          "quote": "Testing concatenates all prediction and truth batches, reshapes them to (-1, pred_len, channels), and calls metric(preds, trues), whose MSE and MAE aggregate over all test windows, prediction steps, and channels.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/exp/exp_main.py",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "arxiv_2205_13504_table_2_exchange_96",
           "section": "metrics",
-          "quote": "Mean Squared Error and Mean Absolute Error are the core metrics.",
-          "summary": "Defines evaluation metrics."
+          "quote": "Table 2 column order is Linear MSE/MAE, NLinear MSE/MAE, DLinear MSE/MAE, followed by compared methods. The selected row is: Exchange 96 45.27% 0.082 0.207 0.089 0.208 0.081 0.203. Therefore the selected DLinear Exchange-Rate prediction-length-96 result is MSE 0.081 and MAE 0.203.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "https://arxiv.org/abs/2205.13504",
+          "source_revision": "text_sha:c611ce7852956016"
+        },
+        {
+          "source_id": "arxiv_2205_13504_table_2_exchange_96",
+          "section": "reported_results",
+          "quote": "Therefore the selected DLinear Exchange-Rate prediction-length-96 result is MSE 0.081 and MAE 0.203.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "https://arxiv.org/abs/2205.13504",
+          "source_revision": "text_sha:c611ce7852956016"
+        },
+        {
+          "source_id": "ltsf_linear_data_loader_7f7a25b",
+          "section": "preprocessing_protocol",
+          "quote": "StandardScaler is fitted only on df_data[0:num_train], then transforms all rows.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/data_provider/data_loader.py",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "ltsf_linear_dlinear_model_7f7a25b",
+          "section": "preprocessing_protocol",
+          "quote": "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/models/DLinear.py",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "ltsf_linear_exchange_script_7f7a25b",
+          "section": "hyperparameters",
+          "quote": "seq_len=336\nmodel_name=DLinear\npython -u run_longExp.py --is_training 1 --root_path ./dataset/ --data_path exchange_rate.csv --model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8 --des Exp --itr 1 --batch_size 8 --learning_rate 0.0005",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/scripts/EXP-LongForecasting/Linear/exchange_rate.sh",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "ltsf_linear_runner_defaults_7f7a25b",
+          "section": "hyperparameters",
+          "quote": "fix_seed = 2021; random.seed(fix_seed); torch.manual_seed(fix_seed); np.random.seed(fix_seed). Defaults: train_epochs=10, patience=3, loss=mse, lradj=type1, use_amp=False. The exchange script overrides batch_size=8 and learning_rate=0.0005.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/run_longExp.py",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "ltsf_linear_dlinear_model_7f7a25b",
+          "section": "hyperparameters",
+          "quote": "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/models/DLinear.py",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "exchange_rate_dataset_manifest_local",
+          "section": "required_start_date",
+          "quote": "date range 1990-01-01 through 2016-11-10.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "dataset_manifest",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear",
+          "source_revision": "sha256:0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f"
+        },
+        {
+          "source_id": "exchange_rate_dataset_manifest_local",
+          "section": "required_end_date",
+          "quote": "date range 1990-01-01 through 2016-11-10.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "dataset_manifest",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear",
+          "source_revision": "sha256:0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f"
+        },
+        {
+          "source_id": "arxiv_2205_13504_table_2_exchange_96",
+          "section": "strict_requirements",
+          "quote": "The selected row is: Exchange 96 45.27% 0.082 0.207 0.089 0.208 0.081 0.203.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "https://arxiv.org/abs/2205.13504",
+          "source_revision": "text_sha:c611ce7852956016"
+        },
+        {
+          "source_id": "ltsf_linear_exchange_script_7f7a25b",
+          "section": "strict_requirements",
+          "quote": "seq_len=336\nmodel_name=DLinear\npython -u run_longExp.py --is_training 1 --root_path ./dataset/ --data_path exchange_rate.csv --model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8 --des Exp --itr 1 --batch_size 8 --learning_rate 0.0005",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/scripts/EXP-LongForecasting/Linear/exchange_rate.sh",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "ltsf_linear_data_loader_7f7a25b",
+          "section": "strict_requirements",
+          "quote": "Dataset_Custom computes num_train=int(len(df_raw)*0.7), num_test=int(len(df_raw)*0.2), num_vali=len(df_raw)-num_train-num_test. Borders are [0, num_train-seq_len, len(df_raw)-num_test-seq_len] to [num_train, num_train+num_vali, len(df_raw)]. StandardScaler is fitted only on df_data[0:num_train], then transforms all rows.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/data_provider/data_loader.py",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "ltsf_linear_dlinear_model_7f7a25b",
+          "section": "strict_requirements",
+          "quote": "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/models/DLinear.py",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "ltsf_linear_experiment_runner_7f7a25b",
+          "section": "strict_requirements",
+          "quote": "Testing concatenates all prediction and truth batches, reshapes them to (-1, pred_len, channels), and calls metric(preds, trues), whose MSE and MAE aggregate over all test windows, prediction steps, and channels.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/exp/exp_main.py",
+          "source_revision": "7f7a25b"
+        },
+        {
+          "source_id": "ltsf_linear_runner_defaults_7f7a25b",
+          "section": "unknowns",
+          "quote": "Defaults: train_epochs=10, patience=3, loss=mse, lradj=type1, use_amp=False.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "official_repository",
+          "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/run_longExp.py",
+          "source_revision": "7f7a25b"
         }
       ],
       "extraction_metadata": {
-        "extractor": "curated_from_primary_paper_and_official_repository",
-        "live_llm_api_used": false,
-        "source_path": "projects/finance_agent/papers/local/arxiv_2205.13504.pdf",
-        "experiment_type": "forecast_only",
-        "preprocessing_protocol": "StandardScaler fitted on the first 70% training partition and applied to validation/test",
-        "hyperparameters": {
-          "seq_len": 336,
-          "pred_len": 96,
-          "batch_size": 8,
-          "learning_rate": 0.0005,
-          "train_epochs": 10,
-          "patience": 3,
-          "seed": 2021,
-          "moving_average_kernel": 25,
-          "individual": false
+        "claim_selector": {
+          "model": "DLinear (shared weights, not DLinear-I)",
+          "dataset": "Exchange-Rate",
+          "input_length": 336,
+          "prediction_length": 96,
+          "metrics": [
+            "mse",
+            "mae"
+          ],
+          "reported_results": {
+            "mse": 0.081,
+            "mae": 0.203
+          }
         },
-        "required_start_date": "1990-01-01",
-        "required_end_date": "2016-11-10",
-        "dataset_sha256": "0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f",
+        "document_id": "arxiv_2205.13504",
+        "text_sha": "c611ce7852956016",
+        "supporting_context_sha": "672da7e9a2fa58d2",
+        "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+        "raw_paper_id": "arxiv_2205.13504",
         "quality_report": {
-          "method_id": "method_arxiv_2205_13504_dlinear_exchange",
+          "method_id": "arxiv_2205_13504_dlinear_exchange_rate_l336_h96_shared",
           "paper_id": "arxiv_2205_13504",
-          "quality_score": 0.97,
+          "quality_score": 1.0,
           "approval_required": false,
           "critical_missing_fields": [],
           "type_errors": [],
           "unsupported_models": [],
-          "warnings": [
-            "evaluation protocol could not be mapped to a supported protocol type"
-          ],
+          "warnings": [],
           "recommended_action": "ready_for_exploratory_p0_harness"
         },
-        "evaluation_protocol_type": "unknown",
-        "evaluation_protocol_description": "fixed chronological 70/10/20 train-validation-test split with 336-step context overlap",
+        "evaluation_protocol_type": "out_of_sample",
+        "evaluation_protocol_description": "Chronological split from Dataset_Custom: num_train=int(len(df_raw)*0.7), num_test=int(len(df_raw)*0.2), num_vali=len(df_raw)-num_train-num_test. Borders are [0, num_train-seq_len, len(df_raw)-num_test-seq_len] to [num_train, num_train+num_vali, len(df_raw)]. Test metrics are computed by concatenating all prediction and truth batches, reshaping to (-1, pred_len, channels), and aggregating MSE and MAE over all test windows, prediction steps, and channels.",
         "frequency_type": "daily",
-        "horizon_type": "96_day"
+        "horizon_type": "next_return",
+        "document_text_sha": "c611ce7852956016",
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2205.13504.pdf",
+        "prompt_profile": "strict",
+        "claim_selector_consistency": {
+          "passed": true,
+          "errors": []
+        },
+        "evidence_verification": {
+          "passed": true,
+          "span_count": 31,
+          "errors": []
+        }
       },
       "approval_required": false,
-      "evaluation_protocol_type": "unknown",
-      "evaluation_protocol_description": "fixed chronological 70/10/20 train-validation-test split with 336-step context overlap",
+      "evaluation_protocol_type": "out_of_sample",
+      "evaluation_protocol_description": "Chronological split from Dataset_Custom: num_train=int(len(df_raw)*0.7), num_test=int(len(df_raw)*0.2), num_vali=len(df_raw)-num_train-num_test. Borders are [0, num_train-seq_len, len(df_raw)-num_test-seq_len] to [num_train, num_train+num_vali, len(df_raw)]. Test metrics are computed by concatenating all prediction and truth batches, reshaping to (-1, pred_len, channels), and aggregating MSE and MAE over all test windows, prediction steps, and channels.",
       "frequency_type": "daily",
-      "horizon_type": "96_day",
+      "horizon_type": "next_return",
       "experiment_type": "forecast_only",
-      "preprocessing_protocol": "StandardScaler fitted on the first 70% training partition and applied to validation/test",
+      "preprocessing_protocol": "StandardScaler is fit only on training rows and then applied to all rows. DLinear first decomposes each input into trend and seasonal/remainder components using a moving-average kernel of size 25, applies one shared linear layer to each component, and sums the outputs.",
       "hyperparameters": {
+        "model_name": "DLinear",
         "seq_len": 336,
         "pred_len": 96,
+        "enc_in": 8,
+        "features": "M",
         "batch_size": 8,
         "learning_rate": 0.0005,
         "train_epochs": 10,
         "patience": 3,
+        "loss": "mse",
+        "optimizer": "Adam",
         "seed": 2021,
-        "moving_average_kernel": 25,
-        "individual": false
+        "moving_average_kernel_size": 25,
+        "individual": false,
+        "lradj": "type1",
+        "use_amp": false,
+        "itr": 1
       },
       "required_start_date": "1990-01-01",
       "required_end_date": "2016-11-10",
@@ -909,79 +1276,118 @@
           "source_id": "arxiv_2209.02407",
           "section": "target_asset",
           "quote": "The dataset consists of the highest price on transaction days.",
-          "summary": "Defines the forecast target."
+          "summary": "Defines the forecast target.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "asset_universe",
           "quote": "Fifty listed-company stocks from Yahoo Finance are selected.",
-          "summary": "Defines the paper universe."
+          "summary": "Defines the paper universe.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "frequency",
           "quote": "Observations are stock highs on transaction days.",
-          "summary": "Defines daily trading frequency."
+          "summary": "Defines daily trading frequency.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "horizon",
           "quote": "Sixty days of data are used to predict the next day.",
-          "summary": "Defines window and horizon."
+          "summary": "Defines window and horizon.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "label_definition",
           "quote": "The models predict the next transaction day's high price.",
-          "summary": "Defines the label."
+          "summary": "Defines the label.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "data_requirements",
           "quote": "The sample spans 1 January 2010 through 31 December 2018.",
-          "summary": "Defines the sample period."
+          "summary": "Defines the sample period.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "feature_groups",
           "quote": "Each prediction uses a sixty-day historical price sequence.",
-          "summary": "Defines input features."
+          "summary": "Defines input features.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "model_families",
           "quote": "The study compares ARIMA and LSTM stock-price forecasts.",
-          "summary": "Defines model families."
+          "summary": "Defines model families.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "training_protocol",
           "quote": "LSTM trains on 2010-2015 and validates on 2016-2017.",
-          "summary": "Defines LSTM training windows."
+          "summary": "Defines LSTM training windows.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "preprocessing_protocol",
           "quote": "The LSTM experiment converts sixty-day histories into supervised sequences.",
-          "summary": "Defines sequence preprocessing; scaling details require code confirmation."
+          "summary": "Defines sequence preprocessing; scaling details require code confirmation.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "hyperparameters",
           "quote": "The selected LSTM has three layers, one hundred nodes and dropout 0.1.",
-          "summary": "Defines key hyperparameters."
+          "summary": "Defines key hyperparameters.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "evaluation_protocol",
           "quote": "Both models use calendar year 2018 as the test set.",
-          "summary": "Defines fixed out-of-sample evaluation."
+          "summary": "Defines fixed out-of-sample evaluation.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2209.02407",
           "section": "metrics",
           "quote": "The study evaluates MAE, MSE and RMSE.",
-          "summary": "Defines evaluation metrics."
+          "summary": "Defines evaluation metrics.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -1096,7 +1502,10 @@
           "source_id": "arxiv_2212_01048",
           "section": "unknown",
           "quote": "",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -1191,7 +1600,10 @@
           "source_id": "arxiv_2306_03620",
           "section": "unknown",
           "quote": "",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -1290,67 +1702,100 @@
           "source_id": "arxiv_2310.16855",
           "section": "target_asset",
           "quote": "The assessment filters the JPX dataset to Sony price data.",
-          "summary": "Defines the target asset."
+          "summary": "Defines the target asset.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "asset_universe",
           "quote": "The study uses the JPX Tokyo Stock Exchange Prediction dataset.",
-          "summary": "Defines the source universe."
+          "summary": "Defines the source universe.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "frequency",
           "quote": "The target compares today's close with the following trading day.",
-          "summary": "Defines daily frequency."
+          "summary": "Defines daily frequency.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "horizon",
           "quote": "The Next column contains the following trading day's close.",
-          "summary": "Defines the forecast horizon."
+          "summary": "Defines the forecast horizon.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "label_definition",
           "quote": "Target is one for an increase and zero for a decrease.",
-          "summary": "Defines binary direction."
+          "summary": "Defines binary direction.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "data_requirements",
           "quote": "Inputs include Date, Open, High, Low, Close and Volume.",
-          "summary": "Defines required columns."
+          "summary": "Defines required columns.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "feature_groups",
           "quote": "Open, High, Low, Close and Volume are used as model features.",
-          "summary": "Defines price and liquidity features."
+          "summary": "Defines price and liquidity features.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "model_families",
           "quote": "Logistic regression, decision tree and random forest are compared.",
-          "summary": "Defines model families; this card selects RF."
+          "summary": "Defines model families; this card selects RF.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "training_protocol",
           "quote": "Random forest uses 250 trees, depth 100 and bootstrap sampling.",
-          "summary": "Defines training protocol."
+          "summary": "Defines training protocol.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "evaluation_protocol",
           "quote": "Validation accuracy compares predictions with true target values.",
-          "summary": "Split boundary remains unresolved."
+          "summary": "Split boundary remains unresolved.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2310.16855",
           "section": "metrics",
           "quote": "Random forest reports accuracy 0.63 and F1 score 0.74.",
-          "summary": "Defines reported results."
+          "summary": "Defines reported results.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -1369,23 +1814,21 @@
         "quality_report": {
           "method_id": "method_arxiv_2310_16855_jpx_direction",
           "paper_id": "arxiv_2310_16855",
-          "quality_score": 0.97,
+          "quality_score": 1.0,
           "approval_required": true,
           "critical_missing_fields": [],
           "type_errors": [],
           "unsupported_models": [],
-          "warnings": [
-            "evaluation protocol could not be mapped to a supported protocol type"
-          ],
+          "warnings": [],
           "recommended_action": "human_review_recommended"
         },
-        "evaluation_protocol_type": "unknown",
+        "evaluation_protocol_type": "out_of_sample",
         "evaluation_protocol_description": "paper validation split; exact chronological boundary is not reported clearly",
         "frequency_type": "daily",
         "horizon_type": "next_return"
       },
       "approval_required": true,
-      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_type": "out_of_sample",
       "evaluation_protocol_description": "paper validation split; exact chronological boundary is not reported clearly",
       "frequency_type": "daily",
       "horizon_type": "next_return",
@@ -1455,7 +1898,10 @@
           "source_id": "arxiv_2405_03151",
           "section": "unknown",
           "quote": "",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -1552,7 +1998,10 @@
           "source_id": "arxiv_2409_08426",
           "section": "unknown",
           "quote": "",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -1648,7 +2097,10 @@
           "source_id": "arxiv_2411_05790",
           "section": "unknown",
           "quote": "",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -1754,43 +2206,64 @@
           "source_id": "arxiv_2412_15448",
           "section": "unknown",
           "quote": "This study evaluates the integration of traditional technical indicators with random forest regression models using minute-level SPY data, analyzing 13 distinct model configurations.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2412_15448",
           "section": "unknown",
           "quote": "Our empirical results reveal a stark contrast between in-sample and out-of-sample performance, with R2 values deteriorating from 0.749–0.812 during training to negative values in testing.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2412_15448",
           "section": "unknown",
           "quote": "A feature importance analysis demonstrates that primary price-based features dominate the predictions made by the model, accounting for over 60% of the importance, while established technical indicators, such as RSI and Bollinger Bands, account for only 14%–15%.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2412_15448",
           "section": "unknown",
           "quote": "Although the indicator-enhanced models achieved superior risk-adjusted metrics, with Rachev ratios between 0.919 and 0.961, they consistently underperformed a simple buy-and-hold strategy, generating returns ranging from -2.4% to -3.9%.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2412_15448",
           "section": "unknown",
           "quote": "our study employs advanced risk–reward measures, including the Rachev ratio and the gains–loss ratio, offering a more comprehensive evaluation in high-frequency contexts of trading strategies based on machine learning",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2412_15448",
           "section": "unknown",
           "quote": "None, however, surpassed the buy-and-hold benchmark in absolute returns. That RFR-based strategies behave worse than the buy-and-hold benchmark can be attributed to transaction costs and market noise, which diminish the effectiveness of short-term trading strategies.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2412_15448",
           "section": "unknown",
           "quote": "ML models, such as random forest regression (RFR), support vector regression (SVR), and gradient boosting, have demonstrated improved predictive performance in financial applications",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {
@@ -1900,43 +2373,64 @@
           "source_id": "arxiv_2501_17366",
           "section": "unknown",
           "quote": "In this report, we compare ARIMA and LSTM models in predicting the S&P 500 index, one of the most popular financial benchmarks.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2501_17366",
           "section": "unknown",
           "quote": "Using historical price data and technical indicators, we evaluated these models using the Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE) metrics.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2501_17366",
           "section": "unknown",
           "quote": "The ARIMA model showcased reasonable performance with an MAE of 462.1, RMSE of 614, and an accuracy of 89.8%.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2501_17366",
           "section": "unknown",
           "quote": "The LSTM model, with favorable features, achieved an MAE of 369.32, RMSE of 412.84, and an accuracy of 92.46%, capturing both short- and long-term dependencies.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2501_17366",
           "section": "unknown",
           "quote": "The LSTM model without features outperformed the version with all features, achieving an MAE of 175.9, RMSE of 207.34, and an accuracy of 96.41%, which showcased its ability to handle market data.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2501_17366",
           "section": "unknown",
           "quote": "Traditional models like ARIMA and GARCH were observed to be good with linear data. However, the stock market data involves non-linear dependencies and intricate patterns that are better handled by machine learning and deep learning approaches.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         },
         {
           "source_id": "arxiv_2501_17366",
           "section": "unknown",
           "quote": "Taking that a step further to patch hyper-parameter tuning and computational complexity that machine learning lacks, we get deep learning models like Long Short-Term Memory (LSTM) networks.",
-          "summary": "LLM-provided evidence span."
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "",
+          "source_revision": ""
         }
       ],
       "extraction_metadata": {

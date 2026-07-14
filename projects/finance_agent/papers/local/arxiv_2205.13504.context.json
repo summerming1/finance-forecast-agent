@@ -1,0 +1,64 @@
+{
+  "schema_version": "paper_supporting_context_v1",
+  "paper_url": "https://arxiv.org/abs/2205.13504",
+  "claim_selector": {
+    "model": "DLinear (shared weights, not DLinear-I)",
+    "dataset": "Exchange-Rate",
+    "input_length": 336,
+    "prediction_length": 96,
+    "metrics": ["mse", "mae"],
+    "reported_results": {"mse": 0.081, "mae": 0.203},
+    "purpose": "Select the concrete paper result row already covered by the local native reproduction runner."
+  },
+  "sources": [
+    {
+      "source_id": "arxiv_2205_13504_table_2_exchange_96",
+      "source_type": "paper",
+      "source_url": "https://arxiv.org/abs/2205.13504",
+      "source_revision": "text_sha:c611ce7852956016",
+      "content": "Table 2 column order is Linear MSE/MAE, NLinear MSE/MAE, DLinear MSE/MAE, followed by compared methods. The selected row is: Exchange 96 45.27% 0.082 0.207 0.089 0.208 0.081 0.203. Therefore the selected DLinear Exchange-Rate prediction-length-96 result is MSE 0.081 and MAE 0.203."
+    },
+    {
+      "source_id": "ltsf_linear_exchange_script_7f7a25b",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/scripts/EXP-LongForecasting/Linear/exchange_rate.sh",
+      "source_revision": "7f7a25b",
+      "content": "seq_len=336\nmodel_name=DLinear\npython -u run_longExp.py --is_training 1 --root_path ./dataset/ --data_path exchange_rate.csv --model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8 --des Exp --itr 1 --batch_size 8 --learning_rate 0.0005"
+    },
+    {
+      "source_id": "ltsf_linear_runner_defaults_7f7a25b",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/run_longExp.py",
+      "source_revision": "7f7a25b",
+      "content": "fix_seed = 2021; random.seed(fix_seed); torch.manual_seed(fix_seed); np.random.seed(fix_seed). Defaults: train_epochs=10, patience=3, loss=mse, lradj=type1, use_amp=False. The exchange script overrides batch_size=8 and learning_rate=0.0005."
+    },
+    {
+      "source_id": "ltsf_linear_data_loader_7f7a25b",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/data_provider/data_loader.py",
+      "source_revision": "7f7a25b",
+      "content": "Dataset_Custom computes num_train=int(len(df_raw)*0.7), num_test=int(len(df_raw)*0.2), num_vali=len(df_raw)-num_train-num_test. Borders are [0, num_train-seq_len, len(df_raw)-num_test-seq_len] to [num_train, num_train+num_vali, len(df_raw)]. StandardScaler is fitted only on df_data[0:num_train], then transforms all rows."
+    },
+    {
+      "source_id": "ltsf_linear_dlinear_model_7f7a25b",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/models/DLinear.py",
+      "source_revision": "7f7a25b",
+      "content": "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs."
+    },
+    {
+      "source_id": "ltsf_linear_experiment_runner_7f7a25b",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/cure-lab/LTSF-Linear/blob/7f7a25b/exp/exp_main.py",
+      "source_revision": "7f7a25b",
+      "content": "Training uses optim.Adam(self.model.parameters(), lr=self.args.learning_rate) and nn.MSELoss(). Testing concatenates all prediction and truth batches, reshapes them to (-1, pred_len, channels), and calls metric(preds, trues), whose MSE and MAE aggregate over all test windows, prediction steps, and channels."
+    },
+    {
+      "source_id": "exchange_rate_dataset_manifest_local",
+      "source_type": "dataset_manifest",
+      "source_url": "https://github.com/cure-lab/LTSF-Linear",
+      "source_revision": "sha256:0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f",
+      "content": "Frozen local Exchange-Rate benchmark: 7,588 rows, 8 daily exchange-rate channels, date range 1990-01-01 through 2016-11-10. CSV columns are date, Australia, British, Canada, Switzerland, China, Japan, New Zealand, Singapore."
+    }
+  ]
+}

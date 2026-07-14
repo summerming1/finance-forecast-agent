@@ -19,7 +19,13 @@ ExperimentType = Literal[
 ]
 PlanMode = Literal["native_reproduction", "common_benchmark"]
 ResolutionStatus = Literal["specified", "not_reported", "not_applicable"]
-ResolutionSource = Literal["paper_evidence", "human_assumption", "benchmark_contract", "system_inference"]
+ResolutionSource = Literal[
+    "paper_evidence",
+    "primary_source_evidence",
+    "human_assumption",
+    "benchmark_contract",
+    "system_inference",
+]
 
 COMMON_REQUIREMENTS = {
     "target_asset",
@@ -125,7 +131,7 @@ class ReproductionPlan:
         if self.plan_mode != "native_reproduction" or not self.execution_ready:
             return False
         fields_have_evidence = all(
-            self.resolutions[name].source == "paper_evidence"
+            self.resolutions[name].source in {"paper_evidence", "primary_source_evidence"}
             and bool(self.resolutions[name].evidence)
             for name in self.required_fields
             if name in self.resolutions
@@ -202,16 +208,27 @@ def classify_experiment_type(card: MethodCard) -> ExperimentType:
     return "forecast_only"
 
 
-def _resolution(value: Any, *, evidence: list[str] | None = None) -> FieldResolution:
+def _resolution(
+    value: Any,
+    *,
+    evidence: list[str] | None = None,
+    source: ResolutionSource = "paper_evidence",
+) -> FieldResolution:
     if is_unknown(value):
-        return FieldResolution("not_reported", value=None, source="paper_evidence", evidence=evidence or [])
-    return FieldResolution("specified", value=value, source="paper_evidence", evidence=evidence or [])
+        return FieldResolution("not_reported", value=None, source=source, evidence=evidence or [])
+    return FieldResolution("specified", value=value, source=source, evidence=evidence or [])
 
 
 def plan_from_method_card(card: MethodCard, *, mode: PlanMode = "native_reproduction") -> ReproductionPlan:
     evidence_by_section: dict[str, list[str]] = {}
+    source_by_section: dict[str, ResolutionSource] = {}
     for span in card.evidence_spans:
-        evidence_by_section.setdefault(str(span.section), []).append(span.quote)
+        section = str(span.section)
+        evidence_by_section.setdefault(section, []).append(span.quote)
+        if span.source_type in {"official_repository", "dataset_manifest", "official_dataset"}:
+            source_by_section[section] = "primary_source_evidence"
+        else:
+            source_by_section.setdefault(section, "paper_evidence")
     values: dict[str, Any] = {
         "target_asset": card.target_asset,
         "asset_universe": card.asset_universe,
@@ -229,7 +246,11 @@ def plan_from_method_card(card: MethodCard, *, mode: PlanMode = "native_reproduc
         "hyperparameters": card.hyperparameters,
     }
     resolutions = {
-        name: _resolution(value, evidence=evidence_by_section.get(name, []))
+        name: _resolution(
+            value,
+            evidence=evidence_by_section.get(name, []),
+            source=source_by_section.get(name, "paper_evidence"),
+        )
         for name, value in values.items()
     }
     experiment_type = classify_experiment_type(card)

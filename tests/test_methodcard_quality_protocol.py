@@ -178,7 +178,8 @@ def test_live_llm_nested_protocol_fields_are_normalized_for_planning() -> None:
             "frequency": "daily",
             "horizon": "next day",
             "label_definition": "next close",
-            "feature_groups": ["price history"],
+            "data_requirements": {"dataset": "daily prices", "rows": 2000},
+            "feature_groups": [{"name": "price history", "window": 60}],
             "model_families": ["arima", "lstm"],
             "training_protocol": {
                 "lstm": {"train_period": "2010-2015", "window": 60},
@@ -196,6 +197,15 @@ def test_live_llm_nested_protocol_fields_are_normalized_for_planning() -> None:
     assert isinstance(card.evaluation_protocol, str)
     assert card.preprocessing_protocol == '{"scaling": "train-only"}'
     assert card.hyperparameters == {}
+    assert card.data_requirements == ["dataset=daily prices", "rows=2000"]
+    assert card.feature_groups == ["price_lag_features", "sequence_window_features"]
     plan = plan_from_method_card(card)
     assert plan.paper_id == "nested_protocol"
     assert plan.resolutions["training_protocol"].status == "specified"
+
+
+def test_fixed_chronological_holdout_normalizes_to_out_of_sample() -> None:
+    protocol = normalize_evaluation_protocol(
+        "single chronological holdout with train/validation/test split"
+    )
+    assert protocol.protocol_type == "out_of_sample"

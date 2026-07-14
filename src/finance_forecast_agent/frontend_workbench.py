@@ -68,7 +68,15 @@ def evidence_rows(card: MethodCard) -> list[dict[str, Any]]:
         rows.append(
             {
                 "用途": _evidence_purpose(span.quote),
-                "原文章节": section if has_section else "未标注（旧提取结果）",
+                "支持字段": section if has_section else "未标注（旧提取结果）",
+                "证据来源": {
+                    "paper": "论文",
+                    "official_repository": "官方代码",
+                    "dataset_manifest": "数据清单",
+                    "official_dataset": "官方数据",
+                }.get(span.source_type, span.source_type),
+                "来源标识": span.source_id,
+                "固定版本": span.source_revision or "未固定",
                 "证据原文": span.quote,
                 "说明": span.summary if span.summary != "LLM-provided evidence span." else "支持方法卡字段的原文摘录",
                 "可追踪性": "完整" if has_section else "缺少章节位置",
@@ -87,7 +95,7 @@ def method_summary_rows(card: MethodCard) -> list[dict[str, str]]:
         ("预测目标", "预测周期", card.horizon),
         ("预测目标", "标签定义", card.label_definition),
         ("方法", "特征组", card.feature_groups),
-        ("方法", "数据预处理", "未单独结构化（当前 MethodCard schema 尚无 preprocessing_protocol）"),
+        ("方法", "数据预处理", card.preprocessing_protocol),
         ("方法", "模型", card.model_families),
         ("训练", "训练协议", card.training_protocol),
         ("回测", "数据切分", card.evaluation_protocol_type),
@@ -98,7 +106,7 @@ def method_summary_rows(card: MethodCard) -> list[dict[str, str]]:
     result: list[dict[str, str]] = []
     for group, field, value in rows:
         display = _text(value)
-        needs_decision = display == "未提取" or field == "数据预处理"
+        needs_decision = display == "未提取"
         result.append(
             {
                 "环节": group,

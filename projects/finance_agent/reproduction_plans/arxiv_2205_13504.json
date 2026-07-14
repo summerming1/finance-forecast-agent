@@ -6,11 +6,11 @@
   "resolutions": {
     "target_asset": {
       "status": "specified",
-      "value": "eight exchange-rate series",
-      "source": "paper_evidence",
+      "value": "Exchange-Rate dataset future exchange-rate values for 8 channels",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "Exchange-Rate is an eight-variate financial time series benchmark."
+        "Frozen local Exchange-Rate benchmark: 7,588 rows, 8 daily exchange-rate channels, date range 1990-01-01 through 2016-11-10. CSV columns are date, Australia, British, Canada, Switzerland, China, Japan, New Zealand, Singapore."
       ]
     },
     "asset_universe": {
@@ -25,63 +25,62 @@
         "New Zealand",
         "Singapore"
       ],
-      "source": "paper_evidence",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "The Exchange-Rate dataset contains eight foreign-exchange channels."
+        "CSV columns are date, Australia, British, Canada, Switzerland, China, Japan, New Zealand, Singapore."
       ]
     },
     "frequency": {
       "status": "specified",
       "value": "daily",
-      "source": "paper_evidence",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "Exchange-Rate has 7,588 timesteps at one-day granularity."
+        "Frozen local Exchange-Rate benchmark: 7,588 rows, 8 daily exchange-rate channels, date range 1990-01-01 through 2016-11-10."
       ]
     },
     "horizon": {
       "status": "specified",
-      "value": "96 days",
-      "source": "paper_evidence",
+      "value": "96 time steps (days)",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "The Exchange benchmark reports prediction length 96."
+        "--model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8"
       ]
     },
     "label_definition": {
       "status": "specified",
-      "value": "next 96 standardized values for all eight exchange-rate channels",
-      "source": "paper_evidence",
+      "value": "Predict the next 96 time steps for all 8 exchange-rate channels from the prior 336-step multivariate input window.",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "Long-term forecasting predicts future values of every variate from a historical input sequence."
+        "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs."
       ]
     },
     "data_requirements": {
       "status": "specified",
       "value": [
-        "LTSF Exchange-Rate benchmark",
-        "7588 daily observations",
-        "eight variates",
-        "official train-validation-test boundaries"
+        "Exchange-Rate dataset with 7,588 rows",
+        "8 multivariate daily exchange-rate channels",
+        "date column plus channels Australia, British, Canada, Switzerland, China, Japan, New Zealand, Singapore",
+        "chronologically ordered data from 1990-01-01 through 2016-11-10"
       ],
-      "source": "paper_evidence",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "Exchange-Rate contains 7,588 daily timesteps and eight variates."
+        "Frozen local Exchange-Rate benchmark: 7,588 rows, 8 daily exchange-rate channels, date range 1990-01-01 through 2016-11-10. CSV columns are date, Australia, British, Canada, Switzerland, China, Japan, New Zealand, Singapore."
       ]
     },
     "feature_groups": {
       "status": "specified",
       "value": [
-        "cross_asset_features",
-        "sequence_window_features"
+        "return_momentum_features"
       ],
-      "source": "paper_evidence",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "The model receives a multivariate look-back window as input."
+        "--data_path exchange_rate.csv --model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8"
       ]
     },
     "model_families": {
@@ -89,28 +88,30 @@
       "value": [
         "dlinear_forecaster"
       ],
-      "source": "paper_evidence",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "DLinear combines seasonal and trend linear projections after decomposition."
+        "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs."
       ]
     },
     "training_protocol": {
       "status": "specified",
-      "value": "official LTSF-Linear exchange protocol: sequence length 336, prediction length 96, 70/10/20 chronological split, batch size 8, 10 epochs with patience 3, Adam and MSE loss, seed 2021",
-      "source": "paper_evidence",
+      "value": "Train DLinear with shared weights (individual=False) on Exchange-Rate using input length 336 and prediction length 96. Seed is fixed to 2021. Optimizer is Adam with learning rate 0.0005. Loss is MSE. Batch size is 8. Defaults include train_epochs=10, patience=3, lradj=type1, use_amp=False. DLinear uses direct multi-step forecasting.",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "The official exchange script uses input length 336 and prediction length 96."
+        "fix_seed = 2021; random.seed(fix_seed); torch.manual_seed(fix_seed); np.random.seed(fix_seed). Defaults: train_epochs=10, patience=3, loss=mse, lradj=type1, use_amp=False. The exchange script overrides batch_size=8 and learning_rate=0.0005.",
+        "Training uses optim.Adam(self.model.parameters(), lr=self.args.learning_rate) and nn.MSELoss()."
       ]
     },
     "evaluation_protocol": {
       "status": "specified",
-      "value": "fixed chronological 70/10/20 train-validation-test split with 336-step context overlap",
-      "source": "paper_evidence",
+      "value": "Chronological split from Dataset_Custom: num_train=int(len(df_raw)*0.7), num_test=int(len(df_raw)*0.2), num_vali=len(df_raw)-num_train-num_test. Borders are [0, num_train-seq_len, len(df_raw)-num_test-seq_len] to [num_train, num_train+num_vali, len(df_raw)]. Test metrics are computed by concatenating all prediction and truth batches, reshaping to (-1, pred_len, channels), and aggregating MSE and MAE over all test windows, prediction steps, and channels.",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "The official loader applies chronological train, validation and test partitions."
+        "Dataset_Custom computes num_train=int(len(df_raw)*0.7), num_test=int(len(df_raw)*0.2), num_vali=len(df_raw)-num_train-num_test. Borders are [0, num_train-seq_len, len(df_raw)-num_test-seq_len] to [num_train, num_train+num_vali, len(df_raw)]. StandardScaler is fitted only on df_data[0:num_train], then transforms all rows.",
+        "Testing concatenates all prediction and truth batches, reshapes them to (-1, pred_len, channels), and calls metric(preds, trues), whose MSE and MAE aggregate over all test windows, prediction steps, and channels."
       ]
     },
     "metrics": {
@@ -122,42 +123,53 @@
       "source": "paper_evidence",
       "rationale": "",
       "evidence": [
-        "Mean Squared Error and Mean Absolute Error are the core metrics."
+        "Table 2 column order is Linear MSE/MAE, NLinear MSE/MAE, DLinear MSE/MAE, followed by compared methods. The selected row is: Exchange 96 45.27% 0.082 0.207 0.089 0.208 0.081 0.203. Therefore the selected DLinear Exchange-Rate prediction-length-96 result is MSE 0.081 and MAE 0.203."
       ]
     },
     "cost_assumptions": {
       "status": "specified",
-      "value": "not applicable: forecast-only benchmark",
+      "value": "not_applicable",
       "source": "paper_evidence",
       "rationale": "",
       "evidence": []
     },
     "preprocessing_protocol": {
       "status": "specified",
-      "value": "StandardScaler fitted on the first 70% training partition and applied to validation/test",
-      "source": "paper_evidence",
+      "value": "StandardScaler is fit only on training rows and then applied to all rows. DLinear first decomposes each input into trend and seasonal/remainder components using a moving-average kernel of size 25, applies one shared linear layer to each component, and sums the outputs.",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "The official loader standardizes using statistics fitted on the training partition."
+        "StandardScaler is fitted only on df_data[0:num_train], then transforms all rows.",
+        "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs."
       ]
     },
     "hyperparameters": {
       "status": "specified",
       "value": {
+        "model_name": "DLinear",
         "seq_len": 336,
         "pred_len": 96,
+        "enc_in": 8,
+        "features": "M",
         "batch_size": 8,
         "learning_rate": 0.0005,
         "train_epochs": 10,
         "patience": 3,
+        "loss": "mse",
+        "optimizer": "Adam",
         "seed": 2021,
-        "moving_average_kernel": 25,
-        "individual": false
+        "moving_average_kernel_size": 25,
+        "individual": false,
+        "lradj": "type1",
+        "use_amp": false,
+        "itr": 1
       },
-      "source": "paper_evidence",
+      "source": "primary_source_evidence",
       "rationale": "",
       "evidence": [
-        "The official script uses batch 8, learning rate 0.0005, ten epochs and seed 2021."
+        "seq_len=336\nmodel_name=DLinear\npython -u run_longExp.py --is_training 1 --root_path ./dataset/ --data_path exchange_rate.csv --model_id Exchange_${seq_len}_96 --model ${model_name} --data custom --features M --seq_len ${seq_len} --pred_len 96 --enc_in 8 --des Exp --itr 1 --batch_size 8 --learning_rate 0.0005",
+        "fix_seed = 2021; random.seed(fix_seed); torch.manual_seed(fix_seed); np.random.seed(fix_seed). Defaults: train_epochs=10, patience=3, loss=mse, lradj=type1, use_amp=False. The exchange script overrides batch_size=8 and learning_rate=0.0005.",
+        "DLinear uses series decomposition with moving-average kernel_size=25. With individual=False it creates one shared Linear_Seasonal(seq_len,pred_len) and one shared Linear_Trend(seq_len,pred_len), applies them to seasonal and trend components, and sums the outputs."
       ]
     },
     "action_spec": {
@@ -275,7 +287,7 @@
     }
   ],
   "approved_for_execution": true,
-  "updated_at": "2026-07-14T09:33:37.680704+00:00",
+  "updated_at": "2026-07-14T11:11:20.812846+00:00",
   "required_fields": [
     "asset_universe",
     "data_requirements",
@@ -294,5 +306,5 @@
   "unresolved_required_fields": [],
   "execution_ready": true,
   "strict_ready": true,
-  "plan_hash": "c618653297e0dbae"
+  "plan_hash": "32a4b0cbde7b7e09"
 }

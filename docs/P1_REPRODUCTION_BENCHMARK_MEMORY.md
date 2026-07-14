@@ -1,4 +1,4 @@
-# P1.0-P1.6 复现协议、统一基准与实验记忆
+# P1.0-P1.6.1 复现协议、统一基准与实验记忆
 
 ## 版本定位
 
@@ -32,6 +32,7 @@ schema_version = method_card_v2
 前端第 3 步可以逐字段填写值并指定来源：
 
 - `paper_evidence`：论文证据，只有绑定 EvidenceSpan 才可能 strict。
+- `primary_source_evidence`：固定 revision 的官方仓库或数据清单证据，可补充论文未展开的实现细节并支持 strict。
 - `human_assumption`：人工补全，可执行但只能探索性复现。
 - `benchmark_contract`：统一基准值，只能用于 benchmark adaptation。
 
@@ -88,6 +89,18 @@ Memory 记录运行模式、任务 fingerprint、方法、模型、指标、阻�
 
 两项均在 `0.01` 容差内，数据 hash、计划证据、模型协议和结果门禁全部通过，因此本次可以声明该具体 claim 的完整复现。
 
+### P1.6.1 严格 LLM 抽取
+
+严格 profile 不再只截取摘要附近约 7,000 字符，而是检索目标结果表、模型、数据和实现段落，并加载 PDF 同名 `.context.json` 主资料包。主资料包固定论文 URL、官方仓库 commit、数据 SHA256 和单一 claim selector；EvidenceSpan 明确区分 `paper`、`official_repository` 与 `dataset_manifest`。
+
+真实抽取经历了三个可审计阶段：
+
+1. 宽泛抽取质量 `0.55`，遗漏 DLinear、频率、horizon 与精确结果，拒绝 strict。
+2. 字段完整但把 Exchange-Rate 336-step 的 `0.305/0.414` 错配到 96-step，新增 claim selector 一致性门禁后拒绝 strict。
+3. 最终卡质量 `1.0`，正确抽取 shared-weight DLinear、336→96、70/10/20、train-only StandardScaler、Adam、seed 2021、数据 hash 与 `0.081/0.203`；所有 strict 必填字段均有证据，31/31 条 quote 均能在声明来源逐字回溯，Replay fixture 已落地。
+
+原生 runner 不再只依赖代码默认值，而是由该卡动态构造 `DLinearProtocol`。缺参数、错误 optimizer/loss、错误结果行、`individual=True`、无法解析切分或缺数据 hash 都会在训练前阻断。
+
 ### 统一基准结果
 
 任务：AAPL 周频下一周收益，12 个共享滞后，8 个 purged walk-forward folds，每个方法 128 个预测。
@@ -97,7 +110,7 @@ Memory 记录运行模式、任务 fingerprint、方法、模型、指标、阻�
 | arxiv_2209_02407 | LSTM sequence | 0.02992 | 0.03910 | 0.4844 |
 | arxiv_2310_16855 | Random Forest tabular | 0.03265 | 0.04149 | 0.4844 |
 
-流程与可比性约束通过，但当前方向准确率没有显示可用优势。LSTM 的误差略低；由于主指标设置为方向准确率且两者并列，当前稳定排序保留 LSTM 在前。该结果只能称为统一基准适配。
+任务 fingerprint、fold signature、目标行和预测数量的可比性审计全部通过。训练折多数方向朴素基线为 `0.4765625`；两种方法方向准确率的 95% Wilson 区间均约为 `[0.3995, 0.5701]`，对 50% 机会水平的双侧二项检验 `p=0.791`。因此当前数据只支持“方向能力未被证明”，不支持“模型永久无效”或“市场不可预测”。LSTM 的误差略低；该结果只能称为统一基准适配。
 
 ## 重跑命令
 
@@ -116,9 +129,9 @@ python scripts/run_p1_validation.py --skip-native
 ## 已知边界
 
 - 2026-07-14 已使用新 `.env` 通过项目 `OpenAIJsonClient` 完成真实 JSON 请求，随后对三篇新增论文执行 live 抽取，传输与 JSON 解析均为 3/3 成功；对应 ReplayLLM fixture 也通过 3/3 离线回放。
-- 在线调用成功不等于方法卡可以直接进入严格复现。单轮 live 抽取中，DLinear 卡遗漏 DLinear 模型、频率、预测长度和精确表格数值；ARIMA/LSTM 卡仍缺预处理与超参数，且 ARIMA adapter 尚未实现；日本股票分类卡信息最完整，但原生切分定义仍需审核。正式验证继续使用论文正文和官方仓库校正后的 `method_cards_local_llm/`，live 输出隔离保存在本地测试目录，不覆盖已审核卡。
+- 在线调用成功不等于任意论文都能直接 strict。DLinear 已通过严格 profile 和一致性门禁；ARIMA/LSTM 卡仍缺预处理与超参数且 ARIMA adapter 尚未实现；日本股票分类卡的原生 split 仍需审核。
 - 真实 LLM 曾把 `training_protocol`、`evaluation_protocol` 或 `hyperparameters` 返回为嵌套对象/`"unknown"` 字符串。MethodCard v2 入库边界现已统一类型，复现规划不再因此中断。
 - ARIMA 尚无通用 adapter；ARIMA/LSTM 论文在统一基准中使用 LSTM 分支。
 - 日本论文原生 split 日期不明确，只批准用于统一基准适配。
 - Streamlit 长训练仍同步执行。
-- 统一基准尚无统计显著性、Diebold-Mariano 检验、多 seed 和置信区间。
+- 统一基准尚无方法间配对显著性、Diebold-Mariano 检验、多 seed 和市场状态分层。

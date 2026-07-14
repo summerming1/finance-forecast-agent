@@ -19,7 +19,14 @@ from .frontend_workbench import evidence_rows, method_summary_rows, paper_invent
 from .golden_sets import load_golden_index, write_golden_methodcard_sets
 from .harness import run_harness
 from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
-from .method_cards import MethodCard, MethodCardAgent, PaperDocument, PaperTextLoader, method_card_prompt, method_card_to_paper_spec
+from .method_cards import (
+    MethodCard,
+    MethodCardAgent,
+    PaperDocument,
+    PaperTextLoader,
+    method_card_to_paper_spec,
+    strict_method_card_prompt,
+)
 from .model_registry import benchmark_compatible
 from .native_reproductions import reproduce_dlinear_exchange_rate
 from .p1_protocol import (
@@ -116,7 +123,12 @@ def _existing_card(cards_dir: Path, document: PaperDocument) -> MethodCard | Non
             card = MethodCard.from_dict(json.loads(path.read_text(encoding="utf-8")))
         except Exception:
             continue
-        if card.extraction_metadata.get("document_text_sha") == document.text_sha:
+        text_matches = card.extraction_metadata.get("document_text_sha") == document.text_sha
+        context_matches = (
+            not document.supporting_context_sha
+            or card.extraction_metadata.get("supporting_context_sha") == document.supporting_context_sha
+        )
+        if text_matches and context_matches:
             return card
     return None
 
@@ -135,6 +147,7 @@ def _extract_paths(paths: list[Path], cards_dir: Path, fixture_dir: Path, mode: 
         raise FileNotFoundError("No PDF/TXT/MD files were selected for extraction.")
     loader, replay = PaperTextLoader(), ReplayLLM(fixture_dir)
     replay_agent = MethodCardAgent(replay)
+    strict_replay_agent = MethodCardAgent(replay, prompt_profile="strict")
     live_agent: MethodCardAgent | None = None
     extracted: list[MethodCard] = []
     live_calls = reused = 0
@@ -142,14 +155,20 @@ def _extract_paths(paths: list[Path], cards_dir: Path, fixture_dir: Path, mode: 
         document = loader.load(path)
         card = _existing_card(cards_dir, document) if mode == "live_reuse" else None
         if card is not None:
-            replay.write_fixture(prompt_payload=method_card_prompt(document), schema_name="method_card", response=card.to_dict())
+            replay.write_fixture(prompt_payload=strict_method_card_prompt(document), schema_name="method_card", response=card.to_dict())
             reused += 1
         elif mode == "replay":
-            card = replay_agent.extract(document, out_dir=cards_dir)
+            try:
+                card = strict_replay_agent.extract(document, out_dir=cards_dir)
+            except FileNotFoundError:
+                card = replay_agent.extract(document, out_dir=cards_dir)
         elif mode == "rule_fallback":
             card = MethodCardAgent(replay, allow_rule_fallback=True).extract(document, out_dir=cards_dir)
         else:
-            live_agent = live_agent or MethodCardAgent(FixtureRecordingLLM(OpenAIJsonClient(), fixture_dir))
+            live_agent = live_agent or MethodCardAgent(
+                FixtureRecordingLLM(OpenAIJsonClient(), fixture_dir),
+                prompt_profile="strict",
+            )
             card = live_agent.extract(document, out_dir=cards_dir)
             live_calls += 1
         extracted.append(card)
@@ -450,7 +469,7 @@ def _render_reproduction_setup(project_dir: Path, card: MethodCard | None, repor
                     key=f"plan_value_{card.paper_id}_{field_name}",
                 )
             with right:
-                sources = ["paper_evidence", "human_assumption", "benchmark_contract"]
+                sources = ["paper_evidence", "primary_source_evidence", "human_assumption", "benchmark_contract"]
                 source = st.selectbox(
                     "来源",
                     sources,
@@ -458,6 +477,7 @@ def _render_reproduction_setup(project_dir: Path, card: MethodCard | None, repor
                     key=f"plan_source_{card.paper_id}_{field_name}",
                     format_func={
                         "paper_evidence": "论文证据",
+                        "primary_source_evidence": "官方实现/数据证据",
                         "human_assumption": "人工假设",
                         "benchmark_contract": "基准统一值",
                     }.get,
@@ -809,12 +829,20 @@ def _render_results(project_dir: Path, card: MethodCard | None, report: dict[str
         rows = []
         for benchmark_item in report.get("reports", []):
             metrics = benchmark_item.get("metrics", {})
+            diagnostics = benchmark_item.get("directional_diagnostics", {})
+            interval = diagnostics.get("wilson_95_interval", [None, None])
             rows.append(
                 {
                     "论文方法": benchmark_item.get("method_id"),
                     "实际模型": benchmark_item.get("model_family"),
                     "预测数": benchmark_item.get("prediction_count"),
                     "方向准确率": metrics.get("directional_accuracy"),
+                    "方向准确率 95% 下限": interval[0] if len(interval) > 0 else None,
+                    "方向准确率 95% 上限": interval[1] if len(interval) > 1 else None,
+                    "相对朴素基线": diagnostics.get("delta_vs_baseline"),
+                    "方向能力结论": (
+                        "已显示" if diagnostics.get("directional_skill_demonstrated") else "未显示"
+                    ),
                     "MAE": metrics.get("mae"),
                     "RMSE": metrics.get("rmse"),
                     "R2": metrics.get("r2"),
@@ -822,7 +850,16 @@ def _render_results(project_dir: Path, card: MethodCard | None, report: dict[str
             )
         st.dataframe(rows, width="stretch", hide_index=True)
         st.success(f"当前主指标最优方法：{report.get('best_method_id')}")
-        st.caption("所有方法使用相同数据行、特征列、标签和 fold；方法差异只来自 MethodAdapter。")
+        integrity = report.get("comparison_integrity", {})
+        baseline = report.get("directional_baseline", {})
+        if integrity.get("comparison_valid"):
+            st.success("可比性审计通过：任务、目标行、预测数量和时间切分一致。", icon=":material/check_circle:")
+        else:
+            st.error("可比性审计未通过，本报告不能用于方法间结论。", icon=":material/error:")
+        st.caption(
+            f"训练折内多数方向基线准确率 {_fmt(baseline.get('accuracy'))}。"
+            "“方向能力已显示”要求 95% 区间下限高于 50%，二项检验 p<0.05，且优于该无泄漏朴素基线。"
+        )
         memory = ExperimentMemoryStore(project_dir / "experiment_memory" / "records.json")
         priors = memory.method_priors(
             task_fingerprint=str(task.get("task_fingerprint")),

@@ -34,6 +34,10 @@ def normalize_evaluation_protocol(value: object) -> ProtocolInfo:
         return ProtocolInfo("purged_walk_forward", text, 0.55)
     if "non-overlapping" in lower or "non overlapping" in lower or "blocked" in lower:
         return ProtocolInfo("blocked_backtest", text, 0.70)
+    if "chronological" in lower and any(
+        token in lower for token in ("holdout", "train/validation/test", "train-validation-test", "split")
+    ):
+        return ProtocolInfo("out_of_sample", text, 0.85)
     return ProtocolInfo("unknown", text, 0.25)
 
 

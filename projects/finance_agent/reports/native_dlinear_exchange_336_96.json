@@ -19,6 +19,8 @@
     "train_epochs": 10,
     "patience": 3,
     "seed": 2021,
+    "moving_average_kernel_size": 25,
+    "individual": false,
     "reported_mse": 0.081,
     "reported_mae": 0.203,
     "result_tolerance": 0.01,
@@ -82,7 +84,18 @@
   "report_path": "projects\\finance_agent\\reports\\native_dlinear_exchange_336_96.json",
   "governance": {
     "methodcard_approved": true,
-    "reproduction_plan_hash": "c618653297e0dbae",
+    "protocol_derived_from_methodcard": true,
+    "methodcard_prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 31,
+      "errors": []
+    },
+    "reproduction_plan_hash": "32a4b0cbde7b7e09",
     "reproduction_plan_strict_ready": true
   },
   "complete_reproduction_allowed": true

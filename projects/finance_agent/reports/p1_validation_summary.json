@@ -21,6 +21,8 @@
       "train_epochs": 10,
       "patience": 3,
       "seed": 2021,
+      "moving_average_kernel_size": 25,
+      "individual": false,
       "reported_mse": 0.081,
       "reported_mae": 0.203,
       "result_tolerance": 0.01,
@@ -84,7 +86,18 @@
     "report_path": "projects\\finance_agent\\reports\\native_dlinear_exchange_336_96.json",
     "governance": {
       "methodcard_approved": true,
-      "reproduction_plan_hash": "c618653297e0dbae",
+      "protocol_derived_from_methodcard": true,
+      "methodcard_prompt_profile": "strict",
+      "claim_selector_consistency": {
+        "passed": true,
+        "errors": []
+      },
+      "evidence_verification": {
+        "passed": true,
+        "span_count": 31,
+        "errors": []
+      },
+      "reproduction_plan_hash": "32a4b0cbde7b7e09",
       "reproduction_plan_strict_ready": true
     },
     "complete_reproduction_allowed": true
@@ -188,6 +201,79 @@
         "test_end": 783
       }
     ],
+    "directional_baseline": {
+      "name": "fold_train_majority_direction",
+      "uses_test_labels_for_selection": false,
+      "correct_predictions": 61,
+      "prediction_count": 128,
+      "accuracy": 0.4765625,
+      "folds": [
+        {
+          "fold_id": 0,
+          "train_up_rate": 0.5166666666666667,
+          "predicted_direction": "up",
+          "test_correct": 10,
+          "test_count": 16
+        },
+        {
+          "fold_id": 1,
+          "train_up_rate": 0.5166666666666667,
+          "predicted_direction": "up",
+          "test_correct": 8,
+          "test_count": 16
+        },
+        {
+          "fold_id": 2,
+          "train_up_rate": 0.6166666666666667,
+          "predicted_direction": "up",
+          "test_correct": 5,
+          "test_count": 16
+        },
+        {
+          "fold_id": 3,
+          "train_up_rate": 0.6166666666666667,
+          "predicted_direction": "up",
+          "test_correct": 10,
+          "test_count": 16
+        },
+        {
+          "fold_id": 4,
+          "train_up_rate": 0.5666666666666667,
+          "predicted_direction": "up",
+          "test_correct": 10,
+          "test_count": 16
+        },
+        {
+          "fold_id": 5,
+          "train_up_rate": 0.6666666666666666,
+          "predicted_direction": "up",
+          "test_correct": 7,
+          "test_count": 16
+        },
+        {
+          "fold_id": 6,
+          "train_up_rate": 0.4,
+          "predicted_direction": "down",
+          "test_correct": 6,
+          "test_count": 16
+        },
+        {
+          "fold_id": 7,
+          "train_up_rate": 0.6333333333333333,
+          "predicted_direction": "up",
+          "test_correct": 5,
+          "test_count": 16
+        }
+      ]
+    },
+    "comparison_integrity": {
+      "same_task_fingerprint": true,
+      "same_fold_signature": true,
+      "identical_target_rows": true,
+      "equal_prediction_counts": true,
+      "method_count": 2,
+      "comparison_valid": true
+    },
     "reports": [
       {
         "method_id": "arxiv_2209_02407",
@@ -199,6 +285,23 @@
           "directional_accuracy": 0.484375
         },
         "prediction_count": 128,
+        "directional_diagnostics": {
+          "correct_predictions": 62,
+          "prediction_count": 128,
+          "accuracy": 0.484375,
+          "chance_level": 0.5,
+          "wilson_95_interval": [
+            0.39952298025969557,
+            0.5701375496238515
+          ],
+          "two_sided_binomial_pvalue": 0.7910074494028781,
+          "fold_train_majority_baseline_accuracy": 0.4765625,
+          "delta_vs_baseline": 0.0078125,
+          "evidence_vs_chance": false,
+          "outperforms_fold_train_majority_baseline": true,
+          "directional_skill_demonstrated": false,
+          "verdict": "directional_skill_not_demonstrated"
+        },
         "prediction_artifact": {
           "schema_version": "prediction_artifact_v1",
           "task_id": "aapl_weekly_next_return_12lag_v1",
@@ -1517,6 +1620,23 @@
           "directional_accuracy": 0.484375
         },
         "prediction_count": 128,
+        "directional_diagnostics": {
+          "correct_predictions": 62,
+          "prediction_count": 128,
+          "accuracy": 0.484375,
+          "chance_level": 0.5,
+          "wilson_95_interval": [
+            0.39952298025969557,
+            0.5701375496238515
+          ],
+          "two_sided_binomial_pvalue": 0.7910074494028781,
+          "fold_train_majority_baseline_accuracy": 0.4765625,
+          "delta_vs_baseline": 0.0078125,
+          "evidence_vs_chance": false,
+          "outperforms_fold_train_majority_baseline": true,
+          "directional_skill_demonstrated": false,
+          "verdict": "directional_skill_not_demonstrated"
+        },
         "prediction_artifact": {
           "schema_version": "prediction_artifact_v1",
           "task_id": "aapl_weekly_next_return_12lag_v1",

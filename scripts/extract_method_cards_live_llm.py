@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 from finance_forecast_agent.llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
-from finance_forecast_agent.method_cards import MethodCard, MethodCardAgent, PaperDocument, PaperTextLoader, method_card_prompt, method_card_to_paper_spec
+from finance_forecast_agent.method_cards import MethodCard, MethodCardAgent, PaperDocument, PaperTextLoader, method_card_to_paper_spec, strict_method_card_prompt
 from finance_forecast_agent.replay_llm import ReplayLLM
 
 
@@ -39,7 +39,10 @@ def main() -> None:
     paths = sorted({path for pattern in patterns for path in papers_dir.glob(pattern)})
     if not paths:
         raise SystemExit(f'No paper files found in {args.papers_dir}')
-    agent = MethodCardAgent(FixtureRecordingLLM(OpenAIJsonClient(), args.fixture_dir))
+    agent = MethodCardAgent(
+        FixtureRecordingLLM(OpenAIJsonClient(), args.fixture_dir),
+        prompt_profile='strict',
+    )
     replay = ReplayLLM(args.fixture_dir)
     loader = PaperTextLoader()
     out_dir = Path(args.out_dir)
@@ -51,7 +54,7 @@ def main() -> None:
         if card is None:
             card = agent.extract(document, out_dir=out_dir)
         else:
-            replay.write_fixture(prompt_payload=method_card_prompt(document), schema_name='method_card', response=card.to_dict())
+            replay.write_fixture(prompt_payload=strict_method_card_prompt(document), schema_name='method_card', response=card.to_dict())
         cards.append(card.to_dict())
         specs.append(method_card_to_paper_spec(card).to_dict())
     out_dir.mkdir(parents=True, exist_ok=True)

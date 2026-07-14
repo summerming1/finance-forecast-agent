@@ -10,7 +10,10 @@ from finance_forecast_agent.benchmark import BenchmarkTask, run_common_benchmark
 from finance_forecast_agent.data import load_yahoo_chart_weekly_dataset
 from finance_forecast_agent.experiment_memory import ExperimentMemoryRecord, ExperimentMemoryStore
 from finance_forecast_agent.frontend_view_model import load_method_cards
-from finance_forecast_agent.native_reproductions import reproduce_dlinear_exchange_rate
+from finance_forecast_agent.native_reproductions import (
+    dlinear_protocol_from_method_card,
+    reproduce_dlinear_exchange_rate,
+)
 from finance_forecast_agent.p1_protocol import plan_from_method_card, save_reproduction_plan
 from finance_forecast_agent.review_state import update_methodcard_review
 
@@ -101,9 +104,18 @@ def run(project_dir: Path, *, skip_native: bool = False) -> dict:
         native_report = reproduce_dlinear_exchange_rate(
             project_dir / "data" / "external" / "exchange_rate" / "exchange_rate.txt",
             output_path=native_path,
+            protocol=dlinear_protocol_from_method_card(cards["arxiv_2205_13504"]),
         )
         native_report["governance"] = {
             "methodcard_approved": True,
+            "protocol_derived_from_methodcard": True,
+            "methodcard_prompt_profile": cards["arxiv_2205_13504"].extraction_metadata.get("prompt_profile"),
+            "claim_selector_consistency": cards["arxiv_2205_13504"].extraction_metadata.get(
+                "claim_selector_consistency"
+            ),
+            "evidence_verification": cards["arxiv_2205_13504"].extraction_metadata.get(
+                "evidence_verification"
+            ),
             "reproduction_plan_hash": dlinear_plan.plan_hash,
             "reproduction_plan_strict_ready": dlinear_plan.strict_ready,
         }
@@ -147,6 +159,13 @@ def main() -> None:
         "benchmark_metrics": {
             row["method_id"]: row["metrics"] for row in result["common_benchmark"]["reports"]
         },
+        "benchmark_directional_verdicts": {
+            row["method_id"]: row["directional_diagnostics"]["verdict"]
+            for row in result["common_benchmark"]["reports"]
+        },
+        "benchmark_comparison_valid": result["common_benchmark"]["comparison_integrity"][
+            "comparison_valid"
+        ],
         "summary_path": result["summary_path"],
     }
     print(json.dumps(compact, indent=2, ensure_ascii=False))

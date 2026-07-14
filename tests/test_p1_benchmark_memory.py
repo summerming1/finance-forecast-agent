@@ -65,6 +65,24 @@ def test_common_benchmark_uses_identical_folds_and_prediction_schema(tmp_path: P
     }
     assert protocols["paper_lstm"]["representation"] == "ordered_sequence"
     assert protocols["paper_rf"]["representation"] == "tabular"
+    assert report["comparison_integrity"] == {
+        "same_task_fingerprint": True,
+        "same_fold_signature": True,
+        "identical_target_rows": True,
+        "equal_prediction_counts": True,
+        "method_count": 3,
+        "comparison_valid": True,
+    }
+    assert report["directional_baseline"]["uses_test_labels_for_selection"] is False
+    for row in report["reports"]:
+        diagnostics = row["directional_diagnostics"]
+        assert diagnostics["prediction_count"] == row["prediction_count"]
+        assert len(diagnostics["wilson_95_interval"]) == 2
+        assert 0 <= diagnostics["two_sided_binomial_pvalue"] <= 1
+        assert diagnostics["verdict"] in {
+            "directional_skill_demonstrated",
+            "directional_skill_not_demonstrated",
+        }
     assert Path(report["report_path"]).exists()
 
 

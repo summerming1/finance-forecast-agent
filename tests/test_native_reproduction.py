@@ -1,11 +1,20 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from finance_forecast_agent.native_reproductions import DLinearProtocol, reproduce_dlinear_exchange_rate
+from finance_forecast_agent.method_cards import MethodCard
+from finance_forecast_agent.native_reproductions import (
+    DLinearProtocol,
+    dlinear_protocol_from_method_card,
+    reproduce_dlinear_exchange_rate,
+)
+
+
+ROOT = Path(__file__).parents[1]
 
 
 def test_dlinear_native_runner_produces_protocol_audit(tmp_path: Path) -> None:
@@ -39,3 +48,11 @@ def test_dlinear_native_runner_produces_protocol_audit(tmp_path: Path) -> None:
     assert report["metrics"]["mse"] >= 0
     assert report["protocol_fidelity"]["strict_reproduction_allowed"] is False
     assert Path(report["report_path"]).exists()
+
+
+def test_dlinear_protocol_is_built_from_strict_live_method_card() -> None:
+    path = ROOT / "projects" / "finance_agent" / "method_cards_local_llm" / "arxiv_2205_13504.json"
+    card = MethodCard.from_dict(json.loads(path.read_text(encoding="utf-8")))
+    assert card.extraction_metadata["prompt_profile"] == "strict"
+    assert card.extraction_metadata["claim_selector_consistency"]["passed"] is True
+    assert dlinear_protocol_from_method_card(card) == DLinearProtocol()

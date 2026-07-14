@@ -56,7 +56,8 @@ def test_paper_inventory_matches_method_card_by_source_file(tmp_path: Path) -> N
 def test_evidence_rows_explain_unknown_section_without_losing_quote() -> None:
     rows = evidence_rows(_card())
 
-    assert rows[0]["原文章节"] == "未标注（旧提取结果）"
+    assert rows[0]["支持字段"] == "未标注（旧提取结果）"
+    assert rows[0]["证据来源"] == "论文"
     assert rows[0]["用途"] == "回测评估"
     assert "0.25%" in rows[0]["证据原文"]
 

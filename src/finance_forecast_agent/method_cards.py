@@ -5,7 +5,7 @@ import json
 import re
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from .method_card_quality import apply_quality_gate, is_unknown
 from .model_registry import canonical_model_families
@@ -20,6 +20,9 @@ class EvidenceSpan:
     section: str
     quote: str
     summary: str
+    source_type: str = "paper"
+    source_url: str = ""
+    source_revision: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -32,6 +35,14 @@ class PaperDocument:
     text: str
     source_path: str
     text_sha: str
+    supporting_context: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def supporting_context_sha(self) -> str:
+        if not self.supporting_context:
+            return ""
+        encoded = json.dumps(self.supporting_context, sort_keys=True, ensure_ascii=False).encode()
+        return hashlib.sha256(encoded).hexdigest()[:16]
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -156,6 +167,78 @@ def method_card_prompt(document: PaperDocument) -> dict[str, Any]:
     }
 
 
+def strict_method_card_prompt(document: PaperDocument) -> dict[str, Any]:
+    all_fields = method_card_prompt(document)["schema"]["all_fields"]
+    return {
+        "task": "extract_strict_reproduction_method_card_v2",
+        "profile": "strict_reproduction",
+        "document_id": document.document_id,
+        "title": document.title,
+        "text_sha": document.text_sha,
+        "supporting_context_sha": document.supporting_context_sha,
+        "objective": (
+            "Extract one concrete, executable experimental claim rather than a broad paper summary. "
+            "When the paper has many datasets or horizons, follow claim_selector and fill every field "
+            "for that single experiment. Use exact numeric reported results."
+        ),
+        "claim_selector": document.supporting_context.get("claim_selector", {}),
+        "paper_url": document.supporting_context.get("paper_url", "unknown"),
+        "paper_context": _strict_method_context(document.text),
+        "supporting_sources": document.supporting_context.get("sources", []),
+        "schema": {
+            "required": [
+                "method_id",
+                "paper_id",
+                "title",
+                "task_type",
+                "target_asset",
+                "asset_universe",
+                "frequency",
+                "horizon",
+                "label_definition",
+                "data_requirements",
+                "feature_groups",
+                "model_families",
+                "training_protocol",
+                "evaluation_protocol",
+                "metrics",
+                "reported_results",
+                "preprocessing_protocol",
+                "hyperparameters",
+                "strict_requirements",
+                "unknowns",
+                "evidence_spans",
+            ],
+            "all_fields": all_fields,
+            "field_contract": {
+                "asset_universe": "JSON list with one asset or channel name per item, never one comma-joined string.",
+                "data_requirements": "JSON list of concise executable dataset requirements, not an object.",
+                "feature_groups": "JSON list of canonical feature-group descriptions, not objects.",
+                "model_families": "Use the actual proposed model, not only compared baselines. Prefer canonical adapter names when clear.",
+                "horizon": "Exact prediction length and unit for the selected claim.",
+                "training_protocol": "Input window, optimizer/loss, epochs, early stopping, seed and batch protocol when reported.",
+                "evaluation_protocol": "Exact chronological split and context overlap; never call a fixed holdout walk-forward.",
+                "preprocessing_protocol": "Fit scope and transform order, including whether statistics use train data only.",
+                "hyperparameters": "JSON object with executable values. Keep truly absent values in unknowns instead of guessing.",
+                "reported_results": "JSON object mapping metric names to exact numeric values for the selected model/dataset/horizon row.",
+            },
+            "evidence_contract": (
+                "Provide at least one evidence span for every strict field. section must exactly name the supported field. "
+                "source_id, source_type, source_url and source_revision must identify the supplied paper, official repository, "
+                "or dataset manifest. quote must be verbatim from supplied context. Never fabricate a quote."
+            ),
+            "rules": [
+                "Return one JSON object only.",
+                "Do not merge configurations from different result rows.",
+                "Treat model, input_length, prediction_length and reported_results in claim_selector as binding row-selection constraints.",
+                "Official repository evidence may fill implementation details absent from the PDF, but label it official_repository.",
+                "Use unknowns instead of guessing, and set approval_required=true if a strict field remains unresolved.",
+                "Set experiment_type=forecast_only for a pure forecasting benchmark and cost_assumptions=not_applicable.",
+            ],
+        },
+    }
+
+
 class PaperTextLoader:
     def load(self, path: str | Path) -> PaperDocument:
         path = Path(path)
@@ -166,7 +249,14 @@ class PaperTextLoader:
             text = path.read_text(encoding="utf-8", errors="ignore")
         title = _guess_title(text, path.stem)
         digest = hashlib.sha256(text.encode("utf-8", errors="ignore")).hexdigest()[:16]
-        return PaperDocument(document_id=path.stem, title=title, text=text, source_path=str(path), text_sha=digest)
+        return PaperDocument(
+            document_id=path.stem,
+            title=title,
+            text=text,
+            source_path=str(path),
+            text_sha=digest,
+            supporting_context=_load_supporting_context(path),
+        )
 
     def _read_pdf(self, path: Path) -> str:
         try:
@@ -181,12 +271,23 @@ class PaperTextLoader:
 
 
 class MethodCardAgent:
-    def __init__(self, llm: ReplayLLM, *, allow_rule_fallback: bool = False):
+    def __init__(
+        self,
+        llm: ReplayLLM,
+        *,
+        allow_rule_fallback: bool = False,
+        prompt_profile: Literal["standard", "strict"] = "standard",
+    ):
         self.llm = llm
         self.allow_rule_fallback = allow_rule_fallback
+        self.prompt_profile = prompt_profile
 
     def extract(self, document: PaperDocument, *, out_dir: str | Path | None = None) -> MethodCard:
-        prompt = method_card_prompt(document)
+        prompt = (
+            strict_method_card_prompt(document)
+            if self.prompt_profile == "strict"
+            else method_card_prompt(document)
+        )
         try:
             response = self.llm.complete_json(prompt_payload=prompt, schema_name="method_card")
         except FileNotFoundError:
@@ -197,7 +298,36 @@ class MethodCardAgent:
         metadata = dict(card.extraction_metadata)
         metadata.setdefault("document_text_sha", document.text_sha)
         metadata.setdefault("source_path", document.source_path)
-        card = replace(card, extraction_metadata=metadata)
+        metadata.setdefault("prompt_profile", self.prompt_profile)
+        if document.supporting_context_sha:
+            metadata.setdefault("supporting_context_sha", document.supporting_context_sha)
+        claim_consistency_errors = (
+            _claim_selector_consistency_errors(card, document.supporting_context.get("claim_selector", {}))
+            if self.prompt_profile == "strict"
+            else []
+        )
+        evidence_errors = (
+            _strict_evidence_verification_errors(card, document)
+            if self.prompt_profile == "strict"
+            else []
+        )
+        consistency_errors = [*claim_consistency_errors, *evidence_errors]
+        if self.prompt_profile == "strict":
+            metadata["claim_selector_consistency"] = {
+                "passed": not claim_consistency_errors,
+                "errors": claim_consistency_errors,
+            }
+            metadata["evidence_verification"] = {
+                "passed": not evidence_errors,
+                "span_count": len(card.evidence_spans),
+                "errors": evidence_errors,
+            }
+        card = replace(
+            card,
+            extraction_metadata=metadata,
+            approval_required=bool(card.approval_required or consistency_errors),
+            unknowns=list(dict.fromkeys([*card.unknowns, *consistency_errors])),
+        )
         validate_method_card(card)
         if out_dir:
             path = Path(out_dir) / f"{card.paper_id}.json"
@@ -226,6 +356,67 @@ def validate_method_card(card: MethodCard) -> None:
         raise ValueError("MethodCard requires at least one feature group")
     if card.approval_required and not card.unknowns:
         raise ValueError("Approval-required MethodCards should explain unknowns")
+
+
+def _claim_selector_consistency_errors(card: MethodCard, selector: dict[str, Any]) -> list[str]:
+    if not selector:
+        return []
+    errors: list[str] = []
+    expected_models = canonical_model_families([str(selector.get("model") or "")])
+    if selector.get("model") and not set(expected_models).intersection(card.model_families):
+        errors.append("claim_selector_mismatch:model")
+    expected_input = selector.get("input_length")
+    actual_input = card.hyperparameters.get("seq_len", card.hyperparameters.get("input_length"))
+    if expected_input is not None and str(actual_input) != str(expected_input):
+        errors.append("claim_selector_mismatch:input_length")
+    expected_prediction = selector.get("prediction_length")
+    actual_prediction = card.hyperparameters.get("pred_len", card.hyperparameters.get("prediction_length"))
+    if expected_prediction is not None and str(actual_prediction) != str(expected_prediction):
+        errors.append("claim_selector_mismatch:prediction_length")
+    for metric, expected in dict(selector.get("reported_results") or {}).items():
+        actual = card.reported_results.get(metric)
+        try:
+            matches = abs(float(actual) - float(expected)) <= 1e-12
+        except (TypeError, ValueError):
+            matches = False
+        if not matches:
+            errors.append(f"claim_selector_mismatch:reported_results.{metric}")
+    return errors
+
+
+def _strict_evidence_verification_errors(
+    card: MethodCard,
+    document: PaperDocument,
+) -> list[str]:
+    if not card.evidence_spans:
+        return ["evidence_verification:no_evidence_spans"]
+    sources = {
+        str(source.get("source_id")): source
+        for source in document.supporting_context.get("sources", [])
+        if isinstance(source, dict) and source.get("source_id")
+    }
+    errors: list[str] = []
+    for index, span in enumerate(card.evidence_spans):
+        source = sources.get(span.source_id)
+        source_text = str(source.get("content") or "") if source else document.text
+        quote = _normalized_evidence_text(span.quote)
+        if not quote or quote not in _normalized_evidence_text(source_text):
+            errors.append(f"evidence_verification:unverified_quote:{span.section}:{index}")
+        if span.source_type in {"official_repository", "dataset_manifest", "official_dataset"}:
+            revision = span.source_revision or (str(source.get("source_revision") or "") if source else "")
+            if not revision:
+                errors.append(f"evidence_verification:unpinned_source:{span.section}:{index}")
+    return errors
+
+
+def _normalized_evidence_text(value: str) -> str:
+    return (
+        re.sub(r"\s+", " ", str(value or ""))
+        .strip()
+        .lower()
+        .replace("ﬁ", "fi")
+        .replace("ﬂ", "fl")
+    )
 
 
 def _normalize_method_card_payload(payload: dict[str, Any]) -> dict[str, Any]:
@@ -356,7 +547,11 @@ def _as_text(value: Any, fallback: str) -> str:
 
 def _as_string_list(value: Any, fallback: list[str]) -> list[str]:
     if isinstance(value, list):
-        result = [str(item).strip() for item in value if str(item).strip()]
+        result = [_as_text(item, "") for item in value]
+        result = [item for item in result if item]
+        return result or fallback
+    if isinstance(value, dict):
+        result = [f"{key}={_as_text(item, 'unknown')}" for key, item in value.items()]
         return result or fallback
     if isinstance(value, str) and value.strip():
         return [value.strip()]
@@ -375,11 +570,24 @@ def _normalize_evidence_spans(value: Any, *, source_id: str) -> list[dict[str, s
                     "section": str(item.get("section") or item.get("field") or "unknown"),
                     "quote": str(item.get("quote") or item.get("text") or item.get("span") or "")[:1000],
                     "summary": str(item.get("summary") or item.get("rationale") or "LLM-provided evidence span.")[:1000],
+                    "source_type": str(item.get("source_type") or "paper"),
+                    "source_url": str(item.get("source_url") or ""),
+                    "source_revision": str(item.get("source_revision") or item.get("revision") or ""),
                 }
             )
         elif item:
             text = str(item)
-            spans.append({"source_id": source_id, "section": "unknown", "quote": text[:1000], "summary": "LLM-provided evidence span."})
+            spans.append(
+                {
+                    "source_id": source_id,
+                    "section": "unknown",
+                    "quote": text[:1000],
+                    "summary": "LLM-provided evidence span.",
+                    "source_type": "paper",
+                    "source_url": "",
+                    "source_revision": "",
+                }
+            )
     return spans
 
 
@@ -459,8 +667,15 @@ def method_card_to_paper_spec(card: MethodCard) -> PaperSpecCard:
     )
 
 
-def write_methodcard_fixture(llm: ReplayLLM, document: PaperDocument, card: MethodCard) -> Path:
-    return llm.write_fixture(prompt_payload=method_card_prompt(document), schema_name="method_card", response=card.to_dict())
+def write_methodcard_fixture(
+    llm: ReplayLLM,
+    document: PaperDocument,
+    card: MethodCard,
+    *,
+    prompt_profile: Literal["standard", "strict"] = "standard",
+) -> Path:
+    prompt = strict_method_card_prompt(document) if prompt_profile == "strict" else method_card_prompt(document)
+    return llm.write_fixture(prompt_payload=prompt, schema_name="method_card", response=card.to_dict())
 
 
 def document_from_paper_spec(paper: PaperSpecCard) -> PaperDocument:
@@ -568,6 +783,19 @@ def rule_based_method_card(document: PaperDocument) -> MethodCard:
     )
 
 
+def _load_supporting_context(path: Path) -> dict[str, Any]:
+    sidecar = path.with_suffix(".context.json")
+    if not sidecar.exists():
+        return {}
+    payload = json.loads(sidecar.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Supporting context must be a JSON object: {sidecar}")
+    sources = payload.get("sources", [])
+    if not isinstance(sources, list) or any(not isinstance(source, dict) for source in sources):
+        raise ValueError(f"Supporting context sources must be a list of objects: {sidecar}")
+    return payload
+
+
 def _guess_title(text: str, fallback: str) -> str:
     for line in text.splitlines():
         line = line.strip()
@@ -599,6 +827,52 @@ def _focused_method_context(text: str, *, max_chars: int = 7000) -> str:
         if sum(len(section) for section in sections) >= max_chars:
             break
     return "\n\n--- excerpt ---\n\n".join(sections)[:max_chars]
+
+
+def _strict_method_context(text: str, *, max_chars: int = 22000) -> str:
+    normalized = re.sub(r"\s+", " ", text).strip()
+    if len(normalized) <= max_chars:
+        return normalized
+    windows: list[tuple[int, int, str]] = [(0, min(3200, len(normalized)), "paper head")]
+    queries = [
+        "Exchange 96",
+        "DLinear",
+        "Exchange-Rate",
+        "Table 1",
+        "Table 2",
+        "Evaluation metric",
+        "Implementation Details",
+        "look-back window",
+        "training set",
+        "validation",
+    ]
+    lower = normalized.lower()
+    for query in queries:
+        start = 0
+        selected = 0
+        while selected < 3:
+            index = lower.find(query.lower(), start)
+            if index < 0:
+                break
+            left = max(0, index - 700)
+            right = min(len(normalized), index + 1800)
+            if not any(max(left, old_left) < min(right, old_right) for old_left, old_right, _ in windows):
+                windows.append((left, right, query))
+                selected += 1
+            start = index + len(query)
+    sections: list[str] = []
+    used = 0
+    for left, right, label in windows:
+        excerpt = normalized[left:right].strip()
+        if not excerpt:
+            continue
+        remaining = max_chars - used
+        if remaining <= 0:
+            break
+        excerpt = excerpt[:remaining]
+        sections.append(f"[source=paper; focus={label}; chars={left}:{left + len(excerpt)}]\n{excerpt}")
+        used += len(excerpt)
+    return "\n\n--- targeted excerpt ---\n\n".join(sections)
 
 
 def _slug(value: str) -> str:
