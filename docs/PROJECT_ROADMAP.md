@@ -13,7 +13,7 @@
 
 ## 当前进展
 
-当前最新实现是 **P1.6.2 validated**；总体 P1 仍在进行中。
+当前最新实现是 **P1.6.3-P1.8 first-batch implementation**；规模化总验收未通过，总体 P1 仍在进行中。
 
 已完成：
 
@@ -27,7 +27,16 @@ P0.9  审批状态、Adapter Backlog、Golden 集合、Run Timeline
 P1.0-P1.6  MethodCard v2、ReproductionPlan、双轨评估、PredictionArtifact、ExperimentMemory 和真实验证
 P1.6.1  严格 LLM 抽取、主资料证据、方法卡驱动原生协议和统一基准统计审计
 P1.6.2  十篇异构金融机器学习论文的能力路由、语义一致性门禁和五方法统一基准
+P1.6.3  首批 86 条语料记录与 50 份合法开放 PDF
+P1.6.4  通用数据获取中心
+P1.6.6  复现覆盖账本和 Delta 框架
+P1.6.7  四类冻结多基准
+P1.6.8  七阶段 Research Workbench
+P1.7    带上下文门禁和失败降权的多基准 prior
+P1.8    十个 SourceBundle 候选审计
 ```
+
+P1.6.5 的硬验收尚未完成：当前严格复现为 1 篇/1 claim，距离 10 篇目标还差 9 篇。P1.6.6 的逐篇探索执行也未完成：28 篇为 candidate，58 篇为 structured blocker。因此上述 P1.7/P1.8 是首批接口和真实验证，不代表规模化路线已按顺序全部验收。
 
 当前已具备 P1 复现协议和实验记忆基础：
 
@@ -99,9 +108,79 @@ P1.6.2  十篇异构金融机器学习论文的能力路由、语义一致性门
 
 ## P1：研究记忆与数据注册增强
 
-2026-07-14 进度：P1.0-P1.6.2 的复现协议子路线已完成，包括 MethodCard v2、ReproductionPlan、原生/统一基准双轨、标准预测产物、严格 LLM 主资料抽取、十篇异构论文能力路由、五方法统一基准和按任务/模式隔离的 ExperimentMemory。Memory 驱动候选 prior、Registry 增强和 MethodCard diff/history 尚未完成，因此总体 P1 仍为进行中。
+2026-07-14 进度：P1.0-P1.6.2 已验证；P1.6.3-P1.8 已完成首批基础实现和聚焦测试。Memory prior 已用于多基准排序，但旧 harness scheduler 尚未接入；SourceBundle 已能固定仓库和审计许可，但仍需人工确认与 publication-date commit。Native Portfolio 和逐篇 exploratory 覆盖尚未达到硬验收，因此总体 P1 仍为进行中。
 
-P1.6.2 是既定 P1 路线内的验收增强，不改变 P1/P2/P3 的总体目标。它暴露出的原生执行覆盖不足应作为后续适配器建设的验收输入；下一项核心路线仍是 P1.7 Memory prior，原生复现样例则按实验类型逐步扩展，不能因控制层路由通过而宣称所有论文已可严格复现。
+P1.6.2 是既定 P1 路线内的验收增强，不改变 P1/P2/P3 的总体目标。它暴露出的原生执行覆盖不足应作为后续适配器建设的验收输入，不能因控制层路由通过而宣称所有论文已可严格复现。
+
+### 已批准的规模化复现扩展
+
+用户已于 2026-07-14 明确批准扩展 P1 路线。P1.7 Memory prior 调整到规模化语料、数据、执行和基准能力完成之后，避免 Memory 只学习当前单一时间序列样例。P1/P2/P3 的总体定位不变。
+
+```text
+P1.6.3  Literature Corpus & Feasibility
+P1.6.4  Data Acquisition Hub
+P1.6.5  Native Reproduction Portfolio
+P1.6.6  Exploratory Reproduction & Delta Audit
+P1.6.7  Multi-Benchmark Suite
+P1.6.8  Research Workbench UX
+P1.7    ExperimentMemory Prior
+P1.8    Official Source Automation
+```
+
+#### P1.6.3：Literature Corpus & Feasibility
+
+- 第一批登记不少于 50 篇高影响力金融机器学习预测论文，第二批扩展到 100 篇。
+- 区分顶级金融期刊、其他高影响力同行评议来源和高影响力 working paper/preprint，不混称为顶刊。
+- 保存 DOI/arXiv/SSRN/NBER 标识、来源、年份、作者、引用信号、开放获取地址、任务类型、数据和代码可得性。
+- 每篇生成严格复现可行性、探索性替代方案、许可风险和 adapter 缺口。
+
+#### P1.6.4：Data Acquisition Hub
+
+- 前端支持用户按论文要求或自定义请求下载数据。
+- 系统可根据 MethodCard 自动生成数据请求并尝试合法获取。
+- 所有下载必须保存来源 URL、获取时间、许可状态、SHA256、字段映射、时间范围和失败原因。
+- 禁止绕过付费墙、身份验证和数据许可；付费或不可再分发数据必须明确阻断。
+
+#### P1.6.5：Native Reproduction Portfolio
+
+- 第一批严格复现硬验收不少于 10 个论文 claim，扩展目标为 20 个。
+- 覆盖时间序列预测、方向分类、信号回测、截面资产定价和组合决策等实验类型。
+- strict 必须同时通过数据、代码 revision、模型、预处理、切分、指标、随机性、证据和结果容差门禁。
+- 同一公开基准论文的多个配置只能在 claim 和协议确实独立时分别计数，并在统计中同时报告 paper 数和 claim 数。
+- 原生 runner 应优先采用声明式 Native Claim Catalog；兼容补丁只能作用于固定官方源码的运行副本，并记录补丁前后哈希和运行环境。
+- 论文重复实验必须冻结预期观测次数；训练中间日志与独立随机重复必须用显式观测策略区分，观测数不一致不得进入 strict。
+
+#### P1.6.6：Exploratory Reproduction & Delta Audit
+
+- 未达到 strict 的论文应进行科学有效的探索性复现，或生成结构化阻断报告。
+- 禁止为追求覆盖率静默替换模型、编造字段或把不可执行论文标记为成功。
+- 每次运行必须输出 Paper-vs-Run Delta，比较数据、特征、预处理、模型、超参数、切分、成本和指标。
+- 论文假设结论限定为 `supported / not_supported / insufficient_evidence / not_transferable`。
+
+#### P1.6.7：Multi-Benchmark Suite
+
+- 建立不少于四类冻结 BenchmarkTask，而不是只使用当前 AAPL 周频任务。
+- 每类基准至少比较三种来源于不同论文的方法，并输出统一 PredictionArtifact。
+- 验证 task fingerprint、目标行、fold、预测数量、信息集、成本和指标口径一致。
+- 同时报告方法相对原论文的差异，以及统一基准结果能否检验或迁移原论文假设。
+
+#### P1.6.8：Research Workbench UX
+
+- 前端按“文献语料 -> 数据 -> 方法卡 -> 复现配置 -> 原生/探索性运行 -> 多基准 -> 结果审计”展示。
+- 默认展示结构化摘要、状态和差异，原始 JSON 仅保留为折叠技术细节。
+- 用户能清楚区分严格复现、探索性复现、统一基准适配和阻断状态。
+
+#### P1.7：ExperimentMemory Prior
+
+- Memory 参与候选排序前，必须按任务类型、运行模式、数据相似度和协议相似度门禁。
+- 历史失败、阻断和负迁移必须可降低 prior，不能只学习成功结果。
+
+#### P1.8：Official Source Automation
+
+- 自动发现论文官方仓库、固定 commit、release、数据页面、许可和字段说明。
+- 自动生成可审计 SourceBundle，逐步替代手工 `.context.json`，但仍需人工批准进入 strict。
+
+规模化验收边界：第一批目标是 50 篇语料和至少 10 个严格 claim，不预先保证 50 篇都能合法下载 PDF 或获得原始数据。未能合法获取或科学执行的论文以结构化 blocker 作为正确结果，不得伪造探索性成功。
 
 - ExperimentMemoryStore 保存候选、运行结果、失败原因、审计状态和上下文。
 - ExperimentMemoryStore 参与 Scheduler prior。

@@ -1,0 +1,233 @@
+{
+  "schema_version": "reproduction_plan_v1",
+  "paper_id": "arxiv_2005_11650",
+  "experiment_type": "forecast_only",
+  "plan_mode": "native_reproduction",
+  "resolutions": {
+    "target_asset": {
+      "status": "specified",
+      "value": "eight-channel daily Exchange-Rate series",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "A-LSTM RSE 0.1803 0.2347 0.3234 0.4389 0.4487 0.4658 0.4641 0.4765 0.0823 0.0916 0.0964 0.1006 0.0174 0.0241 0.0341 0.0444\nCORR 0.9850 0.9742 0.9487 0.9081 0.8812 0.8717 0.8717 0.8629 0.9439 0.9337 0.9250 0.9133 0.9790 0.9709 0.9564 0.9381\nMTGNN RSE 0.1778 0.2348 0.3109 0.42700.4162 0.4754 0.4461 0.45350.0745 0.0878 0.0916 0.09530.0194 0.0259 0.0349 0.0456\nCORR 0.9852 0.9726 0.9509 0.9031 0.8963 0.8667 0.8794 0.88100.9474 0.9316 0.9278 0.92340.9786 0.9708 0.9551 0.9372\nMTGNN+sampling RSE0.1875 0.2521 0.3347 0.4386 0.4170 0.4435 0.4469 0.4537 0.0762 0.0862 0.0938 0.0976 0.0212 0.0271 0.0350 0.0454\nCORR 0.9834 0.9687 0.9440 0.8990 0.8960 0.8815 0.8793 0.8758 0.9467 0.9354 0.9261 0.9219 0.9788 0.9704 0.9574 0.9382\nTable 3: Baseline comparison under mult"
+      ]
+    },
+    "asset_universe": {
+      "status": "specified",
+      "value": [
+        "exchange_channel_1",
+        "exchange_channel_2",
+        "exchange_channel_3",
+        "exchange_channel_4",
+        "exchange_channel_5",
+        "exchange_channel_6",
+        "exchange_channel_7",
+        "exchange_channel_8"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    },
+    "frequency": {
+      "status": "specified",
+      "value": "daily",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    },
+    "horizon": {
+      "status": "specified",
+      "value": "12 days",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "A-LSTM RSE 0.1803 0.2347 0.3234 0.4389 0.4487 0.4658 0.4641 0.4765 0.0823 0.0916 0.0964 0.1006 0.0174 0.0241 0.0341 0.0444\nCORR 0.9850 0.9742 0.9487 0.9081 0.8812 0.8717 0.8717 0.8629 0.9439 0.9337 0.9250 0.9133 0.9790 0.9709 0.9564 0.9381\nMTGNN RSE 0.1778 0.2348 0.3109 0.42700.4162 0.4754 0.4461 0.45350.0745 0.0878 0.0916 0.09530.0194 0.0259 0.0349 0.0456\nCORR 0.9852 0.9726 0.9509 0.9031 0.8963 0.8667 0.8794 0.88100.9474 0.9316 0.9278 0.92340.9786 0.9708 0.9551 0.9372\nMTGNN+sampling RSE0.1875 0.2521 0.3347 0.4386 0.4170 0.4435 0.4469 0.4537 0.0762 0.0862 0.0938 0.0976 0.0212 0.0271 0.0350 0.0454\nCORR 0.9834 0.9687 0.9440 0.8990 0.8960 0.8815 0.8793 0.8758 0.9467 0.9354 0.9261 0.9219 0.9788 0.9704 0.9574 0.9382\nTable 3: Baseline comparison under mult"
+      ]
+    },
+    "label_definition": {
+      "status": "specified",
+      "value": "future multivariate exchange-rate levels",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    },
+    "data_requirements": {
+      "status": "specified",
+      "value": [
+        "frozen Exchange-Rate bytes",
+        "chronological train/validation/test split"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    },
+    "feature_groups": {
+      "status": "specified",
+      "value": [
+        "eight raw exchange-rate channels"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    },
+    "model_families": {
+      "status": "specified",
+      "value": [
+        "MTGNN"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    },
+    "training_protocol": {
+      "status": "specified",
+      "value": "Pinned official implementation and claim command; see native claim catalog.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    },
+    "evaluation_protocol": {
+      "status": "specified",
+      "value": "Paper-native chronological holdout and paper-native metrics.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    },
+    "metrics": {
+      "status": "specified",
+      "value": [
+        "rse",
+        "corr"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "A-LSTM RSE 0.1803 0.2347 0.3234 0.4389 0.4487 0.4658 0.4641 0.4765 0.0823 0.0916 0.0964 0.1006 0.0174 0.0241 0.0341 0.0444\nCORR 0.9850 0.9742 0.9487 0.9081 0.8812 0.8717 0.8717 0.8629 0.9439 0.9337 0.9250 0.9133 0.9790 0.9709 0.9564 0.9381\nMTGNN RSE 0.1778 0.2348 0.3109 0.42700.4162 0.4754 0.4461 0.45350.0745 0.0878 0.0916 0.09530.0194 0.0259 0.0349 0.0456\nCORR 0.9852 0.9726 0.9509 0.9031 0.8963 0.8667 0.8794 0.88100.9474 0.9316 0.9278 0.92340.9786 0.9708 0.9551 0.9372\nMTGNN+sampling RSE0.1875 0.2521 0.3347 0.4386 0.4170 0.4435 0.4469 0.4537 0.0762 0.0862 0.0938 0.0976 0.0212 0.0271 0.0350 0.0454\nCORR 0.9834 0.9687 0.9440 0.8990 0.8960 0.8815 0.8793 0.8758 0.9467 0.9354 0.9261 0.9219 0.9788 0.9704 0.9574 0.9382\nTable 3: Baseline comparison under mult"
+      ]
+    },
+    "preprocessing_protocol": {
+      "status": "specified",
+      "value": "Training-split standardization implemented by the pinned official loader.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    },
+    "hyperparameters": {
+      "status": "specified",
+      "value": [
+        "{python}",
+        "-u",
+        "{source_root}/train_single_step.py",
+        "--save",
+        "{runtime_root}/mtgnn_exchange_h12.pt",
+        "--data",
+        "{dataset_path}",
+        "--device",
+        "cpu",
+        "--num_nodes",
+        "8",
+        "--subgraph_size",
+        "8",
+        "--batch_size",
+        "4",
+        "--epochs",
+        "30",
+        "--horizon",
+        "12",
+        "--seq_in_len",
+        "168",
+        "--layers",
+        "5",
+        "--gcn_depth",
+        "2",
+        "--node_dim",
+        "40",
+        "--dilation_exponential",
+        "2",
+        "--conv_channels",
+        "16",
+        "--residual_channels",
+        "16",
+        "--skip_channels",
+        "32",
+        "--end_channels",
+        "64",
+        "--dropout",
+        "0.3",
+        "--propalpha",
+        "0.05",
+        "--tanhalpha",
+        "3",
+        "--optim",
+        "adam",
+        "--lr",
+        "0.001",
+        "--weight_decay",
+        "0.0001",
+        "--clip",
+        "5"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "irements\nThe model is implemented using Python3 with dependencies specified in requirements.txt\n## Data Preparation\n### Multivariate time series datasets\n\nDownload Solar-Energy, Traffic, Electricity, Exchange-rate datasets from [https://github.com/laiguokun/multivariate-time-series-data](https://github.com/laiguokun/multivariate-time-series-data). Uncompress them and move them to the data folder.\n\n### Traffic datasets\nDownload the METR-LA and PEMS-BAY dataset from [Google Drive](https://drive.google.com/open?id=10FOTa6HXPqX8Pf5WRoRwcFnW9BrNZEIX) or [Baidu Yun](https://pan.baidu.com/s/14Yy9isAIZYdU__OYEQGa_g) provided by [Li et al.](https://github.com/liyaguang/DCRNN.git) . Move them into the data folder. \n\n```\n\n# Create data directories\nmkdir -p data/{METR-LA,PEMS-BAY}\n\n# METR-LA\npython generate_training_data.py --output_dir=data/METR-LA --traffic_df_filename=data/metr-la.h5\n\n# PEMS-BAY\npython generate_training_data.py --output_dir=data/PEMS-BAY --traffic_df_filename=data/pems-bay.h5\n\n```\n\n## Model Training\n\n### Single-step\n\n* Solar-Energy\n\n```\npython train_single_step.py --save ./mo"
+      ]
+    }
+  },
+  "claims": [
+    {
+      "claim_id": "arxiv_2005_11650_exchange_h12_native",
+      "description": "KDD 2020 paper, Table 2, MTGNN, Exchange-Rate, horizon 12",
+      "primary_metrics": [
+        "rse",
+        "corr"
+      ],
+      "reported_values": {
+        "rse": 0.0349,
+        "corr": 0.9551
+      },
+      "acceptance_tolerance": {
+        "rse": 0.008,
+        "corr": 0.015
+      }
+    }
+  ],
+  "approved_for_execution": true,
+  "updated_at": "2026-07-16T14:49:03.608095+00:00",
+  "required_fields": [
+    "asset_universe",
+    "data_requirements",
+    "evaluation_protocol",
+    "feature_groups",
+    "frequency",
+    "horizon",
+    "label_definition",
+    "metrics",
+    "model_families",
+    "target_asset",
+    "training_protocol"
+  ],
+  "unresolved_required_fields": [],
+  "execution_ready": true,
+  "strict_ready": true,
+  "plan_hash": "97115f3fdfe9359b"
+}

@@ -1,0 +1,231 @@
+{
+  "schema_version": "reproduction_plan_v1",
+  "paper_id": "arxiv_2201_12740",
+  "experiment_type": "forecast_only",
+  "plan_mode": "native_reproduction",
+  "resolutions": {
+    "target_asset": {
+      "status": "specified",
+      "value": "eight-channel daily Exchange-Rate series",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "s are highligh ted in bold.\nMethods Metric ETTm2 Electricity Exchange Trafﬁc Weather ILI\n96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 24 36 48 60\nFEDformer-f MSE 0.203 0.269 0.325 0.421 0.193 0.201 0.214 0.246 0.148 0.271 0.460 1.195 0.587 0.604 0.621 0.626 0.217 0.276 0.339 0.403 3.228 2.679 2.622 2.857\nMAE 0.287 0.328 0.366 0.415 0.308 0.315 0.329 0.355 0.278 0.380 0.500 0.841 0.366 0.373 0.383 0.382 0.296 0.336 0.380 0.428 1.260 1.080 1.078 1.157\nFEDformer-w MSE 0.204 0.316 0.359 0.433 0.183 0.195 0.212 0.231 0.139 0.256 0.426 1.090 0.562 0.562 0.570 0.596 0.227 0.295 0.381 0.424 2.203 2.272 2.209 2.545\nMAE 0.288 0.363 0.387 0.432 0.297 0.308 0.313 0.343 0.276 0.369 0.464 0.800 0.349 0.346 0.323 0.368 0.304 0.363 0.41"
+      ]
+    },
+    "asset_universe": {
+      "status": "specified",
+      "value": [
+        "exchange_channel_1",
+        "exchange_channel_2",
+        "exchange_channel_3",
+        "exchange_channel_4",
+        "exchange_channel_5",
+        "exchange_channel_6",
+        "exchange_channel_7",
+        "exchange_channel_8"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    },
+    "frequency": {
+      "status": "specified",
+      "value": "daily",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    },
+    "horizon": {
+      "status": "specified",
+      "value": "96 days",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "s are highligh ted in bold.\nMethods Metric ETTm2 Electricity Exchange Trafﬁc Weather ILI\n96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 24 36 48 60\nFEDformer-f MSE 0.203 0.269 0.325 0.421 0.193 0.201 0.214 0.246 0.148 0.271 0.460 1.195 0.587 0.604 0.621 0.626 0.217 0.276 0.339 0.403 3.228 2.679 2.622 2.857\nMAE 0.287 0.328 0.366 0.415 0.308 0.315 0.329 0.355 0.278 0.380 0.500 0.841 0.366 0.373 0.383 0.382 0.296 0.336 0.380 0.428 1.260 1.080 1.078 1.157\nFEDformer-w MSE 0.204 0.316 0.359 0.433 0.183 0.195 0.212 0.231 0.139 0.256 0.426 1.090 0.562 0.562 0.570 0.596 0.227 0.295 0.381 0.424 2.203 2.272 2.209 2.545\nMAE 0.288 0.363 0.387 0.432 0.297 0.308 0.313 0.343 0.276 0.369 0.464 0.800 0.349 0.346 0.323 0.368 0.304 0.363 0.41"
+      ]
+    },
+    "label_definition": {
+      "status": "specified",
+      "value": "future multivariate exchange-rate levels",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    },
+    "data_requirements": {
+      "status": "specified",
+      "value": [
+        "frozen Exchange-Rate bytes",
+        "chronological train/validation/test split"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    },
+    "feature_groups": {
+      "status": "specified",
+      "value": [
+        "eight raw exchange-rate channels"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    },
+    "model_families": {
+      "status": "specified",
+      "value": [
+        "FEDformer"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    },
+    "training_protocol": {
+      "status": "specified",
+      "value": "Pinned official implementation and claim command; see native claim catalog.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    },
+    "evaluation_protocol": {
+      "status": "specified",
+      "value": "Paper-native chronological holdout and paper-native metrics.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    },
+    "metrics": {
+      "status": "specified",
+      "value": [
+        "mse",
+        "mae"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "s are highligh ted in bold.\nMethods Metric ETTm2 Electricity Exchange Trafﬁc Weather ILI\n96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 24 36 48 60\nFEDformer-f MSE 0.203 0.269 0.325 0.421 0.193 0.201 0.214 0.246 0.148 0.271 0.460 1.195 0.587 0.604 0.621 0.626 0.217 0.276 0.339 0.403 3.228 2.679 2.622 2.857\nMAE 0.287 0.328 0.366 0.415 0.308 0.315 0.329 0.355 0.278 0.380 0.500 0.841 0.366 0.373 0.383 0.382 0.296 0.336 0.380 0.428 1.260 1.080 1.078 1.157\nFEDformer-w MSE 0.204 0.316 0.359 0.433 0.183 0.195 0.212 0.231 0.139 0.256 0.426 1.090 0.562 0.562 0.570 0.596 0.227 0.295 0.381 0.424 2.203 2.272 2.209 2.545\nMAE 0.288 0.363 0.387 0.432 0.297 0.308 0.313 0.343 0.276 0.369 0.464 0.800 0.349 0.346 0.323 0.368 0.304 0.363 0.41"
+      ]
+    },
+    "preprocessing_protocol": {
+      "status": "specified",
+      "value": "Training-split standardization implemented by the pinned official loader.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    },
+    "hyperparameters": {
+      "status": "specified",
+      "value": [
+        "{python}",
+        "-u",
+        "{source_root}/run.py",
+        "--is_training",
+        "1",
+        "--root_path",
+        "{dataset_dir}",
+        "--data_path",
+        "exchange_rate.csv",
+        "--task_id",
+        "Exchange",
+        "--model",
+        "FEDformer",
+        "--data",
+        "custom",
+        "--features",
+        "M",
+        "--seq_len",
+        "96",
+        "--label_len",
+        "48",
+        "--pred_len",
+        "96",
+        "--e_layers",
+        "2",
+        "--d_layers",
+        "1",
+        "--enc_in",
+        "8",
+        "--dec_in",
+        "8",
+        "--c_out",
+        "8",
+        "--des",
+        "native",
+        "--num_workers",
+        "0",
+        "--checkpoints",
+        "{runtime_root}/checkpoints",
+        "--version",
+        "Fourier",
+        "--modes",
+        "64",
+        "--d_model",
+        "512",
+        "--factor",
+        "3",
+        "--itr",
+        "5"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen"
+      ]
+    }
+  },
+  "claims": [
+    {
+      "claim_id": "arxiv_2201_12740_exchange_native",
+      "description": "ICML 2022 paper, Table 2, FEDformer-f, Exchange, horizon 96",
+      "primary_metrics": [
+        "mse",
+        "mae"
+      ],
+      "reported_values": {
+        "mse": 0.148,
+        "mae": 0.278
+      },
+      "acceptance_tolerance": {
+        "mse": 0.015,
+        "mae": 0.025
+      }
+    }
+  ],
+  "approved_for_execution": true,
+  "updated_at": "2026-07-16T14:49:03.531092+00:00",
+  "required_fields": [
+    "asset_universe",
+    "data_requirements",
+    "evaluation_protocol",
+    "feature_groups",
+    "frequency",
+    "horizon",
+    "label_definition",
+    "metrics",
+    "model_families",
+    "target_asset",
+    "training_protocol"
+  ],
+  "unresolved_required_fields": [],
+  "execution_ready": true,
+  "strict_ready": true,
+  "plan_hash": "7bd943e35f495855"
+}

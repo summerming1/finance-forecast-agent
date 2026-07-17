@@ -1,0 +1,34 @@
+{
+  "request": {
+    "request_id": "benchmark_eurusd",
+    "dataset_id": "benchmark_eurusd",
+    "source_type": "yahoo_chart",
+    "paper_id": null,
+    "source_url": null,
+    "symbol_or_series": "EURUSD=X",
+    "start_date": "2010-01-01",
+    "end_date": "2026-07-14",
+    "frequency": "1d",
+    "expected_fields": [
+      "chart"
+    ],
+    "license_status": "provider_terms_review_required",
+    "requested_by": "benchmark_suite",
+    "rationale": "",
+    "status": "pending",
+    "blockers": []
+  },
+  "status": "downloaded",
+  "local_path": "projects\\finance_agent\\data\\acquired\\benchmark_eurusd\\snapshot.json",
+  "sha256": "874d532065693babdfe95049f3f4e8e8cfa40590cbfee31c2be775c33c4ad253",
+  "byte_count": 460966,
+  "content_type": "application/json;charset=utf-8",
+  "detected_fields": [
+    "chart"
+  ],
+  "missing_expected_fields": [],
+  "acquired_at": "2026-07-14T14:24:28.930848+00:00",
+  "source_final_url": "https://query1.finance.yahoo.com/v8/finance/chart/EURUSD=X?period1=1262304000&period2=1783987200&interval=1d&events=history",
+  "error": null,
+  "schema_version": "data_acquisition_result_v1"
+}

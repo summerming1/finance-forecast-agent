@@ -6,47 +6,81 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 
-APP_PATH = Path(__file__).parents[1] / "apps" / "streamlit_app.py"
-STAGES = ["1 文献库", "2 方法审核", "3 复现配置", "4 运行实验", "5 结果审计"]
+ROOT = Path(__file__).parents[1]
+APP_PATH = ROOT / "apps" / "streamlit_app.py"
+PAGE_DIR = ROOT / "apps" / "app_pages"
+STAGES = [
+    "1 文献语料",
+    "2 数据准备",
+    "3 方法卡审核",
+    "4 复现配置",
+    "5 原生/探索运行",
+    "6 多方法基准",
+    "7 结果审计",
+]
 
 
-@pytest.fixture()
-def app() -> AppTest:
-    instance = AppTest.from_file(str(APP_PATH), default_timeout=30).run()
-    assert not instance.exception
-    return instance
+def _run(path: Path, timeout: int = 30) -> AppTest:
+    app = AppTest.from_file(str(path), default_timeout=timeout).run()
+    assert not app.exception
+    return app
 
 
-def test_workbench_opens_on_a_five_stage_paper_library(app: AppTest) -> None:
+def test_forecastproof_opens_on_a_judge_friendly_home_page() -> None:
+    app = _run(APP_PATH)
+
+    assert any(item.value == "ForecastProof" for item in app.title)
+    assert any("auditable go/no-go decision" in item.value for item in app.subheader)
+    assert {item.label for item in app.metric} >= {
+        "Evidence spans",
+        "Deterministic gates",
+        "Paper MSE",
+        "Local MSE",
+    }
+
+
+@pytest.mark.parametrize(
+    ("page_name", "expected_title"),
+    [
+        ("analyze.py", "Analyze the claim"),
+        ("verify.py", "Verify the reproduction"),
+        ("decision_memo.py", "Decision memo"),
+    ],
+)
+def test_each_product_page_renders_without_an_api_key(page_name: str, expected_title: str) -> None:
+    app = _run(PAGE_DIR / page_name)
+
+    assert any(item.value == expected_title for item in app.title)
+
+
+def test_verification_page_exposes_all_four_passed_gates() -> None:
+    app = _run(PAGE_DIR / "verify.py")
+
+    assert len([item for item in app.markdown if item.value == ":green-badge[Passed]"]) == 4
+    assert any("reproduced within the declared tolerance" in item.value for item in app.success)
+
+
+def test_decision_page_defaults_to_a_safe_replay_memo() -> None:
+    app = _run(PAGE_DIR / "decision_memo.py")
+
+    mode = app.segmented_control(key="forecastproof_memo_mode")
+    assert mode.value == "Verified replay"
+    assert any("CONDITIONAL" in item.value for item in app.markdown)
+    assert any("not investment advice" in warning.value.lower() for warning in app.warning)
+
+
+def test_research_lab_preserves_the_seven_stage_workbench() -> None:
+    app = _run(PAGE_DIR / "research_lab.py")
+
     stage_control = app.segmented_control(key="workflow_stage")
     assert stage_control.options == STAGES
-    assert stage_control.value == "1 文献库"
-    assert any("选择文献与方法卡" in heading.value for heading in app.header)
+    assert stage_control.value == "1 文献语料"
 
 
 @pytest.mark.parametrize("stage", STAGES[1:])
-def test_each_workbench_stage_renders_without_exception(app: AppTest, stage: str) -> None:
+def test_each_research_lab_stage_renders_without_exception(stage: str) -> None:
+    app = _run(PAGE_DIR / "research_lab.py")
+
     app.segmented_control(key="workflow_stage").set_value(stage).run()
     assert not app.exception
     assert app.segmented_control(key="workflow_stage").value == stage
-
-
-def test_method_review_has_one_clear_review_action(app: AppTest) -> None:
-    app.segmented_control(key="workflow_stage").set_value("2 方法审核").run()
-    button_labels = [button.label for button in app.button]
-    assert button_labels.count("保存审核结果") == 1
-    assert "Approve" not in button_labels
-    assert "Reject" not in button_labels
-
-
-def test_existing_methodcard_moves_through_review_and_setup(app: AppTest) -> None:
-    next(button for button in app.button if button.label == "使用已有方法卡").click().run()
-    assert not app.exception
-    assert app.segmented_control(key="workflow_stage").value == "2 方法审核"
-
-    next(button for button in app.button if button.label == "继续配置复现").click().run()
-    assert not app.exception
-    assert app.segmented_control(key="workflow_stage").value == "3 复现配置"
-
-    assert any(button.label == "保存复现计划" for button in app.button)
-    assert next(button for button in app.button if button.label == "进入运行").disabled is True

@@ -4,6 +4,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .pytest_tmp/
+.pytest-*/
 .ruff_cache/
 mlruns/
 src/*.egg-info/
@@ -14,6 +15,12 @@ projects/finance_agent/mlruns/
 projects/finance_agent/.dvc/
 projects/finance_agent/.dvcignore
 projects/finance_agent/data/*.dvc
+projects/finance_agent/data/acquired/
+projects/finance_agent/data/benchmarks/
+projects/finance_agent/data/external/ett/
+projects/finance_agent/data/external/exchange_rate/exchange_rate.csv
+projects/finance_agent/data/external/exchange_rate/exchange_rate.txt.gz
+projects/finance_agent/sources/
 projects/finance_agent/llm_fixtures/research_advice/
 projects/finance_agent/llm_fixtures/research_advice_catalog.json
 projects/finance_agent/llm_fixtures_live_test/

@@ -4,12 +4,15 @@ import hashlib
 import json
 from pathlib import Path
 
+import pytest
+
 from finance_forecast_agent.method_cards import MethodCardAgent, PaperTextLoader, strict_method_card_prompt
 from finance_forecast_agent.replay_llm import ReplayLLM
 
 
 ROOT = Path(__file__).parents[1]
 PROJECT = ROOT / "projects" / "finance_agent"
+PAPER_PDF = PROJECT / "papers" / "local" / "arxiv_2205.13504.pdf"
 
 
 def test_native_dlinear_artifact_passes_data_protocol_and_result_gates() -> None:
@@ -58,8 +61,9 @@ def test_common_benchmark_artifact_uses_shared_task_and_equal_prediction_counts(
     }
 
 
+@pytest.mark.skipif(not PAPER_PDF.exists(), reason="Optional local arXiv PDF has not been downloaded")
 def test_dlinear_strict_prompt_contains_result_row_and_pinned_primary_sources() -> None:
-    document = PaperTextLoader().load(PROJECT / "papers" / "local" / "arxiv_2205.13504.pdf")
+    document = PaperTextLoader().load(PAPER_PDF)
     prompt = strict_method_card_prompt(document)
     assert "Exchange 96" in prompt["paper_context"]
     assert "0.081 0.203" in prompt["paper_context"]
@@ -72,8 +76,9 @@ def test_dlinear_strict_prompt_contains_result_row_and_pinned_primary_sources() 
     assert all(source["source_revision"] for source in sources)
 
 
+@pytest.mark.skipif(not PAPER_PDF.exists(), reason="Optional local arXiv PDF has not been downloaded")
 def test_dlinear_strict_live_card_replays_without_an_api_call() -> None:
-    document = PaperTextLoader().load(PROJECT / "papers" / "local" / "arxiv_2205.13504.pdf")
+    document = PaperTextLoader().load(PAPER_PDF)
     card = MethodCardAgent(
         ReplayLLM(PROJECT / "llm_fixtures"),
         prompt_profile="strict",

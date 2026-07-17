@@ -1,0 +1,572 @@
+{
+  "schema_version": "experiment_memory_v1",
+  "records": [
+    {
+      "run_id": "20260714T072943375530Z-cd82349a",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "452bfd685cb4d567",
+      "method_id": "arxiv_2209_02407",
+      "model_family": "lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.2234662035157425,
+        "rmse": 0.2304363305352607,
+        "r2": -30.505996168119644,
+        "directional_accuracy": 0.625
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\benchmark_us_equity_weekly_next_return_v1_452bfd685cb4d567.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T07:29:43.375530+00:00",
+      "experiment_type": "unknown",
+      "data_domain": "unknown",
+      "protocol_fingerprint": ""
+    },
+    {
+      "run_id": "20260714T072943375530Z-d0455795",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "452bfd685cb4d567",
+      "method_id": "arxiv_2310_16855",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.0362190506422171,
+        "rmse": 0.049285157537057915,
+        "r2": -0.44119787204409366,
+        "directional_accuracy": 0.5
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\benchmark_us_equity_weekly_next_return_v1_452bfd685cb4d567.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T07:29:43.376536+00:00",
+      "experiment_type": "unknown",
+      "data_domain": "unknown",
+      "protocol_fingerprint": ""
+    },
+    {
+      "run_id": "p1-validation-8e4a283b33c57761-arxiv_2209_02407",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "8e4a283b33c57761",
+      "method_id": "arxiv_2209_02407",
+      "model_family": "lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.02992392918625139,
+        "rmse": 0.03909580786332092,
+        "r2": -0.08209582810420613,
+        "directional_accuracy": 0.484375
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\benchmark_aapl_weekly_next_return_12lag_v1_8e4a283b33c57761.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T12:41:04.224535+00:00",
+      "experiment_type": "unknown",
+      "data_domain": "unknown",
+      "protocol_fingerprint": ""
+    },
+    {
+      "run_id": "p1-validation-8e4a283b33c57761-arxiv_2306_03620",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "8e4a283b33c57761",
+      "method_id": "arxiv_2306_03620",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.0326516577763457,
+        "rmse": 0.041490816446405496,
+        "r2": -0.21873504913187136,
+        "directional_accuracy": 0.484375
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\benchmark_aapl_weekly_next_return_12lag_v1_8e4a283b33c57761.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T12:41:04.224535+00:00",
+      "experiment_type": "unknown",
+      "data_domain": "unknown",
+      "protocol_fingerprint": ""
+    },
+    {
+      "run_id": "p1-validation-8e4a283b33c57761-arxiv_2310_16855",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "8e4a283b33c57761",
+      "method_id": "arxiv_2310_16855",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.0326516577763457,
+        "rmse": 0.041490816446405496,
+        "r2": -0.21873504913187136,
+        "directional_accuracy": 0.484375
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\benchmark_aapl_weekly_next_return_12lag_v1_8e4a283b33c57761.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T12:41:04.224535+00:00",
+      "experiment_type": "unknown",
+      "data_domain": "unknown",
+      "protocol_fingerprint": ""
+    },
+    {
+      "run_id": "p1-validation-8e4a283b33c57761-arxiv_2108_10826",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "8e4a283b33c57761",
+      "method_id": "arxiv_2108_10826",
+      "model_family": "gradient_boosting_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.031043515835464254,
+        "rmse": 0.03994310088957208,
+        "r2": -0.12950691447211882,
+        "directional_accuracy": 0.4609375
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\benchmark_aapl_weekly_next_return_12lag_v1_8e4a283b33c57761.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T12:41:04.224535+00:00",
+      "experiment_type": "unknown",
+      "data_domain": "unknown",
+      "protocol_fingerprint": ""
+    },
+    {
+      "run_id": "p1-validation-8e4a283b33c57761-arxiv_2405_03151",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "8e4a283b33c57761",
+      "method_id": "arxiv_2405_03151",
+      "model_family": "ga_lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.030389438403545264,
+        "rmse": 0.039980677544164296,
+        "r2": -0.13163309168444792,
+        "directional_accuracy": 0.4296875
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\benchmark_aapl_weekly_next_return_12lag_v1_8e4a283b33c57761.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T12:41:04.224535+00:00",
+      "experiment_type": "unknown",
+      "data_domain": "unknown",
+      "protocol_fingerprint": ""
+    },
+    {
+      "run_id": "multi-c9e7e2ac44d78efd-arxiv_2108_10826",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "c9e7e2ac44d78efd",
+      "method_id": "arxiv_2108_10826",
+      "model_family": "gradient_boosting_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.007219500843369354,
+        "rmse": 0.01009616668014848,
+        "r2": -0.05226706105962653,
+        "directional_accuracy": 0.5167682926829268
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:48.820790+00:00",
+      "experiment_type": "direction_classification",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "3d7ef4366a7fc99a"
+    },
+    {
+      "run_id": "multi-c9e7e2ac44d78efd-arxiv_2306_03620",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "c9e7e2ac44d78efd",
+      "method_id": "arxiv_2306_03620",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.0076030831365697,
+        "rmse": 0.010597638256672818,
+        "r2": -0.159394229406274,
+        "directional_accuracy": 0.5121951219512195
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:48.823291+00:00",
+      "experiment_type": "direction_classification",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "3d7ef4366a7fc99a"
+    },
+    {
+      "run_id": "multi-c9e7e2ac44d78efd-arxiv_2310_16855",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "c9e7e2ac44d78efd",
+      "method_id": "arxiv_2310_16855",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.0076030831365697,
+        "rmse": 0.010597638256672818,
+        "r2": -0.159394229406274,
+        "directional_accuracy": 0.5121951219512195
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:48.826294+00:00",
+      "experiment_type": "direction_classification",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "3d7ef4366a7fc99a"
+    },
+    {
+      "run_id": "multi-c9e7e2ac44d78efd-arxiv_2405_03151",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "c9e7e2ac44d78efd",
+      "method_id": "arxiv_2405_03151",
+      "model_family": "ga_lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.007126044769667475,
+        "rmse": 0.009997099724579194,
+        "r2": -0.03171798443830931,
+        "directional_accuracy": 0.48323170731707316
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:48.828752+00:00",
+      "experiment_type": "direction_classification",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "3d7ef4366a7fc99a"
+    },
+    {
+      "run_id": "multi-c9e7e2ac44d78efd-arxiv_2209_02407",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "c9e7e2ac44d78efd",
+      "method_id": "arxiv_2209_02407",
+      "model_family": "lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.007168846548686707,
+        "rmse": 0.009989160620322816,
+        "r2": -0.030079976516637963,
+        "directional_accuracy": 0.4771341463414634
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:48.830758+00:00",
+      "experiment_type": "direction_classification",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "3d7ef4366a7fc99a"
+    },
+    {
+      "run_id": "multi-4bc1c6c5d06779ed-arxiv_2306_03620",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "4bc1c6c5d06779ed",
+      "method_id": "arxiv_2306_03620",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.0038214103397588993,
+        "rmse": 0.0056715957484007925,
+        "r2": -0.036304564451925536,
+        "directional_accuracy": 1.0
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:50.775502+00:00",
+      "experiment_type": "volatility_regression",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "a06607f15ef29f7e"
+    },
+    {
+      "run_id": "multi-4bc1c6c5d06779ed-arxiv_2310_16855",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "4bc1c6c5d06779ed",
+      "method_id": "arxiv_2310_16855",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.0038214103397588993,
+        "rmse": 0.0056715957484007925,
+        "r2": -0.036304564451925536,
+        "directional_accuracy": 1.0
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:50.779325+00:00",
+      "experiment_type": "volatility_regression",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "a06607f15ef29f7e"
+    },
+    {
+      "run_id": "multi-4bc1c6c5d06779ed-arxiv_2108_10826",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "4bc1c6c5d06779ed",
+      "method_id": "arxiv_2108_10826",
+      "model_family": "gradient_boosting_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.0038882685795891634,
+        "rmse": 0.005941433089509889,
+        "r2": -0.13725877285530141,
+        "directional_accuracy": 1.0
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:50.783345+00:00",
+      "experiment_type": "volatility_regression",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "a06607f15ef29f7e"
+    },
+    {
+      "run_id": "multi-4bc1c6c5d06779ed-arxiv_2405_03151",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "4bc1c6c5d06779ed",
+      "method_id": "arxiv_2405_03151",
+      "model_family": "ga_lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.003794081986476457,
+        "rmse": 0.0059488573502730685,
+        "r2": -0.14010272677199453,
+        "directional_accuracy": 1.0
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:50.785327+00:00",
+      "experiment_type": "volatility_regression",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "a06607f15ef29f7e"
+    },
+    {
+      "run_id": "multi-4bc1c6c5d06779ed-arxiv_2209_02407",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "4bc1c6c5d06779ed",
+      "method_id": "arxiv_2209_02407",
+      "model_family": "lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.003933211653290828,
+        "rmse": 0.006142211720994389,
+        "r2": -0.21542017025085425,
+        "directional_accuracy": 1.0
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:50.787329+00:00",
+      "experiment_type": "volatility_regression",
+      "data_domain": "equity_index",
+      "protocol_fingerprint": "a06607f15ef29f7e"
+    },
+    {
+      "run_id": "multi-7abe0cf2e163207d-arxiv_2209_02407",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "7abe0cf2e163207d",
+      "method_id": "arxiv_2209_02407",
+      "model_family": "lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.020699494451599455,
+        "rmse": 0.028366161425546335,
+        "r2": -0.004510505772276074,
+        "directional_accuracy": 0.5411184210526315
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:52.561246+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "crypto",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "multi-7abe0cf2e163207d-arxiv_2405_03151",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "7abe0cf2e163207d",
+      "method_id": "arxiv_2405_03151",
+      "model_family": "ga_lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.020933172270414656,
+        "rmse": 0.028579333118693994,
+        "r2": -0.01966502791976832,
+        "directional_accuracy": 0.5361842105263158
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:52.564247+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "crypto",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "multi-7abe0cf2e163207d-arxiv_2306_03620",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "7abe0cf2e163207d",
+      "method_id": "arxiv_2306_03620",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.024468129935065436,
+        "rmse": 0.03326080506052523,
+        "r2": -0.38108006613015766,
+        "directional_accuracy": 0.5230263157894737
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:52.567245+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "crypto",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "multi-7abe0cf2e163207d-arxiv_2310_16855",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "7abe0cf2e163207d",
+      "method_id": "arxiv_2310_16855",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.024468129935065436,
+        "rmse": 0.03326080506052523,
+        "r2": -0.38108006613015766,
+        "directional_accuracy": 0.5230263157894737
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:52.570019+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "crypto",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "multi-7abe0cf2e163207d-arxiv_2108_10826",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "7abe0cf2e163207d",
+      "method_id": "arxiv_2108_10826",
+      "model_family": "gradient_boosting_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.02117448488617678,
+        "rmse": 0.029232912872768854,
+        "r2": -0.06683566867883894,
+        "directional_accuracy": 0.5164473684210527
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:52.573026+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "crypto",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "multi-d845fea9f575f4cd-arxiv_2405_03151",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "d845fea9f575f4cd",
+      "method_id": "arxiv_2405_03151",
+      "model_family": "ga_lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.00401556728973155,
+        "rmse": 0.0053542661114942365,
+        "r2": -0.02682871447002677,
+        "directional_accuracy": 0.5119047619047619
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:54.550226+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "fx",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "multi-d845fea9f575f4cd-arxiv_2209_02407",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "d845fea9f575f4cd",
+      "method_id": "arxiv_2209_02407",
+      "model_family": "lstm_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.00398542312646852,
+        "rmse": 0.0053132371049865925,
+        "r2": -0.011152114225788212,
+        "directional_accuracy": 0.4955357142857143
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:54.553825+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "fx",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "multi-d845fea9f575f4cd-arxiv_2108_10826",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "d845fea9f575f4cd",
+      "method_id": "arxiv_2108_10826",
+      "model_family": "gradient_boosting_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.004088007879111526,
+        "rmse": 0.0053821693125072475,
+        "r2": -0.03755902386687726,
+        "directional_accuracy": 0.49255952380952384
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:54.555846+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "fx",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "multi-d845fea9f575f4cd-arxiv_2306_03620",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "d845fea9f575f4cd",
+      "method_id": "arxiv_2306_03620",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.004367635643598047,
+        "rmse": 0.0056854601337204685,
+        "r2": -0.1577887831794984,
+        "directional_accuracy": 0.46875
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:54.558778+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "fx",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "multi-d845fea9f575f4cd-arxiv_2310_16855",
+      "run_mode": "common_benchmark",
+      "task_fingerprint": "d845fea9f575f4cd",
+      "method_id": "arxiv_2310_16855",
+      "model_family": "random_forest_regressor",
+      "status": "success",
+      "metrics": {
+        "mae": 0.004367635643598047,
+        "rmse": 0.0056854601337204685,
+        "r2": -0.1577887831794984,
+        "directional_accuracy": 0.46875
+      },
+      "blockers": [],
+      "artifact_path": "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+      "parent_run_id": null,
+      "created_at": "2026-07-14T15:15:54.562791+00:00",
+      "experiment_type": "return_regression",
+      "data_domain": "fx",
+      "protocol_fingerprint": "3851ffcbd776dc99"
+    }
+  ]
+}

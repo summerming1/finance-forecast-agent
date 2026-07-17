@@ -8,7 +8,7 @@ test-unit:
 	PYTHONPATH=src $(PYTHON) -m pytest tests -q
 
 test-integration:
-	PYTHONPATH=src $(PYTHON) -m pytest tests/test_harness.py -q
+	PYTHONPATH=src $(PYTHON) -m pytest tests/test_models_and_harness.py -q
 
 demo:
 	PYTHONPATH=src $(PYTHON) scripts/run_finance_agent.py

@@ -1,0 +1,62 @@
+{
+  "schema_version": "v1",
+  "updated_at": "2026-07-14T12:40:57.863+00:00",
+  "reviews": {
+    "arxiv_1706_10059": {
+      "paper_id": "arxiv_1706_10059",
+      "status": "approved",
+      "reviewer_note": "",
+      "updated_at": "2026-07-13T02:53:52.141+00:00",
+      "source": "streamlit"
+    },
+    "arxiv_1904_00745": {
+      "paper_id": "arxiv_1904_00745",
+      "status": "pending",
+      "reviewer_note": "",
+      "updated_at": "2026-07-13T02:54:35.656+00:00",
+      "source": "streamlit"
+    },
+    "arxiv_2306_03620": {
+      "paper_id": "arxiv_2306_03620",
+      "status": "approved",
+      "reviewer_note": "Approved for common-benchmark adaptation only; unresolved native-protocol fields remain explicit.",
+      "updated_at": "2026-07-14T12:40:57.861+00:00",
+      "source": "p1_validation"
+    },
+    "arxiv_2205_13504": {
+      "paper_id": "arxiv_2205_13504",
+      "status": "approved",
+      "reviewer_note": "Primary paper, official repository protocol and dataset checksum verified by P1 validation.",
+      "updated_at": "2026-07-14T12:40:57.858+00:00",
+      "source": "p1_validation"
+    },
+    "arxiv_2209_02407": {
+      "paper_id": "arxiv_2209_02407",
+      "status": "approved",
+      "reviewer_note": "Approved for common-benchmark adaptation only; unresolved native-protocol fields remain explicit.",
+      "updated_at": "2026-07-14T12:40:57.860+00:00",
+      "source": "p1_validation"
+    },
+    "arxiv_2310_16855": {
+      "paper_id": "arxiv_2310_16855",
+      "status": "approved",
+      "reviewer_note": "Approved for common-benchmark adaptation only; unresolved native-protocol fields remain explicit.",
+      "updated_at": "2026-07-14T12:40:57.862+00:00",
+      "source": "p1_validation"
+    },
+    "arxiv_2108_10826": {
+      "paper_id": "arxiv_2108_10826",
+      "status": "approved",
+      "reviewer_note": "Approved for common-benchmark adaptation only; unresolved native-protocol fields remain explicit.",
+      "updated_at": "2026-07-14T12:40:57.859+00:00",
+      "source": "p1_validation"
+    },
+    "arxiv_2405_03151": {
+      "paper_id": "arxiv_2405_03151",
+      "status": "approved",
+      "reviewer_note": "Approved for common-benchmark adaptation only; unresolved native-protocol fields remain explicit.",
+      "updated_at": "2026-07-14T12:40:57.863+00:00",
+      "source": "p1_validation"
+    }
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "schema_version": "reproduction_plan_v1",
+  "paper_id": "arxiv_1703_07015",
+  "experiment_type": "forecast_only",
+  "plan_mode": "native_reproduction",
+  "resolutions": {
+    "target_asset": {
+      "status": "specified",
+      "value": "eight-channel daily Exchange-Rate series",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "0.0626\n(0) CORR 0.9823 0.9675 0.9150 0.8823 0.8511 0.8405 0.8345 0.8300 0.8597 0.8623 0.8472 0.8651 0.9786 0.9712 0.9531 0.9223\nLST-Skip RSE 0.1843 0.2559 0.3254 0.4643 0.4777 0.4893 0.4950 0.4973 0.0864 0.0931 0.1007 0.1007 0.0226 0.0280 0.0356 0.0449\n(17) CORR 0.9843 0.9690 0.9467 0.8870 0.8721 0.8690 0.8614 0.8588 0.9283 0.9135 0.9077 0.9119 0.9735 0.9658 0.9511 0.9354\nLST-Attn RSE 0.1816 0.2538 0.3466 0.4403 0.4897 0.4973 0.5173 0.5300 0.0868 0.0953 0.0984 0.1059 0.0276 0.0321 0.0448 0.0590\n(7) CORR 0.9848 0.9696 0.9397 0.8995 0.8704 0.8669 0.8540 0.8429 0.9243 0.9095 0.9030 0.9025 0.9717 0.9656 0.9499 0.9339\nTable 2: Results summary (in RSE and CORR) of all methods on four datasets: 1) each row has the results of a specific method\nin a particul"
+      ]
+    },
+    "asset_universe": {
+      "status": "specified",
+      "value": [
+        "exchange_channel_1",
+        "exchange_channel_2",
+        "exchange_channel_3",
+        "exchange_channel_4",
+        "exchange_channel_5",
+        "exchange_channel_6",
+        "exchange_channel_7",
+        "exchange_channel_8"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    },
+    "frequency": {
+      "status": "specified",
+      "value": "daily",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    },
+    "horizon": {
+      "status": "specified",
+      "value": "12 days",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "0.0626\n(0) CORR 0.9823 0.9675 0.9150 0.8823 0.8511 0.8405 0.8345 0.8300 0.8597 0.8623 0.8472 0.8651 0.9786 0.9712 0.9531 0.9223\nLST-Skip RSE 0.1843 0.2559 0.3254 0.4643 0.4777 0.4893 0.4950 0.4973 0.0864 0.0931 0.1007 0.1007 0.0226 0.0280 0.0356 0.0449\n(17) CORR 0.9843 0.9690 0.9467 0.8870 0.8721 0.8690 0.8614 0.8588 0.9283 0.9135 0.9077 0.9119 0.9735 0.9658 0.9511 0.9354\nLST-Attn RSE 0.1816 0.2538 0.3466 0.4403 0.4897 0.4973 0.5173 0.5300 0.0868 0.0953 0.0984 0.1059 0.0276 0.0321 0.0448 0.0590\n(7) CORR 0.9848 0.9696 0.9397 0.8995 0.8704 0.8669 0.8540 0.8429 0.9243 0.9095 0.9030 0.9025 0.9717 0.9656 0.9499 0.9339\nTable 2: Results summary (in RSE and CORR) of all methods on four datasets: 1) each row has the results of a specific method\nin a particul"
+      ]
+    },
+    "label_definition": {
+      "status": "specified",
+      "value": "future multivariate exchange-rate levels",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    },
+    "data_requirements": {
+      "status": "specified",
+      "value": [
+        "frozen Exchange-Rate bytes",
+        "chronological train/validation/test split"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    },
+    "feature_groups": {
+      "status": "specified",
+      "value": [
+        "eight raw exchange-rate channels"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    },
+    "model_families": {
+      "status": "specified",
+      "value": [
+        "LSTNet"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    },
+    "training_protocol": {
+      "status": "specified",
+      "value": "Pinned official implementation and claim command; see native claim catalog.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    },
+    "evaluation_protocol": {
+      "status": "specified",
+      "value": "Paper-native chronological holdout and paper-native metrics.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    },
+    "metrics": {
+      "status": "specified",
+      "value": [
+        "rse",
+        "corr"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "0.0626\n(0) CORR 0.9823 0.9675 0.9150 0.8823 0.8511 0.8405 0.8345 0.8300 0.8597 0.8623 0.8472 0.8651 0.9786 0.9712 0.9531 0.9223\nLST-Skip RSE 0.1843 0.2559 0.3254 0.4643 0.4777 0.4893 0.4950 0.4973 0.0864 0.0931 0.1007 0.1007 0.0226 0.0280 0.0356 0.0449\n(17) CORR 0.9843 0.9690 0.9467 0.8870 0.8721 0.8690 0.8614 0.8588 0.9283 0.9135 0.9077 0.9119 0.9735 0.9658 0.9511 0.9354\nLST-Attn RSE 0.1816 0.2538 0.3466 0.4403 0.4897 0.4973 0.5173 0.5300 0.0868 0.0953 0.0984 0.1059 0.0276 0.0321 0.0448 0.0590\n(7) CORR 0.9848 0.9696 0.9397 0.8995 0.8704 0.8669 0.8540 0.8429 0.9243 0.9095 0.9030 0.9025 0.9717 0.9656 0.9499 0.9339\nTable 2: Results summary (in RSE and CORR) of all methods on four datasets: 1) each row has the results of a specific method\nin a particul"
+      ]
+    },
+    "preprocessing_protocol": {
+      "status": "specified",
+      "value": "Training-split standardization implemented by the pinned official loader.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    },
+    "hyperparameters": {
+      "status": "specified",
+      "value": [
+        "{python}",
+        "-u",
+        "{source_root}/main.py",
+        "--data",
+        "{dataset_path}",
+        "--save",
+        "{runtime_root}/lstnet.pt",
+        "--hidCNN",
+        "50",
+        "--hidRNN",
+        "50",
+        "--L1Loss",
+        "False",
+        "--output_fun",
+        "None",
+        "--horizon",
+        "12"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python main.py --gpu 3 --data data/exchange_rate.txt --save save/exchange_rate.pt --hidCNN 50 --hidRNN 50 --L1Loss False --output_fun None"
+      ]
+    }
+  },
+  "claims": [
+    {
+      "claim_id": "arxiv_1703_07015_exchange_native",
+      "description": "SIGIR 2018 paper, Table 2, Exchange-Rate, horizon 12",
+      "primary_metrics": [
+        "rse",
+        "corr"
+      ],
+      "reported_values": {
+        "rse": 0.0356,
+        "corr": 0.9511
+      },
+      "acceptance_tolerance": {
+        "rse": 0.01,
+        "corr": 0.02
+      }
+    }
+  ],
+  "approved_for_execution": true,
+  "updated_at": "2026-07-16T14:49:03.592095+00:00",
+  "required_fields": [
+    "asset_universe",
+    "data_requirements",
+    "evaluation_protocol",
+    "feature_groups",
+    "frequency",
+    "horizon",
+    "label_definition",
+    "metrics",
+    "model_families",
+    "target_asset",
+    "training_protocol"
+  ],
+  "unresolved_required_fields": [],
+  "execution_ready": true,
+  "strict_ready": true,
+  "plan_hash": "66abeb5df7e21f03"
+}
