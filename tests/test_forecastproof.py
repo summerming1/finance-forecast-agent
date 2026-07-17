@@ -1,10 +1,18 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 
 import pytest
 
-from finance_forecast_agent.forecastproof import build_replay_memo, load_demo_brief, verify_demo_claim
+from finance_forecast_agent.forecastproof import (
+    AUDIT_PACK_SCHEMA_VERSION,
+    audit_decision_memo,
+    build_audit_pack,
+    build_replay_memo,
+    load_demo_brief,
+    verify_demo_claim,
+)
 from finance_forecast_agent.openai_responses import OpenAIResponsesDecisionAgent
 
 
@@ -21,6 +29,48 @@ def test_verified_demo_builds_an_evidence_first_decision() -> None:
     assert verification.absolute_deltas["mae"] <= verification.tolerance
     assert memo.recommendation == "CONDITIONAL"
     assert "not investment advice" in memo.guardrail.lower()
+    assert len(verification.protocol_comparison) == 7
+    assert {row["status"] for row in verification.protocol_comparison} == {"matched"}
+
+
+def test_replay_memo_passes_deterministic_decision_audit_and_exports_pack() -> None:
+    brief = load_demo_brief()
+    verification = verify_demo_claim()
+    memo = build_replay_memo(brief, verification)
+
+    audit = audit_decision_memo(memo, brief, verification)
+    pack = build_audit_pack(
+        brief=brief,
+        verification=verification,
+        memo=memo,
+        memo_audit=audit,
+        response_id="offline-replay",
+        run_metadata={"generation_mode": "verified_replay", "request_count": 0},
+    )
+
+    assert audit.passed
+    assert audit.score == 100
+    assert pack["schema_version"] == AUDIT_PACK_SCHEMA_VERSION
+    assert pack["decision_audit"]["score"] == 100
+    assert pack["provenance"]["dataset_sha256"] == verification.dataset_sha256
+    assert "api_key" not in json.dumps(pack).lower()
+
+
+def test_decision_audit_rejects_unconditional_uncited_advice() -> None:
+    brief = load_demo_brief()
+    verification = verify_demo_claim()
+    memo = replace(
+        build_replay_memo(brief, verification),
+        recommendation="GO",
+        citations=({"evidence_id": "invented", "claim": "reported_results"},),
+        guardrail="Deploy this trading strategy.",
+    )
+
+    audit = audit_decision_memo(memo, brief, verification)
+    failed = {check.check_id for check in audit.checks if not check.passed}
+
+    assert not audit.passed
+    assert {"deterministic_authority", "citation_validity", "research_guardrail"} <= failed
 
 
 def test_live_agent_requires_an_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -46,6 +96,13 @@ def test_live_agent_calls_both_tools_and_uses_strict_structured_output() -> None
         {
             "id": "resp_tools",
             "status": "completed",
+            "usage": {
+                "input_tokens": 100,
+                "input_tokens_details": {"cached_tokens": 20},
+                "output_tokens": 10,
+                "output_tokens_details": {"reasoning_tokens": 5},
+                "total_tokens": 110,
+            },
             "output": [
                 {
                     "id": "fc_evidence",
@@ -66,6 +123,13 @@ def test_live_agent_calls_both_tools_and_uses_strict_structured_output() -> None
         {
             "id": "resp_final",
             "status": "completed",
+            "usage": {
+                "input_tokens": 200,
+                "input_tokens_details": {"cached_tokens": 100},
+                "output_tokens": 50,
+                "output_tokens_details": {"reasoning_tokens": 20},
+                "total_tokens": 250,
+            },
             "output": [
                 {
                     "type": "message",
@@ -90,14 +154,29 @@ def test_live_agent_calls_both_tools_and_uses_strict_structured_output() -> None
         requests_seen.append({"url": url, **kwargs})
         return FakeResponse(responses[len(requests_seen) - 1])
 
-    agent = OpenAIResponsesDecisionAgent(api_key="test-key", post=fake_post)
+    agent = OpenAIResponsesDecisionAgent(
+        api_key="test-key",
+        model="gpt-5.6-luna",
+        base_url="https://api.openai.com/v1",
+        post=fake_post,
+    )
     run = agent.generate(brief=load_demo_brief(), verification=verify_demo_claim())
 
     assert run.response_id == "resp_final"
     assert set(run.tool_trace) == {"get_evidence_brief", "get_verification_result"}
     assert run.memo.mode == "live_gpt_5_6"
+    assert run.request_count == 2
+    assert run.usage.input_tokens == 300
+    assert run.usage.cached_input_tokens == 120
+    assert run.usage.output_tokens == 60
+    assert run.usage.reasoning_tokens == 25
+    assert run.usage.total_tokens == 360
+    assert run.usage.estimated_cost_usd == pytest.approx(0.000552)
     assert requests_seen[0]["url"] == "https://api.openai.com/v1/responses"
-    assert requests_seen[0]["json"]["model"] == "gpt-5.6"
+    assert requests_seen[0]["json"]["model"] == "gpt-5.6-luna"
+    assert requests_seen[0]["json"]["reasoning"] == {"effort": "low"}
+    assert requests_seen[0]["json"]["max_output_tokens"] == 1600
+    assert requests_seen[0]["json"]["store"] is False
     assert requests_seen[0]["json"]["text"]["format"]["strict"] is True
     assert requests_seen[0]["json"]["text"]["format"]["schema"]["additionalProperties"] is False
     tool_outputs = [

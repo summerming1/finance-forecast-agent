@@ -36,7 +36,7 @@ Open **Verify**.
 
 Show the bar chart, the four gates, and the audit identifiers. State that this is a frozen artifact replay, not fake instant training.
 
-## 1:35–2:20 — Decide with GPT-5.6
+## 1:35–2:25 — Decide and audit with GPT-5.6
 
 Open **Decision memo**.
 
@@ -44,11 +44,11 @@ Open **Decision memo**.
 
 > GPT-5.6 is the EvidenceAnalyst. Through the Responses API it must call the evidence brief and verification result tools before returning this strict structured memo. The memo separates verified facts from risks and actions.
 
-Show `Verified replay` first. If live mode is tested, switch to **Live GPT-5.6**, run it, then expand **Agent trace and citations**.
+Show `Verified replay` first and point to the deterministic 100/100 memo audit. If live mode is tested, switch to **Live GPT-5.6**, keep low reasoning and the 1,600-token cap, run it once, then expand **Agent trace and citations** to show the two tools and token/cost telemetry.
 
-Point to the recommendation and guardrail.
+Point to the recommendation and guardrail, then show the complete Audit Pack download.
 
-## 2:20–2:45 — Product depth
+## 2:25–2:45 — Product depth
 
 Open **Research lab** briefly.
 

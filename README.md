@@ -4,6 +4,8 @@ ForecastProof turns a forecasting paper claim into an auditable decision: cited 
 
 The default verified demo requires no API key. Live decision synthesis uses GPT-5.6 through the Responses API, calls two read-only evidence tools, and returns a strict Structured Output. Deterministic code—not the model—decides whether the claim passed.
 
+The Build Week edition also adds a seven-row protocol delta, a six-check deterministic memo audit, complete evidence-pack export, and live token/cost telemetry. The default Luna configuration uses low reasoning, a 1,600-token per-response cap, `store=false`, and one attempt in the judge-facing UI.
+
 ## Run the Build Week demo
 
 ```bash
@@ -20,9 +22,10 @@ Home → Analyze → Verify → Decision memo
 
 - `Verified replay` works offline against the frozen DLinear native-run report.
 - `Live GPT-5.6` requires `OPENAI_API_KEY`; copy `.env.example` to `.env` and keep the key local.
+- For the cost-sensitive path, use `OPENAI_RESPONSES_MODEL=gpt-5.6-luna`; the official endpoint is `https://api.openai.com/v1`.
 - The decision memo is research support only and explicitly does not authorize trading.
 
-See [`docs/OPENAI_BUILD_WEEK_HACKATHON_PLAN.md`](docs/OPENAI_BUILD_WEEK_HACKATHON_PLAN.md), [`docs/BUILD_WEEK_SUBMISSION.md`](docs/BUILD_WEEK_SUBMISSION.md), and [`docs/BUILD_WEEK_DEMO_SCRIPT.md`](docs/BUILD_WEEK_DEMO_SCRIPT.md).
+See [`docs/OPENAI_BUILD_WEEK_HACKATHON_PLAN.md`](docs/OPENAI_BUILD_WEEK_HACKATHON_PLAN.md), [`docs/BUILD_WEEK_SUBMISSION.md`](docs/BUILD_WEEK_SUBMISSION.md), [`docs/BUILD_WEEK_DEMO_SCRIPT.md`](docs/BUILD_WEEK_DEMO_SCRIPT.md), and the Chinese [`docs/BUILD_WEEK_PRODUCT_GUIDE_ZH.md`](docs/BUILD_WEEK_PRODUCT_GUIDE_ZH.md) for the full interaction and success checklist.
 
 ## Research harness
 

@@ -1,8 +1,18 @@
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import streamlit as st
 
-from finance_forecast_agent.config import load_env_file
+# Always resolve the isolated clone's source tree before any globally installed
+# editable copy of the research package.
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SOURCE_ROOT = PROJECT_ROOT / "src"
+if str(SOURCE_ROOT) not in sys.path:
+    sys.path.insert(0, str(SOURCE_ROOT))
+
+from finance_forecast_agent.config import load_env_file  # noqa: E402
 
 load_env_file()
 st.set_page_config(page_title="ForecastProof", page_icon=":material/fact_check:", layout="wide")

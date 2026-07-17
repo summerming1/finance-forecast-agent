@@ -5,6 +5,7 @@ import os
 import time
 from dataclasses import dataclass
 from typing import Any, Callable
+from urllib.parse import urlparse
 
 import requests
 
@@ -67,12 +68,42 @@ TOOLS: list[dict[str, Any]] = [
     },
 ]
 
+LUNA_PRICING_USD_PER_MILLION = {
+    "input": 1.0,
+    "cached_input": 0.1,
+    "output": 6.0,
+}
+
+
+@dataclass(frozen=True)
+class AgentUsage:
+    input_tokens: int
+    cached_input_tokens: int
+    output_tokens: int
+    reasoning_tokens: int
+    total_tokens: int
+    estimated_cost_usd: float | None
+    cost_basis: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "input_tokens": self.input_tokens,
+            "cached_input_tokens": self.cached_input_tokens,
+            "output_tokens": self.output_tokens,
+            "reasoning_tokens": self.reasoning_tokens,
+            "total_tokens": self.total_tokens,
+            "estimated_cost_usd": self.estimated_cost_usd,
+            "cost_basis": self.cost_basis,
+        }
+
 
 @dataclass(frozen=True)
 class ResponsesAgentRun:
     memo: DecisionMemo
     response_id: str
     tool_trace: tuple[str, ...]
+    usage: AgentUsage
+    request_count: int
 
 
 class OpenAIResponsesDecisionAgent:
@@ -85,7 +116,9 @@ class OpenAIResponsesDecisionAgent:
         model: str | None = None,
         base_url: str | None = None,
         timeout: int = 120,
-        retries: int = 2,
+        retries: int | None = None,
+        reasoning_effort: str | None = None,
+        max_output_tokens: int | None = None,
         post: Callable[..., Any] | None = None,
     ) -> None:
         self.api_key = api_key or os.getenv("OPENAI_API_KEY", "")
@@ -95,7 +128,20 @@ class OpenAIResponsesDecisionAgent:
         configured_base = base_url or os.getenv("OPENAI_RESPONSES_BASE_URL") or "https://api.openai.com/v1"
         self.url = _responses_url(configured_base)
         self.timeout = timeout
-        self.retries = retries
+        self.retries = retries if retries is not None else _env_int("OPENAI_RESPONSES_RETRIES", 1)
+        self.reasoning_effort = reasoning_effort or os.getenv("OPENAI_RESPONSES_REASONING_EFFORT") or "low"
+        allowed_efforts = {"none", "low", "medium", "high", "xhigh"}
+        if self.reasoning_effort not in allowed_efforts:
+            raise ValueError(f"Reasoning effort must be one of {sorted(allowed_efforts)}")
+        self.max_output_tokens = (
+            max_output_tokens
+            if max_output_tokens is not None
+            else _env_int("OPENAI_RESPONSES_MAX_OUTPUT_TOKENS", 1600)
+        )
+        if self.max_output_tokens < 256:
+            raise ValueError("OPENAI_RESPONSES_MAX_OUTPUT_TOKENS must be at least 256")
+        if self.retries < 1:
+            raise ValueError("OPENAI_RESPONSES_RETRIES must be at least 1")
         self._post = post or requests.post
 
     def generate(self, *, brief: EvidenceBrief, verification: VerificationResult) -> ResponsesAgentRun:
@@ -104,15 +150,20 @@ class OpenAIResponsesDecisionAgent:
             "content": (
                 "Prepare an evidence-first decision memo for a forecasting research lead. "
                 "Call both available tools before deciding. Separate verified facts from risks. "
-                "A reproduced paper metric may justify a research baseline, but never a trading recommendation."
+                "Cite valid evidence identifiers from at least two distinct MethodCard sections, and set each "
+                "citation claim to the exact evidence section name. A reproduced paper metric may justify a "
+                "CONDITIONAL research baseline, but never GO or a trading recommendation. The guardrail must "
+                "include the exact phrase 'not investment advice' and keep the memo limited to research use."
             ),
         }
         input_items: list[dict[str, Any]] = [context]
         tool_trace: list[str] = []
+        usage_rows: list[dict[str, Any]] = []
         response: dict[str, Any] = {}
 
         for _ in range(3):
             response = self._request(self._payload(input_items))
+            usage_rows.append(response.get("usage", {}))
             output = response.get("output", [])
             calls = [item for item in output if item.get("type") == "function_call"]
             if not calls:
@@ -121,8 +172,10 @@ class OpenAIResponsesDecisionAgent:
             for call in calls:
                 name = str(call.get("name", ""))
                 arguments = json.loads(call.get("arguments") or "{}")
-                if arguments:
+                if arguments != {}:
                     raise ValueError(f"Read-only tool {name} does not accept arguments")
+                if name in tool_trace:
+                    raise RuntimeError(f"GPT-5.6 called read-only tool {name} more than once")
                 result = self._execute_tool(name, brief=brief, verification=verification)
                 tool_trace.append(name)
                 input_items.append(
@@ -154,10 +207,13 @@ class OpenAIResponsesDecisionAgent:
             model=self.model,
             tool_trace=tuple(tool_trace),
         )
+        usage = _summarize_usage(usage_rows, model=self.model, endpoint=self.url)
         return ResponsesAgentRun(
             memo=memo,
             response_id=str(response.get("id", "unknown")),
             tool_trace=tuple(tool_trace),
+            usage=usage,
+            request_count=len(usage_rows),
         )
 
     def _payload(self, input_items: list[dict[str, Any]]) -> dict[str, Any]:
@@ -170,7 +226,10 @@ class OpenAIResponsesDecisionAgent:
             "input": input_items,
             "tools": TOOLS,
             "tool_choice": "auto",
-            "reasoning": {"effort": "medium"},
+            "parallel_tool_calls": True,
+            "reasoning": {"effort": self.reasoning_effort},
+            "max_output_tokens": self.max_output_tokens,
+            "store": False,
             "text": {
                 "format": {
                     "type": "json_schema",
@@ -249,6 +308,81 @@ def _validate_decision_memo(data: dict[str, Any]) -> None:
         raise ValueError("Invalid decision recommendation")
     if not 0 <= float(data["confidence"]) <= 1:
         raise ValueError("Decision confidence must be between 0 and 1")
-    for name in ("rationale", "verified_facts", "risks", "next_actions", "citations"):
-        if not isinstance(data[name], list):
-            raise ValueError(f"Decision memo field {name} must be an array")
+    for name in ("headline", "guardrail"):
+        if not isinstance(data[name], str) or not data[name].strip():
+            raise ValueError(f"Decision memo field {name} must be a non-empty string")
+    for name in ("rationale", "verified_facts", "risks", "next_actions"):
+        if not isinstance(data[name], list) or not data[name]:
+            raise ValueError(f"Decision memo field {name} must be a non-empty array")
+        if not all(isinstance(item, str) and item.strip() for item in data[name]):
+            raise ValueError(f"Decision memo field {name} may contain only non-empty strings")
+    citations = data["citations"]
+    if not isinstance(citations, list) or not citations:
+        raise ValueError("Decision memo field citations must be a non-empty array")
+    for citation in citations:
+        if not isinstance(citation, dict) or set(citation) != {"evidence_id", "claim"}:
+            raise ValueError("Each citation must contain exactly evidence_id and claim")
+        if not all(isinstance(value, str) and value.strip() for value in citation.values()):
+            raise ValueError("Citation values must be non-empty strings")
+
+
+def _env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None or not value.strip():
+        return default
+    try:
+        return int(value)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be an integer") from exc
+
+
+def _summarize_usage(
+    usage_rows: list[dict[str, Any]],
+    *,
+    model: str,
+    endpoint: str,
+) -> AgentUsage:
+    input_tokens = sum(int(row.get("input_tokens") or 0) for row in usage_rows)
+    cached_input_tokens = sum(
+        int((row.get("input_tokens_details") or {}).get("cached_tokens") or 0)
+        for row in usage_rows
+    )
+    output_tokens = sum(int(row.get("output_tokens") or 0) for row in usage_rows)
+    reasoning_tokens = sum(
+        int((row.get("output_tokens_details") or {}).get("reasoning_tokens") or 0)
+        for row in usage_rows
+    )
+    total_tokens = sum(int(row.get("total_tokens") or 0) for row in usage_rows)
+    if not total_tokens:
+        total_tokens = input_tokens + output_tokens
+
+    estimated_cost: float | None = None
+    cost_basis = "No public pricing profile is configured for this model."
+    usage_reported = any(
+        row.get("input_tokens") is not None or row.get("output_tokens") is not None
+        for row in usage_rows
+    )
+    if not usage_reported:
+        cost_basis = "The configured provider did not return token usage, so cost cannot be estimated."
+    elif model == "gpt-5.6-luna" or model.startswith("gpt-5.6-luna-"):
+        uncached_input_tokens = max(0, input_tokens - cached_input_tokens)
+        estimated_cost = (
+            uncached_input_tokens * LUNA_PRICING_USD_PER_MILLION["input"]
+            + cached_input_tokens * LUNA_PRICING_USD_PER_MILLION["cached_input"]
+            + output_tokens * LUNA_PRICING_USD_PER_MILLION["output"]
+        ) / 1_000_000
+        host = (urlparse(endpoint).hostname or "").lower()
+        if host == "api.openai.com":
+            cost_basis = "OpenAI GPT-5.6 Luna public list rates."
+        else:
+            cost_basis = "OpenAI list-rate reference only; the configured compatible provider may bill differently."
+
+    return AgentUsage(
+        input_tokens=input_tokens,
+        cached_input_tokens=cached_input_tokens,
+        output_tokens=output_tokens,
+        reasoning_tokens=reasoning_tokens,
+        total_tokens=total_tokens,
+        estimated_cost_usd=estimated_cost,
+        cost_basis=cost_basis,
+    )

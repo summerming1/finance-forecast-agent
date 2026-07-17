@@ -1,6 +1,6 @@
 # ForecastProof — Build Week submission brief
 
-> Status: product flow implemented locally. Public demo URL, screenshots, and the final video URL must be added before Devpost submission.
+> Status: product flow, cost controls, deterministic memo eval, Audit Pack, and local automated tests are implemented. Public demo URL, screenshots, final video URL, eligibility confirmation, and Devpost fields must still be completed before submission.
 
 ## One-line pitch
 
@@ -19,6 +19,8 @@ ForecastProof makes that path inspectable. The judge-facing demo uses a strict D
 - **Analyze:** loads a MethodCard with pinned paper, repository, and dataset evidence.
 - **Verify:** replays four deterministic gates against a real native-run report.
 - **Decide:** produces a cited memo with verified facts, risks, next actions, and a research-only guardrail.
+- **Audit:** deterministically checks gate authority, tool grounding, citation mappings, evidence coverage, completeness, and safety; the verified replay scores 100/100.
+- **Export:** downloads a complete versioned Audit Pack with evidence, protocol delta, verification, memo, provenance, response ID, and token/cost metadata.
 - **Research lab:** preserves the original seven-stage workbench for advanced users without exposing its complexity in the golden path.
 
 ## Why GPT-5.6 is core
@@ -29,6 +31,8 @@ The live `EvidenceAnalyst` uses the OpenAI Responses API with GPT-5.6. It must c
 - `get_verification_result`
 
 The final memo uses a strict JSON Schema. The model synthesizes the decision narrative, while deterministic Python gates remain the authority for evidence, protocol, dataset hash, and metric tolerance. This separates agentic reasoning from governance.
+
+The judge-facing live form is cost controlled: the recommended GPT-5.6 Luna profile uses low reasoning, a 1,600-token cap per API response, `store=false`, and one attempt. The UI aggregates token usage across the tool loop and displays a reference cost estimate. Compatible proxies may bill differently from OpenAI's public list rates.
 
 ```mermaid
 flowchart LR
@@ -99,7 +103,8 @@ python -m streamlit run apps/streamlit_app.py
 2. Open **Analyze** and expand one paper evidence span and one official-repository span.
 3. Open **Verify** and show the four green gates, paper-versus-local chart, and frozen hashes.
 4. Open **Decision memo** in verified replay mode, then show live GPT-5.6 and its tool trace if a key is configured.
-5. End on the guardrail: reproduced forecasting error is a research milestone, not an investment recommendation.
+5. Show the deterministic 100/100 decision audit and download the complete Audit Pack.
+6. End on the guardrail: reproduced forecasting error is a research milestone, not an investment recommendation.
 
 ## Devpost-ready project description
 

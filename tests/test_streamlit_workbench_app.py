@@ -58,6 +58,7 @@ def test_verification_page_exposes_all_four_passed_gates() -> None:
 
     assert len([item for item in app.markdown if item.value == ":green-badge[Passed]"]) == 4
     assert any("reproduced within the declared tolerance" in item.value for item in app.success)
+    assert any(item.value == "Protocol delta" for item in app.subheader)
 
 
 def test_decision_page_defaults_to_a_safe_replay_memo() -> None:
@@ -67,6 +68,8 @@ def test_decision_page_defaults_to_a_safe_replay_memo() -> None:
     assert mode.value == "Verified replay"
     assert any("CONDITIONAL" in item.value for item in app.markdown)
     assert any("not investment advice" in warning.value.lower() for warning in app.warning)
+    assert any(item.label == "Audit score" and item.value == "100/100" for item in app.metric)
+    assert any("passed every deterministic" in item.value.lower() for item in app.success)
 
 
 def test_research_lab_preserves_the_seven_stage_workbench() -> None:

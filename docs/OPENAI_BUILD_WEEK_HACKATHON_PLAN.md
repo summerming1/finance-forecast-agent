@@ -1,6 +1,6 @@
 # OpenAI Build Week 黑客松产品化计划
 
-> 落地状态（2026-07-17）：已在独立副本 `D:\AI Agent\finance_forecast_agent_build_week` 的 `codex/openai-build-week` 分支实现 ForecastProof 四页黄金路径、免密钥 verified replay、GPT-5.6 Responses 工具循环、严格 DecisionMemo schema、Research Lab 保留入口与自动测试。当前原项目未包含该分支或本规划文件。
+> 落地状态（2026-07-17）：已在独立副本 `D:\AI Agent\finance_forecast_agent_build_week` 的 `codex/openai-build-week` 分支实现 ForecastProof 四页黄金路径、免密钥 verified replay、GPT-5.6 Luna Responses 工具循环、严格 DecisionMemo schema、协议 delta、确定性 memo eval、token/cost telemetry、完整 Audit Pack、Research Lab 保留入口与自动测试。当前原项目未包含该分支或本规划文件。
 
 > 项目：Finance Forecast Agent
 > 黑客松分支：`codex/openai-build-week`

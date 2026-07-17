@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -9,6 +10,8 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_METHOD_CARD = PROJECT_ROOT / "projects" / "finance_agent" / "method_cards_local_llm" / "arxiv_2205_13504.json"
 DEFAULT_REPORT = PROJECT_ROOT / "projects" / "finance_agent" / "reports" / "native_dlinear_exchange_336_96.json"
+APP_VERSION = "0.3.0-build-week"
+AUDIT_PACK_SCHEMA_VERSION = "forecastproof_audit_pack_v1"
 
 
 @dataclass(frozen=True)
@@ -54,6 +57,7 @@ class VerificationResult:
     reproduction_plan_hash: str
     evidence_span_count: int
     training_history: tuple[dict[str, float], ...]
+    protocol_comparison: tuple[dict[str, str], ...]
     artifact_path: str
 
     @property
@@ -78,6 +82,29 @@ class DecisionMemo:
     mode: str
     model: str
     tool_trace: tuple[str, ...]
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class MemoAuditCheck:
+    check_id: str
+    label: str
+    passed: bool
+    detail: str
+
+
+@dataclass(frozen=True)
+class MemoAudit:
+    score: int
+    passed_checks: int
+    total_checks: int
+    checks: tuple[MemoAuditCheck, ...]
+
+    @property
+    def passed(self) -> bool:
+        return self.passed_checks == self.total_checks
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -143,6 +170,58 @@ def verify_demo_claim(report_path: str | Path = DEFAULT_REPORT) -> VerificationR
     local = {name: float(value) for name, value in report.get("metrics", {}).items() if name in reported}
     tolerance = float(protocol["result_tolerance"])
     deltas = {name: abs(local[name] - paper_value) for name, paper_value in reported.items()}
+    split_matches = (
+        float(protocol.get("train_ratio", 0)) == 0.7
+        and float(protocol.get("test_ratio", 0)) == 0.2
+        and protocol_fidelity.get("data_split") == "matched"
+    )
+    protocol_comparison = (
+        {
+            "control": "Input window",
+            "paper requirement": "336 steps",
+            "native run": f"{protocol.get('seq_len', 'unknown')} steps",
+            "status": "matched" if int(protocol.get("seq_len", -1)) == 336 else "mismatch",
+        },
+        {
+            "control": "Forecast horizon",
+            "paper requirement": "96 steps",
+            "native run": f"{protocol.get('pred_len', 'unknown')} steps",
+            "status": "matched" if int(protocol.get("pred_len", -1)) == 96 else "mismatch",
+        },
+        {
+            "control": "Chronological split",
+            "paper requirement": "70% train · 10% validation · 20% test",
+            "native run": "70% train · 10% validation · 20% test",
+            "status": "matched" if split_matches else "mismatch",
+        },
+        {
+            "control": "Scaling",
+            "paper requirement": "Fit on training data only",
+            "native run": "Train-only scaler audit",
+            "status": str(protocol_fidelity.get("scaling", "unknown")),
+        },
+        {
+            "control": "Architecture",
+            "paper requirement": "DLinear shared weights",
+            "native run": f"DLinear individual={str(protocol.get('individual', 'unknown')).lower()}",
+            "status": str(protocol_fidelity.get("model_architecture", "unknown")),
+        },
+        {
+            "control": "Optimizer",
+            "paper requirement": "Adam · learning rate 0.0005 · batch 8",
+            "native run": (
+                f"Adam · learning rate {protocol.get('learning_rate', 'unknown')} · "
+                f"batch {protocol.get('batch_size', 'unknown')}"
+            ),
+            "status": str(protocol_fidelity.get("optimizer", "unknown")),
+        },
+        {
+            "control": "Seed",
+            "paper requirement": "2021",
+            "native run": str(protocol.get("seed", "unknown")),
+            "status": str(protocol_fidelity.get("seed", "unknown")),
+        },
+    )
 
     evidence_gate = bool(
         governance.get("methodcard_approved")
@@ -180,6 +259,7 @@ def verify_demo_claim(report_path: str | Path = DEFAULT_REPORT) -> VerificationR
         reproduction_plan_hash=str(governance.get("reproduction_plan_hash", "")),
         evidence_span_count=int(evidence_verification.get("span_count", 0)),
         training_history=tuple(report.get("training_history", [])),
+        protocol_comparison=protocol_comparison,
         artifact_path=artifact_display,
     )
 
@@ -222,6 +302,129 @@ def build_replay_memo(brief: EvidenceBrief, verification: VerificationResult) ->
         model="deterministic policy",
         tool_trace=("get_evidence_brief", "get_verification_result", "apply_decision_guardrails"),
     )
+
+
+def audit_decision_memo(
+    memo: DecisionMemo,
+    brief: EvidenceBrief,
+    verification: VerificationResult,
+) -> MemoAudit:
+    """Grade model output with deterministic checks that the model cannot override."""
+    valid_evidence_pairs = {
+        (span.evidence_id, span.section)
+        for span in brief.evidence_spans
+    }
+    citations = tuple(memo.citations)
+    cited_ids = [str(row.get("evidence_id", "")) for row in citations]
+    valid_citation_count = sum(
+        (evidence_id, str(row.get("claim", ""))) in valid_evidence_pairs
+        for row, evidence_id in zip(citations, cited_ids, strict=True)
+    )
+    valid_citations = bool(cited_ids) and valid_citation_count == len(citations)
+    cited_sections = {
+        str(row.get("claim", ""))
+        for row, evidence_id in zip(citations, cited_ids, strict=True)
+        if (evidence_id, str(row.get("claim", ""))) in valid_evidence_pairs
+    }
+    required_tools = {"get_evidence_brief", "get_verification_result"}
+    observed_tools = set(memo.tool_trace)
+    decision_is_safe = (
+        memo.recommendation in {"CONDITIONAL", "NO_GO"}
+        if verification.verdict == "REPRODUCED"
+        else memo.recommendation == "NO_GO"
+    )
+    complete = all(
+        (
+            memo.headline.strip(),
+            memo.rationale,
+            memo.verified_facts,
+            memo.risks,
+            memo.next_actions,
+            0 <= memo.confidence <= 1,
+        )
+    )
+    guardrail = memo.guardrail.lower()
+    guarded = "research" in guardrail and "not investment advice" in guardrail
+    checks = (
+        MemoAuditCheck(
+            "deterministic_authority",
+            "Deterministic gate authority",
+            decision_is_safe,
+            "A reproduced metric may support research, but cannot become an unconditional deployment decision.",
+        ),
+        MemoAuditCheck(
+            "tool_grounding",
+            "Required tool grounding",
+            required_tools <= observed_tools,
+            f"Observed {len(required_tools & observed_tools)}/{len(required_tools)} required read-only tools.",
+        ),
+        MemoAuditCheck(
+            "citation_validity",
+            "Citation validity",
+            valid_citations,
+            f"Validated {valid_citation_count}/{len(cited_ids)} evidence identifier-to-section mappings.",
+        ),
+        MemoAuditCheck(
+            "evidence_coverage",
+            "Evidence coverage",
+            len(cited_sections) >= 2,
+            f"Citations cover {len(cited_sections)} distinct MethodCard sections.",
+        ),
+        MemoAuditCheck(
+            "decision_completeness",
+            "Decision completeness",
+            complete,
+            "Headline, facts, rationale, risks, actions, and bounded confidence are all required.",
+        ),
+        MemoAuditCheck(
+            "research_guardrail",
+            "Research-only guardrail",
+            guarded,
+            "The memo must explicitly remain research support and not investment advice.",
+        ),
+    )
+    passed_checks = sum(check.passed for check in checks)
+    return MemoAudit(
+        score=round(100 * passed_checks / len(checks)),
+        passed_checks=passed_checks,
+        total_checks=len(checks),
+        checks=checks,
+    )
+
+
+def build_audit_pack(
+    *,
+    brief: EvidenceBrief,
+    verification: VerificationResult,
+    memo: DecisionMemo,
+    memo_audit: MemoAudit,
+    response_id: str,
+    run_metadata: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Create a portable, secret-free evidence bundle for review or handoff."""
+    return {
+        "schema_version": AUDIT_PACK_SCHEMA_VERSION,
+        "app_version": APP_VERSION,
+        "exported_at_utc": datetime.now(timezone.utc).isoformat(),
+        "case": {
+            "paper_id": brief.paper_id,
+            "title": brief.title,
+            "question": brief.claim,
+        },
+        "evidence_brief": brief.to_dict(),
+        "verification": verification.to_dict(),
+        "decision_memo": memo.to_dict(),
+        "decision_audit": memo_audit.to_dict(),
+        "agent_run": {
+            "response_id": response_id,
+            **(run_metadata or {}),
+        },
+        "provenance": {
+            "dataset_sha256": verification.dataset_sha256,
+            "reproduction_plan_hash": verification.reproduction_plan_hash,
+            "artifact_path": verification.artifact_path,
+        },
+    }
 
 
 def _load_json(path: str | Path) -> dict[str, Any]:
