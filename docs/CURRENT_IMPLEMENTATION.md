@@ -2,7 +2,7 @@
 
 ## 当前版本
 
-当前最新实现为 **P1.6.3-P1.8 first-batch implementation（未通过规模化总验收）**。项目仍是论文驱动、真实数据驱动、可审计和需人工审批的金融预测研究平台，不是自动交易系统。
+当前最新实现为 **P1.6.3-P1.8 first-batch implementation + ForecastProof v0.5 controlled iteration（未通过规模化总验收）**。项目仍是论文驱动、真实数据驱动、可审计和需人工审批的金融预测研究平台，不是自动交易系统。
 
 本批已实现 50 份合法开放 PDF、86 条论文审计记录、通用数据获取、四类冻结统一基准、带负向证据的 ExperimentMemory prior、十个 SourceBundle 候选和七阶段前端。规模化总验收仍未通过，因为严格复现只有 1/10，逐篇探索性运行也尚未覆盖全部非 strict 文献；这些缺口不能由共享 benchmark 或 Replay fixture 代替。
 
@@ -26,6 +26,7 @@ P1.6.7 四任务、五方法、20 组统一基准比较
 P1.6.8 七阶段 Research Workbench
 P1.7 带上下文隔离、失败降权和解释的 Memory prior
 P1.8 GitHub API/Git fallback SourceBundle 审计
+Build Week v0.5 分层误差诊断、证据绑定 IterationProposal、父子谱系和单次受控迭代
 ```
 
 P1.6.5 Native Reproduction Portfolio 仍未完成：DLinear 是唯一 strict verified paper/claim，目标缺口为 9 篇。
@@ -48,6 +49,13 @@ BenchmarkTask -> shared snapshot/features/folds -> MethodAdapter
 -> PredictionArtifact -> comparable metrics
 
 -> ExperimentMemory prior -> 结果审计与技术资产
+
+受控迭代（与 strict reproduction 隔离）:
+PredictionArtifact -> fold/time/realized-move diagnostics
+-> MethodCard evidence + model-performance evidence -> 1-3 IterationProposal
+-> 人工批准 + 参数白名单 + 时间预算 -> exactly one child run
+-> identical-target / primary / secondary / worst-slice gates
+-> promote_to_research_candidate 或 retain_parent（永不自动授权部署）
 ```
 
 ## 完整复现定义
@@ -74,10 +82,11 @@ BenchmarkTask -> shared snapshot/features/folds -> MethodAdapter
 - 规模化语料：86 条审计记录、50 份开放 PDF、3 篇顶级金融/计量来源、29 篇高影响力同行评议元数据；下载到本地的 50 份中只有 1 份属于高影响力同行评议来源，其余主要是合法 arXiv 预印本，不能统称“50 篇顶刊”。
 - 复现覆盖账本：1 篇 strict verified、28 篇 exploratory candidate、58 篇结构化 blocked；candidate 只表示适配路径存在，不表示已执行该论文。
 - 多基准：4 个任务 × 5 个方法共 20 组，目标行/fold/预测数完整性全部通过。SPY 方向与 EURUSD 未显示方向能力；SPY 5 日波动率误差优于训练折均值基线；BTC-LSTM 在该冻结任务上显示方向能力。原论文假设均不能从共享任务直接迁移。
+- Controlled Iteration Lab：先预注册时间顺序的 28 个 development folds 与 13 个 untouched promotion folds；只用前者生成 fold、时间段和 realized-move 分层诊断与提案，只用后者做晋升。每个提案同时引用 MethodCard 文献证据和当前性能证据，并保存 `parent_run_id`。SPY 波动率/RF 实测子配置在 untouched holdout 上的 RMSE 改善约 1.18%，但最差 MAE 切片回退约 20.30%，因此门禁正确选择 `retain_parent`。
 
 ## 前端
 
-入口：`apps/streamlit_app.py`，页面为七步工作台：
+入口：`apps/streamlit_app.py`。评委黄金路径为 Home、Analyze、Verify、Decision memo、Iteration lab；高级 Research lab 保留原七步工作台：
 
 1. 文献语料：本地文献、86 篇语料、覆盖账本和 SourceBundle。
 2. 数据准备：人工请求、MethodCard 自动请求和获取历史。
@@ -102,6 +111,8 @@ transformer_regressor
 ga_lstm_regressor
 ```
 
+上述通用 adapter 现在接受受控参数白名单和硬范围；未知参数或越界值在训练前阻断。Random Forest、GBDT、Ridge、LSTM、Transformer 和 GA-LSTM 均可进入单次 child run，但不能从该轨道改写 strict reproduction 产物。
+
 专用原生 adapter：
 
 ```text
@@ -121,6 +132,7 @@ reproduction_plans/      字段解决、证据和计划 hash
 data/external/           冻结外部数据
 reports/                 原生与统一基准报告
 experiment_memory/       按任务和运行模式隔离的历史记录
+iteration_lab/            父子运行谱系、提案和 child PredictionArtifact
 literature/              语料目录与统计
 data_requests/           数据请求和落地审计
 source_bundles/          官方来源候选、固定 commit 与许可审计
@@ -135,9 +147,9 @@ backlog/                 adapter 任务
 
 ```text
 Ruff: passed
-pytest: 97 passed
+pytest: 139 passed
 Seven-stage Streamlit AppTest: passed
-HTTP health: localhost:8501 and localhost:8502 returned 200
+HTTP health and browser smoke: localhost:8510 returned 200; Iteration lab loaded saved result and enforced approval
 Multi benchmark: 4 tasks / 5 methods / 20 comparisons, integrity passed
 Literature: 86 records / 50 downloaded PDFs
 Source audit: 10/10 repositories pinned; 0 strict-source-ready before human approval
@@ -154,9 +166,10 @@ Live LLM strict DLinear: quality 1.0、claim consistency passed、evidence 31/31
 - 统一基准已覆盖五篇方法卡和四种不同 adapter；它证明同任务可比较性，不代表保留了每篇论文的原始数据、特征、超参数或结论。
 - MethodCard v2 已兼容 LLM 返回的嵌套协议对象和字符串形式的未知超参数，避免后续 ReproductionPlan 类型错误。
 - ExperimentMemory 已改变多基准候选执行顺序，并输出完全同任务/相似任务证据、失败率和降权原因；旧 harness 的 Replay 候选生成尚未接入该 prior。
+- Controlled Iteration 已形成“诊断—提案—人工批准—单次运行—晋升审计”闭环，但当前提案由确定性规则生成，不是开放式架构搜索；它只在统一基准轨道工作，不修改原论文 MethodCard 或 strict native runner。
 - PaperDatasetRegistry 的许可、字段映射和可替代性说明仍需增强。
 - 缺少 MethodCard diff/version history、异步任务和取消/恢复能力。
-- 统一基准已有方向准确率 Wilson 区间、机会水平二项检验和训练折多数方向基线；仍缺少方法间配对检验、Diebold-Mariano、多 seed 与市场状态分层。
+- 统一基准已有方向准确率 Wilson 区间、机会水平二项检验、训练折多数方向基线和 realized-move 事后诊断；仍缺少方法间配对检验、Diebold-Mariano、预注册多 seed 与可在预测时识别的 ex-ante 市场状态分层。
 - 当前不执行真实下单。
 - 第二批九个 Native Claim 共用 Exchange-Rate 数据，能检验不同深度时序架构、重复实验和多种指标，但不能证明信号回测、截面资产定价或组合强化学习的原生复现通用性；这些仍按 Roadmap 保留为后续独立 strict 样例。
 
@@ -184,4 +197,4 @@ python -m streamlit run apps/streamlit_app.py
 3. P1.6.3：提高高影响力正式期刊全文占比；不能合法下载的只保留元数据。
 4. P1.6.5：分别增加信号回测、截面资产定价和组合强化学习严格样例。
 5. P1.7/P1.8：把 prior 接入旧 harness scheduler，并增加 SourceBundle 人工确认和 publication-date commit。
-6. 之后再进入配对检验、多 seed、市场状态分层和 P2 搜索效率。
+6. 为 Controlled Iteration 增加配对检验、预注册多 seed、ex-ante 市场状态和 P2 搜索效率；保持单轮预算与人工审批。

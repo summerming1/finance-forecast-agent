@@ -1,10 +1,10 @@
 # ForecastProof — OpenAI Build Week edition
 
-ForecastProof turns a forecasting paper claim into an auditable decision: cited evidence, deterministic reproduction gates, and a safe go/no-go memo. It is the judge-facing product built on top of the Finance Forecast Agent research harness for OpenAI Build Week.
+ForecastProof turns a forecasting paper claim into an auditable decision and one bounded next experiment: cited evidence, deterministic reproduction gates, a safe go/no-go memo, weak-slice diagnostics, and human-approved model iteration. It is the judge-facing product built on top of the Finance Forecast Agent research harness for OpenAI Build Week.
 
 The default verified demo requires no API key. Live decision synthesis uses GPT-5.6 through the Responses API, calls two read-only evidence tools, and returns a strict Structured Output. Deterministic code—not the model—decides whether the claim passed.
 
-The standout result is intentionally honest: DLinear reproduces the paper, yet improves MSE by only 0.06% over same-window last-value persistence and regresses 4.96% on MAE. ForecastProof therefore accepts the scientific reproduction while holding deployment. A deterministic challenger gate, interactive decision stress test, seven-check memo audit, complete evidence-pack export, and live token/cost telemetry make that boundary inspectable.
+The standout result is intentionally honest: DLinear reproduces the paper, yet improves MSE by only 0.06% over same-window last-value persistence and regresses 4.96% on MAE. ForecastProof therefore accepts the scientific reproduction while holding deployment. Its Iteration Lab binds literature evidence to earlier development-fold diagnostics, reserves later folds as an untouched promotion holdout, permits exactly one approved child run, and refuses research promotion when an average improvement hides a weak-slice regression.
 
 The default Luna configuration uses low reasoning, a 1,600-token per-response cap, `store=false`, and one attempt in the judge-facing UI.
 
@@ -18,8 +18,8 @@ python -m streamlit run apps/streamlit_app.py
 Then follow the top navigation:
 
 ```text
-Home → Analyze → Verify + challenge → Decision memo
-                                     ↘ Research lab (advanced seven-stage workflow)
+Home → Analyze → Verify + challenge → Decision memo → Iteration lab
+                                                     ↘ Research lab (advanced seven-stage workflow)
 ```
 
 - `Verified replay` works offline against the frozen DLinear native-run report.

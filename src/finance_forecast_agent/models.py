@@ -98,19 +98,99 @@ if nn is not None:
             return self.head(out[:, -1, :])
 
 
-def make_model(model_family: str):
+def _bounded_parameters(model_family: str, parameters: dict | None) -> dict:
+    values = dict(parameters or {})
+    allowed = {
+        'random_forest_regressor': {
+            'n_estimators': (int, 10, 200),
+            'max_depth': (int, 2, 16),
+            'random_state': (int, 0, 2**31 - 1),
+        },
+        'gradient_boosting_regressor': {
+            'n_estimators': (int, 10, 200),
+            'learning_rate': (float, 0.001, 0.2),
+            'max_depth': (int, 1, 8),
+            'random_state': (int, 0, 2**31 - 1),
+        },
+        'ridge_regression': {'alpha': (float, 0.0001, 1000.0)},
+        'lstm_regressor': {
+            'hidden_size': (int, 4, 64),
+            'epochs': (int, 1, 20),
+            'lr': (float, 0.0001, 0.1),
+            'seed': (int, 0, 2**31 - 1),
+        },
+        'transformer_regressor': {
+            'hidden_size': (int, 4, 64),
+            'epochs': (int, 1, 10),
+            'lr': (float, 0.0001, 0.1),
+            'seed': (int, 0, 2**31 - 1),
+        },
+        'ga_lstm_regressor': {
+            'population_size': (int, 1, 8),
+            'generations': (int, 1, 4),
+            'seed': (int, 0, 2**31 - 1),
+        },
+    }
+    schema = allowed.get(model_family, {})
+    unknown = sorted(set(values) - set(schema))
+    if unknown:
+        raise ValueError(f"Unsupported controlled parameters for {model_family}: {', '.join(unknown)}")
+    checked = {}
+    for key, value in values.items():
+        expected_type, lower, upper = schema[key]
+        if expected_type is int:
+            if isinstance(value, bool) or not isinstance(value, (int, np.integer)):
+                raise ValueError(f"{key} must be an integer")
+            normalized = int(value)
+        else:
+            if isinstance(value, bool) or not isinstance(value, (int, float, np.number)):
+                raise ValueError(f"{key} must be numeric")
+            normalized = float(value)
+        if not lower <= normalized <= upper:
+            raise ValueError(f"{key} must be between {lower} and {upper}")
+        checked[key] = normalized
+    return checked
+
+
+def make_model(model_family: str, parameters: dict | None = None):
+    params = _bounded_parameters(model_family, parameters)
     if model_family == 'random_forest_regressor':
-        return SklearnWrapper(RandomForestRegressor(n_estimators=10, max_depth=4, random_state=42))
+        return SklearnWrapper(
+            RandomForestRegressor(
+                n_estimators=params.get('n_estimators', 10),
+                max_depth=params.get('max_depth', 4),
+                random_state=params.get('random_state', 42),
+            )
+        )
     if model_family == 'gradient_boosting_regressor':
-        return SklearnWrapper(GradientBoostingRegressor(n_estimators=10, learning_rate=0.05, max_depth=2, random_state=42))
+        return SklearnWrapper(
+            GradientBoostingRegressor(
+                n_estimators=params.get('n_estimators', 10),
+                learning_rate=params.get('learning_rate', 0.05),
+                max_depth=params.get('max_depth', 2),
+                random_state=params.get('random_state', 42),
+            )
+        )
     if model_family == 'lstm_regressor':
-        return TorchSeqRegressor(kind='lstm', hidden_size=12, epochs=5, lr=0.01)
+        return TorchSeqRegressor(
+            kind='lstm',
+            hidden_size=params.get('hidden_size', 12),
+            epochs=params.get('epochs', 5),
+            lr=params.get('lr', 0.01),
+            seed=params.get('seed', 42),
+        )
     if model_family == 'transformer_regressor':
-        return TorchSeqRegressor(kind='transformer', hidden_size=12, epochs=1, lr=0.01)
+        return TorchSeqRegressor(
+            kind='transformer',
+            hidden_size=params.get('hidden_size', 12),
+            epochs=params.get('epochs', 1),
+            lr=params.get('lr', 0.01),
+            seed=params.get('seed', 42),
+        )
     if model_family == 'ga_lstm_regressor':
-        return GALSTMRegressor()
+        return GALSTMRegressor(**params)
     if model_family == 'ridge_regression':
-        return SklearnWrapper(make_pipeline(StandardScaler(), Ridge(alpha=1.0)))
+        return SklearnWrapper(make_pipeline(StandardScaler(), Ridge(alpha=params.get('alpha', 1.0))))
     raise ValueError(f'No general-purpose model adapter is registered for {model_family}')
 
 

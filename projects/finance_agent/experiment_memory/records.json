@@ -567,6 +567,29 @@
       "experiment_type": "return_regression",
       "data_domain": "fx",
       "protocol_fingerprint": "3851ffcbd776dc99"
+    },
+    {
+      "run_id": "controlled-4bc1c6c5d06779ed-20260717T123014974964Z",
+      "run_mode": "controlled_iteration",
+      "task_fingerprint": "4bc1c6c5d06779ed",
+      "method_id": "arxiv_2310_16855",
+      "model_family": "random_forest_regressor",
+      "status": "not_promoted",
+      "metrics": {
+        "mae": 0.0030314042812307827,
+        "rmse": 0.004230524266659002,
+        "r2": 0.3983142864943561,
+        "directional_accuracy": 1.0
+      },
+      "blockers": [
+        "Worst-slice guardrail"
+      ],
+      "artifact_path": "projects\\finance_agent\\iteration_lab\\runs\\controlled-4bc1c6c5d06779ed-20260717T123014974964Z.json",
+      "parent_run_id": "multi-4bc1c6c5d06779ed-arxiv_2310_16855",
+      "created_at": "2026-07-17T12:30:14.992087+00:00",
+      "experiment_type": "volatility_regression",
+      "data_domain": "SPY",
+      "protocol_fingerprint": "4bc1c6c5d06779ed"
     }
   ]
 }

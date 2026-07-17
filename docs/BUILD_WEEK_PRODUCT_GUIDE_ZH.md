@@ -3,7 +3,7 @@
 > 更新日期：2026-07-17
 > 隔离项目：`D:\AI Agent\finance_forecast_agent_build_week`
 > 黑客松分支：`codex/openai-build-week`
-> 应用版本：`0.4.0-build-week`
+> 应用版本：`0.5.0-build-week`
 
 ## 1. 产品是什么
 
@@ -11,10 +11,10 @@ ForecastProof 是面向量化研究员、金融数据科学家和研究负责人
 
 > 一篇预测论文的关键结果是否有足够证据、是否按相同协议复现、是否胜过简单基线、是否值得投入下一轮研究？
 
-产品把复杂研究流程压缩成四层：
+产品把复杂研究流程压缩成五层：
 
 ```text
-Analyze → Verify → Challenge the value → Get an audited decision memo
+Analyze → Verify → Challenge the value → Audited decision memo → Controlled iteration
 ```
 
 GPT-5.6 负责读取证据和验证工具、综合语义并生成严格结构的决策备忘录；确定性 Python 门禁负责证据、协议、数据哈希和指标容差。模型不能修改门禁结果。
@@ -97,7 +97,20 @@ GPT-5.6 负责读取证据和验证工具、综合语义并生成严格结构的
 
 Audit Pack 不写入 API Key。
 
-### 2.9 Advanced Research lab
+### 2.9 Evidence-guided Iteration lab
+
+- 直接读取统一基准保存的逐行 out-of-fold PredictionArtifact，先预注册早期 development folds 与后期 untouched promotion folds。
+- 只用 development folds 诊断并生成提案；promotion holdout 在提案固定前不可见，避免同一批结果既指导改造又决定晋升。
+- 输出全局、chronological fold、时间段和 realized-move 三分位误差；realized-move 只作事后诊断，不伪装成可交易的实时状态信号。
+- 每个 IterationProposal 同时绑定 MethodCard 文献证据和模型表现证据。
+- 最多给出 3 个可检验假设，明确参数改动、预期指标、风险、停止条件、运行预算和零 API 成本。
+- 只有人工勾选批准后才能执行；每次点击最多运行一个 child，模型参数必须通过白名单和上下界。
+- child 必须复用相同 task fingerprint、数据、fold、时间戳、horizon 和目标行。
+- 晋升同时检查平均主指标、次指标、最差 MAE 切片、有限值和运行预算；通过也只进入 research candidate，不授权部署。
+- 保存 `parent_run_id`、proposal、child artifact、门禁和决策到 ExperimentMemory 与 lineage。
+- 默认 SPY 波动率/RF 案例中，28 个早期 folds 用于诊断，13 个后期 folds 保留晋升；paper-informed child 在 untouched holdout 上的 RMSE 改善约 1.18%，但最差切片 MAE 回退约 20.30%，因此结果为 `retain_parent`。这证明系统不会用平均分掩盖局部退化。
+
+### 2.10 Advanced Research lab
 
 原有七阶段研究平台仍保留在 Research lab：文献语料、数据准备、方法卡审核、复现配置、原生/探索运行、多方法基准和结果审计。评委默认路径不需要理解这些复杂能力。
 
@@ -200,6 +213,20 @@ v0.4 最终 Live 验收也已通过：Luna 正确给出“复现通过、increme
 
 如果模型请求成功但 audit 低于 100，说明 API 已连通，但模型输出没有完全满足产品级证据/安全契约；不能把它当作完整端到端成功。
 
+### Step 6 — Controlled iteration
+
+操作：打开 `Iteration lab`，保留默认 SPY 5 日波动率任务与 RF parent；查看分层诊断和两类 evidence，勾选人工批准，只点击一次 `Run one controlled iteration`。
+
+成功信号：
+
+- 页面展示 Development rows、Global MAE、Fold MAE variation、Large/quiet MAE 和 Untouched holdout。
+- 提案同时包含 `literature` 与 `model_performance` evidence，参数显示为有界 JSON。
+- 未勾选批准时不会训练；批准后只生成一个 child run。
+- 目标行一致性、有限指标和运行预算通过。
+- 默认真实结果在后期 holdout 上的 RMSE 改善约 1.18%，但 worst-slice guardrail 失败并显示 `retain_parent`。
+- Deployment 始终显示 `Unauthorized`。
+- Experiment lineage 出现 parent/child、proposal、参数、决策和 artifact 记录。
+
 ## 6. 自动化验收命令
 
 ```powershell
@@ -215,8 +242,8 @@ ruff check .
 
 | 评审维度 | 当前可见证据 |
 |---|---|
-| 技术实现 | Responses tool loop、严格 schema、真实 native artifact、四类复现 gate、同窗 baseline、stress test、memo eval、130+ tests |
-| 设计与体验 | 四层黄金路径、免密钥 replay、可交互决策边界、成本表单、Research lab 与黄金路径分离 |
+| 技术实现 | Responses tool loop、严格 schema、真实 native artifact、四类复现 gate、同窗 baseline、误差切片、受控 child runner、谱系与 promotion gates |
+| 设计与体验 | 五层黄金路径、免密钥 replay、可交互决策边界、一次审批式迭代、Research lab 与黄金路径分离 |
 | 潜在影响 | 帮助研究团队在投入更多工程/算力前识别不可复现或不可迁移的预测 claim |
 | 创意质量 | 同时给出“复现通过、部署 HOLD”的诚实双结论，而非只展示成功指标 |
 | GPT-5.6 深度 | 两个只读工具、证据/基线综合、严格结构决策、token/cost trace、输出后 7 项确定性 eval |
@@ -238,10 +265,10 @@ ruff check .
 
 优先级从高到低：
 
-1. 任意 PDF 上传、分块索引和 EvidenceSpan 定位。
-2. 第二个 out-of-period 金融案例，验证“可复现但不可迁移”。
-3. 5 个 golden agent eval：strict success、数据替代、任务变化、证据缺失、prompt injection。
-4. 版本化 live fixture 与回归评分，监控模型升级后的 citation/audit 变化。
-5. 团队审阅链接、人工批准与审计日志持久化。
+1. 配对检验、Diebold-Mariano 和预注册多 seed，让 child promotion 的统计证据更强。
+2. 可在预测时识别的 ex-ante 市场状态，替代当前只用于诊断的 realized-move 切片。
+3. 任意 PDF 上传、分块索引和 EvidenceSpan 定位。
+4. 第二个 out-of-period 金融案例，验证“可复现但不可迁移”。
+5. 5 个 golden agent eval：strict success、数据替代、任务变化、证据缺失、prompt injection。
 6. 后台任务、取消/恢复、更多公共数据源和部署级可观测性。
 7. 在有真实业务使用数据后，量化节省的研究时间、避免的失败实验和决策采用率。

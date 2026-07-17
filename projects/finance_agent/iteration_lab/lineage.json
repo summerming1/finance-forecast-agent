@@ -1,0 +1,22 @@
+{
+  "schema_version": "iteration_lineage_v1",
+  "runs": [
+    {
+      "run_id": "controlled-4bc1c6c5d06779ed-20260717T123014974964Z",
+      "parent_run_id": "multi-4bc1c6c5d06779ed-arxiv_2310_16855",
+      "proposal_id": "iteration-b160ec765ff8",
+      "task_id": "spy_daily_next_5d_volatility_v1",
+      "method_id": "arxiv_2310_16855",
+      "model_family": "random_forest_regressor",
+      "model_parameters": {
+        "n_estimators": 100,
+        "max_depth": 12,
+        "random_state": 42
+      },
+      "decision": "retain_parent",
+      "deployment_authorized": false,
+      "artifact_path": "projects\\finance_agent\\iteration_lab\\runs\\controlled-4bc1c6c5d06779ed-20260717T123014974964Z.json",
+      "created_at": "2026-07-17T12:30:14.991085+00:00"
+    }
+  ]
+}

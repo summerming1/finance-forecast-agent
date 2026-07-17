@@ -14,7 +14,7 @@
 
 > Forecasting teams can find exciting paper results in minutes, but it can take days to learn whether the claim is reproducible and useful. ForecastProof turns one paper claim into an auditable research decision.
 
-**Show:** Home title, the reproduction/value split, and the four-layer flow.
+**Show:** Home title, the reproduction/value split, and the five-layer flow.
 
 ## 0:20–0:55 — Analyze
 
@@ -48,7 +48,17 @@ Show `Verified replay` first and point to the deterministic 100/100, 7/7 memo au
 
 Point to the recommendation and guardrail, then show the complete Audit Pack download.
 
-## 2:30–2:47 — Product depth
+## 2:30–2:50 — Evidence-guided iteration
+
+Open **Iteration lab**.
+
+**Say:**
+
+> A hold decision now becomes a bounded next experiment. ForecastProof diagnoses only earlier development folds, binds the hypothesis to literature and performance evidence, and reserves later folds as an untouched promotion holdout. It requires human approval for exactly one child run. In this frozen example holdout RMSE improves, but the worst slice regresses, so the deterministic gate retains the parent. It will not optimize away an inconvenient failure.
+
+Show the four diagnostics, two evidence types, bounded parameter JSON, saved gate result, and `Deployment: Unauthorized`. Use the already saved result during recording; do not wait for training.
+
+## 2:50–2:57 — Product depth
 
 Open **Research lab** briefly.
 
@@ -56,7 +66,7 @@ Open **Research lab** briefly.
 
 > Behind the three-minute product flow is the original seven-stage research harness: literature, data, MethodCard review, reproduction configuration, native runs, benchmarks, and audit. We kept that depth while removing it from the judge's golden path.
 
-## 2:47–3:00 — Build evidence and close
+## 2:57–3:00 — Build evidence and close
 
 Return to Home or Decision memo.
 

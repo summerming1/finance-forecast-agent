@@ -46,6 +46,7 @@ def test_forecastproof_opens_on_a_judge_friendly_home_page() -> None:
         ("analyze.py", "Analyze the claim"),
         ("verify.py", "Verify the reproduction"),
         ("decision_memo.py", "Decision memo"),
+        ("iteration_lab.py", "Evidence-guided iteration lab"),
     ],
 )
 def test_each_product_page_renders_without_an_api_key(page_name: str, expected_title: str) -> None:
@@ -78,6 +79,23 @@ def test_decision_page_defaults_to_a_safe_replay_memo() -> None:
     assert any(item.label == "Checks passed" and item.value == "7/7" for item in app.metric)
     assert any(item.label == "Deployment" and item.value == "HOLD" for item in app.metric)
     assert any("passed every deterministic" in item.value.lower() for item in app.success)
+
+
+def test_iteration_lab_exposes_diagnostics_evidence_and_approval_gate() -> None:
+    app = _run(PAGE_DIR / "iteration_lab.py")
+
+    assert {item.label for item in app.metric} >= {
+        "Development rows",
+        "Global MAE",
+        "Fold MAE variation",
+        "Large/quiet MAE",
+        "Untouched holdout",
+    }
+    assert app.selectbox(key="iteration_task_id").value == "spy_daily_next_5d_volatility_v1"
+    assert app.selectbox(key="iteration_method_id").value == "arxiv_2310_16855"
+    assert app.selectbox(key="iteration_proposal_id").value.startswith("iteration-")
+    assert any("Strict reproduction stays immutable" in item.value for item in app.info)
+    assert any(button.label == "Run one controlled iteration" for button in app.button)
 
 
 def test_research_lab_preserves_the_seven_stage_workbench() -> None:

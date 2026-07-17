@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 
 import pandas as pd
 import streamlit as st
@@ -20,6 +21,15 @@ from .forecastproof import (
     verify_demo_claim,
 )
 from .openai_responses import OpenAIResponsesDecisionAgent
+from .benchmark import BenchmarkTask
+from .iteration_lab import (
+    ControlledIterationResult,
+    build_iteration_proposals,
+    diagnose_prediction_artifact,
+    iteration_fold_partition,
+    load_lineage,
+    run_controlled_iteration,
+)
 
 
 DEMO_STATE_KEYS = (
@@ -33,7 +43,10 @@ DEMO_STATE_KEYS = (
     "forecastproof_value_hurdle",
     "forecastproof_reasoning_effort",
     "forecastproof_max_output_tokens",
+    "iteration_lab_result",
 )
+
+PROJECT_DIR = Path(__file__).resolve().parents[2] / "projects" / "finance_agent"
 
 
 @st.cache_data(show_spinner=False)
@@ -86,24 +99,28 @@ def render_home() -> None:
             )
         st.caption("ForecastProof distinguishes scientific reproducibility from deployment readiness.")
 
-    st.subheader("One claim. Four auditable layers.")
-    steps = st.columns(4)
-    with steps[0].container(border=True):
-        st.markdown(":material/article:")
-        st.markdown("#### 1. Analyze")
-        st.write("Extract the claim, protocol, unknowns, and source-revision evidence from a verified MethodCard.")
-    with steps[1].container(border=True):
-        st.markdown(":material/fact_check:")
-        st.markdown("#### 2. Verify")
-        st.write("Replay deterministic evidence, protocol, dataset, and metric gates against a native-run artifact.")
-    with steps[2].container(border=True):
-        st.markdown(":material/experiment:")
-        st.markdown("#### 3. Challenge")
-        st.write("Compare the model with persistence and expose the thresholds that would flip the decision.")
-    with steps[3].container(border=True):
-        st.markdown(":material/description:")
-        st.markdown("#### 4. Decide")
-        st.write("Generate a cited decision memo that separates reproduced facts from deployment risks.")
+    st.subheader("One claim. Five auditable layers.")
+    with st.container(horizontal=True):
+        with st.container(border=True):
+            st.markdown(":material/article:")
+            st.markdown("#### 1. Analyze")
+            st.write("Extract the claim, protocol, unknowns, and source-revision evidence from a verified MethodCard.")
+        with st.container(border=True):
+            st.markdown(":material/fact_check:")
+            st.markdown("#### 2. Verify")
+            st.write("Replay deterministic evidence, protocol, dataset, and metric gates against a native-run artifact.")
+        with st.container(border=True):
+            st.markdown(":material/experiment:")
+            st.markdown("#### 3. Challenge")
+            st.write("Compare the model with persistence and expose the thresholds that would flip the decision.")
+        with st.container(border=True):
+            st.markdown(":material/description:")
+            st.markdown("#### 4. Decide")
+            st.write("Generate a cited decision memo that separates reproduced facts from deployment risks.")
+        with st.container(border=True):
+            st.markdown(":material/model_training:")
+            st.markdown("#### 5. Iterate")
+            st.write("Diagnose weak slices, approve one bounded child run, and audit whether it earns research promotion.")
 
     with st.container(horizontal=True):
         st.page_link(
@@ -594,3 +611,256 @@ def render_research_lab() -> None:
 
     st.caption("Advanced workspace · the original seven-stage research control tower")
     render_app(embedded=True)
+
+
+@st.cache_data(show_spinner=False)
+def _load_iteration_suite() -> dict:
+    return json.loads((PROJECT_DIR / "reports" / "multi_benchmark_suite.json").read_text(encoding="utf-8"))
+
+
+@st.cache_data(show_spinner=False)
+def _load_iteration_card(paper_id: str) -> dict:
+    path = PROJECT_DIR / "method_cards_local_llm" / f"{paper_id}.json"
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _render_iteration_result(result: ControlledIterationResult | dict) -> None:
+    payload = result.to_dict() if isinstance(result, ControlledIterationResult) else result
+    checks = payload["checks"]
+    promoted = all(check["passed"] for check in checks)
+    if promoted:
+        st.success(
+            "The child passed every gate and may enter the research-candidate pool. Deployment is still unauthorized.",
+            icon=":material/verified:",
+        )
+    else:
+        st.warning(
+            "The child did not clear every guardrail, so the parent remains the research incumbent.",
+            icon=":material/shield_with_heart:",
+        )
+    with st.container(horizontal=True):
+        st.metric("Decision", payload["decision"].replace("_", " "), border=True)
+        st.metric("Primary improvement", f"{payload['primary_improvement']:.2%}", border=True)
+        st.metric("Runtime", f"{payload['runtime_seconds']:.2f}s", border=True)
+        st.metric("Deployment", "Unauthorized", border=True)
+    metric_rows = []
+    for metric, parent_value in payload["parent_metrics"].items():
+        if metric in payload["child_metrics"]:
+            child_value = payload["child_metrics"][metric]
+            metric_rows.append(
+                {
+                    "metric": metric,
+                    "parent": parent_value,
+                    "child": child_value,
+                    "delta": child_value - parent_value,
+                }
+            )
+    st.dataframe(
+        metric_rows,
+        hide_index=True,
+        width="stretch",
+        column_config={
+            "parent": st.column_config.NumberColumn(format="%.6f"),
+            "child": st.column_config.NumberColumn(format="%.6f"),
+            "delta": st.column_config.NumberColumn(format="%+.6f"),
+        },
+    )
+    st.dataframe(
+        [
+            {"gate": check["label"], "status": "passed" if check["passed"] else "failed", "detail": check["detail"]}
+            for check in checks
+        ],
+        hide_index=True,
+        width="stretch",
+    )
+
+
+def render_iteration_lab() -> None:
+    st.title("Evidence-guided iteration lab")
+    st.caption("Diagnose → propose → approve one bounded run → promote or retain · no LLM or API cost")
+    st.info(
+        "Strict reproduction stays immutable. This page creates a separate controlled_iteration child, and a passing "
+        "result can become only a research candidate—not a deployable model.",
+        icon=":material/account_tree:",
+    )
+    suite = _load_iteration_suite()
+    task_rows = suite["tasks"]
+    task_by_id = {row["task"]["task_id"]: row for row in task_rows}
+    task_ids = list(task_by_id)
+    default_task = "spy_daily_next_5d_volatility_v1"
+    task_id = st.selectbox(
+        "Frozen benchmark task",
+        task_ids,
+        index=task_ids.index(default_task) if default_task in task_ids else 0,
+        format_func=lambda value: value.replace("_v1", "").replace("_", " "),
+        key="iteration_task_id",
+    )
+    task_row = task_by_id[task_id]
+    reports = task_row["reports"]
+    method_ids = [row["method_id"] for row in reports]
+    default_method = "arxiv_2310_16855"
+    method_id = st.selectbox(
+        "Parent method",
+        method_ids,
+        index=method_ids.index(default_method) if default_method in method_ids else 0,
+        format_func=lambda value: f"{value} · {next(row['model_family'] for row in reports if row['method_id'] == value)}",
+        key="iteration_method_id",
+    )
+    parent_report = next(row for row in reports if row["method_id"] == method_id)
+    task = BenchmarkTask.from_dict(task_row["task"])
+    diagnostic_folds, promotion_folds = iteration_fold_partition(parent_report["prediction_artifact"])
+    diagnostics = diagnose_prediction_artifact(parent_report["prediction_artifact"], fold_ids=diagnostic_folds)
+    card = _load_iteration_card(method_id)
+
+    st.subheader("1. Diagnose where the parent loses")
+    with st.container(horizontal=True):
+        st.metric("Development rows", f"{diagnostics.observations:,}", border=True)
+        st.metric("Global MAE", f"{diagnostics.global_metrics['mae']:.6f}", border=True)
+        st.metric("Fold MAE variation", f"{diagnostics.fold_mae_cv:.1%}", border=True)
+        st.metric("Large/quiet MAE", f"{diagnostics.high_move_mae_ratio:.2f}×", border=True)
+        st.metric("Untouched holdout", f"{len(promotion_folds)} folds", border=True)
+    for finding in diagnostics.findings:
+        st.write(f"- {finding}")
+    slice_rows = [item.to_dict() for item in diagnostics.slices]
+    regime_rows = [row for row in slice_rows if row["dimension"] == "realized_move_regime"]
+    fold_rows = [row for row in slice_rows if row["dimension"] == "fold"]
+    charts = st.columns(2)
+    with charts[0].container(border=True):
+        st.markdown("#### Error by realized-move slice")
+        regime_frame = pd.DataFrame(
+            {"Regime": [row["label"] for row in regime_rows], "MAE": [row["mae"] for row in regime_rows]}
+        )
+        st.vega_lite_chart(
+            regime_frame,
+            {
+                "mark": {"type": "bar", "tooltip": True},
+                "encoding": {
+                    "x": {"field": "Regime", "type": "nominal", "sort": ["quiet", "normal", "large_move"]},
+                    "y": {"field": "MAE", "type": "quantitative", "scale": {"zero": True}},
+                },
+            },
+            width="stretch",
+        )
+        st.caption("Descriptive test slices only; they are not an ex-ante market-state signal.")
+    with charts[1].container(border=True):
+        st.markdown("#### Error by chronological fold")
+        fold_frame = pd.DataFrame(
+            {
+                "Fold": [int(row["label"].split("_")[-1]) for row in fold_rows],
+                "MAE": [row["mae"] for row in fold_rows],
+            }
+        )
+        st.vega_lite_chart(
+            fold_frame,
+            {
+                "mark": {"type": "line", "point": True, "tooltip": True},
+                "encoding": {
+                    "x": {"field": "Fold", "type": "quantitative"},
+                    "y": {"field": "MAE", "type": "quantitative", "scale": {"zero": True}},
+                },
+            },
+            width="stretch",
+        )
+
+    st.subheader("2. Review evidence-bound hypotheses")
+    proposals = build_iteration_proposals(task, parent_report, card)
+    proposal_by_id = {proposal.proposal_id: proposal for proposal in proposals}
+    selected_id = st.selectbox(
+        "Proposed experiment",
+        list(proposal_by_id),
+        format_func=lambda value: proposal_by_id[value].title,
+        key="iteration_proposal_id",
+    )
+    proposal = proposal_by_id[selected_id]
+    with st.container(border=True):
+        st.badge("Human approval required", color="orange", icon=":material/approval:")
+        st.markdown(f"#### {proposal.title}")
+        st.write(proposal.hypothesis)
+        st.caption(proposal.expected_outcome)
+        st.code(json.dumps(proposal.model_parameters, indent=2), language="json")
+    st.dataframe(
+        [
+            {
+                "type": item.evidence_type,
+                "section": item.section,
+                "claim": item.claim,
+                "evidence ID": item.evidence_id,
+                "revision": item.source_revision,
+            }
+            for item in proposal.evidence
+        ],
+        hide_index=True,
+        width="stretch",
+    )
+    with st.expander("Safeguards and stopping conditions", icon=":material/policy:"):
+        st.markdown("**Safeguards**")
+        for item in proposal.safeguards:
+            st.write(f"- {item}")
+        st.markdown("**Stop conditions**")
+        for item in proposal.stop_conditions:
+            st.write(f"- {item}")
+
+    st.subheader("3. Approve exactly one child experiment")
+    with st.form("controlled_iteration_form", border=True):
+        runtime_budget = st.slider(
+            "Runtime budget (seconds)",
+            min_value=15,
+            max_value=proposal.max_runtime_seconds,
+            value=min(60, proposal.max_runtime_seconds),
+            step=15,
+        )
+        approved = st.checkbox(
+            "I approve one child run on the frozen task and understand it cannot authorize deployment."
+        )
+        submitted = st.form_submit_button(
+            "Run one controlled iteration",
+            type="primary",
+            icon=":material/play_arrow:",
+        )
+    if submitted:
+        if not approved:
+            st.warning("Explicit approval is required before training can start.", icon=":material/approval:")
+        else:
+            try:
+                with st.status("Running one bounded child experiment…", expanded=True) as status:
+                    st.write("Reusing the frozen dataset, target rows, and chronological folds.")
+                    result = run_controlled_iteration(
+                        PROJECT_DIR,
+                        task,
+                        parent_report,
+                        proposal,
+                        approved=True,
+                        runtime_budget_seconds=runtime_budget,
+                    )
+                    st.session_state["iteration_lab_result"] = result
+                    status.update(label="Controlled iteration audited", state="complete", expanded=False)
+                st.toast("Child experiment and lineage saved", icon=":material/check_circle:")
+            except Exception as exc:
+                st.error(f"Controlled iteration stopped safely: {exc}", icon=":material/error:")
+    lineage = load_lineage(PROJECT_DIR)
+    result = st.session_state.get("iteration_lab_result")
+    saved_payload = None
+    if not result:
+        latest = next((item for item in reversed(lineage) if item.get("task_id") == task_id), None)
+        if latest:
+            artifact_path = Path(latest["artifact_path"])
+            if not artifact_path.is_absolute():
+                artifact_path = PROJECT_DIR.parents[1] / artifact_path
+            if artifact_path.exists():
+                saved_payload = json.loads(artifact_path.read_text(encoding="utf-8"))["result"]
+    if result and result.task_id == task_id:
+        st.subheader("4. Deterministic promotion decision")
+        _render_iteration_result(result)
+    elif saved_payload:
+        st.subheader("4. Latest saved promotion decision")
+        st.caption("Replay of the committed child artifact; no training occurs when this page loads.")
+        _render_iteration_result(saved_payload)
+
+    if lineage:
+        st.subheader("Experiment lineage")
+        st.dataframe(
+            list(reversed(lineage)),
+            hide_index=True,
+            width="stretch",
+            column_config={"artifact_path": None, "model_parameters": st.column_config.JsonColumn("Parameters")},
+        )

@@ -54,7 +54,7 @@ P1.6.5 的硬验收尚未完成：当前严格复现为 1 篇/1 claim，距离 1
 - 十篇异构论文均可从 PDF 经 Replay 抽取、实验类型分类和能力路由；不支持的实验不会静默换模型。
 - 五篇预测论文的方法已在同一冻结 AAPL 任务上实际执行，并通过目标行、fold 和预测数量一致性审计。
 
-尚未完成的 P1 核心是 ExperimentMemory 对候选生成和调度的真实反馈，以及 Registry 增强和 MethodCard diff/history。
+ExperimentMemory 已通过多基准排序和独立 `controlled_iteration` 轨道对下一轮研究产生真实反馈；该轨道能把分层误差与 MethodCard 证据转成 1-3 个提案，并在人工批准后运行一个 child。旧 harness scheduler 尚未接入，Registry 增强和 MethodCard diff/history 仍未完成。
 
 ## P0：可信研究内核
 
@@ -108,7 +108,7 @@ P1.6.5 的硬验收尚未完成：当前严格复现为 1 篇/1 claim，距离 1
 
 ## P1：研究记忆与数据注册增强
 
-2026-07-14 进度：P1.0-P1.6.2 已验证；P1.6.3-P1.8 已完成首批基础实现和聚焦测试。Memory prior 已用于多基准排序，但旧 harness scheduler 尚未接入；SourceBundle 已能固定仓库和审计许可，但仍需人工确认与 publication-date commit。Native Portfolio 和逐篇 exploratory 覆盖尚未达到硬验收，因此总体 P1 仍为进行中。
+2026-07-17 进度：P1.0-P1.6.2 已验证；P1.6.3-P1.8 已完成首批基础实现和聚焦测试。Memory prior 已用于多基准排序；Build Week 的独立 controlled-iteration 轨道增加了诊断、证据提案、父子谱系和单次受控运行，但旧 harness scheduler 尚未接入。SourceBundle 已能固定仓库和审计许可，但仍需人工确认与 publication-date commit。Native Portfolio 和逐篇 exploratory 覆盖尚未达到硬验收，因此总体 P1 仍为进行中。
 
 P1.6.2 是既定 P1 路线内的验收增强，不改变 P1/P2/P3 的总体目标。它暴露出的原生执行覆盖不足应作为后续适配器建设的验收输入，不能因控制层路由通过而宣称所有论文已可严格复现。
 

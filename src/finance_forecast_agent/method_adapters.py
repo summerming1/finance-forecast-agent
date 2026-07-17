@@ -48,9 +48,10 @@ class PredictionArtifact:
 
 
 class MethodAdapter:
-    def __init__(self, *, method_id: str, model_family: str):
+    def __init__(self, *, method_id: str, model_family: str, model_parameters: dict[str, Any] | None = None):
         self.method_id = method_id
         self.model_family = model_family
+        self.model_parameters = dict(model_parameters or {})
 
     def fit_predict(
         self,
@@ -69,6 +70,7 @@ class MethodAdapter:
         adapter_protocol: dict[str, Any] = {
             "input_columns": feature_columns,
             "representation": "tabular",
+            "model_parameters": self.model_parameters,
         }
         if self.model_family in {"lstm_regressor", "transformer_regressor", "ga_lstm_regressor"}:
             x = x[:, :, None]
@@ -77,7 +79,7 @@ class MethodAdapter:
         y = frame[label_column].astype(float).to_numpy()
         rows: list[PredictionRow] = []
         for fold_id, window in enumerate(splits):
-            model = make_model(self.model_family)
+            model = make_model(self.model_family, self.model_parameters)
             model.fit(x[window.train_indices], y[window.train_indices])
             predictions = np.asarray(model.predict(x[window.test_indices]), dtype=float)
             for index, prediction in zip(window.test_indices, predictions):

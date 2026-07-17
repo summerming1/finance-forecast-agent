@@ -171,7 +171,7 @@ OpenAI 当前建议新项目使用 Responses API；GPT-5.6 支持 Responses、�
 
 第一个案例用于证明技术完整性；第二个案例用于证明实际决策价值。
 
-### 3.2 三步操作、四层判断
+### 3.2 五层判断与受控迭代
 
 #### Step 1 — Analyze the claim
 
@@ -557,7 +557,7 @@ assets/
 | 标准 | 评委要看到什么 | 本项目的展示证据 |
 |---|---|---|
 | Technological Implementation | Codex 使用深入；代码真实、非平凡、能运行 | 赛中 commit、GPT-5.6 Responses + tools + schema、确定性门禁、真实基准、自动测试 |
-| Design | 完整、连贯的产品体验，不只是技术验证 | 三步主要操作、Analyze/Verify/Challenge/Decide 四层判断、免配置样例、可下载报告、失败回退 |
+| Design | 完整、连贯的产品体验，不只是技术验证 | Analyze/Verify/Challenge/Decide/Iterate 五层判断、免配置样例、可下载报告、人工审批与失败回退 |
 | Potential Impact | 真实用户、真实问题、方案确实解决问题 | 量化研究团队、减少无效复现和错误模型判断、审计包 |
 | Quality of the Idea | 新颖且不同于已有概念 | “预测可信度编译器”：论文证据 + 协议门禁 + 可比实验 + AI 决策备忘录 |
 
