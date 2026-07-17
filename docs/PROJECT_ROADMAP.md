@@ -13,7 +13,7 @@
 
 ## 当前进展
 
-当前最新实现是 **P1.G1-P1.G6 control-plane implementation**。P1.6.5 的 10 个金融数据 strict claim 数值目标已通过；声明式接入、MethodCard v3、协议、Registry、任务、lineage、研究日志和 P2 门禁已经实现。实验类型 strict 覆盖、论文级 exploratory execution、blocker 消减和 P1 总验收未完成，总体 P1 仍在进行中。
+当前最新实现是 **P1.G1-P1.G6 control-plane + scientific acceptance implementation**。P1.6.5 的 10 个金融数据 strict claim 数值目标已通过；声明式接入、MethodCard v3、协议、Registry、任务、lineage、研究日志、通用 strict 门禁和 P2 门禁已经实现。原 28 个 candidate 已全部完成论文绑定的探索性统一基准执行；三类纵向 strict pair、总 blocker 净消减和 P1 总验收仍未完成，总体 P1 继续进行。
 
 已完成：
 
@@ -27,7 +27,7 @@ P0.9  审批状态、Adapter Backlog、Golden 集合、Run Timeline
 P1.0-P1.6  MethodCard v2、ReproductionPlan、双轨评估、PredictionArtifact、ExperimentMemory 和真实验证
 P1.6.1  严格 LLM 抽取、主资料证据、方法卡驱动原生协议和统一基准统计审计
 P1.6.2  十篇异构金融机器学习论文的能力路由、语义一致性门禁和五方法统一基准
-P1.6.3  首批 86 条语料记录与 50 份合法开放 PDF
+P1.6.3  首批 86 条语料记录与 56 份合法开放 PDF（50 基线 + 6 OA 消减）
 P1.6.4  通用数据获取中心
 P1.6.5  10 个金融数据原生 strict claims
 P1.6.6  复现覆盖账本和 Delta 框架
@@ -37,7 +37,7 @@ P1.7    带上下文门禁和失败降权的多基准 prior
 P1.8    十个 SourceBundle 候选审计
 ```
 
-P1.6.5 的数量门禁已完成：当前严格复现为 10 篇/10 claims，目标缺口为 0。十篇均为 Exchange-Rate 时间序列预测，因此“覆盖信号回测、截面资产定价和组合决策”的类型门禁仍未完成。P1.6.6 的逐篇探索执行也未完成：28 篇为 candidate，58 篇为 structured blocker。因此上述 P1.7/P1.8 仍是首批接口和真实验证，不代表规模化路线已按顺序全部验收。
+P1.6.5 的首批数量门禁已完成：当前严格复现为 10 篇/10 claims。十篇均为 Exchange-Rate 时间序列预测，因此“20 篇、4 类实验、3 数据域”和信号回测、截面资产定价、组合决策 strict pair 尚未完成。P1.6.6 的原 28 篇 candidate 已完成 MethodCard、数据绑定、真实模型执行和 Delta，但均为 exploratory benchmark adaptation；另有 58 篇 structured blocker。P1.7/P1.8 仍是首批接口和真实验证，不代表规模化路线已全部验收。
 
 当前已具备 P1 复现协议和实验记忆基础：
 
@@ -55,7 +55,7 @@ P1.6.5 的数量门禁已完成：当前严格复现为 10 篇/10 claims，目�
 - 十篇异构论文均可从 PDF 经 Replay 抽取、实验类型分类和能力路由；不支持的实验不会静默换模型。
 - 五篇预测论文的方法已在同一冻结 AAPL 任务上实际执行，并通过目标行、fold 和预测数量一致性审计。
 
-尚未完成的 P1 核心是新论文到 Native Claim 的通用接入、三类非预测 strict 纵向样例、逐篇 exploratory、ExperimentMemory 对候选生成和调度的真实反馈，以及 Registry/Source/Data 增强和 MethodCard diff/history。
+尚未完成的 P1 核心是三类非预测 strict 纵向 pair、总 blocker 净消减、20 篇/4 类/3 数据域验收，以及 Source/Data/Environment 在更多论文上的 held-out 科学闭环。Native Compiler、28 篇逐篇 exploratory、Memory 队列反馈、Registry/Source/Data 控制面和 MethodCard diff/history 已实现。
 
 ### 2026-07-17 能力审计结论
 
@@ -77,7 +77,7 @@ P1.G5  Benchmark Registry、异步任务、MLflow/DVC lineage、全局 Memory Sc
 P1.G6  20 篇、4 类实验、3 数据域、held-out、false-strict=0 总验收
 ```
 
-2026-07-17 实施状态：G1、G2、G5 的控制能力和 G6 的自动验收器已实现；G3 三类协议 schema 通过但 strict 为 0；G4 已将 28 candidate 与 58 blocker 统一为 86 个诚实的可解释阻断记录，但尚未完成 blocker 消减；G6 当前为 10/20 strict、1/4 strict 类型、1/3 数据域、held-out 10/10、false-strict=0，因此 P2 门禁保持关闭。完整证据见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。
+2026-07-17 实施状态：G1、G2、G5 的控制能力和 G6 自动验收器已实现；G3 三类协议 schema 通过但 strict 为 0；G4 已真实执行 28/28 candidate，OA 获取使全文根因 36→30，但 6 篇转为协议/adapter blocker，故总 blocker 仍为 58、净消减 0；G5 已接通 SQLite MLflow、仓库外 DVC remote 和 Memory 优先队列。G6 当前为 10/20 strict、1/4 strict 类型、1/3 数据域、held-out 10/10、false-strict=0，因此 P2 门禁保持关闭。完整证据见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md` 和 `docs/P1G_SCIENTIFIC_ACCEPTANCE_LOG.md`。
 
 实施还必须遵守四个新增门禁：逐篇记录探索过程；论文特例必须沉淀为可复用能力并由第 2 篇验证；允许按市场/频率/资产类型限定通用范围；统一比较前必须通过领域适配性审计，禁止把高频、周频、外汇、期权等不兼容任务硬合并。
 
@@ -133,7 +133,7 @@ P1.G6  20 篇、4 类实验、3 数据域、held-out、false-strict=0 总验收
 
 ## P1：研究记忆与数据注册增强
 
-2026-07-17 进度：P1.0-P1.6.2 已验证；P1.6.3-P1.8 已完成首批基础实现和聚焦测试；Native Portfolio 达到 10 个金融数据 strict claims。Memory prior 已用于多基准排序，但旧 harness scheduler 尚未接入；SourceBundle 仍需人工确认与 publication-date commit；逐篇 exploratory 和三类非时序原生样例未完成，因此总体 P1 仍为进行中。
+2026-07-17 进度：P1.0-P1.6.2 已验证；P1.6.3-P1.8 已完成首批基础实现和聚焦测试；Native Portfolio 达到 10 个金融数据 strict claims。Memory prior 已接入持久化任务队列，28 篇逐篇 exploratory 已执行，MLflow/DVC/lineage 已闭环；SourceBundle 的论文身份和许可仍需人工确认，三类非时序 strict pair 未完成，因此总体 P1 仍为进行中。
 
 P1.6.2 是既定 P1 路线内的验收增强，不改变 P1/P2/P3 的总体目标。它暴露出的原生执行覆盖不足应作为后续适配器建设的验收输入，不能因控制层路由通过而宣称所有论文已可严格复现。
 

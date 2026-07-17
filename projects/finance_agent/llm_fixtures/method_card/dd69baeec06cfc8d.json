@@ -1,0 +1,301 @@
+{
+  "prompt_hash": "dd69baeec06cfc8d",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "linear_regression_nifty50_dataset3_test_data",
+    "paper_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+    "title": "Machine Learning Models in Stock Market Prediction",
+    "venue_or_source": "International Journal of Innovative Technology and Exploring Engineering (IJITEE)",
+    "paper_url": "unknown",
+    "task_type": "forecast_only",
+    "target_asset": "Nifty 50 Index",
+    "asset_universe": [
+      "Nifty 50 Index"
+    ],
+    "frequency": "daily trading days",
+    "horizon": "unknown",
+    "label_definition": "direction of daily closing price movement in the Nifty 50 Index",
+    "data_requirements": [
+      "Use historical Nifty 50 Index data covering April 22, 1996 to September 19, 2008 for Data Set-3.",
+      "Use 3110 trading days for Data Set-3.",
+      "Split Data Set-3 into 2488 training trading days and 622 testing trading days.",
+      "Use an 80% training and 20% testing split with training data excluded from the test dataset."
+    ],
+    "feature_groups": [
+      "unknown"
+    ],
+    "model_families": [
+      "Linear Regression"
+    ],
+    "training_protocol": "For Data Set-3, train a Linear Regression model using the training portion of the 80%/20% split: 2488 trading days for training and 622 trading days for testing. Input window, optimizer, loss, epochs, early stopping, seed, batch protocol, and exact feature construction are unknown.",
+    "evaluation_protocol": "Evaluate the trained Linear Regression model on the held-out testing portion of Data Set-3 using the paper's 'Test on Testing Data' protocol. Results are sorted by RMSE ascending. The exact chronological split procedure and any context overlap are unknown.",
+    "metrics": [
+      "Train time [s]",
+      "Test time [s]",
+      "MSE",
+      "RMSE",
+      "MAE",
+      "R2",
+      "CVRMSE"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {
+      "rank": 1,
+      "train_time_s": 0.05,
+      "test_time_s": 0.007,
+      "MSE": 1329.2,
+      "RMSE": 36.458,
+      "MAE": 23.923,
+      "R2": 0.998,
+      "CVRMSE": 0.85
+    },
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "1996-04-22",
+    "required_end_date": "2008-09-19",
+    "strict_requirements": [
+      "Use the Data Set-3 Nifty 50 Index subset, not another dataset subset.",
+      "Use the Data Set-3 80%/20% train/test split with 2488 training trading days and 622 testing trading days.",
+      "Use Linear Regression as the selected model.",
+      "Report the Test on Testing Data metrics for Data Set-3, not cross-validation or training-data metrics."
+    ],
+    "unknowns": [
+      "Exact prediction horizon is not stated in the supplied context.",
+      "Exact input features are not stated in the supplied context.",
+      "Whether the target is price level, price movement direction, or another transformed closing-price target is ambiguous because the paper states 'direction of daily closing price movement' while result discussion and figures refer to predicted close price.",
+      "Exact chronological split implementation is not fully specified beyond 80% training and 20% testing with counts.",
+      "Preprocessing, scaling, missing-value handling, and fit scope are not stated in the supplied context.",
+      "Linear Regression hyperparameters and software implementation details are not stated in the supplied context.",
+      "Random seed and hardware/runtime environment are not stated in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "method_id",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "Table 10. Test on Testing Data of Data Set -3 Rank Model Train time [s] Test time [s] MSE RMSE MAE R2 CVRMSE 1 Linear Regression"
+      },
+      {
+        "section": "paper_id",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "Machine Learning Models in Stock Market Prediction Gurjeet Singh"
+      },
+      {
+        "section": "title",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "Machine Learning Models in Stock Market Prediction Gurjeet Singh"
+      },
+      {
+        "section": "venue_or_source",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "International Journal of Innovative Technology and Exploring Engineering (IJITEE) ISSN: 2278-3075 (Online), Volume-11 Issue-3, January 2022"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The paper focuses on predicting the Nifty 50 Index by using 8 Supervised Mach ine Learn ing Models ."
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The paper focuses on predicting the Nifty 50 Index by using 8 Supervised Mach ine Learn ing Models ."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The research data used in this study is the direction of daily closing price movement in the Nifty 50 Index."
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The Data Set -3 covers the period from April 22, 1996 to September 19, 2008, containing 2488 trading day’s data in Training Data Set and 622 trading day’s data in Testing Data Set."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The paper focuses on predicting the Nifty 50 Index by using 8 Supervised Mach ine Learn ing Models ."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The research data used in this study is the direction of daily closing price movement in the Nifty 50 Index."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The Data Set -3 covers the period from April 22, 1996 to September 19, 2008, containing 2488 trading day’s data in Training Data Set and 622 trading day’s data in Testing Data Set."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The third subset is 50% of the entire data set and containing 3110 trading day’s data. This data set is called ‘‘Data Set -3’’."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The research data used in this study is the direction of daily closing price movement in the Nifty 50 Index."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The techniques used for empirical study are Adaptive Boost (AdaBoost), k - Nearest Neighbors (kNN), Linear Regression (LR), Artificial Neural Network (ANN), Random Forest (RF), Stochastic Gradient Descent (SGD), Support Vector Machine (SVM) and Decision Trees (DT)."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "each subset was further divided into 2 parts, Training Data Set (80% of the Data Set) and Testing Data Set (20% of the Data Set)."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The Data Set -3 covers the period from April 22, 1996 to September 19, 2008, containing 2488 trading day’s data in Training Data Set and 622 trading day’s data in Testing Data Set."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "Data points in the training datasets are excluded from the test dataset (validation). So, the training data is used to fit the model and testing data is used to test it."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "Before comparing obtained testing results, sorting is done on RMSE variable, in ascending order for each ta"
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The next measurements in the testing results are MSE, RMSE, MAE, R 2 and CVRMSE which stands for Mean Square Error, Root Mean Square Error, Mean Absolute Error, R-Square, Coefficient of the Variation of the Root Mean Square Error respectively."
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "Table 10. Test on Testing Data of Data Set -3 Rank Model Train time [s] Test time [s] MSE RMSE MAE R2 CVRMSE 1 Linear Regression 0.050 0.007 1329.200 36.458 23.923 0.998 0.850"
+      },
+      {
+        "section": "experiment_type",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The paper focuses on predicting the Nifty 50 Index by using 8 Supervised Mach ine Learn ing Models ."
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "Data points in the training datasets are excluded from the test dataset (validation). So, the training data is used to fit the model and testing data is used to test it."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "Table 10. Test on Testing Data of Data Set -3 Rank Model Train time [s] Test time [s] MSE RMSE MAE R2 CVRMSE 1 Linear Regression"
+      },
+      {
+        "section": "required_start_date",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The Data Set -3 covers the period from April 22, 1996 to September 19, 2008, containing 2488 trading day’s data in Training Data Set and 622 trading day’s data in Testing Data Set."
+      },
+      {
+        "section": "required_end_date",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The Data Set -3 covers the period from April 22, 1996 to September 19, 2008, containing 2488 trading day’s data in Training Data Set and 622 trading day’s data in Testing Data Set."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "Tables 8, 9 and 10 are showing the testing results of Data Set -3."
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "3284108ca804fc1a",
+        "quote": "The paper focuses on predicting the Nifty 50 Index by using 8 Supervised Mach ine Learn ing Models ."
+      }
+    ],
+    "extraction_metadata": {
+      "selected_claim": "Linear Regression on Data Set-3 evaluated with Test on Testing Data",
+      "document_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+      "text_sha": "3284108ca804fc1a"
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

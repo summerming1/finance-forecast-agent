@@ -465,5 +465,26 @@
   "complete_reproduction_allowed": true,
   "blockers": [],
   "duration_seconds": 1330.14,
-  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2402_10198_exchange_native.json"
+  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2402_10198_exchange_native.json",
+  "tracker_refs": {
+    "tracking_mode": "historical_reconciliation",
+    "source_report_sha256_before_tracking": "527929df7468fab07f80e1237b1ab081eb8e3e36ebf5c441abbd1ee736265154",
+    "mlflow": {
+      "backend": "mlflow",
+      "run_id": "23b0d6e0f14c49be93de58ba2971fb8d",
+      "tracking_uri": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db",
+      "experiment_name": "native-reconciliation"
+    },
+    "dvc": {
+      "backend": "dvc",
+      "tracked": true,
+      "pushed": true,
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+      "pointer_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv.dvc",
+      "remote": {
+        "name": "finance_agent_remote",
+        "url": "D:\\AI Agent\\finance_forecast_agent_dvc_remote"
+      }
+    }
+  }
 }

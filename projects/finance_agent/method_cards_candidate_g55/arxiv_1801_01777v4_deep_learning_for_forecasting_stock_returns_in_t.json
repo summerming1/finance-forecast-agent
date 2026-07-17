@@ -1,0 +1,450 @@
+{
+  "method_id": "abe_nakayama_dnn8_1_msci_japan_1m_forecast",
+  "paper_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+  "title": "Deep Learning for Forecasting Stock Returns",
+  "venue_or_source": "unknown",
+  "paper_url": "unknown",
+  "task_type": "cross-sectional stock return regression/forecasting",
+  "target_asset": "Japanese equities",
+  "asset_universe": [
+    "MSCI Japan Index constituents"
+  ],
+  "frequency": "monthly",
+  "horizon": "one-month-ahead stock return",
+  "label_definition": "For each stock in the MSCI Japan Index universe at month T, the output label is the actual stock return at T+1, rescaled cross-sectionally by rank within the stock universe at each time point.",
+  "data_requirements": [
+    "Monthly MSCI Japan Index constituent universe.",
+    "Monthly dividend-inclusive stock returns at end of month.",
+    "Twenty-five monthly factors calculated from market and financial data.",
+    "Financial data from WorldScope and Reuters Fundamentals with WorldScope priority and a four-month reporting lag.",
+    "Forecast data from Thomson Reuters Estimates and I/B/E/S Estimates with Thomson Reuters priority.",
+    "MSCI Barra JPE4 Historical Beta and Predicted Specific Risk for factors 18 and 24."
+  ],
+  "feature_groups": [
+    "price_lag_features",
+    "return_momentum_features",
+    "volatility_features",
+    "cross_asset_features",
+    "liquidity_proxy_features"
+  ],
+  "model_families": [
+    "dnn_asset_pricing_model"
+  ],
+  "training_protocol": "{\"bias_initialization\": 0, \"early_stopping\": \"unknown\", \"epochs\": 100, \"implementation\": \"TensorFlow\", \"input_window\": \"125-dimensional input consisting of 25 factors at five time points: T, T-3, T-6, T-9, and T-12 for training examples.\", \"loss\": \"mean squared error\", \"mini_batch_size\": \"size of the stock universe at each time point, approximately 300\", \"optimizer\": \"Adam\", \"random_seed\": \"unknown\", \"selected_configuration\": \"DNN8_1\", \"training_window\": \"latest 120 sets of training data from the past 10 years\", \"weight_initialization\": \"TensorFlow tf.truncated_normal with mean 0 and standard deviation M/1, where M is the size of the previous layer\"}",
+  "evaluation_protocol": "{\"context_overlap\": \"rolling training window uses past 10 years of monthly training sets before each prediction\", \"evaluation_period\": \"December 2001 to November 2016\", \"procedure\": \"walk-forward monthly forecasting: train using the latest 120 monthly training sets, then substitute the latest input values to compute cross-sectional predictive stock return scores for the next month\", \"stock_filtering\": \"prediction scores are not calculated for stocks with 63 or more missing input values out of 125; for stocks with 62 or fewer missing values, missing values are replaced by the cross-sectional median among non-missing stocks\"}",
+  "metrics": [
+    "unknown_exact_reported_evaluation_metrics_for_the_selected_dnn8_1_row"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {},
+  "strict_requirements": [
+    "Use MSCI Japan Index constituent universe.",
+    "Use 25 listed factors as monthly inputs.",
+    "Use five lagged factor observation dates per example, producing 125 input dimensions.",
+    "Use a rolling/latest 120-set training window from the past 10 years.",
+    "Use cross-sectional rank rescaling for inputs and labels.",
+    "For the selected DNN8_1 configuration, use an 8-layer fully connected feedforward neural network with hidden layers 100-100-50-50-10-10 and 50% dropout."
+  ],
+  "unknowns": [
+    "Exact numeric reported results for DNN8_1 are not present in the supplied context.",
+    "Exact evaluation metric names for the selected DNN8_1 result row are not present in the supplied context.",
+    "Random seed is not reported in the supplied context.",
+    "Early stopping is not reported in the supplied context.",
+    "Venue/source is not present in the supplied context.",
+    "Paper URL is not supplied.",
+    "dnn_asset_pricing_model"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "title",
+      "quote": "Deep Learning for Forecasting Stock Returns in the Cross-Section",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "task_type",
+      "quote": "This paper implements deep learning to predict one -month-ahead stock returns in the cross -section in the Japanese stock market and investigates the performance of the method.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "target_asset",
+      "quote": "This paper implements deep learning to predict one -month-ahead stock returns in the cross -section in the Japanese stock market and investigates the performance of the method.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "asset_universe",
+      "quote": "We prepare dataset for MSCI Japan Index constituents.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "asset_universe",
+      "quote": "As of Ja nuary 2017, the index is composed of 319 constituents and covers approximately 85% of the free float-adjusted market capitalization in Japan [13].",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "frequency",
+      "quote": "Factors are calculated on a monthly basis (at the end of month) from December 1990 to November 2016.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "frequency",
+      "quote": "Stock returns with dividends are acquired on a monthly basis (at the end of month).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "horizon",
+      "quote": "The present paper predicts one-month-ahead stock returns using multiple factors from both market and financial data as input values.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "label_definition",
+      "quote": "The output value is the actual stock return at December 2001 ( T+1).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "label_definition",
+      "quote": "Similar rescaling is done for output values ri,T+1, to convert to the cross-sectional stock returns (scores).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "data_requirements",
+      "quote": "We use the 25 factors listed in Table 1.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "data_requirements",
+      "quote": "In calculat- ing these factors, we acquire necessary data from WorldScope, Thomson Reuters, I/B/E/S, EXSHARE, and MSCI.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "data_requirements",
+      "quote": "The actual financial data is acquired from WorldScope and Reuters Fundamentals (WorldScope priority). Taking into account the time when investors are actually available, we have a lag of four months.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "data_requirements",
+      "quote": "Forecast data is obtained from Thomson Reuters Estimates and I/B/E/S Estimates (Thomson Reuters prio rity).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "data_requirements",
+      "quote": "We directly use “Historical Beta” for No.18 and “Predicted Specific Risk” for No.24 from the MSCI Barra JPE4 model.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "feature_groups",
+      "quote": "Table 1. List of factors. No. Factor No. Factor 1 Book-to-market ratio 14 Investment growth 2 Earnings-to-price ratio 15 Investment-to-assets ratio 3 Dividend yield 16 EPS Revision(1 month) 4 Sales-to-price ratio 17 EPS Revision(3 months) 5 Cash flow-to-price ratio 18 Market beta 6 Return on equity 19 Market value 7 Return on asset 20 Past stock return(1 month) 8 Return on invested capital 21 Past stock return(12 months) 9 Accruals 22 Volatility 10 Sales-to-total assets ratio 23 Skewness 11 Current ratio 24 Idiosyncratic volatility 12 Equity ratio 25 Trading turnover 13 Total asset growth",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "model_families",
+      "quote": "All of the neural networks examined this paper are fully - connected feedforward neural networks .",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "model_families",
+      "quote": "We examine a total of Table 2. Number of stocks (monthly average). All Tertile Quintile Top Bottom Top Bottom 336.5 112.5 111.8 67.7 66.9 7 8 patterns of deep neural networks (DNN) with 8 layers (DNN8) and with 5 layers (DNN5).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "training_protocol",
+      "quote": "We train the model by using the latest 120 sets of training from the past 10 years.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "training_protocol",
+      "quote": "The output value is the actual stock return at December 2001 ( T+1).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "training_protocol",
+      "quote": "We use the mean squared error (MSE) as the loss function",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "training_protocol",
+      "quote": "As an intersection, we use the hyperbolic tangent as the activation function, Adam [14] for the optimization algorithm. The mini batch size is the size of the stock universe at each time point (approximately 300) with 100 epochs. We use TensorFlow for implementation.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "training_protocol",
+      "quote": "We initialize the biases to be 0 and generate the initial weight from TensorFlow ’s function “tf.truncated_normal” set to mean “0” and standard deviation “ M/1 ” (M is the size of the previous layer).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "evaluation_protocol",
+      "quote": "bers for the stock universe for the evaluation period from De- cember 2001 to November 2016 with top and bottom stocks for both tertiles and quin- tiles.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "evaluation_protocol",
+      "quote": "To calculate the prediction, we substitute the latest input values into the model after train- ing has occurred.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "evaluation_protocol",
+      "quote": "For example, in order to calculate the prediction score at Jan uary 20 02 (T+2) from December 2001 (T+1), the input values are as follows: December 2001 (T+1), Sep- tember 2001 (T−2), January 2001 (T−5), March 2001 (T−8), December 2000 (T−11), as factors of the past five time points.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "metrics",
+      "quote": "We use the mean squared error (MSE) as the loss function",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "reported_results",
+      "quote": "Our results show that deep neural networks generally outperform shallow neural networks, and the best networks also out- perform representative machine learning models.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "preprocessing_protocol",
+      "quote": "For data preprocessing, rescaling is performed so that each input value is maximally 1 (minimum  0) by ranking each input value in an ascending order by stock universe at each time point and then dividing by the maximum rank value.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "preprocessing_protocol",
+      "quote": "However, the prediction scores are not calculated for stocks with 63 or more missing input values, which is about half of the total number (125) of input values. For stocks with 62 or less missing input values, ea ch missing value is replaced by the median value for the stocks that are not missing.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "hyperparameters",
+      "quote": "DNN8_1 8 100-100-50-50-10-10 50%",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "hyperparameters",
+      "quote": "The dropout rate is set uniformly to 50%.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "required_start_date",
+      "quote": "Factors are calculated on a monthly basis (at the end of month) from December 1990 to November 2016.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "required_end_date",
+      "quote": "Factors are calculated on a monthly basis (at the end of month) from December 1990 to November 2016.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "strict_requirements",
+      "quote": "For stock i in MSCI Japan Index constituents at month T (end of month), 25 factors listed in Table 1 are defined by xi,T  R25 and input values are defined by vi,T  {xi,T, xi,T−3, xi,T−6,",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    },
+    {
+      "source_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "section": "strict_requirements",
+      "quote": "Input: 125 dim. Output: 1 dim.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:d2be4bf53ae782ec"
+    }
+  ],
+  "extraction_metadata": {
+    "claim_selection": "Selected one executable neural-network configuration from Table 3: DNN8_1 on MSCI Japan monthly one-month-ahead cross-sectional stock-return forecasting.",
+    "source_document_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+    "text_sha": "d2be4bf53ae782ec",
+    "quality_report": {
+      "method_id": "abe_nakayama_dnn8_1_msci_japan_1m_forecast",
+      "paper_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t",
+      "quality_score": 0.89,
+      "approval_required": true,
+      "critical_missing_fields": [],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [
+        "dnn_asset_pricing_model"
+      ],
+      "warnings": [
+        "unsupported model adapters required: dnn_asset_pricing_model"
+      ],
+      "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+    },
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "{\"context_overlap\": \"rolling training window uses past 10 years of monthly training sets before each prediction\", \"evaluation_period\": \"December 2001 to November 2016\", \"procedure\": \"walk-forward monthly forecasting: train using the latest 120 monthly training sets, then substitute the latest input values to compute cross-sectional predictive stock return scores for the next month\", \"stock_filtering\": \"prediction scores are not calculated for stocks with 63 or more missing input values out of 125; for stocks with 62 or fewer missing values, missing values are replaced by the cross-sectional median among non-missing stocks\"}",
+    "frequency_type": "monthly",
+    "horizon_type": "next_month_return",
+    "document_text_sha": "d2be4bf53ae782ec",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 36,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "purged_walk_forward",
+  "evaluation_protocol_description": "{\"context_overlap\": \"rolling training window uses past 10 years of monthly training sets before each prediction\", \"evaluation_period\": \"December 2001 to November 2016\", \"procedure\": \"walk-forward monthly forecasting: train using the latest 120 monthly training sets, then substitute the latest input values to compute cross-sectional predictive stock return scores for the next month\", \"stock_filtering\": \"prediction scores are not calculated for stocks with 63 or more missing input values out of 125; for stocks with 62 or fewer missing values, missing values are replaced by the cross-sectional median among non-missing stocks\"}",
+  "frequency_type": "monthly",
+  "horizon_type": "next_month_return",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "{\"fit_scope\": \"cross-sectional transformation within the stock universe at each time point\", \"input_rescaling\": \"Each input value is ranked in ascending order within the stock universe at each time point and divided by the maximum rank value so the maximum is 1 and minimum is approximately 0.\", \"label_rescaling\": \"The same rank-based cross-sectional rescaling is applied to output stock returns.\", \"missing_values\": \"Stocks with 63 or more missing input values are excluded from prediction; otherwise missing values are replaced by the median value for stocks that are not missing.\", \"train_only_statistics\": \"unknown\"}",
+  "hyperparameters": {
+    "selected_model": "DNN8_1",
+    "number_of_layers": 8,
+    "hidden_layers": [
+      100,
+      100,
+      50,
+      50,
+      10,
+      10
+    ],
+    "dropout_rate": 0.5,
+    "activation": "hyperbolic tangent",
+    "optimizer": "Adam",
+    "epochs": 100,
+    "mini_batch_size": "approximately 300, equal to the stock universe size at each time point",
+    "input_dimension": 125,
+    "output_dimension": 1,
+    "training_sets": 120
+  },
+  "required_start_date": "1990-12",
+  "required_end_date": "2016-11",
+  "schema_version": "method_card_v2"
+}

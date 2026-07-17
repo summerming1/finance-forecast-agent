@@ -252,5 +252,26 @@
     "one or more paper metrics fell outside the predeclared tolerance"
   ],
   "duration_seconds": 3164.281,
-  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2106_09305_exchange_native.json"
+  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2106_09305_exchange_native.json",
+  "tracker_refs": {
+    "tracking_mode": "historical_reconciliation",
+    "source_report_sha256_before_tracking": "c09ad9580b37d7e14e0e05492fac01b6a485aff235991d14e4ba144f322ac20a",
+    "mlflow": {
+      "backend": "mlflow",
+      "run_id": "1915785fd3744e839e774645a3a44486",
+      "tracking_uri": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db",
+      "experiment_name": "native-reconciliation"
+    },
+    "dvc": {
+      "backend": "dvc",
+      "tracked": true,
+      "pushed": true,
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+      "pointer_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv.dvc",
+      "remote": {
+        "name": "finance_agent_remote",
+        "url": "D:\\AI Agent\\finance_forecast_agent_dvc_remote"
+      }
+    }
+  }
 }

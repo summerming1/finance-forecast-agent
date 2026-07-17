@@ -1,0 +1,299 @@
+{
+  "prompt_hash": "4b0ee3bce048ab9a",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "knn_classification_case_iii_test_2014",
+    "paper_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+    "title": "A Time Series Analysis-Based Stock Price Prediction",
+    "venue_or_source": "unknown",
+    "paper_url": "unknown",
+    "task_type": "binary_classification",
+    "target_asset": "unknown",
+    "asset_universe": [
+      "unknown NSE-listed company"
+    ],
+    "frequency": "5-minute stock price data aggregated into three intraday slots",
+    "horizon": "unknown",
+    "label_definition": "Categorical class derived from open_perc; exact threshold/sign mapping is unknown.",
+    "data_requirements": [
+      "Daily stock price data collected at five-minute intervals for one NSE-listed company.",
+      "Aggregate the five-minute data into three slots per day before model building.",
+      "For the selected Case III experiment, use the 2014 test records corresponding to 396 actual class-0 cases and 329 actual class-1 cases.",
+      "Include a response variable named open_perc converted to a categorical classification target.",
+      "Normalize predictors using min-max normalization before applying KNN."
+    ],
+    "feature_groups": [
+      "Stock price percentage/change variables including open_perc as the response; exact predictor set for KNN is unknown.",
+      "Potential tabular time/market predictors are mentioned elsewhere in the paper, but the exact KNN predictor list is unknown."
+    ],
+    "model_families": [
+      "k_nearest_neighbors_classifier"
+    ],
+    "training_protocol": "Apply min-max normalization, try k values 1, 3, 5, 7, and 9, and select k=3 to avoid overfitting from k=1. Exact training-period construction for Case III, distance metric, tie handling, random seed, and fit scope of normalization are unknown.",
+    "evaluation_protocol": "Evaluate the KNN classifier on Case III, reported as Test Accuracy 2014. For k=3, the paper reports 202 actual class-0 cases misclassified as class 1 and 51 actual class-1 cases misclassified as class 0. Exact chronological boundaries and any overlap between train and test contexts are unknown.",
+    "metrics": [
+      "Sensitivity",
+      "Specificity",
+      "PPV",
+      "NPV",
+      "CA",
+      "F1 Score"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {
+      "Sensitivity": 84.5,
+      "Specificity": 48.99,
+      "PPV": 57.92,
+      "NPV": 79.18,
+      "CA": 65.1,
+      "F1 Score": 68.73
+    },
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "Convert open_perc into a categorical response for classification. Normalize the data using min-max normalization before applying the KNN function. Whether normalization parameters are fit on training data only is unknown.",
+    "hyperparameters": {
+      "k": 3,
+      "candidate_k_values": [
+        1,
+        3,
+        5,
+        7,
+        9
+      ],
+      "normalization": "min-max",
+      "distance_metric": "unknown",
+      "tie_handling": "unknown"
+    },
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "strict_requirements": [
+      "Use the KNN classification row for Case III only; do not merge results from Case I or Case II.",
+      "Use k=3 for the selected reported Case III result.",
+      "Use min-max normalization before KNN.",
+      "Evaluate using the Case III 2014 test setup.",
+      "Report the Case III KNN metrics exactly as shown in Table 2."
+    ],
+    "unknowns": [
+      "Exact target company name.",
+      "Exact train/test date boundaries for Case III.",
+      "Exact prediction horizon and label timing.",
+      "Exact definition of classes 0 and 1 for open_perc.",
+      "Exact KNN predictor columns.",
+      "KNN distance metric.",
+      "KNN tie-handling rule.",
+      "Whether min-max normalization parameters are fit on the training set only or on the full dataset.",
+      "Any random seed or software version beyond R library names."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "A Time Series Analysis-Based Stock Price Prediction Using Machine Learning and Deep Learning Models"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "KNN Classification: Table 2 presents the performance results of the KNN classification method."
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "We use daily stock price data, collected at five minutes intervals of time, of a very well-known company that is listed in the National Stock Exchange (NSE) of India."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "of a very well-known company that is listed in the National Stock Exchange (NSE) of India"
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "We use daily stock price data, collected at five minutes intervals of time"
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "The granular data is aggregated into three slots in a day, and the aggregated data is used for training and building the forecasting models."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "can be deployed for short -term forecasting of stock prices, and prediction of stock movement patterns."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "The response variable (i.e., open_perc) is converted into a categorical type by using the function as.factor before building the models."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "We use daily stock price data, collected at five minutes intervals of time, of a very well-known company that is listed in the National Stock Exchange (NSE) of India."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "The granular data is aggregated into three slots in a day, and the aggregated data is used for training and building the forecasting models."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "For Case III, the classification accuracy values are found to be 65.24, 65.10, 67.17, 68.69, and 67.44 for k = 1, 3, 5, 7, and 9 respectively. We choose k = 3, for which 202 cases which are 0s, are misclassified as 1s, while 51 cases of actual 1s were misclassified as 0s."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "The response variable (i.e., open_perc) is converted into a categorical type by using the function as.factor before building the models."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "KNN Classification: Table 2 presents the performance results of the KNN classification method."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "We use the function knn defined in the R library class to carryout KNN classification in the stock price data. The data is normalized using min-max normalization before applying the knn function so that all predictors are scaled down into the same range of values. Different values of k are tried out for building the models , and the value of k = 3 is finally chosen."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "This value of k is found to yield the best performance with the minimum possibility of model overfitting."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "Table 2: KNN classification results Metrics Case I Case II Case III Training Accuracy 2013 Training Accuracy 2014 Test Accuracy 2014"
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "We choose k = 3, for which 202 cases which are 0s, are misclassified as 1s, while 51 cases of actual 1s were misclassified as 0s."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "Table 2: KNN classification results Metrics Case I Case II Case III Training Accuracy 2013 Training Accuracy 2014 Test Accuracy 2014 Sensitivity 89.57 86.93 84.50 Specificity 96.42 92.93 48.99 PPV 95.11 91.08 57.92 NPV 92.24 89.54 79.18 CA 93.42 90.21 65.10 F1 Score 92.26 88.96 68.73"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "Table 2: KNN classification results Metrics Case I Case II Case III Training Accuracy 2013 Training Accuracy 2014 Test Accuracy 2014 Sensitivity 89.57 86.93 84.50 Specificity 96.42 92.93 48.99 PPV 95.11 91.08 57.92 NPV 92.24 89.54 79.18 CA 93.42 90.21 65.10 F1 Score 92.26 88.96 68.73"
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "The data is normalized using min-max normalization before applying the knn function so that all predictors are scaled down into the same range of values."
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "The response variable (i.e., open_perc) is converted into a categorical type by using the function as.factor before building the models."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "For Case III, the classification accuracy values are found to be 65.24, 65.10, 67.17, 68.69, and 67.44 for k = 1, 3, 5, 7, and 9 respectively. We choose k = 3"
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "For Case III, the classification accuracy values are found to be 65.24, 65.10, 67.17, 68.69, and 67.44 for k = 1, 3, 5, 7, and 9 respectively. We choose k = 3"
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "Table 2: KNN classification results Metrics Case I Case II Case III Training Accuracy 2013 Training Accuracy 2014 Test Accuracy 2014"
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "b23ac5428fe57b3e",
+        "quote": "of a very well-known company that is listed in the National Stock Exchange (NSE) of India"
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict",
+      "text_sha": "b23ac5428fe57b3e",
+      "selected_claim": "KNN classification, Case III Test Accuracy 2014"
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

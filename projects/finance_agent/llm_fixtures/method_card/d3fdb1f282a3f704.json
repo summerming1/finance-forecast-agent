@@ -1,0 +1,272 @@
+{
+  "prompt_hash": "d3fdb1f282a3f704",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "rf_local_fundamental_quarterly_top20_buy",
+    "paper_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+    "title": "Machine Learning for Stock Prediction Based on Fundamental Analysis",
+    "venue_or_source": "IEEE Symposium Series on Computational Intelligence, 2021",
+    "paper_url": "unknown",
+    "task_type": "cross-sectional stock return/price regression and portfolio ranking",
+    "target_asset": "individual stocks",
+    "asset_universe": [
+      "unknown stock universe"
+    ],
+    "frequency": "quarterly",
+    "horizon": "one quarter",
+    "label_definition": "Build regression models to predict the price for each stock, then rank stocks by predicted relative returns; evaluate portfolios using real relative return of selected equal-weight stocks for each quarter.",
+    "data_requirements": [
+      "Quarterly stock financial data from Q1 1996 to Q4 2017 with 88 observations per stock.",
+      "21 fundamental financial-ratio features per stock observation.",
+      "Stock price or return data sufficient to compute predicted and real relative returns by quarter.",
+      "Chronological training, validation, and testing splits without test-data snooping."
+    ],
+    "feature_groups": [
+      "fundamental financial ratios"
+    ],
+    "model_families": [
+      "Random Forest regression"
+    ],
+    "training_protocol": {
+      "learning_scope": "local learning; one model built for each stock",
+      "model_task": "regression",
+      "loss_function": "not_applicable_for_random_forest",
+      "split_protocol": "chronological training, validation, and testing sets; exact dates unknown",
+      "optimizer": "not_applicable_for_random_forest",
+      "epochs": "not_applicable_for_random_forest",
+      "batch_size": "unknown",
+      "random_seed": "unknown"
+    },
+    "evaluation_protocol": {
+      "portfolio_construction": "For each quarter, rank stocks by predicted relative return and select the Top20 highest-ranked stocks as the Buy portfolio.",
+      "portfolio_weighting": "equal weight",
+      "test_period_length": "18 quarters",
+      "comparison_context": "Top20 and Bottom20 portfolios are used for cross-model comparison; compounded relative return over the 18-quarter test period is calculated.",
+      "split_type": "fixed chronological holdout with training, validation, and test sets; exact split dates unknown"
+    },
+    "metrics": [
+      "mean quarterly relative return",
+      "compound relative return over test period",
+      "Portfolio Score",
+      "standard deviation of quarterly relative returns"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {
+      "selected_model": "Random Forest",
+      "selected_portfolio": "Buy Top20",
+      "test_period_length_quarters": 18,
+      "mean_quarterly_relative_return_percent": 1.63,
+      "universe_mean_quarterly_relative_return_percent": -0.0164,
+      "compound_relative_return_outperformance_vs_universe_percent": 33.5
+    },
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": {
+      "feature_selection": "unknown for the selected RF Top20 Buy result",
+      "scaling_or_normalization": "unknown",
+      "missing_data_handling": "unknown",
+      "fit_scope": "unknown"
+    },
+    "hyperparameters": {},
+    "required_start_date": "1996-Q1",
+    "required_end_date": "2017-Q4",
+    "strict_requirements": [
+      "Use quarterly observations.",
+      "Use the 21 fundamental financial-ratio features.",
+      "Use local learning: build one model for each stock.",
+      "Use Random Forest regression for the selected claim.",
+      "Rank stocks by predicted relative returns for each quarter.",
+      "Construct the Buy Top20 equal-weight portfolio from the highest-ranked stocks.",
+      "Evaluate on an 18-quarter test period using mean quarterly relative return and compound relative return."
+    ],
+    "unknowns": [
+      "Exact stock universe composition and number of stocks are not provided in the supplied context.",
+      "Exact train/validation/test date boundaries are not provided in the supplied context.",
+      "Random Forest hyperparameters are not provided in the supplied context.",
+      "Random seed is not provided in the supplied context.",
+      "Batch protocol is not applicable to Random Forest, but any implementation-specific sampling settings are unknown.",
+      "Preprocessing details such as scaling, missing-value handling, and fit scope are not provided in the supplied context.",
+      "Exact prediction target formula for price-to-relative-return conversion is not fully specified in the supplied context.",
+      "Whether RF-based feature selection was applied to this specific Random Forest Top20 Buy result row is not resolved from the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "Machine Learning for Stock Prediction Based on Fundamental Analysis"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "We decided to build regression models to predict the price for each stock, and then induce a ranking of the stocks by sorting their predicted relative returns."
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "predict the price for each stock"
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "The “ Top20” and the “Bottom20” portfolios are used for cross -model comparison, because they represent roughly the top one third and the bottom one third of the universe."
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "stock has 88 observations, ranging from Q1 1996 to Q4 2017, with an interval of one quarter between two consecutive observations."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "R𝑅𝑝𝑝(𝑞𝑞) is the real relative return of the selected equal weight portfolio for quarter"
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "We decided to build regression models to predict the price for each stock, and then induce a ranking of the stocks by sorting their predicted relative returns."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "stock has 88 observations, ranging from Q1 1996 to Q4 2017, with an interval of one quarter between two consecutive observations. The 21 features are illustrated in Table 8."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "we carefully split our data into training, validation and testing sets and made sure that we did not accidentally snoop the test data or overfit the models."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "the near -term winners and losers from a universe of stocks based on the stocks’ most recent fundamental financial ratios."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "The RF outperforms other models in constructing both “Buy” and “Sell” portfolios in terms of all evaluation metrics by a significant margin"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "Local learning approach was proven to have better performance in our early experiment, and thus we built one model for each stock for all three algorithms."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "The RF algorithm, unlike FNN and ANFIS, does not involve training cycles and loss function."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "After fitting a model with the training data, it is then evaluated on the validation data. The stocks are ranked by their predicted relative returns for each of the quarters. The top one third stocks with the highest ranking are selected into a portfolio. The real relative return of the selected portfolio for each quarter is then calculated, assuming the portfolio is equal weight."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "The “ Top20” and the “Bottom20” portfolios are used for cross -model comparison, because they represent roughly the top one third and the bottom one third of the universe. Moreover, the compounded relative return over t he test period of 18 quarters are calculated for each method as an additional metric."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "All “Buy” portfolios outperform the universe in terms of average quarterly relative return, Portfolio Score and compound relative return by a significant margin."
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "The “Buy” portfolio constructed by RF achieved a mean quarterly relative return of 1.63%, compared with the mea n quarterly relative return of the universe at - 0.0164%. The compound relative return outperforms the universe by 33.5% over the test period of 18 quarters or four and half years."
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "Finally, we also employed the featu re selection technique in order to remove unreliable features and reduce model complicity."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "Many hyperparameters can be tuned to increase the performance of RF, including number of estimators, minimum sample split, maximum features, etc."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "The “Buy” portfolio constructed by RF achieved a mean quarterly relative return of 1.63%, compared with the mea n quarterly relative return of the universe at - 0.0164%."
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "aeb915975c43f24e",
+        "quote": "Many hyperparameters can be tuned to increase the performance of RF, including number of estimators, minimum sample split, maximum features, etc."
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f",
+      "text_sha": "aeb915975c43f24e",
+      "selected_claim": "Random Forest Buy Top20 portfolio performance over the 18-quarter test period"
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

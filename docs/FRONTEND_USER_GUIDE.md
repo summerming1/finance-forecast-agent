@@ -30,13 +30,15 @@ python -m streamlit run apps/streamlit_app.py
 - 全部重新调用 LLM：重新付费提取并保存 fixture。
 - 规则兜底：只验证流程，不可当严格方法卡。
 
-“规模化语料”展示 86 条论文记录、50 份本地开放 PDF、来源层级和任务统计。复现覆盖账本中的状态含义：
+“规模化语料”展示 86 条论文记录、56 份本地开放 PDF、来源层级和任务统计。复现覆盖账本中的状态含义：
 
 - `strict_verified`：论文数据、协议、代码、指标、证据和结果容差均通过。
-- `exploratory_candidate`：旧覆盖账本中的预筛标签，不等于已经执行。
+- `exploratory_executed`：已绑定论文方法卡并在兼容冻结基准上真实运行；不是原生复现，也不是 strict。
 - `blocked`：全文、数据、任务 adapter 或模型 adapter 缺失。
 
-“逐篇探索与阻断聚类”是当前正式账本：所有旧 candidate 必须变成 `exploratory_executed` 或六类结构化 blocker；“P2 进入门禁”同时显示 strict 论文数、实验类型、数据域和 false-strict。
+“逐篇探索与阻断聚类”是当前正式账本：原 28 个 candidate 已全部变成 `exploratory_executed`，另有 58 个结构化 blocker。“全文根因 36→30”不等于总 blocker 减少；六篇仍等待方法、协议或数据闭环。“P2 进入门禁”同时显示 strict 论文数、实验类型、数据域和 false-strict。
+
+展开“受限范围科学验收”可查看三类纵向范围、held-out 规则、十一项通用 strict 门禁、逐篇失败门禁和 blocker。这里最适合回答“为什么仓库能跑却不算严格复现”。“实验追踪与数据版本”显示当前 MLflow database URI 和 DVC remote 状态。
 
 SourceBundle 表只代表仓库候选、commit 和许可审计。未经人工确认论文-仓库身份及数据来源，不会进入 strict。
 
@@ -75,6 +77,8 @@ ReproductionPlan 对每个条件字段记录值、来源和证据：
 
 Catalog 原生训练默认提交后台任务。页面关闭后 worker、日志、断点和任务状态继续保留；重新打开可查看 `queued/running/resumable/completed/blocked/cancelled`，也可以取消。Native 与 benchmark 报告都会生成统一 run lineage，记录 Git SHA、环境和输入/输出 hash。
 
+同批多个研究任务会先读取 ExperimentMemory，再按任务/协议相似度、历史成功、失败和 blocker 计算优先级。后台任务表中的“优先级”和“调度理由”说明为什么某篇先运行；默认单 worker 会在前一项结束后自动启动下一项。
+
 长任务会在最终报告旁保存 `.partial`。页面出现“继续所选官方协议”时，说明已有可恢复运行目录；FiLM/FEDformer 还会在每个论文内部重复结束后保存 RNG 边界。已有 strict 报告无需重复运行。
 
 ### 6 多方法基准
@@ -96,6 +100,7 @@ Catalog 原生训练默认提交后台任务。页面关闭后 worker、日志�
 - 单一基准：排行榜、方向区间、朴素基线、统计结论。
 - 多基准：任务级最佳方法、假设迁移结论和八维 Delta。
 - Memory prior：同任务成功次数、历史指标、失败率、blocker 和推荐理由。
+- Candidate ledger：28 篇逐篇探索的 benchmark、模型、指标、适配任务结论、原论文可迁移性、MLflow run ID 和 Delta。
 
 论文假设只能是 `supported`、`not_supported`、`insufficient_evidence` 或 `not_transferable`。共享任务和原论文不一致时必须使用 `not_transferable`。
 
@@ -118,6 +123,8 @@ Catalog 原生训练默认提交后台任务。页面关闭后 worker、日志�
 
 ```powershell
 $env:PYTHONPATH="src"
+python scripts/configure_tracking.py --project-dir projects/finance_agent --dvc-remote-url "D:\your\dvc_remote"
+python scripts/reconcile_tracking.py --project-dir projects/finance_agent
 python scripts/fetch_native_sources.py --verify-only
 python scripts/build_native_exchange_catalog.py
 python scripts/run_native_claim.py --all --audit-only
@@ -133,7 +140,15 @@ python scripts/run_native_claim.py arxiv_2310_06625_exchange_native
 
 当前覆盖账本为 10 篇/10 claims strict。它们是 DLinear、LSTNet、FEDformer、ETSformer、FiLM、Non-stationary Transformer、TimesNet、Koopa、iTransformer 和 SAMformer；均为 Exchange-Rate 原生预测，不能代替信号回测、截面资产定价和组合强化学习的类型验收。只有 DLinear 方法卡同时经过 live LLM 严格抽取，其余九张为主资料人工策展卡。
 
-## 路径 C：验证四类统一基准
+## 路径 C：查看 28 篇逐篇探索执行
+
+1. 进入“1 文献语料”，查看“逐篇探索与阻断聚类”，确认探索性已执行为 `28/28`。
+2. 进入“7 结果审计”，选择 `candidate_execution_ledger.json`。
+3. 先按 benchmark、模型和适配任务结论筛查，再选择单篇展开 Paper-vs-Run Delta。
+4. `adapted task supported` 只说明该方法在替代冻结任务上通过当前统计证据；`original paper not transferable` 说明不能据此验证原论文假设。
+5. 展开追踪信息，用 MLflow run ID、DVC pointer 和 lineage run ID 定位完整运行。
+
+## 路径 D：验证四类统一基准
 
 1. 进入“6 多方法基准”。
 2. 选择“四类冻结基准”。
@@ -142,7 +157,7 @@ python scripts/run_native_claim.py arxiv_2310_06625_exchange_native
 
 当前真实结果：SPY 方向未显示能力；SPY 波动率误差优于训练折均值基线；BTC-LSTM 在该冻结任务显示方向能力；EURUSD 未显示方向能力。四类任务均不直接证明原论文假设。
 
-## 路径 D：验证数据获取
+## 路径 E：验证数据获取
 
 1. 进入“2 数据准备”并选择 Yahoo。
 2. Dataset ID 输入 `manual_aapl_test`，代码输入 `AAPL`，日期填写一个较短历史区间。
@@ -151,7 +166,7 @@ python scripts/run_native_claim.py arxiv_2310_06625_exchange_native
 
 FRED 或其他来源超时时，失败记录也是正确审计结果；不要把网络失败改成下载成功。
 
-## 路径 E：导入一篇当前 Catalog 外的新论文
+## 路径 F：导入一篇当前 Catalog 外的新论文
 
 1. 在“文献语料”选择 PDF，使用 live LLM、Replay 或已有方法卡完成抽取。
 2. 在“方法卡审核”核对证据，在“复现配置”解决字段和来源。
@@ -177,6 +192,8 @@ projects/finance_agent/benchmark_registry/           可比任务注册表
 projects/finance_agent/tasks/                        后台任务和日志
 projects/finance_agent/run_lineage/                  统一运行谱系
 projects/finance_agent/research_journal/             逐篇探索与能力验证
+projects/finance_agent/scientific_acceptance/         受限范围与逐篇 strict 门禁输入
+projects/finance_agent/candidate_executions/           28 篇探索执行、数据绑定和 Delta
 projects/finance_agent/reports/                    运行与覆盖报告
 projects/finance_agent/experiment_memory/          实验记忆
 projects/finance_agent/review_state/               人工审核状态
@@ -188,6 +205,7 @@ projects/finance_agent/llm_fixtures/               Replay 响应
 - 运行按钮不可用：MethodCard 未批准或 ReproductionPlan 未执行就绪。
 - Strict 不通过：检查证据、数据 hash、模型/预处理/切分、论文结果和人工假设。
 - 401：key、base URL 和 provider 不匹配；修改 `.env` 后重启 Streamlit。
+- 503：provider 暂时没有可用通道。保留本地 PDF 和 extraction progress，稍后续跑；不要改成规则卡并声称 live LLM 成功。
 - 503 `No available channel for model`：key 已到达服务端，但该代理组不提供 `.env` 中的模型。先查 `/models`，再把 `OPENAI_MODEL` 改成实际可用模型；本次环境实测 `gpt-5.5` 可用而 `gpt-5.4` 不可用。
 - 结果页显示 `not_transferable`：运行任务与论文原始任务不同，不是程序错误。
 - “探索候选”很多但“探索完成”为零：说明只有适配路径，尚未逐篇抽取、审核和执行。

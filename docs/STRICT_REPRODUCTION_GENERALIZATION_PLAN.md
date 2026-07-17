@@ -89,13 +89,13 @@ PDF/TXT/MD
 
 | 能力 | 当前成熟度 | 已有证据 | 主要缺口 |
 |---|---|---|---|
-| 论文语料发现 | L2 | 86 条记录、50 份合法开放 PDF | 高影响力正式期刊全文占比很低；来源质量目标未完成 |
+| 论文语料发现 | L2 | 86 条记录、56 份合法开放 PDF；OA 根因 36→30 | 高影响力正式期刊全文占比仍低；总 blocker 未净减少 |
 | MethodCard 控制层 | L3 | v2、质量门禁、语义冲突、人工审批、Replay | 仅 1 篇 live LLM strict；跨表格/附录/源码证据融合不足 |
 | ReproductionPlan | L3 | 五类实验条件字段、证据来源和 strict/execution 分离 | 非预测实验字段只完成 schema，尚无真实 strict 验收 |
 | 原生执行内核 | L4（预测仓库内） | 15 个 claim 共用 adapter；10 个 strict | Catalog、命令、补丁和环境仍靠人工策展；任务类型单一 |
 | 数据获取 | L2 | Yahoo、FRED、Kenneth French、HTTPS、本地快照与 SHA256 | 自动请求主要靠关键词；字段映射、许可判定和 point-in-time 数据不足 |
 | SourceBundle | L2 | 10 个候选 API 审计、commit/license 记录 | 候选仓库人工提供；0 个候选自动达到 strict-source-ready |
-| 探索性复现 | L1 | Delta schema 和 candidate/blocker 账本 | 28 个 candidate 尚未逐篇执行；没有批量任务编排 |
+| 探索性复现 | L2 | 28/28 逐篇执行、Delta、MLflow/DVC/lineage | 均为 benchmark adaptation，不能代替 native strict |
 | 多方法统一基准 | L3 | 4 任务 × 5 方法，目标行/fold 完整性通过 | 方法/任务固定；缺配对检验、多 seed、市场状态和成本统一 |
 | ExperimentMemory | L2 | 同任务 prior、失败降权、运行模式隔离 | 未接入旧 harness Scheduler 和新论文候选生成 |
 | 前端工作台 | L3 | 七阶段、结构化摘要、门禁、报告和断点状态 | 当前论文与 Catalog claim 未绑定；长任务同步；新论文无法从页面创建 claim |
@@ -114,7 +114,7 @@ PDF/TXT/MD
 | P1.6.3 | 数量完成、质量未完成 | 86 条/50 PDF 达标，但原需求中的高影响力正式期刊全文构成未达标 |
 | P1.6.4 | 首批实现 | 连接器和审计可用，尚不是论文数据需求的通用自动解析器 |
 | P1.6.5 | 数量门禁完成、类型门禁未完成 | 10/10 strict；全部为 Exchange-Rate forecast_only |
-| P1.6.6 | 框架完成、执行未完成 | 28 candidate 未逐篇运行，58 blocker 未聚类消减 |
+| P1.6.6 | 逐篇执行完成、消减未完成 | 28 candidate 已运行；58 blocker 完成聚类但净消减为 0 |
 | P1.6.7 | 首批实现 | 四个冻结任务和 20 组比较完成，尚未形成 Benchmark Registry |
 | P1.6.8 | 首批实现 | 七阶段可用，但论文到原生 claim 的页面闭环断开 |
 | P1.7 | 首批实现 | prior 已改变多基准顺序，未进入全局 Scheduler/Advisor |

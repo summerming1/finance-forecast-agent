@@ -1,0 +1,327 @@
+{
+  "prompt_hash": "d6add3bd195c935f",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "arxiv_2407_01572v1_auto_sector_lstm_1day",
+    "paper_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+    "title": "Exploring Sectoral Profitability in the Indian Stock Market Using Deep Learning",
+    "venue_or_source": "unknown",
+    "paper_url": "unknown",
+    "task_type": "next-day stock close-price forecasting with mandatory daily buy/sell trading simulation",
+    "target_asset": "NSE Auto sector top-ten stocks, with sector-level averages reported",
+    "asset_universe": [
+      "M&M",
+      "TATAMOTORS",
+      "MARUTI",
+      "BAJAJ-AUTO",
+      "HEROMOTOCO",
+      "EICHERMOT",
+      "TVSMOTOR",
+      "TATAMTRDVR",
+      "BHARATFORG",
+      "MOTHERSON"
+    ],
+    "frequency": "daily",
+    "horizon": "1 trading day",
+    "label_definition": "Predict the next day's close price. A buy signal is generated when the model predicts a higher next-day price than today's price; otherwise a sell signal is generated.",
+    "data_requirements": [
+      "Daily stock price records for each selected NSE Auto sector stock from 2005-01-01 through 2024-04-23.",
+      "Input features reported as open, high, low, close, and volume for the model-design phase.",
+      "Use past 50 days of historical stock price records as the input window for each prediction.",
+      "Use the Auto sector top-ten NSE stocks and weights reported from the NSE report dated March 24, 2024."
+    ],
+    "feature_groups": [
+      "OHLCV daily market data: open, high, low, close, volume",
+      "Target variable: close price"
+    ],
+    "model_families": [
+      "LSTM"
+    ],
+    "training_protocol": "Train an LSTM model using a 50-day historical input window, default 256 LSTM nodes, default two LSTM layers, 30% dropout, Huber loss, Adam optimizer, batch size 64, and 100 epochs. The paper reports training and validation loss plots, but the exact chronological train/validation/test split is unknown.",
+    "evaluation_protocol": "Evaluate on out-of-sample test data using Huber Loss, MAE, and Accuracy Score for next-day price-direction prediction. For profitability, simulate mandatory daily trading of a single equity share: buy if predicted next-day price is higher than current-day price, sell if predicted next-day price is lower than or equal to current-day price; profits are calculated using actual next-day prices. Exact chronological split and test-period boundaries for Table 20 are unknown.",
+    "metrics": [
+      "Huber Loss",
+      "MAE",
+      "Accuracy Score",
+      "Buy Profit",
+      "Sell Profit",
+      "Gross Profit",
+      "Mean Price",
+      "Gross Profit / Mean Price",
+      "Sectoral average of gross profit/mean price"
+    ],
+    "cost_assumptions": "Mandatory trading every day of a single equity share is assumed. Transaction costs, slippage, taxes, bid-ask spread, and financing costs are unknown.",
+    "reported_results": {
+      "Auto sector Huber Loss": 4.9e-05,
+      "Auto sector MAE": 54.81793,
+      "Auto sector Accuracy Score": 0.978721,
+      "Auto sectoral average gross profit/mean price": 1189.24,
+      "M&M Gross Profit / Mean Price": 1530.95,
+      "TATAMOTORS Gross Profit / Mean Price": 1814.98,
+      "MARUTI Gross Profit / Mean Price": 990.73,
+      "BAJAJ-AUTO Gross Profit / Mean Price": 1003.35,
+      "HEROMOTOCO Gross Profit / Mean Price": 793.12,
+      "EICHERMOT Gross Profit / Mean Price": 907.49,
+      "TVSMOTOR Gross Profit / Mean Price": 1543.31,
+      "TATAMTRDVR Gross Profit / Mean Price": 479.24,
+      "BHARATFORG Gross Profit / Mean Price": 1597.72,
+      "MOTHERSON Gross Profit / Mean Price": 1231.47
+    },
+    "experiment_type": "trading_simulation_from_forecasts",
+    "preprocessing_protocol": "The paper states that transformed and pre-processed data are provided to the model-processing function, but the exact transformations, scaler type, fit scope, missing-value handling, corporate-action adjustment, and train-only versus full-sample statistics are unknown.",
+    "hyperparameters": {
+      "input_window_days": 50,
+      "input_features_reported_in_model_design": [
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "prediction_target": "close",
+      "lstm_nodes": 256,
+      "lstm_layers": 2,
+      "dropout": 0.3,
+      "loss": "Huber",
+      "optimizer": "Adam",
+      "batch_size": 64,
+      "epochs": 100,
+      "forecast_horizon_days": 1
+    },
+    "required_start_date": "2005-01-01",
+    "required_end_date": "2024-04-23",
+    "strict_requirements": [
+      "Use only the selected Auto sector stock universe listed in Table 1.",
+      "Use the reported daily period January 1, 2005 through April 23, 2024 for the Auto sector experiment.",
+      "Use a one-day forecast horizon.",
+      "Use a 50-day historical input window.",
+      "Train the LSTM for 100 epochs with Huber loss, Adam optimizer, batch size 64, 256 LSTM nodes, two LSTM layers, and 30% dropout unless reproducing unknown implementation details requires author clarification.",
+      "For profitability results, apply the paper's mandatory daily single-share trading rule and compute buy/sell profits from actual next-day prices."
+    ],
+    "unknowns": [
+      "Exact data vendor or API endpoint is not provided in the supplied context.",
+      "Exact chronological train/validation/test split is not provided.",
+      "Whether validation/test windows overlap with the 50-day context window is not provided.",
+      "Random seed and deterministic training settings are not provided.",
+      "Exact preprocessing transformations are not provided.",
+      "Scaler type and whether scaling statistics are fit on train-only data or full data are not provided.",
+      "Handling of missing trading days, delisted stocks, dividends, splits, and corporate actions is not provided.",
+      "Exact LSTM layer implementation details beyond default layer count, nodes, and dropout are not fully specified.",
+      "A conflict exists in the supplied text: one section reports five input features open/high/low/close/volume, while a later architecture section states the input consists of daily close prices only with shape (50, 1).",
+      "Transaction costs, slippage, bid-ask spread, taxes, and financing costs are not reported.",
+      "Whether Table 20 metrics are averaged across all ten Auto stocks with equal weights or another aggregation method is not explicitly stated in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Exploring Sectoral Profitability in the Indian Stock Market Using Deep Learning"
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Table 1 displays the outcomes for auto sector stocks, detailing the total profits from buying and selling each stock between January 1, 2005, and April 23, 2024."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Mahindra & Mahindra (M&M): 18.26, Tata Motors (TATAMOTORS): 1 7.35, Maruti Suzuki India (MARUTI) : 1 6.51, Bajaj Auto (BAJ AJ- AUTO): 10.28, Hero MotoCorp (HEROMOTOCO): 6.09, Eicher Motors (E ICHERMOT): 5.46, TVS Motor Company (TVSMOTOR): 4.97, Tata Motors DVR (TATAMTRDVR): 3.05, Bharat Forge (BHARATFORG): 2.87, and Samvardhana Motherson International (MOTHERSON): 2.76"
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "The input data’s historical length is set to 50, indicating the utilization of the past 50 days’ stock price records for making predictions."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "However, in this study , a forecast horizon of one day is employed, predicting the stock price for the following day."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "The “close” variable is the prediction target, while the others are explanatory variables, also known as predictor variables."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "If the forecasted price for the next day is higher than the current day’s price, the investor must buy the stock. Conversely, if the forecasted price is lower or equal to the current day’s price, the investor must sell the stock."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "The start date for all stocks is set as January 1, 2005, and the end date as April 23, 2024."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Five input features are utilized: open, high, low, close, and volume."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "In this phase, the LSTM -based predictive model is formulated."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "The default number of LSTM nodes in the model is 256, and the default number of LSTM layers is two. To ensure proper regularization of the model, the dropout percentage is set to 30% by default. The Huber loss function is chosen due to its adaptiveness in handling complex data. The Adam optimizer is employed as the default optimizer for optimizing the gradient descent algorithm during learning. A batch size of 64 and 100 epochs are used as defaults for training the LSTM model."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Firstly, the Huber Loss (HL) is employed to measure the loss exhibited by the model when tested with out -of-sample data, essentially the test data."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Buy/sell profits are computed assuming the trading of a single equity share."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "In the final analysis, the LSTM model ’s performance is thoroughly assessed using three key metrics. Firstly, the Huber Loss (HL) is employed"
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Secondly, the Mean Absolute Error (MAE) is calculated, which represents the average of the absolute differences between the actual stock prices and the prices predicted by the LSTM model on the test data."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Lastly, the Accuracy Score (AS) is determined, indicating the percentage of correct predictions made by the LSTM model regarding the direction of movement"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Auto 0.000049 54.817930 0.978721"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Sectoral average of gross profit/mean price 1189.24"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "M&M 288537 276382 564919 369 1530.95 TATAMOTORS 163784 162912 326696 180 1814.98 MARUTI 1768834 1775983 3544817 3578 990.73 BAJAJ-AUTO 819358 833160 1652518 1647 1003.35 HEROMOTOCO 628732 628360 1257092 1585 793.12 EICHERMOT 877605 860291 1737896 1410 907.49 TVSMOTOR 201876 202474 404349 262 1543.31 TATAMTRDVR 45980 45555 91535 191 479.24 BHARATFORG 210759 209443 320202 263 1597.72 MOTHERSON 19950 19457 39407 32 1231.47"
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "a Python function is executed with two arguments: (i) the model designed in the previous step, and (ii) the transformed and pre - processed data."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "The input data’s historical length is set to 50"
+      },
+      {
+        "section": "required_start_date",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "The start date for all stocks is set as January 1, 2005"
+      },
+      {
+        "section": "required_end_date",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "the end date as April 23, 2024."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "All these parameters are adjustable. However, the following values have been applied during the training and validation phases:"
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:bbc7e68c5f8fce77",
+        "quote": "Input Data: We use the daily close prices of the stock for the past 50 days as our input. This input data, consisting of a single feature (close values), is shaped as (50, 1)."
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s",
+      "text_sha": "bbc7e68c5f8fce77",
+      "claim_selected": "Auto sector LSTM one-day forecasting and trading-simulation results for the period January 1, 2005 to April 23, 2024"
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

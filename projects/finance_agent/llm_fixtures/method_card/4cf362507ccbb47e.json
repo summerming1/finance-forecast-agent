@@ -1,0 +1,350 @@
+{
+  "prompt_hash": "4cf362507ccbb47e",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "xgboost_cost_aware_long_only_btcusdt_hourly_2018_2026",
+    "paper_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+    "title": "Machine Learning-Based Bitcoin Trading Under Transaction Costs: Evidence",
+    "venue_or_source": "unknown",
+    "paper_url": "unknown",
+    "task_type": "next-hour return forecasting converted to cost-aware trading strategy",
+    "target_asset": "BTC/USDT",
+    "asset_universe": [
+      "BTC/USDT"
+    ],
+    "frequency": "1 hour",
+    "horizon": "1 hour ahead",
+    "label_definition": "one-step-ahead BTC/USDT log return, r_{t+1} = ln(P_{t+1}/P_t), using information available up to and including time t",
+    "data_requirements": [
+      "Hourly BTC/USDT closing prices and OHLCV data covering 1 December 2017 to 1 January 2026",
+      "Cleaned sample must contain 70,872 hourly observations",
+      "December 2017 is used as burn-in for rolling feature construction",
+      "Effective walk-forward modelling window begins on 1 January 2018 and contains 70,128 observations after burn-in"
+    ],
+    "feature_groups": [
+      "OHLCV",
+      "technical indicators",
+      "EGARCH-derived volatility features"
+    ],
+    "model_families": [
+      "XGBoost"
+    ],
+    "training_protocol": {
+      "walk_forward_design": "non-anchored rolling walk-forward",
+      "folds": 27,
+      "train_window": "12 months",
+      "validation_window": "3 months",
+      "test_window": "3 months",
+      "step_size": "3 months",
+      "model_selection": "loss-best selection on validation segment",
+      "loss_function": "MSE",
+      "early_stopping": "validation segment used for early stopping",
+      "hyperparameter_tuning": "validation segment used for hyperparameter tuning",
+      "seed_protocol": "unknown",
+      "batch_protocol": "not_applicable_for_xgboost_or_unknown"
+    },
+    "evaluation_protocol": {
+      "protocol": "rolling walk-forward out-of-sample evaluation with 27 sequential 3-month test folds",
+      "execution_mode": "long-only",
+      "execution_type": "cost-aware execution",
+      "position_rule": "hold Bitcoin when forecast is positive and remain in cash otherwise, with cost-aware filter suppressing trades unless forecast magnitude exceeds the transaction-cost threshold",
+      "transaction_cost": "c = 0.001 proportional transaction cost per unit of turnover",
+      "cost_filter_lambda": 2.0,
+      "main_threshold_interpretation": "long-only entry or exit requires forecast magnitude above 0.20%",
+      "test_usage": "test segment reserved exclusively for final out-of-sample evaluation"
+    },
+    "metrics": [
+      "ARC",
+      "ASD",
+      "MD",
+      "MLD",
+      "SR",
+      "IR*",
+      "IR**",
+      "Trades"
+    ],
+    "cost_assumptions": {
+      "proportional_transaction_cost_per_unit_turnover": 0.001,
+      "basis_points_per_position_change": 10,
+      "lambda": 2.0,
+      "long_only_entry_exit_threshold": "0.20%"
+    },
+    "reported_results": {
+      "architecture": "XGBoost",
+      "mode": "LO",
+      "type": "CA",
+      "ARC_percent": 65.4,
+      "ASD_percent": 56.22,
+      "MD_percent": -67.42,
+      "MLD": 2.31,
+      "SR": 1.09,
+      "IR_star": 1.16,
+      "IR_star_star": 1.13,
+      "Trades": 251
+    },
+    "experiment_type": "trading_strategy_backtest",
+    "preprocessing_protocol": {
+      "target_construction": "forecasting target is one-step-ahead log return from BTC/USDT closing prices",
+      "temporal_causality": "features use information available up to and including time t only",
+      "burn_in": "December 2017 used as burn-in period for rolling feature construction",
+      "gap_handling": "observations near gap timestamps may contain mechanically smoothed returns",
+      "scaling_or_normalization": "unknown",
+      "feature_fit_scope": "unknown"
+    },
+    "hyperparameters": {
+      "selected_model": "XGBoost",
+      "loss_function": "MSE",
+      "feature_set": "OHLCV+TA+EGARCH",
+      "selection_criterion": "loss-best",
+      "execution_lambda": 2.0,
+      "transaction_cost_c": 0.001,
+      "search_space": {
+        "loss_function": [
+          "MSE",
+          "MAE"
+        ],
+        "maximum_tree_depth": "integer[2,4]",
+        "learning_rate": "[0.005,0.03] log-uniform",
+        "number_of_estimators": "integer[1000,2500]",
+        "minimum_child_weight": "[10.0,40.0]",
+        "subsample": "[0.60,0.90]",
+        "column_sample_by_tree": "[0.60,0.90]",
+        "l1_regularisation": "[10^-4,0.05] log-uniform",
+        "l2_regularisation": "[1.0,40.0] log-uniform"
+      },
+      "selected_tree_depth": "unknown",
+      "selected_learning_rate": "unknown",
+      "selected_number_of_estimators": "unknown",
+      "selected_minimum_child_weight": "unknown",
+      "selected_subsample": "unknown",
+      "selected_column_sample_by_tree": "unknown",
+      "selected_l1_regularisation": "unknown",
+      "selected_l2_regularisation": "unknown"
+    },
+    "required_start_date": "2017-12-01",
+    "required_end_date": "2026-01-01",
+    "strict_requirements": [
+      "Use hourly BTC/USDT data.",
+      "Use the one-step-ahead log return as the prediction target.",
+      "Preserve temporal causality: no feature used to predict the next-hour return may depend on information after forecast time t.",
+      "Use a rolling walk-forward design with 12-month training, 3-month validation, and 3-month test windows advanced by 3 months.",
+      "Use 27 sequential out-of-sample test folds.",
+      "Use XGBoost with the OHLCV+TA+EGARCH feature set, MSE loss, and loss-best selection for the selected Table 11 row.",
+      "Use long-only cost-aware execution with c = 0.001 and lambda = 2.0.",
+      "Compute net strategy returns after proportional transaction costs."
+    ],
+    "unknowns": [
+      "Exact selected XGBoost hyperparameter values for the reported Table 11 row are not provided in the supplied context.",
+      "Exact technical indicator definitions are not provided in the supplied context.",
+      "Exact EGARCH feature definitions and estimation details are not provided in the supplied context.",
+      "Scaling, normalization, missing-value handling, and train-only fit scope for preprocessing are not fully specified in the supplied context.",
+      "Random seeds and implementation library versions are not provided in the supplied context.",
+      "Exact early-stopping criterion and number of boosting rounds actually used for the selected row are not provided in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "method_id",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "After cost-aware filtering, the long-only XGBoost strategy achieves the strongest result, with ARC of 65.40%, Sharpe ratio of 1.09, and IR∗∗ of 1.13."
+      },
+      {
+        "section": "paper_id",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "Machine Learning-Based Bitcoin Trading Under Transaction Costs: Evidence From Walk-Forward Forecasting"
+      },
+      {
+        "section": "title",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "Machine Learning-Based Bitcoin Trading Under Transaction Costs: Evidence From Walk-Forward Forecasting"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "This paper investigates whether machine-learning forecasts of hourly BTC/USDT returns can be converted into economically meaningful trading performance after transaction costs."
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "This paper investigates whether machine-learning forecasts of hourly BTC/USDT returns can be converted into economically meaningful trading performance after transaction costs."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "This paper investigates whether machine-learning forecasts of hourly BTC/USDT returns can be converted into economically meaningful trading performance after transaction costs."
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "Using approximately 70,000 hourly observations from 2018–2026, XGBoost, LSTM, and iTransformer are evaluated in a 27-fold walk-forward protocol."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "The forecasting target is the one-step-ahead log return, rt+1 = ln \u0012 Pt+1 Pt \u0013 ,(1) where Pt denotes the BTC/USDT closing price at hourt."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "The forecasting target is the one-step-ahead log return, rt+1 = ln \u0012 Pt+1 Pt \u0013 ,(1) where Pt denotes the BTC/USDT closing price at hourt."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "After preprocessing, the dataset contains 70,872 hourly observations. The effective walk-forward evaluation sample, net of the December 2017 burn-in period, contains 70,128 observations."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "The comparison uses the OHLCV+TA+EGARCH feature set, MSE loss, and loss-best selection."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "After cost-aware filtering, the long-only XGBoost strategy achieves the strongest result, with ARC of 65.40%, Sharpe ratio of 1.09, and IR∗∗ of 1.13."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "Each fold contains a 12-month training window, a 3-month validation window, and a 3-month test window. After each fold, the entire window advances by three months. This produces 27 sequential test folds over the out-of-sample evaluation period."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "In the main specification,c = 0.001 and λ = 2.0. Thus, a long-only entry or exit requires a forecast magnitude above 0.20%, while a long-short reversal requires a forecast magnitude above 0.40% because the turnover is two units."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "T able 11.Performance comparison across model architectures Architecture Mode Type ARC ASD MD MLD SR IR ∗ IR∗∗ Trades"
+      },
+      {
+        "section": "cost_assumptions",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "where c = 0.001denotes the proportional transaction cost per unit of turnover. This corresponds to 10 basis points per position change and is interpreted as a conservative effective cost that includes explicit exchange fees, spread crossing, slippage, and other execution friction"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "XGBoost LO CA65.4056.22-67.42 2.31 1.09 1.16 1.13251"
+      },
+      {
+        "section": "experiment_type",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "Net strategy returns are computed as: rnet t+1 = post ·(e rt+1 −1)−c· |pos t −pos t−1|,(4)"
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "The model receives information available up to and including timet and produces a forecast ofrt+1. This construction enforces strict temporal causality: no feature used to predict the next-hour return depends on information observed after the forecast time."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "T able B.22.Hyperparameter search space by architecture Model Hyperparameter Search space XGBoost Loss function {MSE,MAE} Maximum tree depth integer[2,4] Learning rate[0.005,0.03]log-uniform Number of estimators integer[1000,2500] Minimum child weight[10.0,40.0] Subsample[0.60,0.90] Column sample by tree[0.60,0.90] L1 regularisation[10 −4,0.05]log-uniform L2 regularisation[1.0,40.0]log-uniform"
+      },
+      {
+        "section": "required_start_date",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "The sample runs from 1 December 2017 to 1 January 2026."
+      },
+      {
+        "section": "required_end_date",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "The sample runs from 1 December 2017 to 1 January 2026."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "Figure 6.Impact of model architecture on cost-aware strategy performance Note:Equity curves for XGBoost, LSTM, and iTransformer strategies with cost-aware execution andλ = 2.0. The comparison uses the OHLCV+TA+EGARCH feature set, MSE loss, and loss-best selection."
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v1",
+        "quote": "This appendix reports implementation details that are relevant for reproducibility but too detailed for the main text: full hyperparameter search spaces, feature-selection diagnostics, and additional model implementation details."
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra",
+      "text_sha": "464ade8da1ca2e15",
+      "selected_claim": "Table 11 long-only XGBoost cost-aware strategy using OHLCV+TA+EGARCH, MSE loss, loss-best selection, lambda 2.0",
+      "extraction_profile": "strict_reproduction"
+    },
+    "approval_required": true,
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

@@ -1,0 +1,367 @@
+{
+  "method_id": "cnn_nse_maruti_400day_mape_table3",
+  "paper_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecast",
+  "title": "Deep Learning Models for Stock Market Forecasting: A Comprehensive Comparative Analysis",
+  "venue_or_source": "Journal of Business and Management Studies",
+  "paper_url": "unknown",
+  "task_type": "stock closing price forecasting",
+  "target_asset": "MARUTI",
+  "asset_universe": [
+    "MARUTI"
+  ],
+  "frequency": "daily",
+  "horizon": "400-day prediction period as reported for Table 3; the paper also reports a 200-day input window selected for predicting 10 days, so the exact forecast-step definition is unresolved",
+  "label_definition": "day-wise closing price",
+  "data_requirements": [
+    "NSE stock data for the training stock Tata Motors from the Automobile sector",
+    "NSE stock data for MARUTI for evaluation",
+    "Daily closing prices extracted from each stock dataset",
+    "Normalize input data to the range 0 to 1 using Qnorm = (Q - Qmin) / (Qmax - Qmin)",
+    "De-normalize network outputs to obtain original predicted values"
+  ],
+  "feature_groups": [
+    "price_lag_features"
+  ],
+  "model_families": [
+    "cnn_sequence_regressor"
+  ],
+  "training_protocol": "{\"batch_size\": \"unknown\", \"early_stopping\": \"unknown\", \"epochs\": 1000, \"input_window_days\": 200, \"loss_function\": \"unknown\", \"optimizer\": \"unknown\", \"random_seed\": \"unknown\", \"training_asset\": \"Tata Motors\", \"training_exchange\": \"NSE\", \"training_sector\": \"Automobile\"}",
+  "evaluation_protocol": "{\"chronological_split\": \"unknown\", \"context_overlap\": \"unknown\", \"metric\": \"MAPE\", \"prediction_period\": \"400 days\", \"test_asset\": \"MARUTI\", \"test_exchange\": \"NSE\", \"walk_forward\": \"unknown\"}",
+  "metrics": [
+    "mae"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "MAPE": 4.3
+  },
+  "strict_requirements": [
+    "Use the CNN architecture result row for MARUTI only; do not merge with RNN, LSTM, MLP, or ARIMA rows.",
+    "Train the neural network using NSE Tata Motors data as described.",
+    "Use daily closing prices as the model input feature.",
+    "Use a 200-day input window.",
+    "Train for 1000 epochs.",
+    "Evaluate with MAPE on MARUTI over the reported 400-day prediction period.",
+    "Report the exact CNN MARUTI Table 3 MAPE value of 4.30."
+  ],
+  "unknowns": [
+    "Exact CNN architecture details are not reported.",
+    "Optimizer is not reported.",
+    "Loss function is not reported.",
+    "Batch size is not reported.",
+    "Random seed is not reported.",
+    "Early stopping protocol is not reported.",
+    "Exact chronological split used for the Table 3 400-day result is not reported.",
+    "Whether the 400-day prediction period is a forecast horizon, an evaluation window length, or rolling prediction period is unclear.",
+    "The paper separately states that a 200-day window is optimal for predicting 10 days, creating ambiguity with the Table 3 400-day prediction-period result.",
+    "The Table 2 and Table 3 company rows list MARUTI twice and omit AXIS BANK in the displayed rows; the selected row is the first MARUTI row from Table 3.",
+    "cnn_sequence_regressor"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "method_id",
+      "quote": "COMPANY RNN LSTM CNN MLP MARUTI 5.63 6.33 4.30 4.71",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "paper_id",
+      "quote": "DOI: 10.32996/jbms.2024.6.2.9",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "title",
+      "quote": "Deep Learning Models for Stock Market Forecasting: A Comprehensive Comparative Analysis",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "task_type",
+      "quote": "This study presents a comprehensive comparative analysis of deep learning models for stock market forecasting using data from two prominent stock exchanges, the National Stock Exchange (NSE) and the New York Stock Exchange (NYSE).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "target_asset",
+      "quote": "COMPANY RNN LSTM CNN MLP MARUTI 5.63 6.33 4.30 4.71",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "asset_universe",
+      "quote": "Table 2 displays the Mean Absolute Percentage Error (MAPE) incurred in forecasting NSE values for MARUTI, HCL, and AXIS BANK using the ARIMA model over 400 days.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "frequency",
+      "quote": "Similar to the training phase, we extracted day-wise closing prices for each stock, normalized the data, and applied a de -normalization process to the predicted output s, following the procedures used in the training dataset.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "horizon",
+      "quote": "Table 3 illustrates the Mean Absolute Percentage Error (MAPE) derived from the neural network for a 400 -day prediction period.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "label_definition",
+      "quote": "The analysis focuses on extracting the daily closing prices of each stock, as investors typically base their decisions on buying or selling stocks on these prices.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "data_requirements",
+      "quote": "The chosen training dataset is TATA MOTORS from the Auto mobile sector, covering the period from January 1, 1996, to June 30, 2015, including closing prices over 4,861 days ranging from 58.79 to 1365.15.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "data_requirements",
+      "quote": "During the testing phase, data from the primary sectors —Automobile, Banking, and IT —were selected, corresponding to stocks including Maruti, Axis Bank, and HCL Technologies, respectively.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "feature_groups",
+      "quote": "Only the day -wise closing prices were extracted from this dataset.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "model_families",
+      "quote": "Four deep neural network architectures —MLP, RNN, LSTM, and CNN —were utilized for this analysis.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "training_protocol",
+      "quote": "These networks underwent training using NSE data, specifically focusing on Tata Motors in the automobile sector.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "training_protocol",
+      "quote": "A fixed window size of 200 days is employed to predict stock values for the subsequent 10 days.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "training_protocol",
+      "quote": "The network undergoes training for 1000 epochs.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "evaluation_protocol",
+      "quote": "Following training, the networks were tested using data from both NSE and NYSE.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "evaluation_protocol",
+      "quote": "A prediction period of 400 days was considered for both ARIMA and neural network mod els to assess their performance over a specific timeframe.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "metrics",
+      "quote": "To evaluate the accuracy of the predicted output, mean absolute percentage error (MAPE) was utilized and calculated using the specified formula.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "reported_results",
+      "quote": "COMPANY RNN LSTM CNN MLP MARUTI 5.63 6.33 4.30 4.71",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "preprocessing_protocol",
+      "quote": "Normalization is applied to standardize the data range between 0 and 1.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "preprocessing_protocol",
+      "quote": "Q norm = (Q− Q min) / (Q max −Q min--------(1)",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "preprocessing_protocol",
+      "quote": "After generating output from the network, a de-normalization process is applied to obtain the original predicted values.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "hyperparameters",
+      "quote": "Among these, a window size of 200 is identified as optimal, displaying the minimum error compared to other window sizes.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "hyperparameters",
+      "quote": "The network undergoes training for 1000 epochs.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "strict_requirements",
+      "quote": "COMPANY RNN LSTM CNN MLP MARUTI 5.63 6.33 4.30 4.71",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "unknowns",
+      "quote": "During training, window sizes are carefully considered, with a window size of 200 deemed optimal for predicting 10 days ahead.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    },
+    {
+      "source_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+      "section": "unknowns",
+      "quote": "Table 3 illustrates the Mean Absolute Percentage Error (MAPE) derived from the neural network for a 400 -day prediction period.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper_context",
+      "source_url": "unknown",
+      "source_revision": "4cda441fff37a6d9"
+    }
+  ],
+  "extraction_metadata": {
+    "claim_selection": "Selected the first MARUTI row in Table 3 for the CNN neural network because it is a concrete model/dataset/result row.",
+    "document_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+    "text_sha": "4cda441fff37a6d9",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "raw_paper_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin",
+    "quality_report": {
+      "method_id": "cnn_nse_maruti_400day_mape_table3",
+      "paper_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecast",
+      "quality_score": 0.89,
+      "approval_required": true,
+      "critical_missing_fields": [],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [
+        "cnn_sequence_regressor"
+      ],
+      "warnings": [
+        "unsupported model adapters required: cnn_sequence_regressor"
+      ],
+      "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+    },
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "{\"chronological_split\": \"unknown\", \"context_overlap\": \"unknown\", \"metric\": \"MAPE\", \"prediction_period\": \"400 days\", \"test_asset\": \"MARUTI\", \"test_exchange\": \"NSE\", \"walk_forward\": \"unknown\"}",
+    "frequency_type": "daily",
+    "horizon_type": "400_day",
+    "document_text_sha": "4cda441fff37a6d9",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 28,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "purged_walk_forward",
+  "evaluation_protocol_description": "{\"chronological_split\": \"unknown\", \"context_overlap\": \"unknown\", \"metric\": \"MAPE\", \"prediction_period\": \"400 days\", \"test_asset\": \"MARUTI\", \"test_exchange\": \"NSE\", \"walk_forward\": \"unknown\"}",
+  "frequency_type": "daily",
+  "horizon_type": "400_day",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "{\"normalization\": \"Qnorm = (Q - Qmin) / (Qmax - Qmin)\", \"normalization_fit_scope\": \"training dataset for Qmin and Qmax as stated for the training dataset; exact test-time fit scope is unclear\", \"output_transform\": \"de-normalization applied to network outputs to obtain original predicted values\", \"price_field\": \"daily closing price\"}",
+  "hyperparameters": {
+    "input_window_days": 200,
+    "epochs": 1000,
+    "evaluation_prediction_period_days": 400
+  },
+  "required_start_date": "unknown",
+  "required_end_date": "unknown",
+  "schema_version": "method_card_v2"
+}

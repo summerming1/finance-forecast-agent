@@ -65,6 +65,7 @@ from .source_data_contracts import (
     save_source_approval,
 )
 from .task_queue import LocalTaskQueue
+from .tracking import DVCDataTracker, MLflowTracker
 
 SKIP_JSON = {"method_card_catalog.json", "paper_specs_from_method_cards.json"}
 TASK_STATUSES = ["todo", "in_progress", "blocked", "done"]
@@ -435,20 +436,20 @@ def _render_literature_corpus(project_dir: Path) -> None:
         )
         summary[2].metric("金融目标缺口", portfolio.get("financial_strict_target_gap", 0))
         summary[3].metric(
-            "探索候选",
-            portfolio.get("coverage_counts", {}).get("exploratory_candidate", 0),
+            "探索已执行",
+            portfolio.get("coverage_counts", {}).get("exploratory_executed", 0),
         )
         summary[4].metric("结构化阻断", portfolio.get("coverage_counts", {}).get("blocked", 0))
         st.caption(
             "金融数据 strict 只统计在金融数据上通过完整审计的论文 claim；它不表示论文发表于金融期刊。"
             "能源等非金融样例只验证执行框架的跨领域通用性。"
         )
-        st.warning(
-            "“探索候选”只表示存在已验证的方法家族与基准路径，并不表示该论文已经完成探索性复现。"
+        st.info(
+            "“探索已执行”表示论文绑定的统一基准适配已经真实运行；它不等于原生复现或 strict。"
         )
         status_filter = st.selectbox(
             "复现状态",
-            ["全部", "exploratory_candidate", "blocked"],
+            ["全部", "exploratory_executed", "exploratory_candidate", "blocked"],
             key="portfolio_status_filter",
         )
         portfolio_rows = [
@@ -523,12 +524,24 @@ def _render_literature_corpus(project_dir: Path) -> None:
             width="stretch",
             hide_index=True,
         )
+        execution = triage.get("candidate_execution", {})
+        reduction = triage.get("blocker_reduction", {})
+        detail = st.columns(3)
+        detail[0].metric(
+            "原 28 篇逐篇执行",
+            f"{execution.get('exploratory_executed', 0)}/{execution.get('baseline_candidates', 0)}",
+        )
+        detail[1].metric(
+            "全文根因消减",
+            f"{reduction.get('full_text_root_cause_before', 0)}→{reduction.get('full_text_root_cause_after', 0)}",
+        )
+        detail[2].metric("合法全文新增", reduction.get("full_text_root_causes_resolved", 0))
     readiness = _load_report(project_dir, "p2_readiness.json")
     if readiness:
         st.subheader("P2 进入门禁")
         observed = readiness.get("observed", {})
         cols = st.columns(4)
-        cols[0].metric("Strict 论文", f"{observed.get('strict_financial_papers', 0)}/20")
+        cols[0].metric("Strict 论文", f"{observed.get('strict_papers', observed.get('strict_financial_papers', 0))}/20")
         cols[1].metric("Strict 实验类型", f"{len(observed.get('strict_experiment_types', []))}/4")
         cols[2].metric("Strict 数据域", f"{len(observed.get('strict_data_domains', []))}/3")
         cols[3].metric("False strict", observed.get("false_strict_count", 0))
@@ -536,6 +549,49 @@ def _render_literature_corpus(project_dir: Path) -> None:
             st.success("P1 通用性门禁已通过，可以进入 P2。", icon=":material/verified:")
         else:
             st.warning("P1 通用性门禁尚未通过；当前继续补齐多类型 strict，而不是提前扩大自动搜索。")
+    acceptance = _load_report(project_dir, "scientific_acceptance_ledger.json")
+    if acceptance:
+        with st.expander("受限范围科学验收", icon=":material/fact_check:"):
+            st.caption(acceptance.get("scientific_boundary", ""))
+            scopes = acceptance.get("scope_contracts", [])
+            if scopes:
+                st.dataframe(
+                    [
+                        {
+                            "实验类型": row.get("experiment_type"),
+                            "受限范围": row.get("scope"),
+                            "Held-out 规则": row.get("heldout_rule"),
+                        }
+                        for row in scopes
+                    ],
+                    width="stretch",
+                    hide_index=True,
+                )
+            st.dataframe(
+                [
+                    {
+                        "论文": row.get("title"),
+                        "类型": row.get("experiment_type"),
+                        "范围": row.get("market_scope"),
+                        "Held-out": "是" if row.get("held_out") else "否",
+                        "结论": "Strict" if row.get("strict_verified") else row.get("status", "blocked"),
+                        "失败门禁": "、".join(row.get("failed_gates") or []),
+                        "阻断": "；".join(row.get("blockers") or []),
+                    }
+                    for row in acceptance.get("papers", [])
+                ],
+                width="stretch",
+                hide_index=True,
+            )
+    with st.expander("实验追踪与数据版本", icon=":material/account_tree:"):
+        mlflow = MLflowTracker(project_dir / "mlruns")
+        dvc = DVCDataTracker(project_dir).status()
+        tracking = st.columns(3)
+        tracking[0].metric("MLflow backend", mlflow.backend)
+        tracking[1].metric("MLflow URI", mlflow.tracking_uri)
+        tracking[2].metric("DVC remote", "已配置" if dvc.get("configured") else "未配置")
+        if dvc.get("remote"):
+            st.caption(f"{dvc['remote'].get('name')} · {dvc['remote'].get('url')}")
     source_path = project_dir / "source_bundles" / "catalog.json"
     if source_path.exists():
         source_catalog = json.loads(source_path.read_text(encoding="utf-8"))
@@ -854,6 +910,45 @@ def _plan_value_text(field_name: str, value: Any) -> str:
     return str(value)
 
 
+def _render_tracker_refs(report: dict[str, Any]) -> None:
+    refs = report.get("tracker_refs") or {}
+    mlflow = refs.get("mlflow") or {}
+    dvc = refs.get("dvc") or {}
+    lineage = report.get("lineage_run_id")
+    if not (mlflow or dvc or lineage):
+        return
+    st.subheader("可追踪运行")
+    columns = st.columns(3)
+    columns[0].metric("Lineage run ID", lineage or "未记录")
+    columns[1].metric("MLflow run ID", mlflow.get("run_id") or mlflow.get("backend") or "未记录")
+    columns[2].metric("DVC 数据", "已推送" if dvc.get("pushed") else "未推送")
+    if dvc.get("remote"):
+        st.caption(
+            f"DVC {dvc['remote'].get('name')} · {dvc['remote'].get('url')} · "
+            f"pointer {dvc.get('pointer_path')}"
+        )
+
+
+def _display_delta_rows(rows: list[dict[str, Any]]) -> list[dict[str, str]]:
+    def display(value: Any) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, (dict, list, tuple)):
+            return json.dumps(value, ensure_ascii=False, sort_keys=True)
+        return str(value)
+
+    return [
+        {
+            "维度": display(row.get("dimension")),
+            "原论文": display(row.get("paper_value")),
+            "本次运行": display(row.get("run_value")),
+            "状态": display(row.get("status")),
+            "影响": display(row.get("implication")),
+        }
+        for row in rows
+    ]
+
+
 def _parse_plan_value(field_name: str, value: str) -> Any:
     text = value.strip()
     if field_name in LIST_PLAN_FIELDS:
@@ -1124,6 +1219,9 @@ def _render_run(
                         "类型": row.task_type,
                         "状态": row.status,
                         "退出码": row.return_code,
+                        "论文": row.paper_id or "-",
+                        "优先级": round(row.priority_score, 3),
+                        "调度理由": row.scheduling_rationale or "单任务直接提交",
                         "日志": row.log_path,
                         "更新时间": row.updated_at,
                     }
@@ -1419,6 +1517,12 @@ def _render_run(
                             ],
                             cwd=repository_root,
                             result_path=str(existing_path),
+                            research_context={
+                                "paper_id": selected_claim.paper_id,
+                                "run_mode": "native_reproduction",
+                                "experiment_type": selected_claim.experiment_type,
+                                "data_domain": selected_claim.dataset_domain,
+                            },
                         )
                         st.success(f"已提交后台任务 {task.task_id[:10]}。可关闭页面，稍后在后台任务或结果审计查看。")
                         st.rerun()
@@ -1534,6 +1638,53 @@ def _render_results(project_dir: Path, card: MethodCard | None, report: dict[str
         st.info("还没有可展示的运行报告。请先运行一张已批准的方法卡，或在侧边栏选择历史 Report file。")
         _render_governance(project_dir, cards, reviews)
         return
+    if report.get("schema_version") == "candidate_execution_ledger_v1":
+        st.badge("逐篇统一基准适配，不是论文原生复现", color="blue", icon=":material/list_alt:")
+        summary = st.columns(4)
+        summary[0].metric("请求论文", report.get("requested_count", 0))
+        summary[1].metric("实际执行", report.get("executed_count", 0))
+        summary[2].metric("执行阻断", report.get("blocked_count", 0))
+        summary[3].metric("Strict", report.get("strict_count", 0))
+        st.info(
+            "每个成功项都是论文绑定的共享基准适配：它检验所选方法在兼容冻结任务上的表现，"
+            "不能直接证明或否定原论文的原生假设。"
+        )
+        rows = report.get("papers", [])
+        st.dataframe(
+            [
+                {
+                    "论文": row.get("paper_id"),
+                    "状态": row.get("status"),
+                    "统一任务": row.get("assigned_benchmark"),
+                    "实际模型": row.get("model_family"),
+                    "方向准确率": (row.get("metrics") or {}).get("directional_accuracy"),
+                    "RMSE": (row.get("metrics") or {}).get("rmse"),
+                    "适配任务结论": row.get("adapted_task_verdict"),
+                    "原论文结论": row.get("original_paper_verdict"),
+                    "MLflow run": row.get("mlflow_run_id"),
+                }
+                for row in rows
+            ],
+            width="stretch",
+            hide_index=True,
+        )
+        paper_ids = [row.get("paper_id") for row in rows]
+        if paper_ids:
+            selected = st.selectbox("查看单篇执行", paper_ids, key="candidate_execution_detail")
+            selected_row = next(row for row in rows if row.get("paper_id") == selected)
+            path = Path(str(selected_row.get("report_path") or ""))
+            if path.is_file():
+                detail = json.loads(path.read_text(encoding="utf-8"))
+                st.subheader("Paper-vs-Run 差异")
+                st.dataframe(
+                    _display_delta_rows(
+                        detail.get("paper_vs_run_delta", {}).get("dimensions", [])
+                    ),
+                    width="stretch",
+                    hide_index=True,
+                )
+                _render_tracker_refs(detail)
+        return
     if report.get("schema_version") == "multi_benchmark_suite_v1":
         st.badge("多基准统一比较，不是论文原生复现", color="blue", icon=":material/grid_view:")
         cols = st.columns(4)
@@ -1589,6 +1740,7 @@ def _render_results(project_dir: Path, card: MethodCard | None, report: dict[str
         )
         with st.expander("技术细节：多基准报告 JSON"):
             st.json(report)
+        _render_tracker_refs(report)
         return
     if report.get("schema_version") == "native_result_report_v1":
         complete = bool(report.get("complete_reproduction_allowed"))
@@ -1623,6 +1775,7 @@ def _render_results(project_dir: Path, card: MethodCard | None, report: dict[str
         st.dataframe(gate_rows, hide_index=True)
         if report.get("blockers"):
             st.error("；".join(report["blockers"]), icon=":material/block:")
+        _render_tracker_refs(report)
         with st.expander("技术详情：命令、环境、补丁与日志", icon=":material/code:"):
             st.json(report)
         return
@@ -1713,6 +1866,7 @@ def _render_results(project_dir: Path, card: MethodCard | None, report: dict[str
                 )
         with st.expander("技术细节：BenchmarkTask、共享 fold 与预测产物"):
             st.json(report)
+        _render_tracker_refs(report)
         return
     if card is None:
         st.info("当前没有 MethodCard。")
@@ -1803,8 +1957,20 @@ def render_app() -> None:
     overview = st.columns(4)
     overview[0].metric("方法卡", summary.method_card_count, f"待审核 {counts.get('pending', 0)}")
     overview[1].metric("已批准", counts.get("approved", 0))
-    overview[2].metric("当前报告", summary.report_count, f"候选 {summary.successful_candidate_count}/{summary.candidate_count}")
-    overview[3].metric("复现模式", "Strict" if summary.strict_allowed_count else "Exploratory")
+    if report and report.get("schema_version") == "candidate_execution_ledger_v1":
+        overview[2].metric(
+            "当前报告",
+            1,
+            f"执行 {report.get('executed_count', 0)}/{report.get('requested_count', 0)}",
+        )
+        overview[3].metric("复现模式", "探索")
+    else:
+        overview[2].metric(
+            "当前报告",
+            summary.report_count,
+            f"候选 {summary.successful_candidate_count}/{summary.candidate_count}",
+        )
+        overview[3].metric("复现模式", "严格" if summary.strict_allowed_count else "探索")
     stage = st.segmented_control(
         "研究流程",
         WORKFLOW_STAGES,

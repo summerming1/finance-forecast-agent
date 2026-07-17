@@ -1,0 +1,455 @@
+{
+  "schema_version": "scientific_acceptance_ledger_v1",
+  "generated_at": "2026-07-17T14:13:31.179115+00:00",
+  "scope_contracts": [
+    {
+      "experiment_type": "signal_backtest",
+      "scope": "US equities, daily bars, next-session execution, long-only or explicitly bounded long-short signals",
+      "heldout_rule": "A second paper must reuse the same signal/backtest protocol plugin without paper-specific evaluation code."
+    },
+    {
+      "experiment_type": "cross_sectional",
+      "scope": "US equities, monthly point-in-time characteristics, monthly formation and factor-aware inference",
+      "heldout_rule": "A second paper must reuse the same point-in-time panel and portfolio-formation plugin."
+    },
+    {
+      "experiment_type": "portfolio_rl",
+      "scope": "US equities, daily bars, long-only fully invested portfolios with explicit costs and independent evaluation seeds",
+      "heldout_rule": "A second paper must reuse the same environment trace, cost, baseline, and seed audit plugin."
+    }
+  ],
+  "paper_count": 9,
+  "strict_verified_count": 0,
+  "strict_type_counts": {},
+  "heldout_strict_type_counts": {},
+  "blocker_category_counts": {
+    "data": 5,
+    "environment": 3,
+    "license": 2,
+    "source_delta": 3,
+    "protocol": 4,
+    "leakage": 1,
+    "metric_mismatch": 1,
+    "compute": 1
+  },
+  "required_strict_gates": [
+    "paper_source_identity",
+    "source_revision",
+    "source_license",
+    "frozen_data",
+    "data_license",
+    "field_mapping",
+    "protocol",
+    "environment",
+    "execution",
+    "observation_contract",
+    "metric_tolerance"
+  ],
+  "papers": [
+    {
+      "paper_id": "rsr_2020",
+      "title": "Temporal Relational Ranking for Stock Prediction",
+      "experiment_type": "signal_backtest",
+      "market_scope": "US equities daily",
+      "held_out": false,
+      "source_revision": "cfbb01bdf194b81bc5893a1b37aff1c0d0d2a82d",
+      "attempts": [
+        "Protocol schema audited",
+        "Official processed data inspected",
+        "Legacy runtime and external embedding audited"
+      ],
+      "gates": {
+        "paper_source_identity": true,
+        "source_revision": true,
+        "source_license": true,
+        "frozen_data": false,
+        "data_license": false,
+        "field_mapping": true,
+        "protocol": true,
+        "environment": false,
+        "execution": false,
+        "observation_contract": false,
+        "metric_tolerance": false
+      },
+      "blocker_categories": [
+        "data",
+        "environment"
+      ],
+      "blockers": [
+        "The pretrained sequential embedding is not frozen in the repository",
+        "TensorFlow 1.x environment is not locked"
+      ],
+      "status": "blocked",
+      "strict_verified": false,
+      "failed_gates": [
+        "frozen_data",
+        "data_license",
+        "environment",
+        "execution",
+        "observation_contract",
+        "metric_tolerance"
+      ]
+    },
+    {
+      "paper_id": "opensourceap_2022",
+      "title": "Open Source Cross-Sectional Asset Pricing",
+      "experiment_type": "cross_sectional",
+      "market_scope": "US equities monthly",
+      "held_out": true,
+      "source_revision": "8db892442c2c3a3779b0f1eac4370d3655be15a1",
+      "attempts": [
+        "Repository and public derived-signal path audited",
+        "Raw construction path traced to WRDS inputs"
+      ],
+      "gates": {
+        "paper_source_identity": true,
+        "source_revision": true,
+        "source_license": false,
+        "frozen_data": false,
+        "data_license": false,
+        "field_mapping": false,
+        "protocol": true,
+        "environment": false,
+        "execution": false,
+        "observation_contract": false,
+        "metric_tolerance": false
+      },
+      "blocker_categories": [
+        "license",
+        "data",
+        "environment"
+      ],
+      "blockers": [
+        "Raw strict rebuild requires licensed WRDS inputs",
+        "Repository license and Windows R environment are not approved"
+      ],
+      "status": "blocked",
+      "strict_verified": false,
+      "failed_gates": [
+        "source_license",
+        "frozen_data",
+        "data_license",
+        "field_mapping",
+        "environment",
+        "execution",
+        "observation_contract",
+        "metric_tolerance"
+      ]
+    },
+    {
+      "paper_id": "arxiv_1706_10059",
+      "title": "Deep Portfolio Management: A Deep Reinforcement Learning Framework",
+      "experiment_type": "portfolio_rl",
+      "market_scope": "Poloniex crypto, 30-minute bars",
+      "held_out": false,
+      "source_revision": "48cc5a4af5edefd298e7801b95b0d4696f5175dd",
+      "attempts": [
+        "Paper/repository identity audited",
+        "Repository README protocol errata inspected",
+        "Historical database path inspected"
+      ],
+      "gates": {
+        "paper_source_identity": true,
+        "source_revision": true,
+        "source_license": true,
+        "frozen_data": false,
+        "data_license": false,
+        "field_mapping": false,
+        "protocol": false,
+        "environment": false,
+        "execution": false,
+        "observation_contract": false,
+        "metric_tolerance": false
+      },
+      "blocker_categories": [
+        "source_delta",
+        "data",
+        "environment"
+      ],
+      "blockers": [
+        "Repository is several versions ahead of the article and documents a paper test-span error",
+        "Paper-era market database and TensorFlow 1.x environment are absent"
+      ],
+      "status": "blocked",
+      "strict_verified": false,
+      "failed_gates": [
+        "frozen_data",
+        "data_license",
+        "field_mapping",
+        "protocol",
+        "environment",
+        "execution",
+        "observation_contract",
+        "metric_tolerance"
+      ]
+    },
+    {
+      "paper_id": "vix_option_2024",
+      "title": "Machine learning for VIX option pricing",
+      "experiment_type": "forecast_only",
+      "market_scope": "US VIX options",
+      "held_out": false,
+      "source_revision": "ad56092661a990e8f337978bdcd9d8b230fa86c3",
+      "attempts": [
+        "Frozen repository data and MLflow artifacts located",
+        "Paper metric and repository protocol alignment inspected"
+      ],
+      "gates": {
+        "paper_source_identity": true,
+        "source_revision": true,
+        "source_license": false,
+        "frozen_data": true,
+        "data_license": false,
+        "field_mapping": true,
+        "protocol": false,
+        "environment": false,
+        "execution": false,
+        "observation_contract": false,
+        "metric_tolerance": false
+      },
+      "blocker_categories": [
+        "license",
+        "protocol"
+      ],
+      "blockers": [
+        "Dataset redistribution terms are not machine approved",
+        "A paper-table claim has not yet been bound to one repository run protocol"
+      ],
+      "status": "blocked",
+      "strict_verified": false,
+      "failed_gates": [
+        "source_license",
+        "data_license",
+        "protocol",
+        "environment",
+        "execution",
+        "observation_contract",
+        "metric_tolerance"
+      ]
+    },
+    {
+      "paper_id": "ml_trading_techniques_2024",
+      "title": "Machine learning techniques for stock return prediction",
+      "experiment_type": "signal_backtest",
+      "market_scope": "US equities",
+      "held_out": true,
+      "source_revision": "d6267a347d92c3cbe4035d56ff8934249d9fed14",
+      "attempts": [
+        "Official notebooks inspected",
+        "Feature timing and live-data dependencies audited"
+      ],
+      "gates": {
+        "paper_source_identity": true,
+        "source_revision": true,
+        "source_license": false,
+        "frozen_data": false,
+        "data_license": false,
+        "field_mapping": false,
+        "protocol": false,
+        "environment": false,
+        "execution": false,
+        "observation_contract": false,
+        "metric_tolerance": false
+      },
+      "blocker_categories": [
+        "leakage",
+        "data",
+        "protocol"
+      ],
+      "blockers": [
+        "Notebook feature construction leaks information relative to a strict signal timestamp",
+        "Input data is live rather than a frozen paper snapshot"
+      ],
+      "status": "blocked",
+      "strict_verified": false,
+      "failed_gates": [
+        "source_license",
+        "frozen_data",
+        "data_license",
+        "field_mapping",
+        "protocol",
+        "environment",
+        "execution",
+        "observation_contract",
+        "metric_tolerance"
+      ]
+    },
+    {
+      "paper_id": "xdrl_finance_2025",
+      "title": "Explainable deep reinforcement learning for portfolio management",
+      "experiment_type": "portfolio_rl",
+      "market_scope": "Equity portfolio",
+      "held_out": true,
+      "source_revision": "b10b589dfc9c67cd84e73e743cc09f5bb8dba5af",
+      "attempts": [
+        "Paper and repository periods compared",
+        "Explainability claim surface audited"
+      ],
+      "gates": {
+        "paper_source_identity": true,
+        "source_revision": true,
+        "source_license": false,
+        "frozen_data": false,
+        "data_license": false,
+        "field_mapping": false,
+        "protocol": false,
+        "environment": false,
+        "execution": false,
+        "observation_contract": false,
+        "metric_tolerance": false
+      },
+      "blocker_categories": [
+        "source_delta",
+        "data",
+        "protocol"
+      ],
+      "blockers": [
+        "Repository and paper evaluation periods do not match",
+        "The central explainability claim is not represented by a frozen executable protocol"
+      ],
+      "status": "blocked",
+      "strict_verified": false,
+      "failed_gates": [
+        "source_license",
+        "frozen_data",
+        "data_license",
+        "field_mapping",
+        "protocol",
+        "environment",
+        "execution",
+        "observation_contract",
+        "metric_tolerance"
+      ]
+    },
+    {
+      "paper_id": "factor_based_drl_2025",
+      "title": "Factor-based deep reinforcement learning for portfolio optimization",
+      "experiment_type": "portfolio_rl",
+      "market_scope": "Equity portfolio",
+      "held_out": false,
+      "source_revision": "c4dbf2c5affc2bb006123d7eb553c754cc4a6151",
+      "attempts": [
+        "Paper method and repository observation space compared"
+      ],
+      "gates": {
+        "paper_source_identity": true,
+        "source_revision": true,
+        "source_license": false,
+        "frozen_data": false,
+        "data_license": false,
+        "field_mapping": false,
+        "protocol": false,
+        "environment": false,
+        "execution": false,
+        "observation_contract": false,
+        "metric_tolerance": false
+      },
+      "blocker_categories": [
+        "source_delta",
+        "protocol"
+      ],
+      "blockers": [
+        "Repository notes that factors are not included in the observation despite the paper claim"
+      ],
+      "status": "blocked",
+      "strict_verified": false,
+      "failed_gates": [
+        "source_license",
+        "frozen_data",
+        "data_license",
+        "field_mapping",
+        "protocol",
+        "environment",
+        "execution",
+        "observation_contract",
+        "metric_tolerance"
+      ]
+    },
+    {
+      "paper_id": "arxiv_2502_15757",
+      "title": "TLOB: A Novel Transformer Model with Dual Attention for Financial Forecasting",
+      "experiment_type": "forecast_only",
+      "market_scope": "FI-2010 limit order book",
+      "held_out": false,
+      "source_revision": "f99da3ca8e378902d761bd24b095fe58b1d74276",
+      "attempts": [
+        "Official FI-2010 archive and checkpoint acquired",
+        "Current source executed",
+        "Paper-period source revision f99da3c executed over all 1090 test batches"
+      ],
+      "claimed_metrics": {
+        "macro_f1": 0.9281
+      },
+      "observed_metrics": {
+        "macro_f1": 0.4553129077,
+        "accuracy": 0.5053778887
+      },
+      "paper_vs_run_delta": {
+        "macro_f1": -0.4727870923
+      },
+      "gates": {
+        "paper_source_identity": true,
+        "source_revision": true,
+        "source_license": true,
+        "frozen_data": true,
+        "data_license": true,
+        "field_mapping": true,
+        "protocol": true,
+        "environment": true,
+        "execution": true,
+        "observation_contract": true,
+        "metric_tolerance": false
+      },
+      "blocker_categories": [
+        "metric_mismatch"
+      ],
+      "blockers": [
+        "Official paper-period release completed, but macro F1 0.4553 is outside the predeclared paper value 0.9281 tolerance"
+      ],
+      "status": "blocked",
+      "strict_verified": false,
+      "failed_gates": [
+        "metric_tolerance"
+      ]
+    },
+    {
+      "paper_id": "openreview_0EXmFzUn5I",
+      "title": "Pyraformer: Low-complexity Pyramidal Attention for Long-range Time Series Modeling and Forecasting",
+      "experiment_type": "forecast_only",
+      "market_scope": "ETTm1 energy benchmark",
+      "held_out": false,
+      "source_revision": "84af4dbd93b7b96975b5034f0dde412005260123",
+      "attempts": [
+        "Official source, frozen ETTm1 data and paper protocol audited",
+        "Official 5-iteration CPU command ran for 3632 seconds without completing the first metric observation or producing a recoverable checkpoint"
+      ],
+      "gates": {
+        "paper_source_identity": true,
+        "source_revision": true,
+        "source_license": true,
+        "frozen_data": true,
+        "data_license": true,
+        "field_mapping": true,
+        "protocol": true,
+        "environment": true,
+        "execution": false,
+        "observation_contract": false,
+        "metric_tolerance": false
+      },
+      "blocker_categories": [
+        "compute"
+      ],
+      "blockers": [
+        "The official five-iteration CPU protocol did not complete a metric observation within the bounded 3632-second audit and exposed no recoverable checkpoint"
+      ],
+      "status": "blocked",
+      "strict_verified": false,
+      "failed_gates": [
+        "execution",
+        "observation_contract",
+        "metric_tolerance"
+      ]
+    }
+  ],
+  "scientific_boundary": "A claim is strict only when every generic source, data, protocol, environment, execution, observation, and metric gate is true. A completed run alone is not strict."
+}

@@ -1,0 +1,61 @@
+{
+  "run_id": "candidate-arxiv_2202_05702v1-1784293582855449600",
+  "run_type": "candidate_exploratory",
+  "git_sha": "51ac3875474924e50bd7d8eaf24efbc287b0a2f2",
+  "python": "3.11.15",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "environment": {
+    "CONDA_DEFAULT_ENV": "base",
+    "MLFLOW_TRACKING_URI": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db"
+  },
+  "inputs": {
+    "method_card": {
+      "path": "projects\\finance_agent\\method_cards_candidate_g55\\arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f.json",
+      "exists": true,
+      "sha256": "287722e1d60bdae38d683ecf95e7b07b7f0d17b9499a3ac581fb7b3f4cd384d4",
+      "size_bytes": 17450
+    },
+    "dataset": {
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\benchmarks\\yahoo_spy_daily_2010_20260714.csv",
+      "exists": true,
+      "sha256": "526b5f08bc0d3b3ebfa6dc1149892da1115bc86738b7b5ff672f43d4663d7198",
+      "size_bytes": 1673504
+    }
+  },
+  "outputs": {
+    "report": {
+      "path": "projects\\finance_agent\\candidate_executions\\arxiv_2202_05702v1\\execution.json",
+      "exists": true,
+      "sha256": "f09884956445c219905eb1fb74ca994f2488c876977f0c4c9c9226a1984e128d",
+      "size_bytes": 230616
+    },
+    "data_binding": {
+      "path": "projects\\finance_agent\\candidate_executions\\arxiv_2202_05702v1\\data_binding.json",
+      "exists": true,
+      "sha256": "5b920d97fd3997d65c755d5d667ec563dfdf856734acf7bec72d471d81cd08f6",
+      "size_bytes": 1128
+    }
+  },
+  "parent_run_ids": [],
+  "tracker_refs": {
+    "mlflow": {
+      "backend": "mlflow",
+      "run_id": "08b04288a13a4d16a72be364c3d84d76",
+      "tracking_uri": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db",
+      "experiment_name": "candidate-exploratory"
+    },
+    "dvc": {
+      "backend": "dvc",
+      "tracked": true,
+      "pushed": true,
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\benchmarks\\yahoo_spy_daily_2010_20260714.csv",
+      "pointer_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\benchmarks\\yahoo_spy_daily_2010_20260714.csv.dvc",
+      "remote": {
+        "name": "finance_agent_remote",
+        "url": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\dvc_remote_storage"
+      }
+    }
+  },
+  "created_at": "2026-07-17T13:06:23.893802+00:00",
+  "schema_version": "run_lineage_v1"
+}

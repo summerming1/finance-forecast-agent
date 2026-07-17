@@ -98,5 +98,26 @@
     "reproduction_plan_hash": "32a4b0cbde7b7e09",
     "reproduction_plan_strict_ready": true
   },
-  "complete_reproduction_allowed": true
+  "complete_reproduction_allowed": true,
+  "tracker_refs": {
+    "tracking_mode": "historical_reconciliation",
+    "source_report_sha256_before_tracking": "befb84384cdacf72fee08bfc975dddf467585e29bc7dfbc350b7174061c296f0",
+    "mlflow": {
+      "backend": "mlflow",
+      "run_id": "1467a00adbd548afafc05c37d0119725",
+      "tracking_uri": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db",
+      "experiment_name": "native-reconciliation"
+    },
+    "dvc": {
+      "backend": "dvc",
+      "tracked": true,
+      "pushed": true,
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.txt",
+      "pointer_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.txt.dvc",
+      "remote": {
+        "name": "finance_agent_remote",
+        "url": "D:\\AI Agent\\finance_forecast_agent_dvc_remote"
+      }
+    }
+  }
 }

@@ -1,0 +1,297 @@
+{
+  "method_id": "numhtml_magnitude_comparison_5_numbers_wwm_bert_ncc_mc_validation",
+  "paper_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transfo",
+  "title": "NumHTML: Numeric-Oriented Hierarchical Transformer Model for Multi-Task Financial Forecasting",
+  "venue_or_source": "AAAI 2022",
+  "paper_url": "unknown",
+  "task_type": "auxiliary_magnitude_comparison_classification",
+  "target_asset": "financial numerals in earnings conference call data",
+  "asset_universe": [
+    "S&P 500 companies in U.S. stock exchanges"
+  ],
+  "frequency": "event-based earnings conference calls",
+  "horizon": "list maximum from 5 numbers; no time-based forecast horizon",
+  "label_definition": "Given a list of 5 numerals, classify which numeral has the maximum magnitude, evaluated by numeral category: Monetary, Temporal, Percentage, and All.",
+  "data_requirements": [
+    "Publicly available Earnings Conference Calls dataset constructed by Qin and Yang (2019)",
+    "576 earning call recordings",
+    "88,829 text-audio aligned sentences",
+    "S&P 500 companies in U.S. stock exchanges",
+    "Financial numerals categorized as Monetary, Temporal, Percentage, and All for magnitude comparison"
+  ],
+  "feature_groups": [
+    "return_momentum_features"
+  ],
+  "model_families": [
+    "ridge_regression"
+  ],
+  "training_protocol": "Adaptive pre-training directly on the magnitude comparison task; hyper-parameters selected by grid search on the validation set. Other executable training details are unknown.",
+  "evaluation_protocol": "Validation-set evaluation of Magnitude Comparison, reported as accuracy for list maximum from 5 numbers. The broader dataset split is chronological train/validation/test in a 7:1:2 instance ratio, but the reported selected results are validation-set results.",
+  "metrics": [
+    "directional_accuracy"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "Monetary_accuracy": 0.93,
+    "Temporal_accuracy": 0.85,
+    "Percentage_accuracy": 0.99,
+    "All_accuracy": 0.94
+  },
+  "strict_requirements": [
+    "Use the publicly available Earnings Conference Calls dataset constructed by Qin and Yang (2019).",
+    "Evaluate the WWM-BERT+NCC+MC variant on the Magnitude Comparison task.",
+    "Use the list maximum from 5 numbers setting.",
+    "Report validation-set accuracy separately for Monetary, Temporal, Percentage, and All categories."
+  ],
+  "unknowns": [
+    "Exact construction procedure for the 5-number magnitude comparison examples is not provided in the supplied context.",
+    "Exact preprocessing protocol and fit scope are not provided in the supplied context.",
+    "Batch size, learning rate, number of epochs, random seed, early stopping criteria, and grid-search ranges are not provided in the supplied context.",
+    "Required start date and end date of the dataset are not provided in the supplied context.",
+    "Whether validation examples overlap by earnings call, company, or time beyond the chronological split is not specified in the supplied context."
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "title",
+      "quote": "NumHTML: Numeric-Oriented Hierarchical Transformer Model for Multi-Task Financial Forecasting",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "venue_or_source",
+      "quote": "Copyright © 2022, Association for the Advancement of Artiﬁcial Intelligence (www.aaai.org). All rights reserved.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "task_type",
+      "quote": "Magnitude Comparison The accuracy of the Magnitude Comparison (listed maximum 5-numbers) based on differ- ent methods are shown in Table 2.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "target_asset",
+      "quote": "This paper describes a numeric-oriented hierarchi- cal transformer model (NumHTML ) to predict stock returns, and ﬁnancial risk using multi-modal aligned earnings calls data by taking advantage of the different categories of num- bers (monetary, temporal, percentages etc.) and their magni- tude.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "asset_universe",
+      "quote": "This dataset contains 576 earning calls recordings, correspond to 88,829 text-audio aligned sentences, for S&P 500 compa- nies in U.S. stock exchanges.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "frequency",
+      "quote": "Earnings conference call data, including text and audio, is an important source of unstructured data",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "horizon",
+      "quote": "Table 2: The Magnitude Comparison Results (List Maximum from 5-numbers).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "label_definition",
+      "quote": "Model Monetary Temporal Percentage All GloVe 0.84 0.78 0.89 0.82 WWM-BERT 0.90 0.71 0.95 0.88 WWM-BERT+NCC 0.89 0.72 0.95 0.88 WWM-BERT+NCC+MC 0.93 0.85 0.99 0.94",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "data_requirements",
+      "quote": "Dataset: In line with previous work (Yang et al. 2020; Sawhney et al. 2020) for multi-task ﬁnancial forecasting, in this evaluation, we use a publicly available Earning Confer- ence Calls dataset constructed by Qin and Yang (2019). This dataset contains 576 earning calls recordings, correspond to 88,829 text-audio aligned sentences, for S&P 500 compa- nies in U.S. stock exchanges.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "feature_groups",
+      "quote": "We ﬁnd that the ‘NCC’ task cannot guarantee the accuracy beneﬁts for the maxi- mum list task. However, the adaptive pre-training directly on the magnitude comparison task can signiﬁcantly improve performance (94% vs 88% on average).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "model_families",
+      "quote": "Model Monetary Temporal Percentage All GloVe 0.84 0.78 0.89 0.82 WWM-BERT 0.90 0.71 0.95 0.88 WWM-BERT+NCC 0.89 0.72 0.95 0.88 WWM-BERT+NCC+MC 0.93 0.85 0.99 0.94",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "training_protocol",
+      "quote": "The hyper-parameters for our method and baselines are all selected by a grid search on the validation set.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "training_protocol",
+      "quote": "However, the adaptive pre-training directly on the magnitude comparison task can signiﬁcantly improve performance (94% vs 88% on average).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "evaluation_protocol",
+      "quote": "To fa- cilitate a direct comparison with the current state-of-the-art (Sawhney et al. 2020), we split the dataset into mutually ex- clusive training/validation/testing sets in the ratio of 7:1:2 (refers to instances) in chronological order, since future data cannot be used for prediction.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "evaluation_protocol",
+      "quote": "To begin with, we present the results on the validation set for the adaptive training used by NumHTML.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "metrics",
+      "quote": "Magnitude Comparison The accuracy of the Magnitude Comparison (listed maximum 5-numbers) based on differ- ent methods are shown in Table 2.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "reported_results",
+      "quote": "WWM-BERT+NCC+MC 0.93 0.85 0.99 0.94",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "preprocessing_protocol",
+      "quote": "We ﬁnd that the ‘NCC’ task cannot guarantee the accuracy beneﬁts for the maxi- mum list task. However, the adaptive pre-training directly on the magnitude comparison task can signiﬁcantly improve performance (94% vs 88% on average).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "hyperparameters",
+      "quote": "Table 2: The Magnitude Comparison Results (List Maximum from 5-numbers).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "strict_requirements",
+      "quote": "Model Monetary Temporal Percentage All GloVe 0.84 0.78 0.89 0.82 WWM-BERT 0.90 0.71 0.95 0.88 WWM-BERT+NCC 0.89 0.72 0.95 0.88 WWM-BERT+NCC+MC 0.93 0.85 0.99 0.94",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    },
+    {
+      "source_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+      "section": "unknowns",
+      "quote": "The hyper-parameters for our method and baselines are all selected by a grid search on the validation set.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:9e2bcf34e76c9431"
+    }
+  ],
+  "extraction_metadata": {
+    "selected_claim": "WWM-BERT+NCC+MC validation accuracy on the Magnitude Comparison task, List Maximum from 5-numbers.",
+    "selection_reason": "The supplied context includes exact numeric results for this single experiment in Table 2.",
+    "text_sha": "9e2bcf34e76c9431",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "raw_paper_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme",
+    "quality_report": {
+      "method_id": "numhtml_magnitude_comparison_5_numbers_wwm_bert_ncc_mc_validation",
+      "paper_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transfo",
+      "quality_score": 1.0,
+      "approval_required": true,
+      "critical_missing_fields": [],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [],
+      "warnings": [],
+      "recommended_action": "human_review_recommended"
+    },
+    "evaluation_protocol_type": "out_of_sample",
+    "evaluation_protocol_description": "Validation-set evaluation of Magnitude Comparison, reported as accuracy for list maximum from 5 numbers. The broader dataset split is chronological train/validation/test in a 7:1:2 instance ratio, but the reported selected results are validation-set results.",
+    "frequency_type": "event-based earnings conference calls",
+    "horizon_type": "list maximum from 5 numbers; no time-based forecast horizon",
+    "document_text_sha": "9e2bcf34e76c9431",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 21,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "out_of_sample",
+  "evaluation_protocol_description": "Validation-set evaluation of Magnitude Comparison, reported as accuracy for list maximum from 5 numbers. The broader dataset split is chronological train/validation/test in a 7:1:2 instance ratio, but the reported selected results are validation-set results.",
+  "frequency_type": "event-based earnings conference calls",
+  "horizon_type": "list maximum from 5 numbers; no time-based forecast horizon",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "unknown",
+  "hyperparameters": {
+    "base_embedding_model": "WWM-BERT",
+    "adaptive_tasks": [
+      "NCC",
+      "MC"
+    ],
+    "magnitude_comparison_list_size": 5
+  },
+  "required_start_date": "unknown",
+  "required_end_date": "unknown",
+  "schema_version": "method_card_v2"
+}

@@ -1,0 +1,57 @@
+{
+  "run_id": "reconcile-arxiv_2201_12740_exchange_native",
+  "run_type": "native_tracking_reconciliation",
+  "git_sha": "51ac3875474924e50bd7d8eaf24efbc287b0a2f2",
+  "python": "3.11.15",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "environment": {
+    "CONDA_DEFAULT_ENV": "base",
+    "MLFLOW_TRACKING_URI": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db"
+  },
+  "inputs": {
+    "source_report": {
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2201_12740_exchange_native.json",
+      "exists": true,
+      "sha256": "eb7a41213f463f2b2871300aad3d75745276d25ee694e9e84892f856cc2866c1",
+      "size_bytes": 21142
+    },
+    "dataset": {
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+      "exists": true,
+      "sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+      "size_bytes": 637800
+    }
+  },
+  "outputs": {
+    "tracked_report": {
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2201_12740_exchange_native.json",
+      "exists": true,
+      "sha256": "eb7a41213f463f2b2871300aad3d75745276d25ee694e9e84892f856cc2866c1",
+      "size_bytes": 21142
+    }
+  },
+  "parent_run_ids": [],
+  "tracker_refs": {
+    "tracking_mode": "historical_reconciliation",
+    "source_report_sha256_before_tracking": "dbb90047b054ef39f34a128454da7429d1c238884c8e4a48a398cf34dd8e0184",
+    "mlflow": {
+      "backend": "mlflow",
+      "run_id": "bc158f506fc54182b1d953ff8555c18c",
+      "tracking_uri": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db",
+      "experiment_name": "native-reconciliation"
+    },
+    "dvc": {
+      "backend": "dvc",
+      "tracked": true,
+      "pushed": true,
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+      "pointer_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv.dvc",
+      "remote": {
+        "name": "finance_agent_remote",
+        "url": "D:\\AI Agent\\finance_forecast_agent_dvc_remote"
+      }
+    }
+  },
+  "created_at": "2026-07-17T13:35:38.940195+00:00",
+  "schema_version": "run_lineage_v1"
+}

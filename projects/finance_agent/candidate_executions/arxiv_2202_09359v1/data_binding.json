@@ -1,0 +1,23 @@
+{
+  "schema_version": "candidate_data_binding_v1",
+  "paper_id": "arxiv_2202_09359v1",
+  "method_card_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti",
+  "run_mode": "common_benchmark",
+  "task_id": "spy_daily_direction_12lag_v1",
+  "task_fingerprint": "c9e7e2ac44d78efd",
+  "dataset_id": "yahoo_spy_daily_2010_20260714",
+  "dataset_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\benchmarks\\yahoo_spy_daily_2010_20260714.csv",
+  "dvc": {
+    "backend": "dvc",
+    "tracked": true,
+    "pushed": true,
+    "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\benchmarks\\yahoo_spy_daily_2010_20260714.csv",
+    "pointer_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\benchmarks\\yahoo_spy_daily_2010_20260714.csv.dvc",
+    "remote": {
+      "name": "finance_agent_remote",
+      "url": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\dvc_remote_storage"
+    }
+  },
+  "strict_eligible": false,
+  "reason": "shared benchmark data replaces the paper's native dataset and protocol"
+}

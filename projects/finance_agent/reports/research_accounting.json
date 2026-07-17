@@ -1,0 +1,56 @@
+{
+  "schema_version": "research_accounting_v1",
+  "generated_at": "2026-07-17T14:13:42.507064+00:00",
+  "counts": {
+    "corpus_papers": 86,
+    "native_catalog_papers": 15,
+    "strict_report_papers": 10,
+    "journal_papers": 102,
+    "expected_journal_union": 102,
+    "strict_status_in_journal": 10,
+    "strict_inside_corpus": 0,
+    "strict_outside_corpus": 10
+  },
+  "journal_status_counts": {
+    "strict_verified": 10,
+    "blocked": 61,
+    "exploratory_executed": 28,
+    "ready_not_run": 3
+  },
+  "sets": {
+    "strict_report_ids": [
+      "arxiv_1703_07015",
+      "arxiv_2201_12740",
+      "arxiv_2202_01381",
+      "arxiv_2205_08897",
+      "arxiv_2205_13504",
+      "arxiv_2205_14415",
+      "arxiv_2210_02186",
+      "arxiv_2305_18803",
+      "arxiv_2310_06625",
+      "arxiv_2402_10198"
+    ],
+    "strict_missing_from_journal": [],
+    "expected_missing_from_journal": [],
+    "unexplained_journal_ids": [],
+    "native_catalog_outside_corpus": [
+      "arxiv_1703_07015",
+      "arxiv_2005_11650",
+      "arxiv_2012_07436",
+      "arxiv_2106_09305",
+      "arxiv_2106_13008",
+      "arxiv_2201_12740",
+      "arxiv_2202_01381",
+      "arxiv_2205_08897",
+      "arxiv_2205_14415",
+      "arxiv_2210_02186",
+      "arxiv_2211_14730",
+      "arxiv_2305_18803",
+      "arxiv_2310_06625",
+      "arxiv_2402_10198",
+      "openreview_0exmfzun5i"
+    ]
+  },
+  "consistent": true,
+  "boundary": "Corpus, Native Catalog and strict-report portfolios are separate sets. Counts are only comparable after canonical paper-id reconciliation."
+}

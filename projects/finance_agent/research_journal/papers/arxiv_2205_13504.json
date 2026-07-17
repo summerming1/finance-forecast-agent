@@ -1,0 +1,47 @@
+{
+  "paper_id": "arxiv_2205_13504",
+  "title": "Strict native claim dlinear_exchange_rate_336_96",
+  "scope": {
+    "market": "global_fx_benchmark",
+    "asset_class": "fx",
+    "frequency": "daily",
+    "task": "forecast_only",
+    "target": "multivariate_forecast",
+    "dataset_id": "projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.txt"
+  },
+  "status": "strict_verified",
+  "claim_ids": [
+    "dlinear_exchange_rate_336_96"
+  ],
+  "attempts": [
+    {
+      "attempt_id": "dlinear_exchange_rate_336_96:official-execution",
+      "stage": "official_execution",
+      "action": "Reconcile an independently implemented strict runner with the research journal",
+      "outcome": "passed",
+      "summary": "The saved native report passed the complete-reproduction gate.",
+      "artifacts": [
+        "reports\\native_dlinear_exchange_336_96.json"
+      ],
+      "blockers": [],
+      "reusable_capability_ids": [
+        "official_repo_command_execution",
+        "native_metric_acceptance"
+      ],
+      "recorded_at": "2026-07-17T14:13:42.455670+00:00"
+    }
+  ],
+  "decisions": [],
+  "linked_assets": {
+    "reports": [
+      "reports\\native_dlinear_exchange_336_96.json"
+    ]
+  },
+  "remaining_manual_steps": [
+    "This runner predates the declarative Native Catalog and should be migrated without changing its frozen claim."
+  ],
+  "historical_reconstruction": true,
+  "started_at": "2026-07-17T14:13:42.455670+00:00",
+  "updated_at": "2026-07-17T14:13:42.455670+00:00",
+  "schema_version": "paper_exploration_record_v1"
+}

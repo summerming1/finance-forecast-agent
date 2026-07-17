@@ -1,0 +1,5 @@
+outs:
+- md5: 2fc11972378a4c8817c1adfdde522bf9
+  size: 637800
+  hash: md5
+  path: exchange_rate.csv

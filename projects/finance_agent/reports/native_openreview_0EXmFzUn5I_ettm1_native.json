@@ -1,0 +1,215 @@
+{
+  "schema_version": "native_result_report_v1",
+  "generated_at": "2026-07-17T14:11:56.153896+00:00",
+  "run_mode": "native_reproduction",
+  "paper_id": "openreview_0EXmFzUn5I",
+  "claim_id": "openreview_0EXmFzUn5I_ettm1_native",
+  "title": "Pyraformer: Low-Complexity Pyramidal Attention for Long-Range Time Series Modeling and Forecasting",
+  "model_name": "Pyraformer",
+  "paper_url": "https://openreview.net/forum?id=0EXmFzUn5I",
+  "claim_locator": "ICLR 2022 paper, Table 3, multivariate ETTm1, horizon 96",
+  "source": {
+    "repository": "https://github.com/alipay/Pyraformer",
+    "revision": "84af4dbd93b7b96975b5034f0dde412005260123",
+    "license": "Apache-2.0",
+    "archive_sha256": "0a7564eaaab0b43cb39292571960bb71b109874ae1dbd01048c056ed1a50d86d",
+    "entrypoint_sha256": "1862c466b278b2325ebae372cefb1cea047d2377ae68d0904f5b669aa784d7f8",
+    "runtime_source_root": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\pyraformer\\Pyraformer-84af4dbd93b7b96975b5034f0dde412005260123",
+    "compatibility_patches": []
+  },
+  "dataset": {
+    "dataset_id": "ettm1_official_69680x7",
+    "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\ett\\ETTm1.csv",
+    "sha256": "6ce1759b1a18e3328421d5d75fadcb316c449fcd7cec32820c8dafda71986c9e",
+    "domain": "energy"
+  },
+  "protocol": {
+    "dataset": "ETTm1",
+    "features": "M",
+    "split": "official chronological loader",
+    "dataset_revision": "zhouhaoyi/ETDataset@1d16c8f4f943005d613b5bc962e9eeb06058cf07",
+    "claim_locator": "ICLR 2022 paper, Table 3, multivariate ETTm1, horizon 96",
+    "protocol_note": "The frozen command is the pinned official Pyraformer long-range ETTm1 horizon-96 script; the reported result is the five-repeat average.",
+    "metric_observation_contract": 1,
+    "paper_repetitions": 1,
+    "randomness_protocol": "Repository-native stochasticity; any explicit seeds are frozen in the resolved command."
+  },
+  "plugin_bindings": {
+    "source_resolver": "pinned_archive_v1",
+    "dataset_materializer": "frozen_file_v1",
+    "execution_backend": "local_subprocess_v1",
+    "metric_extractor": "regex_log_v1",
+    "compatibility_recipe": "no_compatibility_patch_v1",
+    "acceptance_policy": "paper_metric_tolerance_v1"
+  },
+  "runtime_environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "torch": "2.12.1"
+  },
+  "runtime_execution_root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\r\\53b4188ef6f5",
+  "runtime_files": [],
+  "required_repetitions": 1,
+  "expected_metric_observations": 1,
+  "metric_observation_policy": "last",
+  "audit": {
+    "dataset_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\ett\\ETTm1.csv",
+    "dataset_sha256": "6ce1759b1a18e3328421d5d75fadcb316c449fcd7cec32820c8dafda71986c9e",
+    "dataset_passed": true,
+    "source_archive_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\pyraformer.zip",
+    "source_archive_sha256": "0a7564eaaab0b43cb39292571960bb71b109874ae1dbd01048c056ed1a50d86d",
+    "source_archive_passed": true,
+    "source_root": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\pyraformer\\Pyraformer-84af4dbd93b7b96975b5034f0dde412005260123",
+    "source_entrypoint": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\pyraformer\\Pyraformer-84af4dbd93b7b96975b5034f0dde412005260123\\long_range_main.py",
+    "source_entrypoint_sha256": "1862c466b278b2325ebae372cefb1cea047d2377ae68d0904f5b669aa784d7f8",
+    "source_entrypoint_passed": true,
+    "protocol_pinned": true,
+    "experiment_protocol": {
+      "experiment_type": "forecast_only",
+      "status": "strict_ready",
+      "passed": true,
+      "blockers": [],
+      "warnings": [],
+      "required_artifacts": [],
+      "leakage_checks": {}
+    },
+    "source_approval": {},
+    "dataset_contract": {},
+    "governance": {
+      "method_card_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\method_cards\\openreview_0EXmFzUn5I.json",
+      "method_card_strict_ready": true,
+      "reproduction_plan_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reproduction_plans\\openreview_0EXmFzUn5I.json",
+      "reproduction_plan_strict_ready": true,
+      "passed": true
+    },
+    "blockers": [],
+    "passed": true
+  },
+  "runs": [
+    {
+      "run_index": 0,
+      "run_parameters": {},
+      "command": [
+        "D:\\ProgramData\\miniconda3\\envs\\finance_fa\\python.exe",
+        "-u",
+        "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\pyraformer\\Pyraformer-84af4dbd93b7b96975b5034f0dde412005260123/long_range_main.py",
+        "-data",
+        "ETTm1",
+        "-root_path",
+        "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\ett",
+        "-data_path",
+        "ETTm1.csv",
+        "-input_size",
+        "384",
+        "-predict_step",
+        "96",
+        "-window_size",
+        "[5,5,5]",
+        "-dropout",
+        "0.2",
+        "-n_head",
+        "6",
+        "-d_model",
+        "256",
+        "-d_bottleneck",
+        "64",
+        "-d_k",
+        "64",
+        "-d_v",
+        "64",
+        "-epoch",
+        "5",
+        "-batch_size",
+        "32",
+        "-lr",
+        "1e-4",
+        "-iter_num",
+        "5"
+      ],
+      "working_directory": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\r\\53b4188ef6f5\\work",
+      "exit_code": 4294967295,
+      "timed_out": false,
+      "duration_seconds": 3632.156,
+      "metrics": {},
+      "metric_values": {},
+      "metric_artifacts": [],
+      "stdout_tail": "[Info] parameters: Namespace(eval=False, data='ETTm1', root_path='D:\\\\AI Agent\\\\finance_forecast_agent\\\\projects\\\\finance_agent\\\\data\\\\external\\\\ett', data_path='ETTm1.csv', input_size=384, predict_step=96, inverse=False, model='Pyraformer', decoder='FC', epoch=5, batch_size=32, pretrain=False, hard_sample_mining=False, dropout=0.2, lr=0.0001, lr_step=0.1, d_model=256, d_inner_hid=512, d_k=64, d_v=64, d_bottleneck=64, n_head=6, n_layer=4, window_size=[5, 5, 5], inner_size=3, CSCM='Bottleneck_Construct', truncate=False, use_tvm=False, iter_num=5, enc_in=7, dec_in=7, covariate_size=4, seq_num=1, embed_type='DataEmbedding')\n[Info] Number of parameters: 3420288\ntrain 34081\ntest 11425\n[ Epoch 1 ]\n",
+      "stderr_tail": "0s/it]\n  - (Training)   :  65%|██████▍   | 691/1065 [52:20<26:41,  4.28s/it]\n  - (Training)   :  65%|██████▍   | 692/1065 [52:25<26:35,  4.28s/it]\n  - (Training)   :  65%|██████▌   | 693/1065 [52:29<26:26,  4.27s/it]\n  - (Training)   :  65%|██████▌   | 694/1065 [52:33<26:26,  4.28s/it]\n  - (Training)   :  65%|██████▌   | 695/1065 [52:37<26:18,  4.27s/it]\n  - (Training)   :  65%|██████▌   | 696/1065 [52:42<26:25,  4.30s/it]\n  - (Training)   :  65%|██████▌   | 697/1065 [52:46<26:38,  4.34s/it]\n  - (Training)   :  66%|██████▌   | 698/1065 [52:50<26:31,  4.34s/it]\n  - (Training)   :  66%|██████▌   | 699/1065 [52:55<26:19,  4.31s/it]\n  - (Training)   :  66%|██████▌   | 700/1065 [52:59<26:49,  4.41s/it]\n  - (Training)   :  66%|██████▌   | 701/1065 [53:04<26:29,  4.37s/it]\n  - (Training)   :  66%|██████▌   | 702/1065 [53:08<26:27,  4.37s/it]\n  - (Training)   :  66%|██████▌   | 703/1065 [53:13<26:34,  4.40s/it]\n  - (Training)   :  66%|██████▌   | 704/1065 [53:17<26:17,  4.37s/it]\n  - (Training)   :  66%|██████▌   | 705/1065 [53:21<26:40,  4.44s/it]\n  - (Training)   :  66%|██████▋   | 706/1065 [53:26<26:19,  4.40s/it]\n  - (Training)   :  66%|██████▋   | 707/1065 [53:30<26:05,  4.37s/it]\n  - (Training)   :  66%|██████▋   | 708/1065 [53:34<25:47,  4.34s/it]\n  - (Training)   :  67%|██████▋   | 709/1065 [53:39<25:36,  4.31s/it]\n  - (Training)   :  67%|██████▋   | 710/1065 [53:43<25:15,  4.27s/it]\n  - (Training)   :  67%|██████▋   | 711/1065 [53:47<25:01,  4.24s/it]\n  - (Training)   :  67%|██████▋   | 712/1065 [53:51<24:57,  4.24s/it]\n  - (Training)   :  67%|██████▋   | 713/1065 [53:55<25:00,  4.26s/it]\n  - (Training)   :  67%|██████▋   | 714/1065 [54:00<25:20,  4.33s/it]\n  - (Training)   :  67%|██████▋   | 715/1065 [54:04<25:22,  4.35s/it]\n  - (Training)   :  67%|██████▋   | 716/1065 [54:09<25:05,  4.31s/it]\n  - (Training)   :  67%|██████▋   | 717/1065 [54:13<25:07,  4.33s/it]\n  - (Training)   :  67%|██████▋   | 718/1065 [54:17<25:02,  4.33s/it]\n  - (Training)   :  68%|██████▊   | 719/1065 [54:21<24:40,  4.28s/it]\n  - (Training)   :  68%|██████▊   | 720/1065 [54:26<24:32,  4.27s/it]\n  - (Training)   :  68%|██████▊   | 721/1065 [54:30<24:46,  4.32s/it]\n  - (Training)   :  68%|██████▊   | 722/1065 [54:34<24:33,  4.29s/it]\n  - (Training)   :  68%|██████▊   | 723/1065 [54:39<24:22,  4.28s/it]\n  - (Training)   :  68%|██████▊   | 724/1065 [54:44<25:34,  4.50s/it]\n  - (Training)   :  68%|██████▊   | 725/1065 [54:48<25:42,  4.54s/it]\n  - (Training)   :  68%|██████▊   | 726/1065 [54:52<25:13,  4.46s/it]\n  - (Training)   :  68%|██████▊   | 727/1065 [54:57<24:41,  4.38s/it]\n  - (Training)   :  68%|██████▊   | 728/1065 [55:01<24:20,  4.33s/it]\n  - (Training)   :  68%|██████▊   | 729/1065 [55:05<24:24,  4.36s/it]\n  - (Training)   :  69%|██████▊   | 730/1065 [55:10<24:20,  4.36s/it]\n  - (Training)   :  69%|██████▊   | 731/1065 [55:14<23:57,  4.30s/it]\n  - (Training)   :  69%|██████▊   | 732/1065 [55:18<23:43,  4.28s/it]\n  - (Training)   :  69%|██████▉   | 733/1065 [55:22<23:24,  4.23s/it]\n  - (Training)   :  69%|██████▉   | 734/1065 [55:27<23:28,  4.26s/it]\n  - (Training)   :  69%|██████▉   | 735/1065 [55:31<23:08,  4.21s/it]\n  - (Training)   :  69%|██████▉   | 736/1065 [55:35<22:45,  4.15s/it]\n  - (Training)   :  69%|██████▉   | 737/1065 [55:39<22:39,  4.14s/it]\n  - (Training)   :  69%|██████▉   | 738/1065 [55:43<22:21,  4.10s/it]\n  - (Training)   :  69%|██████▉   | 739/1065 [55:47<22:16,  4.10s/it]\n  - (Training)   :  69%|██████▉   | 740/1065 [55:51<22:52,  4.22s/it]\n  - (Training)   :  70%|██████▉   | 741/1065 [55:56<22:49,  4.23s/it]\n  - (Training)   :  70%|██████▉   | 742/1065 [56:00<23:06,  4.29s/it]\n  - (Training)   :  70%|██████▉   | 743/1065 [56:05<23:41,  4.41s/it]\n  - (Training)   :  70%|██████▉   | 744/1065 [56:09<23:18,  4.36s/it]\n  - (Training)   :  70%|██████▉   | 745/1065 [56:13<23:11,  4.35s/it]\n  - (Training)   :  70%|███████   | 746/1065 [56:18<23:00,  4.33s/it]\n  - (Training)   :  70%|███████   | 747/1065 [56:22<22:44,  4.29s/it]\n  - (Training)   :  70%|███████   | 748/1065 [56:26<22:28,  4.26s/it]\n  - (Training)   :  70%|███████   | 749/1065 [56:30<22:16,  4.23s/it]\n  - (Training)   :  70%|███████   | 750/1065 [56:34<22:10,  4.23s/it]\n  - (Training)   :  71%|███████   | 751/1065 [56:39<22:15,  4.25s/it]\n  - (Training)   :  71%|███████   | 752/1065 [56:43<22:16,  4.27s/it]\n  - (Training)   :  71%|███████   | 753/1065 [56:48<23:01,  4.43s/it]\n  - (Training)   :  71%|███████   | 754/1065 [56:52<22:37,  4.37s/it]\n  - (Training)   :  71%|███████   | 755/1065 [56:56<22:21,  4.33s/it]\n  - (Training)   :  71%|███████   | 756/1065 [57:00<22:11,  4.31s/it]\n  - (Training)   :  71%|███████   | 757/1065 [57:05<21:59,  4.28s/it]\n  - (Training)   :  71%|███████   | 758/1065 [57:09<21:51,  4.27s/it]\n  - (Training)   :  71%|███████▏  | 759/1065 [57:13<22:05,  4.33s/it]\n  - (Training)   :  71%|███████▏  | 760/1065 [57:18<21:52,  4.30s/it]\n  - (Training)   :  71%|███████▏  | 761/1065 [57:22<21:48,  4.31s/it]\n  - (Training)   :  72%|███████▏  | 762/1065 [57:26<22:00,  4.36s/it]\n  - (Training)   :  72%|███████▏  | 763/1065 [57:31<21:50,  4.34s/it]\n  - (Training)   :  72%|███████▏  | 764/1065 [57:35<21:36,  4.31s/it]\n  - (Training)   :  72%|███████▏  | 765/1065 [57:39<21:30,  4.30s/it]\n  - (Training)   :  72%|███████▏  | 766/1065 [57:44<21:32,  4.32s/it]\n  - (Training)   :  72%|███████▏  | 767/1065 [57:48<21:19,  4.29s/it]\n  - (Training)   :  72%|███████▏  | 768/1065 [57:52<21:42,  4.39s/it]\n  - (Training)   :  72%|███████▏  | 769/1065 [57:57<21:16,  4.31s/it]\n  - (Training)   :  72%|███████▏  | 770/1065 [58:01<21:52,  4.45s/it]\n  - (Training)   :  72%|███████▏  | 771/1065 [58:06<21:25,  4.37s/it]\n  - (Training)   :  72%|███████▏  | 772/1065 [58:10<21:18,  4.36s/it]\n  - (Training)   :  73%|███████▎  | 773/1065 [58:14<21:06,  4.34s/it]\n  - (Training)   :  73%|███████▎  | 774/1065 [58:18<20:54,  4.31s/it]\n  - (Training)   :  73%|███████▎  | 775/1065 [58:23<20:47,  4.30s/it]\n  - (Training)   :  73%|███████▎  | 776/1065 [58:27<20:31,  4.26s/it]\n  - (Training)   :  73%|███████▎  | 777/1065 [58:31<20:26,  4.26s/it]\n  - (Training)   :  73%|███████▎  | 778/1065 [58:35<20:10,  4.22s/it]\n  - (Training)   :  73%|███████▎  | 779/1065 [58:39<19:49,  4.16s/it]\n  - (Training)   :  73%|███████▎  | 780/1065 [58:44<20:43,  4.36s/it]\n  - (Training)   :  73%|███████▎  | 781/1065 [58:48<20:36,  4.36s/it]\n  - (Training)   :  73%|███████▎  | 782/1065 [58:53<20:30,  4.35s/it]\n  - (Training)   :  74%|███████▎  | 783/1065 [58:57<20:15,  4.31s/it]\n  - (Training)   :  74%|███████▎  | 784/1065 [59:01<20:09,  4.30s/it]\n  - (Training)   :  74%|███████▎  | 785/1065 [59:05<19:48,  4.25s/it]\n  - (Training)   :  74%|███████▍  | 786/1065 [59:10<19:34,  4.21s/it]\n  - (Training)   :  74%|███████▍  | 787/1065 [59:14<19:26,  4.20s/it]\n  - (Training)   :  74%|███████▍  | 788/1065 [59:18<19:17,  4.18s/it]\n  - (Training)   :  74%|███████▍  | 789/1065 [59:22<19:09,  4.16s/it]\n  - (Training)   :  74%|███████▍  | 790/1065 [59:26<18:58,  4.14s/it]\n  - (Training)   :  74%|███████▍  | 791/1065 [59:30<18:57,  4.15s/it]\n  - (Training)   :  74%|███████▍  | 792/1065 [59:35<19:21,  4.25s/it]\n  - (Training)   :  74%|███████▍  | 793/1065 [59:39<19:17,  4.26s/it]\n  - (Training)   :  75%|███████▍  | 794/1065 [59:43<19:18,  4.28s/it]\n  - (Training)   :  75%|███████▍  | 795/1065 [59:48<19:07,  4.25s/it]\n  - (Training)   :  75%|███████▍  | 796/1065 [59:52<19:08,  4.27s/it]\n  - (Training)   :  75%|███████▍  | 797/1065 [59:56<18:50,  4.22s/it]\n  - (Training)   :  75%|███████▍  | 798/1065 [1:00:00<18:36,  4.18s/it]\n  - (Training)   :  75%|███████▌  | 799/1065 [1:00:04<18:35,  4.19s/it]\n  - (Training)   :  75%|███████▌  | 800/1065 [1:00:08<18:35,  4.21s/it]\n  - (Training)   :  75%|███████▌  | 801/1065 [1:00:13<18:28,  4.20s/it]\n  - (Training)   :  75%|███████▌  | 802/1065 [1:00:17<18:12,  4.15s/it]\n  - (Training)   :  75%|███████▌  | 803/1065 [1:00:21<18:02,  4.13s/it]\n  - (Training)   :  75%|███████▌  | 804/1065 [1:00:25<18:08,  4.17s/it]"
+    }
+  ],
+  "metric_source": "captured_logs",
+  "metrics": {
+    "mse": null,
+    "mae": null
+  },
+  "metric_aggregate": {
+    "mse": {
+      "mean": null,
+      "std": null,
+      "values": []
+    },
+    "mae": {
+      "mean": null,
+      "std": null,
+      "values": []
+    }
+  },
+  "reported_metrics": {
+    "mse": 0.48,
+    "mae": 0.486
+  },
+  "metric_checks": {
+    "mse": {
+      "expected": 0.48,
+      "actual": null,
+      "absolute_tolerance": 0.04,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": false
+    },
+    "mae": {
+      "expected": 0.486,
+      "actual": null,
+      "absolute_tolerance": 0.04,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": false
+    }
+  },
+  "execution_passed": false,
+  "observation_count_passed": false,
+  "result_reproduced_within_tolerance": false,
+  "complete_reproduction_allowed": false,
+  "blockers": [
+    "official command did not complete every required repetition",
+    "missing parsed metrics: mse, mae",
+    "one or more paper metrics fell outside the predeclared tolerance"
+  ],
+  "resumed_run_count": 0,
+  "resumed_from_partial": false,
+  "partial_report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_openreview_0EXmFzUn5I_ettm1_native.json.partial",
+  "duration_seconds": 3632.188,
+  "lineage_run_id": "63a9ef4ca54b2d772513e064",
+  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_openreview_0EXmFzUn5I_ettm1_native.json",
+  "tracker_refs": {
+    "mlflow": {
+      "backend": "mlflow",
+      "run_id": "ac5eb72d53f243ab8de234aeaaaf5453",
+      "tracking_uri": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db",
+      "experiment_name": "native-reproduction"
+    },
+    "dvc": {
+      "backend": "dvc",
+      "tracked": true,
+      "pushed": true,
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\ett\\ETTm1.csv",
+      "pointer_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\ett\\ETTm1.csv.dvc",
+      "remote": {
+        "name": "finance_agent_remote",
+        "url": "D:\\AI Agent\\finance_forecast_agent_dvc_remote"
+      }
+    }
+  }
+}

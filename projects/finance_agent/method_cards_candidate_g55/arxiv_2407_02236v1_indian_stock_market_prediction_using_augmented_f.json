@@ -1,0 +1,297 @@
+{
+  "method_id": "arxiv_2407_02236v1_cnn_lstm_stock_price_forecast",
+  "paper_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+  "title": "IndianStockMarket PredictionusingAugmentedFinancial IntelligenceML",
+  "venue_or_source": "SSRN electronic copy",
+  "paper_url": "unknown",
+  "task_type": "stock_price_forecasting",
+  "target_asset": "unknown",
+  "asset_universe": [
+    "unknown"
+  ],
+  "frequency": "unknown",
+  "horizon": "unknown",
+  "label_definition": "unknown",
+  "data_requirements": [
+    "Sequential stock price data arranged into input and target arrays named trainX and trainY."
+  ],
+  "feature_groups": [
+    "price_lag_features"
+  ],
+  "model_families": [
+    "lstm_regressor",
+    "cnn_sequence_regressor"
+  ],
+  "training_protocol": "The model is compiled with Adam optimizer and mean squared error loss, then trained with fit on trainX and trainY using backpropagation. Epochs, batch size, validation split, seed, and early stopping are unknown.",
+  "evaluation_protocol": "Models are assessed using MAE scores, but the chronological split, holdout period, context overlap, and selected evaluation row are unknown.",
+  "metrics": [
+    "mae",
+    "mse"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {},
+  "strict_requirements": [
+    "Use the CNN-LSTM architecture described in section 3.3 with TimeDistributed Conv1D, TimeDistributed MaxPooling1D, TimeDistributed Flatten, LSTM, and Dense output.",
+    "Compile with Adam optimizer and mean squared error loss.",
+    "Evaluate predictive accuracy using MAE."
+  ],
+  "unknowns": [
+    "Exact target stock or index is not specified in the supplied context.",
+    "Asset universe is not specified in the supplied context.",
+    "Sampling frequency is not specified in the supplied context.",
+    "Forecast horizon is not specified in the supplied context.",
+    "Exact label definition is not specified in the supplied context.",
+    "Train/test split and evaluation period are not specified in the supplied context.",
+    "Exact numeric MAE result for the selected CNN-LSTM experiment is not present in the supplied context.",
+    "Input window length value for time_stemp is not specified in the supplied context.",
+    "Epochs, batch size, random seed, validation protocol, and early stopping are not specified in the supplied context.",
+    "Preprocessing and scaling fit scope are not specified in the supplied context.",
+    "Dataset start and end dates are not specified in the supplied context.",
+    "target_asset",
+    "asset_universe",
+    "frequency",
+    "horizon",
+    "label_definition",
+    "cnn_sequence_regressor",
+    "evidence_verification:unverified_quote:hyperparameters:13",
+    "evidence_verification:unverified_quote:hyperparameters:15"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "title",
+      "quote": "IndianStockMarket PredictionusingAugmentedFinancial IntelligenceML",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "task_type",
+      "quote": "This paper presents price prediction models using Machine Learning algorithms augmentedwithSuperforecasters’ predictions, aimedat enhancinginvestment decisions.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "data_requirements",
+      "quote": "Thetrainingdata, denotedas `trainX` and`trainY`,representtheinput sequence",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "feature_groups",
+      "quote": "This model will be used to learn patterns and makepredictionsonsequentialdata.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "model_families",
+      "quote": "FiveMachineLearningmodels arebuilt, includingBidirectional LSTM, ARIMA, acombinationof CNNandLSTM,GRU,andamodel built using LSTMand GRUalgorithms.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "model_families",
+      "quote": "3.3.2 TimeDistributedConv1DLayerTo capture temporal dependencies within the sequential data, a TimeDistributed layer isadded to themodel. This layer contains aConv1Dlayer with64filters andakernel sizeof 1",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "training_protocol",
+      "quote": "To configure the model for training, it is compiled using the Adam optimizer. The meansquared error (MSE) loss function is selected",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "training_protocol",
+      "quote": "Themodel is trainedusingthe`fit`function,whichappliesthebackpropagationalgorithmtoupdatethemodel's weights iteratively.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "evaluation_protocol",
+      "quote": "Later these models areassessedusingMAEscorestofindwhichmodelispredictingwiththehighestaccuracy.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "metrics",
+      "quote": "The models are evaluated using the Mean AbsoluteError (MAE) to determine their predictive accuracy.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "metrics",
+      "quote": "The meansquared error (MSE) loss function is selected, which measures the discrepancy between thepredicted and true values.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "hyperparameters",
+      "quote": "This layer contains aConv1Dlayer with64filters andakernel sizeof 1, whichenables theextractionof local features. Therectifiedlinearunit(ReLU)activationfunctionisapplied",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "hyperparameters",
+      "quote": "The `input_shape` parameter is set to `(None, 1,time_stemp)`,indicatingthatthemodelcanacceptinputsequencesofvaryinglengths.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "hyperparameters",
+      "quote": "TheMaxPooling1Dlayerhasapool sizeof2andemploys'same' paddingtomaintainthespatialdimensionsofthefeaturemaps.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "hyperparameters",
+      "quote": "anLSTMlayer with50units isaddedtothemodel. Therectifiedlinear unit(ReLU)activationfunctionisemployedwithintheLSTMlayer",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "hyperparameters",
+      "quote": "a single-nodedenselayer is includedinthemodel toproducethedesiredoutput. This layer uses alinear activationfunction",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "reported_results",
+      "quote": "The models are evaluated using the Mean AbsoluteError (MAE) to determine their predictive accuracy.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    },
+    {
+      "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "section": "strict_requirements",
+      "quote": "To capture long-termdependencies andsequential patterns, anLSTMlayer with50units isaddedtothemodel.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:1943ed4884504aee"
+    }
+  ],
+  "extraction_metadata": {
+    "claim_selection": "Selected the concrete CNN-LSTM architecture described in the targeted excerpt because no explicit claim selector or numeric result row was supplied.",
+    "document_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+    "text_sha": "1943ed4884504aee",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "quality_report": {
+      "method_id": "arxiv_2407_02236v1_cnn_lstm_stock_price_forecast",
+      "paper_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "quality_score": 0.23,
+      "approval_required": true,
+      "critical_missing_fields": [
+        "target_asset",
+        "asset_universe",
+        "frequency",
+        "horizon",
+        "label_definition"
+      ],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [
+        "cnn_sequence_regressor"
+      ],
+      "warnings": [
+        "frequency is unknown",
+        "horizon is unknown",
+        "unsupported model adapters required: cnn_sequence_regressor"
+      ],
+      "recommended_action": "human_review_required_fix_method_card_fields"
+    },
+    "evaluation_protocol_type": "out_of_sample",
+    "evaluation_protocol_description": "Models are assessed using MAE scores, but the chronological split, holdout period, context overlap, and selected evaluation row are unknown.",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown",
+    "document_text_sha": "1943ed4884504aee",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": false,
+      "span_count": 18,
+      "errors": [
+        "evidence_verification:unverified_quote:hyperparameters:13",
+        "evidence_verification:unverified_quote:hyperparameters:15"
+      ]
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "out_of_sample",
+  "evaluation_protocol_description": "Models are assessed using MAE scores, but the chronological split, holdout period, context overlap, and selected evaluation row are unknown.",
+  "frequency_type": "unknown",
+  "horizon_type": "unknown",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "unknown",
+  "hyperparameters": {
+    "model_type": "Sequential",
+    "conv1d_filters": 64,
+    "conv1d_kernel_size": 1,
+    "conv1d_activation": "ReLU",
+    "input_shape": "(None, 1, time_stemp)",
+    "maxpooling1d_pool_size": 2,
+    "maxpooling1d_padding": "same",
+    "lstm_units": 50,
+    "lstm_activation": "ReLU",
+    "dense_units": 1,
+    "dense_activation": "linear",
+    "optimizer": "Adam",
+    "loss": "MSE"
+  },
+  "required_start_date": "unknown",
+  "required_end_date": "unknown",
+  "schema_version": "method_card_v2"
+}

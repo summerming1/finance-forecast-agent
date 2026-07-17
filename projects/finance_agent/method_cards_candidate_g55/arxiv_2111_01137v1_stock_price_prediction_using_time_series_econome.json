@@ -1,0 +1,332 @@
+{
+  "method_id": "simple_rnn_infosys_close_7day_window",
+  "paper_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+  "title": "Stock Price Prediction Using Time Series, Econometric, Machine Learning, and Deep Learning Models",
+  "venue_or_source": "unknown",
+  "paper_url": "unknown",
+  "task_type": "stock_price_forecasting",
+  "target_asset": "Infosys close stock price",
+  "asset_universe": [
+    "Infosys"
+  ],
+  "frequency": "daily",
+  "horizon": "unknown",
+  "label_definition": "Close value of the Infosys stock price; each close value is predicted from the previous seven days of data.",
+  "data_requirements": [
+    "Daily Infosys stock data from 2004 to 2018 for training, reported as 3708 records before rolling-window truncation.",
+    "Daily Infosys stock data from 2019 for testing, reported as 241 records before rolling-window truncation.",
+    "Use only the close column for the Simple RNN experiment.",
+    "Apply a seven-day rolling input window, truncating the train set to 3700 days and the test set to 233 days."
+  ],
+  "feature_groups": [
+    "price_lag_features",
+    "sequence_window_features"
+  ],
+  "model_families": [
+    "ridge_regression"
+  ],
+  "training_protocol": "{\"batch_size\": 64, \"early_stopping\": \"unknown\", \"epochs\": 100, \"error_computed_using\": \"RMSE\", \"features\": [\"close\"], \"input_window\": \"7 days\", \"optimizer\": \"Adam\", \"random_seed\": \"unknown\", \"split\": \"Fixed chronological holdout: train on 2004-2018 data and test on 2019 data.\", \"test_records_after_windowing\": 233, \"test_records_before_windowing\": 241, \"train_records_after_windowing\": 3700, \"train_records_before_windowing\": 3708}",
+  "evaluation_protocol": "{\"context_overlap\": \"unknown\", \"metric_definition\": \"Ratio of RMSE to the mean of close values; train metric uses train mean of close values and test metric uses test mean of close values.\", \"split_type\": \"fixed chronological holdout\", \"test_period\": \"2019\", \"walk_forward\": false}",
+  "metrics": [
+    "mse",
+    "rmse"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "train_RMSE_over_mean_close": 0.0235,
+    "test_RMSE_over_mean_close": 0.022
+  },
+  "strict_requirements": [
+    "Use Infosys daily stock close values for the selected IT-sector experiment.",
+    "Use the Simple RNN model, not the LSTM, MARS, Random Forest, ARIMA, or Holt-Winters result rows.",
+    "Use a seven-day rolling window with one close-price feature.",
+    "Train on 2004-2018 and evaluate on 2019 using the reported fixed chronological split.",
+    "Report the Infosys Simple RNN row metric as RMSE/mean of close: 0.0235 on training data and 0.022 on testing data."
+  ],
+  "unknowns": [
+    "Exact prediction horizon is not explicitly stated beyond predicting close values from the previous seven days.",
+    "Original data source is not specified in the supplied context.",
+    "Exact train/test date boundaries within 2004-2018 and 2019 are not specified in the supplied context.",
+    "Whether MinMaxScaler was fit only on training data or on a broader scope is not specified.",
+    "Random seed is not specified.",
+    "Early stopping or validation split is not specified.",
+    "Adam learning rate and other optimizer parameters are not specified.",
+    "Exact Simple RNN framework/package version is not specified.",
+    "Whether recurrent layers used return_sequences or other implementation-specific settings is not specified.",
+    "Output-layer activation is not specified.",
+    "The comparative table appears to report a more precise IT-sector RNN test value of 0.0224, while the selected Infosys DL table row reports 0.022.",
+    "horizon",
+    "model_families conflict with title/protocol references: expected one of arima_regressor, lstm_regressor, random_forest_regressor"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "method_id",
+      "quote": "Fig. 3 (e) Actual and Forecasted Stock Prices of Infosys using Simple RNN",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "paper_id",
+      "quote": "Stock Price Prediction Using Time Series, Econometric, Machine Learning, and Deep Learning Models",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "title",
+      "quote": "Stock Price Prediction Using Time Series, Econometric, Machine Learning, and Deep Learning Models",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "task_type",
+      "quote": "The performance result demonstrates the efficacy of six models built to forecast the stock price of three different sectors like IT, Bank, and Health.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "target_asset",
+      "quote": "In the IT sector , the close value of the stock price of Infosys was taken.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "asset_universe",
+      "quote": "In the IT sector , the close value of the stock price of Infosys was taken.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "frequency",
+      "quote": "Using seven days rolling window, we truncated the train set to 3700 days, and the test set was truncated to 233 days.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "horizon",
+      "quote": "Each of the close values is predicated on the previous seven days of trained data.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "label_definition",
+      "quote": "A univariate analysis was done, taking only the close column in scope.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "data_requirements",
+      "quote": "The data of Infosys, ICICI, SUN PHARMA from 2004 to 2018 (3708 records) was used as a training dataset, while data of 2019 (241 records) was selected for the test dataset.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "feature_groups",
+      "quote": "The input layer of RNN has a number of time steps as seven and a number of features as 1 (which is the close column).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "model_families",
+      "quote": "For deep learning, two models – Simple RNN and Stacked LSTM – were used for model building.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "training_protocol",
+      "quote": "The train set had 3708 records (2004 to 2018), while the test set had 241 records (2019). Using seven days rolling window, we truncated the train set to 3700 days, and the test set was truncated to 233 days.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "training_protocol",
+      "quote": "The model is trained on the training set (X-train and y-train). The model is compiled with the help of Adam optimizer, and the error is computed using Root Mean Squared Error (RMSE). The network is trained for 100 epochs with a batch size of 64.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "evaluation_protocol",
+      "quote": "The performance of the models was measured using an evaluation metric that determines the ratio of RMSE and test mean of close values of the stock price as well as the train mean of close values. For the train set, the mean was the average of close values of train data. For the test set, the mean was the average of close values of test data.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "metrics",
+      "quote": "RNN RMSE/ mean of close 0.0235 RMSE/ mean of close 0.022",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "reported_results",
+      "quote": "Table VII Results of Actual and Forecasted Stock Prices of Infosys using DL based models Models Training Data Testing Data RNN RMSE/ mean of close 0.0235 RMSE/ mean of close 0.022",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "preprocessing_protocol",
+      "quote": "A univariate analysis was done, taking only the close column in scope. First, it was scaled using MinMaxScaler from a range of 0 to 1. Then the training and testing data was prepared. For this, seven days rolling window was used as a time step.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "hyperparameters",
+      "quote": "First hidden RNN layer (Simple- RNN) has 256 nodes, followed by a 20% dropout (dropout). The second hidden RNN layer (simple-rnn-1) has 128 nodes, again followed by a 20% dropout (dropout-1). Tanh activation function was used in both the RNN layers. And finally, a dense output layer (dense).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "required_start_date",
+      "quote": "The data of Infosys, ICICI, and SUN PHARMA from the period of January 2004 to December 2019 was used here for training and testing the models",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "required_end_date",
+      "quote": "The data of Infosys, ICICI, and SUN PHARMA from the period of January 2004 to December 2019 was used here for training and testing the models",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "strict_requirements",
+      "quote": "Fig. 3 (e) Actual and Forecasted Stock Prices of Infosys using Simple RNN",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    },
+    {
+      "source_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "section": "unknowns",
+      "quote": "The input layer of RNN has a number of time steps as seven and a number of features as 1 (which is the close column).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "83f1fa33ec4e7e01"
+    }
+  ],
+  "extraction_metadata": {
+    "selected_claim": "Infosys IT-sector Simple RNN stock close forecasting result",
+    "claim_selection_reason": "Selected one concrete row with model, dataset, split, preprocessing, hyperparameters, metric, and reported train/test results present in the supplied context.",
+    "quality_report": {
+      "method_id": "simple_rnn_infosys_close_7day_window",
+      "paper_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome",
+      "quality_score": 0.7,
+      "approval_required": true,
+      "critical_missing_fields": [
+        "horizon"
+      ],
+      "type_errors": [],
+      "semantic_conflicts": [
+        "model_families conflict with title/protocol references: expected one of arima_regressor, lstm_regressor, random_forest_regressor"
+      ],
+      "unsupported_models": [],
+      "warnings": [
+        "horizon is unknown"
+      ],
+      "recommended_action": "human_review_required_fix_method_card_fields"
+    },
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "{\"context_overlap\": \"unknown\", \"metric_definition\": \"Ratio of RMSE to the mean of close values; train metric uses train mean of close values and test metric uses test mean of close values.\", \"split_type\": \"fixed chronological holdout\", \"test_period\": \"2019\", \"walk_forward\": false}",
+    "frequency_type": "daily",
+    "horizon_type": "unknown",
+    "document_text_sha": "83f1fa33ec4e7e01",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 23,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "purged_walk_forward",
+  "evaluation_protocol_description": "{\"context_overlap\": \"unknown\", \"metric_definition\": \"Ratio of RMSE to the mean of close values; train metric uses train mean of close values and test metric uses test mean of close values.\", \"split_type\": \"fixed chronological holdout\", \"test_period\": \"2019\", \"walk_forward\": false}",
+  "frequency_type": "daily",
+  "horizon_type": "unknown",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "{\"feature_scope\": \"Univariate analysis using only the close column\", \"scaling\": \"MinMaxScaler to range 0 to 1\", \"scaling_fit_scope\": \"unknown\", \"windowing\": \"Seven-day rolling window used as the time step\"}",
+  "hyperparameters": {
+    "time_steps": 7,
+    "num_features": 1,
+    "rnn_layer_1_units": 256,
+    "rnn_layer_1_activation": "tanh",
+    "dropout_after_rnn_layer_1": 0.2,
+    "rnn_layer_2_units": 128,
+    "rnn_layer_2_activation": "tanh",
+    "dropout_after_rnn_layer_2": 0.2,
+    "output_layer": "dense",
+    "optimizer": "Adam",
+    "epochs": 100,
+    "batch_size": 64
+  },
+  "required_start_date": "2004-01",
+  "required_end_date": "2019-12",
+  "schema_version": "method_card_v2"
+}

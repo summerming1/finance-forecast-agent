@@ -1,0 +1,353 @@
+{
+  "method_id": "stacking_stock_selection_china_holdout_2013_before_feature_selection",
+  "paper_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+  "title": "A Machine Learning Framework for Stock Selection",
+  "venue_or_source": "unknown",
+  "paper_url": "unknown",
+  "task_type": "binary_stock_selection_classification",
+  "target_asset": "stocks",
+  "asset_universe": [
+    "Chinese stocks"
+  ],
+  "frequency": "unknown",
+  "horizon": "unknown",
+  "label_definition": "Rank stocks by return-to-volatility ratio; label the top Q percent as positive and the bottom Q percent as negative; discard middle-ranked stocks. Exact Q and return/volatility lookahead window are unknown from the supplied context.",
+  "data_requirements": [
+    "Chinese stock data for constructing labeled stock instances",
+    "Training dataset constructed from Chinese stock data ranging from 2012.08.08 to 2013.02.01",
+    "Testing dataset constructed from Chinese stock data ranging from 2013.02.04 to 2013.03.08",
+    "244 technical and fundamental features for each stock"
+  ],
+  "feature_groups": [
+    "return_momentum_features"
+  ],
+  "model_families": [
+    "random_forest_regressor",
+    "dnn_asset_pricing_model"
+  ],
+  "training_protocol": "For the selected Stacking model before GA feature selection: use the original training dataset from 2012.08.08 to 2013.02.01 and partition it into three disjoint sets: Train-1, Train-2, and Validation. Train the DNN base classifier on the concatenation of Train-1 and Train-2. Train the RF base classifier solely on Train-2. Train the meta-level Logistic Regression on Validation using predictions from the trained DNN and trained RF as inputs. DNN training uses SGD with Nesterov momentum and learning rate decay and generally converges after 20 epochs; exact batch size, random seed, validation split ratios, DNN architecture details, and loss details are unknown from the supplied context.",
+  "evaluation_protocol": "Fixed chronological holdout statistical evaluation: train on Chinese stock data ranging from 2012.08.08 to 2013.02.01 and test on Chinese stock data ranging from 2013.02.04 to 2013.03.08. The selected result row is the Stacking model before GA feature selection.",
+  "metrics": [
+    "f1",
+    "directional_accuracy"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "AUC": 0.972,
+    "Accuracy": 0.919,
+    "Precision": 0.904,
+    "Recall": 0.938,
+    "F1": 0.921,
+    "TPR": 0.938,
+    "FPR": 0.099
+  },
+  "strict_requirements": [
+    "Use the Stacking model result before GA feature selection, not the after-feature-selection row.",
+    "Use chronological training data from 2012.08.08 to 2013.02.01 and chronological testing data from 2013.02.04 to 2013.03.08.",
+    "Construct labels by ranking stocks by return-to-volatility ratio, labeling top Q percent positive and bottom Q percent negative, and discarding middle-ranked stocks.",
+    "Use 244 technical and fundamental features unless reproducing the GA-selected variant, which is not the selected claim."
+  ],
+  "unknowns": [
+    "Exact stock universe membership and inclusion/exclusion rules",
+    "Data frequency",
+    "Exact prediction horizon / label lookahead window",
+    "Exact value of Q for top and bottom percent labels",
+    "Exact formulas for the 244 technical and fundamental features",
+    "Preprocessing, normalization, missing-value handling, and whether transformations are fit on train data only",
+    "Exact DNN architecture beyond being three-layer",
+    "DNN dropout rate, L2 coefficient, batch-normalization placement, batch size, activation functions, loss function, and random seed",
+    "Exact sizes or ratios of Train-1, Train-2, and Validation partitions",
+    "Whether the reported statistical metrics use a fixed decision threshold or optimized threshold",
+    "frequency",
+    "horizon",
+    "dnn_asset_pricing_model"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "title",
+      "quote": "A Machine Learning Framework for Stock Selection",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "task_type",
+      "quote": "The essence of stock selection is to distinguish the “good” stocks from the “bad” stocks, which lies into the scenario of classiﬁcation problem.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "target_asset",
+      "quote": "This paper demonstrates how to apply machine learning algorithms to distinguish “good” stocks from the “bad” stocks.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "asset_universe",
+      "quote": "The effectiveness of the stock selection strategy is validated in Chinese stock market in both statistical and practical aspects",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "frequency",
+      "quote": "The training dataset is constructed from Chinese stock data ranging from 2012.08.08 to 2013.02.01 and the testing dataset is constructed from 2013.02.04 to 2013.03.08.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "horizon",
+      "quote": "we rank stocks according to the return-to- volatility ratio and label the top and bottom Q percent stocks as positive and negative respectively",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "label_definition",
+      "quote": "we rank stocks according to the return-to- volatility ratio and label the top and bottom Q percent stocks as positive and negative respectively [5]. The stocks ranking in the middle of all candidates are discarded.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "data_requirements",
+      "quote": "we construct 244 technical and fundamental features to characterize each stock",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "data_requirements",
+      "quote": "The training dataset is constructed from Chinese stock data ranging from 2012.08.08 to 2013.02.01 and the testing dataset is constructed from 2013.02.04 to 2013.03.08.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "feature_groups",
+      "quote": "we construct 244 technical and fundamental features to characterize each stock",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "model_families",
+      "quote": "In this work, RF and DNN are used as based-level classiﬁers and LR is selected as meta-level algorithm.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "training_protocol",
+      "quote": "We ﬁrst partition the original training dataset into three disjoint sets, named as Train-1, Train-2, and Validation. Train-1 and Train-2 serve as the training set of based-level classiﬁers, in which the DNN is trained on the concatenation of Train-1 and Train-2 and RF is trained solely on Train-2.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "training_protocol",
+      "quote": "Validation is then used to train the meta-level LR model, where the inputs to LR is the predictions from trained-DNN and trained-RF on the Validation.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "evaluation_protocol",
+      "quote": "The training dataset is constructed from Chinese stock data ranging from 2012.08.08 to 2013.02.01 and the testing dataset is constructed from 2013.02.04 to 2013.03.08.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "metrics",
+      "quote": "LR RF DNN Stack AUC 0.964 0.965 0.970 0.972 Accuracy 0.903 0.918 0.913 0.919 Precision 0.871 0.916 0.875 0.904 Recall 0.945 0.922 0.963 0.938 F1 0.907 0.919 0.917 0.921 TPR 0.945 0.922 0.963 0.938 FPR 0.139 0.084 0.138 0.099 TABLE V STATISTICAL INDEXES BEFORE FEATURE SELECTION",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "reported_results",
+      "quote": "LR RF DNN Stack AUC 0.964 0.965 0.970 0.972 Accuracy 0.903 0.918 0.913 0.919 Precision 0.871 0.916 0.875 0.904 Recall 0.945 0.922 0.963 0.938 F1 0.907 0.919 0.917 0.921 TPR 0.945 0.922 0.963 0.938 FPR 0.139 0.084 0.138 0.099 TABLE V STATISTICAL INDEXES BEFORE FEATURE SELECTION",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "preprocessing_protocol",
+      "quote": "we construct 244 technical and fundamental features to characterize each stock",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "hyperparameters",
+      "quote": "Hyperparameter Value Number of Trees 100 Maximal Tree Depth 4 Minimal Samples Number of Split 2 Minimal Impurity of Split 10−7 TABLE II RF H YPERPARAMETERS",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "hyperparameters",
+      "quote": "Hyperparameter Value Initial Learning Rate 10−2 Learning Rate Decay Rate 10−6 Training Epochs 20 Momentum Coefﬁcient 0.9 TABLE I LR H YPERPARAMETERS",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "hyperparameters",
+      "quote": "we implement a three-layer neural network to classify stocks, where Dropout, Batch-Normalization and L2 Regularization are used to avoid over-ﬁtting. Its training is done through SGD with Nesterov momentum and learning rate decay. For most cases, the network converges after 20 epochs.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "strict_requirements",
+      "quote": "TABLE V STATISTICAL INDEXES BEFORE FEATURE SELECTION",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    },
+    {
+      "source_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "section": "unknowns",
+      "quote": "The training dataset is constructed from Chinese stock data ranging from 2012.08.08 to 2013.02.01 and the testing dataset is constructed from 2013.02.04 to 2013.03.08.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v2"
+    }
+  ],
+  "extraction_metadata": {
+    "document_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+    "text_sha": "7014d0dbd4867f00",
+    "selected_claim": "Stacking model statistical indexes before feature selection on the 2012.08.08-2013.02.01 train and 2013.02.04-2013.03.08 test split",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "quality_report": {
+      "method_id": "stacking_stock_selection_china_holdout_2013_before_feature_selection",
+      "paper_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection",
+      "quality_score": 0.59,
+      "approval_required": true,
+      "critical_missing_fields": [
+        "frequency",
+        "horizon"
+      ],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [
+        "dnn_asset_pricing_model"
+      ],
+      "warnings": [
+        "frequency is unknown",
+        "horizon is unknown",
+        "unsupported model adapters required: dnn_asset_pricing_model"
+      ],
+      "recommended_action": "human_review_required_fix_method_card_fields"
+    },
+    "evaluation_protocol_type": "out_of_sample",
+    "evaluation_protocol_description": "Fixed chronological holdout statistical evaluation: train on Chinese stock data ranging from 2012.08.08 to 2013.02.01 and test on Chinese stock data ranging from 2013.02.04 to 2013.03.08. The selected result row is the Stacking model before GA feature selection.",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown",
+    "document_text_sha": "7014d0dbd4867f00",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 22,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "out_of_sample",
+  "evaluation_protocol_description": "Fixed chronological holdout statistical evaluation: train on Chinese stock data ranging from 2012.08.08 to 2013.02.01 and test on Chinese stock data ranging from 2013.02.04 to 2013.03.08. The selected result row is the Stacking model before GA feature selection.",
+  "frequency_type": "unknown",
+  "horizon_type": "unknown",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "unknown",
+  "hyperparameters": {
+    "stacking": {
+      "base_level_classifiers": [
+        "DNN",
+        "RF"
+      ],
+      "meta_level_algorithm": "LR",
+      "dnn_training_data": "Train-1 concatenated with Train-2",
+      "rf_training_data": "Train-2",
+      "meta_lr_training_data": "Validation predictions from trained DNN and trained RF"
+    },
+    "logistic_regression": {
+      "initial_learning_rate": 0.01,
+      "learning_rate_decay_rate": 1e-06,
+      "training_epochs": 20,
+      "momentum_coefficient": 0.9,
+      "optimizer": "SGD with Nesterov momentum and learning rate decay"
+    },
+    "random_forest": {
+      "number_of_trees": 100,
+      "maximal_tree_depth": 4,
+      "minimal_samples_number_of_split": 2,
+      "minimal_impurity_of_split": 1e-07
+    },
+    "dnn": {
+      "architecture": "three-layer neural network",
+      "regularization": [
+        "Dropout",
+        "Batch-Normalization",
+        "L2 Regularization"
+      ],
+      "optimizer": "SGD with Nesterov momentum and learning rate decay",
+      "training_epochs": 20
+    }
+  },
+  "required_start_date": "2012.08.08",
+  "required_end_date": "2013.03.08",
+  "schema_version": "method_card_v2"
+}

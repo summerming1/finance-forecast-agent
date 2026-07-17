@@ -1,0 +1,298 @@
+{
+  "method_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_",
+  "paper_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_",
+  "title": "Forecasting stock market prices using deep learning methods",
+  "venue_or_source": "International Journal of Electrical and Computer Engineering (IJECE)",
+  "paper_url": "unknown",
+  "task_type": "stock market price forecasting",
+  "target_asset": "unknown",
+  "asset_universe": [
+    "AAPL",
+    "GOOGL",
+    "MSFT"
+  ],
+  "frequency": "unknown",
+  "horizon": "10 days",
+  "label_definition": "actual stock price values over the last 10 days",
+  "data_requirements": [
+    "Historical stock price data for a selected company.",
+    "Historical data covering at least the 60-day input context and the 10-day validation period."
+  ],
+  "feature_groups": [
+    "price_lag_features"
+  ],
+  "model_families": [
+    "lstm_regressor",
+    "gru_regressor"
+  ],
+  "training_protocol": "{\"batch_size\": \"unknown\", \"early_stopping\": \"unknown\", \"epochs\": \"unknown\", \"input_window\": \"60 days\", \"loss_function\": \"unknown\", \"optimizer\": \"unknown\", \"random_seed\": \"unknown\", \"train_validation_test_protocol\": \"The model is trained on a training set, evaluated on a validation set, and tested on a test set.\"}",
+  "evaluation_protocol": "{\"comparison\": \"predicted stock prices are compared with actual stock price data\", \"split_details\": \"unknown\", \"validation_horizon\": \"last 10 days\", \"walk_forward\": \"unknown\"}",
+  "metrics": [
+    "mae"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {},
+  "strict_requirements": [
+    "Use recurrent neural networks with LSTM and GRU for stock market price prediction.",
+    "Prepare the stock price data as a time series.",
+    "Train on a training set, evaluate on a validation set, and test on a test set.",
+    "Validate by comparing predicted stock prices with actual prices over the last 10 days.",
+    "Use the last 60 days of historical data as the context for training and forecasting."
+  ],
+  "unknowns": [
+    "Exact target asset for the reported validation figure is not specified in the supplied context.",
+    "Data frequency is not specified.",
+    "Exact chronological train/validation/test split dates or proportions are not specified.",
+    "Exact optimizer is not specified.",
+    "Exact loss function is not specified.",
+    "Number of epochs is not specified.",
+    "Batch size is not specified.",
+    "Early stopping protocol is not specified.",
+    "Random seed is not specified.",
+    "Scaling or normalization protocol is not specified.",
+    "Whether preprocessing statistics are fit on train data only is not specified.",
+    "Exact numeric reported results are not present in the supplied context.",
+    "target_asset",
+    "frequency",
+    "gru_regressor"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "method_id",
+      "quote": "This research work applies a deep learning method for stock market price prediction based on recurrent neural networks using long -short-term memory (LSTM) and state update gate (GRU).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "paper_id",
+      "quote": "DOI: 10.11591/ijece.v14i5.pp5601-5611",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "title",
+      "quote": "Forecasting stock market prices using deep learning methods",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "venue_or_source",
+      "quote": "International Journal of Electrical and Computer Engineering (IJECE) Vol. 14, No. 5, October 2024, pp. 5601~5611",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "task_type",
+      "quote": "This research work applies a deep learning method for stock market price prediction based on recurrent neural networks using long -short-term memory (LSTM) and state update gate (GRU).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "target_asset",
+      "quote": "The main functionality of the program includes selecting a company from a provided list, such as \"AAPL\" (Apple), \"GOOGL\" (Google) and \"MSFT\" (Microsoft), as well as defining the time period of the analysis by specifying the start and end dates.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "asset_universe",
+      "quote": "The main functionality of the program includes selecting a company from a provided list, such as \"AAPL\" (Apple), \"GOOGL\" (Google) and \"MSFT\" (Microsoft), as well as defining the time period of the analysis by specifying the start and end dates.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "frequency",
+      "quote": "The main functionality of the program includes selecting a company from a provided list, such as \"AAPL\" (Apple), \"GOOGL\" (Google) and \"MSFT\" (Microsoft), as well as defining the time period of the analysis by specifying the start and end dates.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "horizon",
+      "quote": "the blue line represents the historical data for the last 60 days, used for training and forecasting; the next line is a forecast based on the analysis of time patterns; and finally, a validation line reflecting actual price values over the last 10 days.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "label_definition",
+      "quote": "the blue line represents the historical data for the last 60 days, used for training and forecasting; the next line is a forecast based on the analysis of time patterns; and finally, a validation line reflecting actual price values over the last 10 days.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "data_requirements",
+      "quote": "During the model validation process, the program analyzes the predicted values of stock prices for a certain time period, comparing them with actual data.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "feature_groups",
+      "quote": "Historical reserve data serves as the model foundation.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "model_families",
+      "quote": "This research work applies a deep learning method for stock market price prediction based on recurrent neural networks using long -short-term memory (LSTM) and state update gate (GRU).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "training_protocol",
+      "quote": "The model is trained on the training set, evaluated on the validation set, and then tested on the test set.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "evaluation_protocol",
+      "quote": "During the model validation process, the program analyzes the predicted values of stock prices for a certain time period, comparing them with actual data.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "metrics",
+      "quote": "The results are evaluated using various metrics, such as the coefficient of determination and mean absolute error, followed by interpretation of the accuracy of the forecasts.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "reported_results",
+      "quote": "Although the differences are minimal, the shape of the forecast graph is consistent with historical data, indicating that the model successfully accounts for time dependencies and changes in the stock market.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "preprocessing_protocol",
+      "quote": "The methodology includes data analysis, preparation of time series, selection of network architecture and optimization of hyperparameters.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "hyperparameters",
+      "quote": "the blue line represents the historical data for the last 60 days, used for training and forecasting; the next line is a forecast based on the analysis of time patterns; and finally, a validation line reflecting actual price values over the last 10 days.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    },
+    {
+      "source_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+      "section": "strict_requirements",
+      "quote": "The methodology includes data analysis, preparation of time series, selection of network architecture and optimization of hyperparameters.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "40c8acad81127f9b"
+    }
+  ],
+  "extraction_metadata": {
+    "document_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+    "text_sha": "40c8acad81127f9b",
+    "claim_selection_note": "Selected the supplied stock-price forecasting method using LSTM/GRU and the validation setup described with a 60-day historical context and 10-day validation period. Numeric results were not available in the provided context.",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "raw_paper_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn",
+    "quality_report": {
+      "method_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_",
+      "paper_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_",
+      "quality_score": 0.62,
+      "approval_required": true,
+      "critical_missing_fields": [
+        "target_asset",
+        "frequency"
+      ],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [
+        "gru_regressor"
+      ],
+      "warnings": [
+        "frequency is unknown",
+        "unsupported model adapters required: gru_regressor"
+      ],
+      "recommended_action": "human_review_required_fix_method_card_fields"
+    },
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "{\"comparison\": \"predicted stock prices are compared with actual stock price data\", \"split_details\": \"unknown\", \"validation_horizon\": \"last 10 days\", \"walk_forward\": \"unknown\"}",
+    "frequency_type": "unknown",
+    "horizon_type": "10_day",
+    "document_text_sha": "40c8acad81127f9b",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 20,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "purged_walk_forward",
+  "evaluation_protocol_description": "{\"comparison\": \"predicted stock prices are compared with actual stock price data\", \"split_details\": \"unknown\", \"validation_horizon\": \"last 10 days\", \"walk_forward\": \"unknown\"}",
+  "frequency_type": "unknown",
+  "horizon_type": "10_day",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "{\"fit_scope\": \"unknown\", \"missing_values\": \"unknown\", \"scaling\": \"unknown\", \"time_series_preparation\": \"reported\", \"transform_order\": \"unknown\"}",
+  "hyperparameters": {
+    "input_window_days": 60,
+    "prediction_length_days": 10
+  },
+  "required_start_date": "unknown",
+  "required_end_date": "unknown",
+  "schema_version": "method_card_v2"
+}

@@ -241,5 +241,26 @@
   "blockers": [],
   "duration_seconds": 16270.5,
   "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2202_01381_exchange_native.json",
-  "metric_source": "official_test_artifacts"
+  "metric_source": "official_test_artifacts",
+  "tracker_refs": {
+    "tracking_mode": "historical_reconciliation",
+    "source_report_sha256_before_tracking": "c776372986b840b025b251f9e95924ebaa8191c8820fa832132b8ab713a376ad",
+    "mlflow": {
+      "backend": "mlflow",
+      "run_id": "97fec3d6e9754e09b2e019f6d7d46d60",
+      "tracking_uri": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db",
+      "experiment_name": "native-reconciliation"
+    },
+    "dvc": {
+      "backend": "dvc",
+      "tracked": true,
+      "pushed": true,
+      "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+      "pointer_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv.dvc",
+      "remote": {
+        "name": "finance_agent_remote",
+        "url": "D:\\AI Agent\\finance_forecast_agent_dvc_remote"
+      }
+    }
+  }
 }

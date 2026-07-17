@@ -1,0 +1,422 @@
+{
+  "method_id": "unknown",
+  "paper_id": "10_31449_inf_v44i3_2904",
+  "title": "Investigating Algorithmic Stock Market Trading Using Ensemble Machine Learning Methods",
+  "venue_or_source": "Informatica 44 (2020) 311–325",
+  "paper_url": "unknown",
+  "task_type": "algorithmic_stock_market_trading_simulation_with_daily_price_movement_prediction",
+  "target_asset": "automatically selected stocks",
+  "asset_universe": [
+    "unknown"
+  ],
+  "frequency": "daily",
+  "horizon": "unknown",
+  "label_definition": "Predict stock price movement as increasing price, decreasing price, or no change; trading action is taken only when one classifier predicts with strong probability or when two classifiers agree.",
+  "data_requirements": [
+    "Daily stock market data sufficient to compute technical indicators",
+    "Stock high, low, and close prices for volatility-related calculations",
+    "SPY data as the market benchmark approximation",
+    "BIL data as the risk-free-rate approximation"
+  ],
+  "feature_groups": [
+    "return_momentum_features"
+  ],
+  "model_families": [
+    "random_forest_regressor",
+    "gradient_boosting_regressor"
+  ],
+  "training_protocol": "unknown",
+  "evaluation_protocol": "Run the trained algorithm in the Quantopian simulator day-by-day over a time period greater than two years with fixed starting capital of 1,000,000 US dollars; assess performance at the end of the simulation using Quantopian-style trading performance indicators.",
+  "metrics": [
+    "net_return",
+    "sharpe"
+  ],
+  "cost_assumptions": "{\"commission\": \"$0.03 per share\", \"slippage\": \"Quantopian default slippage model; orders limited to up to 2.5% of total available stocks\"}",
+  "reported_results": {
+    "Algorithm Returns": "unknown",
+    "Alpha": "unknown",
+    "Beta": "unknown",
+    "Sharpe Ratio": "unknown",
+    "Sortino Ratio": "unknown",
+    "Information Ratio": "unknown",
+    "Volatility": "unknown",
+    "Maximum Draw-down": "unknown"
+  },
+  "strict_requirements": [
+    "Use the Quantopian algorithmic stock market trading simulator.",
+    "Use a fixed starting capital of 1,000,000 US dollars.",
+    "Use a simulation period greater than two years.",
+    "Use default Quantopian slippage and commission models.",
+    "Commission must be $0.03 per share.",
+    "Order size is limited to up to 2.5% of total available stocks.",
+    "Approximate the market with SPY.",
+    "Approximate the risk-free rate with BIL."
+  ],
+  "unknowns": [
+    "method_id is not specified in the supplied text",
+    "exact selected result row is not available in the supplied context",
+    "exact asset universe and stock-selection rules are not available in the supplied context",
+    "exact prediction horizon is not stated beyond daily prediction/trading in the supplied context",
+    "exact training split, input window, optimizer/loss, epochs, early stopping, seed, and batch protocol are not available in the supplied context",
+    "exact preprocessing fit scope and transform order are not available in the supplied context",
+    "exact model hyperparameters and minimum probability threshold are not available in the supplied context",
+    "exact start date and end date are not available in the supplied context",
+    "exact numeric reported results are not available in the supplied context",
+    "asset_universe",
+    "horizon"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "paper_id",
+      "quote": "https://doi.org/10.31449/inf.v44i3.2904 Informatica 44 (2020) 311–325 311",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "title",
+      "quote": "Investigating Algorithmic Stock Market Trading Using Ensemble Machine Learning Methods",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "venue_or_source",
+      "quote": "Informatica 44 (2020) 311–325",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "task_type",
+      "quote": "we use the Quantopian algorithmic stock market trading simulator to assess ensemble methods performance in daily prediction and trading.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "target_asset",
+      "quote": "All methods are trained using multiple technical indicators and automatic stock selection is used.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "asset_universe",
+      "quote": "automatic stock selection is used.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "frequency",
+      "quote": "daily prediction and trading",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "horizon",
+      "quote": "daily prediction and trading",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "label_definition",
+      "quote": "Classifier predicts increasing price with strong probability.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "label_definition",
+      "quote": "Classifier predicts decreasing price with strong probability.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "label_definition",
+      "quote": "Classifier either predicts no change with strong probability or predicts any outcome with weak probability.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "data_requirements",
+      "quote": "All methods are trained using multiple technical indicators",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "data_requirements",
+      "quote": "H is the highest price a stock reached during the day. L is the lowest price a stock reached during the day. C is the closing price of the day for a given stock.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "data_requirements",
+      "quote": "We have chosen to consider the market to be reasonably approximated by the Standard and Poor 500 index (NYSE: SPY), and the risk-free rate to be reasonably approximated by the US Treasury Index (NYSE: BIL).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "feature_groups",
+      "quote": "All methods are trained using multiple technical indicators",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "model_families",
+      "quote": "The ensemble methods used are Extremely Randomized Trees, Random Forest, and Gradient Boosting.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "training_protocol",
+      "quote": "After finding the best parameters for an accurate prediction of stock price movement, we can move our algorithms from the research environment to the simulation.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "evaluation_protocol",
+      "quote": "We define a certain time-period (greater than two years) for the simulation to run through day-by-day, and a fixed starting capital of 1 million US dollars.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "metrics",
+      "quote": "At the end of each simulation, the algorithm’s performance is assessed automatically through eight performance indicators that are usually used to assess and compare different trading strategies together; they are outlined in Table 2 below.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "metrics",
+      "quote": "Performance indicator Brief description of the indicator Algorithm Returns Cumulative returns (as a percentage) of the algorithm relative to the starting capital at the beginning of the simulation Alpha The return on an investment that is not a result of general movement in the greater market. Beta The tendenc y of the algorithm’s price movement to respond to swings in the market.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "metrics",
+      "quote": "Information Ratio A ratio of portfolio returns above the returns of a benchmark (usually an index) to the volatility of those returns.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "metrics",
+      "quote": "Volatility An identification of price ranges and breakouts",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "metrics",
+      "quote": "Maximum Draw- down The maximum draw -down experienced by the cumulative returns of the algorithm during a certain period of time defined by the simulator.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "cost_assumptions",
+      "quote": "For all simulations in this project, we are using the default slippage and commission models that are being used on the Quantopian simulator.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "cost_assumptions",
+      "quote": "our algorithm will be limited to ordering up to 2.5% of the total available stocks, a percentage defined by the simulator to make the simulation results more realistic. The commission is set to $0.03 dollars per shar e, as is the default on the simulator.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "reported_results",
+      "quote": "Simulation results show significant returns relative to the ben chmark and large values of alpha are produced from all methods.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "experiment_type",
+      "quote": "we use the Quantopian algorithmic stock market trading simulator to assess ensemble methods performance in daily prediction and trading.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "preprocessing_protocol",
+      "quote": "All methods are trained using multiple technical indicators and automatic stock selection is used.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "hyperparameters",
+      "quote": "we specify that it should be more than a certain value (defined as the minimum probability) for the AT program to take the appropriate action of longing or shorting.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "strict_requirements",
+      "quote": "We define a certain time-period (greater than two years) for the simulation to run through day-by-day, and a fixed starting capital of 1 million US dollars.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "strict_requirements",
+      "quote": "For all simulations in this project, we are using the default slippage and commission models that are being used on the Quantopian simulator.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "strict_requirements",
+      "quote": "We have chosen to consider the market to be reasonably approximated by the Standard and Poor 500 index (NYSE: SPY), and the risk-free rate to be reasonably approximated by the US Treasury Index (NYSE: BIL).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    },
+    {
+      "source_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+      "section": "unknowns",
+      "quote": "After finding the best parameters for an accurate prediction of stock price movement, we can move our algorithms from the research environment to the simulation.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "25c6f874fd27f9a8"
+    }
+  ],
+  "extraction_metadata": {
+    "document_id": "crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u",
+    "text_sha": "25c6f874fd27f9a8",
+    "supporting_context_sha": "",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "raw_paper_id": "10.31449/inf.v44i3.2904",
+    "quality_report": {
+      "method_id": "unknown",
+      "paper_id": "10_31449_inf_v44i3_2904",
+      "quality_score": 0.7,
+      "approval_required": true,
+      "critical_missing_fields": [
+        "asset_universe",
+        "horizon"
+      ],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [],
+      "warnings": [
+        "evaluation protocol could not be mapped to a supported protocol type",
+        "horizon is unknown"
+      ],
+      "recommended_action": "human_review_required_fix_method_card_fields"
+    },
+    "evaluation_protocol_type": "unknown",
+    "evaluation_protocol_description": "Run the trained algorithm in the Quantopian simulator day-by-day over a time period greater than two years with fixed starting capital of 1,000,000 US dollars; assess performance at the end of the simulation using Quantopian-style trading performance indicators.",
+    "frequency_type": "daily",
+    "horizon_type": "unknown",
+    "document_text_sha": "25c6f874fd27f9a8",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 33,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "unknown",
+  "evaluation_protocol_description": "Run the trained algorithm in the Quantopian simulator day-by-day over a time period greater than two years with fixed starting capital of 1,000,000 US dollars; assess performance at the end of the simulation using Quantopian-style trading performance indicators.",
+  "frequency_type": "daily",
+  "horizon_type": "unknown",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "unknown",
+  "hyperparameters": {
+    "minimum_probability": "unknown",
+    "number_of_classifiers": "one or two classifiers are described, but the selected concrete result row is unknown"
+  },
+  "required_start_date": "unknown",
+  "required_end_date": "unknown",
+  "schema_version": "method_card_v2"
+}

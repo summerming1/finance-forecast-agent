@@ -7,7 +7,11 @@ import pytest
 
 from finance_forecast_agent.method_cards import document_from_paper_spec, method_card_from_paper_spec
 from finance_forecast_agent.papers import built_in_paper_specs
-from finance_forecast_agent.streamlit_p09 import _safe_file_name, _specs_for_run
+from finance_forecast_agent.streamlit_p09 import (
+    _display_delta_rows,
+    _safe_file_name,
+    _specs_for_run,
+)
 
 
 def _cards(count: int = 2):
@@ -55,3 +59,20 @@ def test_safe_file_name_rejects_paths_and_wrong_suffixes(value: str) -> None:
 
 def test_safe_file_name_accepts_supported_extension_case_insensitively() -> None:
     assert _safe_file_name("paper.PDF", suffixes={".pdf", ".txt", ".md"}, field="Uploaded paper") == "paper.PDF"
+
+
+def test_delta_rows_are_arrow_safe_strings() -> None:
+    rows = _display_delta_rows(
+        [
+            {
+                "dimension": "model",
+                "paper_value": ["lstm", "transformer"],
+                "run_value": {"model": "lstm"},
+                "status": "adapted",
+                "implication": "changed",
+            }
+        ]
+    )
+    assert rows[0]["原论文"] == '["lstm", "transformer"]'
+    assert rows[0]["本次运行"] == '{"model": "lstm"}'
+    assert all(isinstance(value, str) for value in rows[0].values())

@@ -1,0 +1,200 @@
+{
+  "schema_version": "oa_blocker_resolution_v1",
+  "generated_at": "2026-07-17T12:49:26.986233+00:00",
+  "before_download_statuses": {
+    "blocked_or_failed": 36,
+    "downloaded_open_access": 50
+  },
+  "after_download_statuses": {
+    "blocked_or_failed": 30,
+    "downloaded_open_access": 56
+  },
+  "attempted_count": 36,
+  "resolved_full_text_count": 6,
+  "unresolved_attempt_count": 30,
+  "attempts": [
+    {
+      "paper_id": "crossref_10_1093_rfs_hhaa009",
+      "status": "blocked_or_failed",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": null,
+      "pdf_sha256": null
+    },
+    {
+      "paper_id": "crossref_10_1287_mnsc_2023_4695",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1287_mnsc_2016_2644",
+      "status": "downloaded_open_access",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": "https://lbsresearch.london.edu/id/eprint/545/1/Bahn_GY_Machine_Learning_Portfolio_Optimization_Mgt_Sci_2016.pdf",
+      "pdf_sha256": "4be2dec2ffaf67cc1e24c7f110d803cb5999f370f517bc42b8cf6b893e829ac6"
+    },
+    {
+      "paper_id": "crossref_10_1007_s00521_018_3963_6",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1093_jjfinec_nbac020",
+      "status": "downloaded_open_access",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": "https://arxiv.org/pdf/2601.13014",
+      "pdf_sha256": "f8c9c63390416bccacdbc9028394d959c5d32893548418e04ca8982aae373d7e"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_eswa_2017_04_006",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1093_jjfinec_nbad005",
+      "status": "blocked_or_failed",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": null,
+      "pdf_sha256": null
+    },
+    {
+      "paper_id": "crossref_10_1016_j_eswa_2020_113973",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1007_s00521_010_0407_3",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2020_106943",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_neucom_2013_01_063",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2021_3110270",
+      "status": "blocked_or_failed",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": null,
+      "pdf_sha256": null
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2020_106401",
+      "status": "downloaded_open_access",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": "https://arxiv.org/pdf/1810.09965",
+      "pdf_sha256": "d4bd10b9deed256343b5e92feaa80316a0dca9d7959fd9512ff38d46c9a39d21"
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2021_3051872",
+      "status": "downloaded_open_access",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": "https://ieeexplore.ieee.org/ielx7/6287639/9312710/09324831.pdf",
+      "pdf_sha256": "cff5309e53332f4aa429c683efe6caf4576cbf29409c06589b0afd0600cd3158"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_ejor_2005_02_012",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_eswa_2020_113799",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1007_s00521_025_11044_5",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2023_111132",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1080_14697688_2021_1905869",
+      "status": "blocked_or_failed",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": null,
+      "pdf_sha256": null
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2024_111759",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_jempfin_2023_07_003",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1155_2021_6647534",
+      "status": "blocked_or_failed",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": null,
+      "pdf_sha256": null
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2022_108894",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_ejor_2021_06_047",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2023_3293064",
+      "status": "blocked_or_failed",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": null,
+      "pdf_sha256": null
+    },
+    {
+      "paper_id": "crossref_10_1093_jjfinec_nbac032",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_eswa_2025_129672",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1007_s12652_020_01839_w",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2021_3068768",
+      "status": "downloaded_open_access",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": "https://ieeexplore.ieee.org/ielx7/6287639/9312710/09386090.pdf",
+      "pdf_sha256": "897c7c00618f11d253d30b14dbc02a724f5d4896dc888bcb06b474affe67ab88"
+    },
+    {
+      "paper_id": "crossref_10_1016_j_jempfin_2025_101598",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2024_3381500",
+      "status": "downloaded_open_access",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": "https://ieeexplore.ieee.org/ielx7/6287639/6514899/10478466.pdf",
+      "pdf_sha256": "e9499998d94db71c0a42968e769ebf238ab55a10458574352b35ba1a990fd927"
+    },
+    {
+      "paper_id": "crossref_10_1080_0015198x_2024_2388024",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_3390_sci7010007",
+      "status": "blocked_or_failed",
+      "prior_status": "blocked_or_failed",
+      "downloaded_from": null,
+      "pdf_sha256": null
+    },
+    {
+      "paper_id": "crossref_10_1177_2053951720926558",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1080_14697688_2022_2124189",
+      "status": "no_legal_open_pdf"
+    },
+    {
+      "paper_id": "crossref_10_1007_s005210200021",
+      "status": "no_legal_open_pdf"
+    }
+  ]
+}

@@ -1,0 +1,393 @@
+{
+  "method_id": "covid19_hpsmp_table1_5day_binary_movement",
+  "paper_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+  "title": "COVID19-HPSMP: COVID-19 Adopted Hybrid and Parallel Deep",
+  "venue_or_source": "arXiv",
+  "paper_url": "unknown",
+  "task_type": "binary stock price movement classification",
+  "target_asset": "Dow Jones stock market index",
+  "asset_universe": [
+    "Dow Jones stock market index"
+  ],
+  "frequency": "daily trading days",
+  "horizon": "5 trading days",
+  "label_definition": "Within a 5 day prediction horizon, assign daily output 1 when adjusted stock price is greater than the previous day and 0 when it is less; final 5-day label is 1/rise if the sum of daily outputs is greater than threshold 3, and 0/fall when the number of 0 outputs within the 5-day window is more than 3.",
+  "data_requirements": [
+    "Historical stock market prices for the Dow Jones stock market index from 01/01/2016 to 30/07/2020.",
+    "Associated Twitter messages for the same period.",
+    "Trading-day-aligned dataframe combining historical prices and Tweet corpora, excluding weekends, half trading days, and market holidays.",
+    "Chronological split: training from January 2016 to January 2020, validation from January 2020 to February 2020, and test from 01/03/2020 to 30/07/2020."
+  ],
+  "feature_groups": [
+    "price_lag_features",
+    "cross_asset_features"
+  ],
+  "model_families": [
+    "lstm_regressor",
+    "cnn_sequence_regressor"
+  ],
+  "training_protocol": "Use the COVID19 PRIMO dataset split chronologically into training data from January 2016 to January 2020, validation data from January 2020 to February 2020, and test data from 01/03/2020 to 30/07/2020. Twitter corpora are tokenized, words occurring less than 5 times are removed, GloVe embeddings are used in the embedding modules, and training uses a five day horizon, batch size 64, and 15 epochs. Optimizer, loss function, seed, early stopping, and exact input window length are unknown.",
+  "evaluation_protocol": "Fixed chronological holdout evaluation on data from 01/03/2020 to 30/07/2020 after training on January 2016 to January 2020 and validation on January 2020 to February 2020. The selected reported row is the proposed COVID19-HPSMP Framework in Table 1 for binary 5-day stock movement prediction.",
+  "metrics": [
+    "directional_accuracy"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "Sensitivity_percent": 60,
+    "Specificity_percent": 71.11,
+    "Accuracy_percent": 66.48
+  },
+  "strict_requirements": [
+    "Use the proposed COVID19-HPSMP Framework row from Table 1, not the standalone CNN Local/Global or standalone CNN-LSTM baselines.",
+    "Use the 5-day binary movement classification setup, not the later 50-50 or 60-40 trading backtests.",
+    "Use chronological train/validation/test dates as reported.",
+    "Use exact reported Table 1 metrics: Sensitivity 60, Specificity 71.11, Accuracy 66.48."
+  ],
+  "unknowns": [
+    "Optimizer is not reported in the supplied context.",
+    "Loss function name is not reported in the supplied context.",
+    "Random seed is not reported in the supplied context.",
+    "Early stopping protocol is not reported in the supplied context.",
+    "Exact input sequence/window length for market and text features is not reported in the supplied context.",
+    "Whether preprocessing statistics are fit only on the training split is not reported in the supplied context.",
+    "Exact number of samples in each split is not reported in the supplied context.",
+    "cnn_sequence_regressor"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "paper_url",
+      "quote": "arXiv:2101.02287v2 [q-fin.ST] 8 Jul 2021",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "title",
+      "quote": "COVID19-HPSMP: COVID-19 Adopted Hybrid and Parallel Deep Information Fusion Framework for Stock Price Movement Prediction",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "task_type",
+      "quote": "Experimental results and comparisons are presented in this section to evaluate the proposed hybrid COVID19-HPSMP framework for the task of stock movement prediction.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "target_asset",
+      "quote": "the introduced dataset is constructed based on the Dow Jones stock market index and its associated Twitter messages for the period of 01/01/2016 to 30/07/2020.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "asset_universe",
+      "quote": "the introduced dataset is constructed based on the Dow Jones stock market index and its associated Twitter messages for the period of 01/01/2016 to 30/07/2020.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "frequency",
+      "quote": "our dataframe is created by combining historical prices and Tweet corpora and matching them to the trading days.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "horizon",
+      "quote": "we consider a ﬁve day horizon and used a batch size of 64 within 15 epoch.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "label_definition",
+      "quote": "within a 5 days prediction horizon, if the adjusted stock price of a speciﬁc day is more than that of the previous day, the output of that speciﬁc day would be 1. Then, the sum of the output values is computed over the 5 days horizon and if the sum is greater than a pre-deﬁned threshold of 3, we consider the ﬁnal output for that 5 day horizon to be 1, denoting a rise",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "label_definition",
+      "quote": "when the adjusted stock price associated with a speciﬁc day is less than its previous day, value 0 is assigned as the output of that speciﬁc day. When the number of such 0 output values within the 5 days window is more than 3, we consider the ﬁnal output to be 0, representing the fall prediction/state.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "data_requirements",
+      "quote": "Consequently, we considered 1, 152 trading days from January 2016 to July 2020 to build our dataset.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "data_requirements",
+      "quote": "The COVID19 PRIMO dataset is then divided into a training set from January 2016 to January 2020, and a validation set from January 2020 to February 2020. Data from 01/03/2020 to 30/07/2020 is kept to be used for test purposes.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "feature_groups",
+      "quote": "Market prices, including Adjusted close price (Adj. Close); Open price (Open); High price (High); Low price (Low); calculated target (Tar- get), and; Presence of COVID-19 in tweets are depicted in this ﬁgure.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "feature_groups",
+      "quote": "Glove, which is an unsupervised word embedding algorithm, is used within the embedding modules of the two parallel paths of the COVID19-HPSMP.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "model_families",
+      "quote": "The proposed COVID19-HPSMP consists of two parallel paths (hence hybrid), one based on Convolutional Neural Network (CNN) with Local/Global Attention modules, and one integrated CNN and Bi-directional Long Short term Memory (BLSTM) path.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "model_families",
+      "quote": "The two parallel paths are followed by a multilayer fusion layer acting as a fusion centre that combines local- ized features.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "training_protocol",
+      "quote": "The COVID19 PRIMO dataset is then divided into a training set from January 2016 to January 2020, and a validation set from January 2020 to February 2020. Data from 01/03/2020 to 30/07/2020 is kept to be used for test purposes.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "training_protocol",
+      "quote": "the available Twitter news corpora is tokenized and words occurring less than 5 times are removed to construct the vocabulary.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "training_protocol",
+      "quote": "we consider a ﬁve day horizon and used a batch size of 64 within 15 epoch.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "evaluation_protocol",
+      "quote": "Data from 01/03/2020 to 30/07/2020 is kept to be used for test purposes.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "evaluation_protocol",
+      "quote": "Table 1: Accuracy, Sensitivity, and Speciﬁcity comparisons between the proposed COVID19-HPSMP framework, those of thee stand-alone models, and accuracies of algorithms from References (Hu, 2019; Xu, 2018).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "metrics",
+      "quote": "Accuracy, Sensitivity, and Speciﬁcity comparisons between the proposed COVID19-HPSMP framework",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "reported_results",
+      "quote": "Model Sensitivity Speciﬁcity Accuracy The COVID19-HPSMP Framework 60 71.11 66.48",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "experiment_type",
+      "quote": "we have computed sensitivity and speciﬁcity metrics to evaluate diﬀerent error types (i.e., False Negative (FN), and False Positive (FP)).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "preprocessing_protocol",
+      "quote": "our dataframe is created by combining historical prices and Tweet corpora and matching them to the trading days.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "preprocessing_protocol",
+      "quote": "the available Twitter news corpora is tokenized and words occurring less than 5 times are removed to construct the vocabulary.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "hyperparameters",
+      "quote": "we consider a ﬁve day horizon and used a batch size of 64 within 15 epoch.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "required_start_date",
+      "quote": "the introduced dataset is constructed based on the Dow Jones stock market index and its associated Twitter messages for the period of 01/01/2016 to 30/07/2020.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "required_end_date",
+      "quote": "the introduced dataset is constructed based on the Dow Jones stock market index and its associated Twitter messages for the period of 01/01/2016 to 30/07/2020.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "strict_requirements",
+      "quote": "The COVID19-HPSMP Framework 60 71.11 66.48",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "unknowns",
+      "quote": "we consider a ﬁve day horizon and used a batch size of 64 within 15 epoch.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    },
+    {
+      "source_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "section": "cost_assumptions",
+      "quote": "Table 1: Accuracy, Sensitivity, and Speciﬁcity comparisons between the proposed COVID19-HPSMP framework, those of thee stand-alone models, and accuracies of algorithms from References (Hu, 2019; Xu, 2018).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2101.02287v2"
+    }
+  ],
+  "extraction_metadata": {
+    "document_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+    "text_sha": "b7627f2b73ff2f57",
+    "selected_claim": "Table 1 COVID19-HPSMP Framework 5-day binary stock movement classification results",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "quality_report": {
+      "method_id": "covid19_hpsmp_table1_5day_binary_movement",
+      "paper_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall",
+      "quality_score": 0.89,
+      "approval_required": true,
+      "critical_missing_fields": [],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [
+        "cnn_sequence_regressor"
+      ],
+      "warnings": [
+        "unsupported model adapters required: cnn_sequence_regressor"
+      ],
+      "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+    },
+    "evaluation_protocol_type": "out_of_sample",
+    "evaluation_protocol_description": "Fixed chronological holdout evaluation on data from 01/03/2020 to 30/07/2020 after training on January 2016 to January 2020 and validation on January 2020 to February 2020. The selected reported row is the proposed COVID19-HPSMP Framework in Table 1 for binary 5-day stock movement prediction.",
+    "frequency_type": "daily",
+    "horizon_type": "5_day",
+    "document_text_sha": "b7627f2b73ff2f57",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 31,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "out_of_sample",
+  "evaluation_protocol_description": "Fixed chronological holdout evaluation on data from 01/03/2020 to 30/07/2020 after training on January 2016 to January 2020 and validation on January 2020 to February 2020. The selected reported row is the proposed COVID19-HPSMP Framework in Table 1 for binary 5-day stock movement prediction.",
+  "frequency_type": "daily",
+  "horizon_type": "5_day",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "Create a trading-day dataframe by combining historical prices and Tweet corpora and matching them to trading days after excluding non-trading dates. Tokenize available Twitter news corpora, remove words occurring less than 5 times to construct the vocabulary, and use GloVe embeddings within the two parallel paths. Whether normalization/statistics are fit only on the training set is unknown.",
+  "hyperparameters": {
+    "prediction_horizon_days": 5,
+    "batch_size": 64,
+    "epochs": 15,
+    "min_word_occurrences": 5,
+    "rise_threshold_sum_over_5_days": 3,
+    "embedding_algorithm": "GloVe"
+  },
+  "required_start_date": "2016-01-01",
+  "required_end_date": "2020-07-30",
+  "schema_version": "method_card_v2"
+}

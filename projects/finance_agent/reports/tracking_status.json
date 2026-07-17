@@ -1,0 +1,16 @@
+{
+  "mlflow": {
+    "backend": "mlflow",
+    "run_id": "88260b20178f4d6bb22286278b1d4f54",
+    "tracking_uri": "sqlite:///D:/AI Agent/finance_forecast_agent/projects/finance_agent/mlflow.db",
+    "experiment_name": "tracking-healthcheck"
+  },
+  "dvc": {
+    "backend": "dvc",
+    "configured": true,
+    "remote": {
+      "name": "finance_agent_remote",
+      "url": "D:\\AI Agent\\finance_forecast_agent_dvc_remote"
+    }
+  }
+}

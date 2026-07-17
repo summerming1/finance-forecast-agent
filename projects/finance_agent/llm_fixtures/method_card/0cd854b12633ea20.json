@@ -1,0 +1,298 @@
+{
+  "prompt_hash": "0cd854b12633ea20",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "blending_ensemble_rnn_fcnn_sp500_1d",
+    "paper_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+    "title": "A Novel Ensemble Deep Learning Model for Stock Prediction Based on Stock Prices and News",
+    "venue_or_source": "arXiv",
+    "paper_url": "unknown",
+    "task_type": "next-day stock price forecasting",
+    "target_asset": "S&P 500 Index adjusted closing price",
+    "asset_universe": [
+      "S&P 500 Index"
+    ],
+    "frequency": "daily trading days",
+    "horizon": "1 trading day ahead",
+    "label_definition": "Predict the next day's adjusted closing stock price using the past 10 trading days of financial news compound scores from multiple sources and adjusted closing prices; movement direction metrics are computed from predicted versus actual stock movement direction.",
+    "data_requirements": [
+      "Daily S&P 500 Index adjusted closing prices for trading days from 2017-12-07 through 2018-06-01.",
+      "Daily financial news compound scores aligned by date from WSJ, Reuters, CBNC, and Fortune.",
+      "Dataset must exclude weekends and remove null records.",
+      "Dataset must contain 121 trading days and six columns: date, four news compound score columns, and adjusted closing price.",
+      "Chronological split: training 2017-12-07 to 2018-04-09, validation 2018-04-10 to 2018-05-04, test 2018-05-07 to 2018-06-01."
+    ],
+    "feature_groups": [
+      "past 10 trading days of adjusted closing prices",
+      "past 10 trading days of WSJ news compound scores",
+      "past 10 trading days of Reuters news compound scores",
+      "past 10 trading days of CBNC news compound scores",
+      "past 10 trading days of Fortune news compound scores"
+    ],
+    "model_families": [
+      "blending ensemble learning",
+      "recurrent neural network level-0 sub-models",
+      "fully connected neural network meta-learner"
+    ],
+    "training_protocol": "Use a rolling window of fixed size 10 over chronological daily trading data. Train level-0 recurrent neural network sub-models on the training split. Use sub-model predictions on the validation split to form a p x m intermediate dataset for the level-1 meta-learner. Train the level-1 fully connected neural network meta-learner on that intermediate validation-derived dataset. At test time, feed test data into the sub-models to produce intermediate test predictions, then feed those intermediate predictions to the meta-learner for final predictions. Reported split-derived window counts are 83 training time steps, 9 validation time steps, and 9 test time steps.",
+    "evaluation_protocol": "Fixed chronological holdout evaluation. Training data are from 2017-12-07 to 2018-04-09, validation data are from 2018-04-10 to 2018-05-04, and test data are from 2018-05-07 to 2018-06-01. The training split trains level-0 sub-models, the validation split trains/prepares the level-1 meta-learner, and the test split evaluates prediction performance. This is not reported as walk-forward validation.",
+    "metrics": [
+      "MSE",
+      "MPA",
+      "Precision",
+      "Recall",
+      "F1-Score",
+      "MDA"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {
+      "model": "Blending Ensemble",
+      "MSE": 186.32,
+      "MPA": "99.65%",
+      "Precision": "60%",
+      "Recall": "75%",
+      "F1-Score": "66.67%",
+      "MDA": "66.67%"
+    },
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "Remove all null data. Combine news data and stock data by date. Exclude weekends because the stock market only opens and closes during weekdays. Use six columns: date, WSJ news compound score, Reuters news compound score, CBNC news compound score, Fortune news compound score, and adjusted closing price. Rescale adjusted closing stock prices to the range [0, 1]. The paper states compound scores are between -1 and 1; it does not specify an additional transformation for compound scores. The paper does not specify whether price normalization parameters are fit only on the training split or on the full dataset.",
+    "hyperparameters": {
+      "rolling_window_size_days": 10,
+      "training_time_steps": 83,
+      "validation_time_steps": 9,
+      "test_time_steps": 9,
+      "meta_learner_layers": 3,
+      "meta_learner_activation": "ReLU",
+      "level_0_number_of_submodels": 2
+    },
+    "required_start_date": "2017-12-07",
+    "required_end_date": "2018-06-01",
+    "strict_requirements": [
+      "Use the S&P 500 Index as the only target asset.",
+      "Use adjusted closing prices as the stock-price series.",
+      "Use WSJ, Reuters, CBNC, and Fortune news compound scores as news inputs.",
+      "Use a 10-trading-day rolling input window.",
+      "Predict the next day's stock price.",
+      "Use the chronological train/validation/test split reported in the paper.",
+      "Train level-0 recurrent neural network sub-models on the training split and train the fully connected meta-learner using intermediate predictions prepared from the validation split.",
+      "Evaluate only on the test period from 2018-05-07 to 2018-06-01.",
+      "Report the Blending Ensemble row, not LSTM, DP-LSTM, GRU, Averaging Ensemble, or Weighted Average Ensemble baselines."
+    ],
+    "unknowns": [
+      "Exact identities and architectures of the two recurrent neural network sub-models are not fully specified in the supplied context.",
+      "Optimizer is not reported in the supplied context.",
+      "Loss function used for training is not reported in the supplied context.",
+      "Number of epochs is not reported in the supplied context.",
+      "Batch size is not reported in the supplied context.",
+      "Random seed is not reported in the supplied context.",
+      "Early stopping protocol is not reported in the supplied context.",
+      "Whether normalization is fit on training data only or on the full dataset is not reported in the supplied context.",
+      "Exact definition of MPA is not available in the supplied context.",
+      "Exact threshold or calculation procedure for converting price predictions to direction labels for Precision, Recall, F1-Score, and MDA is not fully specified in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "A Novel Ensemble Deep Learning Model for Stock Prediction Based on Stock Prices and News"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "This paper proposes a novel deep learning approach to predict future stock move- ment."
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "In our research, we use the S&P 500 Index as our test case."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "In our research, we use the S&P 500 Index as our test case."
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "Since the stock market only opens and closes during the weekdays, therefore weekends are not included in the dataset."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "we are using the past 10 days’ ﬁnancial news from multiple sources and stock prices to predict the next day’s stock price."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "we are using the past 10 days’ ﬁnancial news from multiple sources and stock prices to predict the next day’s stock price."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "Our dataset contains 121 trading days and a total of six columns; the ﬁrst column contains the date corresponding to the news data and stock data in the next 5 columns. The news data contains the WSJ news compound score, the Reuter’s news compound score, the CBNC news compound score, the Fortune news compound score, and the stock data are the adjusted closing prices."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "we are using the past 10 days’ ﬁnancial news from multiple sources and stock prices to predict the next day’s stock price."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "The model employs a blending ensemble learning method to combine two recurrent neural networks (RNNs) followed by a fully connected neural network (FCNN)."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "The training dataset is used to train the level 0 sub-models, the validation dataset is used to prepare the level 1 model, and the test dataset used to evaluate our prediction performance."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "The meta-learner is a fully-connect neural network with three layers; the activation function for this model is the Rectiﬁed Linear Unit (ReLu)."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "The training data are those obtained from 12/07/2017 to 04/09/2018; the validation data are those data between 04/10/2018 and 05/04/2018; the test data are from 05/07/2018 to 06/01/2018."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "During the experiments, we mainly use four different evaluation metrics: mean square error (MSE), confusion matrix, mean prediction accuracy (MPA) and Movement Direction Accuracy (MDA) to evaluate the Blending Ensemble model."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "In this paper, we will use the Precision, Recall, and F1-Score to evaluate the the Blending Ensemble model."
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "Evaluation Metrics LSTM DP- LSTM GRU Averaging Ensemble Weighted Average Ensemble Blending Ensemble MSE 438.94 330.97 249.34 231.16 229.52 186.32 MPA 99.29% 99.48% 99.57% 99.57% 99.57% 99.65% Precision 25% 20% 40% 25% 40% 60% Recall 25% 25% 50% 25% 50% 75% F1-Score 25% 22.22% 44.44% 25% 44.44% 66.67% MDA 33.33% 22.22% 44.44% 33.33% 33.33% 66.67%"
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "During the pre-processing, all the null data are removed from the dataset, and all news data and stock data are combined together."
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "Since the compound scores are numbers between -1 and 1, to avoid overﬁtting and improve accuracy, we rescaled the adjusted closing stock prices between 0 and 1."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "a rolling window with ﬁxed-size 10 is used to provide different time steps."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "According to the length of the window, the training data is divided into 83-time steps. The validation data is divided into 9-time steps, and the test data divided is into 9-time steps."
+      },
+      {
+        "section": "required_start_date",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "The training data are those obtained from 12/07/2017 to 04/09/2018; the validation data are those data between 04/10/2018 and 05/04/2018; the test data are from 05/07/2018 to 06/01/2018."
+      },
+      {
+        "section": "required_end_date",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "The training data are those obtained from 12/07/2017 to 04/09/2018; the validation data are those data between 04/10/2018 and 05/04/2018; the test data are from 05/07/2018 to 06/01/2018."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "As shown in the table above, the Blending Ensemble model outperforms all other models in every category."
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:5da528501206cb4d",
+        "quote": "The details of the model architecture will be discussed later in section 4.4."
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p",
+      "text_sha": "5da528501206cb4d",
+      "selected_claim": "Blending Ensemble model on S&P 500 next-day stock price prediction using prices and news compound scores, evaluated on the fixed May 2018 holdout test split."
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

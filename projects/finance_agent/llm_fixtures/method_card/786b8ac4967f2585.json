@@ -1,0 +1,270 @@
+{
+  "prompt_hash": "786b8ac4967f2585",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "gan_psr_djia_stock_prediction",
+    "paper_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+    "title": "Generative Adversarial Network (GAN) and Enhanced Root Mean Square Error (ERMSE): Deep Learning for Stock Price Movement Prediction",
+    "venue_or_source": "Multimedia Tools and Applications (2021)",
+    "paper_url": "unknown",
+    "task_type": "stock_index_closed_price_prediction_with_directional_accuracy_evaluation",
+    "target_asset": "DJIA",
+    "asset_universe": [
+      "DJIA"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "Predict closed stock price; directional trend is evaluated as 0 if y_t - y_{t-1} < 0, 1 if y_t - y_{t-1} > 0, and previous trend if y_t - y_{t-1} = 0.",
+    "data_requirements": [
+      "Use Yahoo Finance CSV data for DJIA covering 1 Jan 2013 to 31 Dec 2018.",
+      "Use stock data fields described as date, open, low, high, close, and volume.",
+      "Input to the proposed model is normalized data."
+    ],
+    "feature_groups": [
+      "OHLCV stock market variables",
+      "phase-space reconstruction / common sliding window transformed time-series features"
+    ],
+    "model_families": [
+      "Generative Adversarial Network",
+      "LSTM generator",
+      "CNN discriminator"
+    ],
+    "training_protocol": "Train the proposed GAN on normalized Yahoo Finance CSV stock-index data. The generator G is based on LSTM, the discriminator D is based on CNN, and the reported GAN configuration uses window size 121, 100 epochs, 25 hidden layers, and 1 output. Optimizer, batch size, chronological train/test split, seed, and convergence rule are unknown.",
+    "evaluation_protocol": "Evaluate the proposed GAN against the state-of-the-art LSTM baseline on the DJIA row using directional accuracy, processing time, and MRSE/RMSE. The exact chronological split and context overlap are unknown.",
+    "metrics": [
+      "directional_accuracy_percent",
+      "processing_time_seconds",
+      "MRSE"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {
+      "directional_accuracy_percent": 64.58,
+      "processing_time_seconds": 125,
+      "MRSE": 0.028
+    },
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "During preprocessing, the dataset is de-noised using a wavelet technique, volume data is folded, and data is replicated multiple times using the common sliding window method to normalize the data. Fit scope and whether normalization statistics are computed on train data only are unknown.",
+    "hyperparameters": {
+      "window_size": 121,
+      "epochs": 100,
+      "hidden_layers": 25,
+      "output_units": 1
+    },
+    "required_start_date": "2013-01-01",
+    "required_end_date": "2018-12-31",
+    "strict_requirements": [
+      "Use the proposed GAN model, not the state-of-the-art LSTM baseline.",
+      "Use DJIA as the selected single result row.",
+      "Use Yahoo Finance stock-index CSV data from 1 Jan 2013 to 31 Dec 2018.",
+      "Use normalized data as model input.",
+      "Report the DJIA proposed-model metrics exactly as directional accuracy 64.58%, processing time 125 Sec, and MRSE 0.0280."
+    ],
+    "unknowns": [
+      "Exact prediction horizon length and unit are not reported in the supplied context.",
+      "Data frequency is not explicitly reported in the supplied context.",
+      "Exact chronological train/test split is not reported.",
+      "Batch size is not reported.",
+      "Optimizer details are not reported.",
+      "Random seed is not reported.",
+      "Early stopping or convergence stopping rule is not reported beyond pseudocode wording.",
+      "Whether preprocessing statistics are fit on training data only is not reported.",
+      "Exact implementation of enhanced RMSE equation is not fully available in the supplied context.",
+      "Whether the stated GAN hyperparameters apply identically to every stock-index row is not fully disambiguated."
+    ],
+    "evidence_spans": [
+      {
+        "section": "method_id",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Proposal uses Generative Adversarial Networks and LSTM."
+      },
+      {
+        "section": "paper_id",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Cite as: Ashish Kumar, Abeer Alsadoon, P. W. C. Prasad, Salma Abdullah, Tarik A. Rashid, Duong Thu Hang Pham & Tran Quoc Vinh Nguyen. 2021. Generative adversarial network (GAN) and enhanced root mean square error (ERMSE): deep learning for stock price movement prediction."
+      },
+      {
+        "section": "title",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Generative Adversarial Network (GAN) and Enhanced Root Mean Square Error (ERMSE): Deep Learning for Stock Price Movement Prediction"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Output: Closed stock price"
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "DJIA 57.79% 196 Sec 0.0588 64.58% 125 Sec 0.0280"
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Table 1: Results of the comparison experiment on Index Stock Prediction Stock Index State of Art Proposed Directional Accuracy Processing Time MRSE Directional Accuracy Processing Time MRSE DJIA"
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "The dataset that taken as samples for testing has a different date (open, low, high, close, and volume data)."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Output: Closed stock price"
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "trend’ = predicted value trend = actual value the trend at time t is defined as: 𝑡𝑟𝑒𝑛𝑑𝑡 = { 0, 𝑦𝑡 − 𝑦𝑡−1 < 0, 1, 𝑦𝑡 − 𝑦𝑡−1 > 0, 𝑡𝑟𝑒𝑛𝑑𝑡−1, 𝑦𝑡 − 𝑦𝑡−1 = 0."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Python 3.7 IDE was used in the implementation and representation of the model by stock index dataset of various companies from 1 Jan 2013 to 31 Dec 2018."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "The dataset was obtained from Yahoo finance (finance.yahoo.com). Additionally the dataset considered an open-source and freely available on the internet as a (CSV file)."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "The dataset that taken as samples for testing has a different date (open, low, high, close, and volume data)."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "This process was done by Phase-space reconstruction technique (common sliding window) for normalization of the data and fast processing."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Generative Adversarial Network (GAN) which is a combination of two neural networks which are Long Short-Term Memory (LSTM) as Generative model and Convolutional Neural Network (CNN) as Discriminative model for adversarial training to forecast the stock market."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Table 2: Pseudocode the proposed model (GAN) Algorithm: Proposed Generative Adversarial Network Input: Normalized data Output: Closed stock price"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Based on the analysis results the GAN has used a window size of 121 and 100 epochs, as well as, it has used 25 hidden layers and 1 output."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Here, the results from the sample were pres ented in terms of accuracy and processing time. Accuracy was determined in terms of root mean square error (RMSE), i.e. the difference between the actual target value and the predicted target value and the processing time was the number of iterations occurred during training and testing the model."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Stock Index State of Art Proposed Directional Accuracy Processing Time MRSE Directional Accuracy Processing Time MRSE"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "DJIA 57.79% 196 Sec 0.0588 64.58% 125 Sec 0.0280"
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "During the pre -processing phase, the wavelet technique has reduced the noise from dataset, folded volume ,data and replicated multiple times using common sliding window method to normalize the data."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Based on the analysis results the GAN has used a window size of 121 and 100 epochs, as well as, it has used 25 hidden layers and 1 output."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Table 1: Results of the comparison experiment on Index Stock Prediction Stock Index State of Art Proposed Directional Accuracy Processing Time MRSE Directional Accuracy Processing Time MRSE DJIA 57.79% 196 Sec 0.0588 64.58% 125 Sec 0.0280"
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "41f29dcf2192cccc",
+        "quote": "Comprehensive examples which include different training epochs and batch size were undertaken."
+      }
+    ],
+    "extraction_metadata": {
+      "claim_selection": "Selected the DJIA proposed-model row from Table 1 because it is a concrete single stock-index experiment with exact reported metrics.",
+      "text_sha": "41f29dcf2192cccc"
+    },
+    "approval_required": true,
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

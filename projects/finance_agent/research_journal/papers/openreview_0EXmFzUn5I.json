@@ -9,7 +9,7 @@
     "target": "multivariate_forecast",
     "dataset_id": "ettm1_official_69680x7"
   },
-  "status": "ready_not_run",
+  "status": "blocked",
   "claim_ids": [
     "openreview_0EXmFzUn5I_ettm1_native"
   ],
@@ -29,7 +29,7 @@
       "reusable_capability_ids": [
         "native_claim_audit"
       ],
-      "recorded_at": "2026-07-17T10:07:04.323354+00:00"
+      "recorded_at": "2026-07-17T14:13:42.442664+00:00"
     },
     {
       "attempt_id": "openreview_0EXmFzUn5I_ettm1_native:source-data-audit",
@@ -46,7 +46,27 @@
       "reusable_capability_ids": [
         "native_claim_audit"
       ],
-      "recorded_at": "2026-07-17T10:07:04.323354+00:00"
+      "recorded_at": "2026-07-17T14:13:42.442664+00:00"
+    },
+    {
+      "attempt_id": "openreview_0EXmFzUn5I_ettm1_native:official-execution",
+      "stage": "official_execution",
+      "action": "Execute the pinned official protocol and evaluate the frozen paper claim",
+      "outcome": "failed",
+      "summary": "Official command completed=False; paper metric tolerance passed=False.",
+      "artifacts": [
+        "reports\\native_openreview_0EXmFzUn5I_ettm1_native.json"
+      ],
+      "blockers": [
+        "official command did not complete every required repetition",
+        "missing parsed metrics: mse, mae",
+        "one or more paper metrics fell outside the predeclared tolerance"
+      ],
+      "reusable_capability_ids": [
+        "official_repo_command_execution",
+        "native_metric_acceptance"
+      ],
+      "recorded_at": "2026-07-17T14:13:42.442664+00:00"
     }
   ],
   "decisions": [
@@ -84,14 +104,16 @@
     "native_claims": [
       "native_claims/catalog.json"
     ],
-    "reports": []
+    "reports": [
+      "reports\\native_openreview_0EXmFzUn5I_ettm1_native.json"
+    ]
   },
   "remaining_manual_steps": [
     "Claim selection and paper/repository protocol reconciliation were historically curated by a developer.",
     "Compatibility and tolerance decisions require human review before reuse on a new paper."
   ],
   "historical_reconstruction": true,
-  "started_at": "2026-07-17T10:07:04.323354+00:00",
-  "updated_at": "2026-07-17T10:07:04.323354+00:00",
+  "started_at": "2026-07-17T14:13:42.442664+00:00",
+  "updated_at": "2026-07-17T14:13:42.442664+00:00",
   "schema_version": "paper_exploration_record_v1"
 }

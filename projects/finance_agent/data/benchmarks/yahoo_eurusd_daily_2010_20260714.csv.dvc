@@ -1,0 +1,5 @@
+outs:
+- md5: 2246810c0e9b78ec3cde1d5bf1c4efda
+  size: 1658721
+  hash: md5
+  path: yahoo_eurusd_daily_2010_20260714.csv

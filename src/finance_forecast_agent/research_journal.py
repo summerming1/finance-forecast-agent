@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
+import time
+import uuid
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -25,9 +28,17 @@ def _utc_now() -> str:
 
 def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary = path.with_suffix(path.suffix + f".{uuid.uuid4().hex}.tmp")
     temporary.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    temporary.replace(path)
+    for attempt in range(8):
+        try:
+            os.replace(temporary, path)
+            return
+        except PermissionError:
+            if attempt == 7:
+                temporary.unlink(missing_ok=True)
+                raise
+            time.sleep(0.025 * (2**attempt))
 
 
 @dataclass(frozen=True)

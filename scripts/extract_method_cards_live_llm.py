@@ -31,12 +31,17 @@ def main() -> None:
     parser.add_argument('--out-dir', default='projects/finance_agent/method_cards')
     parser.add_argument('--fixture-dir', default='projects/finance_agent/llm_fixtures')
     parser.add_argument('--pattern', action='append', default=None, help='Glob pattern relative to papers-dir. Can be passed multiple times.')
+    parser.add_argument('--paper-id', action='append', default=None, help='Only process files whose name starts with this paper id. Repeatable.')
     parser.add_argument('--write-paper-specs', action='store_true')
     parser.add_argument('--reuse-existing', action='store_true', help='Reuse an existing MethodCard with the same document text hash instead of calling the live LLM again.')
+    parser.add_argument('--continue-on-error', action='store_true', help='Record a failed paper and continue the resumable batch.')
     args = parser.parse_args()
     papers_dir = Path(args.papers_dir)
     patterns = args.pattern or ['*.txt', '*.md', '*.pdf']
     paths = sorted({path for pattern in patterns for path in papers_dir.glob(pattern)})
+    if args.paper_id:
+        selected_ids = tuple(args.paper_id)
+        paths = [path for path in paths if path.stem.startswith(selected_ids)]
     if not paths:
         raise SystemExit(f'No paper files found in {args.papers_dir}')
     agent = MethodCardAgent(
@@ -48,20 +53,37 @@ def main() -> None:
     out_dir = Path(args.out_dir)
     cards = []
     specs = []
+    progress_path = out_dir / 'extraction_progress.json'
+    progress = {'schema_version': 'methodcard_batch_progress_v1', 'completed': [], 'failed': []}
     for path in paths:
-        document = loader.load(path)
-        card = _load_existing_card(out_dir, document) if args.reuse_existing else None
-        if card is None:
-            card = agent.extract(document, out_dir=out_dir)
-        else:
-            replay.write_fixture(prompt_payload=strict_method_card_prompt(document), schema_name='method_card', response=card.to_dict())
-        cards.append(card.to_dict())
-        specs.append(method_card_to_paper_spec(card).to_dict())
+        try:
+            document = loader.load(path)
+            card = _load_existing_card(out_dir, document) if args.reuse_existing else None
+            if card is None:
+                card = agent.extract(document, out_dir=out_dir)
+            else:
+                replay.write_fixture(prompt_payload=strict_method_card_prompt(document), schema_name='method_card', response=card.to_dict())
+            cards.append(card.to_dict())
+            specs.append(method_card_to_paper_spec(card).to_dict())
+            progress['completed'].append({'source': str(path), 'paper_id': card.paper_id})
+        except Exception as exc:
+            progress['failed'].append({'source': str(path), 'error': str(exc)})
+            if not args.continue_on_error:
+                raise
+        finally:
+            out_dir.mkdir(parents=True, exist_ok=True)
+            progress_path.write_text(json.dumps(progress, indent=2, ensure_ascii=False), encoding='utf-8')
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / 'method_card_catalog.json').write_text(json.dumps({'method_card_count': len(cards), 'method_cards': cards}, indent=2, ensure_ascii=False), encoding='utf-8')
     if args.write_paper_specs:
         (out_dir / 'paper_specs_from_method_cards.json').write_text(json.dumps({'paper_specs': specs}, indent=2, ensure_ascii=False), encoding='utf-8')
-    print({'method_card_count': len(cards), 'fixtures_recorded': True, 'out_dir': str(out_dir)})
+    print({
+        'method_card_count': len(cards),
+        'failed_count': len(progress['failed']),
+        'fixtures_recorded': True,
+        'out_dir': str(out_dir),
+        'progress_path': str(progress_path),
+    })
 
 
 if __name__ == '__main__':

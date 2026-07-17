@@ -12,6 +12,7 @@ def test_p2_gate_does_not_promote_same_type_strict_count(tmp_path: Path) -> None
     (reports / "reproduction_portfolio.json").write_text(
         json.dumps(
             {
+                "strict_verified_paper_count": 20,
                 "strict_verified_financial_paper_count": 20,
                 "strict_claims": [{"claim_id": "one"}],
             }
@@ -57,9 +58,46 @@ def test_p2_gate_does_not_promote_same_type_strict_count(tmp_path: Path) -> None
         json.dumps({"false_strict_count": 0, "route_count": 10}), encoding="utf-8"
     )
     (reports / "candidate_triage.json").write_text(
-        json.dumps({"candidate_label_eliminated": True}), encoding="utf-8"
+        json.dumps(
+            {
+                "candidate_execution": {"complete": True},
+                "blocker_reduction": {"net_reduction": 1},
+            }
+        ),
+        encoding="utf-8",
     )
     result = assess_p2_readiness(tmp_path)
     assert result["ready_for_p2"] is False
     assert result["gates"]["strict_papers_at_least_20"] is True
     assert result["gates"]["experiment_types_at_least_4"] is False
+
+
+def test_p2_gate_rejects_label_only_candidate_triage(tmp_path: Path) -> None:
+    reports = tmp_path / "reports"
+    claims = tmp_path / "native_claims"
+    reports.mkdir()
+    claims.mkdir()
+    (reports / "reproduction_portfolio.json").write_text(
+        json.dumps({"strict_verified_financial_paper_count": 0, "strict_claims": []}),
+        encoding="utf-8",
+    )
+    (claims / "catalog.json").write_text(json.dumps({"claims": []}), encoding="utf-8")
+    (reports / "vertical_validation.json").write_text(
+        json.dumps({"false_strict_count": 0, "strict_verified_count": 0}), encoding="utf-8"
+    )
+    (reports / "heldout_onboarding_validation.json").write_text(
+        json.dumps({"false_strict_count": 0, "route_count": 10}), encoding="utf-8"
+    )
+    (reports / "candidate_triage.json").write_text(
+        json.dumps(
+            {
+                "candidate_label_eliminated": True,
+                "candidate_execution": {"complete": False},
+                "blocker_reduction": {"net_reduction": -28},
+            }
+        ),
+        encoding="utf-8",
+    )
+    result = assess_p2_readiness(tmp_path)
+    assert result["gates"]["candidate_execution_complete"] is False
+    assert result["gates"]["blocker_reduction_positive"] is False

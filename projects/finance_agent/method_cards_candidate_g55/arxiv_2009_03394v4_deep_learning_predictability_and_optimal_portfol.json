@@ -1,0 +1,353 @@
+{
+  "method_id": "lstm_6mo_quarterly_oos_return_forecast_table1_panel_a",
+  "paper_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+  "title": "Deep Learning, Predictability, and Optimal",
+  "venue_or_source": "arXiv",
+  "paper_url": "unknown",
+  "task_type": "forecast_only",
+  "target_asset": "stock market excess returns",
+  "asset_universe": [
+    "stock index"
+  ],
+  "frequency": "quarterly forecast updates/rebalancing; underlying returns appear monthly but exact observation frequency is unknown",
+  "horizon": "6-month prediction horizon",
+  "label_definition": "future excess stock market return over the 6-month horizon; exact compounding/log-return label construction is unknown",
+  "data_requirements": [
+    "Stock market excess return series spanning January 1945 to December 2018.",
+    "Predictor variables observed up to each forecast origin t.",
+    "Out-of-sample forecasts start in February 1955.",
+    "Evaluate only at quarterly update/rebalancing dates for this selected 6-month horizon experiment."
+  ],
+  "feature_groups": [
+    "return_momentum_features"
+  ],
+  "model_families": [
+    "lstm_regressor"
+  ],
+  "training_protocol": "At each quarterly rebalance date, split available historical data into temporally ordered training and validation samples; tune hyperparameters on the validation sample using 100 randomly chosen grid combinations; fit using Adam with weight decay regularization and Huber loss; train for up to 1000 epochs with early stopping; use ensemble averaging of five models with randomly chosen initial values.",
+  "evaluation_protocol": "Out-of-sample evaluation starts in February 1955 using the January 1945 to December 2018 sample. For Panel A, forecasts are evaluated at quarterly rebalancing dates for the 6-month horizon. Report MSPE and out-of-sample R2 relative to the EH benchmark, with Clark-West p-value reported only when R2_oos is positive.",
+  "metrics": [
+    "r2"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "selected_model": "LSTM",
+    "selected_panel": "Table 1 Panel A: 6-month horizon and quarterly rebalancing",
+    "MSPE_q_x_1e4": 17.3,
+    "R2_q_oos_percent": 1.6,
+    "Clark_West_p_value": 0.002
+  },
+  "strict_requirements": [
+    "Use the LSTM recurrent neural network row from Table 1 Panel A only.",
+    "Use the 6-month horizon with quarterly forecast updates/rebalancing.",
+    "Use the sample period January 1945 to December 2018.",
+    "Start out-of-sample forecasts in February 1955.",
+    "Tune hyperparameters at each quarterly rebalance using temporally ordered training and validation data.",
+    "Use the reported random hyperparameter grid ranges, Adam optimizer, Huber loss, dropout, early stopping, and five-model ensemble averaging."
+  ],
+  "unknowns": [
+    "Exact input predictor variable list is not supplied in the provided context.",
+    "Exact neural network architecture details for the selected LSTM, including number of layers, hidden units, sequence length, and batch size, are not supplied in the provided context.",
+    "Exact training/validation split proportions are not supplied in the provided context.",
+    "Random seed protocol is not supplied in the provided context.",
+    "Preprocessing, scaling, missing-value handling, and fit scope for transformations are not supplied in the provided context.",
+    "Exact label construction for the 6-month excess return, including whether it is cumulative simple return or log return, is not fully specified in the provided context.",
+    "Whether the neural-network estimation window is rolling, expanding, or otherwise defined is not fully specified in the provided context."
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "title",
+      "quote": "Deep Learning, Predictability, and Optimal Portfolio Returns",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "task_type",
+      "quote": "We study the dynamic portfolio selection of an investor who uses deep learning methods to fore- cast stock market excess returns.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "target_asset",
+      "quote": "uses deep learning methods to fore- cast stock market excess returns",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "asset_universe",
+      "quote": "There are two assets: a one-period Treasury bill and a stock index.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "frequency",
+      "quote": "Panel A: 6-month horizon and quarterly rebalancing",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "horizon",
+      "quote": "Panel A: 6-month horizon and quarterly rebalancing",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "label_definition",
+      "quote": "uses deep learning methods to fore- cast stock market excess returns",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "data_requirements",
+      "quote": "The forecast starts in February 1955. The sample period spans from January 1945 to December 2018.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "feature_groups",
+      "quote": "exploiting the time-series structure of standard predictor variables via deep learning",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "model_families",
+      "quote": "including a long short-term memory (LSTM) recurrent architecture",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "training_protocol",
+      "quote": "At the end of each quarter (year), we split the data into training and validation samples that maintain the temporal ordering of the data and tune hyperparameters with respect to the statistical and economic criteria.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "training_protocol",
+      "quote": "To fit the networks, we adopt a popular and robust adaptive moment estimation algorithm (Adam) with weight decay regularization introduced by Kingma and Ba (2014) and we use the Huber loss function in the estimation.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "training_protocol",
+      "quote": "Since the sample at each window is rather small and final models can depend on initial values in the optimization, we use ensemble averaging of five models with randomly chosen initial values.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "evaluation_protocol",
+      "quote": "Panels A and B show the MSPE and out-of-sampleR 2 statistics based on those periods when quarterly and annual rebalancing happens.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "evaluation_protocol",
+      "quote": "We report statistical significance only ifR 2 oos is positive. The forecast starts in February 1955. The sample period spans from January 1945 to December 2018.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "metrics",
+      "quote": "MSPE q ×10 4 17.4 18.0 18.2 18.9 18.0 16.3 16.6 16.6 17.3 R2 q,oos 0.0% -2.5% -3.6% -8.0% -2.5% 7.1% 5.1% 5.6% 1.6% p-value (0.006) (0.007) (0.002) (0.002)",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "cost_assumptions",
+      "quote": "Table 1 reports the statistical accuracy of the models considered.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "reported_results",
+      "quote": "Panel A: 6-month horizon and quarterly rebalancing MSPE q ×10 4 17.4 18.0 18.2 18.9 18.0 16.3 16.6 16.6 17.3 R2 q,oos 0.0% -2.5% -3.6% -8.0% -2.5% 7.1% 5.1% 5.6% 1.6% p-value (0.006) (0.007) (0.002) (0.002)",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "experiment_type",
+      "quote": "Table 1 reports the statistical accuracy of the models considered.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "preprocessing_protocol",
+      "quote": "At the end of each quarter (year), we split the data into training and validation samples that maintain the temporal ordering of the data",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "hyperparameters",
+      "quote": "We search the optimal models in the following 11 grid of 100 randomly chosen combinations of the following hyperparameters: learning rate∈[0.001, 0.02], decay regularization∈[0, 0.001], dropout∈[0%, 60%]of weights and activation function∈ {sigmoid, ReLU}with 1000 epochs with early stopping.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "required_start_date",
+      "quote": "The sample period spans from January 1945 to December 2018.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "required_end_date",
+      "quote": "The sample period spans from January 1945 to December 2018.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "strict_requirements",
+      "quote": "Panel A: 6-month horizon and quarterly rebalancing",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    },
+    {
+      "source_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "section": "unknowns",
+      "quote": "For each modelM s (either a linear model or a machine learning approach), the prediction ˆrMs t+1 is based on a set of variables observed untiltas described in Section 2.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "v4"
+    }
+  ],
+  "extraction_metadata": {
+    "selected_claim_rationale": "Selected the LSTM row in Table 1 Panel A because the provided context contains exact forecasting metrics for one concrete model and horizon.",
+    "text_sha": "db8b1904d64e0728",
+    "supporting_context_sha": "",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "quality_report": {
+      "method_id": "lstm_6mo_quarterly_oos_return_forecast_table1_panel_a",
+      "paper_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol",
+      "quality_score": 1.0,
+      "approval_required": true,
+      "critical_missing_fields": [],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [],
+      "warnings": [],
+      "recommended_action": "human_review_recommended"
+    },
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "Out-of-sample evaluation starts in February 1955 using the January 1945 to December 2018 sample. For Panel A, forecasts are evaluated at quarterly rebalancing dates for the 6-month horizon. Report MSPE and out-of-sample R2 relative to the EH benchmark, with Clark-West p-value reported only when R2_oos is positive.",
+    "frequency_type": "monthly",
+    "horizon_type": "6_month",
+    "document_text_sha": "db8b1904d64e0728",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 25,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "purged_walk_forward",
+  "evaluation_protocol_description": "Out-of-sample evaluation starts in February 1955 using the January 1945 to December 2018 sample. For Panel A, forecasts are evaluated at quarterly rebalancing dates for the 6-month horizon. Report MSPE and out-of-sample R2 relative to the EH benchmark, with Clark-West p-value reported only when R2_oos is positive.",
+  "frequency_type": "monthly",
+  "horizon_type": "6_month",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "unknown",
+  "hyperparameters": {
+    "learning_rate_search_range": [
+      0.001,
+      0.02
+    ],
+    "weight_decay_regularization_search_range": [
+      0,
+      0.001
+    ],
+    "dropout_search_range_percent": [
+      0,
+      60
+    ],
+    "activation_function_candidates": [
+      "sigmoid",
+      "ReLU"
+    ],
+    "random_hyperparameter_combinations": 100,
+    "max_epochs": 1000,
+    "early_stopping": true,
+    "optimizer": "Adam",
+    "loss": "Huber",
+    "ensemble_size": 5,
+    "initialization": "randomly chosen initial values"
+  },
+  "required_start_date": "1945-01",
+  "required_end_date": "2018-12",
+  "schema_version": "method_card_v2"
+}

@@ -1,0 +1,5 @@
+outs:
+- md5: b90abc8b54bc847dac36f8d37c11c009
+  size: 546336
+  hash: md5
+  path: exchange_rate.txt

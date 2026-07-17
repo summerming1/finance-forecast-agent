@@ -16,6 +16,7 @@ from finance_forecast_agent.research_journal import (
     ResearchJournalStore,
     ReusableCapability,
 )
+from finance_forecast_agent.research_accounting import reconcile_research_state
 
 
 def _relative(project_dir: Path, path: str | Path) -> str:
@@ -145,6 +146,48 @@ def _record_for_claim(
             "reports": [_relative(project_dir, report.get("report_path", ""))] if report else [],
         },
         remaining_manual_steps=manual_steps,
+        historical_reconstruction=True,
+    )
+
+
+def _record_for_uncatalogued_strict_report(project_dir: Path, report: dict) -> PaperExplorationRecord:
+    paper_id = str(report["paper_id"])
+    claim_id = str(report["claim_id"])
+    dataset = report.get("dataset", {})
+    protocol = report.get("protocol", {})
+    return PaperExplorationRecord(
+        paper_id=paper_id,
+        title=str(report.get("title") or f"Strict native claim {claim_id}"),
+        scope={
+            "market": str(dataset.get("domain") or "global_fx_benchmark"),
+            "asset_class": str(dataset.get("domain") or "fx"),
+            "frequency": str(protocol.get("frequency") or "daily"),
+            "task": str(report.get("experiment_type") or "forecast_only"),
+            "target": str(protocol.get("target") or "multivariate_forecast"),
+            "dataset_id": str(dataset.get("dataset_id") or dataset.get("path") or "unknown"),
+        },
+        status="strict_verified",
+        claim_ids=[claim_id],
+        attempts=[
+            ExplorationAttempt(
+                attempt_id=f"{claim_id}:official-execution",
+                stage="official_execution",
+                action="Reconcile an independently implemented strict runner with the research journal",
+                outcome="passed",
+                summary="The saved native report passed the complete-reproduction gate.",
+                artifacts=[_relative(project_dir, report.get("report_path", ""))],
+                reusable_capability_ids=[
+                    "official_repo_command_execution",
+                    "native_metric_acceptance",
+                ],
+            )
+        ],
+        linked_assets={
+            "reports": [_relative(project_dir, report.get("report_path", ""))],
+        },
+        remaining_manual_steps=[
+            "This runner predates the declarative Native Catalog and should be migrated without changing its frozen claim."
+        ],
         historical_reconstruction=True,
     )
 
@@ -282,14 +325,21 @@ def build_research_journal(project_dir: Path) -> dict[str, int]:
                 _add_validation(capabilities, "internal_rng_resume", spec, "passed", report_path)
             if any("{conda}" in part for part in spec.command):
                 _add_validation(capabilities, "isolated_conda_runtime", spec, execution_result, report_path)
+    catalog_claim_ids = {spec.claim_id for spec in claims}
+    for claim_id, report in reports.items():
+        if claim_id in catalog_claim_ids or not report.get("complete_reproduction_allowed"):
+            continue
+        store.save_paper(_record_for_uncatalogued_strict_report(project_dir, report))
     store.save_capabilities(capabilities)
     index = store.load_papers()
+    accounting = reconcile_research_state(project_dir)
     return {
         "paper_records": len(index),
         "capabilities": len(capabilities),
         "reusable_validated": sum(
             row.status == "reusable_validated" for row in capabilities.values()
         ),
+        "accounting_consistent": int(accounting["consistent"]),
     }
 
 
@@ -301,7 +351,8 @@ def main() -> None:
     print(
         f"Research journal: {summary['paper_records']} papers; "
         f"{summary['capabilities']} capabilities; "
-        f"{summary['reusable_validated']} reusable validated."
+        f"{summary['reusable_validated']} reusable validated; "
+        f"accounting consistent={bool(summary['accounting_consistent'])}."
     )
 
 

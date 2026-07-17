@@ -1,6 +1,6 @@
 {
   "schema_version": "literature_corpus_v1",
-  "generated_at": "2026-07-14T14:10:37.077362+00:00",
+  "generated_at": "2026-07-17T12:49:26.955019+00:00",
   "records": [
     {
       "paper_id": "crossref_10_1093_rfs_hhaa009",
@@ -22,7 +22,8 @@
       "landing_url": "https://doi.org/10.1093/rfs/hhaa009",
       "pdf_candidates": [
         "http://academic.oup.com/rfs/advance-article-pdf/doi/10.1093/rfs/hhaa009/32892601/hhaa009.pdf",
-        "http://academic.oup.com/rfs/article-pdf/33/5/2223/33209812/hhaa009.pdf"
+        "http://academic.oup.com/rfs/article-pdf/33/5/2223/33209812/hhaa009.pdf",
+        "https://academic.oup.com/rfs/article-pdf/33/5/2223/33209812/hhaa009.pdf"
       ],
       "oa_status": "crossref_link_unverified",
       "license": "http://creativecommons.org/licenses/by-nc-nd/4.0/",
@@ -37,9 +38,9 @@
       "pdf_sha256": null,
       "pdf_bytes": null,
       "download_status": "blocked_or_failed",
-      "download_error": "http://academic.oup.com/rfs/advance-article-pdf/doi/10.1093/rfs/hhaa009/32892601/hhaa009.pdf: HTTP 403 | http://academic.oup.com/rfs/article-pdf/33/5/2223/33209812/hhaa009.pdf: HTTP 403",
+      "download_error": "http://academic.oup.com/rfs/advance-article-pdf/doi/10.1093/rfs/hhaa009/32892601/hhaa009.pdf: HTTP 403 | http://academic.oup.com/rfs/article-pdf/33/5/2223/33209812/hhaa009.pdf: HTTP 403 | https://academic.oup.com/rfs/article-pdf/33/5/2223/33209812/hhaa009.pdf: HTTP 403",
       "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:03.667584+00:00",
+      "acquired_at": "2026-07-17T12:48:44.166082+00:00",
       "redistribution_allowed": true
     },
     {
@@ -99,7 +100,9 @@
       "task_category": "financial_prediction_other",
       "method_tags": [],
       "landing_url": "https://doi.org/10.1287/mnsc.2016.2644",
-      "pdf_candidates": [],
+      "pdf_candidates": [
+        "https://lbsresearch.london.edu/id/eprint/545/1/Bahn_GY_Machine_Learning_Portfolio_Optimization_Mgt_Sci_2016.pdf"
+      ],
       "oa_status": "unknown",
       "license": null,
       "source_version": "publishedVersion",
@@ -108,13 +111,13 @@
       "feasibility_reasons": [
         "Crossref bibliographic metadata is available"
       ],
-      "local_pdf": null,
-      "pdf_sha256": null,
-      "pdf_bytes": null,
-      "download_status": "blocked_or_failed",
-      "download_error": "no open-access PDF candidate",
-      "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:03.669220+00:00",
+      "local_pdf": "projects\\finance_agent\\papers\\corpus\\crossref_10_1287_mnsc_2016_2644_machine_learning_and_portfolio_optimization.pdf",
+      "pdf_sha256": "4be2dec2ffaf67cc1e24c7f110d803cb5999f370f517bc42b8cf6b893e829ac6",
+      "pdf_bytes": 782886,
+      "download_status": "downloaded_open_access",
+      "download_error": null,
+      "downloaded_from": "https://lbsresearch.london.edu/id/eprint/545/1/Bahn_GY_Machine_Learning_Portfolio_Optimization_Mgt_Sci_2016.pdf",
+      "acquired_at": "2026-07-17T12:48:49.396373+00:00",
       "redistribution_allowed": false
     },
     {
@@ -219,7 +222,9 @@
       "method_tags": [],
       "landing_url": "https://doi.org/10.1093/jjfinec/nbac020",
       "pdf_candidates": [
-        "https://academic.oup.com/jfec/article-pdf/21/5/1680/53400344/nbac020.pdf"
+        "https://academic.oup.com/jfec/article-pdf/21/5/1680/53400344/nbac020.pdf",
+        "https://arxiv.org/pdf/2601.13014",
+        "https://pure.au.dk/ws/files/414118629/A_machine_learning_approach_to_volatility_forecasting_2023_AM.pdf"
       ],
       "oa_status": "crossref_link_unverified",
       "license": "https://academic.oup.com/pages/standard-publication-reuse-rights",
@@ -230,13 +235,13 @@
         "Crossref bibliographic metadata is available",
         "publisher supplied a PDF link; access still requires validation"
       ],
-      "local_pdf": null,
-      "pdf_sha256": null,
-      "pdf_bytes": null,
-      "download_status": "blocked_or_failed",
-      "download_error": "https://academic.oup.com/jfec/article-pdf/21/5/1680/53400344/nbac020.pdf: HTTP 403",
-      "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:08.354616+00:00",
+      "local_pdf": "projects\\finance_agent\\papers\\corpus\\crossref_10_1093_jjfinec_nbac020_a_machine_learning_approach_to_volatility_foreca.pdf",
+      "pdf_sha256": "f8c9c63390416bccacdbc9028394d959c5d32893548418e04ca8982aae373d7e",
+      "pdf_bytes": 681556,
+      "download_status": "downloaded_open_access",
+      "download_error": null,
+      "downloaded_from": "https://arxiv.org/pdf/2601.13014",
+      "acquired_at": "2026-07-17T12:48:51.600404+00:00",
       "redistribution_allowed": false
     },
     {
@@ -297,7 +302,8 @@
       ],
       "landing_url": "https://doi.org/10.1093/jjfinec/nbad005",
       "pdf_candidates": [
-        "https://academic.oup.com/jfec/article-pdf/22/2/492/57067139/nbad005.pdf"
+        "https://academic.oup.com/jfec/article-pdf/22/2/492/57067139/nbad005.pdf",
+        "https://academic.oup.com/jfec/advance-article-pdf/doi/10.1093/jjfinec/nbad005/49572093/nbad005.pdf"
       ],
       "oa_status": "crossref_link_unverified",
       "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -313,9 +319,9 @@
       "pdf_sha256": null,
       "pdf_bytes": null,
       "download_status": "blocked_or_failed",
-      "download_error": "https://academic.oup.com/jfec/article-pdf/22/2/492/57067139/nbad005.pdf: HTTP 403",
+      "download_error": "https://academic.oup.com/jfec/article-pdf/22/2/492/57067139/nbad005.pdf: HTTP 403 | https://academic.oup.com/jfec/advance-article-pdf/doi/10.1093/jjfinec/nbad005/49572093/nbad005.pdf: HTTP 403",
       "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:08.880667+00:00",
+      "acquired_at": "2026-07-17T12:48:53.531259+00:00",
       "redistribution_allowed": true
     },
     {
@@ -489,7 +495,9 @@
       "task_category": "credit_default",
       "method_tags": [],
       "landing_url": "https://doi.org/10.1109/access.2021.3110270",
-      "pdf_candidates": [],
+      "pdf_candidates": [
+        "https://ieeexplore.ieee.org/ielx7/6287639/6514899/09529166.pdf"
+      ],
       "oa_status": "unknown",
       "license": "https://creativecommons.org/licenses/by/4.0/legalcode",
       "source_version": "publishedVersion",
@@ -502,9 +510,9 @@
       "pdf_sha256": null,
       "pdf_bytes": null,
       "download_status": "blocked_or_failed",
-      "download_error": "no open-access PDF candidate",
+      "download_error": "https://ieeexplore.ieee.org/ielx7/6287639/6514899/09529166.pdf: HTTP 404",
       "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:13.357180+00:00",
+      "acquired_at": "2026-07-17T12:48:57.240994+00:00",
       "redistribution_allowed": true
     },
     {
@@ -530,7 +538,9 @@
         "deep_neural_network"
       ],
       "landing_url": "https://doi.org/10.1016/j.asoc.2020.106401",
-      "pdf_candidates": [],
+      "pdf_candidates": [
+        "https://arxiv.org/pdf/1810.09965"
+      ],
       "oa_status": "unknown",
       "license": "https://www.elsevier.com/tdm/userlicense/1.0/",
       "source_version": "publishedVersion",
@@ -540,13 +550,13 @@
         "Crossref bibliographic metadata is available",
         "machine-learning method family is identifiable"
       ],
-      "local_pdf": null,
-      "pdf_sha256": null,
-      "pdf_bytes": null,
-      "download_status": "blocked_or_failed",
-      "download_error": "no open-access PDF candidate",
-      "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:13.357180+00:00",
+      "local_pdf": "projects\\finance_agent\\papers\\corpus\\crossref_10_1016_j_asoc_2020_106401_using_deep_learning_for_price_prediction_by_expl.pdf",
+      "pdf_sha256": "d4bd10b9deed256343b5e92feaa80316a0dca9d7959fd9512ff38d46c9a39d21",
+      "pdf_bytes": 375979,
+      "download_status": "downloaded_open_access",
+      "download_error": null,
+      "downloaded_from": "https://arxiv.org/pdf/1810.09965",
+      "acquired_at": "2026-07-17T12:48:58.184209+00:00",
       "redistribution_allowed": false
     },
     {
@@ -569,7 +579,9 @@
         "deep_neural_network"
       ],
       "landing_url": "https://doi.org/10.1109/access.2021.3051872",
-      "pdf_candidates": [],
+      "pdf_candidates": [
+        "https://ieeexplore.ieee.org/ielx7/6287639/9312710/09324831.pdf"
+      ],
       "oa_status": "unknown",
       "license": "https://creativecommons.org/licenses/by/4.0/legalcode",
       "source_version": "publishedVersion",
@@ -579,13 +591,13 @@
         "Crossref bibliographic metadata is available",
         "machine-learning method family is identifiable"
       ],
-      "local_pdf": null,
-      "pdf_sha256": null,
-      "pdf_bytes": null,
-      "download_status": "blocked_or_failed",
-      "download_error": "no open-access PDF candidate",
-      "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:13.357180+00:00",
+      "local_pdf": "projects\\finance_agent\\papers\\corpus\\crossref_10_1109_access_2021_3051872_combining_deep_learning_and_multiresolution_anal.pdf",
+      "pdf_sha256": "cff5309e53332f4aa429c683efe6caf4576cbf29409c06589b0afd0600cd3158",
+      "pdf_bytes": 2741798,
+      "download_status": "downloaded_open_access",
+      "download_error": null,
+      "downloaded_from": "https://ieeexplore.ieee.org/ielx7/6287639/9312710/09324831.pdf",
+      "acquired_at": "2026-07-17T12:49:02.509537+00:00",
       "redistribution_allowed": true
     },
     {
@@ -752,7 +764,9 @@
       "task_category": "volatility_forecast",
       "method_tags": [],
       "landing_url": "https://doi.org/10.1080/14697688.2021.1905869",
-      "pdf_candidates": [],
+      "pdf_candidates": [
+        "https://www.tandfonline.com/doi/pdf/10.1080/14697688.2021.1905869?needAccess=true"
+      ],
       "oa_status": "unknown",
       "license": "http://creativecommons.org/licenses/by/4.0/",
       "source_version": "publishedVersion",
@@ -765,9 +779,9 @@
       "pdf_sha256": null,
       "pdf_bytes": null,
       "download_status": "blocked_or_failed",
-      "download_error": "no open-access PDF candidate",
+      "download_error": "https://www.tandfonline.com/doi/pdf/10.1080/14697688.2021.1905869?needAccess=true: HTTP 403",
       "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:16.852762+00:00",
+      "acquired_at": "2026-07-17T12:49:06.152646+00:00",
       "redistribution_allowed": true
     },
     {
@@ -865,7 +879,8 @@
       ],
       "landing_url": "https://doi.org/10.1155/2021/6647534",
       "pdf_candidates": [
-        "http://downloads.hindawi.com/journals/complexity/2021/6647534.pdf"
+        "http://downloads.hindawi.com/journals/complexity/2021/6647534.pdf",
+        "https://downloads.hindawi.com/journals/complexity/2021/6647534.pdf"
       ],
       "oa_status": "crossref_link_unverified",
       "license": "http://creativecommons.org/licenses/by/4.0/",
@@ -881,9 +896,9 @@
       "pdf_sha256": null,
       "pdf_bytes": null,
       "download_status": "blocked_or_failed",
-      "download_error": "http://downloads.hindawi.com/journals/complexity/2021/6647534.pdf: HTTP 403",
+      "download_error": "http://downloads.hindawi.com/journals/complexity/2021/6647534.pdf: HTTP 403 | https://downloads.hindawi.com/journals/complexity/2021/6647534.pdf: HTTP 403",
       "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:17.606037+00:00",
+      "acquired_at": "2026-07-17T12:49:09.439983+00:00",
       "redistribution_allowed": true
     },
     {
@@ -982,7 +997,9 @@
       "task_category": "limit_order_book",
       "method_tags": [],
       "landing_url": "https://doi.org/10.1109/access.2023.3293064",
-      "pdf_candidates": [],
+      "pdf_candidates": [
+        "https://ieeexplore.ieee.org/ielx7/6287639/6514899/10175387.pdf"
+      ],
       "oa_status": "unknown",
       "license": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
       "source_version": "publishedVersion",
@@ -995,9 +1012,9 @@
       "pdf_sha256": null,
       "pdf_bytes": null,
       "download_status": "blocked_or_failed",
-      "download_error": "no open-access PDF candidate",
+      "download_error": "https://ieeexplore.ieee.org/ielx7/6287639/6514899/10175387.pdf: HTTP 404",
       "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:17.609298+00:00",
+      "acquired_at": "2026-07-17T12:49:11.842176+00:00",
       "redistribution_allowed": true
     },
     {
@@ -1179,7 +1196,9 @@
         "reinforcement_learning"
       ],
       "landing_url": "https://doi.org/10.1109/access.2021.3068768",
-      "pdf_candidates": [],
+      "pdf_candidates": [
+        "https://ieeexplore.ieee.org/ielx7/6287639/9312710/09386090.pdf"
+      ],
       "oa_status": "unknown",
       "license": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
       "source_version": "publishedVersion",
@@ -1189,13 +1208,13 @@
         "Crossref bibliographic metadata is available",
         "machine-learning method family is identifiable"
       ],
-      "local_pdf": null,
-      "pdf_sha256": null,
-      "pdf_bytes": null,
-      "download_status": "blocked_or_failed",
-      "download_error": "no open-access PDF candidate",
-      "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:26.359939+00:00",
+      "local_pdf": "projects\\finance_agent\\papers\\corpus\\crossref_10_1109_access_2021_3068768_adversarial_attacks_against_reinforcement_learni.pdf",
+      "pdf_sha256": "897c7c00618f11d253d30b14dbc02a724f5d4896dc888bcb06b474affe67ab88",
+      "pdf_bytes": 2077840,
+      "download_status": "downloaded_open_access",
+      "download_error": null,
+      "downloaded_from": "https://ieeexplore.ieee.org/ielx7/6287639/9312710/09386090.pdf",
+      "acquired_at": "2026-07-17T12:49:17.213238+00:00",
       "redistribution_allowed": true
     },
     {
@@ -1475,7 +1494,9 @@
       "task_category": "forecast_only",
       "method_tags": [],
       "landing_url": "https://doi.org/10.1109/access.2024.3381500",
-      "pdf_candidates": [],
+      "pdf_candidates": [
+        "https://ieeexplore.ieee.org/ielx7/6287639/6514899/10478466.pdf"
+      ],
       "oa_status": "unknown",
       "license": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
       "source_version": "publishedVersion",
@@ -1484,13 +1505,13 @@
       "feasibility_reasons": [
         "Crossref bibliographic metadata is available"
       ],
-      "local_pdf": null,
-      "pdf_sha256": null,
-      "pdf_bytes": null,
-      "download_status": "blocked_or_failed",
-      "download_error": "no open-access PDF candidate",
-      "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:26.361288+00:00",
+      "local_pdf": "projects\\finance_agent\\papers\\corpus\\crossref_10_1109_access_2024_3381500_long_term_interbank_bond_rate_prediction_based_o.pdf",
+      "pdf_sha256": "e9499998d94db71c0a42968e769ebf238ab55a10458574352b35ba1a990fd927",
+      "pdf_bytes": 3224319,
+      "download_status": "downloaded_open_access",
+      "download_error": null,
+      "downloaded_from": "https://ieeexplore.ieee.org/ielx7/6287639/6514899/10478466.pdf",
+      "acquired_at": "2026-07-17T12:49:22.956950+00:00",
       "redistribution_allowed": true
     },
     {
@@ -2165,7 +2186,9 @@
         "deep_neural_network"
       ],
       "landing_url": "https://doi.org/10.3390/sci7010007",
-      "pdf_candidates": [],
+      "pdf_candidates": [
+        "https://www.mdpi.com/2413-4155/7/1/7/pdf?version=1736503214"
+      ],
       "oa_status": "unknown",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "source_version": "publishedVersion",
@@ -2179,9 +2202,9 @@
       "pdf_sha256": null,
       "pdf_bytes": null,
       "download_status": "blocked_or_failed",
-      "download_error": "no open-access PDF candidate",
+      "download_error": "https://www.mdpi.com/2413-4155/7/1/7/pdf?version=1736503214: HTTP 403",
       "downloaded_from": null,
-      "acquired_at": "2026-07-14T14:10:26.361288+00:00",
+      "acquired_at": "2026-07-17T12:49:25.196713+00:00",
       "redistribution_allowed": true
     },
     {

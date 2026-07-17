@@ -1,0 +1,307 @@
+{
+  "prompt_hash": "474ea2a9b288e626",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "lstm_minimum_variance_portfolio_daily_covariance_forecast",
+    "paper_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+    "title": "Investment Portfolio Optimization Based on Modern Portfolio Theory and Deep Learning Models",
+    "venue_or_source": "unknown",
+    "paper_url": "unknown",
+    "task_type": "portfolio_optimization_with_variance_covariance_forecasting",
+    "target_asset": "stocks_and_cryptocurrencies",
+    "asset_universe": [
+      "unknown"
+    ],
+    "frequency": "daily",
+    "horizon": "1 day ahead",
+    "label_definition": "one-day ahead multivariate forecasts used as variance-covariance matrix forecasts for minimum-variance portfolio optimization",
+    "data_requirements": [
+      "Daily prices for the selected stock and cryptocurrency assets.",
+      "At each optimization date, use the last window observations, where window is one of 30, 60, 90, or 120 days, to calculate the current variance-covariance estimator.",
+      "For deep learning strategies, use a validation set length equal to window * 2; exact calendar dates depend on the chosen window and rebalancing parameters."
+    ],
+    "feature_groups": [
+      "historical asset prices",
+      "variance-covariance matrix estimates derived from trailing price windows"
+    ],
+    "model_families": [
+      "LSTM_RNN"
+    ],
+    "training_protocol": "Train LSTM RNN variance-covariance forecasting models for 150 epochs using the ADAM optimizer with learning rate 0.01. Validation set length is window * 2. Batch size is selected from 8 or 16. Sequence length is selected from 15 or 20. Exact chronological train/test dates, loss function, random seed, and early stopping protocol are unknown.",
+    "evaluation_protocol": "Evaluate investment strategies across window values 30, 60, 90, and 120 days and rebalancing period values 30, 60, 90, and 120 days, using a minimum-variance optimization criterion and assuming 365 trading days per year. Exact chronological split and test period are unknown.",
+    "metrics": [
+      "information ratio",
+      "annualized returns"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {},
+    "experiment_type": "portfolio_backtest",
+    "preprocessing_protocol": "For each calculation, use the selected trailing window of past price observations to calculate the current variance-covariance matrix estimator. For deep learning strategies, validation data length is window * 2. Any scaling, normalization, missing-value handling, and train-only fit scope are unknown.",
+    "hyperparameters": {
+      "window_days": [
+        30,
+        60,
+        90,
+        120
+      ],
+      "rebalancing_period_days": [
+        30,
+        60,
+        90,
+        120
+      ],
+      "optimization_criterion": "minimal variance",
+      "lstm_units": [
+        5,
+        10,
+        15,
+        20,
+        [
+          5,
+          5
+        ],
+        [
+          5,
+          10
+        ],
+        [
+          10,
+          5
+        ],
+        [
+          10,
+          10
+        ],
+        [
+          15,
+          15
+        ],
+        [
+          20,
+          20
+        ]
+      ],
+      "batch_size": [
+        8,
+        16
+      ],
+      "sequence_length": [
+        15,
+        20
+      ],
+      "epochs": 150,
+      "optimizer": "ADAM",
+      "learning_rate": 0.01,
+      "validation_set_length": "window * 2"
+    },
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "strict_requirements": [
+      "Use daily price observations for the selected assets.",
+      "Use one of the reported trailing window lengths: 30, 60, 90, or 120 observations.",
+      "Use one of the reported rebalancing periods: 30, 60, 90, or 120 days.",
+      "Use the minimum-variance optimization criterion.",
+      "For LSTM strategies, train for 150 epochs with ADAM optimizer and learning rate 0.01.",
+      "For LSTM strategies, choose only from the reported units, batch sizes, and sequence lengths."
+    ],
+    "unknowns": [
+      "Exact asset universe and tickers are not provided in the supplied context.",
+      "Exact chronological train, validation, and test dates are not provided in the supplied context.",
+      "Exact selected LSTM configuration for the best reported result is not provided in the supplied context.",
+      "Exact numeric reported results are not provided in the supplied context.",
+      "Loss function is not provided in the supplied context.",
+      "Random seed is not provided in the supplied context.",
+      "Early stopping protocol is not provided in the supplied context.",
+      "Transaction cost assumptions are not provided in the supplied context.",
+      "Scaling, normalization, and missing-value handling are not provided in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "Investment Portfolio Optimization Based on Modern Portfolio Theory and Deep Learning Models"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "We propose a novel framework for variance-covariance matrix estimation for purposes of the portfolio optimization, which is based on deep learning models."
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "We then use these forecasts to optimize portfolios of stocks and cryptocurrencies."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "We then use these forecasts to optimize portfolios of stocks and cryptocurrencies."
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "For every calculation we assumed 365 trading days per year."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "We employ the long short-term memory (LSTM) recurrent neural networks (RNN) along with two probabilistic deep learning models: DeepVAR and GPVAR to the task of one-day ahead multivariate forecasting."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "Strategies based on the variance-covariance matrix forecast from the LSTM models were tested with numerous possible hyperparameters."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "A window parameter corresponds to the number of past observations taken into calculation of the current variance-covariance estimator, that is how many last prices are used to calculate the matrix estimator."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "Strategies based on deep learning models also share an additional parameter regarding the validation dataset – all models were trained using a validation set consisting of values from the period calculated as 𝑤𝑖𝑛𝑑𝑜𝑤 ∗ 2."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "A window parameter corresponds to the number of past observations taken into calculation of the current variance-covariance estimator, that is how many last prices are used to calculate the matrix estimator."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "We employ the long short-term memory (LSTM) recurrent neural networks (RNN) along with two probabilistic deep learning models: DeepVAR and GPVAR to the task of one-day ahead multivariate forecasting."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "Each RNN was trained with 150 epochs using ADAM optimizer with the learning rate parameter set to 0.01."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "Batch size 8, 16 Sequences length 15, 20"
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "Our analysis presents results across different combinations of observation windows and rebalancing periods to compare performances of classical and deep learning variance-covariance estimation methods."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "For every calculation we assumed 365 trading days per year."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "generally the best results in terms of the information ratio and annualized returns are obtained using the LSTM-RNN models."
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "generally the best results in terms of the information ratio and annualized returns are obtained using the LSTM-RNN models."
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "A window parameter corresponds to the number of past observations taken into calculation of the current variance-covariance estimator, that is how many last prices are used to calculate the matrix estimator."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "Table 1. Parameters and corresponding values shared by all strategies Parameter Possible values window 30, 60, 90, 120 rebalancing period 30, 60, 90, 120 optimization criterion minimal variance"
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "Table 2. Parameters and corresponding values used for strategies based on LSTM variance-covariance matrix forecasts Parameter Possible values Units 5, 10, 15, 20, [5, 5], [5, 10], [10, 5], [10, 10], [15, 15], [20, 20] Batch size 8, 16 Sequences length 15, 20"
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "Moreover, as described above, we assumed a joint optimization criterion for all strategies, which was chosen to be minimal variance."
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "fcc1ddcce8e70c02",
+        "quote": "The exact dates of training and validation periods are therefore dependent on parameters."
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder",
+      "text_sha": "fcc1ddcce8e70c02",
+      "claim_selection_note": "Selected the LSTM RNN variance-covariance forecasting strategy for minimum-variance portfolio optimization, because the supplied context identifies LSTM-RNN as the best-performing proposed model family but does not provide an exact numeric result row."
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

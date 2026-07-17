@@ -1,0 +1,289 @@
+{
+  "prompt_hash": "6eb879c6101d4ce6",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "lstm_liquidity_xrpusdt_daily_close_2018_2022",
+    "paper_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+    "title": "Cryptocurrency Price Forecasting Using Machine Learning: Building Intelligent Financial Prediction Models",
+    "venue_or_source": "International Journal of Accounting and Economics Studies, 12 (3) (2025) 255-268",
+    "paper_url": "unknown",
+    "task_type": "time_series_forecasting",
+    "target_asset": "XRP/USDT",
+    "asset_universe": [
+      "XRP/USDT"
+    ],
+    "frequency": "daily",
+    "horizon": "unknown",
+    "label_definition": "forecast the closing price of the XRP/USDT trading pair",
+    "data_requirements": [
+      "Historical XRP/USDT time series covering daily closing prices from 2018 to 2022.",
+      "Daily trading volume for XRP from 2018 to 2022.",
+      "Liquidity proxy features computed from the data: Volume-To-Volatility Ratio (VVR) and Volume-Weighted Average Price (VWAP).",
+      "Chronological split into approximately 70% training, 15% validation, and 15% testing with no random shuffling."
+    ],
+    "feature_groups": [
+      "historical price data",
+      "daily trading volume",
+      "lagged sequence inputs",
+      "liquidity proxies: Volume-To-Volatility Ratio (VVR) and Volume-Weighted Average Price (VWAP)"
+    ],
+    "model_families": [
+      "LSTM neural network"
+    ],
+    "training_protocol": "Train an LSTM model on chronologically ordered XRP/USDT data with liquidity features VVR and VWAP included. Use approximately 70% of observations for training and 15% for validation; preserve temporal order with no random shuffling. The paper reports LSTM training and validation loss curves over 25 epochs and mentions early stopping/validation monitoring, but does not report exact input window length, batch size, optimizer, random seed, or early-stopping patience.",
+    "evaluation_protocol": "Evaluate once on the final chronologically held-out 15% test set reserved for unseen data. Metrics are calculated on this separate test set; the paper does not describe walk-forward evaluation or context overlap.",
+    "metrics": [
+      "MAE",
+      "MSE",
+      "R² Score"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {
+      "MAE": 0.0212,
+      "MSE": 0.000911,
+      "R2_score": 0.9295
+    },
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {
+      "max_epochs": 25,
+      "early_stopping": "mentioned",
+      "optimizer": "unknown",
+      "loss_function": "unknown",
+      "batch_size": "unknown",
+      "input_window": "unknown",
+      "random_seed": "unknown",
+      "lstm_layers": "unknown",
+      "hidden_units": "unknown"
+    },
+    "required_start_date": "2018",
+    "required_end_date": "2022",
+    "strict_requirements": [
+      "Use XRP/USDT as the target trading pair.",
+      "Forecast closing prices.",
+      "Include liquidity proxy metrics VVR and VWAP.",
+      "Use the LSTM model row with liquidity features included.",
+      "Preserve chronological ordering in the train/validation/test split.",
+      "Do not randomly shuffle the time series.",
+      "Use approximately 70% training, 15% validation, and 15% testing."
+    ],
+    "unknowns": [
+      "Exact forecast horizon or prediction length is not reported in the supplied context.",
+      "Exact input sequence/window length for the LSTM is not reported in the supplied context.",
+      "Exact optimizer is not reported in the supplied context.",
+      "Exact loss function for training is not reported in the supplied context.",
+      "Batch size is not reported in the supplied context.",
+      "Random seed is not reported in the supplied context.",
+      "LSTM layer count and hidden-unit sizes are not reported in the supplied context.",
+      "Exact preprocessing steps, scaling method, and train-only fit scope are not reported in the supplied context.",
+      "Exact early-stopping patience and callback settings are not reported in the supplied context.",
+      "Exact calendar start and end dates are not reported beyond years 2018 to 2022."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Cryptocurrency Price Forecasting Using Machine Learning: Building Intelligent Financial Prediction Models"
+      },
+      {
+        "section": "venue_or_source",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "International Journal of Accounting and Economics Studies, 12 (3) (2025) 255-268"
+      },
+      {
+        "section": "task_type",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "forecast cryptocurrency prices"
+      },
+      {
+        "section": "target_asset",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "forecast the closing prices of the XRP/USDT trading pair"
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "forecast the closing prices of the XRP/USDT trading pair"
+      },
+      {
+        "section": "frequency",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Fig. 3: Time Series of Daily Closing Prices for XRP/USDT from 2018 to 2022"
+      },
+      {
+        "section": "label_definition",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "forecast the closing prices of the XRP/USDT trading pair"
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Fig. 3: Time Series of Daily Closing Prices for XRP/USDT from 2018 to 2022, Illustrating Major Trends and Volatility Spikes. Fig. 4: Time Series of Daily Trading Volume for XRP from 2018 to 2022"
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "we introduce two im- portant liquidity proxy metrics: the Volume-To-Volatility Ratio (VVR) and the Volume-Weighted Average Price (VWAP)."
+      },
+      {
+        "section": "model_families",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "The top performer? The LSTM model included liquidity proxies."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "we divided the dataset chronologically into three parts: training, validation, and testing. This chronological split preserves the time-based nature of the data"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Approximately 70% of the data was allocated for training, where the models learned patterns and adjusted their param- eters. We set aside 15% for validation, primarily to fine -tune hyperparameters and apply early stopping, which was especially beneficial for the LSTM model. The final 15% was reserved strictly for testing"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Importantly, no random shuffling was performed; we maintained the original timeline of the data"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Fig. 6: LSTM Training and Validation Loss Curves Over 25 Epochs with Early Stopping"
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "We calculated these metrics using a separate test set that we had kept aside, ensuring that we were evaluating the models’ ability to generalize to new, unseen data rather than merely memorizing the training examples."
+      },
+      {
+        "section": "metrics",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Table 1: Model Performance Comparison (With and Without Liquidity Features) Model Liquidity Features MAE MSE R² Score"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "LSTM Included 0.0212 0.000911 0.9295"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "posting an impressive R² of 92.95%, with a mean absolute error of just 0.0212 and a mean squared error of 0.000911."
+      },
+      {
+        "section": "experiment_type",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "forecast the closing prices of the XRP/USDT trading pair"
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Fig. 6: LSTM Training and Validation Loss Curves Over 25 Epochs with Early Stopping"
+      },
+      {
+        "section": "required_start_date",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Fig. 3: Time Series of Daily Closing Prices for XRP/USDT from 2018 to 2022"
+      },
+      {
+        "section": "required_end_date",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "Fig. 3: Time Series of Daily Closing Prices for XRP/USDT from 2018 to 2022"
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "The LSTM model that includes liquidity features closely matches actual price movements, demonstrating a high level of predict ion accu- racy."
+      },
+      {
+        "section": "unknowns",
+        "source_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:7da9a3a5b937cbc1",
+        "quote": "The LSTM model comprised an input layer that represented lagged seque"
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l",
+      "text_sha": "7da9a3a5b937cbc1",
+      "selected_claim": "LSTM with liquidity features for XRP/USDT daily closing-price forecasting",
+      "schema_name": "method_card",
+      "profile": "strict_reproduction"
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

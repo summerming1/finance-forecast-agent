@@ -1,7 +1,7 @@
 {
   "paper_count": 86,
-  "downloaded_pdf_count": 50,
-  "downloaded_bytes": 71058043,
+  "downloaded_pdf_count": 56,
+  "downloaded_bytes": 80942421,
   "top_finance_or_econometrics_count": 3,
   "high_impact_peer_reviewed_count": 29,
   "working_paper_or_preprint_count": 43,
@@ -44,20 +44,21 @@
     "crossref_link_unverified": 18
   },
   "download_statuses": {
-    "downloaded_open_access": 50,
-    "blocked_or_failed": 36
+    "downloaded_open_access": 56,
+    "blocked_or_failed": 30
   },
   "downloaded_venue_tiers": {
     "influential_working_paper_or_preprint": 43,
+    "high_impact_peer_reviewed": 6,
     "other_peer_reviewed_or_repository": 6,
-    "high_impact_peer_reviewed": 1
+    "top_finance_or_econometrics": 1
   },
   "downloaded_task_categories": {
-    "forecast_only": 24,
-    "portfolio_rl": 8,
-    "volatility_forecast": 6,
-    "limit_order_book": 4,
-    "financial_prediction_other": 3,
+    "forecast_only": 26,
+    "portfolio_rl": 9,
+    "volatility_forecast": 7,
+    "limit_order_book": 5,
+    "financial_prediction_other": 4,
     "crypto_forecast": 2,
     "credit_default": 1,
     "fx_forecast": 1,

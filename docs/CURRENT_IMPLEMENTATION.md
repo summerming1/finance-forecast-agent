@@ -4,7 +4,7 @@
 
 当前最新实现为 **P1.6.3-P1.8 first-batch implementation（未通过规模化总验收）**。项目仍是论文驱动、真实数据驱动、可审计和需人工审批的金融预测研究平台，不是自动交易系统。
 
-本批已实现 50 份合法开放 PDF、86 条论文审计记录、通用数据获取、四类冻结统一基准、带负向证据的 ExperimentMemory prior、十个 SourceBundle 候选和七阶段前端。金融数据严格复现数量达到 10/10；规模化总验收仍未通过，因为十篇都属于 Exchange-Rate 时间序列预测，且逐篇探索性运行尚未覆盖全部非 strict 文献。
+本批已实现 56 份合法开放 PDF、86 条语料记录、102 篇去重 Research Journal 并集、通用数据获取、四类冻结统一基准、真实 Memory 优先队列、SQLite MLflow、仓库外 DVC remote 和七阶段前端。金融数据严格复现为 10 篇；原 28 个 candidate 已全部完成逐篇探索执行。规模化总验收仍未通过，因为十篇 strict 都属于 Exchange-Rate 时间序列预测，三类纵向 strict pair 为 0，总 blocker 仍为 58。
 
 已完成：
 
@@ -19,7 +19,7 @@ P1.5 隔离 ExperimentMemory
 P1.6 真实论文、真实数据和端到端验证
 P1.6.1 严格 LLM 抽取、方法卡驱动原生协议和统一基准方向能力审计
 P1.6.2 十篇异构论文能力路由、语义一致性门禁和五方法统一基准
-P1.6.3 首批 86 篇元数据/50 份开放全文语料与可行性统计
+P1.6.3 首批 86 篇元数据/56 份开放全文语料与可行性统计
 P1.6.4 数据获取中心与来源、许可、SHA256、字段审计
 P1.6.5 十个金融数据原生 strict claims
 P1.6.6 逐篇覆盖账本和 Paper-vs-Run Delta 框架
@@ -49,6 +49,10 @@ BenchmarkTask -> shared snapshot/features/folds -> MethodAdapter
 -> PredictionArtifact -> comparable metrics
 
 -> ExperimentMemory prior -> 结果审计与技术资产
+
+所有运行:
+-> MLflow run ID + DVC pointer + lineage envelope
+-> ScientificAcceptanceLedger -> P2 自动门禁
 ```
 
 ### 当前流程真正能到达哪里
@@ -56,11 +60,11 @@ BenchmarkTask -> shared snapshot/features/folds -> MethodAdapter
 | 输入情况 | 当前最远可达终点 | 能否自动 strict |
 |---|---|---|
 | DLinear 或 Native Claim Catalog 已登记论文 | 官方原生运行、结果门禁、Portfolio 和前端审计 | 可以，但必须已有通过全部门禁的声明式 claim |
-| 任意本地新论文 | MethodCard、人工审核、ReproductionPlan、数据请求或 Adapter Backlog | 不可以；当前不会自动生成 Native Claim |
+| 任意本地新论文 | MethodCard v3、人工审核、ReproductionPlan、数据合同、Native Claim 草案或 Adapter Backlog | 不可以；Compiler 只生成带 blocker 的声明式草案 |
 | 新论文方法可映射到现有通用 adapter | AAPL 或四类冻结统一基准、PredictionArtifact 和 Delta | 只能是 benchmark adaptation |
 | 模型、数据或任务协议不受支持 | 结构化 blocker | 不可以，且不允许静默替换模型 |
 
-第 5 阶段的 Catalog selector 是预配置研究资产列表，不是由当前选中的论文动态生成。当前页面顶部显示的 active MethodCard 可能与 selector 中选择的 claim 不同；真正的官方运行门禁来自所选 claim 自己绑定的 MethodCard 和 ReproductionPlan。这是当前 UX 和论文接入闭环的已知缺口。
+第 5 阶段默认只显示当前论文绑定的 Native Claim；只有显式选择“浏览 Catalog”才允许跨论文查看。真正的官方运行门禁来自 claim 自己绑定的方法卡、来源、数据、环境、观测合同和预冻结容差。
 
 ## 完整复现定义
 
@@ -84,8 +88,10 @@ BenchmarkTask -> shared snapshot/features/folds -> MethodAdapter
 - 十篇异构论文的 Replay PDF 流程全部完成能力路由：1 篇原生严格就绪、5 篇统一基准候选、4 篇受控阻断；五篇统一基准候选已全部实际执行。
 - 14 张本地 MethodCard；DLinear 正式卡为真实严格 LLM 产物，十篇验收样例均有确定性 Replay fixture。
 - Exchange-Rate 官方数据、Yahoo Finance AAPL 冻结响应与派生周频数据均保存在 `projects/finance_agent/data/external/`。
-- 规模化语料：86 条审计记录、50 份开放 PDF、3 篇顶级金融/计量来源、29 篇高影响力同行评议元数据；下载到本地的 50 份中只有 1 份属于高影响力同行评议来源，其余主要是合法 arXiv 预印本，不能统称“50 篇顶刊”。
-- 复现覆盖账本：10 篇 strict verified、28 篇 exploratory candidate、58 篇结构化 blocked；candidate 只表示适配路径存在，不表示已执行该论文。
+- 规模化语料：86 条审计记录、56 份开放 PDF；新增 6 份来自 OpenAlex 的合法 OA PDF 使全文根因 36→30。期刊层级与全文可得性分开统计，不能统称“顶刊全文”。
+- 复现覆盖账本：10 篇 strict verified、28 篇 exploratory executed、58 篇结构化 blocked。28 篇均有真实模型运行和 Delta，但 strict 数量为 0。
+- TLOB 官方 FI-2010 和 checkpoint 在 current 与 paper-period revision 上均完整执行，macro F1 `0.455313` 对论文 `0.9281`，因此正确保持 blocked。
+- Pyraformer 官方 ETTm1 五次重复在 CPU 上运行 `3632s` 后仍未完成首个指标观测或 checkpoint，按 compute blocker 落地，未缩短协议。
 - 多基准：4 个任务 × 5 个方法共 20 组，目标行/fold/预测数完整性全部通过。SPY 方向与 EURUSD 未显示方向能力；SPY 5 日波动率误差优于训练折均值基线；BTC-LSTM 在该冻结任务上显示方向能力。原论文假设均不能从共享任务直接迁移。
 
 ## 前端
@@ -148,9 +154,12 @@ backlog/                 adapter 任务
 
 ```text
 Ruff: passed
-pytest: 159 passed
+pytest full suite: 170 passed
+post-Portfolio/UI consistency regression: 18 passed
 Seven-stage Streamlit AppTest: 11 passed
 HTTP health: localhost:8501 returned 200
+Browser E2E: seven stages, acceptance/tracking, candidate 28/28 and Delta passed; console errors 0
+Candidate Delta table: nested/scalar values normalized to Arrow-safe strings; focused frontend tests 24 passed
 Multi benchmark: 4 tasks / 5 methods / 20 comparisons, integrity passed
 Literature: 86 records / 50 downloaded PDFs
 Native source bundles: 15/15 pinned commits verified; 15/15 claim audits passed
@@ -170,13 +179,14 @@ Live LLM strict DLinear: quality 1.0、claim consistency passed、evidence 31/31
 - MethodCard v2 已兼容 LLM 返回的嵌套协议对象和字符串形式的未知超参数，避免后续 ReproductionPlan 类型错误。
 - ExperimentMemory 已改变多基准候选执行顺序，并输出完全同任务/相似任务证据、失败率和降权原因；旧 harness 的 Replay 候选生成尚未接入该 prior。
 - PaperDatasetRegistry 的许可、字段映射和可替代性说明仍需增强。
-- 缺少 MethodCard diff/version history 和异步任务队列；原生长任务已有边界断点恢复，但前端执行仍为同步调用。
+- MethodCard diff/history、后台任务和断点已实现；当前队列仍是本机进程级单 worker，不是分布式研究集群。
 - 统一基准已有方向准确率 Wilson 区间、机会水平二项检验和训练折多数方向基线；仍缺少方法间配对检验、Diebold-Mariano、多 seed 与市场状态分层。
 - 当前不执行真实下单。
 - 第二批九个 Native Claim 共用 Exchange-Rate 数据，能检验不同深度时序架构、重复实验和多种指标，但不能证明信号回测、截面资产定价或组合强化学习的原生复现通用性；这些仍按 Roadmap 保留为后续独立 strict 样例。
 - 本轮十篇复现中的 claim 选择、论文/源码协议对齐、官方命令、兼容补丁、运行环境、容差冻结和九张主资料卡仍由人工完成；只要新增论文还需要修改 `scripts/build_native_exchange_catalog.py`，就不能称为声明式通用接入。
 - `DataAcquisitionHub` 能审计下载，但 MethodCard 自动请求目前主要使用关键词规则；未知公开数据默认提出 Yahoo 探索性替代，不能自动构造论文原始数据字段映射。
-- 15-claim 原生执行和四类多基准没有统一写入旧 harness 的 MLflow/DVC tracking；当前主要依赖 JSON、SHA256、Git 和环境锁文件追踪。
+- Native、四类多基准和逐篇 candidate 已统一写入 MLflow/DVC/lineage；MLflow health-check run 使用真实 SQLite backend，DVC push/pull 与 remote status 已验证。
+- 接入 tracking 前的 12 份 Native 报告已用 `historical_reconciliation` 回填 run ID，并保留回填前报告 SHA256；新报告继续使用 execution-time run ID。
 - `pytest` 验证控制逻辑、schema、AppTest 和短任务；十篇小时级官方训练结果由已保存报告和源码/数据审计证明，不会在普通测试套件中全部重跑。
 
 ## 2026-07-17 通用性评估
@@ -188,8 +198,8 @@ Live LLM strict DLinear: quality 1.0、claim consistency passed、evidence 31/31
 1. 10 篇 strict 全部属于 `forecast_only + Exchange-Rate`。
 2. 只有 1 篇 live LLM strict MethodCard。
 3. 新论文不能自动编译为 Native Claim。
-4. 28 个 exploratory candidate 尚未逐篇执行。
-5. SourceBundle、数据字段映射、异步运行和全链路追踪尚未闭环。
+4. 28 个 exploratory candidate 已逐篇执行，但没有一篇因此升级为 native strict。
+5. SourceBundle、数据字段映射和追踪控制面已闭环；三类纵向数据/协议/环境的科学闭环仍未完成。
 
 完整规划见 `docs/STRICT_REPRODUCTION_GENERALIZATION_PLAN.md`；用户已批准该规划，P1.G 控制层实施结果和未通过门禁见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。
 
@@ -198,10 +208,11 @@ Live LLM strict DLinear: quality 1.0、claim consistency passed、evidence 31/31
 - 已实现 Native Claim Compiler、逐论文声明式 spec 和 source/data/command/environment/metric 插件审计。
 - 已实现 MethodCard v3 claim/evidence/history、SourceApproval、DatasetContract 和审批冲突失效。
 - 已实现信号回测、截面资产定价、组合强化学习协议验证；三类纵向样例均产生结构化 blocker，strict 为 0。
-- 已实现 Benchmark Registry、持久化本地任务队列、统一 lineage 和全局 Memory Scheduler。
-- 86 篇研究日志已生成；原 28 个 candidate 未被共享 adapter 虚报为论文级执行，当前与 58 个 blocker 合计为 86 个待消减记录。
+- 已实现 Benchmark Registry、Memory 排序的持久化本地任务队列、SQLite MLflow、仓库外 DVC remote 和统一 lineage。
+- 102 篇去重 Research Journal 记录均有探索过程；原 28 个 candidate 已真实执行且没有被虚报为 strict。OA 全文根因减少 6，但总 blocker 仍为 58。
+- 已实现通用 ScientificAcceptanceLedger，并用 TLOB 验证“官方产物可运行但指标不匹配”不会产生 false-strict。
 - 使用 provider 可用的 `gpt-5.5` 完成三篇真实 LLM 抽取，全部为 `unknown section=0`；只有日内信号论文达到 v3 证据 strict，仍未达到完整 strict reproduction。
-- 最终验证为 `159 passed`、Ruff 通过；P2 自动门禁为 `ready_for_p2=false`。
+- 本轮最终测试数以 `docs/P1G_SCIENTIFIC_ACCEPTANCE_LOG.md` 和提交时测试输出为准；P2 自动门禁仍为 `ready_for_p2=false`。
 
 ## 推荐命令
 

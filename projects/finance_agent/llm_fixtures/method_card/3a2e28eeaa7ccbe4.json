@@ -1,0 +1,265 @@
+{
+  "prompt_hash": "3a2e28eeaa7ccbe4",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "svm_sp500_long_short_ir_2007_2023",
+    "paper_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+    "title": "Hybrid Models for Financial Forecasting: Combining",
+    "venue_or_source": "unknown",
+    "paper_url": "unknown",
+    "task_type": "financial_time_series_forecasting_with_trading_backtest",
+    "target_asset": "S&P 500 index",
+    "asset_universe": [
+      "S&P 500 index"
+    ],
+    "frequency": "daily",
+    "horizon": "unknown",
+    "label_definition": "logarithmic returns of the S&P 500 index; exact prediction target timing is unknown",
+    "data_requirements": [
+      "Daily S&P 500 observations from 2002-01-01 through 2023-12-31.",
+      "Compute logarithmic returns for the S&P 500 series.",
+      "Use an out-of-sample testing/backtest period from 2007-01-01 through 2023-12-31."
+    ],
+    "feature_groups": [
+      "unknown"
+    ],
+    "model_families": [
+      "Support Vector Machine"
+    ],
+    "training_protocol": "Rolling-basis cross-validation with dynamically adjusted windows for S&P 500 machine learning models: each window has a three-year training period, three validation periods of 8, 16, and 24 months, and a one-year testing period; the window moves forward by one year. Hyperparameters are selected based on average performance across the three validation folds. Optimizer, loss, seed, batch size, and SVM-specific hyperparameter grid are unknown.",
+    "evaluation_protocol": "Walk-forward/rolling evaluation on the S&P 500 out-of-sample period from 2007-01-01 to 2023-12-31. Forecasts are transformed into Long-Short trading signals and evaluated using forecast error metrics and trading performance indicators. Exact signal construction rule and context overlap are unknown.",
+    "metrics": [
+      "RMSE",
+      "MAE",
+      "ARC",
+      "ASD",
+      "MD",
+      "IR",
+      "IR*",
+      "SR"
+    ],
+    "cost_assumptions": "transaction costs are mentioned as part of practical trading evaluation, but exact cost values are unknown",
+    "reported_results": {
+      "IR": 0.68
+    },
+    "experiment_type": "forecast_and_trading_backtest",
+    "preprocessing_protocol": "Transform price/index data into continuously compounded logarithmic returns. Whether any scaling, normalization, or feature engineering statistics are fit on training data only is unknown.",
+    "hyperparameters": {},
+    "required_start_date": "2002-01-01",
+    "required_end_date": "2023-12-31",
+    "strict_requirements": [
+      "Use the S&P 500 index only for this extracted experiment.",
+      "Use daily data and logarithmic returns.",
+      "Use the rolling three-fold validation design described for S&P 500: three-year training, validation folds of 8/16/24 months, one-year testing, shifted forward by one year.",
+      "Evaluate on the out-of-sample S&P 500 period 2007-01-01 to 2023-12-31.",
+      "Use the individual SVM model row/claim, not hybrid or XGBoost rows.",
+      "Use the Long-Short trading strategy setting for the reported IR result."
+    ],
+    "unknowns": [
+      "Exact forecast horizon/prediction length.",
+      "Exact label timing, such as next-day return versus another horizon.",
+      "Exact SVM input features.",
+      "SVM kernel and hyperparameter grid or selected hyperparameter values.",
+      "Optimizer/loss details, if applicable.",
+      "Random seed and batch protocol.",
+      "Exact Long-Short signal construction rule.",
+      "Exact transaction cost assumption.",
+      "All Table 2 numeric values other than the reported SVM IR=0.68 are not available in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "method_id",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "Evaluating the models’ trading performance based on the three risk-adjusted return metrics, the indi- vidual SVM model served as the best-performing investment strategy. With the IR metric at the level of 0.68, SVM significantly outperformed the benchmark Buy&Hold."
+      },
+      {
+        "section": "paper_id",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "Hybrid Models for Financial Forecasting: Combining Econometric, Machine Learning, and Deep Learning Models"
+      },
+      {
+        "section": "title",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "Hybrid Models for Financial Forecasting: Combining Econometric, Machine Learning, and Deep Learning Models"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "This research systematically develops and evaluates various hybrid modeling approaches by com- bining traditional econometric models (ARIMA and ARFIMA models) with machine learning and deep learning techniques (SVM, XGBoost, and LSTM models) to forecast financial time series."
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "The performance, both in terms of error metrics and trading indicators, of econometric techniques, machine learning models, and hybrid approaches for the S&P 500 index and Long-Short trading strategy is presented in Table 2."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "The empirical analysis is based on two distinct financial assets: the S&P 500 index and Bitcoin."
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "For S&P 500, the data period covers daily observations from 1 January 2002 to 31 December 2023."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "Each window consists of a three-year training period, three validation periods of 8, 16, and 24 months, and a one-year testing period."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "Table 1 presents the calculated descriptive statistics values for the logarithmic returns of S&P 500 and Bitcoin for the whole study period."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "Note: S&P 500 series covers the period between 1 January 2002 and 31 December 2023."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "The out-of-sample part of the data for S&P 500 spanned the period from 1 January 2007 to 31 December 2023."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "Most of the calculations in this study were performed using the Python programming language. The exception was made for the parameter estimation and prediction generation for the ARFIMA model, which were carried out with the use of the R statistical software."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "With the IR metric at the level of 0.68, SVM significantly outperformed the benchmark Buy&Hold."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "Each window covers the six-year period with the separated training, validation, and testing sets. The length of each segment corresponds to the three-year, two-year, and one-year periods, respectively. However, the validation set is additionally divided into three separate sections of 8, 16, and 24 months. For each iteration, the window moves one year forward. The optimal set of hyperparameters is selected based on the average performance across three distinct validation folds."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "Furthermore, the generated forecasts are transformed into two categories of trading signals. This stage enables the construction of corresponding trading strategies and the backtesting of the models on the real-world historical market data."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "The out-of-sample part of the data for S&P 500 spanned the period from 1 January 2007 to 31 December 2023."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "The accuracy and quality of the predictions for each of the constructed models are evaluated using standard error metrics: Root Mean Squared Error (RMSE) and Mean Absolute Error (MAE)."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "The performance of the obtained investment strategies is examined based on the following trading metrics: annualized rate of return (ARC), annualized standard deviation (ASD), maximum drawdown (MD), information ratio (IR), adjusted information ratio (IR*), and Sortino ratio (SR)."
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "With the IR metric at the level of 0.68, SVM significantly outperformed the benchmark Buy&Hold."
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "ontinuously compounded returns, which facilitates their additivity over time (Hudson and Gregoriou, 2015)."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "The optimal set of hyperparameters is selected based on the average performance across three distinct validation folds."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "The performance, both in terms of error metrics and trading indicators, of econometric techniques, machine learning models, and hybrid approaches for the S&P 500 index and Long-Short trading strategy is presented in Table 2."
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "c362862105e09368",
+        "quote": "The optimal set of hyperparameters is selected based on the average performance across three distinct validation folds."
+      }
+    ],
+    "extraction_metadata": {
+      "claim_selected": "S&P 500 Long-Short trading strategy using the individual SVM model, reported as best-performing by IR in Table 2 discussion.",
+      "source_text_sha": "c362862105e09368"
+    },
+    "approval_required": true,
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

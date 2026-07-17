@@ -6,7 +6,7 @@
     "market": "bounded_by_assigned_benchmark",
     "frequency": "unknown"
   },
-  "status": "blocked",
+  "status": "exploratory_executed",
   "claim_ids": [],
   "attempts": [
     {
@@ -24,15 +24,28 @@
       ],
       "reusable_capability_ids": [],
       "recorded_at": "2026-07-17T10:32:17.494170+00:00"
+    },
+    {
+      "attempt_id": "portfolio_triage_v2",
+      "stage": "candidate_triage",
+      "action": "validate paper-specific card, adapter execution and benchmark binding",
+      "outcome": "passed",
+      "summary": "Paper-specific exploratory run and delta are complete",
+      "artifacts": [
+        "projects\\finance_agent\\reports\\reproduction_portfolio.json",
+        "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+        "projects\\finance_agent\\reports\\candidate_execution_ledger.json"
+      ],
+      "blockers": [],
+      "reusable_capability_ids": [],
+      "recorded_at": "2026-07-17T13:09:09.622521+00:00"
     }
   ],
   "decisions": [],
   "linked_assets": {},
-  "remaining_manual_steps": [
-    "extract/review MethodCard, bind data, execute, then write Paper-vs-Run Delta"
-  ],
+  "remaining_manual_steps": [],
   "historical_reconstruction": false,
   "started_at": "2026-07-17T10:32:17.494170+00:00",
-  "updated_at": "2026-07-17T10:32:17.494170+00:00",
+  "updated_at": "2026-07-17T14:13:38.475982+00:00",
   "schema_version": "paper_exploration_record_v1"
 }

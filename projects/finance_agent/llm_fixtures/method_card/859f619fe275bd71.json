@@ -1,0 +1,263 @@
+{
+  "prompt_hash": "859f619fe275bd71",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "arxiv_2402_06689v1_snp500_stock_forecasting_unknown_row",
+    "paper_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+    "title": "A Study on Stock Forecasting Using Deep Learning",
+    "venue_or_source": "unknown",
+    "paper_url": "unknown",
+    "task_type": "stock price forecasting",
+    "target_asset": "s&p 500 index",
+    "asset_universe": [
+      "s&p 500 index"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "future stock price",
+    "data_requirements": [
+      "Historical S&P 500 index data for training and testing"
+    ],
+    "feature_groups": [
+      "historical stock price data"
+    ],
+    "model_families": [
+      "Moving Average",
+      "ARIMA",
+      "LSTM",
+      "RNN",
+      "CNN",
+      "Full CNN"
+    ],
+    "training_protocol": {
+      "train_test_split": "unknown",
+      "input_window": "unknown",
+      "optimizer": "unknown",
+      "loss": "unknown",
+      "epochs": "unknown",
+      "early_stopping": "unknown",
+      "seed": "unknown",
+      "batch_size": "unknown"
+    },
+    "evaluation_protocol": {
+      "test_set": "unknown",
+      "chronological_split": "unknown",
+      "context_overlap": "unknown",
+      "comparison_models": [
+        "Moving Average",
+        "ARIMA",
+        "LSTM",
+        "RNN",
+        "CNN",
+        "Full CNN"
+      ]
+    },
+    "metrics": [
+      "Root mean square error",
+      "mean absolute error",
+      "mean squared error"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {},
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": {
+      "stationarity_transform": "difference mentioned generally, exact protocol unknown",
+      "scaling": "unknown",
+      "fit_scope": "unknown",
+      "transform_order": "unknown"
+    },
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "strict_requirements": [
+      "Use S&P 500 index data",
+      "Evaluate stock price forecasting using error metrics such as RMSE, MAE, and MSE"
+    ],
+    "unknowns": [
+      "No single concrete experiment row could be selected from the supplied context because the excerpt does not include a results table or numeric reported results.",
+      "Exact target variable definition is not reported in the supplied context beyond stock price forecasting.",
+      "Data frequency is not reported in the supplied context.",
+      "Prediction horizon is not reported in the supplied context.",
+      "Date range is not reported in the supplied context.",
+      "Exact train/test split is not reported in the supplied context.",
+      "Input window length is not reported in the supplied context.",
+      "Model-specific hyperparameters are not reported in the supplied context.",
+      "Optimizer, loss function, epochs, batch size, early stopping, and random seed are not reported in the supplied context.",
+      "Exact preprocessing protocol, including scaling and train-only fit scope, is not reported in the supplied context.",
+      "Exact numeric metric values for any selected model are not reported in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "method_id",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "A Study on Stock Forecasting Using Deep Learning and Statistical Models"
+      },
+      {
+        "section": "paper_id",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "A Study on Stock Forecasting Using Deep Learning and Statistical Models"
+      },
+      {
+        "section": "title",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "A Study on Stock Forecasting Using Deep Learning and Statistical Models"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "Predicting a fast and accurate model for stock price forecasting is been a challenging task"
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "We use a record of s&p 500 index data for training and testing."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "We use a record of s&p 500 index data for training and testing."
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "We use a record of s&p 500 index data for training and testing."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "The model can be used to predict the stock price"
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "The model can be used to predict the stock price"
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "We use a record of s&p 500 index data for training and testing."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "As it is explained that these stock data contain high noise, non- stationary and non-linearity data"
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "The survey motive is to check various deep learning and statistical model techniques for stock price forecasting that are Moving A verages, ARIMA which are statistical techniques and LSTM, RNN, CNN, and FULL CNN which are deep learning models."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "We use a record of s&p 500 index data for training and testing."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "We use a record of s&p 500 index data for training and testing."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "Root mean square error, mean absolute error, mean squared error"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "in terms of error calculation or percentage of accuracy that how much it is accurate which measures by the function like Root mean square error, mean absolute error, mean squared error"
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "As it is explained that these stock data contain high noise, non- stationary and non-linearity data and to make it stationary we calculate the difference."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "This paper will review many deep learning algorithms for stock price forecasting."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "We use a record of s&p 500 index data for training and testing."
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "df834e67ed45d832",
+        "quote": "This paper will review many deep learning algorithms for stock price forecasting."
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning",
+      "text_sha": "df834e67ed45d832",
+      "supporting_context_sha": "",
+      "claim_selector": {}
+    },
+    "approval_required": true,
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

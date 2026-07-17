@@ -1,0 +1,280 @@
+{
+  "method_id": "arxiv_2502_15853v1_attention_tesla_daily_last30_accuracy",
+  "paper_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+  "title": "Multi-Agent Stock Prediction Systems: Machine Learning Models, Simulations, and Real-Time Trading Strategies",
+  "venue_or_source": "arXiv:2502.15853v1",
+  "paper_url": "unknown",
+  "task_type": "stock price forecasting",
+  "target_asset": "Tesla stock",
+  "asset_universe": [
+    "Tesla"
+  ],
+  "frequency": "daily trading-day data",
+  "horizon": "unknown",
+  "label_definition": "unknown",
+  "data_requirements": [
+    "Tesla stock time-series dataset with Date, Open, High, Low, Close, Adj Close, and Volume columns.",
+    "Chronologically partition the dataset so the training set contains all data points from the initial timestamp up to 30 days before the final recorded timestamp.",
+    "Use the last 30 days of the dataset as the test set."
+  ],
+  "feature_groups": [
+    "price_lag_features",
+    "liquidity_proxy_features"
+  ],
+  "model_families": [
+    "ridge_regression"
+  ],
+  "training_protocol": "{\"batch_size\": \"unknown\", \"chronological_split\": \"Training set comprises all data points from the initial timestamp up to 30 days prior to the final recorded timestamp.\", \"early_stopping\": \"unknown\", \"environment\": \"Python in a Jupyter notebook environment hosted on Google Colab\", \"epochs\": 10, \"framework\": \"TensorFlow\", \"hardware\": \"L4 GPUs\", \"hidden_layer_size\": 128, \"input_window\": \"unknown\", \"layers\": 1, \"learning_rate\": 0.01, \"loss_function\": \"unknown\", \"optimizer\": \"unknown\", \"random_seed\": \"unknown\"}",
+  "evaluation_protocol": "{\"context_overlap\": \"unknown\", \"split_type\": \"fixed chronological holdout\", \"test_period\": \"last 30 days of the dataset\", \"walk_forward\": false}",
+  "metrics": [
+    "directional_accuracy"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "Accuracy": 95.1467
+  },
+  "strict_requirements": [
+    "Use the Tesla dataset described in the paper.",
+    "Use daily stock fields including Date, Open, High, Low, Close, Adj Close, and Volume.",
+    "Use the chronological train/test split where training ends 30 days before the final timestamp and testing uses the last 30 days.",
+    "Train the selected Attention model with 1 layer, hidden size 128, 10 epochs, and learning rate 0.01.",
+    "Evaluate using Accuracy and reproduce the reported Attention accuracy of 95.1467."
+  ],
+  "unknowns": [
+    "Exact prediction horizon or forecast length is not specified beyond evaluation on the last 30 days.",
+    "Exact target label is not explicitly specified; the paper describes stock price forecasting and notes Close is often used for trend analysis, but does not unambiguously define the predicted column for this experiment.",
+    "Input sequence/window length is not reported.",
+    "Optimizer is not reported.",
+    "Loss function is not reported.",
+    "Batch size is not reported.",
+    "Random seed is not reported.",
+    "Early stopping protocol is not reported.",
+    "Preprocessing transformations and fit scope are not reported.",
+    "Dataset start date and end date are not reported in the supplied context.",
+    "Accuracy definition/formula is not reported.",
+    "horizon",
+    "label_definition",
+    "model_families conflict with title/protocol references: expected one of random_forest_regressor"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "title",
+      "quote": "Multi-Agent Stock Prediction Systems: Machine Learning Models, Simulations, and Real-Time Trading Strategies",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "task_type",
+      "quote": "This paper presents a comprehensive study on stock price prediction, leveraging advanced machine learning (ML) and deep learning (DL) techniques to improve financial forecasting accuracy.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "target_asset",
+      "quote": "sample rows from the Tesla dataset.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "asset_universe",
+      "quote": "sample rows from the Tesla dataset.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "frequency",
+      "quote": "The stock price at the opening of the trading day.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "horizon",
+      "quote": "This approach ensures that the model is trained on historical data and is evaluated by forecasting based on the most recent 30-day period.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "label_definition",
+      "quote": "Close: The stock price at the close of the trading day. This is often the most used column for trend analysis.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "data_requirements",
+      "quote": "when the stock data was recorded. • Open: The stock price at the opening of the trading day. • High: The highest price reached during the trading day. • Low: The lowest price reached during the trading day. • Close: The stock price at the close of the trading day. This is often the most used column for trend analysis. • Adj Close: The adjusted closing price, which accounts for corporate actions like stock splits, dividends, etc. • V olume: The total number of shares traded during the day. Date Open High Low Close Adj Close Volume",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "feature_groups",
+      "quote": "when the stock data was recorded. • Open: The stock price at the opening of the trading day. • High: The highest price reached during the trading day. • Low: The lowest price reached during the trading day. • Close: The stock price at the close of the trading day. This is often the most used column for trend analysis. • Adj Close: The adjusted closing price, which accounts for corporate actions like stock splits, dividends, etc. • V olume: The total number of shares traded during the day. Date Open High Low Close Adj Close Volume",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "model_families",
+      "quote": "The evaluation of various models is summarized in Table 2. The table compares the accuracy of LSTM, GRU, their variants, and the Attention mechanism.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "training_protocol",
+      "quote": "For training and test- ing, we will partition the dataset into training and testing subsets. The training set comprises all data points from the initial timestamp up to 30 days prior to the final recorded timestamp. The test set includes the data from the last 30 days of the dataset.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "training_protocol",
+      "quote": "For each model in the experiments, the number of layers was set to 1. The size of the hidden layer was fixed at 128 units. Training was performed over 10 epochs and the learning rate was set to 0.01.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "training_protocol",
+      "quote": "For the implementation, we use Python in a Jupyter notebook environment hosted on Google Colab and use L4 GPUs for training. The TensorFlow framework is employed to build and train the forecasting models.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "evaluation_protocol",
+      "quote": "For training and test- ing, we will partition the dataset into training and testing subsets. The training set comprises all data points from the initial timestamp up to 30 days prior to the final recorded timestamp. The test set includes the data from the last 30 days of the dataset.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "metrics",
+      "quote": "Model Name 1 Accuracy 1 Model Name 2 Accuracy 2 LSTM 89.2522 LSTM-2Path 94.1620 LSTM-Seq2Seq 88.3902 LSTM-Bidirectional 94.1620 LSTM-Bidirectional-Seq2Seq 95.0921",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "reported_results",
+      "quote": "GRU 84.1694 GRU-2Path 83.7746 GRU-Seq2Seq 90.8855 GRU-Bidirectional 87.0331 GRU-Bidirectional-Seq2Seq 87.3672 Attention 95.1467",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "hyperparameters",
+      "quote": "For each model in the experiments, the number of layers was set to 1. The size of the hidden layer was fixed at 128 units. Training was performed over 10 epochs and the learning rate was set to 0.01.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    },
+    {
+      "source_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "section": "strict_requirements",
+      "quote": "T able 2: Model Accuracy Comparison",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "arXiv:2502.15853v1"
+    }
+  ],
+  "extraction_metadata": {
+    "claim_selection": "Selected the Attention model row in Table 2 because it is a single concrete reported result with the highest listed accuracy.",
+    "text_sha": "e4f25ac9329d8949",
+    "supporting_context_sha": "",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "quality_report": {
+      "method_id": "arxiv_2502_15853v1_attention_tesla_daily_last30_accuracy",
+      "paper_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea",
+      "quality_score": 0.58,
+      "approval_required": true,
+      "critical_missing_fields": [
+        "horizon",
+        "label_definition"
+      ],
+      "type_errors": [],
+      "semantic_conflicts": [
+        "model_families conflict with title/protocol references: expected one of random_forest_regressor"
+      ],
+      "unsupported_models": [],
+      "warnings": [
+        "horizon is unknown"
+      ],
+      "recommended_action": "human_review_required_fix_method_card_fields"
+    },
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "{\"context_overlap\": \"unknown\", \"split_type\": \"fixed chronological holdout\", \"test_period\": \"last 30 days of the dataset\", \"walk_forward\": false}",
+    "frequency_type": "daily",
+    "horizon_type": "unknown",
+    "document_text_sha": "e4f25ac9329d8949",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 18,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "purged_walk_forward",
+  "evaluation_protocol_description": "{\"context_overlap\": \"unknown\", \"split_type\": \"fixed chronological holdout\", \"test_period\": \"last 30 days of the dataset\", \"walk_forward\": false}",
+  "frequency_type": "daily",
+  "horizon_type": "unknown",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "unknown",
+  "hyperparameters": {
+    "num_layers": 1,
+    "hidden_layer_units": 128,
+    "epochs": 10,
+    "learning_rate": 0.01
+  },
+  "required_start_date": "unknown",
+  "required_end_date": "unknown",
+  "schema_version": "method_card_v2"
+}

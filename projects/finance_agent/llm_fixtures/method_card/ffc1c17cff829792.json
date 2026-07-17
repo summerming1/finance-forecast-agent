@@ -1,0 +1,271 @@
+{
+  "prompt_hash": "ffc1c17cff829792",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "arxiv_2009_10819v1_lstm1_univariate_one_week_nifty50_open",
+    "paper_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+    "title": "Stock Price Prediction Using Machine Learning and",
+    "venue_or_source": "arXiv",
+    "paper_url": "unknown",
+    "task_type": "time_series_forecasting",
+    "target_asset": "NIFTY 50 index open value",
+    "asset_universe": [
+      "NIFTY 50"
+    ],
+    "frequency": "daily trading days",
+    "horizon": "5 trading days / next week",
+    "label_definition": "Forecast the open value of the NIFTY 50 index for each of the five working days in the upcoming week.",
+    "data_requirements": [
+      "Daily NIFTY 50 index values collected from Yahoo Finance.",
+      "Use records from 2014-12-29 through 2018-12-28 as the initial training dataset.",
+      "Use records from 2018-12-31 through 2020-07-31 as the test period.",
+      "For the selected LSTM#1 experiment, use only the univariate sequence of open values as model input."
+    ],
+    "feature_groups": [
+      "Lagged daily NIFTY 50 open values from the previous one trading week"
+    ],
+    "model_families": [
+      "LSTM univariate multi-step forecaster"
+    ],
+    "training_protocol": "Train the univariate LSTM model on the initial training records from 2014-12-29 to 2018-12-28. The selected LSTM#1 configuration uses previous five open values, input shape (5,1), to forecast the next five open values. During testing, use walk-forward validation: after each forecasted week, append the actual records for that week to the training data before forecasting the following week. Optimizer, loss function, epoch count, batch size, random seed, and detailed layer sizes are not reported in the supplied context.",
+    "evaluation_protocol": "Chronological expanding-window walk-forward evaluation over the test period 2018-12-31 to 2020-07-31. Each round forecasts one NSE working week, Monday through Friday, producing five predicted open values; after the week is over, the actual records for that week are included for forecasting the next week.",
+    "metrics": [
+      "RMSE",
+      "day-wise RMSE",
+      "RMSE/Mean",
+      "execution time in seconds"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {
+      "mean_RMSE": 344.57,
+      "mean_daywise_RMSE_Mon": 232,
+      "mean_daywise_RMSE_Tue": 293,
+      "mean_daywise_RMSE_Wed": 330,
+      "mean_daywise_RMSE_Thu": 392,
+      "mean_daywise_RMSE_Fri": 436,
+      "mean_execution_time_seconds": 18.64,
+      "RMSE_over_mean": 0.0311,
+      "min_RMSE": 314.5,
+      "max_RMSE": 378.1,
+      "sd_RMSE": 18.47
+    },
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {
+      "input_window_trading_days": 5,
+      "output_window_trading_days": 5,
+      "input_shape": [
+        5,
+        1
+      ],
+      "walk_forward_update_frequency": "weekly",
+      "input_variables": [
+        "open"
+      ],
+      "optimizer": "unknown",
+      "loss": "unknown",
+      "epochs": "unknown",
+      "batch_size": "unknown",
+      "random_seed": "unknown",
+      "lstm_units": "unknown"
+    },
+    "required_start_date": "2014-12-29",
+    "required_end_date": "2020-07-31",
+    "strict_requirements": [
+      "Use NIFTY 50 daily index data from Yahoo Finance.",
+      "Use chronological split: train on 2014-12-29 through 2018-12-28 and test on 2018-12-31 through 2020-07-31.",
+      "Use univariate open-value input for LSTM#1.",
+      "Use one prior NSE working week, five trading days, as input.",
+      "Forecast the next NSE working week, five trading days, using walk-forward validation with actual weekly records appended after each forecast week."
+    ],
+    "unknowns": [
+      "Detailed LSTM layer architecture beyond the reported input shape is not available in the supplied context.",
+      "Optimizer is not available in the supplied context.",
+      "Loss function is not available in the supplied context.",
+      "Number of epochs is not available in the supplied context.",
+      "Batch size is not available in the supplied context.",
+      "Random seed or repetition seed protocol is not available in the supplied context.",
+      "Scaling, normalization, missing-value handling, and other preprocessing details are not available in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "method_id",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "Table 10 presents the performance of the deep learning regression model LSTM#2. The mean execution time fo r the 10 rounds of execution of the model on the same computing environment was found to be 31.44s. This was almost two times the time needed for the execution of the LSTM#1 model."
+      },
+      {
+        "section": "paper_id",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "Stock Price Prediction Using Machine Learning and LSTM-Based Deep Learning Models"
+      },
+      {
+        "section": "title",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "Stock Price Prediction Using Machine Learning and LSTM-Based Deep Learning Models"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "Prediction of stock prices has been an important area of research for a long time."
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "we predicted the open values of NIFTY 50 for the period December 31 , 2018 till Jul y 31, 2020."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "we have used NIFTY 50 inde x values of the National Stock Exchange (NSE) of India, during the period December 29, 2014 till July 31, 2020."
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "The data is collected from the Ya hoo Finance website and these are daily NIFTY 50 index values."
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "As a working week in the NSE involves five days - Monday through Friday – each round of forecasting resulted in five values corresponding to the predicted open values for the five days in the upcoming week."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "then deploy the model for forecasting the open value of the NIFTY 50 index on a weekly basis for the rec ords in the test da taset."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "For training the regression models, we use t he data for the period December 29, 2014 (whic h was a Monday) ti ll December 28, 20 18 (which was a Friday). The models are then tested on the data for the period December 31, 2018 – a Monday - till July 31, 2020 – a Friday. The data is collected from the Ya hoo Finance website and these are daily NIFTY 50 index values."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "The first model - univariate LSTM model with prior one week’s data as the input - performs multi-step time series forecasting using only the univariate sequence of the open values of the NIFTY 50 time series."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "The four models are: (i) LSTM model for multi -step forecasting with univariate input data of one week"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "The shape of the input data to the input layer of the network is (5,1) indicating that the previous five values"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "The first model - univariate LSTM model with prior one week’s data as the input - performs multi-step time series forecasting using only the univariate sequence of the open values of the NIFTY 50 time series. We train the model using the training dataset records, and then use the model to for ecast the open values for the next week (i.e., the next five values as a week consists of five working days)."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "The approach is called multi-step forecasting with walk-forward validation [27]. Following this approach, we build the models using the records in the training dataset and then deploy the model for forecasting the open value of the NIFTY 50 index on a weekly basis for the rec ords in the test da taset. As soon as the week for which the last round of forecasting was made was over, the actual records for that week were included in the training dataset for the purpose of forecasting the next week’s open values of the NIFTY 50 index."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "The average value the ratio of the RMSE to the mean of the actual open values yielded by the model was 0.0353, while the mean RMSE wa s 390.46."
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "Mean 344.57 232 293 330 392 436 18.64 Min 314.5 201 259 299 359 411 16.42 Max 378.1 253 385 349 450 467 19.80 SD 18.47 17.9 34.5 16.7 25.8 17.0 0.899 RMSE/Mean 0.0311 0.02 0.03 0.03 0.04 0.04"
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "unknown"
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "The shape of the input data to the input layer of the network is (5,1) indicating that the previous five values"
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "We exploit the power of LSTM models in multi -step time series forecasting using a walk-forward validation method [27]. In this method, a model is required to make a one-week predict ion, and the actual data for that week is use d in the model for making the forecast for the next week."
+      },
+      {
+        "section": "unknowns",
+        "source_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "6331492c87771dd6",
+        "quote": "The architectural design a nd the parame ters of each of the four models are now discussed in the following."
+      }
+    ],
+    "extraction_metadata": {
+      "claim_selection": "Selected the LSTM#1 univariate one-week-input model because the supplied context states it is the most accurate model and provides exact Table 9 results.",
+      "document_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an",
+      "text_sha": "6331492c87771dd6"
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

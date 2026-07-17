@@ -1,0 +1,325 @@
+{
+  "method_id": "xgboost_tesla_stock_1_day_ahead_240_trading_day_rolling_training",
+  "paper_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+  "title": "Short-Term Stock Price Forecasting using exogenous variables and Machine Learning Algorithms",
+  "venue_or_source": "unknown",
+  "paper_url": "unknown",
+  "task_type": "stock_price_forecasting",
+  "target_asset": "Tesla stock",
+  "asset_universe": [
+    "Tesla stock"
+  ],
+  "frequency": "daily trading-day",
+  "horizon": "1 day ahead",
+  "label_definition": "Next-day Tesla stock price",
+  "data_requirements": [
+    "Tesla stock data over the period from March 2020 to May 2022",
+    "Rolling training datasets of 240 trading days",
+    "Exogenous variables are required, but their exact identities are unknown"
+  ],
+  "feature_groups": [
+    "cross_asset_features"
+  ],
+  "model_families": [
+    "gradient_boosting_regressor"
+  ],
+  "training_protocol": "Develop XGBoost forecasting models using rolling 240-day training data sets for Tesla stock one-day-ahead forecasts; optimizer, loss, seed, batch protocol, and exact tuning procedure are unknown.",
+  "evaluation_protocol": "Evaluate one-day-ahead Tesla stock price forecasts from models developed and evaluated using rolling 240-day training data sets; exact chronological split, test dates, and context overlap are unknown.",
+  "metrics": [
+    "mse",
+    "rmse"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "RMSE": "unknown",
+    "MAPE": "unknown",
+    "MTT": "unknown",
+    "MPE": "unknown",
+    "qualitative_finding": "XGBoost models produce the lowest errors compared to the other machine learning models considered"
+  },
+  "strict_requirements": [
+    "Use Tesla stock as the target asset.",
+    "Use a one-day-ahead forecast horizon.",
+    "Use rolling 240-day training data sets.",
+    "Evaluate using RMSE, MAPE, MTT, and MPE.",
+    "Do not infer exact numeric metric values because they are not present in the supplied context."
+  ],
+  "unknowns": [
+    "Exact numeric RMSE for the selected Tesla one-day-ahead XGBoost 240-day rolling-training experiment",
+    "Exact numeric MAPE for the selected Tesla one-day-ahead XGBoost 240-day rolling-training experiment",
+    "Exact numeric MTT for the selected Tesla one-day-ahead XGBoost 240-day rolling-training experiment",
+    "Exact numeric MPE for the selected Tesla one-day-ahead XGBoost 240-day rolling-training experiment",
+    "Exact XGBoost hyperparameters for the selected result row",
+    "Exact exogenous variables used",
+    "Exact raw data source",
+    "Exact preprocessing and feature engineering steps",
+    "Exact chronological evaluation dates and test-set construction",
+    "Optimizer, loss, seed, batch protocol, and early-stopping protocol",
+    "Venue or publication source",
+    "Paper URL"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "method_id",
+      "quote": "The ﬁrst set of results, presented in Figure 3, is on the comparison of these models for forecasting the price of Tesla stock for the next day (1 day ahead forecast). Two sets of results were produced: one for models developed and evaluated using “rolling” 60-day training data sets, the other using “rolling” 240-day training data sets.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "paper_id",
+      "quote": "Short-Term Stock Price Forecasting using exogenous variables and Machine Learning Algorithms",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "title",
+      "quote": "Short-Term Stock Price Forecasting using exogenous variables and Machine Learning Algorithms",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "task_type",
+      "quote": "this research paper compares four machine learning models and their accuracy in forecasting three well- known stocks traded in the NYSE in the short term over the period from March 2020 to May 2022.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "target_asset",
+      "quote": "The ﬁrst set of results, presented in Figure 3, is on the comparison of these models for forecasting the price of Tesla stock for the next day (1 day ahead forecast).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "asset_universe",
+      "quote": "The ﬁrst set of results, presented in Figure 3, is on the comparison of these models for forecasting the price of Tesla stock for the next day (1 day ahead forecast).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "frequency",
+      "quote": "Using a training data set of 240 trading days, we ﬁnd that XGBoost gives the highest accuracy despite taking longer (up to 10 seconds) to run.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "horizon",
+      "quote": "The ﬁrst set of results, presented in Figure 3, is on the comparison of these models for forecasting the price of Tesla stock for the next day (1 day ahead forecast).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "label_definition",
+      "quote": "forecasting the price of Tesla stock for the next day (1 day ahead forecast)",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "data_requirements",
+      "quote": "forecasting three well- known stocks traded in the NYSE in the short term over the period from March 2020 to May 2022.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "data_requirements",
+      "quote": "Using a training data set of 240 trading days, we ﬁnd that XGBoost gives the highest accuracy despite taking longer (up to 10 seconds) to run.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "feature_groups",
+      "quote": "Short-Term Stock Price Forecasting using exogenous variables and Machine Learning Algorithms",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "feature_groups",
+      "quote": "Machine learning algorithms use past data to create short-term forecasts of the movement of the chosen stock prices.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "model_families",
+      "quote": "we ﬁnd that XGBoost gives the highest accuracy despite taking longer (up to 10 seconds) to run.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "training_protocol",
+      "quote": "Two sets of results were produced: one for models developed and evaluated using “rolling” 60-day training data sets, the other using “rolling” 240-day training data sets.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "evaluation_protocol",
+      "quote": "Two sets of results were produced: one for models developed and evaluated using “rolling” 60-day training data sets, the other using “rolling” 240-day training data sets.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "metrics",
+      "quote": "report the models that produce the highest accuracies from our evaluation metrics: RMSE, MAPE, MTT, and MPE.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "reported_results",
+      "quote": "It is apparent that, on average, the XGBoost models produce the lowest errors compared to the other machine learning models considered.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "preprocessing_protocol",
+      "quote": "Machine learning algorithms use past data to create short-term forecasts of the movement of the chosen stock prices.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "hyperparameters",
+      "quote": "The four basic machine learning algorithms were used to develop the forecasting models with different hyper- parameters to optimize their performance.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "strict_requirements",
+      "quote": "The ﬁrst set of results, presented in Figure 3, is on the comparison of these models for forecasting the price of Tesla stock for the next day (1 day ahead forecast). Two sets of results were produced: one for models developed and evaluated using “rolling” 60-day training data sets, the other using “rolling” 240-day training data sets.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "unknowns",
+      "quote": "The following tables summarize the top-performing models developed for each algorithm with details on the hyper-parameters used.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "required_start_date",
+      "quote": "over the period from March 2020 to May 2022.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    },
+    {
+      "source_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "section": "required_end_date",
+      "quote": "over the period from March 2020 to May 2022.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "a7e9ca21935dae82"
+    }
+  ],
+  "extraction_metadata": {
+    "document_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+    "text_sha": "a7e9ca21935dae82",
+    "supporting_context_sha": "",
+    "claim_selection_note": "Selected the Tesla stock one-day-ahead XGBoost experiment with rolling 240-day training because the supplied context explicitly states this comparison and identifies XGBoost as lowest-error; exact numeric table values were not supplied.",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "quality_report": {
+      "method_id": "xgboost_tesla_stock_1_day_ahead_240_trading_day_rolling_training",
+      "paper_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno",
+      "quality_score": 1.0,
+      "approval_required": true,
+      "critical_missing_fields": [],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [],
+      "warnings": [],
+      "recommended_action": "human_review_recommended"
+    },
+    "evaluation_protocol_type": "rolling_origin",
+    "evaluation_protocol_description": "Evaluate one-day-ahead Tesla stock price forecasts from models developed and evaluated using rolling 240-day training data sets; exact chronological split, test dates, and context overlap are unknown.",
+    "frequency_type": "daily",
+    "horizon_type": "next_return",
+    "document_text_sha": "a7e9ca21935dae82",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 24,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "rolling_origin",
+  "evaluation_protocol_description": "Evaluate one-day-ahead Tesla stock price forecasts from models developed and evaluated using rolling 240-day training data sets; exact chronological split, test dates, and context overlap are unknown.",
+  "frequency_type": "daily",
+  "horizon_type": "next_return",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "unknown",
+  "hyperparameters": {},
+  "required_start_date": "March 2020",
+  "required_end_date": "May 2022",
+  "schema_version": "method_card_v2"
+}

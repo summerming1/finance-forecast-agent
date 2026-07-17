@@ -88,6 +88,10 @@ def build_reproduction_portfolio(project_dir: str | Path) -> dict[str, Any]:
     records = load_corpus(project_dir / "literature" / "literature_corpus.json")
     benchmark = _load_json(project_dir / "reports" / "multi_benchmark_suite.json")
     sources = _load_json(project_dir / "source_bundles" / "catalog.json")
+    execution_ledger = _load_json(project_dir / "reports" / "candidate_execution_ledger.json")
+    execution_by_paper = {
+        str(row.get("paper_id")): row for row in execution_ledger.get("papers", [])
+    }
     source_by_title = {
         _normalized_title(row.get("paper_title", "")): row for row in sources.get("bundles", [])
     }
@@ -121,6 +125,12 @@ def build_reproduction_portfolio(project_dir: str | Path) -> dict[str, Any]:
             status = "exploratory_candidate"
             blocker = "paper-specific MethodCard, preprocessing and delta audit have not been executed"
             next_action = "extract/review MethodCard, bind data, execute, then write Paper-vs-Run Delta"
+        baseline_status = status
+        execution = execution_by_paper.get(record.paper_id, {})
+        if status == "exploratory_candidate" and execution.get("status") == "exploratory_executed":
+            status = "exploratory_executed"
+            blocker = ""
+            next_action = "inspect the Paper-vs-Run Delta; native reproduction remains separate"
         rows.append(
             {
                 "paper_id": record.paper_id,
@@ -130,11 +140,13 @@ def build_reproduction_portfolio(project_dir: str | Path) -> dict[str, Any]:
                 "method_tags": record.method_tags,
                 "local_pdf": record.local_pdf,
                 "status": status,
+                "baseline_status": baseline_status,
                 "assigned_benchmark": task_id,
                 "proposed_model_family": model_family,
                 "source_bundle_status": source.get("identity_status") if source else "not_discovered",
                 "blocker": blocker,
                 "next_action": next_action,
+                "execution_report_path": execution.get("report_path"),
             }
         )
 
@@ -231,8 +243,9 @@ def build_reproduction_portfolio(project_dir: str | Path) -> dict[str, Any]:
         "native_candidate_audits": [deep_lob],
         "papers": rows,
         "scientific_boundary": (
-            "exploratory_candidate means an adapter path exists; it is not an executed paper "
-            "reproduction. Non-financial strict claims validate execution-framework generality but "
+            "baseline_status preserves the pre-execution portfolio classification. "
+            "exploratory_executed means a paper-linked benchmark adaptation ran; it is not native or strict. "
+            "Non-financial strict claims validate execution-framework generality but "
             "do not count toward the financial-data strict-reproduction target."
         ),
     }

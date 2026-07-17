@@ -1,0 +1,5 @@
+outs:
+- md5: 0e4425c0c617ce046876954c9064031d
+  size: 1673504
+  hash: md5
+  path: yahoo_spy_daily_2010_20260714.csv

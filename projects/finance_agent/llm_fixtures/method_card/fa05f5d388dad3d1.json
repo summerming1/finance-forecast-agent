@@ -1,0 +1,151 @@
+{
+  "prompt_hash": "fa05f5d388dad3d1",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "dual_clvsa_spdr_sp500_trust_etf_sentiment_backtest",
+    "paper_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+    "title": "Dual-CLVSA: a Novel Deep Learning Approach to Predict Financial Markets with Sentiment Measurements",
+    "venue_or_source": "unknown",
+    "paper_url": "unknown",
+    "task_type": "financial market movement prediction",
+    "target_asset": "SPDR SP 500 Trust ETF",
+    "asset_universe": [
+      "SPDR SP 500 Trust ETF"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "unknown",
+    "data_requirements": [
+      "Historical trading data for SPDR SP 500 Trust ETF over eight years",
+      "Corresponding social sentiment measurements"
+    ],
+    "feature_groups": [
+      "trading data",
+      "social sentiment measurements"
+    ],
+    "model_families": [
+      "dual-CLVSA"
+    ],
+    "training_protocol": "unknown",
+    "evaluation_protocol": "Backtesting on historical trading data of SPDR SP 500 Trust ETF over eight years; exact chronological split and context overlap are unknown.",
+    "metrics": [
+      "unknown"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {},
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "strict_requirements": [
+      "Use the proposed dual-CLVSA model with separate sequence-to-sequence channels for trading data and corresponding social sentiment measurements.",
+      "Evaluate by backtesting on historical trading data of SPDR SP 500 Trust ETF over eight years."
+    ],
+    "unknowns": [
+      "Exact data frequency is not provided in the supplied context.",
+      "Exact prediction horizon is not provided in the supplied context.",
+      "Exact label definition for market movement is not provided in the supplied context.",
+      "Exact training protocol, including input window, optimizer, loss, epochs, early stopping, seed, and batch protocol, is not provided in the supplied context.",
+      "Exact chronological train/test split and context overlap are not provided in the supplied context.",
+      "Metrics and exact numeric reported results for the selected experiment are not provided in the supplied context.",
+      "Preprocessing protocol and fit scope are not provided in the supplied context.",
+      "Executable hyperparameter values are not provided in the supplied context.",
+      "Required start date and end date for the eight-year backtest are not provided in the supplied context.",
+      "Venue or source is not provided in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "Dual-CLVSA: a Novel Deep Learning Approach to Predict Financial Markets with Sentiment Measurements"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "we propose a novel deep learning approach, named dual-CLVSA, to predict ﬁnancial market movement with both trading data and the correspond- ing social sentiment measurements"
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "We evaluate the performance of our approach with backtesting on historical trading data of SPDR SP 500 Trust ETF over eight years."
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "We evaluate the performance of our approach with backtesting on historical trading data of SPDR SP 500 Trust ETF over eight years."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "to predict ﬁnancial market movement with both trading data and the correspond- ing social sentiment measurements"
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "to predict ﬁnancial market movement with both trading data and the correspond- ing social sentiment measurements"
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "we propose a novel deep learning approach, named dual-CLVSA"
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "We evaluate the performance of our approach with backtesting on historical trading data of SPDR SP 500 Trust ETF over eight years."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "we propose a novel deep learning approach, named dual-CLVSA, to predict ﬁnancial market movement with both trading data and the correspond- ing social sentiment measurements, each through a separate sequence-to-sequence channel."
+      },
+      {
+        "section": "experiment_type",
+        "source_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "4847a913d5a9faed",
+        "quote": "The experiment results show that dual-CLVSA can effectively fuse the two types of data, and verify that sentiment measurements are not only informative for ﬁnancial market predictions"
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre",
+      "text_sha": "4847a913d5a9faed",
+      "supporting_context_sha": "",
+      "claim_selection_note": "Only the supplied paper-head context was available; selected the concrete SPDR SP 500 Trust ETF dual-CLVSA backtesting claim mentioned in the abstract."
+    },
+    "approval_required": true,
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

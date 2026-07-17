@@ -64,6 +64,7 @@ def test_registry_and_tracking_fallback(tmp_path: Path):
     out = tracker.log_run('run', params={'a':1}, metrics={'m':1.0}, artifacts={})
     assert out['backend'] in {'mlflow','local_json_fallback'}
     dvc = DVCDataTracker(tmp_path)
+    dvc.configure_remote(tmp_path / 'remote')
     data = tmp_path/'x.csv'
     data.write_text('a\n1\n')
     assert dvc.track(data)['tracked'] is True

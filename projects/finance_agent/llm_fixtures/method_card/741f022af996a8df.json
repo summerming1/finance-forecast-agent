@@ -1,0 +1,229 @@
+{
+  "prompt_hash": "741f022af996a8df",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "arxiv_2407_02236v1_cnn_lstm_stock_price_forecast",
+    "paper_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+    "title": "IndianStockMarket PredictionusingAugmentedFinancial IntelligenceML",
+    "venue_or_source": "SSRN electronic copy",
+    "paper_url": "unknown",
+    "task_type": "stock_price_forecasting",
+    "target_asset": "unknown",
+    "asset_universe": [
+      "unknown"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "unknown",
+    "data_requirements": [
+      "Sequential stock price data arranged into input and target arrays named trainX and trainY."
+    ],
+    "feature_groups": [
+      "historical sequential stock price values"
+    ],
+    "model_families": [
+      "CNN-LSTM neural network with TimeDistributed Conv1D, TimeDistributed MaxPooling1D, TimeDistributed Flatten, LSTM, and Dense output"
+    ],
+    "training_protocol": "The model is compiled with Adam optimizer and mean squared error loss, then trained with fit on trainX and trainY using backpropagation. Epochs, batch size, validation split, seed, and early stopping are unknown.",
+    "evaluation_protocol": "Models are assessed using MAE scores, but the chronological split, holdout period, context overlap, and selected evaluation row are unknown.",
+    "metrics": [
+      "MAE",
+      "MSE loss"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {},
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {
+      "model_type": "Sequential",
+      "conv1d_filters": 64,
+      "conv1d_kernel_size": 1,
+      "conv1d_activation": "ReLU",
+      "input_shape": "(None, 1, time_stemp)",
+      "maxpooling1d_pool_size": 2,
+      "maxpooling1d_padding": "same",
+      "lstm_units": 50,
+      "lstm_activation": "ReLU",
+      "dense_units": 1,
+      "dense_activation": "linear",
+      "optimizer": "Adam",
+      "loss": "MSE"
+    },
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "strict_requirements": [
+      "Use the CNN-LSTM architecture described in section 3.3 with TimeDistributed Conv1D, TimeDistributed MaxPooling1D, TimeDistributed Flatten, LSTM, and Dense output.",
+      "Compile with Adam optimizer and mean squared error loss.",
+      "Evaluate predictive accuracy using MAE."
+    ],
+    "unknowns": [
+      "Exact target stock or index is not specified in the supplied context.",
+      "Asset universe is not specified in the supplied context.",
+      "Sampling frequency is not specified in the supplied context.",
+      "Forecast horizon is not specified in the supplied context.",
+      "Exact label definition is not specified in the supplied context.",
+      "Train/test split and evaluation period are not specified in the supplied context.",
+      "Exact numeric MAE result for the selected CNN-LSTM experiment is not present in the supplied context.",
+      "Input window length value for time_stemp is not specified in the supplied context.",
+      "Epochs, batch size, random seed, validation protocol, and early stopping are not specified in the supplied context.",
+      "Preprocessing and scaling fit scope are not specified in the supplied context.",
+      "Dataset start and end dates are not specified in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "IndianStockMarket PredictionusingAugmentedFinancial IntelligenceML"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "This paper presents price prediction models using Machine Learning algorithms augmentedwithSuperforecasters’ predictions, aimedat enhancinginvestment decisions."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "Thetrainingdata, denotedas `trainX` and`trainY`,representtheinput sequence"
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "This model will be used to learn patterns and makepredictionsonsequentialdata."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "FiveMachineLearningmodels arebuilt, includingBidirectional LSTM, ARIMA, acombinationof CNNandLSTM,GRU,andamodel built using LSTMand GRUalgorithms."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "3.3.2 TimeDistributedConv1DLayerTo capture temporal dependencies within the sequential data, a TimeDistributed layer isadded to themodel. This layer contains aConv1Dlayer with64filters andakernel sizeof 1"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "To configure the model for training, it is compiled using the Adam optimizer. The meansquared error (MSE) loss function is selected"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "Themodel is trainedusingthe`fit`function,whichappliesthebackpropagationalgorithmtoupdatethemodel's weights iteratively."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "Later these models areassessedusingMAEscorestofindwhichmodelispredictingwiththehighestaccuracy."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "The models are evaluated using the Mean AbsoluteError (MAE) to determine their predictive accuracy."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "The meansquared error (MSE) loss function is selected, which measures the discrepancy between thepredicted and true values."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "This layer contains aConv1Dlayer with64filters andakernel sizeof 1, whichenables theextractionof local features. Therectifiedlinearunit(ReLU)activationfunctionisapplied"
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "The `input_shape` parameter is set to `(None, 1,time_stemp)`,indicatingthatthemodelcanacceptinputsequencesofvaryinglengths."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "TheMaxPooling1Dlayerhasapool sizeof2andemploys'same' paddingtomaintainthespatialdimensionsofthefeaturemaps."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "anLSTMlayer with50units isaddedtothemodel. Therectifiedlinear unit(ReLU)activationfunctionisemployedwithintheLSTMlayer"
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "a single-nodedenselayer is includedinthemodel toproducethedesiredoutput. This layer uses alinear activationfunction"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "The models are evaluated using the Mean AbsoluteError (MAE) to determine their predictive accuracy."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "text_sha:1943ed4884504aee",
+        "quote": "To capture long-termdependencies andsequential patterns, anLSTMlayer with50units isaddedtothemodel."
+      }
+    ],
+    "extraction_metadata": {
+      "claim_selection": "Selected the concrete CNN-LSTM architecture described in the targeted excerpt because no explicit claim selector or numeric result row was supplied.",
+      "document_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f",
+      "text_sha": "1943ed4884504aee"
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

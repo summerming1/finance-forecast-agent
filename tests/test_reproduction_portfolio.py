@@ -52,8 +52,70 @@ def test_portfolio_does_not_count_adapter_path_as_executed_reproduction(tmp_path
     (reports / "multi_benchmark_suite.json").write_text(json.dumps(benchmark), encoding="utf-8")
     result = build_reproduction_portfolio(tmp_path)
     assert result["papers"][0]["status"] == "exploratory_candidate"
-    assert "not an executed paper reproduction" in result["scientific_boundary"]
+    assert "not native or strict" in result["scientific_boundary"]
     assert result["strict_verified_paper_count"] == 0
+
+
+def test_portfolio_preserves_baseline_and_surfaces_completed_execution(tmp_path: Path) -> None:
+    literature = tmp_path / "literature"
+    reports = tmp_path / "reports"
+    literature.mkdir()
+    reports.mkdir()
+    record = {
+        "paper_id": "paper",
+        "openalex_id": "",
+        "title": "LSTM stock forecast",
+        "authors": [],
+        "publication_year": 2024,
+        "venue": "arXiv",
+        "venue_tier": "influential_working_paper_or_preprint",
+        "doi": None,
+        "cited_by_count": 1,
+        "abstract": "",
+        "task_category": "forecast_only",
+        "method_tags": ["lstm"],
+        "landing_url": None,
+        "pdf_candidates": [],
+        "oa_status": "green",
+        "license": "cc-by",
+        "source_version": "submittedVersion",
+        "relevance_score": 1.0,
+        "strict_feasibility": "candidate_needs_source_audit",
+        "feasibility_reasons": [],
+        "local_pdf": "paper.pdf",
+        "download_status": "downloaded_open_access",
+    }
+    (literature / "literature_corpus.json").write_text(
+        json.dumps({"records": [record]}), encoding="utf-8"
+    )
+    (reports / "multi_benchmark_suite.json").write_text(
+        json.dumps(
+            {
+                "tasks": [
+                    {
+                        "task": {"task_id": "spy_daily_direction_12lag_v1"},
+                        "comparison_integrity": {"comparison_valid": True},
+                        "reports": [{"model_family": "lstm_regressor", "prediction_count": 10}],
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    (reports / "candidate_execution_ledger.json").write_text(
+        json.dumps(
+            {
+                "papers": [
+                    {"paper_id": "paper", "status": "exploratory_executed", "report_path": "run.json"}
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    result = build_reproduction_portfolio(tmp_path)
+    assert result["papers"][0]["baseline_status"] == "exploratory_candidate"
+    assert result["papers"][0]["status"] == "exploratory_executed"
+    assert result["coverage_counts"] == {"exploratory_executed": 1}
 
 
 def test_portfolio_blocks_missing_legal_full_text(tmp_path: Path) -> None:

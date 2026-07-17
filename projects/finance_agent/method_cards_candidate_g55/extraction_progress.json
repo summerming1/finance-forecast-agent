@@ -1,0 +1,118 @@
+{
+  "schema_version": "methodcard_batch_progress_v1",
+  "completed": [
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t.pdf",
+      "paper_id": "arxiv_1801_01777v4_deep_learning_for_forecasting_stock_returns_in_t"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection.pdf",
+      "paper_id": "arxiv_1806_01743v2_a_machine_learning_framework_for_stock_selection"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate.pdf",
+      "paper_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr.pdf",
+      "paper_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict.pdf",
+      "paper_id": "arxiv_2004_11697v2_a_time_series_analysis_based_stock_price_predict"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p.pdf",
+      "paper_id": "arxiv_2007_12620v1_a_novel_ensemble_deep_learning_model_for_stock_p"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol.pdf",
+      "paper_id": "arxiv_2009_03394v4_deep_learning_predictability_and_optimal_portfol"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an.pdf",
+      "paper_id": "arxiv_2009_10819v1_stock_price_prediction_using_machine_learning_an"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall.pdf",
+      "paper_id": "arxiv_2101_02287v2_covid19_hpsmp_covid_19_adopted_hybrid_and_parall"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome.pdf",
+      "paper_id": "arxiv_2111_01137v1_stock_price_prediction_using_time_series_econome"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced_.pdf",
+      "paper_id": "arxiv_2112_03946v1_generative_adversarial_network_gan_and_enhanced"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre.pdf",
+      "paper_id": "arxiv_2202_03158v1_dual_clvsa_a_novel_deep_learning_approach_to_pre"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f.pdf",
+      "paper_id": "arxiv_2202_05702v1_machine_learning_for_stock_prediction_based_on_f"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti.pdf",
+      "paper_id": "arxiv_2202_09359v1_machine_learning_models_in_stock_market_predicti"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno.pdf",
+      "paper_id": "arxiv_2309_00618v1_short_term_stock_price_forecasting_using_exogeno"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning.pdf",
+      "paper_id": "arxiv_2402_06689v1_a_study_on_stock_forecasting_using_deep_learning"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian.pdf",
+      "paper_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s.pdf",
+      "paper_id": "arxiv_2407_01572v1_exploring_sectoral_profitability_in_the_indian_s"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f.pdf",
+      "paper_id": "arxiv_2407_02236v1_indian_stock_market_prediction_using_augmented_f"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea.pdf",
+      "paper_id": "arxiv_2502_15853v1_multi_agent_stock_prediction_systems_machine_lea"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin.pdf",
+      "paper_id": "arxiv_2505_19617v1_hybrid_models_for_financial_forecasting_combinin"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder.pdf",
+      "paper_id": "arxiv_2508_14999v1_investment_portfolio_optimization_based_on_moder"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra.pdf",
+      "paper_id": "arxiv_2606_00060v1_machine_learning_based_bitcoin_trading_under_tra"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_deep_learn.pdf",
+      "paper_id": "crossref_10_11591_ijece_v14i5_pp5601_5611_forecasting_stock_market_prices_using_"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l.pdf",
+      "paper_id": "crossref_10_14419_s0pktr58_cryptocurrency_price_forecasting_using_machine_l"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transforme.pdf",
+      "paper_id": "crossref_10_1609_aaai_v36i10_21414_numhtml_numeric_oriented_hierarchical_transfo"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\crossref_10_31449_inf_v44i3_2904_investigating_algorithmic_stock_market_trading_u.pdf",
+      "paper_id": "10_31449_inf_v44i3_2904"
+    },
+    {
+      "source": "projects\\finance_agent\\papers\\corpus\\crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecastin.pdf",
+      "paper_id": "crossref_10_32996_jbms_2024_6_2_9_deep_learning_models_for_stock_market_forecast"
+    }
+  ],
+  "failed": []
+}

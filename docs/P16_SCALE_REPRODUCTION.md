@@ -4,7 +4,7 @@
 
 本批工作来自 2026-07-14 用户批准的 Roadmap 调整，方向与项目的论文驱动、证据约束、strict/exploratory 分层一致。它没有改变“strict 必须由数据、协议、代码、指标和结果共同证明”的定义。
 
-当前是 first-batch implementation，不是 P1.8 validated。2026-07-17 已达到 10 个金融数据 strict paper claim 的数值硬目标，但逐篇 exploratory 执行和实验类型覆盖尚未完成，因此不能将总体 P1 标为验收通过。
+当前是 first-batch implementation，不是 P1.8 validated。2026-07-17 已达到 10 个金融数据 strict paper claim 的首批目标，并完成原 28 个 candidate 的逐篇 exploratory 执行；实验类型 strict pair、20 篇/3 数据域和 blocker 净消减尚未完成，因此不能将总体 P1 标为验收通过。
 
 ## 文献语料
 
@@ -56,11 +56,11 @@ DeepLOB 审计发现论文与官方 PyTorch notebook 协议不同：论文 Setup
 ## 覆盖账本
 
 - strict verified：10 篇/10 claims，均为金融 Exchange-Rate 原生预测 claim。
-- exploratory candidate：28 篇。
+- exploratory executed：28 篇，全部有论文级数据绑定、执行、Delta 和 lineage，strict=0。
 - structured blocked：58 篇。
 - strict 数值目标缺口：0；信号回测、截面资产定价、组合强化学习类型覆盖仍缺 3 类。
 
-`exploratory candidate` 只表示存在可用方法 adapter 和冻结任务，不表示已完成该论文的 MethodCard 审核、数据绑定、执行和 Delta。该边界由测试固定，防止共享 benchmark 虚增逐篇复现数。
+历史 `exploratory candidate` 只表示存在可用 adapter 和冻结任务；本轮已将 28 个标签全部消解为真实 `exploratory_executed`。执行仍是统一基准适配，不得虚增为原生或 strict 复现。
 
 ## 第二批 Native Claim Registry
 
@@ -140,6 +140,6 @@ python -m streamlit run apps/streamlit_app.py
 
 ## P1.G 后续实施结果
 
-“本地论文 -> Native Claim”的控制断点已由 Native Claim Compiler、逐论文 spec、MethodCard v3、SourceApproval 和 DatasetContract 补齐。三种类型协议、Benchmark Registry、异步任务、lineage、Memory Scheduler 和自动 P2 门禁也已实现。
+“本地论文 -> Native Claim”的控制断点已由 Native Claim Compiler、逐论文 spec、MethodCard v3、SourceApproval、DatasetContract 和 ScientificAcceptanceLedger 补齐。三种类型协议、Benchmark Registry、异步任务、SQLite MLflow、仓库外 DVC remote、lineage、Memory 优先调度和自动 P2 门禁也已实现。
 
-这并未完成本节的科学验收：信号回测、截面资产定价、组合强化学习的协议验证均正确阻断，新增 strict 仍为 0；原 28 个 candidate 经论文级资格审计后没有真实执行成功，当前 blocker 总数为 86。详细结果、真实 LLM 三篇抽取和下一步顺序见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。
+这并未完成本节的科学验收：信号回测、截面资产定价、组合强化学习的协议验证均正确阻断，新增纵向 strict 仍为 0；28 个 candidate 已真实探索执行，另有 58 个 blocker。详细执行、TLOB 官方 checkpoint 指标失败、真实 LLM 状态和下一步顺序见 `docs/P1G_SCIENTIFIC_ACCEPTANCE_LOG.md`。

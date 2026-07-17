@@ -29,7 +29,7 @@
       "reusable_capability_ids": [
         "native_claim_audit"
       ],
-      "recorded_at": "2026-07-17T10:07:04.274069+00:00"
+      "recorded_at": "2026-07-17T14:13:42.378422+00:00"
     },
     {
       "attempt_id": "arxiv_2211_14730_ettm1_native:source-data-audit",
@@ -46,7 +46,7 @@
       "reusable_capability_ids": [
         "native_claim_audit"
       ],
-      "recorded_at": "2026-07-17T10:07:04.274069+00:00"
+      "recorded_at": "2026-07-17T14:13:42.378422+00:00"
     }
   ],
   "decisions": [
@@ -99,7 +99,7 @@
     "Compatibility and tolerance decisions require human review before reuse on a new paper."
   ],
   "historical_reconstruction": true,
-  "started_at": "2026-07-17T10:07:04.274069+00:00",
-  "updated_at": "2026-07-17T10:07:04.274069+00:00",
+  "started_at": "2026-07-17T14:13:42.378422+00:00",
+  "updated_at": "2026-07-17T14:13:42.378422+00:00",
   "schema_version": "paper_exploration_record_v1"
 }

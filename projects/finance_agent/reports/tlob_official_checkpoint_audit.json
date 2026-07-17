@@ -1,0 +1,38 @@
+{
+  "schema_version": "official_checkpoint_audit_v1",
+  "paper_id": "arxiv_2502_15757",
+  "claim": "FI-2010 horizon-100 classification with the official horizon_10 checkpoint",
+  "paper_locator": "TLOB paper table, FI-2010 F1 at h=100",
+  "source_repository": "https://github.com/LeonardoBerti00/TLOB",
+  "source_revision": "f99da3ca8e378902d761bd24b095fe58b1d74276",
+  "revision_rationale": "Repository revision available at the paper-era release boundary; the current revision was also executed and produced the same result.",
+  "data_artifact": "Official embedded FI-2010 preprocessed archive",
+  "checkpoint_artifact": "HuggingFace/FI-2010_horizon_10_TLOB_seed_42.ckpt",
+  "compatibility_changes": [
+    "Registered legacy PyTorch Dataset symbols for checkpoint deserialization",
+    "Loaded the full-model checkpoint with explicit weights_only=false",
+    "Resolved the legacy checkpoint directory setting",
+    "Created missing output directories"
+  ],
+  "compatibility_class": "semantic_noop_runtime_compatibility",
+  "execution": {
+    "status": "completed",
+    "test_batches": 1090,
+    "support": 139460,
+    "seed": 42,
+    "observed_metrics": {
+      "macro_f1": 0.45531290769577026,
+      "accuracy": 0.5053778886795044,
+      "precision_macro": 0.49746066331863403,
+      "recall_macro": 0.5535812377929688,
+      "test_loss": 3.37544584274292
+    }
+  },
+  "paper_metrics": {"macro_f1": 0.9281},
+  "paper_vs_run_delta": {"macro_f1": -0.4727870923042297},
+  "strict_verified": false,
+  "blockers": [
+    "The official checkpoint produces macro F1 0.4553, outside the predeclared tolerance around the paper value 0.9281"
+  ],
+  "scientific_conclusion": "The official artifacts are executable, but this run does not reproduce the paper claim. Process completion is not treated as strict verification."
+}

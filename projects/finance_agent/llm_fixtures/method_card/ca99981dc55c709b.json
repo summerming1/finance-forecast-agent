@@ -1,0 +1,200 @@
+{
+  "prompt_hash": "ca99981dc55c709b",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "arxiv_2002_10247v1_lstm_usd_inr_monthly_accuracy",
+    "paper_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+    "title": "Forecasting Foreign Exchange Rate:",
+    "venue_or_source": "arXiv",
+    "paper_url": "unknown",
+    "task_type": "foreign_exchange_rate_forecasting",
+    "target_asset": "USD/INR foreign exchange rate",
+    "asset_universe": [
+      "USD/INR"
+    ],
+    "frequency": "monthly",
+    "horizon": "unknown",
+    "label_definition": "future USD-INR foreign exchange rate",
+    "data_requirements": [
+      "Monthly historical data from April 1994 to December 2018",
+      "Macroeconomic variables for USA and India",
+      "USD-INR foreign exchange rate"
+    ],
+    "feature_groups": [
+      "macroeconomic variables for USA",
+      "macroeconomic variables for India",
+      "historical USD-INR foreign exchange rate"
+    ],
+    "model_families": [
+      "Recurrent Neural Network with Long Short-Term Memory"
+    ],
+    "training_protocol": "unknown",
+    "evaluation_protocol": "unknown",
+    "metrics": [
+      "accuracy"
+    ],
+    "cost_assumptions": "not_applicable",
+    "reported_results": {
+      "accuracy_percent": 97.83
+    },
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "1994-04",
+    "required_end_date": "2018-12",
+    "strict_requirements": [
+      "Use monthly historical data for USA and India macroeconomic variables from April 1994 to December 2018.",
+      "Predict USD-INR foreign exchange rate.",
+      "Use an RNN model with Long Short-Term Memory for the selected reported result."
+    ],
+    "unknowns": [
+      "Exact forecast horizon is not reported in the supplied context.",
+      "Train/test split or validation protocol is not reported in the supplied context.",
+      "Input window length is not reported in the supplied context.",
+      "Optimizer, loss function, epochs, batch size, early stopping, and random seed are not reported in the supplied context.",
+      "Preprocessing steps and whether transforms are fit on train data only are not reported in the supplied context.",
+      "Exact definition of accuracy is not reported in the supplied context.",
+      "The full list of macroeconomic variables is not reported in the supplied context."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "Forecasting Foreign Exchange Rate:"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "This paper tries to come up with a multivariate time series approach to forecast the exchange rate (USD/INR)"
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "forecast the exchange rate (USD/INR)"
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "to predict USD-INR Foreign Exchange Rate"
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "We have used monthly historical data for several macroeconomic variables from April 1994 to December 2018 for USA and India to predict USD-INR Foreign Exchange Rate."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "to predict USD-INR Foreign Exchange Rate"
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "We have used monthly historical data for several macroeconomic variables from April 1994 to December 2018 for USA and India to predict USD-INR Foreign Exchange Rate."
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "monthly historical data for several macroeconomic variables from April 1994 to December 2018 for USA and India"
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "Recurrent Neural Networks (a Contemporary Deep Learning Technique)"
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "The RNN model with Long Short-Term Memory (LSTM) provides the maximum accuracy (97.83%)"
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "The RNN model with Long Short-Term Memory (LSTM) provides the maximum accuracy (97.83%)"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "The RNN model with Long Short-Term Memory (LSTM) provides the maximum accuracy (97.83%) followed by SVM Model (97.17%) and VAR Model (96.31%)."
+      },
+      {
+        "section": "required_start_date",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "from April 1994 to December 2018"
+      },
+      {
+        "section": "required_end_date",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "from April 1994 to December 2018"
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "We have used monthly historical data for several macroeconomic variables from April 1994 to December 2018 for USA and India to predict USD-INR Foreign Exchange Rate."
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2002_10247v1_forecasting_foreign_exchange_rate_a_multivariate",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "22207a2fbef61de8",
+        "quote": "The RNN model with Long Short-Term Memory (LSTM) provides the maximum accuracy (97.83%)"
+      }
+    ],
+    "extraction_metadata": {
+      "selected_experimental_claim": "RNN model with Long Short-Term Memory forecasts USD-INR foreign exchange rate using monthly macroeconomic data for USA and India and reports 97.83% accuracy.",
+      "source_context": "paper head only",
+      "text_sha": "22207a2fbef61de8"
+    },
+    "approval_required": true,
+    "schema_version": "strict_reproduction_method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

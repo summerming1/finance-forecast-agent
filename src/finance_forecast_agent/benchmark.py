@@ -16,6 +16,7 @@ from .evaluation import CostModel, evaluate_sign_strategy
 from .lineage import LineageStore
 from .method_adapters import MethodAdapter, PredictionArtifact
 from .splitters import make_splits
+from .tracking import DVCDataTracker, MLflowTracker
 
 ComparisonTrack = Literal["model_only", "end_to_end"]
 BenchmarkTaskType = Literal[
@@ -323,11 +324,34 @@ def run_common_benchmark(
         path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
         payload["report_path"] = str(path)
         project_root = root.parent if root.name == "reports" else root
+        dvc_ref = DVCDataTracker(project_root).track(Path(task.dataset_path))
+        flat_metrics = {
+            f"{row['method_id']}.{metric}": value
+            for row in reports
+            for metric, value in row.get("metrics", {}).items()
+            if isinstance(value, (int, float))
+        }
+        mlflow_ref = MLflowTracker(project_root / "mlruns").log_run(
+            f"benchmark-{task.task_id}-{lineage_run_id}",
+            params={
+                "task_id": task.task_id,
+                "task_fingerprint": task.fingerprint,
+                "dataset_id": task.dataset_id,
+                "run_mode": "common_benchmark",
+                "method_ids": ",".join(row["method_id"] for row in reports),
+            },
+            metrics=flat_metrics,
+            artifacts={"report": str(path), "dvc": dvc_ref},
+        )
+        tracker_refs = {"mlflow": mlflow_ref, "dvc": dvc_ref}
+        payload["tracker_refs"] = tracker_refs
+        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
         LineageStore(project_root / "run_lineage").record(
             run_type="common_benchmark",
             cwd=project_root,
             inputs={"dataset": task.dataset_path},
             outputs={"report": path},
+            tracker_refs=tracker_refs,
             run_id=lineage_run_id,
         )
     return payload

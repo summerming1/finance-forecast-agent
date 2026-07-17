@@ -24,6 +24,23 @@
       ],
       "reusable_capability_ids": [],
       "recorded_at": "2026-07-17T10:32:17.896105+00:00"
+    },
+    {
+      "attempt_id": "portfolio_triage_v2",
+      "stage": "candidate_triage",
+      "action": "validate paper-specific card, adapter execution and benchmark binding",
+      "outcome": "blocked",
+      "summary": "no non-proxy adapter for the extracted method family",
+      "artifacts": [
+        "projects\\finance_agent\\reports\\reproduction_portfolio.json",
+        "projects\\finance_agent\\reports\\multi_benchmark_suite.json",
+        "projects\\finance_agent\\reports\\candidate_execution_ledger.json"
+      ],
+      "blockers": [
+        "no non-proxy adapter for the extracted method family"
+      ],
+      "reusable_capability_ids": [],
+      "recorded_at": "2026-07-17T13:09:10.465749+00:00"
     }
   ],
   "decisions": [],
@@ -33,6 +50,6 @@
   ],
   "historical_reconstruction": false,
   "started_at": "2026-07-17T10:32:17.896105+00:00",
-  "updated_at": "2026-07-17T10:32:17.896105+00:00",
+  "updated_at": "2026-07-17T14:13:39.006221+00:00",
   "schema_version": "paper_exploration_record_v1"
 }

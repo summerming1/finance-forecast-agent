@@ -1,0 +1,304 @@
+{
+  "method_id": "tpe_lstm_nifty50_next_day_close",
+  "paper_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+  "title": "Gated recurrent neural network with TPE Bayesian optimization",
+  "venue_or_source": "arXiv",
+  "paper_url": "unknown",
+  "task_type": "univariate target, multivariate next-day stock index close forecasting",
+  "target_asset": "NIFTY 50 index",
+  "asset_universe": [
+    "NIFTY 50 index"
+  ],
+  "frequency": "daily",
+  "horizon": "1 trading day ahead",
+  "label_definition": "following-day closing price of the NIFTY 50 index",
+  "data_requirements": [
+    "Daily NIFTY 50 closing price from Yahoo Finance.",
+    "Daily S&P 500 closing price from Yahoo Finance.",
+    "Daily crude oil price from Yahoo Finance.",
+    "Daily NIFTY volatility index / India VIX from investing.com.",
+    "Daily USD to INR exchange rate from Yahoo Finance.",
+    "Daily gold price from Yahoo Finance.",
+    "Daily MACD technical indicator.",
+    "Daily RSI technical indicator."
+  ],
+  "feature_groups": [
+    "price_lag_features",
+    "cross_asset_features"
+  ],
+  "model_families": [
+    "lstm_regressor"
+  ],
+  "training_protocol": "{\"batch_size\": \"unknown\", \"development_environment\": {\"hardware\": \"Google Collab GPU for TPE Bayesian optimization HPO\", \"keras\": \"3.1.1\", \"matplotlib\": \"3.8.3\", \"notebook\": \"Jupyter Notebook 7.1.1\", \"numpy\": \"1.26.4\", \"pandas\": \"2.2.1\", \"python\": \"3.10.11\", \"scikit_learn\": \"1.4.1\", \"scipy\": \"1.12.0\", \"tensorflow\": \"2.16.1\"}, \"early_stopping\": \"unknown\", \"epochs\": \"unknown\", \"hyperparameter_optimization\": \"Tree-structured Parzen Estimator Bayesian optimization\", \"input_window\": \"unknown\", \"loss\": \"unknown\", \"model_selection\": \"best model selected by largest possible R2 and smallest possible MAPE and RMSE across multiple executions\", \"optimizer\": \"unknown\", \"repeated_training_runs\": \"at least 32 independent trainings per model\", \"seed\": \"unknown\", \"selected_model\": \"single-layer TPE-LSTM\"}",
+  "evaluation_protocol": "{\"chronological_split\": \"unknown\", \"metric_transform_scope\": \"R2, MAPE, and RMSE are calculated on the inverse transformation on the predicted normalized data; RMSE on normalized data is also calculated.\", \"metrics\": [\"R2\", \"MAPE\", \"RMSE\", \"RMSE on normalized data\"], \"test_period\": \"unknown\", \"validation_protocol\": \"unknown\", \"walk_forward\": \"unknown\"}",
+  "metrics": [
+    "mse",
+    "rmse",
+    "r2"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "MAPE_percent": 0.0137
+  },
+  "strict_requirements": [
+    "Use the eight daily input factors: NIFTY closing price, S&P 500 closing price, crude oil price, India VIX, USD to INR exchange rate, gold price, MACD, and RSI.",
+    "Forecast the following-day closing price of the NIFTY 50 index.",
+    "Use the single-layer TPE-LSTM configuration for the selected reported result.",
+    "Evaluate MAPE on inverse-transformed predictions."
+  ],
+  "unknowns": [
+    "Exact dataset start date.",
+    "Exact dataset end date.",
+    "Exact chronological train/validation/test split.",
+    "Input sequence/window length.",
+    "Selected TPE-LSTM units, batch size, learning rate, optimizer, dropout, epochs, loss function, and early stopping settings.",
+    "Random seed or deterministic reproducibility controls.",
+    "Whether normalization statistics are fit on train data only or on the full dataset.",
+    "Exact R2, RMSE, and RMSE (ND) values for the selected single-layer TPE-LSTM row are not present in the supplied context."
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "title",
+      "quote": "Gated recurrent neural network with TPE Bayesian optimization for enhancing stock index prediction accuracy",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "task_type",
+      "quote": "The aim is to improve the prediction accuracy of the next day's closing price of the NIFTY 50 index, a prominent Indian stock market index, using TPE -GRNN.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "target_asset",
+      "quote": "The proposed model predicts the following -day closing price of the NIFTY 50 index based on technical indicators, fundamental data, and macroeconomic data.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "asset_universe",
+      "quote": "2024 Proposed method NIFTY 50 LSTM, GRU, GRU- LSTM, LSTM-GRU TPE Bayesian Optimization TPE-LSTM 0. 0137",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "frequency",
+      "quote": "All the features considered in the projected model contain daily data.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "horizon",
+      "quote": "The proposed model predicts the following -day closing price of the NIFTY 50 index based on technical indicators, fundamental data, and macroeconomic data.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "label_definition",
+      "quote": "The aim is to improve the prediction accuracy of the next day's closing price of the NIFTY 50 index, a prominent Indian stock market index, using TPE -GRNN.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "data_requirements",
+      "quote": "NIFTY closing price (in ₹) Yahoo Finance Daily NIFTY S & P 500 closing price (in $) Yahoo Finance Daily S & P 500 Crude oil price (in $) Yahoo Finance Daily Crude Oil NIFTY volatility index (in ₹) investing.com Daily India VIX USD to INR exchange rate (in ₹) Yahoo Finance Daily INRUSD Gold price (in $) Yahoo Finance Daily Gold MACD - Daily MACD RSI - Daily RSI",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "feature_groups",
+      "quote": "A combination of eight influential factors is carefully chosen from fundamental stock data, technical indicators, crude oil price, and macroeconomic data to train the models for capturing the changes in the price of the index with the factors of the broader economy.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "model_families",
+      "quote": "Comparing all the considered TPE -GRNN models' performances, it is observed that a single -layer TPE-LSTM model gives the best p rediction accuracy for forecasting the next-day closing price of the NIFTY 50 index.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "training_protocol",
+      "quote": "For addressing the stochastic behavior of the weights, each of the models is trained at least 32 times independently. The best possible 𝑅2, MAPE, and RMSE obtained from multiple time execution is considered as model selection criteria.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "training_protocol",
+      "quote": "The development tool used in this study is Jupyter Notebook 7.1.1. The code implementation is based on Python 3.10.11, Tensor Flow 2.16.1, Keras API 3.1.1, pandas 2.2.1, NumPy 1.26.4, sci -kit- learn 1.4.1, scripy 1.12.0, and matplotlib 3.8.3.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "evaluation_protocol",
+      "quote": "𝑅2, MAPE, and RMSE are calculated on the inverse transformation on the predicted normalized data. To remove the biases by the scale of the original data (Table 2), we also calculate RMSE on GRNN with TPE Bayesian Optimization for Enhancing Stock Index Prediction Accuracy 13 normalized data (RMSE (ND)).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "metrics",
+      "quote": "The models’ performance is evaluated using standard matrices like R2, MAPE, and RMSE.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "reported_results",
+      "quote": "The best MAPE of our proposed method (TPE-LSTM) is 0.0137%.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "experiment_type",
+      "quote": "The aim is to improve the prediction accuracy of the next day's closing price of the NIFTY 50 index, a prominent Indian stock market index, using TPE -GRNN.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "preprocessing_protocol",
+      "quote": "This section briefly describes the strategy for selecting features, normalizing data, and preparing model inputs.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "preprocessing_protocol",
+      "quote": "Normalization ensures that all factors have a fair shot at influencing the model’s learning process, leading to more accurate and robust stock price predictions.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "hyperparameters",
+      "quote": "The hyperparameters for the NIFTY 50 index price prediction models using GRNN architectures are the number of layers, the number of units in each layer, batch size, learning rate, optimize",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    },
+    {
+      "source_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "section": "strict_requirements",
+      "quote": "Hence, the single-layer LSTM model gives the best prediction accuracy for forecasting the next day's closing price of NIFTY 50 index.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "text_sha:69e07e36e61c624f"
+    }
+  ],
+  "extraction_metadata": {
+    "document_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+    "text_sha": "69e07e36e61c624f",
+    "claim_selection": "Selected the reported best proposed method: single-layer TPE-LSTM for next-day NIFTY 50 close forecasting.",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "quality_report": {
+      "method_id": "tpe_lstm_nifty50_next_day_close",
+      "paper_id": "arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian",
+      "quality_score": 1.0,
+      "approval_required": true,
+      "critical_missing_fields": [],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [],
+      "warnings": [],
+      "recommended_action": "human_review_recommended"
+    },
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "{\"chronological_split\": \"unknown\", \"metric_transform_scope\": \"R2, MAPE, and RMSE are calculated on the inverse transformation on the predicted normalized data; RMSE on normalized data is also calculated.\", \"metrics\": [\"R2\", \"MAPE\", \"RMSE\", \"RMSE on normalized data\"], \"test_period\": \"unknown\", \"validation_protocol\": \"unknown\", \"walk_forward\": \"unknown\"}",
+    "frequency_type": "daily",
+    "horizon_type": "next_return",
+    "document_text_sha": "69e07e36e61c624f",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_2406_02604v1_gated_recurrent_neural_network_with_tpe_bayesian.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 20,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "purged_walk_forward",
+  "evaluation_protocol_description": "{\"chronological_split\": \"unknown\", \"metric_transform_scope\": \"R2, MAPE, and RMSE are calculated on the inverse transformation on the predicted normalized data; RMSE on normalized data is also calculated.\", \"metrics\": [\"R2\", \"MAPE\", \"RMSE\", \"RMSE on normalized data\"], \"test_period\": \"unknown\", \"validation_protocol\": \"unknown\", \"walk_forward\": \"unknown\"}",
+  "frequency_type": "daily",
+  "horizon_type": "next_return",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "{\"inverse_transform_for_metrics\": \"R2, MAPE, and RMSE are calculated after inverse transformation of predicted normalized data.\", \"normalization\": \"Input features are normalized before training.\", \"train_only_fit_scope\": \"unknown\", \"transform_order\": \"unknown\"}",
+  "hyperparameters": {
+    "hpo_method": "TPE Bayesian optimization",
+    "num_layers": 1,
+    "architecture": "LSTM",
+    "search_space": {
+      "number_of_layers": "reported as tuned",
+      "number_of_units_in_each_layer": "reported as tuned",
+      "batch_size": "reported as tuned",
+      "learning_rate": "reported as tuned",
+      "optimizer": "reported as tuned"
+    },
+    "selected_values": {
+      "number_of_units": "unknown",
+      "batch_size": "unknown",
+      "learning_rate": "unknown",
+      "optimizer": "unknown",
+      "dropout": "unknown"
+    }
+  },
+  "required_start_date": "unknown",
+  "required_end_date": "unknown",
+  "schema_version": "method_card_v2"
+}

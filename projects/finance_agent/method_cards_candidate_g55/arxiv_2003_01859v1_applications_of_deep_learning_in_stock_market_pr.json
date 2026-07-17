@@ -1,0 +1,294 @@
+{
+  "method_id": "unknown",
+  "paper_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+  "title": "Applications of deep learning in stock market",
+  "venue_or_source": "arXiv preprint",
+  "paper_url": "unknown",
+  "task_type": "unknown",
+  "target_asset": "unknown",
+  "asset_universe": [
+    "unknown"
+  ],
+  "frequency": "unknown",
+  "horizon": "unknown",
+  "label_definition": "unknown",
+  "data_requirements": [
+    "unknown"
+  ],
+  "feature_groups": [
+    "return_momentum_features"
+  ],
+  "model_families": [
+    "ridge_regression"
+  ],
+  "training_protocol": "{\"batch_protocol\": \"unknown\", \"early_stopping\": \"unknown\", \"epochs\": \"unknown\", \"input_window\": \"unknown\", \"loss\": \"unknown\", \"optimizer\": \"unknown\", \"seed\": \"unknown\", \"split\": \"unknown\"}",
+  "evaluation_protocol": "{\"context_overlap\": \"unknown\", \"split\": \"unknown\", \"statistical_tests\": \"unknown\"}",
+  "metrics": [],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {},
+  "strict_requirements": [
+    "No concrete executable experimental claim with a specific dataset/model/horizon/result row is available in the supplied context; the paper is a survey."
+  ],
+  "unknowns": [
+    "concrete selected experiment",
+    "target asset",
+    "asset universe",
+    "data frequency",
+    "prediction horizon",
+    "label definition",
+    "dataset requirements",
+    "feature groups for a selected experiment",
+    "proposed model family for a selected experiment",
+    "training protocol",
+    "evaluation protocol",
+    "exact metrics for a selected result row",
+    "reported numeric results",
+    "preprocessing fit scope",
+    "hyperparameters",
+    "required start date",
+    "required end date",
+    "target_asset",
+    "asset_universe",
+    "frequency",
+    "horizon",
+    "label_definition",
+    "metrics"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "method_id",
+      "quote": "Hence, our motivation for this survey is to give a latest review of recent works on deep learning models for stock market prediction.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "paper_id",
+      "quote": "Preprint submitted to Elsevier Journal March 5, 2020 arXiv:2003.01859v1 [q-fin.ST] 29 Feb 2020",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "title",
+      "quote": "Applications of deep learning in stock market prediction: recent progress",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "task_type",
+      "quote": "More speciﬁcally, if the target to predict the speciﬁc value of the prices, we classify it as a regression problem, and if the target is to predict the price movement direction, e.g., going up o",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "target_asset",
+      "quote": "In this study, the major focus would be the prediction of the close prices of individual stocks and market indexes.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "asset_universe",
+      "quote": "In this study, the major focus would be the prediction of the close prices of individual stocks and market indexes.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "frequency",
+      "quote": "For intraday prediction, we would also cover mid-price prediction for limit order books.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "horizon",
+      "quote": "market data includes all trading activities that happen in a stock market, e.g., open/high/low/close prices, trading volume, etc. It is used as both input features (e.g., the historical prices in a look-back window) and prediction target (e.g., the close price of the next day).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "label_definition",
+      "quote": "Classiﬁcation metrics are used to measure the model’s performance on movement prediction, which is modeled as a clas- siﬁcation problem.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "data_requirements",
+      "quote": "market data includes all trading activities that happen in a stock market, e.g., open/high/low/close prices, trading volume, etc.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "feature_groups",
+      "quote": "In this part, we categories the raw data that are commonly used for stock market prediction into seven types: • Market data: market data includes all trading activities that happen in a stock market, e.g., open/high/low/close prices, trading volume, etc.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "model_families",
+      "quote": "Hence, our motivation for this survey is to give a latest review of recent works on deep learning models for stock market prediction.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "training_protocol",
+      "quote": "The model is trained with the training or in-sample data set, the hyper-parameters is ﬁne-tuned on the validation data set optional, 24 and the ﬁnal performance is evaluated on the test or out-of-sample data set.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "evaluation_protocol",
+      "quote": "For evaluation of diﬀerent prediction models, in-sample/out-of-sample split or train/validation/test split of data samples is commonly used in machine learn- ing and deep learning ﬁelds.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "metrics",
+      "quote": "In this part, we category the evaluation metrics for the prediction models mentioned in the last part into four types: • Classiﬁcation metrics .",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "reported_results",
+      "quote": "The detailed list of studies using each metrics (as well as the metrics’ abbre- viations) is shown in Table 10.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "preprocessing_protocol",
+      "quote": "For market data, technical analysis is a feature extraction approach that builds various indicators for forecasting the direction of prices based on his- 17 torical prices and volumes, e.g., moving average, or moving average conver- gence/divergence (MACD).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "hyperparameters",
+      "quote": "The model is trained with the training or in-sample data set, the hyper-parameters is ﬁne-tuned on the validation data set optional, 24 and the ﬁnal performance is evaluated on the test or out-of-sample data set.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "strict_requirements",
+      "quote": "Our goal is to help the interested researchers to synchronize with the latest progress and also help them to easily reproduce the previous stud- ies as baselines.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    },
+    {
+      "source_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "section": "unknowns",
+      "quote": "In total, we cover 56 journal papers, 58 conference papers and 10 preprint papers.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "c4217bcf38c10f71"
+    }
+  ],
+  "extraction_metadata": {
+    "document_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+    "text_sha": "c4217bcf38c10f71",
+    "extraction_note": "The supplied paper context describes a survey and does not provide a single original experiment row with exact numeric reported results.",
+    "quality_report": {
+      "method_id": "unknown",
+      "paper_id": "arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr",
+      "quality_score": 0.19,
+      "approval_required": true,
+      "critical_missing_fields": [
+        "target_asset",
+        "asset_universe",
+        "frequency",
+        "horizon",
+        "label_definition",
+        "metrics"
+      ],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [],
+      "warnings": [
+        "evaluation protocol could not be mapped to a supported protocol type",
+        "frequency is unknown",
+        "horizon is unknown"
+      ],
+      "recommended_action": "human_review_required_fix_method_card_fields"
+    },
+    "evaluation_protocol_type": "unknown",
+    "evaluation_protocol_description": "{\"context_overlap\": \"unknown\", \"split\": \"unknown\", \"statistical_tests\": \"unknown\"}",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown",
+    "document_text_sha": "c4217bcf38c10f71",
+    "source_path": "projects\\finance_agent\\papers\\corpus\\arxiv_2003_01859v1_applications_of_deep_learning_in_stock_market_pr.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 20,
+      "errors": []
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "unknown",
+  "evaluation_protocol_description": "{\"context_overlap\": \"unknown\", \"split\": \"unknown\", \"statistical_tests\": \"unknown\"}",
+  "frequency_type": "unknown",
+  "horizon_type": "unknown",
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "unknown",
+  "hyperparameters": {},
+  "required_start_date": "unknown",
+  "required_end_date": "unknown",
+  "schema_version": "method_card_v2"
+}

@@ -20,6 +20,7 @@ import numpy as np
 from .experiment_protocols import audit_experiment_protocol
 from .lineage import LineageStore
 from .native_plugins import DEFAULT_NATIVE_PLUGIN_REGISTRY, infer_native_plugin_bindings
+from .tracking import DVCDataTracker, MLflowTracker
 
 
 MetricObjective = Literal["minimize", "maximize", "match"]
@@ -732,11 +733,34 @@ class OfficialRepoCommandAdapter:
                 lineage_inputs["reproduction_plan"] = _resolve(
                     project, spec.reproduction_plan_path
                 )
+            dvc_ref = DVCDataTracker(project).track(dataset_path)
+            mlflow_ref = MLflowTracker(project / "mlruns", experiment_name="native-reproduction").log_run(
+                f"native-{spec.claim_id}-{lineage_run_id}",
+                params={
+                    "paper_id": spec.paper_id,
+                    "claim_id": spec.claim_id,
+                    "experiment_type": spec.experiment_type,
+                    "dataset_id": spec.dataset_id,
+                    "source_revision": spec.source_revision,
+                    "run_mode": "native_reproduction",
+                    "strict_allowed": gate["complete_reproduction_allowed"],
+                },
+                metrics={
+                    name: float(value)
+                    for name, value in gate["metrics"].items()
+                    if isinstance(value, (int, float))
+                },
+                artifacts={"report": str(output), "dvc": dvc_ref},
+            )
+            tracker_refs = {"mlflow": mlflow_ref, "dvc": dvc_ref}
+            payload["tracker_refs"] = tracker_refs
+            _write_json_atomic(output, payload)
             LineageStore(project / "run_lineage").record(
                 run_type="native_reproduction",
                 cwd=project,
                 inputs=lineage_inputs,
                 outputs={"report": output},
+                tracker_refs=tracker_refs,
                 run_id=lineage_run_id,
             )
             if gate["execution_passed"] and partial_path is not None:

@@ -1,11 +1,12 @@
 {
   "schema_version": "research_journal_index_v1",
-  "updated_at": "2026-07-17T10:32:17.916517+00:00",
-  "paper_count": 101,
+  "updated_at": "2026-07-17T14:13:42.479774+00:00",
+  "paper_count": 102,
   "paper_status_counts": {
-    "strict_verified": 9,
-    "blocked": 88,
-    "ready_not_run": 4
+    "strict_verified": 10,
+    "blocked": 61,
+    "exploratory_executed": 28,
+    "ready_not_run": 3
   },
   "capability_count": 8,
   "capability_status_counts": {
@@ -37,31 +38,31 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_1801_01777v4",
       "title": "Deep Learning for Forecasting Stock Returns in the Cross-Section",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_1806_01743v2",
       "title": "A Machine Learning Framework for Stock Selection",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "volatility_forecast",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -73,7 +74,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -85,7 +86,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -97,7 +98,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -109,7 +110,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -121,19 +122,19 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2002_10247v1",
       "title": "Forecasting Foreign Exchange Rate: A Multivariate Comparative Analysis between Traditional Econometric, Contemporary Machine Learning & Deep Learning Techniques",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "fx_forecast",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -145,31 +146,31 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2003_01859v1",
       "title": "Applications of deep learning in stock market prediction: recent progress",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2004_11697v2",
       "title": "A Time Series Analysis-Based Stock Price Prediction Using Machine Learning and Deep Learning Models",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -190,37 +191,37 @@
     {
       "paper_id": "arxiv_2007_12620v1",
       "title": "A Novel Ensemble Deep Learning Model for Stock Prediction Based on Stock Prices and News",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2009_03394v4",
       "title": "Deep Learning, Predictability, and Optimal Portfolio Returns",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2009_10819v1",
       "title": "Stock Price Prediction Using Machine Learning and LSTM-Based Deep Learning Models",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -241,13 +242,13 @@
     {
       "paper_id": "arxiv_2101_02287v2",
       "title": "COVID19-HPSMP: COVID-19 Adopted Hybrid and Parallel Deep Information Fusion Framework for Stock Price Movement Prediction",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -259,7 +260,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -301,7 +302,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -313,19 +314,19 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2111_01137v1",
       "title": "Stock Price Prediction Using Time Series, Econometric, Machine Learning, and Deep Learning Models",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -337,19 +338,19 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2112_03946v1",
       "title": "Generative Adversarial Network (GAN) and Enhanced Root Mean Square Error (ERMSE): Deep Learning for Stock Price Movement Prediction",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -385,37 +386,37 @@
     {
       "paper_id": "arxiv_2202_03158v1",
       "title": "Dual-CLVSA: a Novel Deep Learning Approach to Predict Financial Markets with Sentiment Measurements",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2202_05702v1",
       "title": "Machine Learning for Stock Prediction Based on Fundamental Analysis",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2202_09359v1",
       "title": "Machine Learning Models in Stock Market Prediction",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -431,6 +432,21 @@
         "dataset_id": "exchange_rate_official_7588x8"
       },
       "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2205_13504",
+      "title": "Strict native claim dlinear_exchange_rate_336_96",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.txt"
+      },
+      "attempt_count": 1,
       "historical_reconstruction": true
     },
     {
@@ -457,7 +473,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -508,13 +524,13 @@
     {
       "paper_id": "arxiv_2309_00618v1",
       "title": "Short-Term Stock Price Forecasting using exogenous variables and Machine Learning Algorithms",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -526,7 +542,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -553,19 +569,19 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2402_06689v1",
       "title": "A Study on Stock Forecasting Using Deep Learning and Statistical Models",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -586,37 +602,37 @@
     {
       "paper_id": "arxiv_2406_02604v1",
       "title": "Gated recurrent neural network with TPE Bayesian optimization for enhancing stock index prediction accuracy",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "volatility_forecast",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2407_01572v1",
       "title": "Exploring Sectoral Profitability in the Indian Stock Market Using Deep Learning",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "volatility_forecast",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2407_02236v1",
       "title": "Indian Stock Market Prediction using Augmented Financial Intelligence ML",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -628,7 +644,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -640,7 +656,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -652,7 +668,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -664,31 +680,31 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2502_15853v1",
       "title": "Multi-Agent Stock Prediction Systems: Machine Learning Models, Simulations, and Real-Time Trading Strategies",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2505_19617v1",
       "title": "Hybrid Models for Financial Forecasting: Combining Econometric, Machine Learning, and Deep Learning Models",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "crypto_forecast",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -700,31 +716,31 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2508_14999v1",
       "title": "Investment Portfolio Optimization Based on Modern Portfolio Theory and Deep Learning Models",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "crypto_forecast",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "arxiv_2606_00060v1",
       "title": "Machine Learning-Based Bitcoin Trading Under Transaction Costs: Evidence From Walk-Forward Forecasting",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "volatility_forecast",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -736,7 +752,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -748,7 +764,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -760,7 +776,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -772,7 +788,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -784,7 +800,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -796,7 +812,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -808,7 +824,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -820,7 +836,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -832,7 +848,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -844,7 +860,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -856,7 +872,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -868,7 +884,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -880,7 +896,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -892,7 +908,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -904,7 +920,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -916,7 +932,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -928,7 +944,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -940,7 +956,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -952,7 +968,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -964,7 +980,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -976,7 +992,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -988,7 +1004,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1000,7 +1016,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1012,7 +1028,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1024,7 +1040,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1036,7 +1052,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1048,7 +1064,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1060,7 +1076,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1072,7 +1088,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1084,7 +1100,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1096,7 +1112,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1108,7 +1124,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1120,7 +1136,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1132,7 +1148,7 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1144,19 +1160,19 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "crossref_10_11591_ijece_v14i5_pp5601_5611",
       "title": "Forecasting stock market prices using deep learning methods",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1168,7 +1184,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1180,7 +1196,7 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1192,55 +1208,55 @@
         "market": "unknown",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "crossref_10_14419_s0pktr58",
       "title": "Cryptocurrency Price Forecasting Using Machine Learning: ‎Building Intelligent Financial Prediction Models",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "volatility_forecast",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "crossref_10_1609_aaai_v36i10_21414",
       "title": "NumHTML: Numeric-Oriented Hierarchical Transformer Model for Multi-Task Financial Forecasting",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "crossref_10_31449_inf_v44i3_2904",
       "title": "Investigating Algorithmic Stock Market Trading using Ensemble Machine Learning Methods",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "crossref_10_32996_jbms_2024_6_2_9",
       "title": "Deep Learning Models for Stock Market Forecasting: A Comprehensive Comparative Analysis",
-      "status": "blocked",
+      "status": "exploratory_executed",
       "scope": {
         "task": "forecast_only",
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
@@ -1252,13 +1268,13 @@
         "market": "bounded_by_assigned_benchmark",
         "frequency": "unknown"
       },
-      "attempt_count": 1,
+      "attempt_count": 2,
       "historical_reconstruction": false
     },
     {
       "paper_id": "openreview_0EXmFzUn5I",
       "title": "Pyraformer: Low-Complexity Pyramidal Attention for Long-Range Time Series Modeling and Forecasting",
-      "status": "ready_not_run",
+      "status": "blocked",
       "scope": {
         "market": "energy",
         "asset_class": "energy",
@@ -1267,7 +1283,7 @@
         "target": "multivariate_forecast",
         "dataset_id": "ettm1_official_69680x7"
       },
-      "attempt_count": 2,
+      "attempt_count": 3,
       "historical_reconstruction": true
     }
   ]
