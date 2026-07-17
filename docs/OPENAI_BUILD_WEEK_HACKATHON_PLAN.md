@@ -1,6 +1,6 @@
 # OpenAI Build Week 黑客松产品化计划
 
-> 落地状态（2026-07-17）：已在独立副本 `D:\AI Agent\finance_forecast_agent_build_week` 的 `codex/openai-build-week` 分支实现 ForecastProof 四页黄金路径、免密钥 verified replay、GPT-5.6 Luna Responses 工具循环、严格 DecisionMemo schema、协议 delta、确定性 memo eval、token/cost telemetry、完整 Audit Pack、Research Lab 保留入口与自动测试。当前原项目未包含该分支或本规划文件。
+> 落地状态（2026-07-17）：已在独立副本 `D:\AI Agent\finance_forecast_agent_build_week` 的 `codex/openai-build-week` 分支实现 ForecastProof 四页黄金路径、免密钥 verified replay、GPT-5.6 Luna Responses 工具循环、严格 DecisionMemo schema、协议 delta、同窗 persistence challenger、可交互 decision stress test、7 项确定性 memo eval、token/cost telemetry、完整 Audit Pack、Research Lab 保留入口与自动测试。当前原项目未包含该分支或本规划文件。
 
 > 项目：Finance Forecast Agent
 > 黑客松分支：`codex/openai-build-week`
@@ -47,7 +47,7 @@ git diff --name-status ffa048e..HEAD
 
 ### 0.3 GPT-5.6 与 Codex 都必须是核心能力
 
-当前 `.env.example` 是 `gpt-5.4`，`OpenAIJsonClient` 默认模型仍是 `gpt-4.1-mini`，而且只调用 Chat Completions JSON mode。这不足以证明 GPT-5.6 是产品核心。
+赛前基线的 `.env.example` 与通用抽取客户端不足以证明 GPT-5.6 是产品核心；黑客松分支已新增独立的 GPT-5.6 Responses EvidenceAnalyst，并完成真实 Luna 工具循环验收。
 
 黑客松版本必须做到：
 
@@ -171,7 +171,7 @@ OpenAI 当前建议新项目使用 Responses API；GPT-5.6 支持 Responses、�
 
 第一个案例用于证明技术完整性；第二个案例用于证明实际决策价值。
 
-### 3.2 三步体验
+### 3.2 三步操作、四层判断
 
 #### Step 1 — Analyze the claim
 
@@ -557,7 +557,7 @@ assets/
 | 标准 | 评委要看到什么 | 本项目的展示证据 |
 |---|---|---|
 | Technological Implementation | Codex 使用深入；代码真实、非平凡、能运行 | 赛中 commit、GPT-5.6 Responses + tools + schema、确定性门禁、真实基准、自动测试 |
-| Design | 完整、连贯的产品体验，不只是技术验证 | 三步黄金路径、免配置样例、清晰 verdict、可下载报告、失败回退 |
+| Design | 完整、连贯的产品体验，不只是技术验证 | 三步主要操作、Analyze/Verify/Challenge/Decide 四层判断、免配置样例、可下载报告、失败回退 |
 | Potential Impact | 真实用户、真实问题、方案确实解决问题 | 量化研究团队、减少无效复现和错误模型判断、审计包 |
 | Quality of the Idea | 新颖且不同于已有概念 | “预测可信度编译器”：论文证据 + 协议门禁 + 可比实验 + AI 决策备忘录 |
 
@@ -624,7 +624,7 @@ assets/
 
 - [ ] 完成英文 README 和 Build Week delta。
 - [ ] 完成 Devpost project story。
-- [ ] 拍摄 3 张 3:2 图片。
+- [ ] 拍摄 4 张 3:2 图片，包含 persistence challenge 与 stress test。
 - [ ] 先写 170 秒脚本，再录屏，不边录边想。
 - [ ] 公开上传 YouTube，确认匿名窗口可看。
 - [ ] 生成 `/feedback` Session ID。

@@ -1,17 +1,22 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_METHOD_CARD = PROJECT_ROOT / "projects" / "finance_agent" / "method_cards_local_llm" / "arxiv_2205_13504.json"
 DEFAULT_REPORT = PROJECT_ROOT / "projects" / "finance_agent" / "reports" / "native_dlinear_exchange_336_96.json"
-APP_VERSION = "0.3.0-build-week"
-AUDIT_PACK_SCHEMA_VERSION = "forecastproof_audit_pack_v1"
+DEFAULT_DATASET = PROJECT_ROOT / "projects" / "finance_agent" / "data" / "external" / "exchange_rate" / "exchange_rate.txt"
+APP_VERSION = "0.4.0-build-week"
+AUDIT_PACK_SCHEMA_VERSION = "forecastproof_audit_pack_v2"
+DEFAULT_VALUE_HURDLE = 0.01
 
 
 @dataclass(frozen=True)
@@ -43,6 +48,26 @@ class EvidenceBrief:
 
 
 @dataclass(frozen=True)
+class BaselineComparison:
+    baseline_name: str
+    evaluation_space: str
+    test_windows: int
+    observations: int
+    model_metrics: dict[str, float]
+    baseline_metrics: dict[str, float]
+    relative_improvements: dict[str, float]
+    metric_winners: dict[str, str]
+    minimum_relative_mse_improvement: float
+    value_gate: bool
+    out_of_period_tested: bool
+    deployment_status: str
+    blockers: tuple[str, ...]
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
 class VerificationResult:
     verdict: str
     evidence_gate: bool
@@ -58,11 +83,27 @@ class VerificationResult:
     evidence_span_count: int
     training_history: tuple[dict[str, float], ...]
     protocol_comparison: tuple[dict[str, str], ...]
+    baseline_comparison: BaselineComparison
     artifact_path: str
 
     @property
     def gates_passed(self) -> int:
         return sum((self.evidence_gate, self.protocol_gate, self.dataset_gate, self.metric_gate))
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
+class DecisionStressTest:
+    metric_tolerance: float
+    minimum_relative_mse_improvement: float
+    reproduction_gate: bool
+    value_gate: bool
+    robustness_gate: bool
+    research_status: str
+    deployment_status: str
+    blockers: tuple[str, ...]
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -160,6 +201,98 @@ def load_demo_brief(method_card_path: str | Path = DEFAULT_METHOD_CARD) -> Evide
     )
 
 
+def evaluate_persistence_baseline(
+    *,
+    dataset_path: str | Path = DEFAULT_DATASET,
+    expected_sha256: str,
+    model_metrics: dict[str, float],
+    seq_len: int = 336,
+    pred_len: int = 96,
+    train_ratio: float = 0.7,
+    test_ratio: float = 0.2,
+    minimum_relative_mse_improvement: float = DEFAULT_VALUE_HURDLE,
+) -> BaselineComparison:
+    """Challenge the reproduced model with a last-value baseline under the same data protocol."""
+    path = Path(dataset_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Required baseline dataset is missing: {path}")
+    observed_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+    if observed_hash != expected_sha256:
+        raise ValueError("Baseline evaluation refused because the dataset SHA-256 does not match the verified artifact")
+
+    values = np.loadtxt(path, delimiter=",")
+    if values.ndim != 2 or values.shape[1] != 8:
+        raise ValueError("ForecastProof baseline evaluation requires eight Exchange-Rate channels")
+    train_count = int(len(values) * train_ratio)
+    test_count = int(len(values) * test_ratio)
+    train_values = values[:train_count]
+    train_mean = train_values.mean(axis=0)
+    train_scale = train_values.std(axis=0)
+    train_scale[train_scale == 0] = 1.0
+    scaled = (values - train_mean) / train_scale
+    test_values = scaled[len(values) - test_count - seq_len :]
+    test_windows = len(test_values) - seq_len - pred_len + 1
+    if test_windows <= 0:
+        raise ValueError("Dataset is too short for the configured baseline evaluation windows")
+
+    squared_error = 0.0
+    absolute_error = 0.0
+    observations = 0
+    for start in range(test_windows):
+        input_window = test_values[start : start + seq_len]
+        target = test_values[start + seq_len : start + seq_len + pred_len]
+        prediction = np.broadcast_to(input_window[-1], target.shape)
+        residual = prediction - target
+        squared_error += float(np.square(residual).sum())
+        absolute_error += float(np.abs(residual).sum())
+        observations += int(target.size)
+
+    baseline_metrics = {
+        "mse": squared_error / observations,
+        "mae": absolute_error / observations,
+    }
+    compared_model_metrics = {
+        "mse": float(model_metrics["mse"]),
+        "mae": float(model_metrics["mae"]),
+    }
+    relative_improvements = {
+        metric: (baseline_metrics[metric] - compared_model_metrics[metric]) / baseline_metrics[metric]
+        for metric in ("mse", "mae")
+    }
+    metric_winners = {
+        metric: "DLinear" if compared_model_metrics[metric] <= baseline_metrics[metric] else "Persistence"
+        for metric in ("mse", "mae")
+    }
+    value_gate = bool(
+        relative_improvements["mse"] >= minimum_relative_mse_improvement
+        and relative_improvements["mae"] >= 0
+    )
+    blockers: list[str] = []
+    if relative_improvements["mse"] < minimum_relative_mse_improvement:
+        blockers.append(
+            "DLinear's MSE improvement over persistence is below the declared "
+            f"{minimum_relative_mse_improvement:.0%} incremental-value hurdle."
+        )
+    if relative_improvements["mae"] < 0:
+        blockers.append("DLinear's MAE is worse than the last-value persistence baseline.")
+    blockers.append("Out-of-period robustness has not yet been tested on a second financial regime.")
+    return BaselineComparison(
+        baseline_name="Last-value persistence",
+        evaluation_space="Train-fitted standardized values · identical chronological test windows",
+        test_windows=test_windows,
+        observations=observations,
+        model_metrics=compared_model_metrics,
+        baseline_metrics=baseline_metrics,
+        relative_improvements=relative_improvements,
+        metric_winners=metric_winners,
+        minimum_relative_mse_improvement=minimum_relative_mse_improvement,
+        value_gate=value_gate,
+        out_of_period_tested=False,
+        deployment_status="HOLD",
+        blockers=tuple(blockers),
+    )
+
+
 def verify_demo_claim(report_path: str | Path = DEFAULT_REPORT) -> VerificationResult:
     report = _load_json(report_path)
     governance = report.get("governance", {})
@@ -244,6 +377,20 @@ def verify_demo_claim(report_path: str | Path = DEFAULT_REPORT) -> VerificationR
         artifact_display = artifact.resolve().relative_to(PROJECT_ROOT).as_posix()
     except ValueError:
         artifact_display = str(artifact)
+    dataset = report.get("dataset", {})
+    dataset_sha256 = str(dataset.get("sha256", ""))
+    configured_dataset = Path(str(dataset.get("path", DEFAULT_DATASET)).replace("\\", "/"))
+    if not configured_dataset.is_absolute():
+        configured_dataset = PROJECT_ROOT / configured_dataset
+    baseline_comparison = evaluate_persistence_baseline(
+        dataset_path=configured_dataset,
+        expected_sha256=dataset_sha256,
+        model_metrics=local,
+        seq_len=int(protocol.get("seq_len", 336)),
+        pred_len=int(protocol.get("pred_len", 96)),
+        train_ratio=float(protocol.get("train_ratio", 0.7)),
+        test_ratio=float(protocol.get("test_ratio", 0.2)),
+    )
 
     return VerificationResult(
         verdict=verdict,
@@ -255,12 +402,65 @@ def verify_demo_claim(report_path: str | Path = DEFAULT_REPORT) -> VerificationR
         local_metrics=local,
         absolute_deltas=deltas,
         tolerance=tolerance,
-        dataset_sha256=str(report.get("dataset", {}).get("sha256", "")),
+        dataset_sha256=dataset_sha256,
         reproduction_plan_hash=str(governance.get("reproduction_plan_hash", "")),
         evidence_span_count=int(evidence_verification.get("span_count", 0)),
         training_history=tuple(report.get("training_history", [])),
         protocol_comparison=protocol_comparison,
+        baseline_comparison=baseline_comparison,
         artifact_path=artifact_display,
+    )
+
+
+def stress_test_decision(
+    verification: VerificationResult,
+    *,
+    metric_tolerance: float | None = None,
+    minimum_relative_mse_improvement: float = DEFAULT_VALUE_HURDLE,
+) -> DecisionStressTest:
+    """Recalculate decision gates under explicit counterfactual governance thresholds."""
+    tolerance = verification.tolerance if metric_tolerance is None else float(metric_tolerance)
+    if tolerance < 0:
+        raise ValueError("Metric tolerance cannot be negative")
+    if minimum_relative_mse_improvement < 0:
+        raise ValueError("Minimum relative MSE improvement cannot be negative")
+
+    reproduction_gate = bool(
+        verification.evidence_gate
+        and verification.protocol_gate
+        and verification.dataset_gate
+        and all(delta <= tolerance for delta in verification.absolute_deltas.values())
+    )
+    improvements = verification.baseline_comparison.relative_improvements
+    value_gate = bool(
+        improvements["mse"] >= minimum_relative_mse_improvement
+        and improvements["mae"] >= 0
+    )
+    robustness_gate = verification.baseline_comparison.out_of_period_tested
+    blockers: list[str] = []
+    if not reproduction_gate:
+        required_tolerance = max(verification.absolute_deltas.values())
+        blockers.append(
+            f"Metric tolerance {tolerance:.4f} is below the {required_tolerance:.4f} needed to reproduce both metrics."
+        )
+    if improvements["mse"] < minimum_relative_mse_improvement:
+        blockers.append(
+            f"MSE improvement is {improvements['mse']:.2%}, below the {minimum_relative_mse_improvement:.2%} hurdle."
+        )
+    if improvements["mae"] < 0:
+        blockers.append(f"MAE regresses by {abs(improvements['mae']):.2%} versus persistence.")
+    if not robustness_gate:
+        blockers.append("No out-of-period financial regime has passed the same frozen protocol yet.")
+    deployment_ready = reproduction_gate and value_gate and robustness_gate
+    return DecisionStressTest(
+        metric_tolerance=tolerance,
+        minimum_relative_mse_improvement=minimum_relative_mse_improvement,
+        reproduction_gate=reproduction_gate,
+        value_gate=value_gate,
+        robustness_gate=robustness_gate,
+        research_status="ACCEPT" if reproduction_gate else "REJECT",
+        deployment_status="READY" if deployment_ready else "HOLD",
+        blockers=tuple(blockers),
     )
 
 
@@ -268,29 +468,39 @@ def build_replay_memo(brief: EvidenceBrief, verification: VerificationResult) ->
     recommendation = "CONDITIONAL" if verification.verdict == "REPRODUCED" else "NO_GO"
     paper_mse = verification.reported_metrics["mse"]
     local_mse = verification.local_metrics["mse"]
+    baseline = verification.baseline_comparison
     return DecisionMemo(
         recommendation=recommendation,
-        headline="Adopt DLinear as a reproducible research baseline, not as a trading signal.",
-        confidence=0.91 if verification.verdict == "REPRODUCED" else 0.35,
+        headline="Accept the reproduction; hold deployment until DLinear clearly beats persistence.",
+        confidence=0.94 if verification.verdict == "REPRODUCED" else 0.35,
         rationale=(
             f"All {verification.gates_passed}/4 deterministic gates passed against a frozen native-run artifact.",
             f"Local MSE {local_mse:.6f} is within {verification.tolerance:.3f} of the paper value {paper_mse:.3f}.",
-            "The MethodCard links the claim to pinned paper, repository, and dataset evidence.",
+            (
+                f"The naive challenger gate remains on HOLD: MSE improves only "
+                f"{baseline.relative_improvements['mse']:.2%}, while MAE regresses "
+                f"{abs(baseline.relative_improvements['mae']):.2%} versus persistence."
+            ),
         ),
         verified_facts=(
             f"Paper claim: MSE {paper_mse:.3f}, MAE {verification.reported_metrics['mae']:.3f}.",
             f"Native run: MSE {local_mse:.6f}, MAE {verification.local_metrics['mae']:.6f}.",
+            (
+                f"Last-value persistence across {baseline.test_windows:,} identical test windows: "
+                f"MSE {baseline.baseline_metrics['mse']:.6f}, MAE {baseline.baseline_metrics['mae']:.6f}."
+            ),
             f"Dataset SHA-256 matched: {verification.dataset_sha256}.",
             f"Evidence audit passed across {verification.evidence_span_count} spans.",
         ),
         risks=(
-            "One benchmark does not establish generalization to current market regimes.",
+            "DLinear does not clear the 1% MSE value hurdle and loses to persistence on MAE.",
+            "One reproduced benchmark does not establish out-of-period robustness in current market regimes.",
             "The published metric is forecasting error, not economic utility or risk-adjusted return.",
-            "Paper-level unknowns remain, including exact device details and whether early stopping triggered.",
         ),
         next_actions=(
-            "Run the same protocol on an out-of-period financial dataset.",
-            "Add naive and production incumbent baselines under identical data windows.",
+            "Require DLinear to beat persistence by at least 1% MSE without MAE regression.",
+            "Run the frozen protocol on an out-of-period financial regime.",
+            "Add production incumbent baselines under the identical evaluation windows.",
             "Define deployment guardrails and economic KPIs before any investment decision.",
         ),
         citations=tuple(
@@ -345,6 +555,23 @@ def audit_decision_memo(
     )
     guardrail = memo.guardrail.lower()
     guarded = "research" in guardrail and "not investment advice" in guardrail
+    decision_text = " ".join(
+        (
+            memo.headline,
+            *memo.rationale,
+            *memo.verified_facts,
+            *memo.risks,
+            *memo.next_actions,
+        )
+    ).lower()
+    baseline_honest = bool(
+        verification.baseline_comparison.value_gate
+        or (
+            memo.recommendation != "GO"
+            and "persistence" in decision_text
+            and ("hold" in decision_text or "value" in decision_text)
+        )
+    )
     checks = (
         MemoAuditCheck(
             "deterministic_authority",
@@ -382,6 +609,15 @@ def audit_decision_memo(
             guarded,
             "The memo must explicitly remain research support and not investment advice.",
         ),
+        MemoAuditCheck(
+            "baseline_honesty",
+            "Naive-challenger honesty",
+            baseline_honest,
+            (
+                "A memo must disclose the persistence comparison and hold deployment when the incremental-value "
+                "gate fails."
+            ),
+        ),
     )
     passed_checks = sum(check.passed for check in checks)
     return MemoAudit(
@@ -413,6 +649,7 @@ def build_audit_pack(
         },
         "evidence_brief": brief.to_dict(),
         "verification": verification.to_dict(),
+        "decision_stress_test": stress_test_decision(verification).to_dict(),
         "decision_memo": memo.to_dict(),
         "decision_audit": memo_audit.to_dict(),
         "agent_run": {

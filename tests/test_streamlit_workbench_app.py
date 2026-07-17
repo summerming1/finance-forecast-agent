@@ -33,10 +33,11 @@ def test_forecastproof_opens_on_a_judge_friendly_home_page() -> None:
     assert any("auditable go/no-go decision" in item.value for item in app.subheader)
     assert {item.label for item in app.metric} >= {
         "Evidence spans",
-        "Deterministic gates",
-        "Paper MSE",
-        "Local MSE",
+        "Reproduction gates",
+        "Naive value gate",
+        "Deployment",
     }
+    assert any("Incremental value on hold" in item.value for item in app.markdown)
 
 
 @pytest.mark.parametrize(
@@ -59,6 +60,11 @@ def test_verification_page_exposes_all_four_passed_gates() -> None:
     assert len([item for item in app.markdown if item.value == ":green-badge[Passed]"]) == 4
     assert any("reproduced within the declared tolerance" in item.value for item in app.success)
     assert any(item.value == "Protocol delta" for item in app.subheader)
+    assert any(item.value == "Challenge the value" for item in app.subheader)
+    assert any("incremental value remains on HOLD" in item.value for item in app.warning)
+    assert any(item.label == "MSE improvement" for item in app.metric)
+    assert app.select_slider(key="forecastproof_tolerance").value == 0.01
+    assert app.select_slider(key="forecastproof_value_hurdle").value == 0.01
 
 
 def test_decision_page_defaults_to_a_safe_replay_memo() -> None:
@@ -69,6 +75,8 @@ def test_decision_page_defaults_to_a_safe_replay_memo() -> None:
     assert any("CONDITIONAL" in item.value for item in app.markdown)
     assert any("not investment advice" in warning.value.lower() for warning in app.warning)
     assert any(item.label == "Audit score" and item.value == "100/100" for item in app.metric)
+    assert any(item.label == "Checks passed" and item.value == "7/7" for item in app.metric)
+    assert any(item.label == "Deployment" and item.value == "HOLD" for item in app.metric)
     assert any("passed every deterministic" in item.value.lower() for item in app.success)
 
 

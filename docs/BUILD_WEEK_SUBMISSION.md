@@ -2,24 +2,28 @@
 
 > Status: product flow, cost controls, deterministic memo eval, Audit Pack, and local automated tests are implemented. Public demo URL, screenshots, final video URL, eligibility confirmation, and Devpost fields must still be completed before submission.
 
+The current v0.4 live Luna acceptance run completed the two-tool Responses loop in two API requests and passed the seven-check deterministic memo audit at 100/100 while disclosing the failed persistence value gate. It used 3,615 input and 927 output tokens; the OpenAI list-rate reference is `$0.009177` and may differ from compatible-provider billing.
+
 ## One-line pitch
 
-ForecastProof turns a forecasting paper claim into an auditable decision: cited evidence, deterministic reproduction gates, and a safe go/no-go memo powered by GPT-5.6.
+ForecastProof proves whether a forecasting paper reproduced, challenges whether it beat a naive baseline, and turns that boundary into an audited GPT-5.6 decision.
 
 ## What the product does
 
-Research and investment teams regularly inherit impressive forecasting claims but lack a fast way to answer three practical questions:
+Research and investment teams regularly inherit impressive forecasting claims but lack a fast way to answer four practical questions:
 
 1. What exactly did the paper claim?
 2. Did a local run follow the same evidence, data, and protocol?
-3. Is the result strong enough to justify the next research step?
+3. Did it add value over a simple same-window baseline?
+4. Is the result strong enough to justify the next research step?
 
 ForecastProof makes that path inspectable. The judge-facing demo uses a strict DLinear claim on the Exchange-Rate benchmark:
 
 - **Analyze:** loads a MethodCard with pinned paper, repository, and dataset evidence.
 - **Verify:** replays four deterministic gates against a real native-run report.
+- **Challenge:** recomputes last-value persistence over 1,422 identical test windows and exposes the thresholds that flip the decision.
 - **Decide:** produces a cited memo with verified facts, risks, next actions, and a research-only guardrail.
-- **Audit:** deterministically checks gate authority, tool grounding, citation mappings, evidence coverage, completeness, and safety; the verified replay scores 100/100.
+- **Audit:** deterministically checks gate authority, tool grounding, citation mappings, evidence coverage, completeness, safety, and naive-challenger honesty; the verified replay scores 100/100.
 - **Export:** downloads a complete versioned Audit Pack with evidence, protocol delta, verification, memo, provenance, response ID, and token/cost metadata.
 - **Research lab:** preserves the original seven-stage workbench for advanced users without exposing its complexity in the golden path.
 
@@ -38,6 +42,7 @@ The judge-facing live form is cost controlled: the recommended GPT-5.6 Luna prof
 flowchart LR
     A["Paper + pinned sources"] --> B["EvidenceBrief tool"]
     C["Native-run report"] --> D["Deterministic gates"]
+    P["Same-window persistence"] --> D
     D --> E["VerificationResult tool"]
     B --> F["GPT-5.6 EvidenceAnalyst"]
     E --> F
@@ -54,6 +59,10 @@ flowchart LR
 | Dataset integrity | SHA-256 matched |
 | Paper MSE / local MSE | 0.081 / 0.0810795 |
 | Paper MAE / local MAE | 0.203 / 0.2060906 |
+| Persistence MSE / MAE | 0.0811257 / 0.1963566 |
+| DLinear vs persistence | MSE +0.06% / MAE −4.96% |
+| Naive value gate | hold |
+| Deployment readiness | hold; out-of-period regime not tested |
 | Acceptance tolerance | 0.01 |
 | Verdict | reproduced |
 
@@ -101,7 +110,7 @@ python -m streamlit run apps/streamlit_app.py
 
 1. Open **Home** and state the promise: “from paper claim to auditable decision.”
 2. Open **Analyze** and expand one paper evidence span and one official-repository span.
-3. Open **Verify** and show the four green gates, paper-versus-local chart, and frozen hashes.
+3. Open **Verify** and show the four green reproduction gates, then the persistence challenge and decision stress test.
 4. Open **Decision memo** in verified replay mode, then show live GPT-5.6 and its tool trace if a key is configured.
 5. Show the deterministic 100/100 decision audit and download the complete Audit Pack.
 6. End on the guardrail: reproduced forecasting error is a research milestone, not an investment recommendation.
@@ -114,11 +123,11 @@ Forecasting research moves faster than teams can validate it. A strong metric in
 
 ### What it does
 
-ForecastProof converts a forecasting claim into an evidence brief, checks a local reproduction with deterministic gates, and creates a cited decision memo. Its default DLinear sample runs without setup, so every judge can inspect the complete flow. Advanced users can enter the Research lab for the underlying seven-stage workflow.
+ForecastProof converts a forecasting claim into an evidence brief, checks a local reproduction with deterministic gates, challenges it against same-window persistence, and creates a cited decision memo. Its default DLinear sample runs without setup, so every judge can inspect the complete flow and see why a reproduced result can still remain on deployment hold. Advanced users can enter the Research lab for the underlying seven-stage workflow.
 
 ### How we used GPT-5.6
 
-Our GPT-5.6 EvidenceAnalyst runs on the Responses API. It calls two read-only tools for the evidence brief and verification result, then returns a strict structured memo. GPT-5.6 is responsible for evidence-aware synthesis and decision framing; it cannot override the deterministic gates or turn a forecasting metric into financial advice.
+Our GPT-5.6 EvidenceAnalyst runs on the Responses API. It calls two read-only tools for the evidence brief and verification result—including the naive challenger result—then returns a strict structured memo. GPT-5.6 is responsible for evidence-aware synthesis and decision framing; it cannot override the deterministic gates, hide a failed value gate, or turn a forecasting metric into financial advice.
 
 ### How we built with Codex
 
@@ -126,17 +135,17 @@ Codex helped audit the existing research harness, isolate the hackathon work in 
 
 ### Challenges
 
-The hardest design choice was separating “the experiment reproduced a paper metric” from “the model is suitable for production.” We solved it by making deterministic comparability gates authoritative and forcing the final memo to show verified facts, unresolved risks, and next actions separately.
+The hardest design choice was separating “the experiment reproduced a paper metric” from “the model adds practical value.” Our real result made that distinction concrete: DLinear only narrowly beats persistence on MSE and loses on MAE. We kept the inconvenient result, added a deterministic challenger gate and stress test, and forced the final memo to disclose the deployment hold.
 
 ### What's next
 
-Next we will add user-supplied paper ingestion, out-of-period finance datasets, team review links, and evals for citation completeness and decision consistency.
+Next we will add user-supplied paper ingestion, an out-of-period regime that can close the robustness gate, stronger production challengers, team review links, and evals for citation completeness and decision consistency.
 
 ## Submission checklist
 
 - [ ] Deploy a public Streamlit URL and test in a clean browser.
 - [ ] Record a 2:30–3:00 minute English demo using `BUILD_WEEK_DEMO_SCRIPT.md`.
-- [ ] Add three screenshots: Home, four verification gates, Decision memo + agent trace.
+- [ ] Add four screenshots: Home result, four reproduction gates, persistence challenge, Decision memo + agent trace.
 - [ ] Add the public repository URL and confirm `codex/openai-build-week` is visible.
 - [ ] Add the baseline and during-event commit evidence.
 - [ ] Confirm live GPT-5.6 works on the deployed environment.
@@ -149,4 +158,4 @@ Next we will add user-supplied paper ingestion, out-of-period finance datasets, 
 - [Responses API migration guide](https://developers.openai.com/api/docs/guides/migrate-to-responses)
 - [Function calling guide](https://developers.openai.com/api/docs/guides/function-calling)
 - [Structured Outputs guide](https://developers.openai.com/api/docs/guides/structured-outputs)
-- [GPT-5.6 model page](https://developers.openai.com/api/docs/models/gpt-5.6-sol)
+- [GPT-5.6 Luna model page](https://developers.openai.com/api/docs/models/gpt-5.6-luna)

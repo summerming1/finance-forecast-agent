@@ -62,7 +62,10 @@ TOOLS: list[dict[str, Any]] = [
     {
         "type": "function",
         "name": "get_verification_result",
-        "description": "Return deterministic gate results and paper-versus-local metrics from the frozen reproduction artifact.",
+        "description": (
+            "Return deterministic reproduction gates, paper-versus-local metrics, the same-window persistence "
+            "baseline challenge, and deployment blockers."
+        ),
         "parameters": {"type": "object", "properties": {}, "required": [], "additionalProperties": False},
         "strict": True,
     },
@@ -152,8 +155,10 @@ class OpenAIResponsesDecisionAgent:
                 "Call both available tools before deciding. Separate verified facts from risks. "
                 "Cite valid evidence identifiers from at least two distinct MethodCard sections, and set each "
                 "citation claim to the exact evidence section name. A reproduced paper metric may justify a "
-                "CONDITIONAL research baseline, but never GO or a trading recommendation. The guardrail must "
-                "include the exact phrase 'not investment advice' and keep the memo limited to research use."
+                "CONDITIONAL research baseline, but never GO or a trading recommendation. If the naive challenger "
+                "value gate is false, explicitly compare DLinear with persistence, state that deployment remains "
+                "on HOLD, and propose a measurable next test. The guardrail must include the exact phrase "
+                "'not investment advice' and keep the memo limited to research use."
             ),
         }
         input_items: list[dict[str, Any]] = [context]
@@ -221,7 +226,8 @@ class OpenAIResponsesDecisionAgent:
             "model": self.model,
             "instructions": (
                 "You are ForecastProof's EvidenceAnalyst. Use only tool-returned facts. "
-                "Do not infer investment suitability from forecasting error. Return the requested structured memo."
+                "Do not infer investment suitability from forecasting error or hide a failed naive-baseline gate. "
+                "Return the requested structured memo."
             ),
             "input": input_items,
             "tools": TOOLS,

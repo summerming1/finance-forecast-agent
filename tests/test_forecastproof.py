@@ -11,6 +11,7 @@ from finance_forecast_agent.forecastproof import (
     build_audit_pack,
     build_replay_memo,
     load_demo_brief,
+    stress_test_decision,
     verify_demo_claim,
 )
 from finance_forecast_agent.openai_responses import OpenAIResponsesDecisionAgent
@@ -31,6 +32,28 @@ def test_verified_demo_builds_an_evidence_first_decision() -> None:
     assert "not investment advice" in memo.guardrail.lower()
     assert len(verification.protocol_comparison) == 7
     assert {row["status"] for row in verification.protocol_comparison} == {"matched"}
+    assert verification.baseline_comparison.test_windows == 1422
+    assert verification.baseline_comparison.baseline_metrics["mse"] == pytest.approx(0.0811256926)
+    assert verification.baseline_comparison.baseline_metrics["mae"] == pytest.approx(0.1963566193)
+    assert verification.baseline_comparison.relative_improvements["mse"] == pytest.approx(0.000569, rel=1e-3)
+    assert verification.baseline_comparison.relative_improvements["mae"] == pytest.approx(-0.04957, rel=1e-3)
+    assert verification.baseline_comparison.value_gate is False
+    assert "persistence" in " ".join(memo.risks).lower()
+
+
+def test_decision_stress_test_separates_reproduction_from_deployment_value() -> None:
+    verification = verify_demo_claim()
+
+    declared = stress_test_decision(verification)
+    strict = stress_test_decision(verification, metric_tolerance=0.003)
+
+    assert declared.reproduction_gate is True
+    assert declared.value_gate is False
+    assert declared.robustness_gate is False
+    assert declared.research_status == "ACCEPT"
+    assert declared.deployment_status == "HOLD"
+    assert strict.reproduction_gate is False
+    assert any("MAE regresses" in blocker for blocker in declared.blockers)
 
 
 def test_replay_memo_passes_deterministic_decision_audit_and_exports_pack() -> None:
@@ -50,8 +73,11 @@ def test_replay_memo_passes_deterministic_decision_audit_and_exports_pack() -> N
 
     assert audit.passed
     assert audit.score == 100
+    assert audit.passed_checks == audit.total_checks == 7
     assert pack["schema_version"] == AUDIT_PACK_SCHEMA_VERSION
     assert pack["decision_audit"]["score"] == 100
+    assert pack["decision_stress_test"]["deployment_status"] == "HOLD"
+    assert pack["verification"]["baseline_comparison"]["value_gate"] is False
     assert pack["provenance"]["dataset_sha256"] == verification.dataset_sha256
     assert "api_key" not in json.dumps(pack).lower()
 
@@ -70,7 +96,7 @@ def test_decision_audit_rejects_unconditional_uncited_advice() -> None:
     failed = {check.check_id for check in audit.checks if not check.passed}
 
     assert not audit.passed
-    assert {"deterministic_authority", "citation_validity", "research_guardrail"} <= failed
+    assert {"deterministic_authority", "citation_validity", "research_guardrail", "baseline_honesty"} <= failed
 
 
 def test_live_agent_requires_an_api_key(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -179,6 +205,7 @@ def test_live_agent_calls_both_tools_and_uses_strict_structured_output() -> None
     assert requests_seen[0]["json"]["store"] is False
     assert requests_seen[0]["json"]["text"]["format"]["strict"] is True
     assert requests_seen[0]["json"]["text"]["format"]["schema"]["additionalProperties"] is False
+    assert "persistence" in requests_seen[0]["json"]["input"][0]["content"].lower()
     tool_outputs = [
         item for item in requests_seen[1]["json"]["input"] if item.get("type") == "function_call_output"
     ]

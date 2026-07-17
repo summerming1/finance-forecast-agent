@@ -8,6 +8,7 @@ import streamlit as st
 
 from .forecastproof import (
     APP_VERSION,
+    DEFAULT_VALUE_HURDLE,
     DecisionMemo,
     EvidenceBrief,
     VerificationResult,
@@ -15,6 +16,7 @@ from .forecastproof import (
     build_audit_pack,
     build_replay_memo,
     load_demo_brief,
+    stress_test_decision,
     verify_demo_claim,
 )
 from .openai_responses import OpenAIResponsesDecisionAgent
@@ -26,6 +28,11 @@ DEMO_STATE_KEYS = (
     "forecastproof_live_memo",
     "forecastproof_live_response_id",
     "forecastproof_live_run_metadata",
+    "forecastproof_memo_mode",
+    "forecastproof_tolerance",
+    "forecastproof_value_hurdle",
+    "forecastproof_reasoning_effort",
+    "forecastproof_max_output_tokens",
 )
 
 
@@ -55,14 +62,32 @@ def render_home() -> None:
         icon=":material/security:",
     )
 
-    metrics = st.columns(4)
-    metrics[0].metric("Evidence spans", verification.evidence_span_count)
-    metrics[1].metric("Deterministic gates", f"{verification.gates_passed}/4")
-    metrics[2].metric("Paper MSE", f"{verification.reported_metrics['mse']:.3f}")
-    metrics[3].metric("Local MSE", f"{verification.local_metrics['mse']:.6f}")
+    baseline = verification.baseline_comparison
+    with st.container(horizontal=True):
+        st.metric("Evidence spans", verification.evidence_span_count, border=True)
+        st.metric("Reproduction gates", f"{verification.gates_passed}/4", border=True)
+        st.metric("Naive value gate", "HOLD" if not baseline.value_gate else "PASS", border=True)
+        st.metric("Deployment", baseline.deployment_status, border=True)
 
-    st.subheader("One claim. Three auditable steps.")
-    steps = st.columns(3)
+    with st.container(border=True):
+        st.markdown("#### The result that matters")
+        result_columns = st.columns(2)
+        with result_columns[0]:
+            st.badge("Reproduction passed", color="green", icon=":material/check_circle:")
+            st.write(
+                f"DLinear reproduced the paper within tolerance: local MSE "
+                f"{verification.local_metrics['mse']:.6f}."
+            )
+        with result_columns[1]:
+            st.badge("Incremental value on hold", color="orange", icon=":material/pause_circle:")
+            st.write(
+                f"Versus persistence, MSE improves only {baseline.relative_improvements['mse']:.2%} "
+                f"and MAE regresses {abs(baseline.relative_improvements['mae']):.2%}."
+            )
+        st.caption("ForecastProof distinguishes scientific reproducibility from deployment readiness.")
+
+    st.subheader("One claim. Four auditable layers.")
+    steps = st.columns(4)
     with steps[0].container(border=True):
         st.markdown(":material/article:")
         st.markdown("#### 1. Analyze")
@@ -72,8 +97,12 @@ def render_home() -> None:
         st.markdown("#### 2. Verify")
         st.write("Replay deterministic evidence, protocol, dataset, and metric gates against a native-run artifact.")
     with steps[2].container(border=True):
+        st.markdown(":material/experiment:")
+        st.markdown("#### 3. Challenge")
+        st.write("Compare the model with persistence and expose the thresholds that would flip the decision.")
+    with steps[3].container(border=True):
         st.markdown(":material/description:")
-        st.markdown("#### 3. Decide")
+        st.markdown("#### 4. Decide")
         st.write("Generate a cited decision memo that separates reproduced facts from deployment risks.")
 
     with st.container(horizontal=True):
@@ -97,6 +126,7 @@ def render_home() -> None:
         """
 - **Research claims become inspectable objects.** Every protocol field points back to a pinned source revision.
 - **The model does not grade its own work.** Deterministic code decides whether evidence, protocol, data, and metrics pass.
+- **Reproduction is challenged, not celebrated blindly.** A same-window persistence baseline tests incremental value.
 - **The output is decision-shaped.** Teams get a cited memo with facts, risks, actions, and an explicit guardrail.
 """
     )
@@ -111,7 +141,7 @@ def render_home() -> None:
             st.markdown("#### During · judge-ready product")
             st.write(
                 "ForecastProof golden path, GPT-5.6 Responses agent, deterministic memo audit, "
-                "cost telemetry, complete Audit Pack, and product tests."
+                "naive-challenger gate, decision stress test, cost telemetry, complete Audit Pack, and product tests."
             )
             st.caption("Built with Codex on codex/openai-build-week")
 
@@ -171,6 +201,121 @@ def render_analyze() -> None:
         st.switch_page("app_pages/verify.py")
 
 
+def _render_value_challenge(verification: VerificationResult) -> None:
+    baseline = verification.baseline_comparison
+    st.subheader("Challenge the value")
+    st.caption(
+        "A paper can reproduce and still add little practical forecasting value. The same frozen test windows "
+        "are therefore challenged with a last-value persistence baseline."
+    )
+    if baseline.value_gate:
+        st.success("DLinear cleared the declared naive-challenger value gate.", icon=":material/trophy:")
+    else:
+        st.warning(
+            "Reproduction passed, but incremental value remains on HOLD.",
+            icon=":material/pause_circle:",
+        )
+
+    with st.container(horizontal=True):
+        st.metric(
+            "MSE improvement",
+            f"{baseline.relative_improvements['mse']:.2%}",
+            f"Required {baseline.minimum_relative_mse_improvement:.0%}",
+            delta_color="off",
+            border=True,
+        )
+        st.metric(
+            "MAE change",
+            f"{baseline.relative_improvements['mae']:.2%}",
+            "Regression" if baseline.relative_improvements["mae"] < 0 else "Improvement",
+            delta_color="inverse" if baseline.relative_improvements["mae"] < 0 else "normal",
+            border=True,
+        )
+        st.metric("Identical test windows", f"{baseline.test_windows:,}", border=True)
+        st.metric("Deployment status", baseline.deployment_status, border=True)
+
+    comparison_rows = pd.DataFrame(
+        [
+            {
+                "metric": metric.upper(),
+                "DLinear": baseline.model_metrics[metric],
+                "Persistence": baseline.baseline_metrics[metric],
+                "relative improvement": baseline.relative_improvements[metric],
+                "winner": baseline.metric_winners[metric],
+            }
+            for metric in ("mse", "mae")
+        ]
+    )
+    chart_frame = comparison_rows.set_index("metric")[["DLinear", "Persistence"]]
+    chart, table = st.columns([1, 1.25])
+    with chart.container(border=True):
+        st.markdown("#### Same-window metric challenge")
+        st.bar_chart(chart_frame, width="stretch")
+    with table.container(border=True):
+        st.markdown("#### Challenger scorecard")
+        st.dataframe(
+            comparison_rows,
+            hide_index=True,
+            width="stretch",
+            column_config={
+                "DLinear": st.column_config.NumberColumn(format="%.6f"),
+                "Persistence": st.column_config.NumberColumn(format="%.6f"),
+                "relative improvement": st.column_config.NumberColumn(format="percent"),
+            },
+        )
+        st.caption(baseline.evaluation_space)
+
+    st.markdown("#### Decision stress test")
+    st.caption("Change governance thresholds—not the underlying result—to see exactly where the decision flips.")
+    with st.form("forecastproof_stress_test", border=True):
+        controls = st.columns(2)
+        tolerance = controls[0].select_slider(
+            "Accepted paper-metric tolerance",
+            options=[0.001, 0.003, 0.0031, 0.005, 0.01, 0.02],
+            value=verification.tolerance,
+            format_func=lambda value: f"{value:.4f}",
+            help="Both MSE and MAE deltas must remain inside this tolerance.",
+            key="forecastproof_tolerance",
+        )
+        value_hurdle = controls[1].select_slider(
+            "Required MSE improvement over persistence",
+            options=[0.0, 0.005, 0.01, 0.02, 0.05],
+            value=DEFAULT_VALUE_HURDLE,
+            format_func=lambda value: f"{value:.1%}",
+            help="The value gate also requires no MAE regression.",
+            key="forecastproof_value_hurdle",
+        )
+        st.form_submit_button(
+            "Recalculate decision boundary",
+            icon=":material/tune:",
+            type="primary",
+        )
+    stress = stress_test_decision(
+        verification,
+        metric_tolerance=tolerance,
+        minimum_relative_mse_improvement=value_hurdle,
+    )
+    boundary_columns = st.columns(4)
+    boundary_rows = (
+        ("Reproduction", stress.reproduction_gate, "Pass" if stress.reproduction_gate else "Fail"),
+        ("Naive value", stress.value_gate, "Pass" if stress.value_gate else "Hold"),
+        ("Out-of-period", stress.robustness_gate, "Pass" if stress.robustness_gate else "Not tested"),
+        ("Deployment", stress.deployment_status == "READY", stress.deployment_status),
+    )
+    for column, (label, passed, value) in zip(boundary_columns, boundary_rows, strict=True):
+        with column.container(border=True):
+            badge_color = "green" if passed else ("red" if value == "Fail" else "orange")
+            st.badge(value, color=badge_color)
+            st.markdown(f"#### {label}")
+    with st.expander("Why the decision is blocked", icon=":material/block:"):
+        for blocker in stress.blockers:
+            st.write(f"- {blocker}")
+    st.info(
+        "GPT-5.6 may summarize this boundary, but it cannot change any of these deterministic gates.",
+        icon=":material/lock:",
+    )
+
+
 def render_verify() -> None:
     verification = _demo_verification()
     st.title("Verify the reproduction")
@@ -221,6 +366,8 @@ def render_verify() -> None:
         f"Δ {verification.absolute_deltas['mae']:.6f}",
         delta_color="off",
     )
+
+    _render_value_challenge(verification)
 
     st.subheader("Protocol delta")
     st.caption("Paper requirements are compared with the frozen native-run protocol before metrics are accepted.")
@@ -280,12 +427,14 @@ def render_decision_memo() -> None:
                 ["none", "low", "medium"],
                 index=1,
                 help="Use low for the demo; medium can improve difficult synthesis but may consume more tokens.",
+                key="forecastproof_reasoning_effort",
             )
             max_output_tokens = controls[1].select_slider(
                 "Maximum output tokens",
                 options=[800, 1200, 1600, 2400],
                 value=1600,
                 help="Each Responses API call cannot generate beyond this hard output cap.",
+                key="forecastproof_max_output_tokens",
             )
             submitted = st.form_submit_button(
                 "Run EvidenceAnalyst once",
@@ -334,9 +483,14 @@ def _render_memo(
     run_metadata: dict[str, object],
 ) -> None:
     color = {"GO": "green", "CONDITIONAL": "orange", "NO_GO": "red"}[memo.recommendation]
+    stress = stress_test_decision(verification)
     st.badge(memo.recommendation, color=color, icon=":material/gavel:")
     st.subheader(memo.headline)
-    st.metric("Decision confidence", f"{memo.confidence:.0%}")
+    with st.container(horizontal=True):
+        st.metric("Research result", stress.research_status, border=True)
+        st.metric("Naive value gate", "PASS" if stress.value_gate else "HOLD", border=True)
+        st.metric("Deployment", stress.deployment_status, border=True)
+        st.metric("Decision confidence", f"{memo.confidence:.0%}", border=True)
 
     left, right = st.columns(2)
     with left.container(border=True):
