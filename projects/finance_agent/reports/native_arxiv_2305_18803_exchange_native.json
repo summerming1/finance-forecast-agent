@@ -1,0 +1,365 @@
+{
+  "schema_version": "native_result_report_v1",
+  "generated_at": "2026-07-15T08:01:36.724464+00:00",
+  "run_mode": "native_reproduction",
+  "paper_id": "arxiv_2305_18803",
+  "claim_id": "arxiv_2305_18803_exchange_native",
+  "title": "Koopa: Learning Non-stationary Time Series Dynamics with Koopman Predictors",
+  "model_name": "Koopa",
+  "paper_url": "https://arxiv.org/abs/2305.18803",
+  "claim_locator": "NeurIPS 2023 paper, Table 1 and Table 6, Exchange, horizon 96",
+  "source": {
+    "repository": "https://github.com/thuml/Koopa",
+    "revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844",
+    "license": "MIT",
+    "archive_sha256": "eb5d7ed4d14bdd2472693eb3b563122bcf0977e3d784f97b7e5da53d066511ad",
+    "entrypoint_sha256": "09175e9c1a7a920652d233c63a2b257ade5758752fe3e8e153684daeeaf7e0f9",
+    "runtime_source_root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\source",
+    "compatibility_patches": [
+      {
+        "path": "utils/tools.py",
+        "classification": "semantic_noop",
+        "rationale": "NumPy 2 removed the uppercase alias; both names denote positive infinity.",
+        "before_sha256": "9365ab7f42a88feba5a02717a456b380d59b178501fec34d8309b2b2c5e1780a",
+        "after_sha256": "6b7257144575064f84dd3b47053298165464d7c5ff6d99394843cf5c024e3538"
+      }
+    ]
+  },
+  "dataset": {
+    "dataset_id": "exchange_rate_official_7588x8",
+    "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+    "domain": "financial"
+  },
+  "protocol": {
+    "dataset": "Exchange-Rate",
+    "features": "M",
+    "split": "official chronological loader",
+    "dataset_revision": "frozen local Exchange-Rate bytes",
+    "claim_locator": "NeurIPS 2023 paper, Table 1 and Table 6, Exchange, horizon 96",
+    "protocol_note": "The paper requires three different random seeds but does not publish their numeric values. Seeds 2021-2023 are frozen before execution; every resolved command is audited.",
+    "metric_observation_contract": 3,
+    "paper_repetitions": 3,
+    "randomness_protocol": "Three adapter runs with frozen seeds 2021, 2022 and 2023; the paper requires three seeds but does not publish their numeric values."
+  },
+  "runtime_environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "torch": "2.12.1"
+  },
+  "runtime_execution_root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\attempts\\20260715T074428-1784101468795738800",
+  "runtime_files": [],
+  "required_repetitions": 3,
+  "expected_metric_observations": 3,
+  "metric_observation_policy": "all",
+  "audit": {
+    "dataset_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "dataset_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+    "dataset_passed": true,
+    "source_archive_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\koopa.zip",
+    "source_archive_sha256": "eb5d7ed4d14bdd2472693eb3b563122bcf0977e3d784f97b7e5da53d066511ad",
+    "source_archive_passed": true,
+    "source_root": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\koopa\\Koopa-a2e0bb77ec7c1a25e8e0579ba517ffb41358b844",
+    "source_entrypoint": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\koopa\\Koopa-a2e0bb77ec7c1a25e8e0579ba517ffb41358b844\\run.py",
+    "source_entrypoint_sha256": "09175e9c1a7a920652d233c63a2b257ade5758752fe3e8e153684daeeaf7e0f9",
+    "source_entrypoint_passed": true,
+    "protocol_pinned": true,
+    "governance": {
+      "method_card_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\method_cards\\arxiv_2305_18803.json",
+      "method_card_strict_ready": true,
+      "reproduction_plan_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reproduction_plans\\arxiv_2305_18803.json",
+      "reproduction_plan_strict_ready": true,
+      "passed": true
+    },
+    "blockers": [],
+    "passed": true
+  },
+  "runs": [
+    {
+      "run_index": 0,
+      "run_parameters": {
+        "seed": "2021"
+      },
+      "command": [
+        "D:\\ProgramData\\miniconda3\\envs\\finance_fa\\python.exe",
+        "-u",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\source/run.py",
+        "--is_training",
+        "1",
+        "--root_path",
+        "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate",
+        "--data_path",
+        "exchange_rate.csv",
+        "--model_id",
+        "Exchange_192_96",
+        "--model",
+        "Koopa",
+        "--data",
+        "custom",
+        "--features",
+        "M",
+        "--seq_len",
+        "192",
+        "--pred_len",
+        "96",
+        "--seg_len",
+        "96",
+        "--dynamic_dim",
+        "64",
+        "--hidden_dim",
+        "64",
+        "--hidden_layers",
+        "3",
+        "--num_blocks",
+        "4",
+        "--enc_in",
+        "8",
+        "--dec_in",
+        "8",
+        "--c_out",
+        "8",
+        "--des",
+        "native",
+        "--learning_rate",
+        "0.001",
+        "--itr",
+        "1",
+        "--gpu",
+        "0",
+        "--seed",
+        "2021",
+        "--num_workers",
+        "0",
+        "--checkpoints",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\attempts\\20260715T074428-1784101468795738800/checkpoints"
+      ],
+      "working_directory": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\attempts\\20260715T074428-1784101468795738800\\work",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 351.953,
+      "metrics": {
+        "mse": 0.08936046063899994,
+        "mae": 0.21253924071788788
+      },
+      "metric_values": {
+        "mse": [
+          0.08936046063899994
+        ],
+        "mae": [
+          0.21253924071788788
+        ]
+      },
+      "stdout_tail": "Args in experiment:\nNamespace(is_training=1, model_id='Exchange_192_96', model='Koopa', data='custom', root_path='D:\\\\AI Agent\\\\finance_forecast_agent\\\\projects\\\\finance_agent\\\\data\\\\external\\\\exchange_rate', data_path='exchange_rate.csv', features='M', target='OT', freq='h', checkpoints='C:\\\\Users\\\\13716\\\\AppData\\\\Local\\\\Temp\\\\ffa-native\\\\arxiv_2305_18803_exchange_native\\\\attempts\\\\20260715T074428-1784101468795738800/checkpoints', seq_len=192, label_len=48, pred_len=96, enc_in=8, dec_in=8, c_out=8, dropout=0.05, embed='timeF', do_predict=False, num_workers=0, itr=1, train_epochs=10, batch_size=32, patience=3, learning_rate=0.001, des='native', loss='mse', lradj='type1', use_amp=False, use_gpu=False, gpu=0, use_multi_gpu=False, devices='0,1,2,3', seed=2021, dynamic_dim=64, hidden_dim=64, hidden_layers=3, seg_len=96, num_blocks=4, alpha=0.2, multistep=False)\nUse CPU\ntrain 5024\n>>>>>>>start training : Exchange_192_96_Koopa_custom_ftM_sl192_pl96_segl96_dyna64_h64_l3_nb4_a0.2_native_0>>>>>>>>>>>>>>>>>>>>>>>>>>\ntrain 5024\nval 665\ntest 1422\n\titers: 100, epoch: 1 | loss: 0.1323569\n\tspeed: 0.5002s/iter; left time: 735.7656s\nEpoch: 1 cost time: 85.6762523651123\nEpoch: 1, Steps: 157 | Train Loss: 0.1484665 Vali Loss: 0.1440328 Test Loss: 0.0893605\nValidation loss decreased (inf --> 0.144033).  Saving model ...\nUpdating learning rate to 0.001\n\titers: 100, epoch: 2 | loss: 0.1213089\n\tspeed: 1.4345s/iter; left time: 1884.9069s\nEpoch: 2 cost time: 63.0355703830719\nEpoch: 2, Steps: 157 | Train Loss: 0.1108433 Vali Loss: 0.1769477 Test Loss: 0.0912454\nEarlyStopping counter: 1 out of 3\nUpdating learning rate to 0.0005\n\titers: 100, epoch: 3 | loss: 0.0703206\n\tspeed: 0.4058s/iter; left time: 469.4791s\nEpoch: 3 cost time: 25.283997058868408\nEpoch: 3, Steps: 157 | Train Loss: 0.0986981 Vali Loss: 0.1643665 Test Loss: 0.0964150\nEarlyStopping counter: 2 out of 3\nUpdating learning rate to 0.00025\n\titers: 100, epoch: 4 | loss: 0.0740686\n\tspeed: 0.4654s/iter; left time: 465.4268s\nEpoch: 4 cost time: 20.626319408416748\nEpoch: 4, Steps: 157 | Train Loss: 0.0909926 Vali Loss: 0.1736059 Test Loss: 0.0960141\nEarlyStopping counter: 3 out of 3\nEarly stopping\n>>>>>>>testing : Exchange_192_96_Koopa_custom_ftM_sl192_pl96_segl96_dyna64_h64_l3_nb4_a0.2_native_0<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\ntest 1422\ntest shape: (1422, 1, 96, 8) (1422, 1, 96, 8)\ntest shape: (1422, 96, 8) (1422, 96, 8)\nmse:0.08936046063899994, mae:0.21253924071788788\n",
+      "stderr_tail": ""
+    },
+    {
+      "run_index": 1,
+      "run_parameters": {
+        "seed": "2022"
+      },
+      "command": [
+        "D:\\ProgramData\\miniconda3\\envs\\finance_fa\\python.exe",
+        "-u",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\source/run.py",
+        "--is_training",
+        "1",
+        "--root_path",
+        "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate",
+        "--data_path",
+        "exchange_rate.csv",
+        "--model_id",
+        "Exchange_192_96",
+        "--model",
+        "Koopa",
+        "--data",
+        "custom",
+        "--features",
+        "M",
+        "--seq_len",
+        "192",
+        "--pred_len",
+        "96",
+        "--seg_len",
+        "96",
+        "--dynamic_dim",
+        "64",
+        "--hidden_dim",
+        "64",
+        "--hidden_layers",
+        "3",
+        "--num_blocks",
+        "4",
+        "--enc_in",
+        "8",
+        "--dec_in",
+        "8",
+        "--c_out",
+        "8",
+        "--des",
+        "native",
+        "--learning_rate",
+        "0.001",
+        "--itr",
+        "1",
+        "--gpu",
+        "0",
+        "--seed",
+        "2022",
+        "--num_workers",
+        "0",
+        "--checkpoints",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\attempts\\20260715T074428-1784101468795738800/checkpoints"
+      ],
+      "working_directory": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\attempts\\20260715T074428-1784101468795738800\\work",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 334.547,
+      "metrics": {
+        "mse": 0.09418316930532455,
+        "mae": 0.2173558622598648
+      },
+      "metric_values": {
+        "mse": [
+          0.09418316930532455
+        ],
+        "mae": [
+          0.2173558622598648
+        ]
+      },
+      "stdout_tail": "Args in experiment:\nNamespace(is_training=1, model_id='Exchange_192_96', model='Koopa', data='custom', root_path='D:\\\\AI Agent\\\\finance_forecast_agent\\\\projects\\\\finance_agent\\\\data\\\\external\\\\exchange_rate', data_path='exchange_rate.csv', features='M', target='OT', freq='h', checkpoints='C:\\\\Users\\\\13716\\\\AppData\\\\Local\\\\Temp\\\\ffa-native\\\\arxiv_2305_18803_exchange_native\\\\attempts\\\\20260715T074428-1784101468795738800/checkpoints', seq_len=192, label_len=48, pred_len=96, enc_in=8, dec_in=8, c_out=8, dropout=0.05, embed='timeF', do_predict=False, num_workers=0, itr=1, train_epochs=10, batch_size=32, patience=3, learning_rate=0.001, des='native', loss='mse', lradj='type1', use_amp=False, use_gpu=False, gpu=0, use_multi_gpu=False, devices='0,1,2,3', seed=2022, dynamic_dim=64, hidden_dim=64, hidden_layers=3, seg_len=96, num_blocks=4, alpha=0.2, multistep=False)\nUse CPU\ntrain 5024\n>>>>>>>start training : Exchange_192_96_Koopa_custom_ftM_sl192_pl96_segl96_dyna64_h64_l3_nb4_a0.2_native_0>>>>>>>>>>>>>>>>>>>>>>>>>>\ntrain 5024\nval 665\ntest 1422\n\titers: 100, epoch: 1 | loss: 0.1157641\n\tspeed: 0.1706s/iter; left time: 250.9510s\nEpoch: 1 cost time: 23.27132821083069\nEpoch: 1, Steps: 157 | Train Loss: 0.1517761 Vali Loss: 0.1372644 Test Loss: 0.0941832\nValidation loss decreased (inf --> 0.137264).  Saving model ...\nUpdating learning rate to 0.001\n\titers: 100, epoch: 2 | loss: 0.1003219\n\tspeed: 0.5276s/iter; left time: 693.2667s\nEpoch: 2 cost time: 39.48483467102051\nEpoch: 2, Steps: 157 | Train Loss: 0.1124308 Vali Loss: 0.1825186 Test Loss: 0.0915847\nEarlyStopping counter: 1 out of 3\nUpdating learning rate to 0.0005\n\titers: 100, epoch: 3 | loss: 0.0671963\n\tspeed: 0.6823s/iter; left time: 789.3853s\nEpoch: 3 cost time: 39.92486596107483\nEpoch: 3, Steps: 157 | Train Loss: 0.0996207 Vali Loss: 0.1615863 Test Loss: 0.0917506\nEarlyStopping counter: 2 out of 3\nUpdating learning rate to 0.00025\n\titers: 100, epoch: 4 | loss: 0.0781588\n\tspeed: 0.7819s/iter; left time: 781.9209s\nEpoch: 4 cost time: 48.65048122406006\nEpoch: 4, Steps: 157 | Train Loss: 0.0908030 Vali Loss: 0.1723122 Test Loss: 0.0945477\nEarlyStopping counter: 3 out of 3\nEarly stopping\n>>>>>>>testing : Exchange_192_96_Koopa_custom_ftM_sl192_pl96_segl96_dyna64_h64_l3_nb4_a0.2_native_0<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\ntest 1422\ntest shape: (1422, 1, 96, 8) (1422, 1, 96, 8)\ntest shape: (1422, 96, 8) (1422, 96, 8)\nmse:0.09418316930532455, mae:0.2173558622598648\n",
+      "stderr_tail": ""
+    },
+    {
+      "run_index": 2,
+      "run_parameters": {
+        "seed": "2023"
+      },
+      "command": [
+        "D:\\ProgramData\\miniconda3\\envs\\finance_fa\\python.exe",
+        "-u",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\source/run.py",
+        "--is_training",
+        "1",
+        "--root_path",
+        "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate",
+        "--data_path",
+        "exchange_rate.csv",
+        "--model_id",
+        "Exchange_192_96",
+        "--model",
+        "Koopa",
+        "--data",
+        "custom",
+        "--features",
+        "M",
+        "--seq_len",
+        "192",
+        "--pred_len",
+        "96",
+        "--seg_len",
+        "96",
+        "--dynamic_dim",
+        "64",
+        "--hidden_dim",
+        "64",
+        "--hidden_layers",
+        "3",
+        "--num_blocks",
+        "4",
+        "--enc_in",
+        "8",
+        "--dec_in",
+        "8",
+        "--c_out",
+        "8",
+        "--des",
+        "native",
+        "--learning_rate",
+        "0.001",
+        "--itr",
+        "1",
+        "--gpu",
+        "0",
+        "--seed",
+        "2023",
+        "--num_workers",
+        "0",
+        "--checkpoints",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\attempts\\20260715T074428-1784101468795738800/checkpoints"
+      ],
+      "working_directory": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2305_18803_exchange_native\\attempts\\20260715T074428-1784101468795738800\\work",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 341.437,
+      "metrics": {
+        "mse": 0.08701930940151215,
+        "mae": 0.21026363968849182
+      },
+      "metric_values": {
+        "mse": [
+          0.08701930940151215
+        ],
+        "mae": [
+          0.21026363968849182
+        ]
+      },
+      "stdout_tail": "Args in experiment:\nNamespace(is_training=1, model_id='Exchange_192_96', model='Koopa', data='custom', root_path='D:\\\\AI Agent\\\\finance_forecast_agent\\\\projects\\\\finance_agent\\\\data\\\\external\\\\exchange_rate', data_path='exchange_rate.csv', features='M', target='OT', freq='h', checkpoints='C:\\\\Users\\\\13716\\\\AppData\\\\Local\\\\Temp\\\\ffa-native\\\\arxiv_2305_18803_exchange_native\\\\attempts\\\\20260715T074428-1784101468795738800/checkpoints', seq_len=192, label_len=48, pred_len=96, enc_in=8, dec_in=8, c_out=8, dropout=0.05, embed='timeF', do_predict=False, num_workers=0, itr=1, train_epochs=10, batch_size=32, patience=3, learning_rate=0.001, des='native', loss='mse', lradj='type1', use_amp=False, use_gpu=False, gpu=0, use_multi_gpu=False, devices='0,1,2,3', seed=2023, dynamic_dim=64, hidden_dim=64, hidden_layers=3, seg_len=96, num_blocks=4, alpha=0.2, multistep=False)\nUse CPU\ntrain 5024\n>>>>>>>start training : Exchange_192_96_Koopa_custom_ftM_sl192_pl96_segl96_dyna64_h64_l3_nb4_a0.2_native_0>>>>>>>>>>>>>>>>>>>>>>>>>>\ntrain 5024\nval 665\ntest 1422\n\titers: 100, epoch: 1 | loss: 0.1501583\n\tspeed: 0.2632s/iter; left time: 387.1330s\nEpoch: 1 cost time: 37.78040814399719\nEpoch: 1, Steps: 157 | Train Loss: 0.1536680 Vali Loss: 0.1481557 Test Loss: 0.0870193\nValidation loss decreased (inf --> 0.148156).  Saving model ...\nUpdating learning rate to 0.001\n\titers: 100, epoch: 2 | loss: 0.1261428\n\tspeed: 0.7097s/iter; left time: 932.5145s\nEpoch: 2 cost time: 43.954885721206665\nEpoch: 2, Steps: 157 | Train Loss: 0.1153985 Vali Loss: 0.1511218 Test Loss: 0.0984364\nEarlyStopping counter: 1 out of 3\nUpdating learning rate to 0.0005\n\titers: 100, epoch: 3 | loss: 0.0878200\n\tspeed: 0.7321s/iter; left time: 847.0789s\nEpoch: 3 cost time: 44.98145771026611\nEpoch: 3, Steps: 157 | Train Loss: 0.1026357 Vali Loss: 0.1549310 Test Loss: 0.0917219\nEarlyStopping counter: 2 out of 3\nUpdating learning rate to 0.00025\n\titers: 100, epoch: 4 | loss: 0.0963485\n\tspeed: 0.7356s/iter; left time: 735.5715s\nEpoch: 4 cost time: 47.07062268257141\nEpoch: 4, Steps: 157 | Train Loss: 0.0941668 Vali Loss: 0.1553961 Test Loss: 0.0911935\nEarlyStopping counter: 3 out of 3\nEarly stopping\n>>>>>>>testing : Exchange_192_96_Koopa_custom_ftM_sl192_pl96_segl96_dyna64_h64_l3_nb4_a0.2_native_0<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\ntest 1422\ntest shape: (1422, 1, 96, 8) (1422, 1, 96, 8)\ntest shape: (1422, 96, 8) (1422, 96, 8)\nmse:0.08701930940151215, mae:0.21026363968849182\n",
+      "stderr_tail": ""
+    }
+  ],
+  "metrics": {
+    "mse": 0.09018764644861221,
+    "mae": 0.21338624755541483
+  },
+  "metric_aggregate": {
+    "mse": {
+      "mean": 0.09018764644861221,
+      "std": 0.0029825491840684113,
+      "values": [
+        0.08936046063899994,
+        0.09418316930532455,
+        0.08701930940151215
+      ]
+    },
+    "mae": {
+      "mean": 0.21338624755541483,
+      "std": 0.002956684030868159,
+      "values": [
+        0.21253924071788788,
+        0.2173558622598648,
+        0.21026363968849182
+      ]
+    }
+  },
+  "reported_metrics": {
+    "mse": 0.083,
+    "mae": 0.207
+  },
+  "metric_checks": {
+    "mse": {
+      "expected": 0.083,
+      "actual": 0.09018764644861221,
+      "absolute_tolerance": 0.015,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": true
+    },
+    "mae": {
+      "expected": 0.207,
+      "actual": 0.21338624755541483,
+      "absolute_tolerance": 0.02,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": true
+    }
+  },
+  "execution_passed": true,
+  "observation_count_passed": true,
+  "result_reproduced_within_tolerance": true,
+  "complete_reproduction_allowed": true,
+  "blockers": [],
+  "duration_seconds": 1027.968,
+  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2305_18803_exchange_native.json"
+}

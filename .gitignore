@@ -14,6 +14,8 @@ projects/finance_agent/mlruns/
 projects/finance_agent/.dvc/
 projects/finance_agent/.dvcignore
 projects/finance_agent/data/*.dvc
+projects/finance_agent/data/acquired/
+projects/finance_agent/sources/
 projects/finance_agent/llm_fixtures/research_advice/
 projects/finance_agent/llm_fixtures/research_advice_catalog.json
 projects/finance_agent/llm_fixtures_live_test/

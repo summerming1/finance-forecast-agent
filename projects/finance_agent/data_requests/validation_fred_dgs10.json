@@ -1,0 +1,36 @@
+{
+  "request": {
+    "request_id": "validation_fred_dgs10",
+    "dataset_id": "fred_dgs10",
+    "source_type": "fred_series",
+    "paper_id": null,
+    "source_url": null,
+    "symbol_or_series": "DGS10",
+    "start_date": null,
+    "end_date": null,
+    "frequency": null,
+    "expected_fields": [
+      "DATE",
+      "DGS10"
+    ],
+    "license_status": "public_provider_terms",
+    "requested_by": "user",
+    "rationale": "",
+    "status": "pending",
+    "blockers": []
+  },
+  "status": "failed",
+  "local_path": null,
+  "sha256": null,
+  "byte_count": 0,
+  "content_type": null,
+  "detected_fields": [],
+  "missing_expected_fields": [
+    "DATE",
+    "DGS10"
+  ],
+  "acquired_at": "2026-07-14T14:15:33.427604+00:00",
+  "source_final_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+  "error": "HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)",
+  "schema_version": "data_acquisition_result_v1"
+}

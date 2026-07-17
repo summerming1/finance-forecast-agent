@@ -1,0 +1,34 @@
+{
+  "request": {
+    "request_id": "benchmark_spy",
+    "dataset_id": "benchmark_spy",
+    "source_type": "yahoo_chart",
+    "paper_id": null,
+    "source_url": null,
+    "symbol_or_series": "SPY",
+    "start_date": "2010-01-01",
+    "end_date": "2026-07-14",
+    "frequency": "1d",
+    "expected_fields": [
+      "chart"
+    ],
+    "license_status": "provider_terms_review_required",
+    "requested_by": "benchmark_suite",
+    "rationale": "",
+    "status": "pending",
+    "blockers": []
+  },
+  "status": "downloaded",
+  "local_path": "projects\\finance_agent\\data\\acquired\\benchmark_spy\\snapshot.json",
+  "sha256": "118103c73f752e38e96c63924853d8878734134eb08c66a786c65d130fcc13d9",
+  "byte_count": 457619,
+  "content_type": "application/json;charset=utf-8",
+  "detected_fields": [
+    "chart"
+  ],
+  "missing_expected_fields": [],
+  "acquired_at": "2026-07-14T14:24:26.443951+00:00",
+  "source_final_url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1262304000&period2=1783987200&interval=1d&events=history",
+  "error": null,
+  "schema_version": "data_acquisition_result_v1"
+}

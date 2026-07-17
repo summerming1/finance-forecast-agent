@@ -1,0 +1,245 @@
+{
+  "schema_version": "native_result_report_v1",
+  "generated_at": "2026-07-16T06:02:12.694991+00:00",
+  "run_mode": "native_reproduction",
+  "paper_id": "arxiv_2202_01381",
+  "claim_id": "arxiv_2202_01381_exchange_native",
+  "title": "ETSformer: Exponential Smoothing Transformers for Time-series Forecasting",
+  "model_name": "ETSformer",
+  "paper_url": "https://arxiv.org/abs/2202.01381",
+  "claim_locator": "Paper Table 1, Exchange, horizon 96",
+  "source": {
+    "repository": "https://github.com/salesforce/ETSformer",
+    "revision": "082555c3638d80dcc7655fc5f316b5a18fd93867",
+    "license": "BSD-3-Clause",
+    "archive_sha256": "83b288e1a3ee7462326d8a7ef357cdc1674dd60071b9d4ac8b866c982181abd9",
+    "entrypoint_sha256": "686434c5238a536f5b9e915a430561bf63c8b051cd887912f67dda957cf5917a",
+    "runtime_source_root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2202_01381_exchange_native\\source",
+    "compatibility_patches": [
+      {
+        "path": "utils/tools.py",
+        "classification": "semantic_noop",
+        "rationale": "NumPy 2 removed the uppercase alias; both names denote positive infinity.",
+        "before_sha256": "7009defebd281c628102e0ddddcd302dbe2727cc702ce949af2d632552beb274",
+        "after_sha256": "131349cec0bc8f640fca1ce9c7415302fd14cecec164833aadbb8a56da8d0504"
+      },
+      {
+        "path": "exp/exp_main.py",
+        "classification": "semantic_noop",
+        "rationale": "Use the same CLI checkpoint directory for evaluation that training already uses.",
+        "before_sha256": "fbe1164145470aead898fde3a21d6b6304cf6b5876850f18cad8996bd3cede85",
+        "after_sha256": "08cf59ef4cc014c8bfda9a204314deb712d6a6404d1ae8eddba1b4e9968b518c"
+      }
+    ]
+  },
+  "dataset": {
+    "dataset_id": "exchange_rate_official_7588x8",
+    "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+    "domain": "financial"
+  },
+  "protocol": {
+    "dataset": "Exchange-Rate",
+    "features": "M",
+    "split": "official chronological loader",
+    "dataset_revision": "frozen local Exchange-Rate bytes",
+    "claim_locator": "Paper Table 1, Exchange, horizon 96",
+    "protocol_note": "The paper's cosine-with-warmup schedule overrides the repository Exchange shell default.",
+    "metric_observation_contract": 3,
+    "paper_repetitions": 3,
+    "randomness_protocol": "Repository-native stochasticity; any explicit seeds are frozen in the resolved command."
+  },
+  "runtime_environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "torch": "2.12.1"
+  },
+  "runtime_execution_root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\r\\6efe0c8edd9e",
+  "runtime_files": [],
+  "required_repetitions": 1,
+  "expected_metric_observations": 3,
+  "metric_observation_policy": "all",
+  "audit": {
+    "dataset_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "dataset_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+    "dataset_passed": true,
+    "source_archive_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\etsformer.zip",
+    "source_archive_sha256": "83b288e1a3ee7462326d8a7ef357cdc1674dd60071b9d4ac8b866c982181abd9",
+    "source_archive_passed": true,
+    "source_root": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\etsformer\\ETSformer-082555c3638d80dcc7655fc5f316b5a18fd93867",
+    "source_entrypoint": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\etsformer\\ETSformer-082555c3638d80dcc7655fc5f316b5a18fd93867\\run.py",
+    "source_entrypoint_sha256": "686434c5238a536f5b9e915a430561bf63c8b051cd887912f67dda957cf5917a",
+    "source_entrypoint_passed": true,
+    "protocol_pinned": true,
+    "governance": {
+      "method_card_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\method_cards\\arxiv_2202_01381.json",
+      "method_card_strict_ready": true,
+      "reproduction_plan_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reproduction_plans\\arxiv_2202_01381.json",
+      "reproduction_plan_strict_ready": true,
+      "passed": true
+    },
+    "blockers": [],
+    "passed": true
+  },
+  "runs": [
+    {
+      "run_index": 0,
+      "run_parameters": {},
+      "command": [
+        "D:\\ProgramData\\miniconda3\\envs\\finance_fa\\python.exe",
+        "-u",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2202_01381_exchange_native\\source/run.py",
+        "--root_path",
+        "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate",
+        "--data_path",
+        "exchange_rate.csv",
+        "--model_id",
+        "Exchange",
+        "--model",
+        "ETSformer",
+        "--data",
+        "custom",
+        "--features",
+        "M",
+        "--seq_len",
+        "336",
+        "--pred_len",
+        "96",
+        "--e_layers",
+        "2",
+        "--d_layers",
+        "2",
+        "--enc_in",
+        "8",
+        "--dec_in",
+        "8",
+        "--c_out",
+        "8",
+        "--des",
+        "native",
+        "--K",
+        "0",
+        "--learning_rate",
+        "3e-5",
+        "--lradj",
+        "cos_with_warmup",
+        "--train_epochs",
+        "15",
+        "--warmup_epochs",
+        "3",
+        "--batch_size",
+        "32",
+        "--num_workers",
+        "0",
+        "--itr",
+        "3",
+        "--checkpoints",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\r\\6efe0c8edd9e/checkpoints"
+      ],
+      "working_directory": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\r\\6efe0c8edd9e\\work",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 16270.484,
+      "metrics": {
+        "mse": 0.08478493243455887,
+        "mae": 0.20336855947971344
+      },
+      "metric_values": {
+        "mse": [
+          0.08648500591516495,
+          0.08698727190494537,
+          0.08478493243455887
+        ],
+        "mae": [
+          0.20545454323291779,
+          0.20600837469100952,
+          0.20336855947971344
+        ]
+      },
+      "stdout_tail": "teps: 152 | Train Loss: 0.4241795 Vali Loss: 0.1279211 Test Loss: 0.0911042\nValidation loss decreased (0.130967 --> 0.127921).  Saving model ...\nUpdating learning rate to 2.9488887394336025e-05\n\titers: 100, epoch: 5 | loss: 0.3708780\n\tspeed: 4.0625s/iter; left time: 6390.2384s\nEpoch: 5 cost time: 372.42765259742737\nEpoch: 5, Steps: 152 | Train Loss: 0.3992409 Vali Loss: 0.1274408 Test Loss: 0.0885225\nValidation loss decreased (0.127921 --> 0.127441).  Saving model ...\nUpdating learning rate to 2.7990381056766583e-05\n\titers: 100, epoch: 6 | loss: 0.4123233\n\tspeed: 4.0761s/iter; left time: 5792.1603s\nEpoch: 6 cost time: 370.9524812698364\nEpoch: 6, Steps: 152 | Train Loss: 0.3897979 Vali Loss: 0.1257863 Test Loss: 0.0869873\nValidation loss decreased (0.127441 --> 0.125786).  Saving model ...\nUpdating learning rate to 2.5606601717798212e-05\n\titers: 100, epoch: 7 | loss: 0.4899391\n\tspeed: 4.0094s/iter; left time: 5087.9363s\nEpoch: 7 cost time: 364.14858627319336\nEpoch: 7, Steps: 152 | Train Loss: 0.3788978 Vali Loss: 0.1274438 Test Loss: 0.0858606\nEarlyStopping counter: 1 out of 5\nUpdating learning rate to 2.25e-05\n\titers: 100, epoch: 8 | loss: 0.2764939\n\tspeed: 3.6557s/iter; left time: 4083.4602s\nEpoch: 8 cost time: 321.6821265220642\nEpoch: 8, Steps: 152 | Train Loss: 0.3641527 Vali Loss: 0.1267015 Test Loss: 0.0848281\nEarlyStopping counter: 2 out of 5\nUpdating learning rate to 1.888228567653781e-05\n\titers: 100, epoch: 9 | loss: 0.3931808\n\tspeed: 3.9649s/iter; left time: 3826.1030s\nEpoch: 9 cost time: 399.4935986995697\nEpoch: 9, Steps: 152 | Train Loss: 0.3603375 Vali Loss: 0.1268678 Test Loss: 0.0845987\nEarlyStopping counter: 3 out of 5\nUpdating learning rate to 1.5e-05\n\titers: 100, epoch: 10 | loss: 0.2937662\n\tspeed: 4.4951s/iter; left time: 3654.5440s\nEpoch: 10 cost time: 402.3454256057739\nEpoch: 10, Steps: 152 | Train Loss: 0.3509930 Vali Loss: 0.1296056 Test Loss: 0.0843156\nEarlyStopping counter: 4 out of 5\nUpdating learning rate to 1.1117714323462191e-05\n\titers: 100, epoch: 11 | loss: 0.2674259\n\tspeed: 4.0262s/iter; left time: 2661.2855s\nEpoch: 11 cost time: 356.06613779067993\nEpoch: 11, Steps: 152 | Train Loss: 0.3556657 Vali Loss: 0.1288559 Test Loss: 0.0843163\nEarlyStopping counter: 5 out of 5\nEarly stopping\n>>>>>>>testing : Exchange_ETSformer_custom_ftM_sl336_pl96_dm512_nh8_el2_dl2_df2048_K0_lr3e-05_native_1<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\nval 665\nloading model\ntest shape: (20, 32, 96, 8) (20, 32, 96, 8)\ntest shape: (640, 96, 8) (640, 96, 8)\nmse:0.12842047214508057, mae:0.248897522687912\ntest 1422\nloading model\ntest shape: (44, 32, 96, 8) (44, 32, 96, 8)\ntest shape: (1408, 96, 8) (1408, 96, 8)\nmse:0.08698727190494537, mae:0.20600837469100952\nUse CPU\n>>>>>>>start training : Exchange_ETSformer_custom_ftM_sl336_pl96_dm512_nh8_el2_dl2_df2048_K0_lr3e-05_native_2>>>>>>>>>>>>>>>>>>>>>>>>>>\ntrain 4880\nval 665\ntest 1422\n\titers: 100, epoch: 1 | loss: 0.3490570\n\tspeed: 2.2714s/iter; left time: 4953.8572s\nEpoch: 1 cost time: 342.42207312583923\nEpoch: 1, Steps: 152 | Train Loss: 0.3770444 Vali Loss: 0.1455133 Test Loss: 0.0837225\nValidation loss decreased (inf --> 0.145513).  Saving model ...\nUpdating learning rate to 7.5e-06\n\titers: 100, epoch: 2 | loss: 0.3887592\n\tspeed: 3.7266s/iter; left time: 7561.1938s\nEpoch: 2 cost time: 345.0350720882416\nEpoch: 2, Steps: 152 | Train Loss: 0.3431530 Vali Loss: 0.1441613 Test Loss: 0.0834562\nValidation loss decreased (0.145513 --> 0.144161).  Saving model ...\nUpdating learning rate to 1.5e-05\n\titers: 100, epoch: 3 | loss: 0.4049467\n\tspeed: 3.8195s/iter; left time: 7169.2536s\nEpoch: 3 cost time: 356.60742259025574\nEpoch: 3, Steps: 152 | Train Loss: 0.3295248 Vali Loss: 0.1401357 Test Loss: 0.0830674\nValidation loss decreased (0.144161 --> 0.140136).  Saving model ...\nUpdating learning rate to 2.25e-05\n\titers: 100, epoch: 4 | loss: 0.2881811\n\tspeed: 3.8174s/iter; left time: 6585.0922s\nEpoch: 4 cost time: 348.02111315727234\nEpoch: 4, Steps: 152 | Train Loss: 0.3281460 Vali Loss: 0.1355674 Test Loss: 0.0839244\nValidation loss decreased (0.140136 --> 0.135567).  Saving model ...\nUpdating learning rate to 2.9488887394336025e-05\n\titers: 100, epoch: 5 | loss: 0.2380453\n\tspeed: 3.7747s/iter; left time: 5937.5714s\nEpoch: 5 cost time: 343.8991045951843\nEpoch: 5, Steps: 152 | Train Loss: 0.3153974 Vali Loss: 0.1348678 Test Loss: 0.0841816\nValidation loss decreased (0.135567 --> 0.134868).  Saving model ...\nUpdating learning rate to 2.7990381056766583e-05\n\titers: 100, epoch: 6 | loss: 0.2806743\n\tspeed: 3.6773s/iter; left time: 5225.3738s\nEpoch: 6 cost time: 335.54280710220337\nEpoch: 6, Steps: 152 | Train Loss: 0.3252333 Vali Loss: 0.1342938 Test Loss: 0.0842332\nValidation loss decreased (0.134868 --> 0.134294).  Saving model ...\nUpdating learning rate to 2.5606601717798212e-05\n\titers: 100, epoch: 7 | loss: 0.3782388\n\tspeed: 3.6586s/iter; left time: 4642.8001s\nEpoch: 7 cost time: 341.37294363975525\nEpoch: 7, Steps: 152 | Train Loss: 0.3157014 Vali Loss: 0.1327672 Test Loss: 0.0845706\nValidation loss decreased (0.134294 --> 0.132767).  Saving model ...\nUpdating learning rate to 2.25e-05\n\titers: 100, epoch: 8 | loss: 0.3749782\n\tspeed: 3.7266s/iter; left time: 4162.6162s\nEpoch: 8 cost time: 335.65549874305725\nEpoch: 8, Steps: 152 | Train Loss: 0.3097337 Vali Loss: 0.1320183 Test Loss: 0.0842942\nValidation loss decreased (0.132767 --> 0.132018).  Saving model ...\nUpdating learning rate to 1.888228567653781e-05\n\titers: 100, epoch: 9 | loss: 0.2780801\n\tspeed: 3.7542s/iter; left time: 3622.7842s\nEpoch: 9 cost time: 348.4804153442383\nEpoch: 9, Steps: 152 | Train Loss: 0.3193536 Vali Loss: 0.1317405 Test Loss: 0.0843272\nValidation loss decreased (0.132018 --> 0.131741).  Saving model ...\nUpdating learning rate to 1.5e-05\n\titers: 100, epoch: 10 | loss: 0.3034756\n\tspeed: 3.6697s/iter; left time: 2983.4878s\nEpoch: 10 cost time: 331.5252776145935\nEpoch: 10, Steps: 152 | Train Loss: 0.3108971 Vali Loss: 0.1314914 Test Loss: 0.0846511\nValidation loss decreased (0.131741 --> 0.131491).  Saving model ...\nUpdating learning rate to 1.1117714323462191e-05\n\titers: 100, epoch: 11 | loss: 0.3739865\n\tspeed: 3.6364s/iter; left time: 2403.6299s\nEpoch: 11 cost time: 353.27689909935\nEpoch: 11, Steps: 152 | Train Loss: 0.3089228 Vali Loss: 0.1307315 Test Loss: 0.0847849\nValidation loss decreased (0.131491 --> 0.130732).  Saving model ...\nUpdating learning rate to 7.500000000000004e-06\n\titers: 100, epoch: 12 | loss: 0.3395942\n\tspeed: 4.3222s/iter; left time: 2200.0069s\nEpoch: 12 cost time: 410.7059555053711\nEpoch: 12, Steps: 152 | Train Loss: 0.3073467 Vali Loss: 0.1326579 Test Loss: 0.0847775\nEarlyStopping counter: 1 out of 5\nUpdating learning rate to 4.393398282201788e-06\n\titers: 100, epoch: 13 | loss: 0.3662556\n\tspeed: 4.2668s/iter; left time: 1523.2583s\nEpoch: 13 cost time: 350.50868582725525\nEpoch: 13, Steps: 152 | Train Loss: 0.3156715 Vali Loss: 0.1311342 Test Loss: 0.0848175\nEarlyStopping counter: 2 out of 5\nUpdating learning rate to 2.0096189432334194e-06\n\titers: 100, epoch: 14 | loss: 0.2978455\n\tspeed: 3.5996s/iter; left time: 737.9161s\nEpoch: 14 cost time: 330.65936756134033\nEpoch: 14, Steps: 152 | Train Loss: 0.3119110 Vali Loss: 0.1320560 Test Loss: 0.0848627\nEarlyStopping counter: 3 out of 5\nUpdating learning rate to 5.11112605663977e-07\n\titers: 100, epoch: 15 | loss: 0.2567335\n\tspeed: 3.5344s/iter; left time: 187.3224s\nEpoch: 15 cost time: 332.82763290405273\nEpoch: 15, Steps: 152 | Train Loss: 0.3087875 Vali Loss: 0.1312624 Test Loss: 0.0848656\nEarlyStopping counter: 4 out of 5\nUpdating learning rate to 0.0\n>>>>>>>testing : Exchange_ETSformer_custom_ftM_sl336_pl96_dm512_nh8_el2_dl2_df2048_K0_lr3e-05_native_2<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\nval 665\nloading model\ntest shape: (20, 32, 96, 8) (20, 32, 96, 8)\ntest shape: (640, 96, 8) (640, 96, 8)\nmse:0.12954728305339813, mae:0.252985417842865\ntest 1422\nloading model\ntest shape: (44, 32, 96, 8) (44, 32, 96, 8)\ntest shape: (1408, 96, 8) (1408, 96, 8)\nmse:0.08478493243455887, mae:0.20336855947971344\n",
+      "stderr_tail": "",
+      "metric_artifacts": [
+        {
+          "path": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\r\\6efe0c8edd9e\\work\\results\\Exchange_ETSformer_custom_ftM_sl336_pl96_dm512_nh8_el2_dl2_df2048_K0_lr3e-05_native_0\\test_metrics.npy",
+          "sha256": "1f0310d2b47570be6f36f83c2c84699db1a98a1764b4cc2a48d17f6f3c72cd85",
+          "metrics": {
+            "mae": 0.20545454323291779,
+            "mse": 0.08648500591516495
+          }
+        },
+        {
+          "path": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\r\\6efe0c8edd9e\\work\\results\\Exchange_ETSformer_custom_ftM_sl336_pl96_dm512_nh8_el2_dl2_df2048_K0_lr3e-05_native_1\\test_metrics.npy",
+          "sha256": "00448762a6a84cddbb9f8a53b7e74322b13c48bc53dc8ceb0bd5359e729b4c8a",
+          "metrics": {
+            "mae": 0.20600837469100952,
+            "mse": 0.08698727190494537
+          }
+        },
+        {
+          "path": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\r\\6efe0c8edd9e\\work\\results\\Exchange_ETSformer_custom_ftM_sl336_pl96_dm512_nh8_el2_dl2_df2048_K0_lr3e-05_native_2\\test_metrics.npy",
+          "sha256": "3095330249039fa31345816be4417248923da429c0ad7bfd002f2a3e145a9738",
+          "metrics": {
+            "mae": 0.20336855947971344,
+            "mse": 0.08478493243455887
+          }
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "mse": 0.0860857367515564,
+    "mae": 0.2049438258012136
+  },
+  "metric_aggregate": {
+    "mse": {
+      "mean": 0.0860857367515564,
+      "std": 0.0009423858673466625,
+      "values": [
+        0.08648500591516495,
+        0.08698727190494537,
+        0.08478493243455887
+      ]
+    },
+    "mae": {
+      "mean": 0.2049438258012136,
+      "std": 0.0011365973513760117,
+      "values": [
+        0.20545454323291779,
+        0.20600837469100952,
+        0.20336855947971344
+      ]
+    }
+  },
+  "reported_metrics": {
+    "mse": 0.085,
+    "mae": 0.204
+  },
+  "metric_checks": {
+    "mse": {
+      "expected": 0.085,
+      "actual": 0.0860857367515564,
+      "absolute_tolerance": 0.02,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": true
+    },
+    "mae": {
+      "expected": 0.204,
+      "actual": 0.2049438258012136,
+      "absolute_tolerance": 0.025,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": true
+    }
+  },
+  "execution_passed": true,
+  "observation_count_passed": true,
+  "result_reproduced_within_tolerance": true,
+  "complete_reproduction_allowed": true,
+  "blockers": [],
+  "duration_seconds": 16270.5,
+  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2202_01381_exchange_native.json",
+  "metric_source": "official_test_artifacts"
+}

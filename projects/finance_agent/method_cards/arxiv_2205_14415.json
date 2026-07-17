@@ -1,0 +1,233 @@
+{
+  "schema_version": "method_card_v2",
+  "method_id": "arxiv_2205_14415_exchange_native",
+  "paper_id": "arxiv_2205_14415",
+  "title": "Non-stationary Transformers: Exploring the Stationarity in Time Series Forecasting",
+  "venue_or_source": "primary-source curated native claim",
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2022/hash/4054556fcaa934b0bf76da52cf4f92cb-Abstract-Conference.html",
+  "task_type": "multivariate time-series forecasting",
+  "target_asset": "eight-channel daily Exchange-Rate series",
+  "asset_universe": [
+    "exchange_channel_1",
+    "exchange_channel_2",
+    "exchange_channel_3",
+    "exchange_channel_4",
+    "exchange_channel_5",
+    "exchange_channel_6",
+    "exchange_channel_7",
+    "exchange_channel_8"
+  ],
+  "frequency": "daily",
+  "horizon": "96 days",
+  "label_definition": "future multivariate exchange-rate levels",
+  "data_requirements": [
+    "frozen Exchange-Rate bytes",
+    "chronological train/validation/test split"
+  ],
+  "feature_groups": [
+    "eight raw exchange-rate channels"
+  ],
+  "model_families": [
+    "ns_Transformer"
+  ],
+  "training_protocol": "Pinned official implementation and claim command; see native claim catalog.",
+  "evaluation_protocol": "Paper-native chronological holdout and paper-native metrics.",
+  "metrics": [
+    "mse",
+    "mae"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "mse": 0.111,
+    "mae": 0.237
+  },
+  "strict_requirements": [
+    "exact data hash",
+    "pinned source revision",
+    "metric observation count",
+    "predeclared tolerance"
+  ],
+  "unknowns": [],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "target_asset",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting target_asset.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "asset_universe",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting asset_universe.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "frequency",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting frequency.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "horizon",
+      "quote": "dditional results (ETTm1,\nETTh1, ETTh2) can be found in Appendix C.1.\nModels Ours Autoformer [37]Pyraformer [23]Informer [39] LogTrans [22] Reformer [19] LSTNet [20]\nMetric MSE MAE MSE MAE MSE MAE MSE MAE MSE MAE MSE MAE MSE MAEExchange\n96 0.111 0.237 0.197 0.323 0.852 0.780 0.847 0.752 0.968 0.812 1.065 0.829 1.551 1.058\n192 0.219 0.335 0.300 0.369 0.993 0.858 1.204 0.895 1.040 0.851 1.188 0.906 1.477 1.028\n336 0.421 0.476 0.509 0.524 1.240 0.958 1.672 1.036 1.659 1.081 1.357 0.976 1.507 1.031\n720 1.092 0.769 1.447 0.941 1.711 1.093 2.478 1.310 1.941 1.127 1.510 1.016 2.285 1.243\nILI\n24 2.294 0.945 3.483 1.287 5.800 1.693 5.764 1.677 4.480 1.444 4.400 1.382 6.026 1.770\n36 1.825 0.848 3.103 1.148 6.043 1.733 4.755 1.467 4.799 1.467 4.783 1.448 5.340",
+      "summary": "Verbatim primary-source excerpt supporting horizon.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.neurips.cc/paper_files/paper/2022/hash/4054556fcaa934b0bf76da52cf4f92cb-Abstract-Conference.html",
+      "source_revision": "NeurIPS 2022 paper, Table 2, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "label_definition",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting label_definition.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "data_requirements",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting data_requirements.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "feature_groups",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting feature_groups.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "model_families",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting model_families.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "training_protocol",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting training_protocol.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "evaluation_protocol",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting evaluation_protocol.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "metrics",
+      "quote": "dditional results (ETTm1,\nETTh1, ETTh2) can be found in Appendix C.1.\nModels Ours Autoformer [37]Pyraformer [23]Informer [39] LogTrans [22] Reformer [19] LSTNet [20]\nMetric MSE MAE MSE MAE MSE MAE MSE MAE MSE MAE MSE MAE MSE MAEExchange\n96 0.111 0.237 0.197 0.323 0.852 0.780 0.847 0.752 0.968 0.812 1.065 0.829 1.551 1.058\n192 0.219 0.335 0.300 0.369 0.993 0.858 1.204 0.895 1.040 0.851 1.188 0.906 1.477 1.028\n336 0.421 0.476 0.509 0.524 1.240 0.958 1.672 1.036 1.659 1.081 1.357 0.976 1.507 1.031\n720 1.092 0.769 1.447 0.941 1.711 1.093 2.478 1.310 1.941 1.127 1.510 1.016 2.285 1.243\nILI\n24 2.294 0.945 3.483 1.287 5.800 1.693 5.764 1.677 4.480 1.444 4.400 1.382 6.026 1.770\n36 1.825 0.848 3.103 1.148 6.043 1.733 4.755 1.467 4.799 1.467 4.783 1.448 5.340",
+      "summary": "Verbatim primary-source excerpt supporting metrics.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.neurips.cc/paper_files/paper/2022/hash/4054556fcaa934b0bf76da52cf4f92cb-Abstract-Conference.html",
+      "source_revision": "NeurIPS 2022 paper, Table 2, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "preprocessing_protocol",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting preprocessing_protocol.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    },
+    {
+      "source_id": "arxiv_2205_14415_primary_sources",
+      "section": "hyperparameters",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 0 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model ns_Transformer \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --gpu 1 \\\n  --des 'Exp_h16_l2' \\\n  --p_hidden_dims 16 16 \\\n  --p_hidden_layers 2 \\\n  --itr 1 & \n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./da",
+      "summary": "Verbatim primary-source excerpt supporting hyperparameters.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Nonstationary_Transformers",
+      "source_revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56"
+    }
+  ],
+  "extraction_metadata": {
+    "curation_mode": "primary_source_curated",
+    "llm_generated": false,
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 13,
+      "errors": [],
+      "verification_method": "exact_substring_primary_source_curation"
+    }
+  },
+  "approval_required": false,
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "Training-split standardization implemented by the pinned official loader.",
+  "hyperparameters": [
+    "{python}",
+    "-u",
+    "{source_root}/run.py",
+    "--is_training",
+    "1",
+    "--root_path",
+    "{dataset_dir}",
+    "--data_path",
+    "exchange_rate.csv",
+    "--model_id",
+    "Exchange_96_96",
+    "--model",
+    "ns_Transformer",
+    "--data",
+    "custom",
+    "--features",
+    "M",
+    "--seq_len",
+    "96",
+    "--label_len",
+    "48",
+    "--pred_len",
+    "96",
+    "--e_layers",
+    "2",
+    "--d_layers",
+    "1",
+    "--enc_in",
+    "8",
+    "--dec_in",
+    "8",
+    "--c_out",
+    "8",
+    "--des",
+    "native",
+    "--num_workers",
+    "0",
+    "--checkpoints",
+    "{runtime_root}/checkpoints",
+    "--factor",
+    "3",
+    "--p_hidden_dims",
+    "16",
+    "16",
+    "--p_hidden_layers",
+    "2",
+    "--itr",
+    "3"
+  ]
+}

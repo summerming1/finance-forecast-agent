@@ -1,0 +1,34 @@
+{
+  "request": {
+    "request_id": "benchmark_btc_usd",
+    "dataset_id": "benchmark_btc_usd",
+    "source_type": "yahoo_chart",
+    "paper_id": null,
+    "source_url": null,
+    "symbol_or_series": "BTC-USD",
+    "start_date": "2016-01-01",
+    "end_date": "2026-07-14",
+    "frequency": "1d",
+    "expected_fields": [
+      "chart"
+    ],
+    "license_status": "provider_terms_review_required",
+    "requested_by": "benchmark_suite",
+    "rationale": "",
+    "status": "pending",
+    "blockers": []
+  },
+  "status": "downloaded",
+  "local_path": "projects\\finance_agent\\data\\acquired\\benchmark_btc_usd\\snapshot.json",
+  "sha256": "3e8c3163ab45e7ce66622b4126fd97dcee6a1a68c528bef73dbfc2ae3da4fa87",
+  "byte_count": 378619,
+  "content_type": "application/json;charset=utf-8",
+  "detected_fields": [
+    "chart"
+  ],
+  "missing_expected_fields": [],
+  "acquired_at": "2026-07-14T14:24:27.197737+00:00",
+  "source_final_url": "https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD?period1=1451606400&period2=1783987200&interval=1d&events=history",
+  "error": null,
+  "schema_version": "data_acquisition_result_v1"
+}

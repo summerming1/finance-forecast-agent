@@ -1,0 +1,234 @@
+{
+  "schema_version": "method_card_v2",
+  "method_id": "arxiv_2201_12740_exchange_native",
+  "paper_id": "arxiv_2201_12740",
+  "title": "FEDformer: Frequency Enhanced Decomposed Transformer for Long-term Series Forecasting",
+  "venue_or_source": "primary-source curated native claim",
+  "paper_url": "https://proceedings.mlr.press/v162/zhou22g.html",
+  "task_type": "multivariate time-series forecasting",
+  "target_asset": "eight-channel daily Exchange-Rate series",
+  "asset_universe": [
+    "exchange_channel_1",
+    "exchange_channel_2",
+    "exchange_channel_3",
+    "exchange_channel_4",
+    "exchange_channel_5",
+    "exchange_channel_6",
+    "exchange_channel_7",
+    "exchange_channel_8"
+  ],
+  "frequency": "daily",
+  "horizon": "96 days",
+  "label_definition": "future multivariate exchange-rate levels",
+  "data_requirements": [
+    "frozen Exchange-Rate bytes",
+    "chronological train/validation/test split"
+  ],
+  "feature_groups": [
+    "eight raw exchange-rate channels"
+  ],
+  "model_families": [
+    "FEDformer"
+  ],
+  "training_protocol": "Pinned official implementation and claim command; see native claim catalog.",
+  "evaluation_protocol": "Paper-native chronological holdout and paper-native metrics.",
+  "metrics": [
+    "mse",
+    "mae"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "mse": 0.148,
+    "mae": 0.278
+  },
+  "strict_requirements": [
+    "exact data hash",
+    "pinned source revision",
+    "metric observation count",
+    "predeclared tolerance"
+  ],
+  "unknowns": [],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "target_asset",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting target_asset.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "asset_universe",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting asset_universe.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "frequency",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting frequency.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "horizon",
+      "quote": "s are highligh ted in bold.\nMethods Metric ETTm2 Electricity Exchange Trafﬁc Weather ILI\n96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 24 36 48 60\nFEDformer-f MSE 0.203 0.269 0.325 0.421 0.193 0.201 0.214 0.246 0.148 0.271 0.460 1.195 0.587 0.604 0.621 0.626 0.217 0.276 0.339 0.403 3.228 2.679 2.622 2.857\nMAE 0.287 0.328 0.366 0.415 0.308 0.315 0.329 0.355 0.278 0.380 0.500 0.841 0.366 0.373 0.383 0.382 0.296 0.336 0.380 0.428 1.260 1.080 1.078 1.157\nFEDformer-w MSE 0.204 0.316 0.359 0.433 0.183 0.195 0.212 0.231 0.139 0.256 0.426 1.090 0.562 0.562 0.570 0.596 0.227 0.295 0.381 0.424 2.203 2.272 2.209 2.545\nMAE 0.288 0.363 0.387 0.432 0.297 0.308 0.313 0.343 0.276 0.369 0.464 0.800 0.349 0.346 0.323 0.368 0.304 0.363 0.41",
+      "summary": "Verbatim primary-source excerpt supporting horizon.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v162/zhou22g.html",
+      "source_revision": "ICML 2022 paper, Table 2, FEDformer-f, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "label_definition",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting label_definition.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "data_requirements",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting data_requirements.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "feature_groups",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting feature_groups.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "model_families",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting model_families.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "training_protocol",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting training_protocol.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "evaluation_protocol",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting evaluation_protocol.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "metrics",
+      "quote": "s are highligh ted in bold.\nMethods Metric ETTm2 Electricity Exchange Trafﬁc Weather ILI\n96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 96 192 336 720 24 36 48 60\nFEDformer-f MSE 0.203 0.269 0.325 0.421 0.193 0.201 0.214 0.246 0.148 0.271 0.460 1.195 0.587 0.604 0.621 0.626 0.217 0.276 0.339 0.403 3.228 2.679 2.622 2.857\nMAE 0.287 0.328 0.366 0.415 0.308 0.315 0.329 0.355 0.278 0.380 0.500 0.841 0.366 0.373 0.383 0.382 0.296 0.336 0.380 0.428 1.260 1.080 1.078 1.157\nFEDformer-w MSE 0.204 0.316 0.359 0.433 0.183 0.195 0.212 0.231 0.139 0.256 0.426 1.090 0.562 0.562 0.570 0.596 0.227 0.295 0.381 0.424 2.203 2.272 2.209 2.545\nMAE 0.288 0.363 0.387 0.432 0.297 0.308 0.313 0.343 0.276 0.369 0.464 0.800 0.349 0.346 0.323 0.368 0.304 0.363 0.41",
+      "summary": "Verbatim primary-source excerpt supporting metrics.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v162/zhou22g.html",
+      "source_revision": "ICML 2022 paper, Table 2, FEDformer-f, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "preprocessing_protocol",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting preprocessing_protocol.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    },
+    {
+      "source_id": "arxiv_2201_12740_primary_sources",
+      "section": "hyperparameters",
+      "quote": "$preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 321 \\\n --dec_in 321 \\\n --c_out 321 \\\n --des 'Exp' \\\n --itr 3\n\n# exchange\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/exchange_rate/ \\\n --data_path exchange_rate.csv \\\n --task_id Exchange \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 8 \\\n --dec_in 8 \\\n --c_out 8 \\\n --des 'Exp' \\\n --itr 3\n\n# traffic\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/traffic/ \\\n --data_path traffic.csv \\\n --task_id traffic \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen \\\n --e_layers 2 \\\n --d_layers 1 \\\n --factor 3 \\\n --enc_in 862 \\\n --dec_in 862 \\\n --c_out 862 \\\n --des 'Exp' \\\n --itr 3 \\\n --train_epochs 3\n\n# weather\npython -u run.py \\\n --is_training 1 \\\n --root_path ./dataset/weather/ \\\n --data_path weather.csv \\\n --task_id weather \\\n --model $model \\\n --data custom \\\n --features M \\\n --seq_len 96 \\\n --label_len 48 \\\n --pred_len $preLen",
+      "summary": "Verbatim primary-source excerpt supporting hyperparameters.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/MAZiqing/FEDformer",
+      "source_revision": "c0f6b972def125691434d62be1ecadf710ae921a"
+    }
+  ],
+  "extraction_metadata": {
+    "curation_mode": "primary_source_curated",
+    "llm_generated": false,
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 13,
+      "errors": [],
+      "verification_method": "exact_substring_primary_source_curation"
+    }
+  },
+  "approval_required": false,
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "Training-split standardization implemented by the pinned official loader.",
+  "hyperparameters": [
+    "{python}",
+    "-u",
+    "{source_root}/run.py",
+    "--is_training",
+    "1",
+    "--root_path",
+    "{dataset_dir}",
+    "--data_path",
+    "exchange_rate.csv",
+    "--task_id",
+    "Exchange",
+    "--model",
+    "FEDformer",
+    "--data",
+    "custom",
+    "--features",
+    "M",
+    "--seq_len",
+    "96",
+    "--label_len",
+    "48",
+    "--pred_len",
+    "96",
+    "--e_layers",
+    "2",
+    "--d_layers",
+    "1",
+    "--enc_in",
+    "8",
+    "--dec_in",
+    "8",
+    "--c_out",
+    "8",
+    "--des",
+    "native",
+    "--num_workers",
+    "0",
+    "--checkpoints",
+    "{runtime_root}/checkpoints",
+    "--version",
+    "Fourier",
+    "--modes",
+    "64",
+    "--d_model",
+    "512",
+    "--factor",
+    "3",
+    "--itr",
+    "5"
+  ]
+}

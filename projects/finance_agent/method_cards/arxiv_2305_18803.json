@@ -1,0 +1,236 @@
+{
+  "schema_version": "method_card_v2",
+  "method_id": "arxiv_2305_18803_exchange_native",
+  "paper_id": "arxiv_2305_18803",
+  "title": "Koopa: Learning Non-stationary Time Series Dynamics with Koopman Predictors",
+  "venue_or_source": "primary-source curated native claim",
+  "paper_url": "https://arxiv.org/abs/2305.18803",
+  "task_type": "multivariate time-series forecasting",
+  "target_asset": "eight-channel daily Exchange-Rate series",
+  "asset_universe": [
+    "exchange_channel_1",
+    "exchange_channel_2",
+    "exchange_channel_3",
+    "exchange_channel_4",
+    "exchange_channel_5",
+    "exchange_channel_6",
+    "exchange_channel_7",
+    "exchange_channel_8"
+  ],
+  "frequency": "daily",
+  "horizon": "96 days",
+  "label_definition": "future multivariate exchange-rate levels",
+  "data_requirements": [
+    "frozen Exchange-Rate bytes",
+    "chronological train/validation/test split"
+  ],
+  "feature_groups": [
+    "eight raw exchange-rate channels"
+  ],
+  "model_families": [
+    "Koopa"
+  ],
+  "training_protocol": "Pinned official implementation and claim command; see native claim catalog.",
+  "evaluation_protocol": "Paper-native chronological holdout and paper-native metrics.",
+  "metrics": [
+    "mse",
+    "mae"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "mse": 0.083,
+    "mae": 0.207
+  },
+  "strict_requirements": [
+    "exact data hash",
+    "pinned source revision",
+    "metric observation count",
+    "predeclared tolerance"
+  ],
+  "unknowns": [],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "target_asset",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting target_asset.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "asset_universe",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting asset_universe.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "frequency",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting frequency.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "horizon",
+      "quote": "1 0.456 0.352 0.397 0.457 0.461\n192 0.356 0.393 0.383 0.406 0.394 0.434 0.385 0.418 0.455 0.464 0.528 0.503 0.361 0.410 0.503 0.491\nExchange\n48 0.042 0.143 0.044 0.144 0.059 0.172 0.043 0.145 0.117 0.248 0.128 0.271 0.071 0.192 0.125 0.252\n96 0.083 0.207 0.085 0.204 0.120 0.255 0.084 0.220 0.108 0.251 0.294 0.394 0.112 0.245 0.280 0.386\n144 0.130 0.261 0.132 0.260 0.206 0.334 0.132 0.253 0.152 0.301 0.597 0.578 0.174 0.306 0.520 0.523\n192 0.184 0.309 0.174 0.300 0.377 0.463 0.178 0.299 0.187 0.331 0.654 0.595 0.241 0.364 0.653 0.592\nILI\n24 1.621 0.800 2.063 0.881 2.464 1.039 2.624 1.118 4.380 1.558 3.722 1.432 3.590 1.424 2.831 1.085\n36 1.803 0.855 2.178 0.943 2.388 1.007 2.693 1.156 3.314 1.313 3.941 1.448 4.200 1.383 2.801 1.088\n48 1.768 0.903 1.91",
+      "summary": "Verbatim primary-source excerpt supporting horizon.",
+      "source_type": "paper",
+      "source_url": "https://arxiv.org/abs/2305.18803",
+      "source_revision": "NeurIPS 2023 paper, Table 1 and Table 6, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "label_definition",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting label_definition.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "data_requirements",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting data_requirements.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "feature_groups",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting feature_groups.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "model_families",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting model_families.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "training_protocol",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting training_protocol.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "evaluation_protocol",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting evaluation_protocol.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "metrics",
+      "quote": "1 0.456 0.352 0.397 0.457 0.461\n192 0.356 0.393 0.383 0.406 0.394 0.434 0.385 0.418 0.455 0.464 0.528 0.503 0.361 0.410 0.503 0.491\nExchange\n48 0.042 0.143 0.044 0.144 0.059 0.172 0.043 0.145 0.117 0.248 0.128 0.271 0.071 0.192 0.125 0.252\n96 0.083 0.207 0.085 0.204 0.120 0.255 0.084 0.220 0.108 0.251 0.294 0.394 0.112 0.245 0.280 0.386\n144 0.130 0.261 0.132 0.260 0.206 0.334 0.132 0.253 0.152 0.301 0.597 0.578 0.174 0.306 0.520 0.523\n192 0.184 0.309 0.174 0.300 0.377 0.463 0.178 0.299 0.187 0.331 0.654 0.595 0.241 0.364 0.653 0.592\nILI\n24 1.621 0.800 2.063 0.881 2.464 1.039 2.624 1.118 4.380 1.558 3.722 1.432 3.590 1.424 2.831 1.085\n36 1.803 0.855 2.178 0.943 2.388 1.007 2.693 1.156 3.314 1.313 3.941 1.448 4.200 1.383 2.801 1.088\n48 1.768 0.903 1.91",
+      "summary": "Verbatim primary-source excerpt supporting metrics.",
+      "source_type": "paper",
+      "source_url": "https://arxiv.org/abs/2305.18803",
+      "source_revision": "NeurIPS 2023 paper, Table 1 and Table 6, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "preprocessing_protocol",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting preprocessing_protocol.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    },
+    {
+      "source_id": "arxiv_2305_18803_primary_sources",
+      "section": "hyperparameters",
+      "quote": "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\",
+      "summary": "Verbatim primary-source excerpt supporting hyperparameters.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/thuml/Koopa",
+      "source_revision": "a2e0bb77ec7c1a25e8e0579ba517ffb41358b844"
+    }
+  ],
+  "extraction_metadata": {
+    "curation_mode": "primary_source_curated",
+    "llm_generated": false,
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 13,
+      "errors": [],
+      "verification_method": "exact_substring_primary_source_curation"
+    }
+  },
+  "approval_required": false,
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "Training-split standardization implemented by the pinned official loader.",
+  "hyperparameters": [
+    "{python}",
+    "-u",
+    "{source_root}/run.py",
+    "--is_training",
+    "1",
+    "--root_path",
+    "{dataset_dir}",
+    "--data_path",
+    "exchange_rate.csv",
+    "--model_id",
+    "Exchange_192_96",
+    "--model",
+    "Koopa",
+    "--data",
+    "custom",
+    "--features",
+    "M",
+    "--seq_len",
+    "192",
+    "--pred_len",
+    "96",
+    "--seg_len",
+    "96",
+    "--dynamic_dim",
+    "64",
+    "--hidden_dim",
+    "64",
+    "--hidden_layers",
+    "3",
+    "--num_blocks",
+    "4",
+    "--enc_in",
+    "8",
+    "--dec_in",
+    "8",
+    "--c_out",
+    "8",
+    "--des",
+    "native",
+    "--learning_rate",
+    "0.001",
+    "--itr",
+    "1",
+    "--gpu",
+    "0",
+    "--seed",
+    "{seed}",
+    "--num_workers",
+    "0",
+    "--checkpoints",
+    "{runtime_root}/checkpoints"
+  ]
+}

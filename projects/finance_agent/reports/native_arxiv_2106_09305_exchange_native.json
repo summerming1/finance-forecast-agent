@@ -1,0 +1,256 @@
+{
+  "schema_version": "native_result_report_v1",
+  "generated_at": "2026-07-15T03:55:50.427801+00:00",
+  "run_mode": "native_reproduction",
+  "paper_id": "arxiv_2106_09305",
+  "claim_id": "arxiv_2106_09305_exchange_native",
+  "title": "Time Series is a Special Sequence: Forecasting with Sample Convolution and Interaction",
+  "model_name": "SCINet",
+  "paper_url": "https://proceedings.neurips.cc/paper/2022/hash/266983d0949aed78a16fa4782237dea7-Abstract-Conference.html",
+  "claim_locator": "NeurIPS 2022 paper, Table 3, Exchange, horizon 96",
+  "source": {
+    "repository": "https://github.com/cure-lab/SCINet",
+    "revision": "02e6b0af2d58243de09aaa1eac3840237b659847",
+    "license": "Apache-2.0",
+    "archive_sha256": "574f3a7221ef258c00d6a7a3e60fabc0965fa99fc8225bbf61f82e58f7ee42f0",
+    "entrypoint_sha256": "fffbfab9ac98f75611b6629709423425219ed15737bf00dcfbf0d1f7db1a71bb",
+    "runtime_source_root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2106_09305_exchange_native\\source",
+    "compatibility_patches": [
+      {
+        "path": "utils/tools.py",
+        "classification": "semantic_noop",
+        "rationale": "NumPy 2 removed the uppercase alias; both names denote positive infinity.",
+        "before_sha256": "a32fc750b784c983ef87636486f1a6d75e6044aa10c9d15b469aaf1833c8491d",
+        "after_sha256": "64363e9775946096d3ea6384e8bfda8f09a0369519617904c2b8507750243dce"
+      },
+      {
+        "path": "experiments/exp_basic.py",
+        "classification": "semantic_noop",
+        "rationale": "Select the available device without changing model operations.",
+        "before_sha256": "e11a2d73c9ee12fb5a223149887f1786ce0c6d78f7fbb386dc5618ad5998fd6f",
+        "after_sha256": "f67c4bf1efbe355a62323399e8f5a52b26918718e7a9be706c344d9be7cdaadd"
+      },
+      {
+        "path": "experiments/exp_financial.py",
+        "classification": "semantic_noop",
+        "rationale": "Place the training loss on the selected device.",
+        "before_sha256": "a041293dc6d82e5ce0f3e150d2d8c6c9175cde24bdec7e5bce4300a440da672c",
+        "after_sha256": "5834cba2409890c6989452bfd1a573df2d35030c7e1e49cf2a9ca4a402a1c581"
+      },
+      {
+        "path": "experiments/exp_financial.py",
+        "classification": "semantic_noop",
+        "rationale": "Place the evaluation loss on the selected device.",
+        "before_sha256": "5834cba2409890c6989452bfd1a573df2d35030c7e1e49cf2a9ca4a402a1c581",
+        "after_sha256": "6bc2ecc132985e34ca0aa6d765c130cf834ea516c0bd9c3ac0cbefea1d97e3cf"
+      },
+      {
+        "path": "experiments/exp_financial.py",
+        "classification": "semantic_noop",
+        "rationale": "Place the evaluation loss on the selected device.",
+        "before_sha256": "6bc2ecc132985e34ca0aa6d765c130cf834ea516c0bd9c3ac0cbefea1d97e3cf",
+        "after_sha256": "c188a0c41eee5a9ca556e50bc1f7022cee4b0cdd02c60779e2c36c57fb954f93"
+      },
+      {
+        "path": "experiments/exp_financial.py",
+        "classification": "semantic_noop",
+        "rationale": "Place the loss weight on the selected device.",
+        "before_sha256": "c188a0c41eee5a9ca556e50bc1f7022cee4b0cdd02c60779e2c36c57fb954f93",
+        "after_sha256": "35bc308e690d4771baf3384bb9ab8fc6b5373b0727c2d6dcd8fc7c0f62c0f026"
+      },
+      {
+        "path": "data_process/financial_dataloader.py",
+        "classification": "semantic_noop",
+        "rationale": "Place scale tensors on the available device.",
+        "before_sha256": "509f629557ed339f09a90cbaf8117b8feee112189d57c25c894b9777d140baff",
+        "after_sha256": "971857cedeea79d0d10c90fe306d4c22524566c2705209be89e57181ba6f1c94"
+      },
+      {
+        "path": "data_process/financial_dataloader.py",
+        "classification": "semantic_noop",
+        "rationale": "Place bias tensors on the available device.",
+        "before_sha256": "971857cedeea79d0d10c90fe306d4c22524566c2705209be89e57181ba6f1c94",
+        "after_sha256": "3ce3d989bad78e3e4621aeb0ae77ea5c7f0822baa6821f69ea2ba4f8252600d7"
+      },
+      {
+        "path": "data_process/financial_dataloader.py",
+        "classification": "semantic_noop",
+        "rationale": "Place input batches on the available device.",
+        "before_sha256": "3ce3d989bad78e3e4621aeb0ae77ea5c7f0822baa6821f69ea2ba4f8252600d7",
+        "after_sha256": "e81922254ede46bf4059d28d543fe2ae66f877166ab22411ec0c849b445bef8a"
+      },
+      {
+        "path": "data_process/financial_dataloader.py",
+        "classification": "semantic_noop",
+        "rationale": "Place target batches on the available device.",
+        "before_sha256": "e81922254ede46bf4059d28d543fe2ae66f877166ab22411ec0c849b445bef8a",
+        "after_sha256": "69aa5a177f2e3a9fb2af3ae893b0082c962b4298ce65dbb3d15d31311a4ace95"
+      },
+      {
+        "path": "models/SCINet.py",
+        "classification": "semantic_noop",
+        "rationale": "Create temporary tensors on the input device.",
+        "before_sha256": "ecd21507e5330e48c968d97b483820e49f811046a16ab3b85ebf7da6b165fc00",
+        "after_sha256": "957bd5f1afe063213e7f9b1c12640a9307e49e18b46372fe566e7ce5dec22caf"
+      }
+    ]
+  },
+  "dataset": {
+    "dataset_id": "exchange_rate_official_7588x8",
+    "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842"
+  },
+  "protocol": {
+    "dataset": "Exchange-Rate",
+    "features": "M",
+    "split": "official chronological loader",
+    "claim_locator": "NeurIPS 2022 paper, Table 3, Exchange, horizon 96",
+    "protocol_note": "The runtime report records the repository's effective normalization branch; README and code disagree on the displayed normalize value."
+  },
+  "runtime_environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "torch": "2.12.1"
+  },
+  "runtime_files": [
+    {
+      "source": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.txt",
+      "destination": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2106_09305_exchange_native\\work\\datasets\\financial\\exchange_rate.txt",
+      "sha256": "0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f"
+    }
+  ],
+  "required_repetitions": 1,
+  "expected_metric_observations": 1,
+  "metric_observation_policy": "last",
+  "audit": {
+    "dataset_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "dataset_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+    "dataset_passed": true,
+    "source_archive_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\scinet.zip",
+    "source_archive_sha256": "574f3a7221ef258c00d6a7a3e60fabc0965fa99fc8225bbf61f82e58f7ee42f0",
+    "source_archive_passed": true,
+    "source_root": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\scinet\\SCINet-02e6b0af2d58243de09aaa1eac3840237b659847",
+    "source_entrypoint": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\scinet\\SCINet-02e6b0af2d58243de09aaa1eac3840237b659847\\run_financial.py",
+    "source_entrypoint_sha256": "fffbfab9ac98f75611b6629709423425219ed15737bf00dcfbf0d1f7db1a71bb",
+    "source_entrypoint_passed": true,
+    "protocol_pinned": true,
+    "governance": {
+      "method_card_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\method_cards\\arxiv_2106_09305.json",
+      "method_card_strict_ready": true,
+      "reproduction_plan_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reproduction_plans\\arxiv_2106_09305.json",
+      "reproduction_plan_strict_ready": true,
+      "passed": true
+    },
+    "blockers": [],
+    "passed": true
+  },
+  "runs": [
+    {
+      "run_index": 0,
+      "command": [
+        "D:\\ProgramData\\miniconda3\\envs\\finance_fa\\python.exe",
+        "-u",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2106_09305_exchange_native\\source/run_financial.py",
+        "--dataset_name",
+        "exchange_rate",
+        "--epochs",
+        "20",
+        "--window_size",
+        "96",
+        "--horizon",
+        "96",
+        "--hidden-size",
+        "0.125",
+        "--normalize",
+        "3",
+        "--lastWeight",
+        "0.5",
+        "--stacks",
+        "1",
+        "--levels",
+        "3",
+        "--lr",
+        "5e-5",
+        "--dropout",
+        "0",
+        "--batch_size",
+        "8",
+        "--model_name",
+        "native",
+        "--num_decoder_layer",
+        "2",
+        "--long_term_forecast"
+      ],
+      "working_directory": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2106_09305_exchange_native\\work",
+      "exit_code": 0,
+      "duration_seconds": 3164.265,
+      "metrics": {
+        "mse": 0.1355,
+        "mae": 0.2788
+      },
+      "metric_values": {
+        "mse": [
+          0.1355
+        ],
+        "mae": [
+          0.2788
+        ]
+      },
+      "stdout_tail": " 133.79s | train_loss 0.0046 | valid rse 0.5556 | valid rae 0.4572 | valid corr  0.2493| valid mse 0.3255 | valid mae  0.4000| test rse 0.4881 | test rae 0.4388 | test corr  0.7033 | test mse 0.2462 | test mae  0.3471|\nUpdating learning rate to 2.9936846961918937e-05\niter:  0 | loss: 0.0047335\niter:100 | loss: 0.0066802\niter:200 | loss: 0.0052235\niter:300 | loss: 0.0040999\niter:400 | loss: 0.0078044\niter:500 | loss: 0.0042254\niter:600 | loss: 0.0035072\n|valid_final mse 0.3884 |valid_final mae 0.4301 |valid_final rse 0.6273 | valid_final rae 0.5118 | valid_final corr  0.1957\n|valid_final mse 0.2993 |valid_final mae 0.3771 |valid_final rse 0.5492 | valid_final rae 0.4930 | valid_final corr  0.6541\n| EncoDeco: end of epoch  10 | time: 165.82s | train_loss 0.0045 | valid rse 0.6273 | valid rae 0.5118 | valid corr  0.1957| valid mse 0.3884 | valid mae  0.4301| test rse 0.5492 | test rae 0.4930 | test corr  0.6541 | test mse 0.2993 | test mae  0.3771|\nUpdating learning rate to 2.8440004613822984e-05\niter:  0 | loss: 0.0040343\niter:100 | loss: 0.0043636\niter:200 | loss: 0.0035016\niter:300 | loss: 0.0043541\niter:400 | loss: 0.0030152\niter:500 | loss: 0.0041534\niter:600 | loss: 0.0047540\n|valid_final mse 0.4113 |valid_final mae 0.4389 |valid_final rse 0.6039 | valid_final rae 0.4837 | valid_final corr  0.1942\n|valid_final mse 0.3168 |valid_final mae 0.3840 |valid_final rse 0.5243 | valid_final rae 0.4698 | valid_final corr  0.6531\n| EncoDeco: end of epoch  11 | time: 142.50s | train_loss 0.0044 | valid rse 0.6039 | valid rae 0.4837 | valid corr  0.1942| valid mse 0.4113 | valid mae  0.4389| test rse 0.5243 | test rae 0.4698 | test corr  0.6531 | test mse 0.3168 | test mae  0.3840|\nUpdating learning rate to 2.7018004383131835e-05\niter:  0 | loss: 0.0052815\niter:100 | loss: 0.0036811\niter:200 | loss: 0.0049233\niter:300 | loss: 0.0041976\niter:400 | loss: 0.0037705\niter:500 | loss: 0.0050515\niter:600 | loss: 0.0037434\n|valid_final mse 0.4620 |valid_final mae 0.4585 |valid_final rse 0.6764 | valid_final rae 0.5374 | valid_final corr  0.1497\n|valid_final mse 0.3554 |valid_final mae 0.4024 |valid_final rse 0.5843 | valid_final rae 0.5238 | valid_final corr  0.6083\n| EncoDeco: end of epoch  12 | time: 143.10s | train_loss 0.0044 | valid rse 0.6764 | valid rae 0.5374 | valid corr  0.1497| valid mse 0.4620 | valid mae  0.4585| test rse 0.5843 | test rae 0.5238 | test corr  0.6083 | test mse 0.3554 | test mae  0.4024|\nUpdating learning rate to 2.5667104163975243e-05\niter:  0 | loss: 0.0040832\niter:100 | loss: 0.0046123\niter:200 | loss: 0.0029771\niter:300 | loss: 0.0046519\niter:400 | loss: 0.0048223\niter:500 | loss: 0.0035063\niter:600 | loss: 0.0042730\n|valid_final mse 0.4910 |valid_final mae 0.4699 |valid_final rse 0.6876 | valid_final rae 0.5431 | valid_final corr  0.1320\n|valid_final mse 0.3843 |valid_final mae 0.4171 |valid_final rse 0.5959 | valid_final rae 0.5345 | valid_final corr  0.5914\n| EncoDeco: end of epoch  13 | time: 135.89s | train_loss 0.0044 | valid rse 0.6876 | valid rae 0.5431 | valid corr  0.1320| valid mse 0.4910 | valid mae  0.4699| test rse 0.5959 | test rae 0.5345 | test corr  0.5914 | test mse 0.3843 | test mae  0.4171|\nUpdating learning rate to 2.4383748955776477e-05\niter:  0 | loss: 0.0052448\niter:100 | loss: 0.0038505\niter:200 | loss: 0.0038904\niter:300 | loss: 0.0050604\niter:400 | loss: 0.0032899\niter:500 | loss: 0.0042580\niter:600 | loss: 0.0046726\n|valid_final mse 0.4942 |valid_final mae 0.4676 |valid_final rse 0.6998 | valid_final rae 0.5503 | valid_final corr  0.1207\n|valid_final mse 0.3861 |valid_final mae 0.4149 |valid_final rse 0.6071 | valid_final rae 0.5443 | valid_final corr  0.5764\n| EncoDeco: end of epoch  14 | time: 171.70s | train_loss 0.0043 | valid rse 0.6998 | valid rae 0.5503 | valid corr  0.1207| valid mse 0.4942 | valid mae  0.4676| test rse 0.6071 | test rae 0.5443 | test corr  0.5764 | test mse 0.3861 | test mae  0.4149|\nUpdating learning rate to 2.3164561507987653e-05\niter:  0 | loss: 0.0052959\niter:100 | loss: 0.0032814\niter:200 | loss: 0.0057430\niter:300 | loss: 0.0032709\niter:400 | loss: 0.0063113\niter:500 | loss: 0.0057898\niter:600 | loss: 0.0051779\n|valid_final mse 0.5015 |valid_final mae 0.4685 |valid_final rse 0.6776 | valid_final rae 0.5307 | valid_final corr  0.1208\n|valid_final mse 0.4046 |valid_final mae 0.4232 |valid_final rse 0.5943 | valid_final rae 0.5335 | valid_final corr  0.5812\n| EncoDeco: end of epoch  15 | time: 150.34s | train_loss 0.0043 | valid rse 0.6776 | valid rae 0.5307 | valid corr  0.1208| valid mse 0.5015 | valid mae  0.4685| test rse 0.5943 | test rae 0.5335 | test corr  0.5812 | test mse 0.4046 | test mae  0.4232|\nUpdating learning rate to 2.2006333432588268e-05\niter:  0 | loss: 0.0045414\niter:100 | loss: 0.0045651\niter:200 | loss: 0.0051932\niter:300 | loss: 0.0042310\niter:400 | loss: 0.0041536\niter:500 | loss: 0.0037294\niter:600 | loss: 0.0057645\n|valid_final mse 0.5781 |valid_final mae 0.4998 |valid_final rse 0.7243 | valid_final rae 0.5660 | valid_final corr  0.0969\n|valid_final mse 0.4656 |valid_final mae 0.4523 |valid_final rse 0.6340 | valid_final rae 0.5687 | valid_final corr  0.5475\n| EncoDeco: end of epoch  16 | time: 180.11s | train_loss 0.0043 | valid rse 0.7243 | valid rae 0.5660 | valid corr  0.0969| valid mse 0.5781 | valid mae  0.4998| test rse 0.6340 | test rae 0.5687 | test corr  0.5475 | test mse 0.4656 | test mae  0.4523|\nUpdating learning rate to 2.0906016760958855e-05\niter:  0 | loss: 0.0047976\niter:100 | loss: 0.0049055\niter:200 | loss: 0.0032967\niter:300 | loss: 0.0029527\niter:400 | loss: 0.0055105\niter:500 | loss: 0.0046869\niter:600 | loss: 0.0038332\n|valid_final mse 0.6162 |valid_final mae 0.5136 |valid_final rse 0.7682 | valid_final rae 0.6006 | valid_final corr  0.0731\n|valid_final mse 0.4940 |valid_final mae 0.4625 |valid_final rse 0.6750 | valid_final rae 0.6050 | valid_final corr  0.5101\n| EncoDeco: end of epoch  17 | time: 168.03s | train_loss 0.0042 | valid rse 0.7682 | valid rae 0.6006 | valid corr  0.0731| valid mse 0.6162 | valid mae  0.5136| test rse 0.6750 | test rae 0.6050 | test corr  0.5101 | test mse 0.4940 | test mae  0.4625|\nUpdating learning rate to 1.986071592291091e-05\niter:  0 | loss: 0.0042082\niter:100 | loss: 0.0040006\niter:200 | loss: 0.0036313\niter:300 | loss: 0.0044280\niter:400 | loss: 0.0061669\niter:500 | loss: 0.0037866\niter:600 | loss: 0.0035705\n|valid_final mse 0.5907 |valid_final mae 0.5020 |valid_final rse 0.7373 | valid_final rae 0.5728 | valid_final corr  0.0823\n|valid_final mse 0.4824 |valid_final mae 0.4580 |valid_final rse 0.6485 | valid_final rae 0.5815 | valid_final corr  0.5285\n| EncoDeco: end of epoch  18 | time: 143.22s | train_loss 0.0042 | valid rse 0.7373 | valid rae 0.5728 | valid corr  0.0823| valid mse 0.5907 | valid mae  0.5020| test rse 0.6485 | test rae 0.5815 | test corr  0.5285 | test mse 0.4824 | test mae  0.4580|\nUpdating learning rate to 1.8867680126765363e-05\niter:  0 | loss: 0.0034208\niter:100 | loss: 0.0037545\niter:200 | loss: 0.0031330\niter:300 | loss: 0.0038747\niter:400 | loss: 0.0069320\niter:500 | loss: 0.0033670\niter:600 | loss: 0.0042178\n|valid_final mse 0.5932 |valid_final mae 0.5038 |valid_final rse 0.7472 | valid_final rae 0.5811 | valid_final corr  0.0740\n|valid_final mse 0.4923 |valid_final mae 0.4639 |valid_final rse 0.6641 | valid_final rae 0.5960 | valid_final corr  0.5179\n| EncoDeco: end of epoch  19 | time: 161.87s | train_loss 0.0042 | valid rse 0.7472 | valid rae 0.5811 | valid corr  0.0740| valid mse 0.5932 | valid mae  0.5038| test rse 0.6641 | test rae 0.5960 | test corr  0.5179 | test mse 0.4923 | test mae  0.4639|\nTraining took 52.43437363306681 minutes\n===================Normal-End=========================\nThis model was trained for 3 epochs\nloaded the model... exp/financial_checkpoints/native\\exchange_rate96.bin now lr: 4.2868749999999995e-05 now epoch: 3\n|valid_final mse 0.1355 |valid_final mae 0.2788 |valid_final rse 0.3705 | valid_final rae 0.3250 | valid_final corr  0.8178\n",
+      "stderr_tail": ""
+    }
+  ],
+  "metrics": {
+    "mse": 0.1355,
+    "mae": 0.2788
+  },
+  "metric_aggregate": {
+    "mse": {
+      "mean": 0.1355,
+      "std": 0.0,
+      "values": [
+        0.1355
+      ]
+    },
+    "mae": {
+      "mean": 0.2788,
+      "std": 0.0,
+      "values": [
+        0.2788
+      ]
+    }
+  },
+  "reported_metrics": {
+    "mse": 0.061,
+    "mae": 0.188
+  },
+  "metric_checks": {
+    "mse": {
+      "expected": 0.061,
+      "actual": 0.1355,
+      "absolute_tolerance": 0.025,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": false
+    },
+    "mae": {
+      "expected": 0.188,
+      "actual": 0.2788,
+      "absolute_tolerance": 0.025,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": false
+    }
+  },
+  "execution_passed": true,
+  "observation_count_passed": true,
+  "result_reproduced_within_tolerance": false,
+  "complete_reproduction_allowed": false,
+  "blockers": [
+    "one or more paper metrics fell outside the predeclared tolerance"
+  ],
+  "duration_seconds": 3164.281,
+  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2106_09305_exchange_native.json"
+}

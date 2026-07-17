@@ -1,0 +1,202 @@
+{
+  "schema_version": "native_result_report_v1",
+  "generated_at": "2026-07-15T02:53:19.591512+00:00",
+  "run_mode": "native_reproduction",
+  "paper_id": "arxiv_2210_02186",
+  "claim_id": "arxiv_2210_02186_exchange_native",
+  "title": "TimesNet: Temporal 2D-Variation Modeling for General Time Series Analysis",
+  "model_name": "TimesNet",
+  "paper_url": "https://openreview.net/forum?id=ju_Uqw384Oq",
+  "claim_locator": "ICLR 2023 paper, Table 13, Exchange, horizon 96",
+  "source": {
+    "repository": "https://github.com/thuml/Time-Series-Library",
+    "revision": "0d1f5330474ad7a7c4d8572d1405978faff1e8b9",
+    "license": "MIT",
+    "archive_sha256": "e7499aba81288540fae866897283ccb55f20125a659218a852cb3dd6ce4e2c78",
+    "entrypoint_sha256": "64a80207648ab2e0579631ed49bc5602bd603a93d9994617327b6dc014a1d057",
+    "runtime_source_root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2210_02186_exchange_native\\source",
+    "compatibility_patches": [
+      {
+        "path": "utils/tools.py",
+        "classification": "semantic_noop",
+        "rationale": "NumPy 2 removed the uppercase alias; both names denote positive infinity.",
+        "before_sha256": "6779189070f8df8add868383c8fe2260e73f6f6b99b0a0f1e7270eeaac89f3f9",
+        "after_sha256": "f6d68920ec9a406beaf56fd4151f836cc519e3785606e6c885449016b33c710b"
+      },
+      {
+        "path": "data_provider/data_loader.py",
+        "classification": "semantic_noop",
+        "rationale": "sktime is only used by the unrelated UEA loader and is optional for the selected custom Exchange task.",
+        "before_sha256": "e1843f15de23530ee59fe6e630e5976c912a644a3043feeb680f5f137474dfa5",
+        "after_sha256": "aabedf44cdf76cb6740aa427fd6cf2b648f5d2a69de918c2f7466e8fe43e9a44"
+      }
+    ]
+  },
+  "dataset": {
+    "dataset_id": "exchange_rate_official_7588x8",
+    "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842"
+  },
+  "protocol": {
+    "dataset": "Exchange-Rate",
+    "features": "M",
+    "split": "official chronological loader",
+    "claim_locator": "ICLR 2023 paper, Table 13, Exchange, horizon 96",
+    "protocol_note": "Pinned paper and official command agree on the selected claim."
+  },
+  "runtime_environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "torch": "2.12.1"
+  },
+  "runtime_files": [],
+  "required_repetitions": 1,
+  "expected_metric_observations": 1,
+  "audit": {
+    "dataset_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "dataset_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+    "dataset_passed": true,
+    "source_archive_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\tslib_timesnet.zip",
+    "source_archive_sha256": "e7499aba81288540fae866897283ccb55f20125a659218a852cb3dd6ce4e2c78",
+    "source_archive_passed": true,
+    "source_root": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\tslib_timesnet\\Time-Series-Library-0d1f5330474ad7a7c4d8572d1405978faff1e8b9",
+    "source_entrypoint": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\tslib_timesnet\\Time-Series-Library-0d1f5330474ad7a7c4d8572d1405978faff1e8b9\\run.py",
+    "source_entrypoint_sha256": "64a80207648ab2e0579631ed49bc5602bd603a93d9994617327b6dc014a1d057",
+    "source_entrypoint_passed": true,
+    "protocol_pinned": true,
+    "governance": {
+      "method_card_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\method_cards\\arxiv_2210_02186.json",
+      "method_card_strict_ready": true,
+      "reproduction_plan_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reproduction_plans\\arxiv_2210_02186.json",
+      "reproduction_plan_strict_ready": true,
+      "passed": true
+    },
+    "blockers": [],
+    "passed": true
+  },
+  "runs": [
+    {
+      "run_index": 0,
+      "command": [
+        "D:\\ProgramData\\miniconda3\\envs\\finance_fa\\python.exe",
+        "-u",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2210_02186_exchange_native\\source/run.py",
+        "--task_name",
+        "long_term_forecast",
+        "--is_training",
+        "1",
+        "--root_path",
+        "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate",
+        "--data_path",
+        "exchange_rate.csv",
+        "--model_id",
+        "Exchange_96_96",
+        "--model",
+        "TimesNet",
+        "--data",
+        "custom",
+        "--features",
+        "M",
+        "--seq_len",
+        "96",
+        "--label_len",
+        "48",
+        "--pred_len",
+        "96",
+        "--e_layers",
+        "2",
+        "--d_layers",
+        "1",
+        "--enc_in",
+        "8",
+        "--dec_in",
+        "8",
+        "--c_out",
+        "8",
+        "--des",
+        "native",
+        "--num_workers",
+        "0",
+        "--checkpoints",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native/checkpoints",
+        "--factor",
+        "3",
+        "--d_model",
+        "64",
+        "--d_ff",
+        "64",
+        "--top_k",
+        "5",
+        "--itr",
+        "1"
+      ],
+      "working_directory": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2210_02186_exchange_native\\work",
+      "exit_code": 0,
+      "duration_seconds": 4017.89,
+      "metrics": {
+        "mse": 0.10109956562519073,
+        "mae": 0.22909210622310638
+      },
+      "metric_values": {
+        "mse": [
+          0.10109956562519073
+        ],
+        "mae": [
+          0.22909210622310638
+        ]
+      },
+      "stdout_tail": "Args in experiment:\nNamespace(task_name='long_term_forecast', is_training=1, model_id='Exchange_96_96', model='TimesNet', data='custom', root_path='D:\\\\AI Agent\\\\finance_forecast_agent\\\\projects\\\\finance_agent\\\\data\\\\external\\\\exchange_rate', data_path='exchange_rate.csv', features='M', target='OT', freq='h', checkpoints='C:\\\\Users\\\\13716\\\\AppData\\\\Local\\\\Temp\\\\ffa-native/checkpoints', seq_len=96, label_len=48, pred_len=96, seasonal_patterns='Monthly', mask_rate=0.25, anomaly_ratio=0.25, top_k=5, num_kernels=6, enc_in=8, dec_in=8, c_out=8, d_model=64, n_heads=8, e_layers=2, d_layers=1, d_ff=64, moving_avg=25, factor=3, distil=True, dropout=0.1, embed='timeF', activation='gelu', output_attention=False, num_workers=0, itr=1, train_epochs=10, batch_size=32, patience=3, learning_rate=0.0001, des='native', loss='MSE', lradj='type1', use_amp=False, use_gpu=False, gpu=0, use_multi_gpu=False, devices='0,1,2,3', p_hidden_dims=[128, 128], p_hidden_layers=2, head_dropout=0.0, patch_len=16, stride=8)\nUse CPU\n>>>>>>>start training : long_term_forecast_Exchange_96_96_TimesNet_custom_ftM_sl96_ll48_pl96_dm64_nh8_el2_dl1_df64_fc3_ebtimeF_dtTrue_native_0>>>>>>>>>>>>>>>>>>>>>>>>>>\ntrain 5120\nval 665\ntest 1422\n\titers: 100, epoch: 1 | loss: 0.1004062\n\tspeed: 4.2535s/iter; left time: 6384.4508s\nEpoch: 1 cost time: 670.6542899608612\nEpoch: 1, Steps: 160 | Train Loss: 0.1542579 Vali Loss: 0.1560495 Test Loss: 0.1010996\nValidation loss decreased (inf --> 0.156050).  Saving model ...\nUpdating learning rate to 0.0001\n\titers: 100, epoch: 2 | loss: 0.0740151\n\tspeed: 7.3335s/iter; left time: 9834.2182s\nEpoch: 2 cost time: 534.6195242404938\nEpoch: 2, Steps: 160 | Train Loss: 0.1116437 Vali Loss: 0.1619630 Test Loss: 0.1035439\nEarlyStopping counter: 1 out of 3\nUpdating learning rate to 5e-05\n\titers: 100, epoch: 3 | loss: 0.1114767\n\tspeed: 9.4531s/iter; left time: 11164.1230s\nEpoch: 3 cost time: 806.9050343036652\nEpoch: 3, Steps: 160 | Train Loss: 0.0951108 Vali Loss: 0.1590527 Test Loss: 0.1025533\nEarlyStopping counter: 2 out of 3\nUpdating learning rate to 2.5e-05\n\titers: 100, epoch: 4 | loss: 0.0625619\n\tspeed: 10.7473s/iter; left time: 10972.9721s\nEpoch: 4 cost time: 815.310830116272\nEpoch: 4, Steps: 160 | Train Loss: 0.0876038 Vali Loss: 0.1715560 Test Loss: 0.1022509\nEarlyStopping counter: 3 out of 3\nEarly stopping\n>>>>>>>testing : long_term_forecast_Exchange_96_96_TimesNet_custom_ftM_sl96_ll48_pl96_dm64_nh8_el2_dl1_df64_fc3_ebtimeF_dtTrue_native_0<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\ntest 1422\ntest shape: (1422, 1, 96, 8) (1422, 1, 96, 8)\ntest shape: (1422, 96, 8) (1422, 96, 8)\nmse:0.10109956562519073, mae:0.22909210622310638\n",
+      "stderr_tail": ""
+    }
+  ],
+  "metrics": {
+    "mse": 0.10109956562519073,
+    "mae": 0.22909210622310638
+  },
+  "metric_aggregate": {
+    "mse": {
+      "mean": 0.10109956562519073,
+      "std": 0.0,
+      "values": [
+        0.10109956562519073
+      ]
+    },
+    "mae": {
+      "mean": 0.22909210622310638,
+      "std": 0.0,
+      "values": [
+        0.22909210622310638
+      ]
+    }
+  },
+  "reported_metrics": {
+    "mse": 0.107,
+    "mae": 0.234
+  },
+  "metric_checks": {
+    "mse": {
+      "expected": 0.107,
+      "actual": 0.10109956562519073,
+      "absolute_tolerance": 0.02,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": true
+    },
+    "mae": {
+      "expected": 0.234,
+      "actual": 0.22909210622310638,
+      "absolute_tolerance": 0.025,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": true
+    }
+  },
+  "execution_passed": true,
+  "result_reproduced_within_tolerance": true,
+  "complete_reproduction_allowed": true,
+  "blockers": [],
+  "duration_seconds": 4017.922,
+  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2210_02186_exchange_native.json"
+}

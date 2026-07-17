@@ -1,0 +1,233 @@
+{
+  "schema_version": "reproduction_plan_v1",
+  "paper_id": "arxiv_2210_02186",
+  "experiment_type": "forecast_only",
+  "plan_mode": "native_reproduction",
+  "resolutions": {
+    "target_asset": {
+      "status": "specified",
+      "value": "eight-channel daily Exchange-Rate series",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "TS DLinearFEDformerStationaryAutoformerPyraformerInformerLogTransReformer\n(Ours) (2022) (2022) (2023) (2022) (2022a) (2021) (2021a) (2021) (2019) (2020)\nMask RatioMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAE\nETTm10.0270.1070.1200.2530.1040.2180.0930.2060.0620.1770.0360.1260.0510.1500.7170.5700.0710.1880.0500.1540.0550.166\nETTm20.0220.0880.2080.3270.0460.1510.0960.2080.1010.2150.0260.0990.0290.1050.4650.5080.1560.2920.1190.2460.1570.280\nETTh1 0.0780.1870.2020.3290.2840.3730.2010.3060.1170.2460.0940.2010.1030.2140.8420.6820.1610.2790.2190.3320.1220.245\nETTh2 0.0490.1460.3670.4360.1190.2500.1420.2590.1630.2790.0530.1520.0550.1561.0790.7920.3370.4520.1860.3180.2340.352\nElectricity0.0920.2100.2140.3390.1310.2620.1320.2600.1300.2590.1"
+      ]
+    },
+    "asset_universe": {
+      "status": "specified",
+      "value": [
+        "exchange_channel_1",
+        "exchange_channel_2",
+        "exchange_channel_3",
+        "exchange_channel_4",
+        "exchange_channel_5",
+        "exchange_channel_6",
+        "exchange_channel_7",
+        "exchange_channel_8"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    },
+    "frequency": {
+      "status": "specified",
+      "value": "daily",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    },
+    "horizon": {
+      "status": "specified",
+      "value": "96 days",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "TS DLinearFEDformerStationaryAutoformerPyraformerInformerLogTransReformer\n(Ours) (2022) (2022) (2023) (2022) (2022a) (2021) (2021a) (2021) (2019) (2020)\nMask RatioMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAE\nETTm10.0270.1070.1200.2530.1040.2180.0930.2060.0620.1770.0360.1260.0510.1500.7170.5700.0710.1880.0500.1540.0550.166\nETTm20.0220.0880.2080.3270.0460.1510.0960.2080.1010.2150.0260.0990.0290.1050.4650.5080.1560.2920.1190.2460.1570.280\nETTh1 0.0780.1870.2020.3290.2840.3730.2010.3060.1170.2460.0940.2010.1030.2140.8420.6820.1610.2790.2190.3320.1220.245\nETTh2 0.0490.1460.3670.4360.1190.2500.1420.2590.1630.2790.0530.1520.0550.1561.0790.7920.3370.4520.1860.3180.2340.352\nElectricity0.0920.2100.2140.3390.1310.2620.1320.2600.1300.2590.1"
+      ]
+    },
+    "label_definition": {
+      "status": "specified",
+      "value": "future multivariate exchange-rate levels",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    },
+    "data_requirements": {
+      "status": "specified",
+      "value": [
+        "frozen Exchange-Rate bytes",
+        "chronological train/validation/test split"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    },
+    "feature_groups": {
+      "status": "specified",
+      "value": [
+        "eight raw exchange-rate channels"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    },
+    "model_families": {
+      "status": "specified",
+      "value": [
+        "TimesNet"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    },
+    "training_protocol": {
+      "status": "specified",
+      "value": "Pinned official implementation and claim command; see native claim catalog.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    },
+    "evaluation_protocol": {
+      "status": "specified",
+      "value": "Paper-native chronological holdout and paper-native metrics.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    },
+    "metrics": {
+      "status": "specified",
+      "value": [
+        "mse",
+        "mae"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "TS DLinearFEDformerStationaryAutoformerPyraformerInformerLogTransReformer\n(Ours) (2022) (2022) (2023) (2022) (2022a) (2021) (2021a) (2021) (2019) (2020)\nMask RatioMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAEMSEMAE\nETTm10.0270.1070.1200.2530.1040.2180.0930.2060.0620.1770.0360.1260.0510.1500.7170.5700.0710.1880.0500.1540.0550.166\nETTm20.0220.0880.2080.3270.0460.1510.0960.2080.1010.2150.0260.0990.0290.1050.4650.5080.1560.2920.1190.2460.1570.280\nETTh1 0.0780.1870.2020.3290.2840.3730.2010.3060.1170.2460.0940.2010.1030.2140.8420.6820.1610.2790.2190.3320.1220.245\nETTh2 0.0490.1460.3670.4360.1190.2500.1420.2590.1630.2790.0530.1520.0550.1561.0790.7920.3370.4520.1860.3180.2340.352\nElectricity0.0920.2100.2140.3390.1310.2620.1320.2600.1300.2590.1"
+      ]
+    },
+    "preprocessing_protocol": {
+      "status": "specified",
+      "value": "Training-split standardization implemented by the pinned official loader.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    },
+    "hyperparameters": {
+      "status": "specified",
+      "value": [
+        "{python}",
+        "-u",
+        "{source_root}/run.py",
+        "--task_name",
+        "long_term_forecast",
+        "--is_training",
+        "1",
+        "--root_path",
+        "{dataset_dir}",
+        "--data_path",
+        "exchange_rate.csv",
+        "--model_id",
+        "Exchange_96_96",
+        "--model",
+        "TimesNet",
+        "--data",
+        "custom",
+        "--features",
+        "M",
+        "--seq_len",
+        "96",
+        "--label_len",
+        "48",
+        "--pred_len",
+        "96",
+        "--e_layers",
+        "2",
+        "--d_layers",
+        "1",
+        "--enc_in",
+        "8",
+        "--dec_in",
+        "8",
+        "--c_out",
+        "8",
+        "--des",
+        "native",
+        "--num_workers",
+        "0",
+        "--checkpoints",
+        "{runtime_root}/checkpoints",
+        "--factor",
+        "3",
+        "--d_model",
+        "64",
+        "--d_ff",
+        "64",
+        "--top_k",
+        "5",
+        "--itr",
+        "1"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "export CUDA_VISIBLE_DEVICES=7\n\nmodel_name=TimesNet\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_96 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 96 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_192 \\\n  --model $model_name \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --label_len 48 \\\n  --pred_len 192 \\\n  --e_layers 2 \\\n  --d_layers 1 \\\n  --factor 3 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --d_model 64 \\\n  --d_ff 64 \\\n  --top_k 5 \\\n  --des 'Exp' \\\n  --itr 1\n\npython -u run.py \\\n  --task_name long_term_forecast \\\n  --is_training 1 \\\n  --root"
+      ]
+    }
+  },
+  "claims": [
+    {
+      "claim_id": "arxiv_2210_02186_exchange_native",
+      "description": "ICLR 2023 paper, Table 13, Exchange, horizon 96",
+      "primary_metrics": [
+        "mse",
+        "mae"
+      ],
+      "reported_values": {
+        "mse": 0.107,
+        "mae": 0.234
+      },
+      "acceptance_tolerance": {
+        "mse": 0.02,
+        "mae": 0.025
+      }
+    }
+  ],
+  "approved_for_execution": true,
+  "updated_at": "2026-07-17T08:03:36.365379+00:00",
+  "required_fields": [
+    "asset_universe",
+    "data_requirements",
+    "evaluation_protocol",
+    "feature_groups",
+    "frequency",
+    "horizon",
+    "label_definition",
+    "metrics",
+    "model_families",
+    "target_asset",
+    "training_protocol"
+  ],
+  "unresolved_required_fields": [],
+  "execution_ready": true,
+  "strict_ready": true,
+  "plan_hash": "07aa2cb12e06d9e8"
+}

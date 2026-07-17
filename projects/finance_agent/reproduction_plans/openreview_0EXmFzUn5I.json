@@ -1,0 +1,217 @@
+{
+  "schema_version": "reproduction_plan_v1",
+  "paper_id": "openreview_0EXmFzUn5I",
+  "experiment_type": "forecast_only",
+  "plan_mode": "native_reproduction",
+  "resolutions": {
+    "target_asset": {
+      "status": "specified",
+      "value": "ETTm1 seven-channel electricity-transformer series",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "0688 144506881016064 1016064 2709504\nETC\nMSE 1.025 1.084 1.137 0.762 1.227 1.272 0.777 1.586 4.361\nMAE 0.771 0.811 0.866 0.653 0.880 0.908 0.326 0.340 0.368\nQ-K pairs125280 125280 288720 331344 836952 836952 125280 125280 288720\nPyraformer\nMSE 0.808 0.945 1.022 0.480 0.754 0.857 0.719 1.533 4.312\nMAE 0.683 0.766 0.806 0.486 0.659 0.707 0.256 0.291 0.346\nQ-K pairs 26472 26472 74280 57264 96384 96384 26472 26472 74280\ncretely, there are three major trends that can be gleaned from Table 2: (1) The proposed Pyraformer\nyields the most accurate prediction results, suggesting that the pyramidal graph can better explain\nthe temporal interactions in the time series by considering dependencies of different ranges. Inter-\nestingly, for the Wind dataset, sparse"
+      ]
+    },
+    "asset_universe": {
+      "status": "specified",
+      "value": [
+        "HUFL",
+        "HULL",
+        "MUFL",
+        "MULL",
+        "LUFL",
+        "LULL",
+        "OT"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    },
+    "frequency": {
+      "status": "specified",
+      "value": "15 minutes",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    },
+    "horizon": {
+      "status": "specified",
+      "value": "96 intervals",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "0688 144506881016064 1016064 2709504\nETC\nMSE 1.025 1.084 1.137 0.762 1.227 1.272 0.777 1.586 4.361\nMAE 0.771 0.811 0.866 0.653 0.880 0.908 0.326 0.340 0.368\nQ-K pairs125280 125280 288720 331344 836952 836952 125280 125280 288720\nPyraformer\nMSE 0.808 0.945 1.022 0.480 0.754 0.857 0.719 1.533 4.312\nMAE 0.683 0.766 0.806 0.486 0.659 0.707 0.256 0.291 0.346\nQ-K pairs 26472 26472 74280 57264 96384 96384 26472 26472 74280\ncretely, there are three major trends that can be gleaned from Table 2: (1) The proposed Pyraformer\nyields the most accurate prediction results, suggesting that the pyramidal graph can better explain\nthe temporal interactions in the time series by considering dependencies of different ranges. Inter-\nestingly, for the Wind dataset, sparse"
+      ]
+    },
+    "label_definition": {
+      "status": "specified",
+      "value": "future multivariate ETTm1 values",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    },
+    "data_requirements": {
+      "status": "specified",
+      "value": [
+        "frozen ETTm1 bytes",
+        "chronological train/validation/test split"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    },
+    "feature_groups": {
+      "status": "specified",
+      "value": [
+        "six power-load channels",
+        "oil-temperature channel"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    },
+    "model_families": {
+      "status": "specified",
+      "value": [
+        "Pyraformer"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    },
+    "training_protocol": {
+      "status": "specified",
+      "value": "Pinned official implementation and claim command; see native claim catalog.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    },
+    "evaluation_protocol": {
+      "status": "specified",
+      "value": "Paper-native chronological holdout and paper-native metrics.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    },
+    "metrics": {
+      "status": "specified",
+      "value": [
+        "mse",
+        "mae"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "0688 144506881016064 1016064 2709504\nETC\nMSE 1.025 1.084 1.137 0.762 1.227 1.272 0.777 1.586 4.361\nMAE 0.771 0.811 0.866 0.653 0.880 0.908 0.326 0.340 0.368\nQ-K pairs125280 125280 288720 331344 836952 836952 125280 125280 288720\nPyraformer\nMSE 0.808 0.945 1.022 0.480 0.754 0.857 0.719 1.533 4.312\nMAE 0.683 0.766 0.806 0.486 0.659 0.707 0.256 0.291 0.346\nQ-K pairs 26472 26472 74280 57264 96384 96384 26472 26472 74280\ncretely, there are three major trends that can be gleaned from Table 2: (1) The proposed Pyraformer\nyields the most accurate prediction results, suggesting that the pyramidal graph can better explain\nthe temporal interactions in the time series by considering dependencies of different ranges. Inter-\nestingly, for the Wind dataset, sparse"
+      ]
+    },
+    "preprocessing_protocol": {
+      "status": "specified",
+      "value": "Training-split standardization implemented by the pinned official loader.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    },
+    "hyperparameters": {
+      "status": "specified",
+      "value": [
+        "{python}",
+        "-u",
+        "{source_root}/long_range_main.py",
+        "-data",
+        "ETTm1",
+        "-root_path",
+        "{dataset_dir}",
+        "-data_path",
+        "ETTm1.csv",
+        "-input_size",
+        "384",
+        "-predict_step",
+        "96",
+        "-window_size",
+        "[5,5,5]",
+        "-dropout",
+        "0.2",
+        "-n_head",
+        "6",
+        "-d_model",
+        "256",
+        "-d_bottleneck",
+        "64",
+        "-d_k",
+        "64",
+        "-d_v",
+        "64",
+        "-epoch",
+        "5",
+        "-batch_size",
+        "32",
+        "-lr",
+        "1e-4",
+        "-iter_num",
+        "5"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "step 168 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 168 -predict_step 336 -n_head 6\npython long_range_main.py -data ETTh1 -input_size 336 -predict_step 720 -inner_size 5 -n_head 6\n\n# ETTm1\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 384 -predict_step 96 \\\n-window_size [5,5,5] -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 288 \\\n-window_size [5,5,5] -inner_size 5 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\npython long_range_main.py -data ETTm1 -data_path ETTm1.csv -input_size 672 -predict_step 672 \\\n-window_size [6,6,6] -batch_size 16 -dropout 0.2 -n_head 6 -d_model 256 -d_bottleneck 64 -d_k 64 -d_v 64;\n\n# Electricity\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168 -predict_step 168 -n_head 6 -lr 0.00001 -d_model 256;\npython long_range_main.py -root_path data/ -data_path LD2011_2014.txt -data elect \\\n-input_size 168  -predict_step 336 -n_head 6 -lr 0.0000"
+      ]
+    }
+  },
+  "claims": [
+    {
+      "claim_id": "openreview_0EXmFzUn5I_ettm1_native",
+      "description": "ICLR 2022 paper, Table 3, multivariate ETTm1, horizon 96",
+      "primary_metrics": [
+        "mse",
+        "mae"
+      ],
+      "reported_values": {
+        "mse": 0.48,
+        "mae": 0.486
+      },
+      "acceptance_tolerance": {
+        "mse": 0.04,
+        "mae": 0.04
+      }
+    }
+  ],
+  "approved_for_execution": true,
+  "updated_at": "2026-07-17T08:03:36.801295+00:00",
+  "required_fields": [
+    "asset_universe",
+    "data_requirements",
+    "evaluation_protocol",
+    "feature_groups",
+    "frequency",
+    "horizon",
+    "label_definition",
+    "metrics",
+    "model_families",
+    "target_asset",
+    "training_protocol"
+  ],
+  "unresolved_required_fields": [],
+  "execution_ready": true,
+  "strict_ready": true,
+  "plan_hash": "69fd97ec0d8658a6"
+}

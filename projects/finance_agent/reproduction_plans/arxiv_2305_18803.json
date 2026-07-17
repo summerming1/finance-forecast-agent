@@ -1,0 +1,233 @@
+{
+  "schema_version": "reproduction_plan_v1",
+  "paper_id": "arxiv_2305_18803",
+  "experiment_type": "forecast_only",
+  "plan_mode": "native_reproduction",
+  "resolutions": {
+    "target_asset": {
+      "status": "specified",
+      "value": "eight-channel daily Exchange-Rate series",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "1 0.456 0.352 0.397 0.457 0.461\n192 0.356 0.393 0.383 0.406 0.394 0.434 0.385 0.418 0.455 0.464 0.528 0.503 0.361 0.410 0.503 0.491\nExchange\n48 0.042 0.143 0.044 0.144 0.059 0.172 0.043 0.145 0.117 0.248 0.128 0.271 0.071 0.192 0.125 0.252\n96 0.083 0.207 0.085 0.204 0.120 0.255 0.084 0.220 0.108 0.251 0.294 0.394 0.112 0.245 0.280 0.386\n144 0.130 0.261 0.132 0.260 0.206 0.334 0.132 0.253 0.152 0.301 0.597 0.578 0.174 0.306 0.520 0.523\n192 0.184 0.309 0.174 0.300 0.377 0.463 0.178 0.299 0.187 0.331 0.654 0.595 0.241 0.364 0.653 0.592\nILI\n24 1.621 0.800 2.063 0.881 2.464 1.039 2.624 1.118 4.380 1.558 3.722 1.432 3.590 1.424 2.831 1.085\n36 1.803 0.855 2.178 0.943 2.388 1.007 2.693 1.156 3.314 1.313 3.941 1.448 4.200 1.383 2.801 1.088\n48 1.768 0.903 1.91"
+      ]
+    },
+    "asset_universe": {
+      "status": "specified",
+      "value": [
+        "exchange_channel_1",
+        "exchange_channel_2",
+        "exchange_channel_3",
+        "exchange_channel_4",
+        "exchange_channel_5",
+        "exchange_channel_6",
+        "exchange_channel_7",
+        "exchange_channel_8"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    },
+    "frequency": {
+      "status": "specified",
+      "value": "daily",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    },
+    "horizon": {
+      "status": "specified",
+      "value": "96 days",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "1 0.456 0.352 0.397 0.457 0.461\n192 0.356 0.393 0.383 0.406 0.394 0.434 0.385 0.418 0.455 0.464 0.528 0.503 0.361 0.410 0.503 0.491\nExchange\n48 0.042 0.143 0.044 0.144 0.059 0.172 0.043 0.145 0.117 0.248 0.128 0.271 0.071 0.192 0.125 0.252\n96 0.083 0.207 0.085 0.204 0.120 0.255 0.084 0.220 0.108 0.251 0.294 0.394 0.112 0.245 0.280 0.386\n144 0.130 0.261 0.132 0.260 0.206 0.334 0.132 0.253 0.152 0.301 0.597 0.578 0.174 0.306 0.520 0.523\n192 0.184 0.309 0.174 0.300 0.377 0.463 0.178 0.299 0.187 0.331 0.654 0.595 0.241 0.364 0.653 0.592\nILI\n24 1.621 0.800 2.063 0.881 2.464 1.039 2.624 1.118 4.380 1.558 3.722 1.432 3.590 1.424 2.831 1.085\n36 1.803 0.855 2.178 0.943 2.388 1.007 2.693 1.156 3.314 1.313 3.941 1.448 4.200 1.383 2.801 1.088\n48 1.768 0.903 1.91"
+      ]
+    },
+    "label_definition": {
+      "status": "specified",
+      "value": "future multivariate exchange-rate levels",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    },
+    "data_requirements": {
+      "status": "specified",
+      "value": [
+        "frozen Exchange-Rate bytes",
+        "chronological train/validation/test split"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    },
+    "feature_groups": {
+      "status": "specified",
+      "value": [
+        "eight raw exchange-rate channels"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    },
+    "model_families": {
+      "status": "specified",
+      "value": [
+        "Koopa"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    },
+    "training_protocol": {
+      "status": "specified",
+      "value": "Pinned official implementation and claim command; see native claim catalog.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    },
+    "evaluation_protocol": {
+      "status": "specified",
+      "value": "Paper-native chronological holdout and paper-native metrics.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    },
+    "metrics": {
+      "status": "specified",
+      "value": [
+        "mse",
+        "mae"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "1 0.456 0.352 0.397 0.457 0.461\n192 0.356 0.393 0.383 0.406 0.394 0.434 0.385 0.418 0.455 0.464 0.528 0.503 0.361 0.410 0.503 0.491\nExchange\n48 0.042 0.143 0.044 0.144 0.059 0.172 0.043 0.145 0.117 0.248 0.128 0.271 0.071 0.192 0.125 0.252\n96 0.083 0.207 0.085 0.204 0.120 0.255 0.084 0.220 0.108 0.251 0.294 0.394 0.112 0.245 0.280 0.386\n144 0.130 0.261 0.132 0.260 0.206 0.334 0.132 0.253 0.152 0.301 0.597 0.578 0.174 0.306 0.520 0.523\n192 0.184 0.309 0.174 0.300 0.377 0.463 0.178 0.299 0.187 0.331 0.654 0.595 0.241 0.364 0.653 0.592\nILI\n24 1.621 0.800 2.063 0.881 2.464 1.039 2.624 1.118 4.380 1.558 3.722 1.432 3.590 1.424 2.831 1.085\n36 1.803 0.855 2.178 0.943 2.388 1.007 2.693 1.156 3.314 1.313 3.941 1.448 4.200 1.383 2.801 1.088\n48 1.768 0.903 1.91"
+      ]
+    },
+    "preprocessing_protocol": {
+      "status": "specified",
+      "value": "Training-split standardization implemented by the pinned official loader.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    },
+    "hyperparameters": {
+      "status": "specified",
+      "value": [
+        "{python}",
+        "-u",
+        "{source_root}/run.py",
+        "--is_training",
+        "1",
+        "--root_path",
+        "{dataset_dir}",
+        "--data_path",
+        "exchange_rate.csv",
+        "--model_id",
+        "Exchange_192_96",
+        "--model",
+        "Koopa",
+        "--data",
+        "custom",
+        "--features",
+        "M",
+        "--seq_len",
+        "192",
+        "--pred_len",
+        "96",
+        "--seg_len",
+        "96",
+        "--dynamic_dim",
+        "64",
+        "--hidden_dim",
+        "64",
+        "--hidden_layers",
+        "3",
+        "--num_blocks",
+        "4",
+        "--enc_in",
+        "8",
+        "--dec_in",
+        "8",
+        "--c_out",
+        "8",
+        "--des",
+        "native",
+        "--learning_rate",
+        "0.001",
+        "--itr",
+        "1",
+        "--gpu",
+        "0",
+        "--seed",
+        "{seed}",
+        "--num_workers",
+        "0",
+        "--checkpoints",
+        "{runtime_root}/checkpoints"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "python -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_96_48 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 96 \\\n  --pred_len 48 \\\n  --seg_len 48 \\\n  --dynamic_dim 128 \\\n  --hidden_dim 256 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\\n  --data_path exchange_rate.csv \\\n  --model_id Exchange_192_96 \\\n  --model Koopa \\\n  --data custom \\\n  --features M \\\n  --seq_len 192 \\\n  --pred_len 96 \\\n  --seg_len 96 \\\n  --dynamic_dim 64 \\\n  --hidden_dim 64 \\\n  --hidden_layers 3 \\\n  --num_blocks 4 \\\n  --enc_in 8 \\\n  --dec_in 8 \\\n  --c_out 8 \\\n  --des 'Exp' \\\n  --learning_rate 0.001 \\\n  --itr 1 \\\n  --gpu 0\n\npython -u run.py \\\n  --is_training 1 \\\n  --root_path ./dataset/exchange_rate/ \\"
+      ]
+    }
+  },
+  "claims": [
+    {
+      "claim_id": "arxiv_2305_18803_exchange_native",
+      "description": "NeurIPS 2023 paper, Table 1 and Table 6, Exchange, horizon 96",
+      "primary_metrics": [
+        "mse",
+        "mae"
+      ],
+      "reported_values": {
+        "mse": 0.083,
+        "mae": 0.207
+      },
+      "acceptance_tolerance": {
+        "mse": 0.015,
+        "mae": 0.02
+      }
+    }
+  ],
+  "approved_for_execution": true,
+  "updated_at": "2026-07-17T08:03:36.639725+00:00",
+  "required_fields": [
+    "asset_universe",
+    "data_requirements",
+    "evaluation_protocol",
+    "feature_groups",
+    "frequency",
+    "horizon",
+    "label_definition",
+    "metrics",
+    "model_families",
+    "target_asset",
+    "training_protocol"
+  ],
+  "unresolved_required_fields": [],
+  "execution_ready": true,
+  "strict_ready": true,
+  "plan_hash": "9784931fb4527bd9"
+}

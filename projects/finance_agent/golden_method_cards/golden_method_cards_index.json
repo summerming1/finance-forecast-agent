@@ -1,0 +1,25 @@
+{
+  "schema_version": "v2",
+  "approved_only": true,
+  "counts": {
+    "cross_market": 1,
+    "unsupported": 0,
+    "us_equity": 1
+  },
+  "materialized_count": 2,
+  "assignments": {
+    "arxiv_1706_10059": "cross_market",
+    "arxiv_2306_03620": "us_equity"
+  },
+  "skipped": {
+    "arxiv_1904_00745": "review_status=pending",
+    "arxiv_2004_10178v2": "review_status=pending",
+    "arxiv_2108_10826": "review_status=pending",
+    "arxiv_2212_01048": "review_status=pending",
+    "arxiv_2405_03151": "review_status=pending",
+    "arxiv_2409_08426": "review_status=pending",
+    "arxiv_2411_05790": "review_status=pending",
+    "arxiv_2412_15448": "review_status=pending",
+    "arxiv_2501_17366": "review_status=pending"
+  }
+}

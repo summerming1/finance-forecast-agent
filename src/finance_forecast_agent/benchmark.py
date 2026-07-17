@@ -16,6 +16,11 @@ from .method_adapters import MethodAdapter, PredictionArtifact
 from .splitters import make_splits
 
 ComparisonTrack = Literal["model_only", "end_to_end"]
+BenchmarkTaskType = Literal[
+    "return_regression",
+    "direction_classification",
+    "volatility_regression",
+]
 
 
 @dataclass(frozen=True)
@@ -33,6 +38,7 @@ class BenchmarkTask:
     split_method: str
     primary_metric: str
     metrics: list[str]
+    task_type: BenchmarkTaskType = "return_regression"
     comparison_track: ComparisonTrack = "model_only"
     cost_model: dict[str, float] = field(default_factory=dict)
     seed: int = 42
@@ -158,6 +164,32 @@ def _fold_train_majority_baseline(
     }
 
 
+def _fold_train_mean_baseline(
+    frame: pd.DataFrame,
+    *,
+    label_column: str,
+    splits: list[Any],
+) -> dict[str, Any]:
+    labels = frame[label_column].astype(float).to_numpy()
+    actual: list[float] = []
+    predicted: list[float] = []
+    folds = []
+    for fold_id, window in enumerate(splits):
+        train_mean = float(np.mean(labels[window.train_indices]))
+        fold_actual = [float(labels[index]) for index in window.test_indices]
+        actual.extend(fold_actual)
+        predicted.extend([train_mean] * len(fold_actual))
+        folds.append({"fold_id": fold_id, "train_mean": train_mean, "test_count": len(fold_actual)})
+    return {
+        "name": "fold_train_mean",
+        "uses_test_labels_for_selection": False,
+        "prediction_count": len(actual),
+        "mae": float(mean_absolute_error(actual, predicted)),
+        "rmse": float(mean_squared_error(actual, predicted) ** 0.5),
+        "folds": folds,
+    }
+
+
 def run_common_benchmark(
     task: BenchmarkTask,
     methods: list[tuple[str, str]],
@@ -183,7 +215,11 @@ def run_common_benchmark(
         }
         for index, window in enumerate(splits)
     ]
-    baseline = _fold_train_majority_baseline(frame, label_column=task.label_column, splits=splits)
+    baseline = (
+        _fold_train_mean_baseline(frame, label_column=task.label_column, splits=splits)
+        if task.task_type == "volatility_regression"
+        else _fold_train_majority_baseline(frame, label_column=task.label_column, splits=splits)
+    )
     reports: list[dict[str, Any]] = []
     target_signatures: list[list[tuple[str, str, str, int, float]]] = []
     for method_id, model_family in methods:
@@ -202,9 +238,32 @@ def run_common_benchmark(
             artifact,
             cost_model=task.cost_model or None,
         )
-        directional_diagnostics = _directional_diagnostics(
-            artifact,
-            baseline_accuracy=float(baseline["accuracy"]),
+        directional_diagnostics = (
+            {
+                "verdict": "not_applicable_for_non_directional_target",
+                "directional_skill_demonstrated": False,
+            }
+            if task.task_type == "volatility_regression"
+            else _directional_diagnostics(
+                artifact,
+                baseline_accuracy=float(baseline["accuracy"]),
+            )
+        )
+        task_diagnostics = (
+            {
+                "baseline_name": baseline["name"],
+                "baseline_rmse": baseline["rmse"],
+                "model_rmse": metrics["rmse"],
+                "rmse_improvement": baseline["rmse"] - metrics["rmse"],
+                "beats_fold_train_baseline": metrics["rmse"] < baseline["rmse"],
+                "verdict": (
+                    "error_skill_demonstrated"
+                    if metrics["rmse"] < baseline["rmse"]
+                    else "error_skill_not_demonstrated"
+                ),
+            }
+            if task.task_type == "volatility_regression"
+            else directional_diagnostics
         )
         target_signatures.append(
             [
@@ -219,6 +278,7 @@ def run_common_benchmark(
                 "metrics": metrics,
                 "prediction_count": len(artifact.rows),
                 "directional_diagnostics": directional_diagnostics,
+                "task_diagnostics": task_diagnostics,
                 "prediction_artifact": artifact.to_dict(),
             }
         )

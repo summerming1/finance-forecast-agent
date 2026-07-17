@@ -1,0 +1,223 @@
+{
+  "schema_version": "reproduction_plan_v1",
+  "paper_id": "arxiv_2402_10198",
+  "experiment_type": "forecast_only",
+  "plan_mode": "native_reproduction",
+  "resolutions": {
+    "target_asset": {
+      "status": "specified",
+      "value": "eight-channel daily Exchange-Rate series",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early sto"
+      ]
+    },
+    "asset_universe": {
+      "status": "specified",
+      "value": [
+        "exchange_channel_1",
+        "exchange_channel_2",
+        "exchange_channel_3",
+        "exchange_channel_4",
+        "exchange_channel_5",
+        "exchange_channel_6",
+        "exchange_channel_7",
+        "exchange_channel_8"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    },
+    "frequency": {
+      "status": "specified",
+      "value": "daily",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    },
+    "horizon": {
+      "status": "specified",
+      "value": "96 days",
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early sto"
+      ]
+    },
+    "label_definition": {
+      "status": "specified",
+      "value": "future multivariate exchange-rate levels",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    },
+    "data_requirements": {
+      "status": "specified",
+      "value": [
+        "frozen Exchange-Rate bytes",
+        "chronological train/validation/test split"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    },
+    "feature_groups": {
+      "status": "specified",
+      "value": [
+        "eight raw exchange-rate channels"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    },
+    "model_families": {
+      "status": "specified",
+      "value": [
+        "SAMformer"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    },
+    "training_protocol": {
+      "status": "specified",
+      "value": "Pinned official implementation and claim command; see native claim catalog.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    },
+    "evaluation_protocol": {
+      "status": "specified",
+      "value": "Paper-native chronological holdout and paper-native metrics.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    },
+    "metrics": {
+      "status": "specified",
+      "value": [
+        "mse",
+        "mae"
+      ],
+      "source": "paper_evidence",
+      "rationale": "",
+      "evidence": [
+        "from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early sto"
+      ]
+    },
+    "preprocessing_protocol": {
+      "status": "specified",
+      "value": "Training-split standardization implemented by the pinned official loader.",
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    },
+    "hyperparameters": {
+      "status": "specified",
+      "value": [
+        "{conda}",
+        "run",
+        "--no-capture-output",
+        "-n",
+        "finance_fa_samformer",
+        "python",
+        "-u",
+        "{source_root}/run.py",
+        "--model",
+        "transformer",
+        "--use_sam",
+        "--data",
+        "exchange_rate",
+        "--feature_type",
+        "M",
+        "--seq_len",
+        "512",
+        "--pred_len",
+        "96",
+        "--batch_size",
+        "32",
+        "--train_epochs",
+        "300",
+        "--learning_rate",
+        "0.001",
+        "--rho",
+        "0.7",
+        "--patience",
+        "5",
+        "--n_block",
+        "8",
+        "--dropout",
+        "0.7",
+        "--ff_dim",
+        "64",
+        "--num_heads",
+        "1",
+        "--d_model",
+        "16",
+        "--checkpoint_dir",
+        "{runtime_root}/checkpoints"
+      ],
+      "source": "primary_source_evidence",
+      "rationale": "",
+      "evidence": [
+        "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone"
+      ]
+    }
+  },
+  "claims": [
+    {
+      "claim_id": "arxiv_2402_10198_exchange_native",
+      "description": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96",
+      "primary_metrics": [
+        "mse",
+        "mae"
+      ],
+      "reported_values": {
+        "mse": 0.161,
+        "mae": 0.306
+      },
+      "acceptance_tolerance": {
+        "mse": 0.02,
+        "mae": 0.025
+      }
+    }
+  ],
+  "approved_for_execution": true,
+  "updated_at": "2026-07-17T08:03:36.705320+00:00",
+  "required_fields": [
+    "asset_universe",
+    "data_requirements",
+    "evaluation_protocol",
+    "feature_groups",
+    "frequency",
+    "horizon",
+    "label_definition",
+    "metrics",
+    "model_families",
+    "target_asset",
+    "training_protocol"
+  ],
+  "unresolved_required_fields": [],
+  "execution_ready": true,
+  "strict_ready": true,
+  "plan_hash": "463669373b56ea3c"
+}

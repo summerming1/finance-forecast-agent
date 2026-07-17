@@ -10,7 +10,7 @@ P1.6.2 是既定 P1 复现协议路线内的覆盖验收，不改变项目定位
 2. 统一基准通用性：可兼容的方法在冻结 BenchmarkTask 上生成同结构 PredictionArtifact，并通过可比性审计。
 3. 原生严格通用性：保留论文数据、模型、预处理、切分、指标和 claim，并由专用 adapter 复现结果。
 
-当前前两层已覆盖十篇/五篇样例，第三层目前只有 DLinear 的一个具体 claim。不能把控制层通过解释为十篇严格复现。
+当前前两层已覆盖十篇/五篇样例，第三层已有十个金融 Exchange-Rate 原生 strict claims。不能把这十个同数据域时序预测结果解释为信号回测、截面资产定价或组合强化学习也已具备通用性。
 
 ## 本轮修复
 
@@ -53,7 +53,7 @@ P1.6.2 是既定 P1 复现协议路线内的覆盖验收，不改变项目定位
 
 ## Replay 边界
 
-DLinear fixture 来自当前 `.env` 的真实严格 LLM 抽取，并通过 claim selector 和 31/31 EvidenceSpan 逐字校验。其余九个标准 fixture 保存的是已审核 MethodCard，用于保证 PDF 到路由的确定性回归；它们不是九次 live LLM strict 抽取证据。
+DLinear fixture 来自当前 `.env` 的真实严格 LLM 抽取，并通过 claim selector 和 31/31 EvidenceSpan 逐字校验。其余标准 fixture 和新增九个 native claim 使用已审核 MethodCard/主资料卡；它们证明原生执行与门禁，不是九次 live LLM strict 抽取证据。
 
 ## 验证命令
 
@@ -71,4 +71,4 @@ python -m ruff check src tests scripts
 
 ## 后续建议
 
-总体 Roadmap 无需改向，P1 的 Memory、Registry 和历史版本目标仍然成立。建议在 P1.7 前或并行增加 P1.6.3：分别选择一个可获得原始数据/官方实现的信号回测、截面资产定价和组合强化学习论文，建立三种专用原生 adapter 与 strict claim 验收。这样进入 Memory prior 阶段时，历史经验不只来自时间序列预测这一种实验形态。
+总体 Roadmap 无需改向。10-claim 数量门禁通过后，下一步按已批准路线分别选择一个可获得原始数据/官方实现的信号回测、截面资产定价和组合强化学习论文，建立三种专用原生 adapter 与 strict claim 验收；同时完成 28 个 exploratory candidate 的逐篇 Delta。这样 Memory prior 不只学习同一 Exchange-Rate 时间序列实验形态。

@@ -13,12 +13,19 @@ import streamlit as st
 from .adapter_backlog import load_model_adapter_backlog, update_model_adapter_task, write_model_adapter_backlog
 from .benchmark import BenchmarkTask, run_common_benchmark
 from .data import load_yahoo_chart_weekly_dataset
+from .data_acquisition import (
+    DataRequest,
+    acquire_data_request,
+    load_data_acquisition_results,
+    requests_from_method_card,
+)
 from .experiment_memory import ExperimentMemoryRecord, ExperimentMemoryStore
 from .frontend_view_model import candidate_leaderboard, load_method_cards, summarize_control_tower
 from .frontend_workbench import evidence_rows, method_summary_rows, paper_inventory, report_item_for_paper, reproduction_readiness
 from .golden_sets import load_golden_index, write_golden_methodcard_sets
 from .harness import run_harness
 from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
+from .literature_corpus import corpus_statistics, load_corpus
 from .method_cards import (
     MethodCard,
     MethodCardAgent,
@@ -28,6 +35,12 @@ from .method_cards import (
     strict_method_card_prompt,
 )
 from .model_registry import benchmark_compatible
+from .multi_benchmark import run_multi_benchmark_suite
+from .native_execution import (
+    OfficialRepoCommandAdapter,
+    audit_native_claim,
+    load_native_claim_catalog,
+)
 from .native_reproductions import reproduce_dlinear_exchange_rate
 from .p1_protocol import (
     FieldResolution,
@@ -37,13 +50,22 @@ from .p1_protocol import (
     save_reproduction_plan,
 )
 from .replay_llm import ReplayLLM
+from .reproduction_portfolio import build_reproduction_portfolio
 from .review_state import approved_paper_ids, load_review_state, review_for_paper, review_status_counts, update_methodcard_review
 from .run_timeline import load_run_timeline_index, write_run_timeline
 from .schemas import PaperSpecCard
 
 SKIP_JSON = {"method_card_catalog.json", "paper_specs_from_method_cards.json"}
 TASK_STATUSES = ["todo", "in_progress", "blocked", "done"]
-WORKFLOW_STAGES = ["1 文献库", "2 方法审核", "3 复现配置", "4 运行实验", "5 结果审计"]
+WORKFLOW_STAGES = [
+    "1 文献语料",
+    "2 数据准备",
+    "3 方法卡审核",
+    "4 复现配置",
+    "5 原生/探索运行",
+    "6 多方法基准",
+    "7 结果审计",
+]
 EXTRACTION_MODE_LABELS = {
     "live_reuse": "复用已有，仅新文献调用 LLM",
     "replay": "Replay 回放",
@@ -308,7 +330,7 @@ def _render_paper_library(papers_dir: Path, cards_dir: Path, fixture_dir: Path, 
     with left:
         if selected_row["paper_id"] and st.button("使用已有方法卡", icon=":material/description:", width="stretch"):
             st.session_state["active_card_id"] = selected_row["paper_id"]
-            _request_stage(WORKFLOW_STAGES[1])
+            _request_stage(WORKFLOW_STAGES[2])
             st.rerun()
     with right:
         if st.button("重新提取所选文献", type="primary", icon=":material/refresh:", width="stretch"):
@@ -319,10 +341,252 @@ def _render_paper_library(papers_dir: Path, cards_dir: Path, fixture_dir: Path, 
                 st.session_state["workbench_notice"] = (
                     f"已生成 1 张方法卡；LLM 调用 {result['live_calls']} 次，复用 {result['reused']} 次。"
                 )
-                _request_stage(WORKFLOW_STAGES[1])
+                _request_stage(WORKFLOW_STAGES[2])
                 st.rerun()
             except Exception as exc:
                 st.error(str(exc))
+
+
+def _render_literature_corpus(project_dir: Path) -> None:
+    st.header("规模化文献语料")
+    st.caption("正式期刊元数据、合法开放全文和复现可行性分别记录；下载成功不等于 strict 可复现。")
+    path = project_dir / "literature" / "literature_corpus.json"
+    if not path.exists():
+        st.info("尚未构建规模化语料。请运行 scripts/build_literature_corpus.py。")
+        return
+    records = load_corpus(path)
+    stats = corpus_statistics(records)
+    cols = st.columns(4)
+    cols[0].metric("审计论文", stats["paper_count"])
+    cols[1].metric("本地 PDF", stats["downloaded_pdf_count"])
+    cols[2].metric("顶级金融/计量", stats["top_finance_or_econometrics_count"])
+    cols[3].metric("高影响力同行评议", stats["high_impact_peer_reviewed_count"])
+    task_options = ["全部", *sorted({record.task_category for record in records})]
+    tier_options = ["全部", *sorted({record.venue_tier for record in records})]
+    left, right = st.columns(2)
+    task_filter = left.selectbox("任务类型", task_options, key="corpus_task_filter")
+    tier_filter = right.selectbox("来源层级", tier_options, key="corpus_tier_filter")
+    visible = [
+        record
+        for record in records
+        if (task_filter == "全部" or record.task_category == task_filter)
+        and (tier_filter == "全部" or record.venue_tier == tier_filter)
+    ]
+    st.dataframe(
+        [
+            {
+                "论文": record.title,
+                "年份": record.publication_year,
+                "来源": record.venue,
+                "来源层级": record.venue_tier,
+                "引用信号": record.cited_by_count,
+                "任务": record.task_category,
+                "方法": ", ".join(record.method_tags),
+                "全文": "已下载" if record.download_status == "downloaded_open_access" else "受阻/失败",
+                "Strict 可行性": record.strict_feasibility,
+            }
+            for record in visible
+        ],
+        width="stretch",
+        hide_index=True,
+    )
+    st.caption(
+        "只有通过官方代码、原始数据、协议证据和结果容差审计后，Strict 可行性才会升级为严格复现。"
+    )
+    portfolio = _load_report(project_dir, "reproduction_portfolio.json")
+    if st.button("刷新复现覆盖账本", icon=":material/fact_check:"):
+        portfolio = build_reproduction_portfolio(project_dir)
+    if portfolio:
+        st.subheader("复现覆盖账本")
+        summary = st.columns(5)
+        summary[0].metric("严格完成（全部）", portfolio.get("strict_verified_paper_count", 0))
+        summary[1].metric(
+            "严格完成（金融数据）",
+            portfolio.get("strict_verified_financial_paper_count", 0),
+        )
+        summary[2].metric("金融目标缺口", portfolio.get("financial_strict_target_gap", 0))
+        summary[3].metric(
+            "探索候选",
+            portfolio.get("coverage_counts", {}).get("exploratory_candidate", 0),
+        )
+        summary[4].metric("结构化阻断", portfolio.get("coverage_counts", {}).get("blocked", 0))
+        st.caption(
+            "金融数据 strict 只统计在金融数据上通过完整审计的论文 claim；它不表示论文发表于金融期刊。"
+            "能源等非金融样例只验证执行框架的跨领域通用性。"
+        )
+        st.warning(
+            "“探索候选”只表示存在已验证的方法家族与基准路径，并不表示该论文已经完成探索性复现。"
+        )
+        status_filter = st.selectbox(
+            "复现状态",
+            ["全部", "exploratory_candidate", "blocked"],
+            key="portfolio_status_filter",
+        )
+        portfolio_rows = [
+            row
+            for row in portfolio.get("papers", [])
+            if status_filter == "全部" or row.get("status") == status_filter
+        ]
+        st.dataframe(
+            [
+                {
+                    "论文": row.get("title"),
+                    "状态": row.get("status"),
+                    "任务": row.get("task_category"),
+                    "拟用模型": row.get("proposed_model_family"),
+                    "统一基准": row.get("assigned_benchmark"),
+                    "当前缺口": row.get("blocker"),
+                    "下一步": row.get("next_action"),
+                }
+                for row in portfolio_rows
+            ],
+            width="stretch",
+            hide_index=True,
+        )
+        native_attempts = portfolio.get("native_claim_attempts", [])
+        if native_attempts:
+            st.subheader("官方原生 claim 进度")
+            status_labels = {
+                "strict_verified": "严格复现通过",
+                "ready_not_run": "审计通过，等待运行",
+                "result_outside_tolerance": "已运行，结果未通过容差",
+                "execution_failed": "执行失败",
+                "blocked": "审计阻断",
+            }
+            domain_labels = {
+                "financial": "金融",
+                "energy": "能源（通用性样例）",
+                "unspecified": "未标注",
+            }
+            st.dataframe(
+                [
+                    {
+                        "模型": row.get("model_name"),
+                        "数据领域": domain_labels.get(
+                            row.get("dataset_domain"), row.get("dataset_domain")
+                        ),
+                        "状态": status_labels.get(row.get("status"), row.get("status")),
+                        "论文 claim": row.get("claim_locator"),
+                        "本地指标": row.get("metrics"),
+                        "阻断原因": "；".join(row.get("blockers") or []),
+                    }
+                    for row in native_attempts
+                ],
+                hide_index=True,
+            )
+    source_path = project_dir / "source_bundles" / "catalog.json"
+    if source_path.exists():
+        source_catalog = json.loads(source_path.read_text(encoding="utf-8"))
+        with st.expander("官方代码与数据来源审计"):
+            st.caption("固定仓库不等于确认官方身份；SourceBundle 仍需人工批准后才能进入 strict。")
+            st.dataframe(
+                [
+                    {
+                        "论文": row.get("paper_title"),
+                        "仓库": row.get("repository"),
+                        "身份": row.get("identity_status"),
+                        "代码许可": row.get("code_license") or "未识别",
+                        "数据状态": row.get("data_status"),
+                        "固定 commit": str(row.get("pinned_commit") or "")[:10],
+                        "阻断数": len(row.get("blockers") or []),
+                    }
+                    for row in source_catalog.get("bundles", [])
+                ],
+                width="stretch",
+                hide_index=True,
+            )
+
+
+def _render_data_hub(project_dir: Path, cards: list[MethodCard]) -> None:
+    st.header("数据获取中心")
+    st.caption("所有请求保存来源、许可、SHA256、字段检查和失败原因；付费数据不会自动下载。")
+    manual_tab, method_tab, history_tab = st.tabs(["人工请求", "按 MethodCard", "获取记录"])
+    with manual_tab:
+        with st.form("manual_data_request", border=True):
+            source_type = st.selectbox(
+                "数据源",
+                ["yahoo_chart", "fred_series", "fama_french_library", "direct_open_url"],
+                format_func={
+                    "yahoo_chart": "Yahoo Finance 图表接口",
+                    "fred_series": "FRED 时间序列",
+                    "fama_french_library": "Kenneth French 数据库",
+                    "direct_open_url": "可信开放 HTTPS 地址",
+                }.get,
+            )
+            dataset_id = st.text_input("Dataset ID", value="custom_dataset")
+            symbol = st.text_input("代码或序列", placeholder="AAPL / DGS10 / F-F_Research_Data_Factors")
+            source_url = st.text_input("开放数据 URL", placeholder="仅 direct_open_url 使用")
+            date_cols = st.columns(2)
+            start_date = date_cols[0].text_input("开始日期", placeholder="2020-01-01")
+            end_date = date_cols[1].text_input("结束日期", placeholder="2024-01-01")
+            expected = st.text_input("预期字段", placeholder="DATE,DGS10")
+            submitted = st.form_submit_button("获取并校验", type="primary", icon=":material/download:")
+        if submitted:
+            request = DataRequest(
+                request_id=f"ui_{uuid4().hex[:12]}",
+                dataset_id=dataset_id,
+                source_type=source_type,
+                source_url=source_url or None,
+                symbol_or_series=symbol or None,
+                start_date=start_date or None,
+                end_date=end_date or None,
+                frequency="1d" if source_type == "yahoo_chart" else None,
+                expected_fields=[item.strip() for item in expected.split(",") if item.strip()],
+                license_status="provider_terms_review_required",
+                requested_by="streamlit_user",
+            )
+            with st.spinner("正在获取并校验数据..."):
+                try:
+                    result = acquire_data_request(request, project_dir)
+                    if result.status.startswith("downloaded"):
+                        st.success(f"数据已落地并记录 SHA256：{result.sha256}")
+                    else:
+                        st.error(result.error or result.status)
+                except Exception as exc:
+                    st.error(str(exc))
+    with method_tab:
+        if not cards:
+            st.info("还没有 MethodCard。")
+        else:
+            selected_id = st.selectbox(
+                "选择 MethodCard",
+                [card.paper_id for card in cards],
+                format_func=lambda paper_id: next(
+                    f"{card.title} · {paper_id}" for card in cards if card.paper_id == paper_id
+                ),
+                key="data_methodcard_id",
+            )
+            card = next(card for card in cards if card.paper_id == selected_id)
+            proposals = requests_from_method_card(card, project_dir)
+            st.dataframe([proposal.to_dict() for proposal in proposals], width="stretch", hide_index=True)
+            if st.button("执行自动数据请求", type="primary", icon=":material/automation:"):
+                for proposal in proposals:
+                    result = acquire_data_request(proposal, project_dir)
+                    if result.status in {"blocked", "failed"}:
+                        st.error(result.error or result.status)
+                    else:
+                        st.success(f"{proposal.dataset_id}：{result.status}")
+    with history_tab:
+        rows = load_data_acquisition_results(project_dir)
+        if not rows:
+            st.info("尚无数据获取记录。")
+        else:
+            st.dataframe(
+                [
+                    {
+                        "请求": row.get("request", {}).get("request_id"),
+                        "数据": row.get("request", {}).get("dataset_id"),
+                        "来源": row.get("request", {}).get("source_type"),
+                        "状态": row.get("status"),
+                        "字节": row.get("byte_count"),
+                        "缺失字段": ", ".join(row.get("missing_expected_fields") or []),
+                        "错误": row.get("error"),
+                    }
+                    for row in rows
+                ],
+                width="stretch",
+                hide_index=True,
+            )
 
 
 def _render_method_review(project_dir: Path, cards: list[MethodCard], reviews: dict[str, dict[str, Any]]) -> None:
@@ -369,7 +633,7 @@ def _render_method_review(project_dir: Path, cards: list[MethodCard], reviews: d
     with st.expander("技术细节：原始 MethodCard JSON"):
         st.json(card.to_dict())
     if st.button("继续配置复现", type="primary", icon=":material/arrow_forward:"):
-        _request_stage(WORKFLOW_STAGES[2])
+        _request_stage(WORKFLOW_STAGES[3])
         st.rerun()
 
 
@@ -529,7 +793,7 @@ def _render_reproduction_setup(project_dir: Path, card: MethodCard | None, repor
     left, right = st.columns(2)
     with left:
         if st.button("返回方法审核", icon=":material/arrow_back:", width="stretch"):
-            _request_stage(WORKFLOW_STAGES[1])
+            _request_stage(WORKFLOW_STAGES[2])
             st.rerun()
     with right:
         if st.button(
@@ -539,7 +803,7 @@ def _render_reproduction_setup(project_dir: Path, card: MethodCard | None, repor
             width="stretch",
             disabled=not plan.execution_ready,
         ):
-            _request_stage(WORKFLOW_STAGES[3])
+            _request_stage(WORKFLOW_STAGES[4])
             st.rerun()
 
 
@@ -609,8 +873,16 @@ def _record_native_memory(project_dir: Path, result: dict[str, Any]) -> None:
     )
 
 
-def _render_run(project_dir: Path, cards_dir: Path, cards: list[MethodCard], reviews: dict[str, dict[str, Any]], report_name: str) -> None:
-    st.header("运行复现实验")
+def _render_run(
+    project_dir: Path,
+    cards_dir: Path,
+    cards: list[MethodCard],
+    reviews: dict[str, dict[str, Any]],
+    report_name: str,
+    *,
+    benchmark_view: bool = False,
+) -> None:
+    st.header("运行多方法统一基准" if benchmark_view else "运行原生或探索性复现")
     card = _active_card(cards)
     if card is None:
         st.info("请先选择并审核一张 MethodCard。")
@@ -629,16 +901,39 @@ def _render_run(project_dir: Path, cards_dir: Path, cards: list[MethodCard], rev
             missing.append("ReproductionPlan 尚未执行就绪")
         st.warning("；".join(missing) + "。原生复现运行已锁定。")
 
-    run_mode = st.segmented_control(
-        "运行模式",
-        ["native_reproduction", "common_benchmark"],
-        default="native_reproduction",
-        format_func={"native_reproduction": "原生复现", "common_benchmark": "统一基准"}.get,
-        required=True,
-        width="stretch",
-    )
+    if benchmark_view:
+        run_mode = st.segmented_control(
+            "基准范围",
+            ["common_benchmark", "multi_benchmark_suite"],
+            default="multi_benchmark_suite",
+            format_func={
+                "common_benchmark": "AAPL 单一基准",
+                "multi_benchmark_suite": "四类冻结基准",
+            }.get,
+            required=True,
+            width="stretch",
+        )
+    else:
+        run_mode = "native_reproduction"
+        st.caption("系统按 MethodCard、数据可比性和 ReproductionPlan 自动判定 strict 或 exploratory，不由按钮名称决定。")
     if run_mode == "native_reproduction":
-        if card.paper_id == "arxiv_2205_13504":
+        catalog_path = project_dir / "native_claims" / "catalog.json"
+        native_claims = load_native_claim_catalog(catalog_path) if catalog_path.exists() else []
+        claim_options = ["dlinear_exchange_rate_336_96", *[claim.claim_id for claim in native_claims]]
+        selected_claim_id = st.selectbox(
+            "选择官方原生复现 claim",
+            claim_options,
+            format_func=lambda claim_id: (
+                "DLinear · Exchange-Rate · 336 → 96"
+                if claim_id == "dlinear_exchange_rate_336_96"
+                else next(
+                    f"{claim.model_name} · {claim.claim_locator}"
+                    for claim in native_claims
+                    if claim.claim_id == claim_id
+                )
+            ),
+        )
+        if selected_claim_id == "dlinear_exchange_rate_336_96":
             with st.container(border=True):
                 st.subheader("DLinear Exchange-Rate 官方协议")
                 st.caption("官方数据快照 · 336 日输入 · 96 日预测 · 70/10/20 时间切分 · MSE/MAE")
@@ -677,45 +972,118 @@ def _render_run(project_dir: Path, cards_dir: Path, cards: list[MethodCard], rev
                         _record_native_memory(project_dir, native)
                     st.session_state["_requested_report_name"] = output.name
                     st.session_state["workbench_notice"] = "DLinear 官方协议运行完成，已切换到结果审计。"
-                    _request_stage(WORKFLOW_STAGES[4])
+                    _request_stage(WORKFLOW_STAGES[6])
                     st.rerun()
                 except Exception as exc:
                     st.error(str(exc))
         else:
-            with st.form("run_selected_methodcard", border=True):
-                max_candidates = int(st.number_input("候选方法数量", min_value=1, max_value=8, value=2))
-                out_report = st.text_input("输出报告文件名", report_name)
-                golden_approved_only = st.toggle("Golden 集合只保留已批准方法卡", value=True)
-                submitted = st.form_submit_button(
-                    "运行原生复现计划",
+            selected_claim = next(
+                claim for claim in native_claims if claim.claim_id == selected_claim_id
+            )
+            claim_audit = audit_native_claim(project_dir, selected_claim)
+            existing_path = project_dir / "reports" / f"native_{selected_claim.claim_id}.json"
+            existing_report = (_load_report(project_dir, existing_path.name) or {}) if existing_path.exists() else {}
+            partial_path = existing_path.with_suffix(existing_path.suffix + ".partial")
+            partial_report = json.loads(partial_path.read_text(encoding="utf-8")) if partial_path.exists() else {}
+            completed_repetitions = sum(
+                row.get("exit_code") == 0 for row in partial_report.get("runs", [])
+            )
+            runtime_execution_root = Path(partial_report.get("runtime_execution_root", ""))
+            rng_state_template = selected_claim.environment.get("FFA_RNG_STATE_PATH", "")
+            rng_state_path = Path(
+                rng_state_template.format(runtime_root=runtime_execution_root)
+            ) if rng_state_template and runtime_execution_root else None
+            has_internal_iteration_state = bool(rng_state_path and rng_state_path.exists())
+            dataset_name = selected_claim.protocol.get("dataset", selected_claim.dataset_id)
+            domain_name = {
+                "financial": "金融",
+                "energy": "能源（通用性样例）",
+                "unspecified": "未标注",
+            }.get(selected_claim.dataset_domain, selected_claim.dataset_domain)
+            with st.container(border=True):
+                st.subheader(f"{selected_claim.model_name} · {dataset_name}")
+                st.caption(selected_claim.claim_locator)
+                protocol_rows = [
+                    {"检查项": "数据领域", "状态": domain_name},
+                    {"检查项": "冻结数据", "状态": "通过" if claim_audit["dataset_passed"] else "阻断"},
+                    {"检查项": "官方源码", "状态": "通过" if claim_audit["source_archive_passed"] else "阻断"},
+                    {"检查项": "方法卡与计划", "状态": "通过" if claim_audit["governance"]["passed"] else "阻断"},
+                    {"检查项": "协议无未决项", "状态": "通过" if claim_audit["protocol_pinned"] else "阻断"},
+                    {
+                        "检查项": "论文重复次数",
+                        "状态": selected_claim.protocol.get("paper_repetitions", "未记录"),
+                    },
+                    {
+                        "检查项": "指标观测契约",
+                        "状态": selected_claim.protocol.get(
+                            "metric_observation_contract",
+                            selected_claim.expected_metric_observations,
+                        ),
+                    },
+                    {
+                        "检查项": "随机性策略",
+                        "状态": selected_claim.protocol.get("randomness_protocol", "未记录"),
+                    },
+                ]
+                st.dataframe(protocol_rows, hide_index=True)
+                metric_rows = [
+                    {
+                        "指标": name.upper(),
+                        "论文值": target.expected,
+                        "冻结容差": target.absolute_tolerance,
+                        "已有本地值": existing_report.get("metrics", {}).get(name),
+                        "结果": (
+                            "通过"
+                            if existing_report.get("metric_checks", {}).get(name, {}).get("passed")
+                            else "尚未通过"
+                        ),
+                    }
+                    for name, target in selected_claim.metrics.items()
+                ]
+                st.dataframe(metric_rows, hide_index=True)
+                if existing_report.get("complete_reproduction_allowed"):
+                    st.success("该 claim 已有完整复现通过报告。", icon=":material/verified:")
+                elif existing_report:
+                    st.warning("已有运行报告，但完整复现门禁未通过。", icon=":material/warning:")
+                if completed_repetitions:
+                    st.info(
+                        f"断点已保存：完成 {completed_repetitions}/{selected_claim.repetitions} 次独立重复；"
+                        "再次运行会从下一次继续。",
+                        icon=":material/resume:",
+                    )
+                elif partial_report:
+                    progress = (
+                        "至少一个官方内部重复的 RNG 边界已保存"
+                        if has_internal_iteration_state
+                        else "运行目录已建立，当前内部重复尚未完成"
+                    )
+                    st.info(f"断点已建立：{progress}；再次运行会从可恢复边界继续。", icon=":material/resume:")
+                if claim_audit["blockers"]:
+                    st.error("；".join(claim_audit["blockers"]), icon=":material/block:")
+                submitted = st.button(
+                    "继续所选官方协议" if partial_report else "运行所选官方协议",
                     type="primary",
                     icon=":material/play_arrow:",
-                    disabled=not (approved and plan.execution_ready),
+                    disabled=not claim_audit["passed"],
+                    key=f"run_native_{selected_claim.claim_id}",
                 )
             if submitted:
                 try:
-                    with st.spinner("正在编译 ReproductionPlan、训练、评估并审计..."):
-                        result = _run(
+                    runtime_root = Path(os.getenv("TEMP", str(project_dir / ".runtime"))) / "ffa-native"
+                    with st.spinner("正在运行固定官方协议并核验论文指标；CPU 训练可能需要较长时间..."):
+                        result = OfficialRepoCommandAdapter(runtime_root=runtime_root).run(
                             project_dir,
-                            [card],
-                            cards_dir,
-                            cards_dir / "paper_specs_from_method_cards.json",
-                            out_report,
-                            1,
-                            max_candidates,
-                            reviews,
-                            True,
-                            golden_approved_only,
-                            artifact_cards=cards,
-                            reproduction_plans={card.paper_id: plan},
+                            selected_claim,
+                            output_path=existing_path,
                         )
-                    st.session_state["_requested_report_name"] = Path(result["report"]).name
-                    st.session_state["workbench_notice"] = "原生复现实验完成，已切换到结果审计。"
-                    _request_stage(WORKFLOW_STAGES[4])
+                        _record_native_memory(project_dir, result)
+                    st.session_state["_requested_report_name"] = existing_path.name
+                    st.session_state["workbench_notice"] = "官方原生 claim 运行完成，已切换到结果审计。"
+                    _request_stage(WORKFLOW_STAGES[6])
                     st.rerun()
                 except Exception as exc:
                     st.error(str(exc))
-    else:
+    elif run_mode == "common_benchmark":
         available = {
             candidate.paper_id: method
             for candidate in cards
@@ -751,7 +1119,30 @@ def _render_run(project_dir: Path, cards_dir: Path, cards: list[MethodCard], rev
                     _record_benchmark_memory(project_dir, benchmark)
                 st.session_state["_requested_report_name"] = Path(benchmark["report_path"]).name
                 st.session_state["workbench_notice"] = "统一基准完成，结果已写入 ExperimentMemory。"
-                _request_stage(WORKFLOW_STAGES[4])
+                _request_stage(WORKFLOW_STAGES[6])
+                st.rerun()
+            except Exception as exc:
+                st.error(str(exc))
+    else:
+        st.subheader("四类冻结金融基准")
+        st.dataframe(
+            [
+                {"基准": "SPY 日频方向", "目标": "下一交易日收益方向", "统计": "方向区间与无泄漏基线"},
+                {"基准": "SPY 日频波动率", "目标": "未来 5 日实现波动率", "统计": "训练折均值误差基线"},
+                {"基准": "BTC-USD 日频收益", "目标": "下一日收益", "统计": "方向区间与无泄漏基线"},
+                {"基准": "EURUSD 日频收益", "目标": "下一日收益", "统计": "方向区间与无泄漏基线"},
+            ],
+            width="stretch",
+            hide_index=True,
+        )
+        st.caption("每类任务固定数据、特征、标签和 folds，运行五篇 MethodCard 的四种实际 adapter。")
+        if st.button("运行完整多基准套件", type="primary", icon=":material/compare_arrows:"):
+            try:
+                with st.spinner("正在运行 4 个任务 × 5 个论文方法并生成差异审计..."):
+                    suite = run_multi_benchmark_suite(project_dir)
+                st.session_state["_requested_report_name"] = Path(suite["report_path"]).name
+                st.session_state["workbench_notice"] = "多基准套件完成，已生成 20 组比较与 Paper-vs-Run 差异。"
+                _request_stage(WORKFLOW_STAGES[6])
                 st.rerun()
             except Exception as exc:
                 st.error(str(exc))
@@ -790,6 +1181,98 @@ def _render_results(project_dir: Path, card: MethodCard | None, report: dict[str
     if not report:
         st.info("还没有可展示的运行报告。请先运行一张已批准的方法卡，或在侧边栏选择历史 Report file。")
         _render_governance(project_dir, cards, reviews)
+        return
+    if report.get("schema_version") == "multi_benchmark_suite_v1":
+        st.badge("多基准统一比较，不是论文原生复现", color="blue", icon=":material/grid_view:")
+        cols = st.columns(4)
+        cols[0].metric("基准任务", report.get("task_count"))
+        cols[1].metric("每任务方法", report.get("method_count_per_task"))
+        cols[2].metric("总比较", report.get("comparison_count"))
+        cols[3].metric("可比性", "全部通过" if report.get("all_comparisons_valid") else "存在失败")
+        tasks = report.get("tasks", [])
+        selected_task_id = st.selectbox(
+            "选择基准任务",
+            [task.get("task", {}).get("task_id") for task in tasks],
+            key="result_multi_benchmark_task",
+        )
+        selected_task = next(
+            task for task in tasks if task.get("task", {}).get("task_id") == selected_task_id
+        )
+        task = selected_task.get("task", {})
+        st.subheader(str(selected_task_id))
+        st.caption(
+            f"{task.get('dataset_id')} · {task.get('frequency')} · {task.get('label_definition')} · "
+            f"{task.get('split_method')} · {task.get('task_fingerprint')}"
+        )
+        rows = []
+        for item in selected_task.get("reports", []):
+            delta = item.get("paper_vs_run_delta", {})
+            rows.append(
+                {
+                    "论文方法": item.get("method_id"),
+                    "实际模型": item.get("model_family"),
+                    "主指标": item.get("metrics", {}).get(task.get("primary_metric")),
+                    "任务证据": item.get("task_diagnostics", {}).get("verdict"),
+                    "原论文假设": delta.get("original_paper_hypothesis_verdict"),
+                    "适配任务假设": delta.get("adapted_task_hypothesis_verdict"),
+                    "关键差异": ", ".join(delta.get("critical_deltas") or []),
+                }
+            )
+        st.dataframe(rows, width="stretch", hide_index=True)
+        st.info(
+            "统一基准可以比较方法在共享任务上的表现；当数据、特征或切分与论文不同，它不能证明或否定原论文结论。"
+        )
+        selected_method = st.selectbox(
+            "查看方法差异",
+            [item.get("method_id") for item in selected_task.get("reports", [])],
+            key="result_multi_benchmark_method",
+        )
+        selected_report = next(
+            item for item in selected_task.get("reports", []) if item.get("method_id") == selected_method
+        )
+        st.dataframe(
+            selected_report.get("paper_vs_run_delta", {}).get("dimensions", []),
+            width="stretch",
+            hide_index=True,
+        )
+        with st.expander("技术细节：多基准报告 JSON"):
+            st.json(report)
+        return
+    if report.get("schema_version") == "native_result_report_v1":
+        complete = bool(report.get("complete_reproduction_allowed"))
+        st.badge(
+            "完整复现通过" if complete else "官方协议已运行，严格门禁未通过",
+            color="green" if complete else "orange",
+            icon=":material/verified:" if complete else ":material/rule:",
+        )
+        st.subheader(f"{report.get('model_name')} · {report.get('claim_locator')}")
+        st.caption(
+            f"数据 {report.get('dataset', {}).get('dataset_id')} · "
+            f"源码 {report.get('source', {}).get('revision')} · "
+            f"观测 {report.get('expected_metric_observations')} 次"
+        )
+        rows = []
+        for name, check in report.get("metric_checks", {}).items():
+            rows.append(
+                {
+                    "指标": name.upper(),
+                    "论文值": check.get("expected"),
+                    "本地均值": check.get("actual"),
+                    "绝对容差": check.get("absolute_tolerance"),
+                    "判定": "通过" if check.get("passed") else "未通过",
+                }
+            )
+        st.dataframe(rows, hide_index=True)
+        gate_rows = [
+            {"门禁": "数据与官方源码哈希", "判定": "通过" if report.get("audit", {}).get("passed") else "未通过"},
+            {"门禁": "全部实验观测完成", "判定": "通过" if report.get("execution_passed") else "未通过"},
+            {"门禁": "论文指标容差", "判定": "通过" if report.get("result_reproduced_within_tolerance") else "未通过"},
+        ]
+        st.dataframe(gate_rows, hide_index=True)
+        if report.get("blockers"):
+            st.error("；".join(report["blockers"]), icon=":material/block:")
+        with st.expander("技术详情：命令、环境、补丁与日志", icon=":material/code:"):
+            st.json(report)
         return
     if report.get("claim_id") == "dlinear_exchange_rate_336_96":
         complete = bool(report.get("complete_reproduction_allowed"))
@@ -980,12 +1463,20 @@ def render_app() -> None:
     )
     card = _active_card(cards)
     if stage == WORKFLOW_STAGES[0]:
-        _render_paper_library(papers_dir, cards_dir, fixture_dir, cards)
+        local_tab, corpus_tab = st.tabs(["本地文献", "规模化语料"])
+        with local_tab:
+            _render_paper_library(papers_dir, cards_dir, fixture_dir, cards)
+        with corpus_tab:
+            _render_literature_corpus(project_dir)
     elif stage == WORKFLOW_STAGES[1]:
-        _render_method_review(project_dir, cards, reviews)
+        _render_data_hub(project_dir, cards)
     elif stage == WORKFLOW_STAGES[2]:
-        _render_reproduction_setup(project_dir, card, report)
+        _render_method_review(project_dir, cards, reviews)
     elif stage == WORKFLOW_STAGES[3]:
+        _render_reproduction_setup(project_dir, card, report)
+    elif stage == WORKFLOW_STAGES[4]:
         _render_run(project_dir, cards_dir, cards, reviews, report_name)
+    elif stage == WORKFLOW_STAGES[5]:
+        _render_run(project_dir, cards_dir, cards, reviews, report_name, benchmark_view=True)
     else:
         _render_results(project_dir, card, report, cards, reviews)

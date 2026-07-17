@@ -46,6 +46,62 @@ def load_yahoo_chart_weekly_dataset(raw_path: Path, output_path: Path) -> pd.Dat
     return weekly
 
 
+def load_yahoo_chart_supervised_dataset(
+    raw_path: Path,
+    output_path: Path,
+    *,
+    price_column: str,
+    frequency: str,
+    target: str,
+) -> pd.DataFrame:
+    if output_path.exists():
+        existing = pd.read_csv(output_path)
+        if len(existing) >= 80:
+            return existing
+    payload = json.loads(raw_path.read_text(encoding="utf-8"))
+    result = payload["chart"]["result"][0]
+    timestamps = pd.to_datetime(result["timestamp"], unit="s", utc=True).tz_convert("America/New_York")
+    quote = result["indicators"]["quote"][0]
+    adjusted = result["indicators"].get("adjclose", [{}])[0].get("adjclose") or quote["close"]
+    frame = pd.DataFrame(
+        {
+            "timestamp": timestamps.tz_localize(None),
+            price_column: adjusted,
+            "volume": quote.get("volume") or [0] * len(timestamps),
+        }
+    ).dropna(subset=[price_column])
+    if frequency == "weekly":
+        frame = (
+            frame.set_index("timestamp")
+            .resample("W-FRI")
+            .agg({price_column: "last", "volume": "sum"})
+            .dropna()
+            .reset_index()
+        )
+    returns = frame[price_column].pct_change()
+    frame["return_1"] = returns
+    for lag in range(1, 13):
+        source = returns.abs() if target == "next_5_period_volatility" else returns
+        frame[f"sequence_lag_{lag}"] = source.shift(lag)
+    frame["rolling_volatility_5"] = returns.rolling(5).std()
+    frame["rolling_volatility_20"] = returns.rolling(20).std()
+    frame["volume_change_1"] = (
+        frame["volume"].pct_change().replace([np.inf, -np.inf], np.nan)
+        if frame["volume"].abs().sum() > 0
+        else 0.0
+    )
+    if target == "next_5_period_volatility":
+        future_returns = pd.concat([returns.shift(-step) for step in range(1, 6)], axis=1)
+        frame["label"] = future_returns.std(axis=1)
+    else:
+        frame["label"] = returns.shift(-1)
+    frame["timestamp"] = frame["timestamp"].dt.strftime("%Y-%m-%d")
+    frame = frame.dropna().reset_index(drop=True)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    frame.to_csv(output_path, index=False)
+    return frame
+
+
 def load_or_create_us_equity_dataset(path: Path) -> pd.DataFrame:
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists():

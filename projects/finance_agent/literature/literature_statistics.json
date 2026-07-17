@@ -1,0 +1,66 @@
+{
+  "paper_count": 86,
+  "downloaded_pdf_count": 50,
+  "downloaded_bytes": 71058043,
+  "top_finance_or_econometrics_count": 3,
+  "high_impact_peer_reviewed_count": 29,
+  "working_paper_or_preprint_count": 43,
+  "total_citations_signal": 5853,
+  "median_publication_year": 2022,
+  "task_categories": {
+    "forecast_only": 37,
+    "volatility_forecast": 15,
+    "portfolio_rl": 10,
+    "limit_order_book": 7,
+    "credit_default": 6,
+    "financial_prediction_other": 4,
+    "cross_sectional_asset_pricing": 2,
+    "crypto_forecast": 2,
+    "derivative_pricing": 1,
+    "fx_forecast": 1,
+    "signal_backtest": 1
+  },
+  "method_tags": {
+    "deep_neural_network": 44,
+    "lstm": 27,
+    "cnn": 14,
+    "transformer": 12,
+    "random_forest": 11,
+    "reinforcement_learning": 9,
+    "gradient_boosting": 9,
+    "linear_or_factor_model": 6,
+    "support_vector_machine": 5,
+    "genetic_algorithm": 1
+  },
+  "venue_tiers": {
+    "influential_working_paper_or_preprint": 43,
+    "high_impact_peer_reviewed": 29,
+    "other_peer_reviewed_or_repository": 11,
+    "top_finance_or_econometrics": 3
+  },
+  "oa_statuses": {
+    "green": 43,
+    "unknown": 25,
+    "crossref_link_unverified": 18
+  },
+  "download_statuses": {
+    "downloaded_open_access": 50,
+    "blocked_or_failed": 36
+  },
+  "downloaded_venue_tiers": {
+    "influential_working_paper_or_preprint": 43,
+    "other_peer_reviewed_or_repository": 6,
+    "high_impact_peer_reviewed": 1
+  },
+  "downloaded_task_categories": {
+    "forecast_only": 24,
+    "portfolio_rl": 8,
+    "volatility_forecast": 6,
+    "limit_order_book": 4,
+    "financial_prediction_other": 3,
+    "crypto_forecast": 2,
+    "credit_default": 1,
+    "fx_forecast": 1,
+    "cross_sectional_asset_pricing": 1
+  }
+}

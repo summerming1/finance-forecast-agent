@@ -1,0 +1,203 @@
+{
+  "schema_version": "native_result_report_v1",
+  "generated_at": "2026-07-15T07:20:15.469018+00:00",
+  "run_mode": "native_reproduction",
+  "paper_id": "arxiv_2205_14415",
+  "claim_id": "arxiv_2205_14415_exchange_native",
+  "title": "Non-stationary Transformers: Exploring the Stationarity in Time Series Forecasting",
+  "model_name": "ns_Transformer",
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2022/hash/4054556fcaa934b0bf76da52cf4f92cb-Abstract-Conference.html",
+  "claim_locator": "NeurIPS 2022 paper, Table 2, Exchange, horizon 96",
+  "source": {
+    "repository": "https://github.com/thuml/Nonstationary_Transformers",
+    "revision": "c4ec40675d11d50b3d9923657f408d0db6f90f56",
+    "license": "MIT",
+    "archive_sha256": "5c6e44f3ac9e0fee954602bd24a6ad48924daeb2844f5ea05e0b856d1e9f65ec",
+    "entrypoint_sha256": "cbc7b68a0620a72191df0020813790c0c5cf5894165edeb296fc768417f0dcb5",
+    "runtime_source_root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2205_14415_exchange_native\\source",
+    "compatibility_patches": [
+      {
+        "path": "utils/tools.py",
+        "classification": "semantic_noop",
+        "rationale": "NumPy 2 removed the uppercase alias; both names denote positive infinity.",
+        "before_sha256": "9365ab7f42a88feba5a02717a456b380d59b178501fec34d8309b2b2c5e1780a",
+        "after_sha256": "6b7257144575064f84dd3b47053298165464d7c5ff6d99394843cf5c024e3538"
+      }
+    ]
+  },
+  "dataset": {
+    "dataset_id": "exchange_rate_official_7588x8",
+    "path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842"
+  },
+  "protocol": {
+    "dataset": "Exchange-Rate",
+    "features": "M",
+    "split": "official chronological loader",
+    "dataset_revision": "frozen local Exchange-Rate bytes",
+    "claim_locator": "NeurIPS 2022 paper, Table 2, Exchange, horizon 96",
+    "protocol_note": "Pinned paper and official command agree on the selected claim."
+  },
+  "runtime_environment": {
+    "python": "3.11.15",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "torch": "2.12.1"
+  },
+  "runtime_files": [],
+  "required_repetitions": 1,
+  "expected_metric_observations": 3,
+  "metric_observation_policy": "all",
+  "audit": {
+    "dataset_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate\\exchange_rate.csv",
+    "dataset_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+    "dataset_passed": true,
+    "source_archive_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\nonstationary.zip",
+    "source_archive_sha256": "5c6e44f3ac9e0fee954602bd24a6ad48924daeb2844f5ea05e0b856d1e9f65ec",
+    "source_archive_passed": true,
+    "source_root": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\nonstationary\\Nonstationary_Transformers-c4ec40675d11d50b3d9923657f408d0db6f90f56",
+    "source_entrypoint": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\sources\\ltsf\\nonstationary\\Nonstationary_Transformers-c4ec40675d11d50b3d9923657f408d0db6f90f56\\run.py",
+    "source_entrypoint_sha256": "cbc7b68a0620a72191df0020813790c0c5cf5894165edeb296fc768417f0dcb5",
+    "source_entrypoint_passed": true,
+    "protocol_pinned": true,
+    "governance": {
+      "method_card_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\method_cards\\arxiv_2205_14415.json",
+      "method_card_strict_ready": true,
+      "reproduction_plan_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reproduction_plans\\arxiv_2205_14415.json",
+      "reproduction_plan_strict_ready": true,
+      "passed": true
+    },
+    "blockers": [],
+    "passed": true
+  },
+  "runs": [
+    {
+      "run_index": 0,
+      "command": [
+        "D:\\ProgramData\\miniconda3\\envs\\finance_fa\\python.exe",
+        "-u",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2205_14415_exchange_native\\source/run.py",
+        "--is_training",
+        "1",
+        "--root_path",
+        "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\data\\external\\exchange_rate",
+        "--data_path",
+        "exchange_rate.csv",
+        "--model_id",
+        "Exchange_96_96",
+        "--model",
+        "ns_Transformer",
+        "--data",
+        "custom",
+        "--features",
+        "M",
+        "--seq_len",
+        "96",
+        "--label_len",
+        "48",
+        "--pred_len",
+        "96",
+        "--e_layers",
+        "2",
+        "--d_layers",
+        "1",
+        "--enc_in",
+        "8",
+        "--dec_in",
+        "8",
+        "--c_out",
+        "8",
+        "--des",
+        "native",
+        "--num_workers",
+        "0",
+        "--checkpoints",
+        "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native/checkpoints",
+        "--factor",
+        "3",
+        "--p_hidden_dims",
+        "16",
+        "16",
+        "--p_hidden_layers",
+        "2",
+        "--itr",
+        "3"
+      ],
+      "working_directory": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffa-native\\arxiv_2205_14415_exchange_native\\work",
+      "exit_code": 0,
+      "duration_seconds": 11907.375,
+      "metrics": {
+        "mse": 0.12314502149820328,
+        "mae": 0.25157609581947327
+      },
+      "metric_values": {
+        "mse": [
+          0.1200900748372078,
+          0.13784384727478027,
+          0.12314502149820328
+        ],
+        "mae": [
+          0.2466156780719757,
+          0.253478467464447,
+          0.25157609581947327
+        ]
+      },
+      "stdout_tail": "Args in experiment:\nNamespace(is_training=1, model_id='Exchange_96_96', model='ns_Transformer', data='custom', root_path='D:\\\\AI Agent\\\\finance_forecast_agent\\\\projects\\\\finance_agent\\\\data\\\\external\\\\exchange_rate', data_path='exchange_rate.csv', features='M', target='OT', freq='h', checkpoints='C:\\\\Users\\\\13716\\\\AppData\\\\Local\\\\Temp\\\\ffa-native/checkpoints', seq_len=96, label_len=48, pred_len=96, enc_in=8, dec_in=8, c_out=8, d_model=512, n_heads=8, e_layers=2, d_layers=1, d_ff=2048, moving_avg=25, factor=3, distil=True, dropout=0.05, embed='timeF', activation='gelu', output_attention=False, do_predict=False, num_workers=0, itr=3, train_epochs=10, batch_size=32, patience=3, learning_rate=0.0001, des='native', loss='mse', lradj='type1', use_amp=False, use_gpu=False, gpu=0, use_multi_gpu=False, devices='0,1,2,3', seed=2021, p_hidden_dims=[16, 16], p_hidden_layers=2)\nUse CPU\n>>>>>>>start training : Exchange_96_96_ns_Transformer_custom_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc3_ebtimeF_dtTrue_native_0>>>>>>>>>>>>>>>>>>>>>>>>>>\ntrain 5120\nval 665\ntest 1422\n\titers: 100, epoch: 1 | loss: 0.0933964\n\tspeed: 3.0455s/iter; left time: 4571.2254s\nEpoch: 1 cost time: 502.7649464607239\nEpoch: 1, Steps: 160 | Train Loss: 0.1074388 Vali Loss: 0.1864435 Test Loss: 0.1200901\nValidation loss decreased (inf --> 0.186443).  Saving model ...\nUpdating learning rate to 0.0001\n\titers: 100, epoch: 2 | loss: 0.0454296\n\tspeed: 7.7522s/iter; left time: 10395.7057s\nEpoch: 2 cost time: 559.6862211227417\nEpoch: 2, Steps: 160 | Train Loss: 0.0528366 Vali Loss: 0.1917545 Test Loss: 0.1425887\nEarlyStopping counter: 1 out of 3\nUpdating learning rate to 5e-05\n\titers: 100, epoch: 3 | loss: 0.0290679\n\tspeed: 7.6752s/iter; left time: 9064.3899s\nEpoch: 3 cost time: 549.3643906116486\nEpoch: 3, Steps: 160 | Train Loss: 0.0362048 Vali Loss: 0.1974788 Test Loss: 0.1502716\nEarlyStopping counter: 2 out of 3\nUpdating learning rate to 2.5e-05\n\titers: 100, epoch: 4 | loss: 0.0295757\n\tspeed: 8.0051s/iter; left time: 8173.1727s\nEpoch: 4 cost time: 565.565331697464\nEpoch: 4, Steps: 160 | Train Loss: 0.0312356 Vali Loss: 0.1927930 Test Loss: 0.1613994\nEarlyStopping counter: 3 out of 3\nEarly stopping\n>>>>>>>testing : Exchange_96_96_ns_Transformer_custom_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc3_ebtimeF_dtTrue_native_0<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\ntest 1422\ntest shape: (1422, 1, 96, 8) (1422, 1, 96, 8)\ntest shape: (1422, 96, 8) (1422, 96, 8)\nmse:0.1200900748372078, mae:0.2466156780719757\nUse CPU\n>>>>>>>start training : Exchange_96_96_ns_Transformer_custom_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc3_ebtimeF_dtTrue_native_1>>>>>>>>>>>>>>>>>>>>>>>>>>\ntrain 5120\nval 665\ntest 1422\n\titers: 100, epoch: 1 | loss: 0.1187804\n\tspeed: 3.7575s/iter; left time: 5640.0173s\nEpoch: 1 cost time: 608.614093542099\nEpoch: 1, Steps: 160 | Train Loss: 0.1052224 Vali Loss: 0.1899846 Test Loss: 0.1178590\nValidation loss decreased (inf --> 0.189985).  Saving model ...\nUpdating learning rate to 0.0001\n\titers: 100, epoch: 2 | loss: 0.0612563\n\tspeed: 9.8091s/iter; left time: 13154.0438s\nEpoch: 2 cost time: 642.6977910995483\nEpoch: 2, Steps: 160 | Train Loss: 0.0510394 Vali Loss: 0.1770690 Test Loss: 0.1378438\nValidation loss decreased (0.189985 --> 0.177069).  Saving model ...\nUpdating learning rate to 5e-05\n\titers: 100, epoch: 3 | loss: 0.0387081\n\tspeed: 9.1638s/iter; left time: 10822.3955s\nEpoch: 3 cost time: 665.7314736843109\nEpoch: 3, Steps: 160 | Train Loss: 0.0350808 Vali Loss: 0.1776908 Test Loss: 0.1463146\nEarlyStopping counter: 1 out of 3\nUpdating learning rate to 2.5e-05\n\titers: 100, epoch: 4 | loss: 0.0188994\n\tspeed: 9.2219s/iter; left time: 9415.5754s\nEpoch: 4 cost time: 540.1863868236542\nEpoch: 4, Steps: 160 | Train Loss: 0.0301958 Vali Loss: 0.1795419 Test Loss: 0.1479222\nEarlyStopping counter: 2 out of 3\nUpdating learning rate to 1.25e-05\n\titers: 100, epoch: 5 | loss: 0.0278015\n\tspeed: 8.6200s/iter; left time: 7421.8135s\nEpoch: 5 cost time: 604.515061378479\nEpoch: 5, Steps: 160 | Train Loss: 0.0281790 Vali Loss: 0.1833529 Test Loss: 0.1533919\nEarlyStopping counter: 3 out of 3\nEarly stopping\n>>>>>>>testing : Exchange_96_96_ns_Transformer_custom_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc3_ebtimeF_dtTrue_native_1<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\ntest 1422\ntest shape: (1422, 1, 96, 8) (1422, 1, 96, 8)\ntest shape: (1422, 96, 8) (1422, 96, 8)\nmse:0.13784384727478027, mae:0.253478467464447\nUse CPU\n>>>>>>>start training : Exchange_96_96_ns_Transformer_custom_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc3_ebtimeF_dtTrue_native_2>>>>>>>>>>>>>>>>>>>>>>>>>>\ntrain 5120\nval 665\ntest 1422\n\titers: 100, epoch: 1 | loss: 0.0954835\n\tspeed: 3.3844s/iter; left time: 5080.0454s\nEpoch: 1 cost time: 562.7333261966705\nEpoch: 1, Steps: 160 | Train Loss: 0.1053853 Vali Loss: 0.1917693 Test Loss: 0.1231450\nValidation loss decreased (inf --> 0.191769).  Saving model ...\nUpdating learning rate to 0.0001\n\titers: 100, epoch: 2 | loss: 0.0557566\n\tspeed: 8.6927s/iter; left time: 11656.8801s\nEpoch: 2 cost time: 586.3948328495026\nEpoch: 2, Steps: 160 | Train Loss: 0.0517727 Vali Loss: 0.2169108 Test Loss: 0.1404467\nEarlyStopping counter: 1 out of 3\nUpdating learning rate to 5e-05\n\titers: 100, epoch: 3 | loss: 0.0260923\n\tspeed: 8.8572s/iter; left time: 10460.3060s\nEpoch: 3 cost time: 571.1806647777557\nEpoch: 3, Steps: 160 | Train Loss: 0.0360997 Vali Loss: 0.2425289 Test Loss: 0.1513908\nEarlyStopping counter: 2 out of 3\nUpdating learning rate to 2.5e-05\n\titers: 100, epoch: 4 | loss: 0.0289438\n\tspeed: 8.6973s/iter; left time: 8879.9886s\nEpoch: 4 cost time: 591.4434955120087\nEpoch: 4, Steps: 160 | Train Loss: 0.0309543 Vali Loss: 0.2436976 Test Loss: 0.1558518\nEarlyStopping counter: 3 out of 3\nEarly stopping\n>>>>>>>testing : Exchange_96_96_ns_Transformer_custom_ftM_sl96_ll48_pl96_dm512_nh8_el2_dl1_df2048_fc3_ebtimeF_dtTrue_native_2<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\ntest 1422\ntest shape: (1422, 1, 96, 8) (1422, 1, 96, 8)\ntest shape: (1422, 96, 8) (1422, 96, 8)\nmse:0.12314502149820328, mae:0.25157609581947327\n",
+      "stderr_tail": ""
+    }
+  ],
+  "metrics": {
+    "mse": 0.12702631453673044,
+    "mae": 0.250556747118632
+  },
+  "metric_aggregate": {
+    "mse": {
+      "mean": 0.12702631453673044,
+      "std": 0.0077501585222267836,
+      "values": [
+        0.1200900748372078,
+        0.13784384727478027,
+        0.12314502149820328
+      ]
+    },
+    "mae": {
+      "mean": 0.250556747118632,
+      "std": 0.0028929538989049793,
+      "values": [
+        0.2466156780719757,
+        0.253478467464447,
+        0.25157609581947327
+      ]
+    }
+  },
+  "reported_metrics": {
+    "mse": 0.111,
+    "mae": 0.237
+  },
+  "metric_checks": {
+    "mse": {
+      "expected": 0.111,
+      "actual": 0.12702631453673044,
+      "absolute_tolerance": 0.03,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": true
+    },
+    "mae": {
+      "expected": 0.237,
+      "actual": 0.250556747118632,
+      "absolute_tolerance": 0.025,
+      "relative_tolerance": 0.0,
+      "objective": "match",
+      "passed": true
+    }
+  },
+  "execution_passed": true,
+  "observation_count_passed": true,
+  "result_reproduced_within_tolerance": true,
+  "complete_reproduction_allowed": true,
+  "blockers": [],
+  "duration_seconds": 11907.438,
+  "report_path": "D:\\AI Agent\\finance_forecast_agent\\projects\\finance_agent\\reports\\native_arxiv_2205_14415_exchange_native.json"
+}

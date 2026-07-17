@@ -141,3 +141,73 @@ def test_validation_scope_can_be_replaced_without_touching_other_memory(tmp_path
     )
     store.replace_scope([replacement], task_fingerprint="shared-task", run_mode="common_benchmark")
     assert {record.run_id for record in store.load()} == {"other", "validation"}
+
+
+def test_ranked_priors_use_exact_success_and_penalize_failures(tmp_path: Path) -> None:
+    store = ExperimentMemoryStore(tmp_path / "memory.json")
+    for run_id, method, status, score in [
+        ("rf-ok", "rf", "success", 0.58),
+        ("lstm-ok", "lstm", "success", 0.62),
+        ("lstm-fail", "lstm", "blocked", 0.0),
+    ]:
+        store.append(
+            ExperimentMemoryRecord(
+                run_id=run_id,
+                run_mode="common_benchmark",
+                task_fingerprint="task-a",
+                method_id=method,
+                model_family=method,
+                status=status,
+                metrics={"directional_accuracy": score},
+                blockers=[] if status == "success" else ["insufficient rows"],
+                artifact_path="report.json",
+                experiment_type="direction_classification",
+                data_domain="equity_index",
+                protocol_fingerprint="protocol-a",
+            )
+        )
+    ranked = store.ranked_priors(
+        task_fingerprint="task-a",
+        run_mode="common_benchmark",
+        metric="directional_accuracy",
+        objective="maximize",
+        experiment_type="direction_classification",
+        data_domain="equity_index",
+        protocol_fingerprint="protocol-a",
+        method_ids=["rf", "lstm", "new"],
+    )
+    assert [row["method_id"] for row in ranked] == ["lstm", "rf", "new"]
+    assert ranked[0]["failures"] == 1
+    assert ranked[0]["blockers"] == ["insufficient rows"]
+
+
+def test_ranked_priors_reject_incompatible_mode_and_weak_context(tmp_path: Path) -> None:
+    store = ExperimentMemoryStore(tmp_path / "memory.json")
+    store.append(
+        ExperimentMemoryRecord(
+            run_id="native",
+            run_mode="native_reproduction",
+            task_fingerprint="other",
+            method_id="dlinear",
+            model_family="dlinear",
+            status="success",
+            metrics={"rmse": 0.01},
+            blockers=[],
+            artifact_path="native.json",
+            experiment_type="forecast",
+            data_domain="electricity",
+            protocol_fingerprint="other-protocol",
+        )
+    )
+    ranked = store.ranked_priors(
+        task_fingerprint="new-task",
+        run_mode="common_benchmark",
+        metric="rmse",
+        objective="minimize",
+        experiment_type="volatility_regression",
+        data_domain="equity_index",
+        protocol_fingerprint="new-protocol",
+        method_ids=["dlinear", "ridge"],
+    )
+    assert [row["exact_successes"] for row in ranked] == [0, 0]
+    assert all(row["rationale"] == "没有可比历史，保持中性顺序" for row in ranked)

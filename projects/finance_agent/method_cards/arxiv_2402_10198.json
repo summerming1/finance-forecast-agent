@@ -1,0 +1,226 @@
+{
+  "schema_version": "method_card_v2",
+  "method_id": "arxiv_2402_10198_exchange_native",
+  "paper_id": "arxiv_2402_10198",
+  "title": "SAMformer: Unlocking the Potential of Transformers in Time Series Forecasting with Sharpness-Aware Minimization and Channel-Wise Attention",
+  "venue_or_source": "primary-source curated native claim",
+  "paper_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+  "task_type": "multivariate time-series forecasting",
+  "target_asset": "eight-channel daily Exchange-Rate series",
+  "asset_universe": [
+    "exchange_channel_1",
+    "exchange_channel_2",
+    "exchange_channel_3",
+    "exchange_channel_4",
+    "exchange_channel_5",
+    "exchange_channel_6",
+    "exchange_channel_7",
+    "exchange_channel_8"
+  ],
+  "frequency": "daily",
+  "horizon": "96 days",
+  "label_definition": "future multivariate exchange-rate levels",
+  "data_requirements": [
+    "frozen Exchange-Rate bytes",
+    "chronological train/validation/test split"
+  ],
+  "feature_groups": [
+    "eight raw exchange-rate channels"
+  ],
+  "model_families": [
+    "SAMformer"
+  ],
+  "training_protocol": "Pinned official implementation and claim command; see native claim catalog.",
+  "evaluation_protocol": "Paper-native chronological holdout and paper-native metrics.",
+  "metrics": [
+    "mse",
+    "mae"
+  ],
+  "cost_assumptions": "not_applicable",
+  "reported_results": {
+    "mse": 0.161,
+    "mae": 0.306
+  },
+  "strict_requirements": [
+    "exact data hash",
+    "pinned source revision",
+    "metric observation count",
+    "predeclared tolerance"
+  ],
+  "unknowns": [],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "target_asset",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting target_asset.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "asset_universe",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting asset_universe.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "frequency",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting frequency.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "horizon",
+      "quote": "from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early sto",
+      "summary": "Verbatim primary-source excerpt supporting horizon.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "label_definition",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting label_definition.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "data_requirements",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting data_requirements.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "feature_groups",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting feature_groups.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "model_families",
+      "quote": "im=64\n            elif [ \"$data\" = \"traffic\" ]; then\n                learning_rate=0.0001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"exchange_rate\" ]; then\n                learning_rate=0.001\n                n_block=8\n                dropout=0.7\n                ff_dim=64\n            elif [ \"$data\" = \"toy\" ]; then\n                learning_rate=0.001\n                n_block=2\n                dropout=0.9\n                ff_dim=64\n            else\n                echo \"Unknown dataset: $data\"\n                continue\n            fi\n            \n            # Construct the command with the appropriate parameters\n            command=\"python run.py --model $model --data $data --seq_len $seq_len --pred_len $pred_len --learning_rate $learning_rate --n_block $n_block --dropout $dropout --ff_dim $ff_dim --num_heads 1 --d_model 16 --rho $rho ${use_sam_flag} ${add_results_flag}\"\n            \n            echo \"Executing: $command\"\n            eval $command\n        done\n    done\ndone",
+      "summary": "Verbatim primary-source excerpt supporting model_families.",
+      "source_type": "official_repository",
+      "source_url": "https://github.com/romilbert/samformer",
+      "source_revision": "71f10eaa696f2a098798779ee14b6ecd6b69bcd9"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "training_protocol",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting training_protocol.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "evaluation_protocol",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting evaluation_protocol.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "metrics",
+      "quote": "from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early sto",
+      "summary": "Verbatim primary-source excerpt supporting metrics.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "preprocessing_protocol",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting preprocessing_protocol.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    },
+    {
+      "source_id": "arxiv_2402_10198_primary_sources",
+      "section": "hyperparameters",
+      "quote": "SAMformer primary-source excerpts curated from the ICML 2024 paper.\n\nDatasets. Exchange contains the time series of daily exchange rates between 8 countries from 1990 to 2016. All time series are segmented with input length L = 512, prediction horizons H in {96, 192, 336, 720}, and a stride of 1.\n\nTable 1 reports average test MSE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.161±0.007\n\nTable 6 reports average test MAE with standard deviation obtained on 5 runs with different seeds.\nExchange\n96 0.306±0.006\n\nTraining parameters. For all experiments, SAMformer is trained with Adam, batch size 32, a cosine annealing scheduler, and Exchange learning rate 0.001. The training/validation/test split is 70%/20%/10% on Exchange. We use a look-back window L = 512 and a sliding window with stride 1. The training loss is MSE. Training is performed during 300 epochs and we use early stopping with a patience of 5 epochs. Each experiment is run 5 times with different seeds, and the average and standard deviation of test MSE and MAE are reported.\n\nTable 4 gives rho = 0.7 for SAMformer on Exchange at horizon 96.",
+      "summary": "Verbatim primary-source excerpt supporting hyperparameters.",
+      "source_type": "paper",
+      "source_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+      "source_revision": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96"
+    }
+  ],
+  "extraction_metadata": {
+    "curation_mode": "primary_source_curated",
+    "llm_generated": false,
+    "evidence_verification": {
+      "passed": true,
+      "span_count": 13,
+      "errors": [],
+      "verification_method": "exact_substring_primary_source_curation"
+    }
+  },
+  "approval_required": false,
+  "experiment_type": "forecast_only",
+  "preprocessing_protocol": "Training-split standardization implemented by the pinned official loader.",
+  "hyperparameters": [
+    "{conda}",
+    "run",
+    "--no-capture-output",
+    "-n",
+    "finance_fa_samformer",
+    "python",
+    "-u",
+    "{source_root}/run.py",
+    "--model",
+    "transformer",
+    "--use_sam",
+    "--data",
+    "exchange_rate",
+    "--feature_type",
+    "M",
+    "--seq_len",
+    "512",
+    "--pred_len",
+    "96",
+    "--batch_size",
+    "32",
+    "--train_epochs",
+    "300",
+    "--learning_rate",
+    "0.001",
+    "--rho",
+    "0.7",
+    "--patience",
+    "5",
+    "--n_block",
+    "8",
+    "--dropout",
+    "0.7",
+    "--ff_dim",
+    "64",
+    "--num_heads",
+    "1",
+    "--d_model",
+    "16",
+    "--checkpoint_dir",
+    "{runtime_root}/checkpoints"
+  ]
+}
