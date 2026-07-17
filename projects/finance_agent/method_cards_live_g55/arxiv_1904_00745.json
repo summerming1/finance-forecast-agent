@@ -1,0 +1,380 @@
+{
+  "method_id": "deep_asset_pricing_gan_us_equities_monthly_oos_1992_2016",
+  "paper_id": "arxiv_1904_00745",
+  "title": "Deep Learning in Asset Pricing ∗",
+  "venue_or_source": "unknown",
+  "paper_url": "unknown",
+  "task_type": "conditional asset pricing / stochastic discount factor estimation",
+  "target_asset": "individual U.S. stock excess returns",
+  "asset_universe": [
+    "CRSP monthly U.S. equity securities"
+  ],
+  "frequency": "monthly",
+  "horizon": "1 month",
+  "label_definition": "Next-month individual stock excess return, defined as stock return minus the one-month Treasury bill risk-free rate.",
+  "data_requirements": [
+    "Monthly equity return data for all securities on CRSP from January 1967 to December 2016.",
+    "One-month Treasury bill rates from the Kenneth French Data Library to compute excess returns.",
+    "Firm-specific characteristics for individual stocks.",
+    "Macroeconomic time series used to extract time-varying economic states."
+  ],
+  "feature_groups": [
+    "return_momentum_features",
+    "cross_asset_features",
+    "sequence_window_features"
+  ],
+  "model_families": [
+    "lstm_regressor",
+    "dnn_asset_pricing_model"
+  ],
+  "training_protocol": "Train the SDF model on 1967-1986 data, tune hyperparameters on 1987-1991 validation data by maximizing the validation Sharpe ratio of the SDF, and evaluate the selected model on 1992-2016 test data. Neural-network models are ensembled by averaging outputs from nine fits with the same architecture and different optimization starting values. The optimal reported GAN configuration has two layers, four economic states, and eight conditioning instruments for the test assets. Optimizer, epochs, batch size, random seeds, and early-stopping rule are unknown from the supplied context.",
+  "evaluation_protocol": "Fixed chronological split: training sample 1967-1986, validation sample 1987-1991, out-of-sample testing sample 1992-2016. The optimal model selected on validation data is evaluated once on the test data. Metrics are computed for the SDF factor and individual stock residuals: unconditional Sharpe ratio, explained variation, and cross-sectional R2.",
+  "metrics": [
+    "r2",
+    "net_return",
+    "sharpe"
+  ],
+  "cost_assumptions": "unknown",
+  "reported_results": {},
+  "strict_requirements": [
+    "Use monthly CRSP equity return data covering January 1967 through December 2016.",
+    "Compute excess returns using one-month Treasury bill rates from the Kenneth French Data Library.",
+    "Use the chronological split 1967-1986 for training, 1987-1991 for validation, and 1992-2016 for out-of-sample testing.",
+    "Select hyperparameters by maximizing the SDF Sharpe ratio on the validation data.",
+    "Use the optimal GAN model configuration with two layers, four economic states, and eight instruments for the test assets.",
+    "Average neural-network outputs across nine model fits for the ensemble.",
+    "Evaluate using SDF Sharpe ratio, explained variation, and XS-R2 on the test sample."
+  ],
+  "unknowns": [
+    "Exact numeric reported results for the selected GAN row are not present in the supplied context.",
+    "Optimizer is unknown.",
+    "Learning rate is unknown.",
+    "Number of epochs is unknown.",
+    "Batch size is unknown.",
+    "Early stopping rule is unknown.",
+    "Random seed protocol is unknown.",
+    "Exact firm characteristic list is unknown from the supplied context.",
+    "Exact macroeconomic time-series list is unknown from the supplied context.",
+    "Characteristic preprocessing, scaling, winsorization, and missing-data handling are unknown from the supplied context.",
+    "Transaction cost assumptions are unknown.",
+    "dnn_asset_pricing_model",
+    "evidence_verification:unverified_quote:training_protocol:13",
+    "evidence_verification:unverified_quote:metrics:18"
+  ],
+  "evidence_spans": [
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "title",
+      "quote": "Deep Learning in Asset Pricing ∗",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "task_type",
+      "quote": "We use deep neural networks to estimate an asset pricing model for individual stock returns that takes advantage of the vast amount of conditioning information, while keeping a fully ﬂexible form and accounting for time-variation.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "target_asset",
+      "quote": "Our goal is to explain the diﬀerences in the cross-section of returns R for individual stocks.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "asset_universe",
+      "quote": "We collect monthly equity return data for all securities on CRSP.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "frequency",
+      "quote": "We collect monthly equity return data for all securities on CRSP.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "horizon",
+      "quote": "Let Rt+1,i denote the return of asset i at time t + 1.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "label_definition",
+      "quote": "We use the one-month Treasury bill rates from the Kenneth French Data Library as the risk-free rate to calculate exce",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "label_definition",
+      "quote": "for any return in excess of the risk-free rate Re t+1,i =Rt+1,i−Rf t+1",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "data_requirements",
+      "quote": "The sample period spans January 1967 to December 2016, totaling 50 years.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "data_requirements",
+      "quote": "The risk exposure to the SDF for individual stocks varies over time because the ﬁrm-speciﬁc characteristics and macroeconomic variables are time-varying",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "feature_groups",
+      "quote": "The risk exposure to the SDF for individual stocks varies over time because the ﬁrm-speciﬁc characteristics and macroeconomic variables are time-varying",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "model_families",
+      "quote": "The key innovations are to use the fundamental no-arbitrage condition as criterion function, to construct the most informative test assets with an adversarial approach and to extract the states of the economy from many macroeconomic time series.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "model_families",
+      "quote": "They are among the most successful commercial AIs and are heavily used for sequences of data such as speech",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "training_protocol",
+      "quote": "We divide the full data into 20 years of training sample (1967 - 1986), 5 years of validation sample (1987 - 1991), and 25 years of out-of-sample 24 testing sample (1992 - 2016).",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "training_protocol",
+      "quote": "All our neural networks including the forecasting approach are averaged over nine model ﬁts.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "training_protocol",
+      "quote": "We choose the best conﬁguration among all possible combinations of hyperparameters by maximizing the Sharpe ratio of the SDF on the validation data.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "training_protocol",
+      "quote": "Our optimal model has two layers, four economic states and eight instruments for the test assets.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "evaluation_protocol",
+      "quote": "The optimal model is evaluated on the test data.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "metrics",
+      "quote": "For each model we report (1) the unconditional Sharpe ratio of the SDF factor, (2) the explained 21 variation in individual stock returns and and (3) the cross-sectional mean 24 R2",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "metrics",
+      "quote": "SR = ˆE [Ft]√ ˆVar (Ft) , EV = 1− ( 1 T ∑T t=1 1 Nt ∑Nt i=1(ˆϵt+1,i)2 ) ( 1 T ∑T t=1 1 Nt ∑Nt i=1(Re t+1,i)2 ), XS-R2 = 1− 1 N ∑N i=1 Ti T ( 1 Ti ∑ t∈Ti ˆϵt+1,i )2 1 N ∑N i=1 Ti T ( 1 Ti ∑ t∈Ti ˆRt+1,i )2.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "reported_results",
+      "quote": "Our asset pricing model outperforms out-of-sample all benchmark approaches in terms of Sharpe ratio, explained variation and pricing errors and identiﬁes the key factors that drive asset prices.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "preprocessing_protocol",
+      "quote": "We use the one-month Treasury bill rates from the Kenneth French Data Library as the risk-free rate to calculate exce",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "hyperparameters",
+      "quote": "Our optimal model has two layers, four economic states and eight instruments for the test assets.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "hyperparameters",
+      "quote": "All our neural networks including the forecasting approach are averaged over nine model ﬁts.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "required_start_date",
+      "quote": "The sample period spans January 1967 to December 2016, totaling 50 years.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "required_end_date",
+      "quote": "The sample period spans January 1967 to December 2016, totaling 50 years.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "strict_requirements",
+      "quote": "We split the data into a training, validation and testing sample. The validation set is used to tune the hyperparameters, which includes the depth of the network (number of layers), the 17A conventional GAN network iterates this procedure until convergence.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    },
+    {
+      "source_id": "arxiv_1904.00745",
+      "section": "unknowns",
+      "quote": "The results are available upon request.",
+      "summary": "LLM-provided evidence span.",
+      "source_type": "paper",
+      "source_url": "unknown",
+      "source_revision": "94f948d7b0af7046"
+    }
+  ],
+  "extraction_metadata": {
+    "document_id": "arxiv_1904.00745",
+    "text_sha": "94f948d7b0af7046",
+    "claim_selection": "Main proposed GAN conditional SDF model for monthly U.S. equities evaluated out-of-sample on 1992-2016 test data.",
+    "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+    "raw_paper_id": "arxiv_1904.00745",
+    "quality_report": {
+      "method_id": "deep_asset_pricing_gan_us_equities_monthly_oos_1992_2016",
+      "paper_id": "arxiv_1904_00745",
+      "quality_score": 0.89,
+      "approval_required": true,
+      "critical_missing_fields": [],
+      "type_errors": [],
+      "semantic_conflicts": [],
+      "unsupported_models": [
+        "dnn_asset_pricing_model"
+      ],
+      "warnings": [
+        "unsupported model adapters required: dnn_asset_pricing_model"
+      ],
+      "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+    },
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "Fixed chronological split: training sample 1967-1986, validation sample 1987-1991, out-of-sample testing sample 1992-2016. The optimal model selected on validation data is evaluated once on the test data. Metrics are computed for the SDF factor and individual stock residuals: unconditional Sharpe ratio, explained variation, and cross-sectional R2.",
+    "frequency_type": "monthly",
+    "horizon_type": "next_month_return",
+    "document_text_sha": "94f948d7b0af7046",
+    "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1904.00745.pdf",
+    "prompt_profile": "strict",
+    "claim_selector_consistency": {
+      "passed": true,
+      "errors": []
+    },
+    "evidence_verification": {
+      "passed": false,
+      "span_count": 28,
+      "errors": [
+        "evidence_verification:unverified_quote:training_protocol:13",
+        "evidence_verification:unverified_quote:metrics:18"
+      ]
+    }
+  },
+  "approval_required": true,
+  "evaluation_protocol_type": "purged_walk_forward",
+  "evaluation_protocol_description": "Fixed chronological split: training sample 1967-1986, validation sample 1987-1991, out-of-sample testing sample 1992-2016. The optimal model selected on validation data is evaluated once on the test data. Metrics are computed for the SDF factor and individual stock residuals: unconditional Sharpe ratio, explained variation, and cross-sectional R2.",
+  "frequency_type": "monthly",
+  "horizon_type": "next_month_return",
+  "experiment_type": "asset_pricing_sdf_estimation",
+  "preprocessing_protocol": "Compute excess returns by subtracting the one-month Treasury bill risk-free rate from monthly stock returns. Use chronological train/validation/test splits. Additional preprocessing of characteristics and macroeconomic time series, including scaling, missing-data handling, and fit scope for normalization, is unknown from the supplied context.",
+  "hyperparameters": {
+    "ensemble_size": 9,
+    "selected_network_layers": 2,
+    "selected_number_of_economic_states": 4,
+    "selected_number_of_conditioning_instruments": 8,
+    "hyperparameter_selection_metric": "validation Sharpe ratio of the SDF",
+    "training_sample": "1967-1986",
+    "validation_sample": "1987-1991",
+    "test_sample": "1992-2016"
+  },
+  "required_start_date": "1967-01",
+  "required_end_date": "2016-12",
+  "schema_version": "method_card_v2"
+}

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -34,8 +35,10 @@ from .method_cards import (
     method_card_to_paper_spec,
     strict_method_card_prompt,
 )
+from .method_card_v3 import MethodCardVersionStore, upgrade_method_card_v2
 from .model_registry import benchmark_compatible
 from .multi_benchmark import run_multi_benchmark_suite
+from .native_claim_compiler import compile_native_claim_draft, save_native_claim_draft
 from .native_execution import (
     OfficialRepoCommandAdapter,
     audit_native_claim,
@@ -54,6 +57,14 @@ from .reproduction_portfolio import build_reproduction_portfolio
 from .review_state import approved_paper_ids, load_review_state, review_for_paper, review_status_counts, update_methodcard_review
 from .run_timeline import load_run_timeline_index, write_run_timeline
 from .schemas import PaperSpecCard
+from .source_data_contracts import (
+    DataFieldMapping,
+    DatasetContract,
+    approve_source_bundle,
+    save_dataset_contract,
+    save_source_approval,
+)
+from .task_queue import LocalTaskQueue
 
 SKIP_JSON = {"method_card_catalog.json", "paper_specs_from_method_cards.json"}
 TASK_STATUSES = ["todo", "in_progress", "blocked", "done"]
@@ -112,7 +123,9 @@ def _specs_for_run(
     selected = cards
     if approved_only:
         approved = approved_paper_ids(reviews)
-        selected = [card for card in cards if card.paper_id in approved]
+        selected = [
+            card for card in cards if card.paper_id in approved and not _semantic_conflicts(card)
+        ]
         if not selected:
             raise ValueError("No approved MethodCards are available.")
 
@@ -281,6 +294,22 @@ def _active_card(cards: list[MethodCard]) -> MethodCard | None:
         card = cards[0]
         st.session_state["active_card_id"] = card.paper_id
     return card
+
+
+def _semantic_conflicts(card: MethodCard) -> list[str]:
+    return list(
+        card.extraction_metadata.get("quality_report", {}).get("semantic_conflicts") or []
+    )
+
+
+def _effective_review_approved(
+    card: MethodCard,
+    reviews: dict[str, dict[str, Any]],
+) -> bool:
+    return (
+        review_for_paper(reviews, card.paper_id).get("status") == "approved"
+        and not _semantic_conflicts(card)
+    )
 
 
 def _render_paper_library(papers_dir: Path, cards_dir: Path, fixture_dir: Path, cards: list[MethodCard]) -> None:
@@ -474,6 +503,39 @@ def _render_literature_corpus(project_dir: Path) -> None:
                 ],
                 hide_index=True,
             )
+    triage = _load_report(project_dir, "candidate_triage.json")
+    if triage:
+        st.subheader("逐篇探索与阻断聚类")
+        status = triage.get("status_counts", {})
+        categories = triage.get("blocker_category_counts", {})
+        cols = st.columns(3)
+        cols[0].metric("探索性已执行", status.get("exploratory_executed", 0))
+        cols[1].metric("结构化阻断", status.get("blocked", 0))
+        cols[2].metric(
+            "未决 candidate 标签",
+            0 if triage.get("candidate_label_eliminated") else "存在",
+        )
+        st.dataframe(
+            [
+                {"阻断类别": key, "论文数": value}
+                for key, value in sorted(categories.items(), key=lambda item: -item[1])
+            ],
+            width="stretch",
+            hide_index=True,
+        )
+    readiness = _load_report(project_dir, "p2_readiness.json")
+    if readiness:
+        st.subheader("P2 进入门禁")
+        observed = readiness.get("observed", {})
+        cols = st.columns(4)
+        cols[0].metric("Strict 论文", f"{observed.get('strict_financial_papers', 0)}/20")
+        cols[1].metric("Strict 实验类型", f"{len(observed.get('strict_experiment_types', []))}/4")
+        cols[2].metric("Strict 数据域", f"{len(observed.get('strict_data_domains', []))}/3")
+        cols[3].metric("False strict", observed.get("false_strict_count", 0))
+        if readiness.get("ready_for_p2"):
+            st.success("P1 通用性门禁已通过，可以进入 P2。", icon=":material/verified:")
+        else:
+            st.warning("P1 通用性门禁尚未通过；当前继续补齐多类型 strict，而不是提前扩大自动搜索。")
     source_path = project_dir / "source_bundles" / "catalog.json"
     if source_path.exists():
         source_catalog = json.loads(source_path.read_text(encoding="utf-8"))
@@ -500,7 +562,9 @@ def _render_literature_corpus(project_dir: Path) -> None:
 def _render_data_hub(project_dir: Path, cards: list[MethodCard]) -> None:
     st.header("数据获取中心")
     st.caption("所有请求保存来源、许可、SHA256、字段检查和失败原因；付费数据不会自动下载。")
-    manual_tab, method_tab, history_tab = st.tabs(["人工请求", "按 MethodCard", "获取记录"])
+    manual_tab, method_tab, contract_tab, history_tab = st.tabs(
+        ["人工请求", "按 MethodCard", "数据合同", "获取记录"]
+    )
     with manual_tab:
         with st.form("manual_data_request", border=True):
             source_type = st.selectbox(
@@ -566,6 +630,85 @@ def _render_data_hub(project_dir: Path, cards: list[MethodCard]) -> None:
                         st.error(result.error or result.status)
                     else:
                         st.success(f"{proposal.dataset_id}：{result.status}")
+    with contract_tab:
+        results = [row for row in load_data_acquisition_results(project_dir) if row.get("sha256")]
+        if not results or not cards:
+            st.info("先获取一份数据并选择对应 MethodCard，才能建立字段与许可合同。")
+        else:
+            result_by_id = {
+                str(row.get("request", {}).get("request_id")): row for row in results
+            }
+            with st.form("dataset_contract_form", border=True):
+                request_id = st.selectbox("已获取数据", list(result_by_id))
+                selected_paper = st.selectbox(
+                    "对应论文", [card.paper_id for card in cards], key="contract_paper_id"
+                )
+                selected_result = result_by_id[request_id]
+                request = selected_result.get("request", {})
+                dataset_id_value = str(request.get("dataset_id") or request_id)
+                cols = st.columns(3)
+                market = cols[0].text_input("市场", value="US equities")
+                asset_class = cols[1].text_input("资产类别", value="common stock")
+                frequency = cols[2].text_input("频率", value=str(request.get("frequency") or "daily"))
+                cols = st.columns(2)
+                timezone_name = cols[0].text_input("时区", value="America/New_York")
+                calendar = cols[1].text_input("交易日历", value="NYSE")
+                license_status = st.selectbox(
+                    "数据许可", ["unknown", "open", "research_use_approved", "restricted"]
+                )
+                expected_fields = list(request.get("expected_fields") or [])
+                mapping_text = st.text_area(
+                    "字段映射（每行 source=canonical）",
+                    value="\n".join(f"{name}={name.lower()}" for name in expected_fields),
+                )
+                availability_lag = st.text_input("数据可用滞后", value="available after market close")
+                point_in_time_required = st.checkbox("要求 point-in-time", value=True)
+                point_in_time_verified = st.checkbox("已核对字段均满足 point-in-time", value=False)
+                approved_by = st.text_input("审批人", placeholder="输入姓名或研究账号")
+                save_contract = st.form_submit_button(
+                    "保存数据合同", type="primary", icon=":material/fact_check:"
+                )
+            if save_contract:
+                mappings = []
+                for line in mapping_text.splitlines():
+                    if "=" not in line:
+                        continue
+                    source_field, canonical_field = (part.strip() for part in line.split("=", 1))
+                    mappings.append(
+                        DataFieldMapping(
+                            source_field=source_field,
+                            canonical_field=canonical_field,
+                            dtype="float64",
+                            unit="provider_native",
+                            availability_lag=availability_lag,
+                            point_in_time=point_in_time_verified,
+                            evidence=f"acquisition request {request_id}",
+                        )
+                    )
+                contract = DatasetContract(
+                    dataset_id=dataset_id_value,
+                    paper_id=selected_paper,
+                    source_url=str(request.get("source_url") or request.get("source_type") or ""),
+                    local_path=str(selected_result.get("local_path") or ""),
+                    sha256=str(selected_result.get("sha256") or ""),
+                    market=market,
+                    asset_class=asset_class,
+                    frequency=frequency,
+                    timezone=timezone_name,
+                    calendar=calendar,
+                    start_date=str(request.get("start_date") or "unknown"),
+                    end_date=str(request.get("end_date") or "unknown"),
+                    license_status=license_status,
+                    redistribution_allowed=False,
+                    field_mappings=mappings,
+                    point_in_time_required=point_in_time_required,
+                    approved_by=approved_by,
+                )
+                path = save_dataset_contract(project_dir, contract)
+                if contract.strict_ready:
+                    st.success(f"数据合同通过 strict 门禁：{path}")
+                else:
+                    st.warning("合同已保存，但仍被阻断：" + "；".join(contract.validation_blockers))
     with history_tab:
         rows = load_data_acquisition_results(project_dir)
         if not rows:
@@ -613,14 +756,45 @@ def _render_method_review(project_dir: Path, cards: list[MethodCard], reviews: d
     cols[1].metric("未知项", len(card.unknowns))
     cols[2].metric("证据摘录", len(card.evidence_spans))
     cols[3].metric("未标注章节", sum(1 for span in card.evidence_spans if str(span.section).lower() == "unknown"))
-    semantic_conflicts = list(quality.get("semantic_conflicts") or [])
+    semantic_conflicts = _semantic_conflicts(card)
     if semantic_conflicts:
         st.error("方法卡语义冲突：" + "；".join(semantic_conflicts))
+        if review_for_paper(reviews, card.paper_id).get("status") == "approved":
+            st.warning("历史审核已因当前语义冲突失效。请先修订方法卡，再重新批准。")
 
     st.subheader("预测方法摘要")
     st.dataframe(method_summary_rows(card), width="stretch", hide_index=True)
     if card.unknowns:
         st.warning("仍需确认：" + "、".join(card.unknowns))
+
+    v3 = upgrade_method_card_v2(card)
+    st.subheader("论文 Claim")
+    st.caption("每个 claim 独立绑定数据、预测周期、模型、指标与证据，避免把不同表格行混成一个结果。")
+    st.dataframe(
+        [
+            {
+                "Claim": claim.claim_id,
+                "数据": claim.dataset_id,
+                "市场": claim.market,
+                "频率": claim.frequency,
+                "预测周期": claim.horizon,
+                "模型": claim.model_family,
+                "指标": ", ".join(claim.metrics),
+                "论文值": ", ".join(f"{key}={value:g}" for key, value in claim.reported_values.items()),
+                "证据数": len(claim.evidence_ids),
+            }
+            for claim in v3.claims
+        ],
+        width="stretch",
+        hide_index=True,
+    )
+    if v3.strict_evidence_ready:
+        st.success("Claim 证据均具有章节、页码、表格行或源码定位。", icon=":material/verified:")
+    else:
+        st.warning("v3 证据图尚未达到 strict：" + "；".join(v3.validation_errors or ["存在不可定位证据"]))
+    if st.button("保存当前 MethodCard 版本", icon=":material/history:"):
+        path = MethodCardVersionStore(project_dir).save(v3)
+        st.success(f"不可变版本已保存：{path.name}")
 
     st.subheader("原文证据")
     rows = evidence_rows(card)
@@ -699,11 +873,59 @@ def _render_reproduction_setup(project_dir: Path, card: MethodCard | None, repor
         st.info("请先选择一张 MethodCard。")
         return
     plan = load_reproduction_plan(project_dir, card.paper_id) or plan_from_method_card(card)
-    review = review_for_paper(load_review_state(project_dir), card.paper_id)
+    setup_reviews = load_review_state(project_dir)
+    effective_approval = _effective_review_approved(card, setup_reviews)
     gates = st.columns(3)
-    gates[0].metric("方法卡审核", "通过" if review.get("status") == "approved" else "未通过")
+    gates[0].metric("方法卡审核", "通过" if effective_approval else "未通过")
     gates[1].metric("执行就绪", "通过" if plan.execution_ready else "未通过")
     gates[2].metric("Strict 就绪", "通过" if plan.strict_ready else "未通过")
+
+    source_catalog_path = project_dir / "source_bundles" / "catalog.json"
+    source_bundle = None
+    if source_catalog_path.exists():
+        source_catalog = json.loads(source_catalog_path.read_text(encoding="utf-8"))
+        source_bundle = next(
+            (
+                row
+                for row in source_catalog.get("bundles", [])
+                if row.get("paper_id") == card.paper_id
+            ),
+            None,
+        )
+    if source_bundle:
+        st.subheader("官方源码审批")
+        st.caption("自动发现只生成候选；仓库身份、发表时点 commit 和许可必须人工确认。")
+        with st.form(f"source_approval_{card.paper_id}", border=True):
+            st.text_input("候选仓库", value=str(source_bundle.get("repository_url") or ""), disabled=True)
+            st.text_input("固定 commit", value=str(source_bundle.get("pinned_commit") or ""), disabled=True)
+            dates = st.columns(2)
+            publication_date = dates[0].text_input("论文发表日期", placeholder="2020-05-01")
+            commit_date = dates[1].text_input(
+                "该 commit 日期",
+                value=str(source_bundle.get("pinned_commit_date") or "")[:10],
+                placeholder="2020-04-01",
+            )
+            data_license_status = st.selectbox(
+                "配套数据许可",
+                ["unknown", "open", "research_use_approved", "restricted"],
+                key=f"source_data_license_{card.paper_id}",
+            )
+            identity_approved_by = st.text_input("仓库身份审批人")
+            submit_source = st.form_submit_button(
+                "保存源码审批", type="primary", icon=":material/verified_user:"
+            )
+        if submit_source:
+            approval = approve_source_bundle(
+                {**source_bundle, "pinned_commit_date": commit_date},
+                publication_date=publication_date,
+                identity_approved_by=identity_approved_by,
+                data_license_status=data_license_status,
+            )
+            path = save_source_approval(project_dir, approval)
+            if approval.strict_source_ready:
+                st.success(f"源码审批通过：{path}")
+            else:
+                st.warning("审批已保存，但仍被阻断：" + "；".join(approval.blockers))
 
     st.subheader("结构化 ReproductionPlan")
     st.caption("这里保存的选择会进入 ResearchContract。人工假设可以解锁探索性执行，但不会被标记为 strict。")
@@ -887,19 +1109,53 @@ def _render_run(
     if card is None:
         st.info("请先选择并审核一张 MethodCard。")
         return
-    review = review_for_paper(reviews, card.paper_id)
-    approved = review.get("status") == "approved"
+    approved = _effective_review_approved(card, reviews)
     plan = load_reproduction_plan(project_dir, card.paper_id) or plan_from_method_card(card)
+    task_queue = LocalTaskQueue(project_dir / "tasks")
+    background_tasks = list(reversed(task_queue.list()))[:20]
+    with st.expander("后台任务", expanded=any(row.status in {"queued", "running", "resumable"} for row in background_tasks)):
+        if not background_tasks:
+            st.caption("尚无后台任务。长时间原生复现可提交后关闭页面，状态和日志会持续保留。")
+        else:
+            st.dataframe(
+                [
+                    {
+                        "任务": row.task_id[:10],
+                        "类型": row.task_type,
+                        "状态": row.status,
+                        "退出码": row.return_code,
+                        "日志": row.log_path,
+                        "更新时间": row.updated_at,
+                    }
+                    for row in background_tasks
+                ],
+                width="stretch",
+                hide_index=True,
+            )
+            active_tasks = [row for row in background_tasks if row.status in {"queued", "running", "resumable"}]
+            if active_tasks:
+                selected_task = st.selectbox(
+                    "选择运行中任务",
+                    [row.task_id for row in active_tasks],
+                    format_func=lambda task_id: next(
+                        f"{row.task_type} · {task_id[:10]} · {row.status}"
+                        for row in active_tasks
+                        if row.task_id == task_id
+                    ),
+                )
+                if st.button("取消任务", icon=":material/cancel:", key=f"cancel_{selected_task}"):
+                    task_queue.cancel(selected_task)
+                    st.rerun()
     st.markdown(f"<div class='paper-title'>{card.title}</div><div class='muted'>{card.paper_id}</div>", unsafe_allow_html=True)
     if approved and plan.execution_ready:
-        st.success("方法卡审核与 ReproductionPlan 执行门禁均已通过。")
+        st.success("当前论文的方法卡审核与 ReproductionPlan 执行门禁均已通过。")
     else:
         missing = []
         if not approved:
             missing.append("方法卡尚未批准")
         if not plan.execution_ready:
             missing.append("ReproductionPlan 尚未执行就绪")
-        st.warning("；".join(missing) + "。原生复现运行已锁定。")
+        st.warning("当前论文：" + "；".join(missing) + "。")
 
     if benchmark_view:
         run_mode = st.segmented_control(
@@ -919,7 +1175,61 @@ def _render_run(
     if run_mode == "native_reproduction":
         catalog_path = project_dir / "native_claims" / "catalog.json"
         native_claims = load_native_claim_catalog(catalog_path) if catalog_path.exists() else []
-        claim_options = ["dlinear_exchange_rate_336_96", *[claim.claim_id for claim in native_claims]]
+        native_scope = st.segmented_control(
+            "原生任务范围",
+            ["current_paper", "catalog"],
+            default="current_paper",
+            format_func={
+                "current_paper": "当前论文",
+                "catalog": "浏览 Catalog",
+            }.get,
+            required=True,
+            key="native_claim_scope",
+            width="stretch",
+        )
+        current_claim_ids = [
+            claim.claim_id for claim in native_claims if claim.paper_id == card.paper_id
+        ]
+        if card.paper_id == "arxiv_2205_13504":
+            current_claim_ids.insert(0, "dlinear_exchange_rate_336_96")
+        claim_options = (
+            current_claim_ids
+            if native_scope == "current_paper"
+            else ["dlinear_exchange_rate_336_96", *[claim.claim_id for claim in native_claims]]
+        )
+        if not claim_options:
+            st.warning(
+                "当前论文尚未登记 Native Claim。系统不会把其他论文的官方任务当作它的复现。",
+                icon=":material/link_off:",
+            )
+            try:
+                draft = compile_native_claim_draft(project_dir, card.paper_id, card=card, plan=plan)
+                issue_rows = [
+                    {
+                        "缺口": issue.code,
+                        "字段": issue.field,
+                        "说明": issue.message,
+                        "建议处理": issue.suggested_resolution,
+                    }
+                    for issue in draft.blockers
+                ]
+                with st.container(border=True):
+                    st.subheader("Native Claim Compiler 草案")
+                    st.caption(
+                        "Compiler 只整理证据与缺口，不会绕过人工审批生成 strict claim。"
+                    )
+                    st.dataframe(issue_rows, hide_index=True, width="stretch")
+                    if st.button(
+                        "保存 Native Claim 草案",
+                        icon=":material/save:",
+                        key=f"save_native_draft_{card.paper_id}",
+                    ):
+                        path = save_native_claim_draft(project_dir, draft)
+                        st.success(f"草案已保存：{path}")
+            except Exception as exc:
+                st.error(f"无法生成 Native Claim 草案：{exc}")
+            st.caption("需要查看已有官方任务时，切换到“浏览 Catalog”。")
+            return
         selected_claim_id = st.selectbox(
             "选择官方原生复现 claim",
             claim_options,
@@ -934,6 +1244,20 @@ def _render_run(
             ),
         )
         if selected_claim_id == "dlinear_exchange_rate_336_96":
+            dlinear_card = next(
+                (candidate for candidate in cards if candidate.paper_id == "arxiv_2205_13504"),
+                None,
+            )
+            dlinear_plan = (
+                load_reproduction_plan(project_dir, "arxiv_2205_13504")
+                or (plan_from_method_card(dlinear_card) if dlinear_card else None)
+            )
+            dlinear_ready = bool(
+                dlinear_card
+                and _effective_review_approved(dlinear_card, reviews)
+                and dlinear_plan
+                and dlinear_plan.execution_ready
+            )
             with st.container(border=True):
                 st.subheader("DLinear Exchange-Rate 官方协议")
                 st.caption("官方数据快照 · 336 日输入 · 96 日预测 · 70/10/20 时间切分 · MSE/MAE")
@@ -949,7 +1273,7 @@ def _render_run(
                     "运行官方协议复现",
                     type="primary",
                     icon=":material/play_arrow:",
-                    disabled=not (approved and plan.execution_ready),
+                    disabled=not dlinear_ready,
                 )
             if native_submitted:
                 try:
@@ -958,13 +1282,13 @@ def _render_run(
                     with st.spinner("正在训练 DLinear 并核验论文 MSE/MAE；CPU 上可能需要数分钟..."):
                         native = reproduce_dlinear_exchange_rate(data_path, output_path=output)
                         native["governance"] = {
-                            "methodcard_approved": approved,
-                            "reproduction_plan_hash": plan.plan_hash,
-                            "reproduction_plan_strict_ready": plan.strict_ready,
+                            "methodcard_approved": _effective_review_approved(dlinear_card, reviews),
+                            "reproduction_plan_hash": dlinear_plan.plan_hash,
+                            "reproduction_plan_strict_ready": dlinear_plan.strict_ready,
                         }
                         native["complete_reproduction_allowed"] = bool(
-                            approved
-                            and plan.strict_ready
+                            _effective_review_approved(dlinear_card, reviews)
+                            and dlinear_plan.strict_ready
                             and native["protocol_fidelity"]["strict_reproduction_allowed"]
                             and native["result_reproduced_within_tolerance"]
                         )
@@ -1067,9 +1391,37 @@ def _render_run(
                     disabled=not claim_audit["passed"],
                     key=f"run_native_{selected_claim.claim_id}",
                 )
+                execution_mode = st.segmented_control(
+                    "执行方式",
+                    ["background", "foreground"],
+                    default="background",
+                    format_func={"background": "后台任务", "foreground": "当前页面"}.get,
+                    key=f"native_execution_mode_{selected_claim.claim_id}",
+                    width="stretch",
+                )
             if submitted:
                 try:
                     runtime_root = Path(os.getenv("TEMP", str(project_dir / ".runtime"))) / "ffa-native"
+                    if execution_mode == "background":
+                        repository_root = project_dir.resolve().parents[1]
+                        task = task_queue.submit(
+                            task_type="native_reproduction",
+                            command=[
+                                sys.executable,
+                                str(repository_root / "scripts" / "run_native_claim.py"),
+                                selected_claim.claim_id,
+                                "--project-dir",
+                                str(project_dir.resolve()),
+                                "--catalog",
+                                str(catalog_path.resolve()),
+                                "--runtime-root",
+                                str(runtime_root),
+                            ],
+                            cwd=repository_root,
+                            result_path=str(existing_path),
+                        )
+                        st.success(f"已提交后台任务 {task.task_id[:10]}。可关闭页面，稍后在后台任务或结果审计查看。")
+                        st.rerun()
                     with st.spinner("正在运行固定官方协议并核验论文指标；CPU 训练可能需要较长时间..."):
                         result = OfficialRepoCommandAdapter(runtime_root=runtime_root).run(
                             project_dir,
@@ -1087,7 +1439,7 @@ def _render_run(
         available = {
             candidate.paper_id: method
             for candidate in cards
-            if review_for_paper(reviews, candidate.paper_id).get("status") == "approved"
+            if _effective_review_approved(candidate, reviews)
             if (method := _benchmark_method(candidate)) is not None
         }
         with st.form("run_common_benchmark", border=True):

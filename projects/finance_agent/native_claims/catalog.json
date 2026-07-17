@@ -1,6 +1,7 @@
 {
-  "schema_version": "native_claim_catalog_v1",
-  "generated_at": "2026-07-17T08:03:36.827475+00:00",
+  "schema_version": "native_claim_catalog_v2",
+  "generated_at": "2026-07-17T10:12:31.972915+00:00",
+  "claim_count": 15,
   "claims": [
     {
       "paper_id": "arxiv_2106_13008",
@@ -126,6 +127,15 @@
       "method_card_path": "method_cards\\arxiv_2106_13008.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2106_13008.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 0,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -283,6 +293,15 @@
       "method_card_path": "method_cards\\arxiv_2201_12740.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2201_12740.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "numpy_vector_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 1,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -418,6 +437,15 @@
       "method_card_path": "method_cards\\arxiv_2202_01381.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2202_01381.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "numpy_vector_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 2,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -552,6 +580,15 @@
       "method_card_path": "method_cards\\arxiv_2210_02186.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2210_02186.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 3,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -673,6 +710,15 @@
       "method_card_path": "method_cards\\arxiv_2310_06625.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2310_06625.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 4,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -804,6 +850,15 @@
       "method_card_path": "method_cards\\arxiv_2205_14415.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2205_14415.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 5,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -968,6 +1023,15 @@
       "method_card_path": "method_cards\\arxiv_2205_08897.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2205_08897.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "numpy_vector_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 6,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -1151,6 +1215,15 @@
       "method_card_path": "method_cards\\arxiv_2106_09305.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2106_09305.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 7,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -1272,6 +1345,15 @@
       "method_card_path": "method_cards\\arxiv_1703_07015.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_1703_07015.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 8,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -1416,6 +1498,15 @@
       "method_card_path": "method_cards\\arxiv_2305_18803.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2305_18803.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 9,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -1543,6 +1634,15 @@
       "method_card_path": "method_cards\\arxiv_2005_11650.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2005_11650.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 10,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -1665,6 +1765,15 @@
       "method_card_path": "method_cards\\arxiv_2402_10198.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2402_10198.json",
       "dataset_domain": "financial",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "conda_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 11,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -1811,6 +1920,15 @@
       "method_card_path": "method_cards\\arxiv_2211_14730.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2211_14730.json",
       "dataset_domain": "energy",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 12,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -1922,6 +2040,15 @@
       "method_card_path": "method_cards\\arxiv_2012_07436.json",
       "reproduction_plan_path": "reproduction_plans\\arxiv_2012_07436.json",
       "dataset_domain": "energy",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "semantic_noop_text_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 13,
       "schema_version": "native_claim_spec_v1"
     },
     {
@@ -2025,6 +2152,15 @@
       "method_card_path": "method_cards\\openreview_0EXmFzUn5I.json",
       "reproduction_plan_path": "reproduction_plans\\openreview_0EXmFzUn5I.json",
       "dataset_domain": "energy",
+      "plugin_bindings": {
+        "source_resolver": "pinned_archive_v1",
+        "dataset_materializer": "frozen_file_v1",
+        "execution_backend": "local_subprocess_v1",
+        "metric_extractor": "regex_log_v1",
+        "compatibility_recipe": "no_compatibility_patch_v1",
+        "acceptance_policy": "paper_metric_tolerance_v1"
+      },
+      "catalog_order": 14,
       "schema_version": "native_claim_spec_v1"
     }
   ]

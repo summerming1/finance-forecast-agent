@@ -17,6 +17,10 @@ from typing import Any, Literal
 
 import numpy as np
 
+from .experiment_protocols import audit_experiment_protocol
+from .lineage import LineageStore
+from .native_plugins import DEFAULT_NATIVE_PLUGIN_REGISTRY, infer_native_plugin_bindings
+
 
 MetricObjective = Literal["minimize", "maximize", "match"]
 MetricObservationPolicy = Literal["all", "last"]
@@ -83,7 +87,11 @@ class NativeClaimSpec:
     unresolved_assumptions: list[str] = field(default_factory=list)
     method_card_path: str = ""
     reproduction_plan_path: str = ""
+    source_approval_path: str = ""
+    dataset_contract_path: str = ""
     dataset_domain: str = "unspecified"
+    plugin_bindings: dict[str, str] = field(default_factory=dict)
+    catalog_order: int = 0
     schema_version: str = "native_claim_spec_v1"
 
     @classmethod
@@ -93,10 +101,24 @@ class NativeClaimSpec:
             name: value if isinstance(value, MetricTarget) else MetricTarget(**value)
             for name, value in dict(values.get("metrics") or {}).items()
         }
+        if not values.get("plugin_bindings"):
+            values["plugin_bindings"] = infer_native_plugin_bindings(
+                metric_artifact_glob=str(values.get("metric_artifact_glob") or ""),
+                compatibility_patches=list(values.get("compatibility_patches") or []),
+                command=list(values.get("command") or []),
+            )
         return cls(**values)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+    @property
+    def effective_plugin_bindings(self) -> dict[str, str]:
+        return self.plugin_bindings or infer_native_plugin_bindings(
+            metric_artifact_glob=self.metric_artifact_glob,
+            compatibility_patches=self.compatibility_patches,
+            command=self.command,
+        )
 
 
 def load_native_claim_catalog(path: str | Path) -> list[NativeClaimSpec]:
@@ -198,6 +220,35 @@ def audit_native_claim(project_dir: str | Path, spec: NativeClaimSpec) -> dict[s
         blockers.extend(f"unresolved assumption: {item}" for item in spec.unresolved_assumptions)
     if not spec.metrics:
         blockers.append("paper claim has no metric targets")
+    experiment_protocol = audit_experiment_protocol(spec.experiment_type, spec.protocol)
+    blockers.extend(experiment_protocol.blockers)
+    source_approval: dict[str, Any] = {}
+    dataset_contract: dict[str, Any] = {}
+    if spec.schema_version == "native_claim_spec_v2":
+        if not spec.source_approval_path:
+            blockers.append("v2 native claim requires a SourceApproval")
+        else:
+            source_approval = _load_governance(_resolve(root, spec.source_approval_path))
+            if not source_approval.get("strict_source_ready"):
+                blockers.append("SourceApproval strict source gate did not pass")
+            if source_approval.get("pinned_commit") != spec.source_revision:
+                blockers.append("SourceApproval commit does not match the native claim")
+        if not spec.dataset_contract_path:
+            blockers.append("v2 native claim requires a DatasetContract")
+        else:
+            dataset_contract = _load_governance(_resolve(root, spec.dataset_contract_path))
+            if not dataset_contract.get("strict_ready"):
+                blockers.append("DatasetContract strict data gate did not pass")
+            if dataset_contract.get("sha256") != spec.dataset_sha256:
+                blockers.append("DatasetContract SHA256 does not match the native claim")
+    artifact_type = "npy" if spec.metric_artifact_glob else "stdout"
+    blockers.extend(
+        DEFAULT_NATIVE_PLUGIN_REGISTRY.validate_bindings(
+            spec.effective_plugin_bindings,
+            experiment_type=spec.experiment_type,
+            artifact_type=artifact_type,
+        )
+    )
 
     governance = _governance_gate(root, spec)
     if not governance["passed"]:
@@ -214,6 +265,9 @@ def audit_native_claim(project_dir: str | Path, spec: NativeClaimSpec) -> dict[s
         "source_entrypoint_sha256": entrypoint_hash,
         "source_entrypoint_passed": entrypoint_hash == spec.source_entrypoint_sha256,
         "protocol_pinned": bool(spec.command and spec.protocol and not spec.unresolved_assumptions),
+        "experiment_protocol": experiment_protocol.to_dict(),
+        "source_approval": source_approval,
+        "dataset_contract": dataset_contract,
         "governance": governance,
         "blockers": blockers,
         "passed": not blockers,
@@ -633,6 +687,7 @@ class OfficialRepoCommandAdapter:
                 "domain": spec.dataset_domain,
             },
             "protocol": spec.protocol,
+            "plugin_bindings": spec.effective_plugin_bindings,
             "runtime_environment": _runtime_versions(),
             "runtime_execution_root": str(execution_root),
             "runtime_files": staged_files,
@@ -661,8 +716,29 @@ class OfficialRepoCommandAdapter:
             "duration_seconds": round(resumed_elapsed + time.monotonic() - started, 3),
         }
         if output is not None:
+            lineage_run_id = hashlib.sha256(
+                f"native:{spec.claim_id}:{time.time_ns()}".encode()
+            ).hexdigest()[:24]
+            payload["lineage_run_id"] = lineage_run_id
             payload["report_path"] = str(output)
             _write_json_atomic(output, payload)
+            lineage_inputs: dict[str, str | Path] = {
+                "dataset": dataset_path,
+                "source_archive": _resolve(project, spec.source_archive_path),
+            }
+            if spec.method_card_path:
+                lineage_inputs["method_card"] = _resolve(project, spec.method_card_path)
+            if spec.reproduction_plan_path:
+                lineage_inputs["reproduction_plan"] = _resolve(
+                    project, spec.reproduction_plan_path
+                )
+            LineageStore(project / "run_lineage").record(
+                run_type="native_reproduction",
+                cwd=project,
+                inputs=lineage_inputs,
+                outputs={"report": output},
+                run_id=lineage_run_id,
+            )
             if gate["execution_passed"] and partial_path is not None:
                 partial_path.unlink(missing_ok=True)
         return payload

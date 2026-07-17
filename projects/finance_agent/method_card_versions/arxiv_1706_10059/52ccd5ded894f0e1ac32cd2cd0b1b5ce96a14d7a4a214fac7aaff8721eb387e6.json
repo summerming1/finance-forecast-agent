@@ -1,0 +1,360 @@
+{
+  "paper_id": "arxiv_1706_10059",
+  "method_id": "deep_portfolio_management_eiie",
+  "title": "Deep Portfolio Management: A Deep Reinforcement Learning Framework for the Financial Portfolio Management Problem",
+  "experiment_type": "forecast_only",
+  "claims": [
+    {
+      "claim_id": "arxiv_1706_10059_primary",
+      "description": "Primary reported result for Deep Portfolio Management: A Deep Reinforcement Learning Framework for the Financial Portfolio Management Problem",
+      "dataset_id": "unknown",
+      "market": "cryptocurrencies",
+      "asset_class": "portfolio management via reinforcement learning",
+      "frequency": "30 minutes",
+      "horizon": "50 days",
+      "target": "explicit reward function based on portfolio growth; the evaluation score of each asset is discounted by the size of its intentional weight change",
+      "model_family": "lstm_regressor",
+      "metrics": [
+        "mae",
+        "mse",
+        "rmse",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "reported_values": {},
+      "evidence_ids": [
+        "evidence_001",
+        "evidence_002",
+        "evidence_003",
+        "evidence_004",
+        "evidence_005",
+        "evidence_006",
+        "evidence_007",
+        "evidence_008",
+        "evidence_009"
+      ],
+      "source_conflicts": []
+    }
+  ],
+  "evidence_graph": [
+    {
+      "evidence_id": "evidence_001",
+      "source_type": "paper",
+      "source_id": "arxiv_1706_10059",
+      "quote": "This paper presents a ﬁnancial-model-free Reinforcement Learning framework to provide a deep machine learning solution to the portfolio management problem.",
+      "quote_sha256": "8d9a276d163dcd824b1210b5e99d0e130bd83f0d74c9f17c4ac127df6f47f0fa",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_002",
+      "source_type": "paper",
+      "source_id": "arxiv_1706_10059",
+      "quote": "The framework consists of the Ensemble of Identical Independent Evaluators (EIIE) topology, a Portfolio-Vector Memory (PVM), an Online Stochastic Batch Learning (OSBL) scheme, and a fully exploiting and explicit reward function.",
+      "quote_sha256": "228b3e0752905cc559424613462f521baea58cb8d60a717f65d4f1c877aa0897",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_003",
+      "source_type": "paper",
+      "source_id": "arxiv_1706_10059",
+      "quote": "This framework is realized in three instants in this work with a Convolutional Neural Network (CNN), a basic Recurrent Neural Network (RNN), and a Long Short-Term Memory (LSTM).",
+      "quote_sha256": "a8437f9f12beaf62d9ce7081a66078abc21d0b9b1cffea8cb8d92b2ed43e07b3",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_004",
+      "source_type": "paper",
+      "source_id": "arxiv_1706_10059",
+      "quote": "examined in three back-test experiments with a trading period of 30 minutes in a cryptocurrency market",
+      "quote_sha256": "e66f0cc79e2397d65b89d9b109086bdb54d3f38c7e0028658d50e55851c15b96",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_005",
+      "source_type": "paper",
+      "source_id": "arxiv_1706_10059",
+      "quote": "All three instances of the framework monopolize the top three positions in all experiments, outdistancing other compared trading algorithms.",
+      "quote_sha256": "ab76ecd5c4cd56a8c958b7ea00ee5059b1e40d8c522512e66a8a73f5fbea9a08",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_006",
+      "source_type": "paper",
+      "source_id": "arxiv_1706_10059",
+      "quote": "Although with a high commission rate of 0.25% in the back-tests, the framework is able to achieve at least 4-fold returns in 50 days.",
+      "quote_sha256": "dc5c39fc6a40463de177c2174541e0f57d78b469ff621b2a9bce3de098a2f475",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_007",
+      "source_type": "paper",
+      "source_id": "arxiv_1706_10059",
+      "quote": "An IIE is a neural network whose job is to inspect the history of an asset and evaluate its potential growth for the immediate future.",
+      "quote_sha256": "7ce956c00766db90775a1152876e0b9c94fef148cefeb06c1a7cd37a92afe310",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_008",
+      "source_type": "paper",
+      "source_id": "arxiv_1706_10059",
+      "quote": "The evaluation score of each asset is discounted by the size of its intentional weight change for the asset in the portfolio and is presented to a softmax layer, whose outcome will be the new portfolio weights for the coming trading period.",
+      "quote_sha256": "6890caf301ae83fd26cb4850a8a2277cf4ed60a76216d28cd01f86a26b3c8cae",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_009",
+      "source_type": "paper",
+      "source_id": "arxiv_1706_10059",
+      "quote": "a dedicated Portfolio-Vector Memory (PVM), is introduced to store the network outputs.",
+      "quote_sha256": "e4e2d980a1f2d1ab8b4a70c55e2b2282496331a2221779896d09d576008a4299",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    }
+  ],
+  "base_method_card": {
+    "method_id": "deep_portfolio_management_eiie",
+    "paper_id": "arxiv_1706_10059",
+    "title": "Deep Portfolio Management: A Deep Reinforcement Learning Framework for the Financial Portfolio Management Problem",
+    "venue_or_source": "arXiv:1706.10059v2 [q-fin.CP]",
+    "paper_url": "https://arxiv.org/abs/1706.10059",
+    "task_type": "portfolio management via reinforcement learning",
+    "target_asset": "cryptocurrencies",
+    "asset_universe": [
+      "cryptocurrency market"
+    ],
+    "frequency": "30 minutes",
+    "horizon": "50 days",
+    "label_definition": "explicit reward function based on portfolio growth; the evaluation score of each asset is discounted by the size of its intentional weight change",
+    "data_requirements": [
+      "market history of assets; portfolio weights from previous periods"
+    ],
+    "feature_groups": [
+      "price_lag_features",
+      "cross_asset_features"
+    ],
+    "model_families": [
+      "lstm_regressor"
+    ],
+    "training_protocol": "Online Stochastic Batch Learning (OSBL) scheme; Portfolio-Vector Memory (PVM) stores network outputs inspired by experience replay memory",
+    "evaluation_protocol": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "commission rate of 0.25%",
+    "reported_results": {
+      "raw": "All three instances of the framework monopolize the top three positions in all experiments, outdistancing other compared trading algorithms; able to achieve at least 4-fold returns in 50 days"
+    },
+    "strict_requirements": [
+      "Ensemble of Identical Independent Evaluators (EIIE) topology",
+      "Portfolio-Vector Memory (PVM)",
+      "Online Stochastic Batch Learning (OSBL) scheme",
+      "fully exploiting and explicit reward function",
+      "financial-model-free"
+    ],
+    "unknowns": [
+      "specific feature engineering details",
+      "exact network architectures and hyperparameters",
+      "specific cryptocurrencies in asset universe beyond Bitcoin",
+      "detailed back-test periods and data sources",
+      "risk metrics beyond return",
+      "model_families conflict with title/protocol references: expected one of rl_portfolio_policy"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_1706_10059",
+        "section": "unknown",
+        "quote": "This paper presents a ﬁnancial-model-free Reinforcement Learning framework to provide a deep machine learning solution to the portfolio management problem.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1706_10059",
+        "section": "unknown",
+        "quote": "The framework consists of the Ensemble of Identical Independent Evaluators (EIIE) topology, a Portfolio-Vector Memory (PVM), an Online Stochastic Batch Learning (OSBL) scheme, and a fully exploiting and explicit reward function.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1706_10059",
+        "section": "unknown",
+        "quote": "This framework is realized in three instants in this work with a Convolutional Neural Network (CNN), a basic Recurrent Neural Network (RNN), and a Long Short-Term Memory (LSTM).",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1706_10059",
+        "section": "unknown",
+        "quote": "examined in three back-test experiments with a trading period of 30 minutes in a cryptocurrency market",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1706_10059",
+        "section": "unknown",
+        "quote": "All three instances of the framework monopolize the top three positions in all experiments, outdistancing other compared trading algorithms.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1706_10059",
+        "section": "unknown",
+        "quote": "Although with a high commission rate of 0.25% in the back-tests, the framework is able to achieve at least 4-fold returns in 50 days.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1706_10059",
+        "section": "unknown",
+        "quote": "An IIE is a neural network whose job is to inspect the history of an asset and evaluate its potential growth for the immediate future.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1706_10059",
+        "section": "unknown",
+        "quote": "The evaluation score of each asset is discounted by the size of its intentional weight change for the asset in the portfolio and is presented to a softmax layer, whose outcome will be the new portfolio weights for the coming trading period.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_1706_10059",
+        "section": "unknown",
+        "quote": "a dedicated Portfolio-Vector Memory (PVM), is introduced to store the network outputs.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "method_card_v1",
+      "document_id": "arxiv_1706.10059",
+      "raw_paper_id": "arxiv_1706.10059",
+      "document_text_sha": "3eacf876a150e5dd",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1706.10059.pdf",
+      "migrated_from_schema_version": "method_card_v1",
+      "quality_report": {
+        "method_id": "deep_portfolio_management_eiie",
+        "paper_id": "arxiv_1706_10059",
+        "quality_score": 0.67,
+        "approval_required": true,
+        "critical_missing_fields": [],
+        "type_errors": [],
+        "semantic_conflicts": [
+          "model_families conflict with title/protocol references: expected one of rl_portfolio_policy"
+        ],
+        "unsupported_models": [],
+        "warnings": [
+          "9/9 evidence spans have no source section"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
+      "frequency_type": "intraday",
+      "horizon_type": "50_day"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "three back-test experiments with a trading period of 30 minutes in a cryptocurrency market; compared against recently reviewed or published portfolio-selection strategies",
+    "frequency_type": "intraday",
+    "horizon_type": "50_day",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "schema_version": "method_card_v2"
+  },
+  "source_conflicts": [],
+  "parent_version_sha256": "",
+  "created_at": "2026-07-17T10:30:37.600124+00:00",
+  "schema_version": "method_card_v3",
+  "validation_errors": [
+    "Claim arxiv_1706_10059_primary has no numeric reported values"
+  ],
+  "strict_evidence_ready": false,
+  "version_sha256": "52ccd5ded894f0e1ac32cd2cd0b1b5ce96a14d7a4a214fac7aaff8721eb387e6"
+}

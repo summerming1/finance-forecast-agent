@@ -1,0 +1,131 @@
+{
+  "paper_id": "arxiv_2402_10198",
+  "claim_id": "arxiv_2402_10198_exchange_native",
+  "title": "SAMformer: Unlocking the Potential of Transformers in Time Series Forecasting with Sharpness-Aware Minimization and Channel-Wise Attention",
+  "paper_url": "https://proceedings.mlr.press/v235/ilbert24a.html",
+  "claim_locator": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96",
+  "model_name": "SAMformer",
+  "experiment_type": "forecast_only",
+  "dataset_id": "exchange_rate_official_7588x8",
+  "dataset_path": "data\\external\\exchange_rate\\exchange_rate.csv",
+  "dataset_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+  "source_repository": "https://github.com/romilbert/samformer",
+  "source_revision": "71f10eaa696f2a098798779ee14b6ecd6b69bcd9",
+  "source_archive_path": "sources\\ltsf\\samformer.zip",
+  "source_archive_sha256": "033d9d54ad982d401145c9225933b79243e128466c40308f8af6e541dfe853ff",
+  "source_root": "sources\\ltsf\\samformer\\samformer-71f10eaa696f2a098798779ee14b6ecd6b69bcd9",
+  "source_entrypoint": "run.py",
+  "source_entrypoint_sha256": "03b47459525372a1f6ce337504849518f3dff97ce029fdb35d42c0a6598c6487",
+  "source_license": "MIT",
+  "command": [
+    "{conda}",
+    "run",
+    "--no-capture-output",
+    "-n",
+    "finance_fa_samformer",
+    "python",
+    "-u",
+    "{source_root}/run.py",
+    "--model",
+    "transformer",
+    "--use_sam",
+    "--data",
+    "exchange_rate",
+    "--feature_type",
+    "M",
+    "--seq_len",
+    "512",
+    "--pred_len",
+    "96",
+    "--batch_size",
+    "32",
+    "--train_epochs",
+    "300",
+    "--learning_rate",
+    "0.001",
+    "--rho",
+    "0.7",
+    "--patience",
+    "5",
+    "--n_block",
+    "8",
+    "--dropout",
+    "0.7",
+    "--ff_dim",
+    "64",
+    "--num_heads",
+    "1",
+    "--d_model",
+    "16",
+    "--checkpoint_dir",
+    "{runtime_root}/checkpoints"
+  ],
+  "metrics": {
+    "mse": {
+      "expected": 0.161,
+      "absolute_tolerance": 0.02,
+      "relative_tolerance": 0.0,
+      "objective": "match"
+    },
+    "mae": {
+      "expected": 0.306,
+      "absolute_tolerance": 0.025,
+      "relative_tolerance": 0.0,
+      "objective": "match"
+    }
+  },
+  "metric_patterns": {
+    "mse": "mse:([0-9.eE+-]+)",
+    "mae": "mae:([0-9.eE+-]+)"
+  },
+  "protocol": {
+    "dataset": "Exchange-Rate",
+    "features": "M",
+    "split": "official chronological loader",
+    "dataset_revision": "frozen local Exchange-Rate bytes",
+    "claim_locator": "ICML 2024 paper, Table 1 and Table 6, SAMformer, Exchange, horizon 96",
+    "protocol_note": "Paper-native input 512, horizon 96, batch 32, Adam, learning rate 0.001, rho 0.7, 300 epochs, patience 5 and five independent trials. TensorFlow 2.13 runs in the isolated finance_fa_samformer Conda environment.",
+    "metric_observation_contract": 5,
+    "paper_repetitions": 5,
+    "randomness_protocol": "Five independent official-process initializations. The paper requires five different seeds but does not publish their numeric values, and the official runner does not bind its --seed argument to real-data model initialization."
+  },
+  "metric_artifact_glob": "",
+  "metric_artifact_indices": {},
+  "repetitions": 5,
+  "expected_metric_observations": 5,
+  "metric_observation_policy": "all",
+  "timeout_seconds": 14400,
+  "environment": {
+    "PYTHONHASHSEED": "0"
+  },
+  "compatibility_patches": [
+    {
+      "path": "run.py",
+      "classification": "semantic_noop",
+      "old": "        test_result = model.evaluate(test_data)",
+      "new": "        test_result = model.evaluate(test_data)\n        logging.info(f'mse:{test_result[0]}, mae:{test_result[1]}')",
+      "rationale": "Emit the already computed official test metrics in a machine-readable log line."
+    }
+  ],
+  "runtime_files": [
+    {
+      "source": "data/external/exchange_rate/exchange_rate.csv",
+      "destination": "dataset/exchange_rate.csv"
+    }
+  ],
+  "run_parameters": [],
+  "unresolved_assumptions": [],
+  "method_card_path": "method_cards\\arxiv_2402_10198.json",
+  "reproduction_plan_path": "reproduction_plans\\arxiv_2402_10198.json",
+  "dataset_domain": "financial",
+  "plugin_bindings": {
+    "source_resolver": "pinned_archive_v1",
+    "dataset_materializer": "frozen_file_v1",
+    "execution_backend": "conda_subprocess_v1",
+    "metric_extractor": "regex_log_v1",
+    "compatibility_recipe": "semantic_noop_text_patch_v1",
+    "acceptance_policy": "paper_metric_tolerance_v1"
+  },
+  "catalog_order": 11,
+  "schema_version": "native_claim_spec_v1"
+}

@@ -12,6 +12,8 @@ P1.6.2 是既定 P1 复现协议路线内的覆盖验收，不改变项目定位
 
 当前前两层已覆盖十篇/五篇样例，第三层已有十个金融 Exchange-Rate 原生 strict claims。不能把这十个同数据域时序预测结果解释为信号回测、截面资产定价或组合强化学习也已具备通用性。
 
+2026-07-17 复盘将当前总体成熟度定义为 L2+：控制层能处理异构论文，原生执行内核能复用多种预测仓库。Native Claim Compiler 已能生成声明式草案和 blocker，但不能在缺少论文主资料、合法数据、源码或指标时自动形成可执行 strict claim。严格复现的多类型 held-out 验收计划见 `docs/STRICT_REPRODUCTION_GENERALIZATION_PLAN.md`，首轮实施结果见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。
+
 ## 本轮修复
 
 - 新增标题、任务、训练协议、评估协议之间的模型语义一致性门禁。
@@ -72,3 +74,7 @@ python -m ruff check src tests scripts
 ## 后续建议
 
 总体 Roadmap 无需改向。10-claim 数量门禁通过后，下一步按已批准路线分别选择一个可获得原始数据/官方实现的信号回测、截面资产定价和组合强化学习论文，建立三种专用原生 adapter 与 strict claim 验收；同时完成 28 个 exploratory candidate 的逐篇 Delta。这样 Memory prior 不只学习同一 Exchange-Rate 时间序列实验形态。
+
+## P1.G 复核
+
+P1.G 已把上述建议中的控制能力实现为类型协议、Native Claim Compiler、MethodCard v3、Benchmark Registry、任务队列、lineage 和 Memory Scheduler。对 RSR、OpenSourceAP 与 PGPortfolio 的纵向验证均能识别真实 blocker，未产生 false-strict；held-out 10/10 路由正确。当前仍只有 `forecast_only + financial` 的 10 篇 strict，因此本文件的“异构论文路由通过”和“多类论文严格复现”必须继续区分。完整验收见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。

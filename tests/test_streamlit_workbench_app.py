@@ -54,6 +54,7 @@ def test_method_review_has_one_clear_review_action(app: AppTest) -> None:
 
 def test_native_stage_exposes_the_registry_without_starting_training(app: AppTest) -> None:
     app.segmented_control(key="workflow_stage").set_value("5 原生/探索运行").run()
+    app.segmented_control(key="native_claim_scope").set_value("catalog").run()
     selector = next(
         item for item in app.selectbox if item.label == "选择官方原生复现 claim"
     )
@@ -70,6 +71,7 @@ def test_native_stage_exposes_the_registry_without_starting_training(app: AppTes
 
 def test_native_stage_uses_each_claims_dataset_label(app: AppTest) -> None:
     app.segmented_control(key="workflow_stage").set_value("5 原生/探索运行").run()
+    app.segmented_control(key="native_claim_scope").set_value("catalog").run()
     selector = next(
         item for item in app.selectbox if item.label == "选择官方原生复现 claim"
     )

@@ -1,0 +1,173 @@
+{
+  "paper_id": "arxiv_2205_08897",
+  "claim_id": "arxiv_2205_08897_exchange_native",
+  "title": "FiLM: Frequency Improved Legendre Memory Model for Long-term Time Series Forecasting",
+  "paper_url": "https://proceedings.neurips.cc/paper_files/paper/2022/hash/524ef58c2bd075775861234266e5e020-Abstract-Conference.html",
+  "claim_locator": "NeurIPS 2022 paper, Table 1, Exchange, horizon 96",
+  "model_name": "FiLM",
+  "experiment_type": "forecast_only",
+  "dataset_id": "exchange_rate_official_7588x8",
+  "dataset_path": "data\\external\\exchange_rate\\exchange_rate.csv",
+  "dataset_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+  "source_repository": "https://github.com/tianzhou2011/FiLM",
+  "source_revision": "2794355ff6258743a29715263414283782910521",
+  "source_archive_path": "sources\\ltsf\\film.zip",
+  "source_archive_sha256": "5a0c59f25894eb95b3468aff583a7ee64d413218327e9f722626e435afb78b2c",
+  "source_root": "sources\\ltsf\\film\\FiLM-2794355ff6258743a29715263414283782910521",
+  "source_entrypoint": "run.py",
+  "source_entrypoint_sha256": "fad0d176119bd4081b8c68931dda0f4cf152862979662fe9fa5f0a440d9da320",
+  "source_license": "MIT",
+  "command": [
+    "{python}",
+    "-u",
+    "{source_root}/run.py",
+    "--is_training",
+    "1",
+    "--root_path",
+    "{dataset_dir}",
+    "--data_path",
+    "exchange_rate.csv",
+    "--model_id",
+    "Exchange_96_96",
+    "--model",
+    "FiLM",
+    "--data",
+    "custom",
+    "--features",
+    "M",
+    "--seq_len",
+    "96",
+    "--label_len",
+    "48",
+    "--pred_len",
+    "96",
+    "--e_layers",
+    "2",
+    "--d_layers",
+    "1",
+    "--enc_in",
+    "8",
+    "--dec_in",
+    "8",
+    "--c_out",
+    "8",
+    "--des",
+    "native",
+    "--num_workers",
+    "0",
+    "--checkpoints",
+    "{runtime_root}/checkpoints",
+    "--seq_len",
+    "384",
+    "--factor",
+    "3",
+    "--ab",
+    "2",
+    "--lradj",
+    "type4",
+    "--learning_rate",
+    "1e-3",
+    "--patience",
+    "20",
+    "--train_epochs",
+    "20",
+    "--ours",
+    "--itr",
+    "5"
+  ],
+  "metrics": {
+    "mse": {
+      "expected": 0.086,
+      "absolute_tolerance": 0.02,
+      "relative_tolerance": 0.0,
+      "objective": "match"
+    },
+    "mae": {
+      "expected": 0.204,
+      "absolute_tolerance": 0.02,
+      "relative_tolerance": 0.0,
+      "objective": "match"
+    }
+  },
+  "metric_patterns": {
+    "mse": "mse:([0-9.eE+-]+)",
+    "mae": "mae:([0-9.eE+-]+)"
+  },
+  "protocol": {
+    "dataset": "Exchange-Rate",
+    "features": "M",
+    "split": "official chronological loader",
+    "dataset_revision": "frozen local Exchange-Rate bytes",
+    "claim_locator": "NeurIPS 2022 paper, Table 1, Exchange, horizon 96",
+    "protocol_note": "Pinned paper and official command agree on the selected claim.",
+    "metric_observation_contract": 5,
+    "paper_repetitions": 5,
+    "randomness_protocol": "Repository-native stochasticity; any explicit seeds are frozen in the resolved command."
+  },
+  "metric_artifact_glob": "results/Exchange_96_96_FiLM_*_native_*/metrics.npy",
+  "metric_artifact_indices": {
+    "mae": 0,
+    "mse": 1
+  },
+  "repetitions": 1,
+  "expected_metric_observations": 5,
+  "metric_observation_policy": "all",
+  "timeout_seconds": 43200,
+  "environment": {
+    "PYTHONHASHSEED": "0",
+    "FFA_RNG_STATE_PATH": "{runtime_root}/film_rng_state.pt"
+  },
+  "compatibility_patches": [
+    {
+      "path": "utils/tools.py",
+      "classification": "semantic_noop",
+      "old": "np.Inf",
+      "new": "np.inf",
+      "rationale": "NumPy 2 removed the uppercase alias; both names denote positive infinity."
+    },
+    {
+      "path": "exp/exp_main.py",
+      "classification": "semantic_noop",
+      "old": "torch.load(os.path.join('./checkpoints/' + setting, 'checkpoint.pth'))",
+      "new": "torch.load(os.path.join(self.args.checkpoints, setting, 'checkpoint.pth'))",
+      "rationale": "Use the same CLI checkpoint directory for evaluation that training already uses."
+    },
+    {
+      "path": "run.py",
+      "classification": "semantic_noop",
+      "old": "if args.is_training:\n    for ii in range(args.itr):\n        # setting record of experiments",
+      "new": "if args.is_training:\n    rng_state_path = os.getenv('FFA_RNG_STATE_PATH')\n    start_iteration = 0\n    resumed = bool(rng_state_path and os.path.exists(rng_state_path))\n    if resumed:\n        rng_state = torch.load(rng_state_path, map_location='cpu', weights_only=False)\n        random.setstate(rng_state['python'])\n        np.random.set_state(rng_state['numpy'])\n        torch.set_rng_state(rng_state['torch'])\n        if torch.cuda.is_available() and rng_state.get('cuda'):\n            torch.cuda.set_rng_state_all(rng_state['cuda'])\n        start_iteration = int(rng_state['next_iteration'])\n    for ii in range(start_iteration, args.itr):\n        # setting record of experiments",
+      "rationale": "Persist and restore RNG state only at completed official repetition boundaries so interrupted CPU runs resume without changing an uninterrupted random sequence."
+    },
+    {
+      "path": "run.py",
+      "classification": "semantic_noop",
+      "old": "        exp = Exp(args)  # set experiments\n        print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))",
+      "new": "        if resumed and ii == start_iteration:\n            for root in (args.checkpoints, './results', './test_results'):\n                incomplete = os.path.join(root, setting)\n                if os.path.isdir(incomplete):\n                    import shutil\n                    shutil.rmtree(incomplete)\n        exp = Exp(args)  # set experiments\n        print('>>>>>>>start training : {}>>>>>>>>>>>>>>>>>>>>>>>>>>'.format(setting))",
+      "rationale": "Remove only the interrupted repetition's incomplete artifacts before replaying it from the saved RNG boundary."
+    },
+    {
+      "path": "run.py",
+      "classification": "semantic_noop",
+      "old": "        torch.cuda.empty_cache()",
+      "new": "        torch.cuda.empty_cache()\n        if rng_state_path:\n            torch.save({\n                'python': random.getstate(),\n                'numpy': np.random.get_state(),\n                'torch': torch.get_rng_state(),\n                'cuda': torch.cuda.get_rng_state_all() if torch.cuda.is_available() else [],\n                'next_iteration': ii + 1,\n            }, rng_state_path)",
+      "rationale": "Snapshot RNG state after each completed official repetition; no model or metric computation is changed."
+    }
+  ],
+  "runtime_files": [],
+  "run_parameters": [],
+  "unresolved_assumptions": [],
+  "method_card_path": "method_cards\\arxiv_2205_08897.json",
+  "reproduction_plan_path": "reproduction_plans\\arxiv_2205_08897.json",
+  "dataset_domain": "financial",
+  "plugin_bindings": {
+    "source_resolver": "pinned_archive_v1",
+    "dataset_materializer": "frozen_file_v1",
+    "execution_backend": "local_subprocess_v1",
+    "metric_extractor": "numpy_vector_v1",
+    "compatibility_recipe": "semantic_noop_text_patch_v1",
+    "acceptance_policy": "paper_metric_tolerance_v1"
+  },
+  "catalog_order": 6,
+  "schema_version": "native_claim_spec_v1"
+}

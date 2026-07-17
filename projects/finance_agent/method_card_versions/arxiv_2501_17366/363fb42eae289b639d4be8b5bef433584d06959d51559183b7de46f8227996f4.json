@@ -1,0 +1,327 @@
+{
+  "paper_id": "arxiv_2501_17366",
+  "method_id": "lstm_sp500_pilla2025",
+  "title": "Forecasting S&P 500 Using LSTM Models",
+  "experiment_type": "forecast_only",
+  "claims": [
+    {
+      "claim_id": "arxiv_2501_17366_primary",
+      "description": "Primary reported result for Forecasting S&P 500 Using LSTM Models",
+      "dataset_id": "unknown",
+      "market": "S&P 500 index",
+      "asset_class": "stock_price_forecasting",
+      "frequency": "unknown",
+      "horizon": "unknown",
+      "target": "Predicting the S&P 500 index value using historical price data and technical indicators",
+      "model_family": "lstm_regressor",
+      "metrics": [
+        "mae",
+        "mse",
+        "rmse",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "reported_values": {},
+      "evidence_ids": [
+        "evidence_001",
+        "evidence_002",
+        "evidence_003",
+        "evidence_004",
+        "evidence_005",
+        "evidence_006",
+        "evidence_007"
+      ],
+      "source_conflicts": []
+    }
+  ],
+  "evidence_graph": [
+    {
+      "evidence_id": "evidence_001",
+      "source_type": "paper",
+      "source_id": "arxiv_2501_17366",
+      "quote": "In this report, we compare ARIMA and LSTM models in predicting the S&P 500 index, one of the most popular financial benchmarks.",
+      "quote_sha256": "66088e5e233832cc26a20042a742ca44cdefb4e70ae1a67ce5cbe6bc39af456f",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_002",
+      "source_type": "paper",
+      "source_id": "arxiv_2501_17366",
+      "quote": "Using historical price data and technical indicators, we evaluated these models using the Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE) metrics.",
+      "quote_sha256": "8db2565e2c30e83cb35d7d4d7aa2250fdbb9df1cb4c21443e4e29db4ca1bdceb",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_003",
+      "source_type": "paper",
+      "source_id": "arxiv_2501_17366",
+      "quote": "The ARIMA model showcased reasonable performance with an MAE of 462.1, RMSE of 614, and an accuracy of 89.8%.",
+      "quote_sha256": "2254706dbfd1bb465496db9d0b83fd01a424a662dac30ff82650f0c218df05d8",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_004",
+      "source_type": "paper",
+      "source_id": "arxiv_2501_17366",
+      "quote": "The LSTM model, with favorable features, achieved an MAE of 369.32, RMSE of 412.84, and an accuracy of 92.46%, capturing both short- and long-term dependencies.",
+      "quote_sha256": "412c3dc9104f3e2798f49ca83b14057e3164b9a1463fb2b562c0318708515b64",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_005",
+      "source_type": "paper",
+      "source_id": "arxiv_2501_17366",
+      "quote": "The LSTM model without features outperformed the version with all features, achieving an MAE of 175.9, RMSE of 207.34, and an accuracy of 96.41%, which showcased its ability to handle market data.",
+      "quote_sha256": "8ece457aacf2abc0d8850744e6f1185bdd6ffe4d96a9c94e012ef4e217261078",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_006",
+      "source_type": "paper",
+      "source_id": "arxiv_2501_17366",
+      "quote": "Traditional models like ARIMA and GARCH were observed to be good with linear data. However, the stock market data involves non-linear dependencies and intricate patterns that are better handled by machine learning and deep learning approaches.",
+      "quote_sha256": "e09cc458a0f17f727950d421d3592c4e238cae9aedb8139bed9858d68a1f6145",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_007",
+      "source_type": "paper",
+      "source_id": "arxiv_2501_17366",
+      "quote": "Taking that a step further to patch hyper-parameter tuning and computational complexity that machine learning lacks, we get deep learning models like Long Short-Term Memory (LSTM) networks.",
+      "quote_sha256": "34e84d647af9e255d1dec1de2ca54a047bbee207ef4657580a7e1ba4925976e2",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    }
+  ],
+  "base_method_card": {
+    "method_id": "lstm_sp500_pilla2025",
+    "paper_id": "arxiv_2501_17366",
+    "title": "Forecasting S&P 500 Using LSTM Models",
+    "venue_or_source": "arXiv",
+    "paper_url": "https://arxiv.org/abs/2501.17366",
+    "task_type": "stock_price_forecasting",
+    "target_asset": "S&P 500 index",
+    "asset_universe": [
+      "S&P 500 index (single benchmark)"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "Predicting the S&P 500 index value using historical price data and technical indicators",
+    "data_requirements": [
+      "Historical price data and technical indicators for the S&P 500"
+    ],
+    "feature_groups": [
+      "price_lag_features"
+    ],
+    "model_families": [
+      "lstm_regressor"
+    ],
+    "training_protocol": "unknown",
+    "evaluation_protocol": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {
+      "ARIMA": {
+        "MAE": 462.1,
+        "RMSE": 614,
+        "accuracy": "89.8%"
+      },
+      "LSTM_with_features": {
+        "MAE": 369.32,
+        "RMSE": 412.84,
+        "accuracy": "92.46%"
+      },
+      "LSTM_without_features": {
+        "MAE": 175.9,
+        "RMSE": 207.34,
+        "accuracy": "96.41%"
+      }
+    },
+    "strict_requirements": [
+      "unknown"
+    ],
+    "unknowns": [
+      "frequency",
+      "horizon",
+      "training_protocol",
+      "cost_assumptions",
+      "strict_requirements",
+      "data_time_range",
+      "train_test_split_ratio",
+      "hyperparameter_details"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2501_17366",
+        "section": "unknown",
+        "quote": "In this report, we compare ARIMA and LSTM models in predicting the S&P 500 index, one of the most popular financial benchmarks.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2501_17366",
+        "section": "unknown",
+        "quote": "Using historical price data and technical indicators, we evaluated these models using the Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE) metrics.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2501_17366",
+        "section": "unknown",
+        "quote": "The ARIMA model showcased reasonable performance with an MAE of 462.1, RMSE of 614, and an accuracy of 89.8%.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2501_17366",
+        "section": "unknown",
+        "quote": "The LSTM model, with favorable features, achieved an MAE of 369.32, RMSE of 412.84, and an accuracy of 92.46%, capturing both short- and long-term dependencies.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2501_17366",
+        "section": "unknown",
+        "quote": "The LSTM model without features outperformed the version with all features, achieving an MAE of 175.9, RMSE of 207.34, and an accuracy of 96.41%, which showcased its ability to handle market data.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2501_17366",
+        "section": "unknown",
+        "quote": "Traditional models like ARIMA and GARCH were observed to be good with linear data. However, the stock market data involves non-linear dependencies and intricate patterns that are better handled by machine learning and deep learning approaches.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2501_17366",
+        "section": "unknown",
+        "quote": "Taking that a step further to patch hyper-parameter tuning and computational complexity that machine learning lacks, we get deep learning models like Long Short-Term Memory (LSTM) networks.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "extraction_date": "2025-01-30",
+      "extractor": "method_card_v1",
+      "confidence": "high",
+      "notes": "Paper is an arXiv preprint. Several implementation details (frequency, horizon, training protocol) not specified in the provided excerpts.",
+      "raw_paper_id": "arxiv_2501.17366",
+      "document_text_sha": "6de424b4258d212b",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2501.17366.pdf",
+      "migrated_from_schema_version": "method_card_v1",
+      "quality_report": {
+        "method_id": "lstm_sp500_pilla2025",
+        "paper_id": "arxiv_2501_17366",
+        "quality_score": 0.5,
+        "approval_required": true,
+        "critical_missing_fields": [
+          "frequency",
+          "horizon"
+        ],
+        "type_errors": [],
+        "semantic_conflicts": [],
+        "unsupported_models": [],
+        "warnings": [
+          "evaluation protocol could not be mapped to a supported protocol type",
+          "frequency is unknown",
+          "horizon is unknown",
+          "7/7 evidence spans have no source section"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "unknown",
+    "evaluation_protocol_description": "Models evaluated using Mean Absolute Error (MAE), Root Mean Squared Error (RMSE), and accuracy metrics. LSTM tested both with and without technical indicator features.",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "schema_version": "method_card_v2"
+  },
+  "source_conflicts": [],
+  "parent_version_sha256": "",
+  "created_at": "2026-07-17T10:30:37.648199+00:00",
+  "schema_version": "method_card_v3",
+  "validation_errors": [
+    "Claim arxiv_2501_17366_primary has no numeric reported values"
+  ],
+  "strict_evidence_ready": false,
+  "version_sha256": "363fb42eae289b639d4be8b5bef433584d06959d51559183b7de46f8227996f4"
+}

@@ -1,0 +1,192 @@
+{
+  "paper_id": "arxiv_2106_09305",
+  "claim_id": "arxiv_2106_09305_exchange_native",
+  "title": "Time Series is a Special Sequence: Forecasting with Sample Convolution and Interaction",
+  "paper_url": "https://proceedings.neurips.cc/paper/2022/hash/266983d0949aed78a16fa4782237dea7-Abstract-Conference.html",
+  "claim_locator": "NeurIPS 2022 paper, Table 3, Exchange, horizon 96",
+  "model_name": "SCINet",
+  "experiment_type": "forecast_only",
+  "dataset_id": "exchange_rate_official_7588x8",
+  "dataset_path": "data\\external\\exchange_rate\\exchange_rate.csv",
+  "dataset_sha256": "48b4d9d3d508f5104162e85b9a6042e3557fde11aa9f2944eba8c0d0efc89842",
+  "source_repository": "https://github.com/cure-lab/SCINet",
+  "source_revision": "02e6b0af2d58243de09aaa1eac3840237b659847",
+  "source_archive_path": "sources\\ltsf\\scinet.zip",
+  "source_archive_sha256": "574f3a7221ef258c00d6a7a3e60fabc0965fa99fc8225bbf61f82e58f7ee42f0",
+  "source_root": "sources\\ltsf\\scinet\\SCINet-02e6b0af2d58243de09aaa1eac3840237b659847",
+  "source_entrypoint": "run_financial.py",
+  "source_entrypoint_sha256": "fffbfab9ac98f75611b6629709423425219ed15737bf00dcfbf0d1f7db1a71bb",
+  "source_license": "Apache-2.0",
+  "command": [
+    "{python}",
+    "-u",
+    "{source_root}/run_financial.py",
+    "--dataset_name",
+    "exchange_rate",
+    "--epochs",
+    "20",
+    "--window_size",
+    "96",
+    "--horizon",
+    "96",
+    "--hidden-size",
+    "0.125",
+    "--normalize",
+    "3",
+    "--lastWeight",
+    "0.5",
+    "--stacks",
+    "1",
+    "--levels",
+    "3",
+    "--lr",
+    "5e-5",
+    "--dropout",
+    "0",
+    "--batch_size",
+    "8",
+    "--model_name",
+    "native",
+    "--num_decoder_layer",
+    "2",
+    "--long_term_forecast"
+  ],
+  "metrics": {
+    "mse": {
+      "expected": 0.061,
+      "absolute_tolerance": 0.025,
+      "relative_tolerance": 0.0,
+      "objective": "match"
+    },
+    "mae": {
+      "expected": 0.188,
+      "absolute_tolerance": 0.025,
+      "relative_tolerance": 0.0,
+      "objective": "match"
+    }
+  },
+  "metric_patterns": {
+    "mse": "\\|valid_final mse\\s+([0-9.eE+-]+)",
+    "mae": "\\|valid_final mse\\s+[0-9.eE+-]+\\s+\\|valid_final mae\\s+([0-9.eE+-]+)"
+  },
+  "protocol": {
+    "dataset": "Exchange-Rate",
+    "features": "M",
+    "split": "official chronological loader",
+    "dataset_revision": "frozen local Exchange-Rate bytes",
+    "claim_locator": "NeurIPS 2022 paper, Table 3, Exchange, horizon 96",
+    "protocol_note": "The runtime report records the repository's effective normalization branch; README and code disagree on the displayed normalize value.",
+    "metric_observation_contract": 1,
+    "paper_repetitions": 10,
+    "randomness_protocol": "Repository-native stochasticity; any explicit seeds are frozen in the resolved command."
+  },
+  "metric_artifact_glob": "",
+  "metric_artifact_indices": {},
+  "repetitions": 1,
+  "expected_metric_observations": 1,
+  "metric_observation_policy": "last",
+  "timeout_seconds": 14400,
+  "environment": {
+    "PYTHONHASHSEED": "0"
+  },
+  "compatibility_patches": [
+    {
+      "path": "utils/tools.py",
+      "classification": "semantic_noop",
+      "old": "np.Inf",
+      "new": "np.inf",
+      "rationale": "NumPy 2 removed the uppercase alias; both names denote positive infinity."
+    },
+    {
+      "path": "experiments/exp_basic.py",
+      "classification": "semantic_noop",
+      "old": "# self.device = self._acquire_device()\n        self.model = self._build_model().cuda()",
+      "new": "self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\n        self.model = self._build_model().to(self.device)",
+      "rationale": "Select the available device without changing model operations."
+    },
+    {
+      "path": "experiments/exp_financial.py",
+      "classification": "semantic_noop",
+      "old": "self.criterion = nn.MSELoss(size_average=False).cuda()",
+      "new": "self.criterion = nn.MSELoss(size_average=False).to(self.device)",
+      "rationale": "Place the training loss on the selected device."
+    },
+    {
+      "path": "experiments/exp_financial.py",
+      "classification": "semantic_noop",
+      "old": "self.evaluateL2 = nn.MSELoss(size_average=False).cuda()",
+      "new": "self.evaluateL2 = nn.MSELoss(size_average=False).to(self.device)",
+      "rationale": "Place the evaluation loss on the selected device."
+    },
+    {
+      "path": "experiments/exp_financial.py",
+      "classification": "semantic_noop",
+      "old": "self.evaluateL1 = nn.L1Loss(size_average=False).cuda()",
+      "new": "self.evaluateL1 = nn.L1Loss(size_average=False).to(self.device)",
+      "rationale": "Place the evaluation loss on the selected device."
+    },
+    {
+      "path": "experiments/exp_financial.py",
+      "classification": "semantic_noop",
+      "old": "torch.tensor(self.args.lastWeight).cuda()",
+      "new": "torch.tensor(self.args.lastWeight).to(self.device)",
+      "rationale": "Place the loss weight on the selected device."
+    },
+    {
+      "path": "data_process/financial_dataloader.py",
+      "classification": "semantic_noop",
+      "old": "self.scale = self.scale.cuda()",
+      "new": "self.scale = self.scale.to('cuda' if torch.cuda.is_available() else 'cpu')",
+      "rationale": "Place scale tensors on the available device."
+    },
+    {
+      "path": "data_process/financial_dataloader.py",
+      "classification": "semantic_noop",
+      "old": "self.bias = self.bias.cuda()",
+      "new": "self.bias = self.bias.to('cuda' if torch.cuda.is_available() else 'cpu')",
+      "rationale": "Place bias tensors on the available device."
+    },
+    {
+      "path": "data_process/financial_dataloader.py",
+      "classification": "semantic_noop",
+      "old": "X = X.cuda()",
+      "new": "X = X.to('cuda' if torch.cuda.is_available() else 'cpu')",
+      "rationale": "Place input batches on the available device."
+    },
+    {
+      "path": "data_process/financial_dataloader.py",
+      "classification": "semantic_noop",
+      "old": "Y = Y.cuda()",
+      "new": "Y = Y.to('cuda' if torch.cuda.is_available() else 'cpu')",
+      "rationale": "Place target batches on the available device."
+    },
+    {
+      "path": "models/SCINet.py",
+      "classification": "semantic_noop",
+      "old": "torch.zeros(x.shape,dtype=x.dtype).cuda()",
+      "new": "torch.zeros(x.shape, dtype=x.dtype, device=x.device)",
+      "rationale": "Create temporary tensors on the input device."
+    }
+  ],
+  "runtime_files": [
+    {
+      "source": "data/external/exchange_rate/exchange_rate.txt",
+      "destination": "datasets/financial/exchange_rate.txt"
+    }
+  ],
+  "run_parameters": [],
+  "unresolved_assumptions": [],
+  "method_card_path": "method_cards\\arxiv_2106_09305.json",
+  "reproduction_plan_path": "reproduction_plans\\arxiv_2106_09305.json",
+  "dataset_domain": "financial",
+  "plugin_bindings": {
+    "source_resolver": "pinned_archive_v1",
+    "dataset_materializer": "frozen_file_v1",
+    "execution_backend": "local_subprocess_v1",
+    "metric_extractor": "regex_log_v1",
+    "compatibility_recipe": "semantic_noop_text_patch_v1",
+    "acceptance_policy": "paper_metric_tolerance_v1"
+  },
+  "catalog_order": 7,
+  "schema_version": "native_claim_spec_v1"
+}

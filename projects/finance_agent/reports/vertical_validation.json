@@ -1,0 +1,179 @@
+{
+  "schema_version": "vertical_validation_v1",
+  "generated_at": "2026-07-17T10:35:31.189984+00:00",
+  "paper_count": 3,
+  "experiment_type_count": 3,
+  "strict_verified_count": 0,
+  "false_strict_count": 0,
+  "papers": [
+    {
+      "paper_id": "rsr_2020",
+      "title": "Temporal Relational Ranking for Stock Prediction",
+      "experiment_type": "signal_backtest",
+      "market_scope": "US equities daily, NASDAQ/NYSE",
+      "source_revision": "cfbb01bdf194b81bc5893a1b37aff1c0d0d2a82d",
+      "source_license": "GPL-3.0",
+      "data_status": "official processed snapshot present; pretrained embedding external",
+      "environment_status": "TensorFlow 1.x/Python 3.6 runtime not materialized",
+      "paper_repository_delta": [
+        "pretrained sequential embedding is a separate Google Drive artifact"
+      ],
+      "blockers": [
+        "pretrained embedding is not frozen",
+        "legacy TensorFlow environment is not locked"
+      ],
+      "protocol": {
+        "signal_timestamp": "close_t",
+        "execution_timestamp": "close_t_plus_1",
+        "holding_period": "one day",
+        "position_rule": "top-ranked stocks",
+        "rebalance_rule": "daily",
+        "transaction_cost_bps": 0.1,
+        "slippage_bps": 0.0,
+        "shorting_rule": "long-only top-k",
+        "corporate_action_policy": "official processed Google Finance data",
+        "split_protocol": "chronological fixed train validation test indices",
+        "metrics": [
+          "investment_return_ratio",
+          "sharpe_ratio"
+        ]
+      },
+      "held_out": false,
+      "protocol_audit": {
+        "experiment_type": "signal_backtest",
+        "status": "strict_ready",
+        "passed": true,
+        "blockers": [],
+        "warnings": [],
+        "required_artifacts": [
+          "positions",
+          "turnover",
+          "gross_returns",
+          "costs",
+          "net_returns",
+          "performance_summary"
+        ],
+        "leakage_checks": {
+          "signal_must_precede_execution": true,
+          "chronological_or_purged_split_required": true,
+          "net_performance_metric_required": true
+        }
+      },
+      "strict_verified": false
+    },
+    {
+      "paper_id": "opensourceap_2022",
+      "title": "Open Source Cross-Sectional Asset Pricing",
+      "experiment_type": "cross_sectional",
+      "market_scope": "US equities monthly",
+      "source_revision": "8db892442c2c3a3779b0f1eac4370d3655be15a1",
+      "source_license": "repository license requires audit",
+      "data_status": "open derived signals exist; several raw inputs require WRDS",
+      "environment_status": "R pipeline not materialized on this Windows host",
+      "paper_repository_delta": [],
+      "blockers": [
+        "source license is not machine approved",
+        "WRDS-dependent raw inputs prevent clean strict rebuild"
+      ],
+      "protocol": {
+        "market": "US equities",
+        "universe_rule": "CRSP common stocks",
+        "point_in_time_policy": "point-in-time source files",
+        "characteristic_lag": "at least one month",
+        "missing_value_policy": "signal-specific official rule",
+        "normalization_rule": "official signal definition",
+        "portfolio_formation": "monthly characteristic sorts",
+        "weighting_rule": "equal and value weighted",
+        "rebalance_rule": "monthly",
+        "inference_protocol": "Newey-West",
+        "delisting_return_policy": "include CRSP delisting returns"
+      },
+      "held_out": true,
+      "protocol_audit": {
+        "experiment_type": "cross_sectional",
+        "status": "strict_ready",
+        "passed": true,
+        "blockers": [],
+        "warnings": [],
+        "required_artifacts": [
+          "point_in_time_panel",
+          "formation_assignments",
+          "portfolio_returns",
+          "factor_adjusted_alpha",
+          "inference_summary"
+        ],
+        "leakage_checks": {
+          "point_in_time_features_required": true,
+          "characteristics_must_be_lagged": true,
+          "inference_protocol_required": true
+        }
+      },
+      "strict_verified": false
+    },
+    {
+      "paper_id": "arxiv_1706_10059",
+      "title": "Deep Portfolio Management: A Deep Reinforcement Learning Framework",
+      "experiment_type": "portfolio_rl",
+      "market_scope": "Poloniex crypto, 30-minute bars",
+      "source_revision": "48cc5a4af5edefd298e7801b95b0d4696f5175dd",
+      "source_license": "GPL-3.0",
+      "data_status": "historical exchange database absent; legacy endpoint is not reproducible",
+      "environment_status": "TensorFlow 1.x/tflearn runtime not materialized",
+      "paper_repository_delta": [
+        "repository README says code is several versions ahead of the article",
+        "repository README says paper test span was about 30% too short and overlapped asset selection"
+      ],
+      "blockers": [
+        "official repository is not protocol-identical to the paper",
+        "paper-era market database is not frozen",
+        "legacy TensorFlow environment is not locked"
+      ],
+      "protocol": {
+        "state_spec": "price tensor and previous portfolio weights",
+        "action_spec": "long-only simplex portfolio weights including cash",
+        "reward_spec": "log portfolio growth net of proportional transaction cost",
+        "transition_timing": "weights at t applied to price relatives at t+1",
+        "portfolio_constraints": "long-only fully invested",
+        "transaction_cost_bps": 25.0,
+        "training_seeds": [
+          0
+        ],
+        "evaluation_seeds": [
+          1,
+          2,
+          3
+        ],
+        "baseline_policies": [
+          "UCRP",
+          "Winner",
+          "UBAH"
+        ],
+        "train_test_protocol": "chronological out-of-sample"
+      },
+      "held_out": false,
+      "protocol_audit": {
+        "experiment_type": "portfolio_rl",
+        "status": "strict_ready",
+        "passed": true,
+        "blockers": [],
+        "warnings": [],
+        "required_artifacts": [
+          "environment_trace",
+          "actions",
+          "portfolio_weights",
+          "costs",
+          "rewards",
+          "seed_results",
+          "baseline_comparison"
+        ],
+        "leakage_checks": {
+          "state_action_timing_declared": true,
+          "independent_evaluation_seeds_required": true,
+          "chronological_evaluation_required": true
+        }
+      },
+      "strict_verified": false
+    }
+  ],
+  "conclusion": "task protocols pass structurally, but all three paper claims remain blocked by source/data/runtime gates"
+}

@@ -13,7 +13,7 @@
 
 ## 当前进展
 
-当前最新实现是 **P1.6.3-P1.8 first-batch implementation**。P1.6.5 的 10 个金融数据 strict claim 数值目标已通过；实验类型覆盖、逐篇 exploratory 和 P1.7/P1.8 总验收未完成，总体 P1 仍在进行中。
+当前最新实现是 **P1.G1-P1.G6 control-plane implementation**。P1.6.5 的 10 个金融数据 strict claim 数值目标已通过；声明式接入、MethodCard v3、协议、Registry、任务、lineage、研究日志和 P2 门禁已经实现。实验类型 strict 覆盖、论文级 exploratory execution、blocker 消减和 P1 总验收未完成，总体 P1 仍在进行中。
 
 已完成：
 
@@ -46,7 +46,7 @@ P1.6.5 的数量门禁已完成：当前严格复现为 10 篇/10 claims，目�
 - 未实现模型会进入 adapter backlog，不会静默代理。
 - 方法卡可以分类为 `us_equity / cross_market / unsupported` Golden 集合。
 - 每次运行会保存 Timeline，能够追踪实验范围、候选执行和审计结果。
-- 前端能够按五步流程完成文献选择、方法审核、复现配置、双轨运行和结果审计。
+- 前端能够按七阶段流程展示文献、数据、方法审核、复现配置、原生/探索运行、多基准和结果审计。
 - DLinear、LSTNet、FEDformer、ETSformer、FiLM、Non-stationary Transformer、TimesNet、Koopa、iTransformer 和 SAMformer 的十个 Exchange-Rate claim 已通过真实完整复现。
 - DLinear 严格方法卡已由真实 LLM 从论文、固定 commit 官方实现和冻结数据清单中抽取，并直接构造原生 runner 协议。
 - 不同论文方法可以在共享 BenchmarkTask 下生成可比较 PredictionArtifact。
@@ -55,7 +55,31 @@ P1.6.5 的数量门禁已完成：当前严格复现为 10 篇/10 claims，目�
 - 十篇异构论文均可从 PDF 经 Replay 抽取、实验类型分类和能力路由；不支持的实验不会静默换模型。
 - 五篇预测论文的方法已在同一冻结 AAPL 任务上实际执行，并通过目标行、fold 和预测数量一致性审计。
 
-尚未完成的 P1 核心是 ExperimentMemory 对候选生成和调度的真实反馈，以及 Registry 增强和 MethodCard diff/history。
+尚未完成的 P1 核心是新论文到 Native Claim 的通用接入、三类非预测 strict 纵向样例、逐篇 exploratory、ExperimentMemory 对候选生成和调度的真实反馈，以及 Registry/Source/Data 增强和 MethodCard diff/history。
+
+### 2026-07-17 能力审计结论
+
+本轮 10 篇严格复现没有改变项目方向，但暴露出 P1 内部执行顺序需要收敛：
+
+- P1.6.5 达到了 10/10 数量门禁，但全部为 `forecast_only + Exchange-Rate`，类型门禁未完成。
+- P1.7/P1.8 已有首批接口，但先于 P1.6.5 三类纵向样例和 P1.6.6 逐篇探索完成。
+- P1.6.3 达到 86 条记录/50 PDF 的数量目标，但高影响力正式期刊全文构成没有达到用户原始期望。
+- Native 执行内核已通用化一部分；claim 选择、协议对齐、命令、补丁、环境和容差仍依赖人工策展。
+
+用户已于 2026-07-17 批准 `docs/STRICT_REPRODUCTION_GENERALIZATION_PLAN.md`。P1/P2/P3 总路线保持不变，P1 内部正式按以下顺序收口：
+
+```text
+P1.G1  Native Claim Compiler、声明式插件和论文-claim 绑定
+P1.G2  MethodCard v3、SourceBundle、数据许可与字段映射闭环
+P1.G3  信号回测、截面资产定价、组合强化学习 strict 纵向样例
+P1.G4  28 candidate 执行与 58 blocker 聚类消减
+P1.G5  Benchmark Registry、异步任务、MLflow/DVC lineage、全局 Memory Scheduler
+P1.G6  20 篇、4 类实验、3 数据域、held-out、false-strict=0 总验收
+```
+
+2026-07-17 实施状态：G1、G2、G5 的控制能力和 G6 的自动验收器已实现；G3 三类协议 schema 通过但 strict 为 0；G4 已将 28 candidate 与 58 blocker 统一为 86 个诚实的可解释阻断记录，但尚未完成 blocker 消减；G6 当前为 10/20 strict、1/4 strict 类型、1/3 数据域、held-out 10/10、false-strict=0，因此 P2 门禁保持关闭。完整证据见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。
+
+实施还必须遵守四个新增门禁：逐篇记录探索过程；论文特例必须沉淀为可复用能力并由第 2 篇验证；允许按市场/频率/资产类型限定通用范围；统一比较前必须通过领域适配性审计，禁止把高频、周频、外汇、期权等不兼容任务硬合并。
 
 ## P0：可信研究内核
 

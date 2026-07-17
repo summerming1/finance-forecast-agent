@@ -1,0 +1,496 @@
+{
+  "paper_id": "arxiv_2209_02407",
+  "method_id": "method_arxiv_2209_02407_arima_lstm",
+  "title": "Predict Stock Prices with ARIMA and LSTM",
+  "experiment_type": "forecast_only",
+  "claims": [
+    {
+      "claim_id": "arxiv_2209_02407_primary",
+      "description": "Primary reported result for Predict Stock Prices with ARIMA and LSTM",
+      "dataset_id": "unknown",
+      "market": "daily high price",
+      "asset_class": "daily_stock_high_price_forecasting",
+      "frequency": "daily trading days",
+      "horizon": "next trading day",
+      "target": "next-day unscaled high price from a 60-day history window",
+      "model_family": "arima_regressor",
+      "metrics": [
+        "arima_mae",
+        "arima_mse",
+        "arima_rmse",
+        "lstm_mae",
+        "lstm_mse",
+        "lstm_rmse"
+      ],
+      "reported_values": {
+        "arima_mae": 3.041,
+        "arima_mse": 16.831,
+        "arima_rmse": 4.102,
+        "lstm_mae": 2.386,
+        "lstm_mse": 7.272,
+        "lstm_rmse": 2.695
+      },
+      "evidence_ids": [
+        "evidence_001",
+        "evidence_002",
+        "evidence_003",
+        "evidence_004",
+        "evidence_005",
+        "evidence_006",
+        "evidence_007",
+        "evidence_008",
+        "evidence_009",
+        "evidence_010",
+        "evidence_011",
+        "evidence_012",
+        "evidence_013"
+      ],
+      "source_conflicts": []
+    }
+  ],
+  "evidence_graph": [
+    {
+      "evidence_id": "evidence_001",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "The dataset consists of the highest price on transaction days.",
+      "quote_sha256": "22235288729be8a0db553ed246f8c34d6148dadaff07c73ca60c515eba2838e0",
+      "section": "target_asset",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_002",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "Fifty listed-company stocks from Yahoo Finance are selected.",
+      "quote_sha256": "e3d6b1e0b4d32fe3b85a171e6f46eaab434acbf4b087d5d1d58acb79e254b811",
+      "section": "asset_universe",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_003",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "Observations are stock highs on transaction days.",
+      "quote_sha256": "bcd66b5ef82e9363411cd9c4ed34e373f5ac7d445bb83de5d620afbe9e01f2ad",
+      "section": "frequency",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_004",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "Sixty days of data are used to predict the next day.",
+      "quote_sha256": "c3f3f7dd076cfce1bace81a8395e6debfd802b8cfbcb064606e3e92639bb2f5b",
+      "section": "horizon",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_005",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "The models predict the next transaction day's high price.",
+      "quote_sha256": "2a41f87bd7b4f5b5d1db254c608a07e0b0afef9c87d2a0b9b6b8bf34c5aca6ed",
+      "section": "label_definition",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_006",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "The sample spans 1 January 2010 through 31 December 2018.",
+      "quote_sha256": "4dd58b7bdef385201092dabe7c5ea3ca69892b63c7167b3ab5b72565e43c61a0",
+      "section": "data_requirements",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_007",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "Each prediction uses a sixty-day historical price sequence.",
+      "quote_sha256": "7e185375fb16ff55b0cda76d1530522bd178242036ec468597e78192b9b49d34",
+      "section": "feature_groups",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_008",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "The study compares ARIMA and LSTM stock-price forecasts.",
+      "quote_sha256": "a0ba51acc56dce9306cdabc4592f9f0bfc53267b75ae36d3a96625ec70232635",
+      "section": "model_families",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_009",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "LSTM trains on 2010-2015 and validates on 2016-2017.",
+      "quote_sha256": "5e3f13e75f76cf7d1a9c338c875a93cda53b701d0b7a4e1136f7184846a7a61d",
+      "section": "training_protocol",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_010",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "The LSTM experiment converts sixty-day histories into supervised sequences.",
+      "quote_sha256": "9d42e84fc60230581c3b7f2b966b17af1c9850cd259d2764082f162e701fa288",
+      "section": "preprocessing_protocol",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_011",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "The selected LSTM has three layers, one hundred nodes and dropout 0.1.",
+      "quote_sha256": "3021a75b3afb9f5366d9477f2a0269f5d77dfe6f9a752c411f51ed3d54fdca49",
+      "section": "hyperparameters",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_012",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "Both models use calendar year 2018 as the test set.",
+      "quote_sha256": "805cfd89c68af88e6e16257a05039ccda0733b0506610ea2a88534388850ebd0",
+      "section": "evaluation_protocol",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_013",
+      "source_type": "paper",
+      "source_id": "arxiv_2209.02407",
+      "quote": "The study evaluates MAE, MSE and RMSE.",
+      "quote_sha256": "5b6a7c8d7ec3b3c798146b63a670de210382e4fac4b1e4feb325074057c7edcc",
+      "section": "metrics",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    }
+  ],
+  "base_method_card": {
+    "method_id": "method_arxiv_2209_02407_arima_lstm",
+    "paper_id": "arxiv_2209_02407",
+    "title": "Predict Stock Prices with ARIMA and LSTM",
+    "venue_or_source": "arXiv",
+    "paper_url": "https://arxiv.org/abs/2209.02407",
+    "task_type": "daily_stock_high_price_forecasting",
+    "target_asset": "daily high price",
+    "asset_universe": [
+      "50 Yahoo Finance listed companies",
+      "Google",
+      "Apple",
+      "Amazon",
+      "Netflix"
+    ],
+    "frequency": "daily trading days",
+    "horizon": "next trading day",
+    "label_definition": "next-day unscaled high price from a 60-day history window",
+    "data_requirements": [
+      "Yahoo Finance daily high prices",
+      "2010-01-01 through 2018-12-31",
+      "same company universe"
+    ],
+    "feature_groups": [
+      "price_lag_features",
+      "sequence_window_features"
+    ],
+    "model_families": [
+      "arima_regressor",
+      "lstm_regressor"
+    ],
+    "training_protocol": "ARIMA trains on 2016-2017 with order (1,0,1); LSTM trains on 2010-2015, validates on 2016-2017, uses 60-day windows, three 100-unit LSTM layers, dropout 0.1 and Adam",
+    "evaluation_protocol": "fixed out-of-sample calendar split; both models test on 2018",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse"
+    ],
+    "cost_assumptions": "not applicable: price forecast-only experiment",
+    "reported_results": {
+      "arima_mae": 3.041,
+      "arima_mse": 16.831,
+      "arima_rmse": 4.102,
+      "lstm_mae": 2.386,
+      "lstm_mse": 7.272,
+      "lstm_rmse": 2.695
+    },
+    "strict_requirements": [
+      "same Yahoo Finance high-price snapshot",
+      "same 50-company universe",
+      "same calendar splits",
+      "same 60-day window",
+      "exact ARIMA and LSTM protocols"
+    ],
+    "unknowns": [
+      "complete list of all 50 tickers is not structured in the paper text",
+      "arima_regressor"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "target_asset",
+        "quote": "The dataset consists of the highest price on transaction days.",
+        "summary": "Defines the forecast target.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "asset_universe",
+        "quote": "Fifty listed-company stocks from Yahoo Finance are selected.",
+        "summary": "Defines the paper universe.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "frequency",
+        "quote": "Observations are stock highs on transaction days.",
+        "summary": "Defines daily trading frequency.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "horizon",
+        "quote": "Sixty days of data are used to predict the next day.",
+        "summary": "Defines window and horizon.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "label_definition",
+        "quote": "The models predict the next transaction day's high price.",
+        "summary": "Defines the label.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "data_requirements",
+        "quote": "The sample spans 1 January 2010 through 31 December 2018.",
+        "summary": "Defines the sample period.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "feature_groups",
+        "quote": "Each prediction uses a sixty-day historical price sequence.",
+        "summary": "Defines input features.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "model_families",
+        "quote": "The study compares ARIMA and LSTM stock-price forecasts.",
+        "summary": "Defines model families.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "training_protocol",
+        "quote": "LSTM trains on 2010-2015 and validates on 2016-2017.",
+        "summary": "Defines LSTM training windows.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "preprocessing_protocol",
+        "quote": "The LSTM experiment converts sixty-day histories into supervised sequences.",
+        "summary": "Defines sequence preprocessing; scaling details require code confirmation.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "hyperparameters",
+        "quote": "The selected LSTM has three layers, one hundred nodes and dropout 0.1.",
+        "summary": "Defines key hyperparameters.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "evaluation_protocol",
+        "quote": "Both models use calendar year 2018 as the test set.",
+        "summary": "Defines fixed out-of-sample evaluation.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2209.02407",
+        "section": "metrics",
+        "quote": "The study evaluates MAE, MSE and RMSE.",
+        "summary": "Defines evaluation metrics.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "curated_from_primary_paper",
+      "live_llm_api_used": false,
+      "source_path": "projects/finance_agent/papers/local/arxiv_2209.02407.pdf",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "60-day supervised sequences; exact scaler behavior not independently verified",
+      "hyperparameters": {
+        "arima_order": [
+          1,
+          0,
+          1
+        ],
+        "lstm_layers": 3,
+        "lstm_units": 100,
+        "dropout": 0.1,
+        "optimizer": "Adam",
+        "lookback_days": 60
+      },
+      "required_start_date": "2010-01-01",
+      "required_end_date": "2018-12-31",
+      "quality_report": {
+        "method_id": "method_arxiv_2209_02407_arima_lstm",
+        "paper_id": "arxiv_2209_02407",
+        "quality_score": 0.89,
+        "approval_required": true,
+        "critical_missing_fields": [],
+        "type_errors": [],
+        "semantic_conflicts": [],
+        "unsupported_models": [
+          "arima_regressor"
+        ],
+        "warnings": [
+          "unsupported model adapters required: arima_regressor"
+        ],
+        "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+      },
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "fixed out-of-sample calendar split; both models test on 2018",
+      "frequency_type": "daily",
+      "horizon_type": "next_return"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "fixed out-of-sample calendar split; both models test on 2018",
+    "frequency_type": "daily",
+    "horizon_type": "next_return",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "60-day supervised sequences; exact scaler behavior not independently verified",
+    "hyperparameters": {
+      "arima_order": [
+        1,
+        0,
+        1
+      ],
+      "lstm_layers": 3,
+      "lstm_units": 100,
+      "dropout": 0.1,
+      "optimizer": "Adam",
+      "lookback_days": 60
+    },
+    "required_start_date": "2010-01-01",
+    "required_end_date": "2018-12-31",
+    "schema_version": "method_card_v2"
+  },
+  "source_conflicts": [],
+  "parent_version_sha256": "",
+  "created_at": "2026-07-17T10:30:37.626622+00:00",
+  "schema_version": "method_card_v3",
+  "validation_errors": [],
+  "strict_evidence_ready": true,
+  "version_sha256": "dc720e438eb0fc3cd34636c4cae281d20378f700ee386a92e1ef26c3241bfdd3"
+}

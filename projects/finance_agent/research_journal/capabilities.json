@@ -1,0 +1,1250 @@
+{
+  "schema_version": "reusable_capability_catalog_v1",
+  "updated_at": "2026-07-17T10:07:04.326373+00:00",
+  "capabilities": [
+    {
+      "capability_id": "internal_rng_resume",
+      "name": "Official internal repetition RNG resume",
+      "kind": "resume_protocol",
+      "scope_contract": {
+        "framework": [
+          "pytorch"
+        ]
+      },
+      "implementation_paths": [
+        "src/finance_forecast_agent/native_execution.py",
+        "scripts/build_native_exchange_catalog.py"
+      ],
+      "validations": [
+        {
+          "paper_id": "arxiv_2205_08897",
+          "claim_id": "arxiv_2205_08897_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2205_08897_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.209043+00:00"
+        }
+      ],
+      "status": "candidate",
+      "schema_version": "reusable_capability_v1"
+    },
+    {
+      "capability_id": "isolated_conda_runtime",
+      "name": "Claim-specific isolated Conda runtime",
+      "kind": "environment_backend",
+      "scope_contract": {
+        "environment": [
+          "conda"
+        ]
+      },
+      "implementation_paths": [
+        "src/finance_forecast_agent/native_execution.py"
+      ],
+      "validations": [
+        {
+          "paper_id": "arxiv_2402_10198",
+          "claim_id": "arxiv_2402_10198_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2402_10198_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.257167+00:00"
+        }
+      ],
+      "status": "candidate",
+      "schema_version": "reusable_capability_v1"
+    },
+    {
+      "capability_id": "log_metric_extractor",
+      "name": "Official log metric extractor",
+      "kind": "metric_extractor",
+      "scope_contract": {
+        "artifact_type": [
+          "stdout",
+          "stderr"
+        ]
+      },
+      "implementation_paths": [
+        "src/finance_forecast_agent/native_execution.py"
+      ],
+      "validations": [
+        {
+          "paper_id": "arxiv_2106_13008",
+          "claim_id": "arxiv_2106_13008_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2106_13008_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.143411+00:00"
+        },
+        {
+          "paper_id": "arxiv_2210_02186",
+          "claim_id": "arxiv_2210_02186_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2210_02186_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.167226+00:00"
+        },
+        {
+          "paper_id": "arxiv_2310_06625",
+          "claim_id": "arxiv_2310_06625_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2310_06625_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.184039+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_14415",
+          "claim_id": "arxiv_2205_14415_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2205_14415_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.197513+00:00"
+        },
+        {
+          "paper_id": "arxiv_2106_09305",
+          "claim_id": "arxiv_2106_09305_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2106_09305_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.219308+00:00"
+        },
+        {
+          "paper_id": "arxiv_1703_07015",
+          "claim_id": "arxiv_1703_07015_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_1703_07015_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.229222+00:00"
+        },
+        {
+          "paper_id": "arxiv_2305_18803",
+          "claim_id": "arxiv_2305_18803_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2305_18803_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.240992+00:00"
+        },
+        {
+          "paper_id": "arxiv_2402_10198",
+          "claim_id": "arxiv_2402_10198_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2402_10198_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.257167+00:00"
+        }
+      ],
+      "status": "reusable_validated",
+      "schema_version": "reusable_capability_v1"
+    },
+    {
+      "capability_id": "metric_artifact_extractor",
+      "name": "Official NumPy metric artifact extractor",
+      "kind": "metric_extractor",
+      "scope_contract": {
+        "artifact_type": [
+          "npy"
+        ]
+      },
+      "implementation_paths": [
+        "src/finance_forecast_agent/native_execution.py"
+      ],
+      "validations": [
+        {
+          "paper_id": "arxiv_2201_12740",
+          "claim_id": "arxiv_2201_12740_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2201_12740_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.150687+00:00"
+        },
+        {
+          "paper_id": "arxiv_2202_01381",
+          "claim_id": "arxiv_2202_01381_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2202_01381_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.157942+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_08897",
+          "claim_id": "arxiv_2205_08897_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2205_08897_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.209043+00:00"
+        }
+      ],
+      "status": "reusable_validated",
+      "schema_version": "reusable_capability_v1"
+    },
+    {
+      "capability_id": "native_claim_audit",
+      "name": "Frozen native claim source/data/governance audit",
+      "kind": "claim_audit",
+      "scope_contract": {
+        "experiment_type": [
+          "forecast_only"
+        ],
+        "source": [
+          "official_repository"
+        ]
+      },
+      "implementation_paths": [
+        "src/finance_forecast_agent/native_execution.py"
+      ],
+      "validations": [
+        {
+          "paper_id": "arxiv_2106_13008",
+          "claim_id": "arxiv_2106_13008_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.141890+00:00"
+        },
+        {
+          "paper_id": "arxiv_2201_12740",
+          "claim_id": "arxiv_2201_12740_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.150687+00:00"
+        },
+        {
+          "paper_id": "arxiv_2202_01381",
+          "claim_id": "arxiv_2202_01381_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.157942+00:00"
+        },
+        {
+          "paper_id": "arxiv_2210_02186",
+          "claim_id": "arxiv_2210_02186_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.167226+00:00"
+        },
+        {
+          "paper_id": "arxiv_2310_06625",
+          "claim_id": "arxiv_2310_06625_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.182518+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_14415",
+          "claim_id": "arxiv_2205_14415_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.197513+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_08897",
+          "claim_id": "arxiv_2205_08897_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.209043+00:00"
+        },
+        {
+          "paper_id": "arxiv_2106_09305",
+          "claim_id": "arxiv_2106_09305_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.219308+00:00"
+        },
+        {
+          "paper_id": "arxiv_1703_07015",
+          "claim_id": "arxiv_1703_07015_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.229222+00:00"
+        },
+        {
+          "paper_id": "arxiv_2305_18803",
+          "claim_id": "arxiv_2305_18803_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.239469+00:00"
+        },
+        {
+          "paper_id": "arxiv_2005_11650",
+          "claim_id": "arxiv_2005_11650_exchange_h12_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.248658+00:00"
+        },
+        {
+          "paper_id": "arxiv_2402_10198",
+          "claim_id": "arxiv_2402_10198_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.257167+00:00"
+        },
+        {
+          "paper_id": "arxiv_2211_14730",
+          "claim_id": "arxiv_2211_14730_ettm1_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "energy",
+            "asset_class": "energy",
+            "frequency": "unspecified",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "ettm1_official_69680x7"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.276978+00:00"
+        },
+        {
+          "paper_id": "arxiv_2012_07436",
+          "claim_id": "arxiv_2012_07436_ettm1_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "energy",
+            "asset_class": "energy",
+            "frequency": "unspecified",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "ettm1_official_69680x7"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.297413+00:00"
+        },
+        {
+          "paper_id": "openreview_0EXmFzUn5I",
+          "claim_id": "openreview_0EXmFzUn5I_ettm1_native",
+          "result": "passed",
+          "evidence_paths": [
+            "native_claims/catalog.json"
+          ],
+          "scope": {
+            "market": "energy",
+            "asset_class": "energy",
+            "frequency": "unspecified",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "ettm1_official_69680x7"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.326373+00:00"
+        }
+      ],
+      "status": "reusable_validated",
+      "schema_version": "reusable_capability_v1"
+    },
+    {
+      "capability_id": "native_metric_acceptance",
+      "name": "Predeclared paper metric acceptance gate",
+      "kind": "result_acceptance",
+      "scope_contract": {
+        "objective": [
+          "match",
+          "minimize",
+          "maximize"
+        ]
+      },
+      "implementation_paths": [
+        "src/finance_forecast_agent/native_execution.py"
+      ],
+      "validations": [
+        {
+          "paper_id": "arxiv_2106_13008",
+          "claim_id": "arxiv_2106_13008_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2106_13008_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.143411+00:00"
+        },
+        {
+          "paper_id": "arxiv_2201_12740",
+          "claim_id": "arxiv_2201_12740_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2201_12740_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.150687+00:00"
+        },
+        {
+          "paper_id": "arxiv_2202_01381",
+          "claim_id": "arxiv_2202_01381_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2202_01381_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.157942+00:00"
+        },
+        {
+          "paper_id": "arxiv_2210_02186",
+          "claim_id": "arxiv_2210_02186_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2210_02186_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.167226+00:00"
+        },
+        {
+          "paper_id": "arxiv_2310_06625",
+          "claim_id": "arxiv_2310_06625_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2310_06625_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.184039+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_14415",
+          "claim_id": "arxiv_2205_14415_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2205_14415_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.197513+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_08897",
+          "claim_id": "arxiv_2205_08897_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2205_08897_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.209043+00:00"
+        },
+        {
+          "paper_id": "arxiv_2106_09305",
+          "claim_id": "arxiv_2106_09305_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2106_09305_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.219308+00:00"
+        },
+        {
+          "paper_id": "arxiv_1703_07015",
+          "claim_id": "arxiv_1703_07015_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_1703_07015_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.229222+00:00"
+        },
+        {
+          "paper_id": "arxiv_2305_18803",
+          "claim_id": "arxiv_2305_18803_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2305_18803_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.240992+00:00"
+        },
+        {
+          "paper_id": "arxiv_2402_10198",
+          "claim_id": "arxiv_2402_10198_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2402_10198_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.257167+00:00"
+        }
+      ],
+      "status": "reusable_validated",
+      "schema_version": "reusable_capability_v1"
+    },
+    {
+      "capability_id": "official_repo_command_execution",
+      "name": "Official repository command execution",
+      "kind": "execution_backend",
+      "scope_contract": {
+        "entrypoint": [
+          "python_cli"
+        ],
+        "experiment_type": [
+          "forecast_only"
+        ]
+      },
+      "implementation_paths": [
+        "src/finance_forecast_agent/native_execution.py"
+      ],
+      "validations": [
+        {
+          "paper_id": "arxiv_2106_13008",
+          "claim_id": "arxiv_2106_13008_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2106_13008_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.143411+00:00"
+        },
+        {
+          "paper_id": "arxiv_2201_12740",
+          "claim_id": "arxiv_2201_12740_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2201_12740_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.150687+00:00"
+        },
+        {
+          "paper_id": "arxiv_2202_01381",
+          "claim_id": "arxiv_2202_01381_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2202_01381_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.157942+00:00"
+        },
+        {
+          "paper_id": "arxiv_2210_02186",
+          "claim_id": "arxiv_2210_02186_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2210_02186_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.167226+00:00"
+        },
+        {
+          "paper_id": "arxiv_2310_06625",
+          "claim_id": "arxiv_2310_06625_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2310_06625_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.184039+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_14415",
+          "claim_id": "arxiv_2205_14415_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2205_14415_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.197513+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_08897",
+          "claim_id": "arxiv_2205_08897_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2205_08897_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.209043+00:00"
+        },
+        {
+          "paper_id": "arxiv_2106_09305",
+          "claim_id": "arxiv_2106_09305_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2106_09305_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.219308+00:00"
+        },
+        {
+          "paper_id": "arxiv_1703_07015",
+          "claim_id": "arxiv_1703_07015_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_1703_07015_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.229222+00:00"
+        },
+        {
+          "paper_id": "arxiv_2305_18803",
+          "claim_id": "arxiv_2305_18803_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2305_18803_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.240992+00:00"
+        },
+        {
+          "paper_id": "arxiv_2402_10198",
+          "claim_id": "arxiv_2402_10198_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2402_10198_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.257167+00:00"
+        }
+      ],
+      "status": "reusable_validated",
+      "schema_version": "reusable_capability_v1"
+    },
+    {
+      "capability_id": "semantic_noop_runtime_patch",
+      "name": "Hash-audited semantic-noop runtime patch",
+      "kind": "compatibility_recipe",
+      "scope_contract": {
+        "source_isolation": [
+          "runtime_copy"
+        ]
+      },
+      "implementation_paths": [
+        "src/finance_forecast_agent/native_execution.py"
+      ],
+      "validations": [
+        {
+          "paper_id": "arxiv_2106_13008",
+          "claim_id": "arxiv_2106_13008_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2106_13008_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.143411+00:00"
+        },
+        {
+          "paper_id": "arxiv_2201_12740",
+          "claim_id": "arxiv_2201_12740_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2201_12740_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.150687+00:00"
+        },
+        {
+          "paper_id": "arxiv_2202_01381",
+          "claim_id": "arxiv_2202_01381_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2202_01381_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.157942+00:00"
+        },
+        {
+          "paper_id": "arxiv_2210_02186",
+          "claim_id": "arxiv_2210_02186_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2210_02186_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.167226+00:00"
+        },
+        {
+          "paper_id": "arxiv_2310_06625",
+          "claim_id": "arxiv_2310_06625_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2310_06625_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.184039+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_14415",
+          "claim_id": "arxiv_2205_14415_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2205_14415_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.197513+00:00"
+        },
+        {
+          "paper_id": "arxiv_2205_08897",
+          "claim_id": "arxiv_2205_08897_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2205_08897_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.209043+00:00"
+        },
+        {
+          "paper_id": "arxiv_2106_09305",
+          "claim_id": "arxiv_2106_09305_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2106_09305_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.219308+00:00"
+        },
+        {
+          "paper_id": "arxiv_1703_07015",
+          "claim_id": "arxiv_1703_07015_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_1703_07015_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.229222+00:00"
+        },
+        {
+          "paper_id": "arxiv_2305_18803",
+          "claim_id": "arxiv_2305_18803_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2305_18803_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.240992+00:00"
+        },
+        {
+          "paper_id": "arxiv_2402_10198",
+          "claim_id": "arxiv_2402_10198_exchange_native",
+          "result": "passed",
+          "evidence_paths": [
+            "reports\\native_arxiv_2402_10198_exchange_native.json"
+          ],
+          "scope": {
+            "market": "global_fx_benchmark",
+            "asset_class": "fx",
+            "frequency": "daily",
+            "task": "forecast_only",
+            "target": "multivariate_forecast",
+            "dataset_id": "exchange_rate_official_7588x8"
+          },
+          "notes": "",
+          "validated_at": "2026-07-17T10:07:04.257167+00:00"
+        }
+      ],
+      "status": "reusable_validated",
+      "schema_version": "reusable_capability_v1"
+    }
+  ]
+}

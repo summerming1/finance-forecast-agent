@@ -1,0 +1,315 @@
+{
+  "paper_id": "arxiv_2412_15448",
+  "method_id": "rfr_hft_spy_minute",
+  "title": "Risk-Adjusted Performance of Random Forest Models in High-Frequency Trading",
+  "experiment_type": "forecast_only",
+  "claims": [
+    {
+      "claim_id": "arxiv_2412_15448_primary",
+      "description": "Primary reported result for Risk-Adjusted Performance of Random Forest Models in High-Frequency Trading",
+      "dataset_id": "unknown",
+      "market": "SPY",
+      "asset_class": "return prediction",
+      "frequency": "minute-level",
+      "horizon": "minute-level",
+      "target": "unknown",
+      "model_family": "random_forest_regressor",
+      "metrics": [
+        "mae",
+        "mse",
+        "rmse",
+        "r2",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "reported_values": {},
+      "evidence_ids": [
+        "evidence_001",
+        "evidence_002",
+        "evidence_003",
+        "evidence_004",
+        "evidence_005",
+        "evidence_006",
+        "evidence_007"
+      ],
+      "source_conflicts": []
+    }
+  ],
+  "evidence_graph": [
+    {
+      "evidence_id": "evidence_001",
+      "source_type": "paper",
+      "source_id": "arxiv_2412_15448",
+      "quote": "This study evaluates the integration of traditional technical indicators with random forest regression models using minute-level SPY data, analyzing 13 distinct model configurations.",
+      "quote_sha256": "4cd4938ea9b1e8bf154b47eb1be6c7c716110b0a163fe22741ec6939b18d5aea",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_002",
+      "source_type": "paper",
+      "source_id": "arxiv_2412_15448",
+      "quote": "Our empirical results reveal a stark contrast between in-sample and out-of-sample performance, with R2 values deteriorating from 0.749–0.812 during training to negative values in testing.",
+      "quote_sha256": "cc74943f523150a598359ca97930d713b6290b1bf74c6da98acc0ddc880c7d3e",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_003",
+      "source_type": "paper",
+      "source_id": "arxiv_2412_15448",
+      "quote": "A feature importance analysis demonstrates that primary price-based features dominate the predictions made by the model, accounting for over 60% of the importance, while established technical indicators, such as RSI and Bollinger Bands, account for only 14%–15%.",
+      "quote_sha256": "f3662b337744273537ca1637226baff7bb7db1f2cbe7d23ba3a5c398fba81cba",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_004",
+      "source_type": "paper",
+      "source_id": "arxiv_2412_15448",
+      "quote": "Although the indicator-enhanced models achieved superior risk-adjusted metrics, with Rachev ratios between 0.919 and 0.961, they consistently underperformed a simple buy-and-hold strategy, generating returns ranging from -2.4% to -3.9%.",
+      "quote_sha256": "ce5fe811c3fda601707bdc66198a3fe520c9e5e269d1fbde5d1d8da07563aa89",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_005",
+      "source_type": "paper",
+      "source_id": "arxiv_2412_15448",
+      "quote": "our study employs advanced risk–reward measures, including the Rachev ratio and the gains–loss ratio, offering a more comprehensive evaluation in high-frequency contexts of trading strategies based on machine learning",
+      "quote_sha256": "78167f9396f29509c55610d9f8df08f1d11d2cda0258e2513651467dde005804",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_006",
+      "source_type": "paper",
+      "source_id": "arxiv_2412_15448",
+      "quote": "None, however, surpassed the buy-and-hold benchmark in absolute returns. That RFR-based strategies behave worse than the buy-and-hold benchmark can be attributed to transaction costs and market noise, which diminish the effectiveness of short-term trading strategies.",
+      "quote_sha256": "ca930473ae3ec14563c80390ff64966a816c4b548be93fa867cf039e3841f60c",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_007",
+      "source_type": "paper",
+      "source_id": "arxiv_2412_15448",
+      "quote": "ML models, such as random forest regression (RFR), support vector regression (SVR), and gradient boosting, have demonstrated improved predictive performance in financial applications",
+      "quote_sha256": "6cc7c39596a2437f7f0ced1e1b33130e7d2d7d46483d7510094b81c7f713e38f",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    }
+  ],
+  "base_method_card": {
+    "method_id": "rfr_hft_spy_minute",
+    "paper_id": "arxiv_2412_15448",
+    "title": "Risk-Adjusted Performance of Random Forest Models in High-Frequency Trading",
+    "venue_or_source": "arXiv (q-fin.CP)",
+    "paper_url": "https://arxiv.org/abs/2412.15448",
+    "task_type": "return prediction",
+    "target_asset": "SPY",
+    "asset_universe": [
+      "SPY"
+    ],
+    "frequency": "minute-level",
+    "horizon": "minute-level",
+    "label_definition": "unknown",
+    "data_requirements": [
+      "minute-level SPY data"
+    ],
+    "feature_groups": [
+      "price_lag_features"
+    ],
+    "model_families": [
+      "random_forest_regressor"
+    ],
+    "training_protocol": "unknown",
+    "evaluation_protocol": "in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse",
+      "r2",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "transaction costs acknowledged; high turnover rates increase trading costs",
+    "reported_results": {
+      "in_sample_R2": "0.749-0.812",
+      "out_of_sample_R2": "negative values",
+      "rachev_ratios": "0.919-0.961",
+      "returns": "-2.4% to -3.9%",
+      "feature_importance_price_based": "over 60%",
+      "feature_importance_technical_indicators": "14%-15%",
+      "benchmark": "buy-and-hold (surpassed all RFR-based strategies)"
+    },
+    "strict_requirements": [
+      "unknown"
+    ],
+    "unknowns": [
+      "exact label definition (e.g., next-minute return, forward return horizon)",
+      "training window size and split details",
+      "hyperparameter tuning protocol",
+      "number of trees and tree depth",
+      "exact list of all 13 model configurations",
+      "data date range",
+      "specific feature engineering pipeline details",
+      "label_definition"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2412_15448",
+        "section": "unknown",
+        "quote": "This study evaluates the integration of traditional technical indicators with random forest regression models using minute-level SPY data, analyzing 13 distinct model configurations.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2412_15448",
+        "section": "unknown",
+        "quote": "Our empirical results reveal a stark contrast between in-sample and out-of-sample performance, with R2 values deteriorating from 0.749–0.812 during training to negative values in testing.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2412_15448",
+        "section": "unknown",
+        "quote": "A feature importance analysis demonstrates that primary price-based features dominate the predictions made by the model, accounting for over 60% of the importance, while established technical indicators, such as RSI and Bollinger Bands, account for only 14%–15%.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2412_15448",
+        "section": "unknown",
+        "quote": "Although the indicator-enhanced models achieved superior risk-adjusted metrics, with Rachev ratios between 0.919 and 0.961, they consistently underperformed a simple buy-and-hold strategy, generating returns ranging from -2.4% to -3.9%.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2412_15448",
+        "section": "unknown",
+        "quote": "our study employs advanced risk–reward measures, including the Rachev ratio and the gains–loss ratio, offering a more comprehensive evaluation in high-frequency contexts of trading strategies based on machine learning",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2412_15448",
+        "section": "unknown",
+        "quote": "None, however, surpassed the buy-and-hold benchmark in absolute returns. That RFR-based strategies behave worse than the buy-and-hold benchmark can be attributed to transaction costs and market noise, which diminish the effectiveness of short-term trading strategies.",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2412_15448",
+        "section": "unknown",
+        "quote": "ML models, such as random forest regression (RFR), support vector regression (SVR), and gradient boosting, have demonstrated improved predictive performance in financial applications",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "extraction_confidence": "high for core method details; low for training protocol and label definition",
+      "notes": "Paper focuses on RFR with technical indicators at minute-level frequency for SPY. Key finding is that technical indicators are more relevant to risk management than return prediction in HFT contexts.",
+      "raw_paper_id": "arxiv_2412.15448",
+      "document_text_sha": "269720716d91e4fb",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2412.15448.pdf",
+      "migrated_from_schema_version": "method_card_v1",
+      "quality_report": {
+        "method_id": "rfr_hft_spy_minute",
+        "paper_id": "arxiv_2412_15448",
+        "quality_score": 0.71,
+        "approval_required": true,
+        "critical_missing_fields": [
+          "label_definition"
+        ],
+        "type_errors": [],
+        "semantic_conflicts": [],
+        "unsupported_models": [],
+        "warnings": [
+          "7/7 evidence spans have no source section"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
+      "frequency_type": "intraday",
+      "horizon_type": "minute-level"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "purged_walk_forward",
+    "evaluation_protocol_description": "in-sample vs out-of-sample testing; compared against buy-and-hold benchmark; 13 distinct model configurations analyzed",
+    "frequency_type": "intraday",
+    "horizon_type": "minute-level",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "schema_version": "method_card_v2"
+  },
+  "source_conflicts": [],
+  "parent_version_sha256": "",
+  "created_at": "2026-07-17T10:30:37.644927+00:00",
+  "schema_version": "method_card_v3",
+  "validation_errors": [
+    "Claim arxiv_2412_15448_primary has no numeric reported values"
+  ],
+  "strict_evidence_ready": false,
+  "version_sha256": "79ce23c5ef42b23a2bcce5188c526a9344f3e23e9b78abc1d4d9aad3d8e1551b"
+}

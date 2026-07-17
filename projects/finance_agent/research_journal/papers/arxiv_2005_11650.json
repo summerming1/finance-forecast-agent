@@ -1,0 +1,104 @@
+{
+  "paper_id": "arxiv_2005_11650",
+  "title": "Connecting the Dots: Multivariate Time Series Forecasting with Graph Neural Networks",
+  "scope": {
+    "market": "global_fx_benchmark",
+    "asset_class": "fx",
+    "frequency": "daily",
+    "task": "forecast_only",
+    "target": "multivariate_forecast",
+    "dataset_id": "exchange_rate_official_7588x8"
+  },
+  "status": "ready_not_run",
+  "claim_ids": [
+    "arxiv_2005_11650_exchange_h12_native"
+  ],
+  "attempts": [
+    {
+      "attempt_id": "arxiv_2005_11650_exchange_h12_native:claim-curation",
+      "stage": "claim_curation",
+      "action": "Reconstruct the paper claim and official execution protocol",
+      "outcome": "passed",
+      "summary": "Historical reconstruction from the paper, pinned official repository, data manifest, MethodCard and ReproductionPlan.",
+      "artifacts": [
+        "method_cards\\arxiv_2005_11650.json",
+        "reproduction_plans\\arxiv_2005_11650.json",
+        "native_claims/catalog.json"
+      ],
+      "blockers": [],
+      "reusable_capability_ids": [
+        "native_claim_audit"
+      ],
+      "recorded_at": "2026-07-17T10:07:04.245574+00:00"
+    },
+    {
+      "attempt_id": "arxiv_2005_11650_exchange_h12_native:source-data-audit",
+      "stage": "source_data_audit",
+      "action": "Verify frozen dataset, source archive, entrypoint and governance hashes",
+      "outcome": "passed",
+      "summary": "Native claim preflight audit reconstructed from the current frozen catalog.",
+      "artifacts": [
+        "data\\external\\exchange_rate\\exchange_rate.txt",
+        "sources\\ltsf\\mtgnn.zip",
+        "train_single_step.py"
+      ],
+      "blockers": [],
+      "reusable_capability_ids": [
+        "native_claim_audit"
+      ],
+      "recorded_at": "2026-07-17T10:07:04.245574+00:00"
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "claim_locator",
+      "value": "KDD 2020 paper, Table 2, MTGNN, Exchange-Rate, horizon 12",
+      "basis": "paper and primary-source curation"
+    },
+    {
+      "decision": "acceptance_policy",
+      "value": {
+        "rse": {
+          "expected": 0.0349,
+          "absolute_tolerance": 0.008,
+          "relative_tolerance": 0.0,
+          "objective": "match"
+        },
+        "corr": {
+          "expected": 0.9551,
+          "absolute_tolerance": 0.015,
+          "relative_tolerance": 0.0,
+          "objective": "maximize"
+        }
+      },
+      "basis": "predeclared NativeClaimSpec"
+    },
+    {
+      "decision": "compatibility_patches",
+      "value": [
+        "train_single_step.py"
+      ],
+      "basis": "manually reviewed semantic_noop recipes"
+    }
+  ],
+  "linked_assets": {
+    "method_cards": [
+      "method_cards\\arxiv_2005_11650.json"
+    ],
+    "reproduction_plans": [
+      "reproduction_plans\\arxiv_2005_11650.json"
+    ],
+    "native_claims": [
+      "native_claims/catalog.json"
+    ],
+    "reports": []
+  },
+  "remaining_manual_steps": [
+    "Claim selection and paper/repository protocol reconciliation were historically curated by a developer.",
+    "Compatibility and tolerance decisions require human review before reuse on a new paper."
+  ],
+  "historical_reconstruction": true,
+  "started_at": "2026-07-17T10:07:04.245574+00:00",
+  "updated_at": "2026-07-17T10:07:04.245574+00:00",
+  "schema_version": "paper_exploration_record_v1"
+}

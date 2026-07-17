@@ -1,0 +1,318 @@
+{
+  "prompt_hash": "e841510c3ae5e21a",
+  "schema_name": "method_card",
+  "schema_version": "v1",
+  "response": {
+    "method_id": "arxiv_2004_10178_3feature_intraday_cudnnlstm",
+    "paper_id": "arxiv_2004.10178",
+    "title": "Forecasting directional movements of stock prices for intraday trading using LSTM and random forests",
+    "venue_or_source": "arXiv:2004.10178v2 [cs.LG] 30 Jun 2021",
+    "paper_url": "unknown",
+    "task_type": "cross-sectional binary directional movement forecasting for intraday trading",
+    "target_asset": "constituent stocks of the S&P 500",
+    "asset_universe": [
+      "S&P 500 constituent stocks"
+    ],
+    "frequency": "daily trading days with intraday return target",
+    "horizon": "same trading day intraday return direction relative to cross-sectional median",
+    "label_definition": "For each stock at time t, Class 0 if its intraday return is smaller than the cross-sectional median intraday return of all stocks at time t; Class 1 if its intraday return is bigger than the cross-sectional median intraday return of all stocks at time t.",
+    "data_requirements": [
+      "Daily data for constituent stocks of the S&P 500 from January 1993 through December 2018.",
+      "Opening prices and closing prices sufficient to compute returns with respect to closing prices, returns with respect to opening prices, and intraday returns.",
+      "For each study window, construct per-stock feature matrices, remove the first 240 partially filled rows, and concatenate training data across all stocks in S.",
+      "At each trading day, compute cross-sectional median intraday return across all stocks to form binary labels."
+    ],
+    "feature_groups": [
+      "3-feature multi-feature setting consisting of returns with respect to closing prices, returns with respect to opening prices, and intraday returns.",
+      "For LSTM, input feature shape is reported as (240, 3), corresponding to 240 time steps and 3 features."
+    ],
+    "model_families": [
+      "CuDNNLSTM"
+    ],
+    "training_protocol": "Within a typical study window with Tstudy = 1008 rows, remove the first 240 rows because lagged returns are partially undefined; split remaining rows chronologically with approximately t = 241 to t = 756 for training and t = 757 to t = Tstudy for testing/trading. Concatenate training data for all stocks in S, yielding approximately 500 x 516 = 258000 training instances and 500 x 252 = 126000 trading instances. LSTM uses CuDNNLSTM. Optimizer, loss, batch size, number of epochs, random seed, validation protocol, and early stopping are unknown from the supplied context.",
+    "evaluation_protocol": "Evaluate the 3-Feature IntraDay LSTM row on the trading/test portion. The trading strategy buys the 10 stocks with the highest predicted probability and sells short the 10 stocks with the lowest predicted probability each trading day, with equal monetary weight, and reports daily returns before transaction costs. The exact outer rolling-window schedule over 1993-2018 is unknown from the supplied context.",
+    "metrics": [
+      "Mean (long)",
+      "Mean (short)",
+      "Mean return",
+      "Standard error",
+      "Minimum",
+      "Quartile 1",
+      "Median",
+      "Quartile 3",
+      "Maximum",
+      "Share > 0",
+      "Std. deviation",
+      "Skewness",
+      "Kurtosis",
+      "1-percent VaR",
+      "1-percent CVaR",
+      "5-percent VaR",
+      "5-percent CVaR",
+      "Max. drawdown",
+      "Avg return p.a.",
+      "Std dev. p.a.",
+      "Down dev. p.a.",
+      "Sharpe ratio",
+      "Time per epoch",
+      "Training time",
+      "Decision making time"
+    ],
+    "cost_assumptions": "Returns are reported prior to transaction costs.",
+    "reported_results": {
+      "selected_row": "3-Feature IntraDay LSTM",
+      "Mean (long)": 0.00332,
+      "Mean (short)": 0.00312,
+      "Mean return": 0.00644,
+      "Standard error": 0.00019,
+      "Minimum": -0.1464,
+      "Quartile 1": -0.0017,
+      "Median": 0.00559,
+      "Quartile 3": 0.01433,
+      "Maximum": 0.14101,
+      "Share > 0": 0.69663,
+      "Std. deviation": 0.01572,
+      "Skewness": 0.15599,
+      "Kurtosis": 9.71987,
+      "1-percent VaR": -0.0352,
+      "1-percent CVaR": -0.0519,
+      "5-percent VaR": -0.0157,
+      "5-percent CVaR": -0.0284,
+      "Max. drawdown": 0.22345,
+      "Avg return p.a.": 3.8475,
+      "Std dev. p.a.": 0.24957,
+      "Down dev. p.a.": 0.17144,
+      "Sharpe ratio": 6.34253,
+      "Time per epoch (sec)": 33.1,
+      "Training time (min)": 24.21,
+      "Decision making time (sec)": 0.086924
+    },
+    "experiment_type": "forecast_with_trading_strategy",
+    "preprocessing_protocol": "For each stock, construct the feature matrix with M columns and Tstudy rows. For LSTM, M is reported as (240, 3). Remove the top 240 rows because lagged return features are partially undefined for t <= m. Split the remaining rows chronologically into training and testing/trading subsets, then concatenate training data across stocks. Scaling, normalization, missing-data handling beyond row removal, and whether any transform statistics are fit on train data only are unknown from the supplied context.",
+    "hyperparameters": {
+      "model": "CuDNNLSTM",
+      "input_shape": [
+        240,
+        3
+      ]
+    },
+    "required_start_date": "1993-01",
+    "required_end_date": "2018-12",
+    "strict_requirements": [
+      "Use the 3-Feature IntraDay LSTM configuration only; do not mix with Random Forest or 1-Feature rows.",
+      "Use a 240 trading-day by 3-feature LSTM input representation.",
+      "Remove the first 240 rows of each study matrix before splitting.",
+      "Use chronological split within each study window: approximately t = 241 to t = 756 for training and t = 757 to t = Tstudy for testing/trading, where typically Tstudy = 1008.",
+      "Construct labels using the cross-sectional median intraday return at each time t.",
+      "For the trading-strategy evaluation, buy the 10 stocks with the highest probability and short the 10 stocks with the lowest probability, with equal monetary weight.",
+      "Report returns before transaction costs."
+    ],
+    "unknowns": [
+      "Exact paper URL.",
+      "Exact S&P 500 constituent membership construction and survivorship-bias handling.",
+      "Exact raw data vendor/source.",
+      "Exact formulas for all three feature return groups beyond the descriptions supplied.",
+      "Exact outer rolling-window schedule over January 1993 to December 2018.",
+      "LSTM architecture details other than CuDNNLSTM and input shape, including number of layers, hidden units, dropout, dense layers, activation functions, and initialization.",
+      "Optimizer, loss function, learning rate, batch size, number of epochs, early stopping, validation split, random seed, and hardware/GPU details.",
+      "Scaling or normalization procedure and whether statistics are fit only on training data.",
+      "Transaction cost model, because the reported returns are prior to transaction costs."
+    ],
+    "evidence_spans": [
+      {
+        "section": "title",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "Forecasting directional movements of stock prices for intr aday trading using LSTM and random forests"
+      },
+      {
+        "section": "venue_or_source",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "arXiv:2004.10178v2 [cs.LG] 30 Jun 2021"
+      },
+      {
+        "section": "task_type",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "We employ both random forests and LSTM networks (more precisely CuDNNLSTM) as training methodologies to analyze their eﬀectiveness in forecasting out-of-sample directional movement s of constituent stocks of the S&P 500 from January 1993 till December 2018 for intraday trading."
+      },
+      {
+        "section": "target_asset",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "constituent stocks of the S&P 500 from January 1993 till December 2018"
+      },
+      {
+        "section": "asset_universe",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "constituent stocks of the S&P 500"
+      },
+      {
+        "section": "frequency",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "On each trading day, w e buy the 10 stocks with the highest probability and sell short the 10 stocks with the lowest probability"
+      },
+      {
+        "section": "horizon",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "based on their intraday returns ir(s) t, 0 . Class 0 is realized if ir(s) t, 0 of stock s is smaller than the cross-sectional median intraday return of all stocks at time t, whereas Class 1 is realized if ir(s) t, 0 of stock s is bigger than the cross-sectional median intraday return of all stocks at time t."
+      },
+      {
+        "section": "label_definition",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "we divid e each stock at time t into 2 classes of equal size, based on their intraday returns ir(s) t, 0 . Class 0 is realized if ir(s) t, 0 of stock s is smaller than the cross-sectional median intraday return of all stocks at time t, whereas Class 1 is realized if ir(s) t, 0 of stock s is bigger than the cross-sectional median intraday return of all stocks at time t."
+      },
+      {
+        "section": "data_requirements",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "from January 1993 till December 2018"
+      },
+      {
+        "section": "feature_groups",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "We introduce a multi-feature setting consisting not only of the returns with respect to the closing prices, but also with respect to the opening prices and intrad ay returns."
+      },
+      {
+        "section": "model_families",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "we perform our experiments using CuDNNLSTMs"
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "Since by deﬁnition, irt,m is not deﬁned when t ≤ m, columns of the top 240 rows are partially ﬁlled and are hence removed. This removal leaves Tstudy − 240 rows (i.e. for t = {241, 242, 243, ..., Tstudy}) which is split into two parts, namely approximately from t = 241 to t = 756, and from t = 757 to t = Tstudy, for training and testing purposes, respectively. Note that typically Tstudy = 1008."
+      },
+      {
+        "section": "training_protocol",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "At the end, we concatenate the training data of all stocks in S to get the collective training set. Hence the training set is a matrix with approximate size of 500 × 516 = 258000 rows (instances) and M columns (features), along with their corresponding target, whereas the trading set is a matrix with approximate size of 500 × 252 = 126000 rows (instances) and M columns (features)."
+      },
+      {
+        "section": "evaluation_protocol",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "On each trading day, w e buy the 10 stocks with the highest probability and sell short the 10 stocks with the lowest probability to outperform the m arket in terms of intraday returns – all with equal monetary weight."
+      },
+      {
+        "section": "metrics",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "Metric of daily returns 3-Feature IntraDay LSTM 3-Feature IntraDay RF 1-Feature NextDay LSTM 1-Feature NextDay RF 1-Feature IntraDay LSTM 1-Feature IntraDay RF SP500 Index Mean (long) 0.00332 0.00273 0.00257 0.00259 0.00094 0.00104 0.00033 Mean (short) 0.00312 0.00266 0.00158 0.00130 0.00180 0.00187 0.00000 Mean return 0.00644"
+      },
+      {
+        "section": "cost_assumptions",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "Our empirical results show that the multi-feature setting p rovides a daily return, prior to transaction costs, of 0.64% using LSTM networks"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "Metric of daily returns 3-Feature IntraDay LSTM 3-Feature IntraDay RF 1-Feature NextDay LSTM 1-Feature NextDay RF 1-Feature IntraDay LSTM 1-Feature IntraDay RF SP500 Index Mean (long) 0.00332 0.00273 0.00257 0.00259 0.00094 0.00104 0.00033 Mean (short) 0.00312 0.00266 0.00158 0.00130 0.00180 0.00187 0.00000 Mean return 0.00644 0.00539 0.00414 0.00389 0.00274 0.00290 0.00033 Standard error 0.00019 0.00020 0.00024 0.00023 0.00021 0.00021 0.00014 Minimum -0.1464 -0.1046 -0.1713 -0.1342 -0.1565 -0.1487 -0.0903 Quartile 1 -0.0017 -0.0028 -0.0052 -0.0051 -0.0054 -0.0050 -0.0044 Median 0.00559 0.00462 0.00352 0.00287 0.00242 0.00221 0.00056 Quartile 3 0.01433 0.01306 0.01294 0.01161 0.01086 0.01036 0.00560 Maximum 0.14101 0.14153 0.19884 0.28139 0.13896 0.16064 0.11580 Share > 0 0.69663 0.65857 0.60598 0.59479 0.58405 0.58937 0.53681 Std. deviation 0.01572 0.01597 0.01961 0.01831 0.01713 0.01683 0.01133 Skewness 0.15599 0.28900 0.36822 1.41199 -0.1828 0.12051 -0.1007 Kurtosis 9.71987 8.32627 10.8793 19.8349 10.1893 11.7758 11.9396 1-percent VaR -0.0352 -0.0364 -0.0492 -0.0432 -0.0461 -0.0448 -0.0313 1-percent CVaR -0.0519 -0.0528 -0.0712 -0.0592 -0.0678 -0.0660 -0.0451 5-percent VaR -0.0157 -0.0170 -0.0234 -0.0208 -0.0214 -0.0197 -0.0177 5-percent CVaR -0.0284 -0.0297 -0.0401 -0.0345 -0.0377 -0.0357 -0.0270 Max. drawdown 0.22345 0.19779 0.42551 0.23155 0.35645 0.43885 0.56775 Avg return p.a. 3.84750 2.75103 1.68883 1.53806 0.91483 1.00281 0.06975 Std dev. p.a. 0.24957 0.25358 0.31135 0.29071 0.27193 0.26719 0.17990 Down dev. p.a. 0.17144 0.17301 0.21204 0.18690 0.19270 0.18530 0.12970 Sharpe ratio 6.34253 5.20303 3.22732 3.23339 2.39560 2.59188 0.24867"
+      },
+      {
+        "section": "reported_results",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "Metric 3-Feature IntraDay LSTM 3-Feature IntraDay RF 1-Feature NextDay LSTM 1-Feature NextDay RF 1-Feature IntraDay LSTM 1-Feature IntraDay RF Time per epoch (in sec) 33.1 - 166 - 13.8 - Training time (in min) 24.21 7.21 112.3 2.59 10.4 2.56 Decision making time (in sec) 0.086924 0.419563 0.180778 0.380040 0.036128 0.374121"
+      },
+      {
+        "section": "preprocessing_protocol",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "Since by deﬁnition, irt,m is not deﬁned when t ≤ m, columns of the top 240 rows are partially ﬁlled and are hence removed."
+      },
+      {
+        "section": "hyperparameters",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "Hence M is equal to 93 and (240 , 3) when using random forest and LSTM, respectively."
+      },
+      {
+        "section": "required_start_date",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "from January 1993 till December 2018"
+      },
+      {
+        "section": "required_end_date",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "from January 1993 till December 2018"
+      },
+      {
+        "section": "strict_requirements",
+        "source_id": "arxiv_2004.10178",
+        "source_type": "paper",
+        "source_url": "unknown",
+        "source_revision": "v2",
+        "quote": "3-Feature IntraDay LSTM"
+      }
+    ],
+    "extraction_metadata": {
+      "document_id": "arxiv_2004.10178",
+      "text_sha": "fae585867c07144f",
+      "selected_claim": "3-Feature IntraDay LSTM intraday trading daily return results",
+      "supporting_context_sha": ""
+    },
+    "approval_required": true,
+    "schema_version": "method_card_v2"
+  },
+  "created_by": "offline_assistant",
+  "approved": true
+}

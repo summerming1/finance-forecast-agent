@@ -1,0 +1,151 @@
+{
+  "schema_version": "heldout_onboarding_validation_v1",
+  "generated_at": "2026-07-17T10:45:36.424699+00:00",
+  "paper_count": 10,
+  "route_count": 10,
+  "type_count": 4,
+  "false_strict_count": 0,
+  "papers": [
+    {
+      "paper_id": "crossref_10_1609_aaai_v36i10_21414",
+      "title": "NumHTML: Numeric-Oriented Hierarchical Transformer Model for Multi-Task Financial Forecasting",
+      "metadata_task_category": "forecast_only",
+      "routed_experiment_type": "forecast_only",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    },
+    {
+      "paper_id": "crossref_10_1007_s10489_021_02262_0",
+      "title": "Portfolio management system in equity market neutral using reinforcement learning",
+      "metadata_task_category": "portfolio_rl",
+      "routed_experiment_type": "portfolio_rl",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    },
+    {
+      "paper_id": "arxiv_2111_03995v2",
+      "title": "Explainable Deep Reinforcement Learning for Portfolio Management: An Empirical Approach",
+      "metadata_task_category": "portfolio_rl",
+      "routed_experiment_type": "portfolio_rl",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    },
+    {
+      "paper_id": "arxiv_2002_10247v1",
+      "title": "Forecasting Foreign Exchange Rate: A Multivariate Comparative Analysis between Traditional Econometric, Contemporary Machine Learning & Deep Learning Techniques",
+      "metadata_task_category": "fx_forecast",
+      "routed_experiment_type": "forecast_only",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    },
+    {
+      "paper_id": "arxiv_1806_01743v2",
+      "title": "A Machine Learning Framework for Stock Selection",
+      "metadata_task_category": "volatility_forecast",
+      "routed_experiment_type": "forecast_only",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    },
+    {
+      "paper_id": "arxiv_2606_00060v1",
+      "title": "Machine Learning-Based Bitcoin Trading Under Transaction Costs: Evidence From Walk-Forward Forecasting",
+      "metadata_task_category": "volatility_forecast",
+      "routed_experiment_type": "signal_backtest",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    },
+    {
+      "paper_id": "arxiv_2209_12014v1",
+      "title": "Asset Pricing and Deep Learning",
+      "metadata_task_category": "cross_sectional_asset_pricing",
+      "routed_experiment_type": "cross_sectional",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    },
+    {
+      "paper_id": "arxiv_2311_10719v1",
+      "title": "Analysis of frequent trading effects of various machine learning models",
+      "metadata_task_category": "limit_order_book",
+      "routed_experiment_type": "signal_backtest",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    },
+    {
+      "paper_id": "arxiv_2108_02283v3",
+      "title": "Machine Learning Classification and Portfolio Construction: Does the Loss Function Matter?",
+      "metadata_task_category": "financial_prediction_other",
+      "routed_experiment_type": "signal_backtest",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    },
+    {
+      "paper_id": "arxiv_2412_18563v3",
+      "title": "A Deep Reinforcement Learning Framework for Dynamic Portfolio Optimization: Evidence from China's Stock Market",
+      "metadata_task_category": "portfolio_rl",
+      "routed_experiment_type": "portfolio_rl",
+      "local_full_text": true,
+      "route": "blocked",
+      "strict_allowed": false,
+      "blockers": [
+        "live strict MethodCard has not been generated and approved",
+        "official source identity and publication-date commit are not approved",
+        "paper DatasetContract and field mappings are not approved"
+      ]
+    }
+  ],
+  "boundary": "This held-out pass validates metadata routing and precise blocker generation only; it is not live MethodCard or native execution evidence."
+}

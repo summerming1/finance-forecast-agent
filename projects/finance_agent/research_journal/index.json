@@ -1,0 +1,1274 @@
+{
+  "schema_version": "research_journal_index_v1",
+  "updated_at": "2026-07-17T10:32:17.916517+00:00",
+  "paper_count": 101,
+  "paper_status_counts": {
+    "strict_verified": 9,
+    "blocked": 88,
+    "ready_not_run": 4
+  },
+  "capability_count": 8,
+  "capability_status_counts": {
+    "candidate": 2,
+    "reusable_validated": 6
+  },
+  "papers": [
+    {
+      "paper_id": "arxiv_1703_07015",
+      "title": "Modeling Long- and Short-Term Temporal Patterns with Deep Neural Networks",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_1706_10059v2",
+      "title": "A Deep Reinforcement Learning Framework for the Financial Portfolio Management Problem",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_1801_01777v4",
+      "title": "Deep Learning for Forecasting Stock Returns in the Cross-Section",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_1806_01743v2",
+      "title": "A Machine Learning Framework for Stock Selection",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_1903_12258v1",
+      "title": "Using Deep Learning Neural Networks and Candlestick Chart Representation to Predict Stock Market",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_1905_07581v1",
+      "title": "Convolutional Feature Extraction and Neural Arithmetic Logic Units for Stock Prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_1912_10343v1",
+      "title": "Design of High-Frequency Trading Algorithm Based on Machine Learning",
+      "status": "blocked",
+      "scope": {
+        "task": "limit_order_book",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2001_09769v1",
+      "title": "Stock Price Prediction Using Convolutional Neural Networks on a Multivariate Timeseries",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2002_09565v4",
+      "title": "Adversarial Attacks on Machine Learning Systems for High-Frequency Trading",
+      "status": "blocked",
+      "scope": {
+        "task": "limit_order_book",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2002_10247v1",
+      "title": "Forecasting Foreign Exchange Rate: A Multivariate Comparative Analysis between Traditional Econometric, Contemporary Machine Learning & Deep Learning Techniques",
+      "status": "blocked",
+      "scope": {
+        "task": "fx_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2003_00656v5",
+      "title": "Machine Learning Portfolio Allocation",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2003_01859v1",
+      "title": "Applications of deep learning in stock market prediction: recent progress",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2004_11697v2",
+      "title": "A Time Series Analysis-Based Stock Price Prediction Using Machine Learning and Deep Learning Models",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2005_11650",
+      "title": "Connecting the Dots: Multivariate Time Series Forecasting with Graph Neural Networks",
+      "status": "ready_not_run",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 2,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2007_12620v1",
+      "title": "A Novel Ensemble Deep Learning Model for Stock Prediction Based on Stock Prices and News",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2009_03394v4",
+      "title": "Deep Learning, Predictability, and Optimal Portfolio Returns",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2009_10819v1",
+      "title": "Stock Price Prediction Using Machine Learning and LSTM-Based Deep Learning Models",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2012_07436",
+      "title": "Informer: Beyond Efficient Transformer for Long Sequence Time-Series Forecasting",
+      "status": "ready_not_run",
+      "scope": {
+        "market": "energy",
+        "asset_class": "energy",
+        "frequency": "unspecified",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "ettm1_official_69680x7"
+      },
+      "attempt_count": 2,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2101_02287v2",
+      "title": "COVID19-HPSMP: COVID-19 Adopted Hybrid and Parallel Deep Information Fusion Framework for Stock Price Movement Prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2104_05413v1",
+      "title": "Financial Markets Prediction with Deep Learning",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2106_09305",
+      "title": "Time Series is a Special Sequence: Forecasting with Sample Convolution and Interaction",
+      "status": "blocked",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2106_13008",
+      "title": "Autoformer: Decomposition Transformers with Auto-Correlation for Long-Term Series Forecasting",
+      "status": "blocked",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2107_13866v1",
+      "title": "Machine Learning and Factor-Based Portfolio Optimization",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2108_02283v3",
+      "title": "Machine Learning Classification and Portfolio Construction: Does the Loss Function Matter?",
+      "status": "blocked",
+      "scope": {
+        "task": "financial_prediction_other",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2111_01137v1",
+      "title": "Stock Price Prediction Using Time Series, Econometric, Machine Learning, and Deep Learning Models",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2111_03995v2",
+      "title": "Explainable Deep Reinforcement Learning for Portfolio Management: An Empirical Approach",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2112_03946v1",
+      "title": "Generative Adversarial Network (GAN) and Enhanced Root Mean Square Error (ERMSE): Deep Learning for Stock Price Movement Prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2201_12740",
+      "title": "FEDformer: Frequency Enhanced Decomposed Transformer for Long-term Series Forecasting",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2202_01381",
+      "title": "ETSformer: Exponential Smoothing Transformers for Time-series Forecasting",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2202_03158v1",
+      "title": "Dual-CLVSA: a Novel Deep Learning Approach to Predict Financial Markets with Sentiment Measurements",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2202_05702v1",
+      "title": "Machine Learning for Stock Prediction Based on Fundamental Analysis",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2202_09359v1",
+      "title": "Machine Learning Models in Stock Market Prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2205_08897",
+      "title": "FiLM: Frequency Improved Legendre Memory Model for Long-term Time Series Forecasting",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2205_14415",
+      "title": "Non-stationary Transformers: Exploring the Stationarity in Time Series Forecasting",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2209_12014v1",
+      "title": "Asset Pricing and Deep Learning",
+      "status": "blocked",
+      "scope": {
+        "task": "cross_sectional_asset_pricing",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2210_02186",
+      "title": "TimesNet: Temporal 2D-Variation Modeling for General Time Series Analysis",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2211_14730",
+      "title": "A Time Series is Worth 64 Words: Long-term Forecasting with Transformers",
+      "status": "ready_not_run",
+      "scope": {
+        "market": "energy",
+        "asset_class": "energy",
+        "frequency": "unspecified",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "ettm1_official_69680x7"
+      },
+      "attempt_count": 2,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2305_18803",
+      "title": "Koopa: Learning Non-stationary Time Series Dynamics with Koopman Predictors",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2309_00618v1",
+      "title": "Short-Term Stock Price Forecasting using exogenous variables and Machine Learning Algorithms",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2309_14615v1",
+      "title": "Gray-box Adversarial Attack of Deep Reinforcement Learning-based Trading Agents",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2310_06625",
+      "title": "iTransformer: Inverted Transformers Are Effective for Time Series Forecasting",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2311_10719v1",
+      "title": "Analysis of frequent trading effects of various machine learning models",
+      "status": "blocked",
+      "scope": {
+        "task": "limit_order_book",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2402_06689v1",
+      "title": "A Study on Stock Forecasting Using Deep Learning and Statistical Models",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2402_10198",
+      "title": "SAMformer: Unlocking the Potential of Transformers in Time Series Forecasting with Sharpness-Aware Minimization and Channel-Wise Attention",
+      "status": "strict_verified",
+      "scope": {
+        "market": "global_fx_benchmark",
+        "asset_class": "fx",
+        "frequency": "daily",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "exchange_rate_official_7588x8"
+      },
+      "attempt_count": 3,
+      "historical_reconstruction": true
+    },
+    {
+      "paper_id": "arxiv_2406_02604v1",
+      "title": "Gated recurrent neural network with TPE Bayesian optimization for enhancing stock index prediction accuracy",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2407_01572v1",
+      "title": "Exploring Sectoral Profitability in the Indian Stock Market Using Deep Learning",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2407_02236v1",
+      "title": "Indian Stock Market Prediction using Augmented Financial Intelligence ML",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2407_19352v1",
+      "title": "Design and Optimization of Big Data and Machine Learning-Based Risk Monitoring System in Financial Markets",
+      "status": "blocked",
+      "scope": {
+        "task": "financial_prediction_other",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2409_08426v1",
+      "title": "A Deep Reinforcement Learning Framework For Financial Portfolio Management",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2411_16277v1",
+      "title": "FinML-Chain: A Blockchain-Integrated Dataset for Enhanced Financial Machine Learning",
+      "status": "blocked",
+      "scope": {
+        "task": "limit_order_book",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2412_18563v3",
+      "title": "A Deep Reinforcement Learning Framework for Dynamic Portfolio Optimization: Evidence from China's Stock Market",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2502_15853v1",
+      "title": "Multi-Agent Stock Prediction Systems: Machine Learning Models, Simulations, and Real-Time Trading Strategies",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2505_19617v1",
+      "title": "Hybrid Models for Financial Forecasting: Combining Econometric, Machine Learning, and Deep Learning Models",
+      "status": "blocked",
+      "scope": {
+        "task": "crypto_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2507_02011v1",
+      "title": "Machine Learning Based Stress Testing Framework for Indian Financial Market Portfolios",
+      "status": "blocked",
+      "scope": {
+        "task": "financial_prediction_other",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2508_14999v1",
+      "title": "Investment Portfolio Optimization Based on Modern Portfolio Theory and Deep Learning Models",
+      "status": "blocked",
+      "scope": {
+        "task": "crypto_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2606_00060v1",
+      "title": "Machine Learning-Based Bitcoin Trading Under Transaction Costs: Evidence From Walk-Forward Forecasting",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "arxiv_2606_04574v2",
+      "title": "Dynamic Multi-Pair Trading Strategy in Cryptocurrency Markets with Deep Reinforcement Learning",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1007_s005210200021",
+      "title": "Forecasting Financial Time Series using Neural Network and Fuzzy System-based Techniques",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1007_s00521_010_0407_3",
+      "title": "Comparison of new activation functions in neural network for forecasting financial time series",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1007_s00521_018_3963_6",
+      "title": "Financial credit risk prediction in internet finance driven by machine learning",
+      "status": "blocked",
+      "scope": {
+        "task": "credit_default",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1007_s00521_025_11044_5",
+      "title": "Bank credit risk prediction using machine learning model",
+      "status": "blocked",
+      "scope": {
+        "task": "credit_default",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1007_s10479_024_06134_x",
+      "title": "Prediction of bank credit worthiness through credit risk analysis: an explainable machine learning study",
+      "status": "blocked",
+      "scope": {
+        "task": "credit_default",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1007_s10489_021_02262_0",
+      "title": "Portfolio management system in equity market neutral using reinforcement learning",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1007_s12652_020_01839_w",
+      "title": "Stock market prediction using machine learning classifiers and social media, news",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2020_106401",
+      "title": "Using Deep Learning for price prediction by exploiting stationary limit order book features",
+      "status": "blocked",
+      "scope": {
+        "task": "limit_order_book",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2020_106943",
+      "title": "Mean–variance portfolio optimization using machine learning-based stock price prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2022_108894",
+      "title": "Multiagent-based deep reinforcement learning for risk-shifting portfolio management",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2023_111132",
+      "title": "Forecasting cryptocurrencies volatility using statistical and machine learning methods: A comparative study",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_asoc_2024_111759",
+      "title": "Recurrent ensemble random vector functional link neural network for financial time series forecasting",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_ejor_2005_02_012",
+      "title": "Neural network approach to forecasting of quasiperiodic financial time series",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_ejor_2021_06_047",
+      "title": "Intertemporal defaulted bond recoveries prediction via machine learning",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_eswa_2017_04_006",
+      "title": "Machine learning models and bankruptcy prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "credit_default",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_eswa_2020_113799",
+      "title": "Option pricing using Machine Learning",
+      "status": "blocked",
+      "scope": {
+        "task": "derivative_pricing",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_eswa_2020_113973",
+      "title": "Portfolio optimization with return prediction using deep learning and machine learning",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_eswa_2025_129672",
+      "title": "Multi-objective portfolio optimization for stock return prediction using machine learning",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_jempfin_2023_07_003",
+      "title": "Forecasting realized volatility with machine learning: Panel data perspective",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_jempfin_2025_101598",
+      "title": "Is machine learning a necessity? A regression-based approach for stock return prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1016_j_neucom_2013_01_063",
+      "title": "Bankruptcy prediction using Extreme Learning Machine and financial expertise",
+      "status": "blocked",
+      "scope": {
+        "task": "credit_default",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1080_0015198x_2024_2388024",
+      "title": "Choices Matter When Training Machine Learning Models for Return Prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1080_14697688_2021_1905869",
+      "title": "Implied volatility directional forecasting: a machine learning approach",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1080_14697688_2022_2124189",
+      "title": "A deep learning approach to estimating fill probabilities in a limit order book",
+      "status": "blocked",
+      "scope": {
+        "task": "limit_order_book",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1093_jjfinec_nbac020",
+      "title": "A Machine Learning Approach to Volatility Forecasting",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1093_jjfinec_nbac032",
+      "title": "Correction to: A Machine Learning Approach to Volatility Forecasting",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1093_jjfinec_nbad005",
+      "title": "Volatility Forecasting with Machine Learning and Intraday Commonality",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1093_rfs_hhaa009",
+      "title": "Empirical Asset Pricing via Machine Learning",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2021_3051872",
+      "title": "Combining Deep Learning and Multiresolution Analysis for Stock Market Forecasting",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2021_3068768",
+      "title": "Adversarial Attacks Against Reinforcement Learning-Based Portfolio Management Strategy",
+      "status": "blocked",
+      "scope": {
+        "task": "portfolio_rl",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2021_3110270",
+      "title": "Explainability of Machine Learning Models for Bankruptcy Prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "credit_default",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2023_3293064",
+      "title": "A Signature Transform of Limit Order Book Data for Stock Price Prediction",
+      "status": "blocked",
+      "scope": {
+        "task": "limit_order_book",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1109_access_2024_3381500",
+      "title": "Long-Term Interbank Bond Rate Prediction Based on ICEEMDAN and Machine Learning",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1155_2021_6647534",
+      "title": "Forecasting Foreign Exchange Volatility Using Deep Learning Autoencoder‐LSTM Techniques",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_11591_ijece_v14i5_pp5601_5611",
+      "title": "Forecasting stock market prices using deep learning methods",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1177_2053951720926558",
+      "title": "The virtue of simplicity: On machine learning models in algorithmic trading",
+      "status": "blocked",
+      "scope": {
+        "task": "signal_backtest",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1287_mnsc_2016_2644",
+      "title": "Machine Learning and Portfolio Optimization",
+      "status": "blocked",
+      "scope": {
+        "task": "financial_prediction_other",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1287_mnsc_2023_4695",
+      "title": "Deep Learning in Asset Pricing",
+      "status": "blocked",
+      "scope": {
+        "task": "cross_sectional_asset_pricing",
+        "market": "unknown",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_14419_s0pktr58",
+      "title": "Cryptocurrency Price Forecasting Using Machine Learning: ‎Building Intelligent Financial Prediction Models",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_1609_aaai_v36i10_21414",
+      "title": "NumHTML: Numeric-Oriented Hierarchical Transformer Model for Multi-Task Financial Forecasting",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_31449_inf_v44i3_2904",
+      "title": "Investigating Algorithmic Stock Market Trading using Ensemble Machine Learning Methods",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_32996_jbms_2024_6_2_9",
+      "title": "Deep Learning Models for Stock Market Forecasting: A Comprehensive Comparative Analysis",
+      "status": "blocked",
+      "scope": {
+        "task": "forecast_only",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "crossref_10_3390_sci7010007",
+      "title": "LSTM–Transformer-Based Robust Hybrid Deep Learning Model for Financial Time Series Forecasting",
+      "status": "blocked",
+      "scope": {
+        "task": "volatility_forecast",
+        "market": "bounded_by_assigned_benchmark",
+        "frequency": "unknown"
+      },
+      "attempt_count": 1,
+      "historical_reconstruction": false
+    },
+    {
+      "paper_id": "openreview_0EXmFzUn5I",
+      "title": "Pyraformer: Low-Complexity Pyramidal Attention for Long-Range Time Series Modeling and Forecasting",
+      "status": "ready_not_run",
+      "scope": {
+        "market": "energy",
+        "asset_class": "energy",
+        "frequency": "unspecified",
+        "task": "forecast_only",
+        "target": "multivariate_forecast",
+        "dataset_id": "ettm1_official_69680x7"
+      },
+      "attempt_count": 2,
+      "historical_reconstruction": true
+    }
+  ]
+}

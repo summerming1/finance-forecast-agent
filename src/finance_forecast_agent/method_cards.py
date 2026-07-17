@@ -514,8 +514,10 @@ def _normalize_method_card_payload(payload: dict[str, Any]) -> dict[str, Any]:
         data["hyperparameters"] = dict(hyperparameters)
     else:
         data["hyperparameters"] = {"raw": hyperparameters}
-    data["experiment_type"] = _as_text(
-        payload.get("experiment_type") or metadata.get("experiment_type"), "forecast_only"
+    data["experiment_type"] = _canonical_experiment_type(
+        payload.get("experiment_type") or metadata.get("experiment_type"),
+        task_type=data.get("task_type"),
+        title=data.get("title"),
     )
     for field_name in ("required_start_date", "required_end_date"):
         if is_unknown(data.get(field_name)):
@@ -543,6 +545,25 @@ def _as_text(value: Any, fallback: str) -> str:
     if isinstance(value, (dict, list, tuple)):
         return json.dumps(value, ensure_ascii=False, sort_keys=True)
     return str(value).strip() or fallback
+
+
+def _canonical_experiment_type(value: Any, *, task_type: Any, title: Any) -> str:
+    normalized = _as_text(value, "forecast_only").lower().replace("-", "_").replace(" ", "_")
+    allowed = {"forecast_only", "signal_backtest", "portfolio_rl", "event_study", "cross_sectional"}
+    if normalized in allowed:
+        return normalized
+    text = " ".join([normalized, _as_text(task_type, ""), _as_text(title, "")]).lower()
+    if any(token in text for token in ("reinforcement", "portfolio_management", "portfolio management", "_rl")):
+        return "portfolio_rl"
+    if any(token in normalized for token in ("backtest", "back_test", "trading_strategy")):
+        return "signal_backtest"
+    if any(token in text for token in ("cross_section", "cross-section", "asset_pricing", "asset pricing")):
+        return "cross_sectional"
+    if "event_study" in text or "event study" in text:
+        return "event_study"
+    if any(token in text for token in ("backtest", "back_test", "trading_strategy", "trading strategy")):
+        return "signal_backtest"
+    return "forecast_only"
 
 
 def _as_string_list(value: Any, fallback: list[str]) -> list[str]:

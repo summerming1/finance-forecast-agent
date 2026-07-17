@@ -1,0 +1,13 @@
+{
+  "schema_version": "method_card_version_index_v1",
+  "paper_id": "arxiv_2209_02407",
+  "versions": [
+    {
+      "version_sha256": "dc720e438eb0fc3cd34636c4cae281d20378f700ee386a92e1ef26c3241bfdd3",
+      "created_at": "2026-07-17T10:30:37.626622+00:00",
+      "path": "projects\\finance_agent\\method_card_versions\\arxiv_2209_02407\\dc720e438eb0fc3cd34636c4cae281d20378f700ee386a92e1ef26c3241bfdd3.json",
+      "parent_version_sha256": "",
+      "strict_evidence_ready": true
+    }
+  ]
+}

@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from .benchmark import BenchmarkTask, run_common_benchmark
+from .benchmark_registry import BenchmarkRegistry
 from .data import load_yahoo_chart_supervised_dataset
 from .frontend_view_model import load_method_cards
 from .experiment_memory import ExperimentMemoryRecord, ExperimentMemoryStore
@@ -146,10 +147,32 @@ def run_multi_benchmark_suite(project_dir: str | Path) -> dict[str, Any]:
         card.paper_id: card
         for card in load_method_cards(project_dir / "method_cards_local_llm")
     }
-    tasks = build_benchmark_tasks(project_dir)
+    registry_root = project_dir / "benchmark_registry"
+    registrations = BenchmarkRegistry(registry_root).list() if registry_root.exists() else []
+    tasks = [registration.task for registration in registrations] or build_benchmark_tasks(project_dir)
+    registration_by_task = {
+        registration.task.task_id: registration for registration in registrations
+    }
     memory = ExperimentMemoryStore(project_dir / "experiment_memory" / "records.json")
     results = []
     for task in tasks:
+        registration = registration_by_task.get(task.task_id)
+        registry_audit = registration.audit(project_dir) if registration else None
+        registered_methods = (
+            [
+                (method.method_id, method.model_family)
+                for method in registration.methods
+                if method.method_id
+                in {row["method_id"] for row in registry_audit["compatible_methods"]}
+            ]
+            if registration and registry_audit
+            else DEFAULT_METHODS
+        )
+        if registry_audit and not registry_audit["passed"]:
+            raise ValueError(
+                f"Benchmark Registry audit failed for {task.task_id}: "
+                + "; ".join(registry_audit["blockers"])
+            )
         prior = memory.ranked_priors(
             task_fingerprint=task.fingerprint,
             run_mode="common_benchmark",
@@ -158,11 +181,12 @@ def run_multi_benchmark_suite(project_dir: str | Path) -> dict[str, Any]:
             experiment_type=task.task_type,
             data_domain=_data_domain(task.entity_id),
             protocol_fingerprint=_protocol_fingerprint(task),
-            method_ids=[method_id for method_id, _ in DEFAULT_METHODS],
+            method_ids=[method_id for method_id, _ in registered_methods],
         )
-        model_by_method = dict(DEFAULT_METHODS)
+        model_by_method = dict(registered_methods)
         ordered_methods = [(row["method_id"], model_by_method[row["method_id"]]) for row in prior]
         result = run_common_benchmark(task, ordered_methods)
+        result["benchmark_registry_audit"] = registry_audit
         result["experiment_memory_prior"] = prior
         for report in result["reports"]:
             report["paper_vs_run_delta"] = benchmark_delta_audit(
@@ -192,7 +216,12 @@ def run_multi_benchmark_suite(project_dir: str | Path) -> dict[str, Any]:
     payload = {
         "schema_version": "multi_benchmark_suite_v1",
         "task_count": len(results),
-        "method_count_per_task": len(DEFAULT_METHODS),
+        "method_count_per_task": (
+            min(len(registration.methods) for registration in registrations)
+            if registrations
+            else len(DEFAULT_METHODS)
+        ),
+        "registry_task_count": len(registrations),
         "comparison_count": sum(len(result["reports"]) for result in results),
         "all_comparisons_valid": all(
             result["comparison_integrity"]["comparison_valid"] for result in results

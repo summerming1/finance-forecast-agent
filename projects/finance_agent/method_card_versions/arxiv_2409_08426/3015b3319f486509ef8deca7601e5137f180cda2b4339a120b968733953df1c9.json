@@ -1,0 +1,160 @@
+{
+  "paper_id": "arxiv_2409_08426",
+  "method_id": "arxiv_2409_08426_method",
+  "title": "A DEEP REINFORCEMENT LEARNING FRAMEWORK FOR FINANCIAL PORTFOLIO MANAGEMENT",
+  "experiment_type": "forecast_only",
+  "claims": [
+    {
+      "claim_id": "arxiv_2409_08426_primary",
+      "description": "Primary reported result for A DEEP REINFORCEMENT LEARNING FRAMEWORK FOR FINANCIAL PORTFOLIO MANAGEMENT",
+      "dataset_id": "unknown",
+      "market": "cryptocurrency, stocks",
+      "asset_class": "Financial Portfolio Management",
+      "frequency": "unknown",
+      "horizon": "unknown",
+      "target": "fully exploiting and explicit reward function",
+      "model_family": "lstm_regressor",
+      "metrics": [
+        "mae",
+        "mse",
+        "rmse",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "reported_values": {},
+      "evidence_ids": [
+        "evidence_001"
+      ],
+      "source_conflicts": []
+    }
+  ],
+  "evidence_graph": [
+    {
+      "evidence_id": "evidence_001",
+      "source_type": "paper",
+      "source_id": "arxiv_2409_08426",
+      "quote": "",
+      "quote_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    }
+  ],
+  "base_method_card": {
+    "method_id": "arxiv_2409_08426_method",
+    "paper_id": "arxiv_2409_08426",
+    "title": "A DEEP REINFORCEMENT LEARNING FRAMEWORK FOR FINANCIAL PORTFOLIO MANAGEMENT",
+    "venue_or_source": "arXiv:2409.08426v1 [q-fin.PM] 3 Sep 2024",
+    "paper_url": "unknown",
+    "task_type": "Financial Portfolio Management",
+    "target_asset": "cryptocurrency, stocks",
+    "asset_universe": [
+      "cryptocurrency market, equity market"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "fully exploiting and explicit reward function",
+    "data_requirements": [
+      "stock market data, dataset different from the original paper"
+    ],
+    "feature_groups": [
+      "return_momentum_features"
+    ],
+    "model_families": [
+      "lstm_regressor"
+    ],
+    "training_protocol": "Ensemble of Identical Independent Evaluators (EIIE) topology, Portfolio-Vector Memory (PVM), Online Stochastic Batch Learning (OSBL) scheme",
+    "evaluation_protocol": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {
+      "raw": "cryptocurrency market experiment achieves superior returns consistent with original paper; does not perform as well in the stock market"
+    },
+    "strict_requirements": [
+      "financial-model-free reinforcement learning framework"
+    ],
+    "unknowns": [
+      "frequency",
+      "horizon",
+      "feature_groups",
+      "cost_assumptions",
+      "paper_url",
+      "model_families conflict with title/protocol references: expected one of rl_portfolio_policy"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2409_08426",
+        "section": "unknown",
+        "quote": "",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "system",
+      "raw_paper_id": "arxiv_2409.08426",
+      "document_text_sha": "cc13523dd035c43c",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2409.08426.pdf",
+      "migrated_from_schema_version": "method_card_v1",
+      "quality_report": {
+        "method_id": "arxiv_2409_08426_method",
+        "paper_id": "arxiv_2409_08426",
+        "quality_score": 0.47,
+        "approval_required": true,
+        "critical_missing_fields": [
+          "frequency",
+          "horizon"
+        ],
+        "type_errors": [],
+        "semantic_conflicts": [
+          "model_families conflict with title/protocol references: expected one of rl_portfolio_policy"
+        ],
+        "unsupported_models": [],
+        "warnings": [
+          "evaluation protocol could not be mapped to a supported protocol type",
+          "frequency is unknown",
+          "horizon is unknown",
+          "1/1 evidence spans have no source section"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "unknown",
+      "evaluation_protocol_description": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "unknown",
+    "evaluation_protocol_description": "comparing to a number of recently reviewed or published portfolio-selection strategies; two experiments in cryptocurrency and stock markets",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "schema_version": "method_card_v2"
+  },
+  "source_conflicts": [],
+  "parent_version_sha256": "",
+  "created_at": "2026-07-17T10:30:37.640007+00:00",
+  "schema_version": "method_card_v3",
+  "validation_errors": [
+    "Claim arxiv_2409_08426_primary has no numeric reported values"
+  ],
+  "strict_evidence_ready": false,
+  "version_sha256": "3015b3319f486509ef8deca7601e5137f180cda2b4339a120b968733953df1c9"
+}

@@ -1,0 +1,120 @@
+{
+  "paper_id": "arxiv_2012_07436",
+  "claim_id": "arxiv_2012_07436_ettm1_native",
+  "title": "Informer: Beyond Efficient Transformer for Long Sequence Time-Series Forecasting",
+  "paper_url": "https://ojs.aaai.org/index.php/AAAI/article/view/17325",
+  "claim_locator": "AAAI 2021 paper, Table 2, multivariate ETTm1, horizon 96",
+  "model_name": "Informer",
+  "experiment_type": "forecast_only",
+  "dataset_id": "ettm1_official_69680x7",
+  "dataset_path": "data\\external\\ett\\ETTm1.csv",
+  "dataset_sha256": "6ce1759b1a18e3328421d5d75fadcb316c449fcd7cec32820c8dafda71986c9e",
+  "source_repository": "https://github.com/zhouhaoyi/Informer2020",
+  "source_revision": "29f2a739226a509202a092b464163da81fa74960",
+  "source_archive_path": "sources\\ltsf\\informer.zip",
+  "source_archive_sha256": "0d6d03d89e8ebc549dd488163eb2b4365a7df789bfc531eec4240655febaf0e2",
+  "source_root": "sources\\ltsf\\informer\\Informer2020-29f2a739226a509202a092b464163da81fa74960",
+  "source_entrypoint": "main_informer.py",
+  "source_entrypoint_sha256": "b35cf6c96a5c2b57600995a14865ddc0124b9c89b8e3f5184fa3c3e1a38e6736",
+  "source_license": "Apache-2.0",
+  "command": [
+    "{python}",
+    "-u",
+    "{source_root}/main_informer.py",
+    "--model",
+    "informer",
+    "--data",
+    "ETTm1",
+    "--root_path",
+    "{dataset_dir}",
+    "--data_path",
+    "ETTm1.csv",
+    "--features",
+    "M",
+    "--freq",
+    "t",
+    "--seq_len",
+    "384",
+    "--label_len",
+    "384",
+    "--pred_len",
+    "96",
+    "--e_layers",
+    "2",
+    "--d_layers",
+    "1",
+    "--attn",
+    "prob",
+    "--des",
+    "native",
+    "--itr",
+    "5",
+    "--num_workers",
+    "0",
+    "--checkpoints",
+    "{runtime_root}/checkpoints"
+  ],
+  "metrics": {
+    "mse": {
+      "expected": 0.194,
+      "absolute_tolerance": 0.04,
+      "relative_tolerance": 0.0,
+      "objective": "match"
+    },
+    "mae": {
+      "expected": 0.372,
+      "absolute_tolerance": 0.04,
+      "relative_tolerance": 0.0,
+      "objective": "match"
+    }
+  },
+  "metric_patterns": {
+    "mse": "mse:([0-9.eE+-]+)",
+    "mae": "mae:([0-9.eE+-]+)"
+  },
+  "protocol": {
+    "dataset": "ETTm1",
+    "features": "M",
+    "split": "official chronological loader",
+    "dataset_revision": "zhouhaoyi/ETDataset@1d16c8f4f943005d613b5bc962e9eeb06058cf07",
+    "claim_locator": "AAAI 2021 paper, Table 2, multivariate ETTm1, horizon 96",
+    "protocol_note": "The frozen command is the pinned official ETTm1 multivariate horizon-96 script; the paper defines a 12/4/4-month split.",
+    "metric_observation_contract": 5,
+    "paper_repetitions": 5,
+    "randomness_protocol": "Repository-native stochasticity; any explicit seeds are frozen in the resolved command."
+  },
+  "metric_artifact_glob": "",
+  "metric_artifact_indices": {},
+  "repetitions": 1,
+  "expected_metric_observations": 5,
+  "metric_observation_policy": "all",
+  "timeout_seconds": 43200,
+  "environment": {
+    "PYTHONHASHSEED": "0"
+  },
+  "compatibility_patches": [
+    {
+      "path": "utils/tools.py",
+      "classification": "semantic_noop",
+      "old": "np.Inf",
+      "new": "np.inf",
+      "rationale": "NumPy 2 removed the uppercase alias; both names denote positive infinity."
+    }
+  ],
+  "runtime_files": [],
+  "run_parameters": [],
+  "unresolved_assumptions": [],
+  "method_card_path": "method_cards\\arxiv_2012_07436.json",
+  "reproduction_plan_path": "reproduction_plans\\arxiv_2012_07436.json",
+  "dataset_domain": "energy",
+  "plugin_bindings": {
+    "source_resolver": "pinned_archive_v1",
+    "dataset_materializer": "frozen_file_v1",
+    "execution_backend": "local_subprocess_v1",
+    "metric_extractor": "regex_log_v1",
+    "compatibility_recipe": "semantic_noop_text_patch_v1",
+    "acceptance_policy": "paper_metric_tolerance_v1"
+  },
+  "catalog_order": 13,
+  "schema_version": "native_claim_spec_v1"
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "method_card_version_index_v1",
+  "paper_id": "arxiv_2004_10178",
+  "versions": [
+    {
+      "version_sha256": "a6a5250e52d8cc5b63a25fa27e9f4c5ed298406c8c758e9e104e93d47038885b",
+      "created_at": "2026-07-17T10:43:58.432588+00:00",
+      "path": "projects\\finance_agent\\method_card_versions\\arxiv_2004_10178\\a6a5250e52d8cc5b63a25fa27e9f4c5ed298406c8c758e9e104e93d47038885b.json",
+      "parent_version_sha256": "",
+      "strict_evidence_ready": true
+    }
+  ]
+}

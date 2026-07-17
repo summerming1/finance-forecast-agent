@@ -209,6 +209,10 @@ def classify_experiment_type(card: MethodCard) -> ExperimentType:
         return "portfolio_rl"
     if has_any("event study"):
         return "event_study"
+    if has_any("trading strategy", "backtest", "back-test", "position") and not has_any(
+        "asset pricing", "portfolio sort"
+    ):
+        return "signal_backtest"
     if has_any("cross-sectional", "cross sectional", "asset pricing", "portfolio sort"):
         return "cross_sectional"
     if has_any("trading strategy", "backtest", "back-test", "position", "portfolio return"):

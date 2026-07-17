@@ -1,0 +1,414 @@
+{
+  "paper_id": "arxiv_2310_16855",
+  "method_id": "method_arxiv_2310_16855_jpx_direction",
+  "title": "Predicting Directional Bias in the Japanese Stock Market with Machine Learning",
+  "experiment_type": "forecast_only",
+  "claims": [
+    {
+      "claim_id": "arxiv_2310_16855_primary",
+      "description": "Primary reported result for Predicting Directional Bias in the Japanese Stock Market with Machine Learning",
+      "dataset_id": "unknown",
+      "market": "Sony daily direction",
+      "asset_class": "daily_stock_direction_classification",
+      "frequency": "daily trading days",
+      "horizon": "next trading day direction",
+      "target": "1 when next close exceeds current close, otherwise 0",
+      "model_family": "random_forest_regressor",
+      "metrics": [
+        "random_forest_accuracy",
+        "random_forest_f1"
+      ],
+      "reported_values": {
+        "random_forest_accuracy": 0.63,
+        "random_forest_f1": 0.74
+      },
+      "evidence_ids": [
+        "evidence_001",
+        "evidence_002",
+        "evidence_003",
+        "evidence_004",
+        "evidence_005",
+        "evidence_006",
+        "evidence_007",
+        "evidence_008",
+        "evidence_009",
+        "evidence_010",
+        "evidence_011"
+      ],
+      "source_conflicts": []
+    }
+  ],
+  "evidence_graph": [
+    {
+      "evidence_id": "evidence_001",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "The assessment filters the JPX dataset to Sony price data.",
+      "quote_sha256": "32a6bc98b013588ab1832460ef555f9836d6d47e003373a3a7e6b075eae412fb",
+      "section": "target_asset",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_002",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "The study uses the JPX Tokyo Stock Exchange Prediction dataset.",
+      "quote_sha256": "9645af2c150606ebb4fe621d39c9a7ac620176fe7f8da0ef0a7699fd111a4538",
+      "section": "asset_universe",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_003",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "The target compares today's close with the following trading day.",
+      "quote_sha256": "c4c79b502192b398e31dd7bdcde840e99a94cf9917ff0c0eecaaca3d6dfff5ba",
+      "section": "frequency",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_004",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "The Next column contains the following trading day's close.",
+      "quote_sha256": "f8ad813f8774d61602752958f0139d8cbe7de30757ea40b50936b3182781f8fc",
+      "section": "horizon",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_005",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "Target is one for an increase and zero for a decrease.",
+      "quote_sha256": "76756319f148aef5015f34b5cd6a8b955e93115e47ea4d776a73df477b4b1e05",
+      "section": "label_definition",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_006",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "Inputs include Date, Open, High, Low, Close and Volume.",
+      "quote_sha256": "2f60e6063ac08e000f88b9bf9bb9d389b98d72ed4dc8a6886c94fd31501a1eec",
+      "section": "data_requirements",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_007",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "Open, High, Low, Close and Volume are used as model features.",
+      "quote_sha256": "6e6466c5d4fac66c7cf7c8fc43d84e60e68435f2aa0caeb7ccb20db7c0fa6e04",
+      "section": "feature_groups",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_008",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "Logistic regression, decision tree and random forest are compared.",
+      "quote_sha256": "76081bbd7d25111a869778dbc96acec786fed3e40f82ca024ca82181a362e2f9",
+      "section": "model_families",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_009",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "Random forest uses 250 trees, depth 100 and bootstrap sampling.",
+      "quote_sha256": "f382f471596211570a6aedbd34b930a95ecc8b25bacbebd5c6020d745ca0d842",
+      "section": "training_protocol",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_010",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "Validation accuracy compares predictions with true target values.",
+      "quote_sha256": "f4c5a9ef7ab04d433aa3a6641516fc71e0cffbb5044e94c9f9eead4be0a65949",
+      "section": "evaluation_protocol",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    },
+    {
+      "evidence_id": "evidence_011",
+      "source_type": "paper",
+      "source_id": "arxiv_2310.16855",
+      "quote": "Random forest reports accuracy 0.63 and F1 score 0.74.",
+      "quote_sha256": "c25c4812b498b0ecdadcf91c97eef98fe60c592c6e8d7f23a1186af47440739a",
+      "section": "metrics",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    }
+  ],
+  "base_method_card": {
+    "method_id": "method_arxiv_2310_16855_jpx_direction",
+    "paper_id": "arxiv_2310_16855",
+    "title": "Predicting Directional Bias in the Japanese Stock Market with Machine Learning",
+    "venue_or_source": "arXiv",
+    "paper_url": "https://arxiv.org/abs/2310.16855",
+    "task_type": "daily_stock_direction_classification",
+    "target_asset": "Sony daily direction",
+    "asset_universe": [
+      "Sony",
+      "JPX Tokyo Stock Exchange Prediction dataset"
+    ],
+    "frequency": "daily trading days",
+    "horizon": "next trading day direction",
+    "label_definition": "1 when next close exceeds current close, otherwise 0",
+    "data_requirements": [
+      "JPX Tokyo Stock Exchange Prediction dataset",
+      "Sony rows",
+      "Date Open High Low Close Volume"
+    ],
+    "feature_groups": [
+      "price_lag_features",
+      "liquidity_proxy_features"
+    ],
+    "model_families": [
+      "random_forest_regressor"
+    ],
+    "training_protocol": "random forest classifier with 250 trees, five maximum features, depth 100, minimum split 100, bootstrap sampling and out-of-bag diagnostics",
+    "evaluation_protocol": "paper validation split; exact chronological boundary is not reported clearly",
+    "metrics": [
+      "f1",
+      "directional_accuracy"
+    ],
+    "cost_assumptions": "not applicable: direction classification without trading backtest",
+    "reported_results": {
+      "random_forest_accuracy": 0.63,
+      "random_forest_f1": 0.74
+    },
+    "strict_requirements": [
+      "same JPX competition snapshot",
+      "same Sony filter",
+      "same target construction",
+      "same classifier hyperparameters",
+      "recover exact split boundary"
+    ],
+    "unknowns": [
+      "exact train-validation date boundary",
+      "class weighting",
+      "software version"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "target_asset",
+        "quote": "The assessment filters the JPX dataset to Sony price data.",
+        "summary": "Defines the target asset.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "asset_universe",
+        "quote": "The study uses the JPX Tokyo Stock Exchange Prediction dataset.",
+        "summary": "Defines the source universe.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "frequency",
+        "quote": "The target compares today's close with the following trading day.",
+        "summary": "Defines daily frequency.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "horizon",
+        "quote": "The Next column contains the following trading day's close.",
+        "summary": "Defines the forecast horizon.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "label_definition",
+        "quote": "Target is one for an increase and zero for a decrease.",
+        "summary": "Defines binary direction.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "data_requirements",
+        "quote": "Inputs include Date, Open, High, Low, Close and Volume.",
+        "summary": "Defines required columns.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "feature_groups",
+        "quote": "Open, High, Low, Close and Volume are used as model features.",
+        "summary": "Defines price and liquidity features.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "model_families",
+        "quote": "Logistic regression, decision tree and random forest are compared.",
+        "summary": "Defines model families; this card selects RF.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "training_protocol",
+        "quote": "Random forest uses 250 trees, depth 100 and bootstrap sampling.",
+        "summary": "Defines training protocol.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "evaluation_protocol",
+        "quote": "Validation accuracy compares predictions with true target values.",
+        "summary": "Split boundary remains unresolved.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      },
+      {
+        "source_id": "arxiv_2310.16855",
+        "section": "metrics",
+        "quote": "Random forest reports accuracy 0.63 and F1 score 0.74.",
+        "summary": "Defines reported results.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "curated_from_primary_paper",
+      "live_llm_api_used": false,
+      "source_path": "projects/finance_agent/papers/local/arxiv_2310.16855.pdf",
+      "experiment_type": "forecast_only",
+      "preprocessing_protocol": "construct Next and binary Target from Close; exact missing-value and scaling protocol not reported",
+      "hyperparameters": {
+        "n_estimators": 250,
+        "max_features": 5,
+        "max_depth": 100,
+        "min_samples_split": 100,
+        "bootstrap": true
+      },
+      "quality_report": {
+        "method_id": "method_arxiv_2310_16855_jpx_direction",
+        "paper_id": "arxiv_2310_16855",
+        "quality_score": 1.0,
+        "approval_required": true,
+        "critical_missing_fields": [],
+        "type_errors": [],
+        "semantic_conflicts": [],
+        "unsupported_models": [],
+        "warnings": [],
+        "recommended_action": "human_review_recommended"
+      },
+      "evaluation_protocol_type": "out_of_sample",
+      "evaluation_protocol_description": "paper validation split; exact chronological boundary is not reported clearly",
+      "frequency_type": "daily",
+      "horizon_type": "next_return"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "out_of_sample",
+    "evaluation_protocol_description": "paper validation split; exact chronological boundary is not reported clearly",
+    "frequency_type": "daily",
+    "horizon_type": "next_return",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "construct Next and binary Target from Close; exact missing-value and scaling protocol not reported",
+    "hyperparameters": {
+      "n_estimators": 250,
+      "max_features": 5,
+      "max_depth": 100,
+      "min_samples_split": 100,
+      "bootstrap": true
+    },
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "schema_version": "method_card_v2"
+  },
+  "source_conflicts": [],
+  "parent_version_sha256": "",
+  "created_at": "2026-07-17T10:30:37.635008+00:00",
+  "schema_version": "method_card_v3",
+  "validation_errors": [],
+  "strict_evidence_ready": true,
+  "version_sha256": "de1daebff58b452ddac18a0f30553658c14c544c9c1e6b0f71bf83f8ef0fc94a"
+}

@@ -1,0 +1,186 @@
+{
+  "schema_version": "benchmark_registration_v1",
+  "task": {
+    "task_id": "spy_daily_direction_12lag_v1",
+    "dataset_id": "yahoo_spy_daily_2010_20260714",
+    "dataset_path": "projects\\finance_agent\\data\\benchmarks\\yahoo_spy_daily_2010_20260714.csv",
+    "entity_id": "SPY",
+    "timestamp_column": "timestamp",
+    "feature_columns": [
+      "sequence_lag_12",
+      "sequence_lag_11",
+      "sequence_lag_10",
+      "sequence_lag_9",
+      "sequence_lag_8",
+      "sequence_lag_7",
+      "sequence_lag_6",
+      "sequence_lag_5",
+      "sequence_lag_4",
+      "sequence_lag_3",
+      "sequence_lag_2",
+      "sequence_lag_1"
+    ],
+    "label_column": "label",
+    "frequency": "daily",
+    "horizon": "next_return",
+    "label_definition": "next_return",
+    "split_method": "purged_walk_forward",
+    "primary_metric": "directional_accuracy",
+    "metrics": [
+      "mae",
+      "rmse",
+      "r2",
+      "directional_accuracy"
+    ],
+    "task_type": "direction_classification",
+    "comparison_track": "model_only",
+    "cost_model": {},
+    "seed": 42,
+    "schema_version": "benchmark_task_v1",
+    "task_fingerprint": "c9e7e2ac44d78efd"
+  },
+  "domain": {
+    "market": "US equities",
+    "asset_class": "equity index ETF",
+    "frequency": "daily",
+    "horizon": "next_return",
+    "estimand": "next_return",
+    "information_set": "twelve lagged period returns available through t",
+    "execution_mechanism": "next period close-to-close",
+    "cost_basis": "not_applicable"
+  },
+  "dataset_contract_path": "dataset_contracts\\yahoo_spy_daily_2010_20260714.json",
+  "minimum_methods": 3,
+  "methods": [
+    {
+      "method_id": "arxiv_2108_10826",
+      "model_family": "gradient_boosting_regressor",
+      "paper_id": "arxiv_2108_10826",
+      "domain": {
+        "market": "US equities",
+        "asset_class": "equity index ETF",
+        "frequency": "daily",
+        "horizon": "next_return",
+        "estimand": "next_return",
+        "information_set": "twelve lagged period returns available through t",
+        "execution_mechanism": "next period close-to-close",
+        "cost_basis": "not_applicable"
+      },
+      "adapter_id": "method_adapter_v1",
+      "removed_paper_components": [
+        "paper original data",
+        "paper feature engineering",
+        "paper split"
+      ],
+      "added_benchmark_components": [
+        "frozen task data",
+        "shared lag features",
+        "shared purged folds"
+      ]
+    },
+    {
+      "method_id": "arxiv_2209_02407",
+      "model_family": "lstm_regressor",
+      "paper_id": "arxiv_2209_02407",
+      "domain": {
+        "market": "US equities",
+        "asset_class": "equity index ETF",
+        "frequency": "daily",
+        "horizon": "next_return",
+        "estimand": "next_return",
+        "information_set": "twelve lagged period returns available through t",
+        "execution_mechanism": "next period close-to-close",
+        "cost_basis": "not_applicable"
+      },
+      "adapter_id": "method_adapter_v1",
+      "removed_paper_components": [
+        "paper original data",
+        "paper feature engineering",
+        "paper split"
+      ],
+      "added_benchmark_components": [
+        "frozen task data",
+        "shared lag features",
+        "shared purged folds"
+      ]
+    },
+    {
+      "method_id": "arxiv_2306_03620",
+      "model_family": "random_forest_regressor",
+      "paper_id": "arxiv_2306_03620",
+      "domain": {
+        "market": "US equities",
+        "asset_class": "equity index ETF",
+        "frequency": "daily",
+        "horizon": "next_return",
+        "estimand": "next_return",
+        "information_set": "twelve lagged period returns available through t",
+        "execution_mechanism": "next period close-to-close",
+        "cost_basis": "not_applicable"
+      },
+      "adapter_id": "method_adapter_v1",
+      "removed_paper_components": [
+        "paper original data",
+        "paper feature engineering",
+        "paper split"
+      ],
+      "added_benchmark_components": [
+        "frozen task data",
+        "shared lag features",
+        "shared purged folds"
+      ]
+    },
+    {
+      "method_id": "arxiv_2310_16855",
+      "model_family": "random_forest_regressor",
+      "paper_id": "arxiv_2310_16855",
+      "domain": {
+        "market": "US equities",
+        "asset_class": "equity index ETF",
+        "frequency": "daily",
+        "horizon": "next_return",
+        "estimand": "next_return",
+        "information_set": "twelve lagged period returns available through t",
+        "execution_mechanism": "next period close-to-close",
+        "cost_basis": "not_applicable"
+      },
+      "adapter_id": "method_adapter_v1",
+      "removed_paper_components": [
+        "paper original data",
+        "paper feature engineering",
+        "paper split"
+      ],
+      "added_benchmark_components": [
+        "frozen task data",
+        "shared lag features",
+        "shared purged folds"
+      ]
+    },
+    {
+      "method_id": "arxiv_2405_03151",
+      "model_family": "ga_lstm_regressor",
+      "paper_id": "arxiv_2405_03151",
+      "domain": {
+        "market": "US equities",
+        "asset_class": "equity index ETF",
+        "frequency": "daily",
+        "horizon": "next_return",
+        "estimand": "next_return",
+        "information_set": "twelve lagged period returns available through t",
+        "execution_mechanism": "next period close-to-close",
+        "cost_basis": "not_applicable"
+      },
+      "adapter_id": "method_adapter_v1",
+      "removed_paper_components": [
+        "paper original data",
+        "paper feature engineering",
+        "paper split"
+      ],
+      "added_benchmark_components": [
+        "frozen task data",
+        "shared lag features",
+        "shared purged folds"
+      ]
+    }
+  ]
+}

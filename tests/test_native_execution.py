@@ -111,6 +111,44 @@ def test_official_repo_adapter_runs_repetitions_and_checks_predeclared_metrics(t
     assert discover_native_reports(tmp_path)[0]["claim_id"] == "paper_claim"
 
 
+def test_v2_native_claim_requires_matching_source_and_dataset_contracts(tmp_path: Path) -> None:
+    spec = _spec(tmp_path, repetitions=1)
+    payload = spec.to_dict()
+    payload["schema_version"] = "native_claim_spec_v2"
+    strict_spec = NativeClaimSpec.from_dict(payload)
+
+    missing_contracts = audit_native_claim(tmp_path, strict_spec)
+    assert missing_contracts["passed"] is False
+    assert "v2 native claim requires a SourceApproval" in missing_contracts["blockers"]
+    assert "v2 native claim requires a DatasetContract" in missing_contracts["blockers"]
+
+    source_approval = tmp_path / "source_approval.json"
+    dataset_contract = tmp_path / "dataset_contract.json"
+    source_approval.write_text(
+        json.dumps({"strict_source_ready": True, "pinned_commit": spec.source_revision}),
+        encoding="utf-8",
+    )
+    dataset_contract.write_text(
+        json.dumps({"strict_ready": True, "sha256": spec.dataset_sha256}),
+        encoding="utf-8",
+    )
+    payload["source_approval_path"] = str(source_approval)
+    payload["dataset_contract_path"] = str(dataset_contract)
+
+    matching_contracts = audit_native_claim(tmp_path, NativeClaimSpec.from_dict(payload))
+    assert matching_contracts["passed"] is True
+    assert matching_contracts["source_approval"]["pinned_commit"] == spec.source_revision
+    assert matching_contracts["dataset_contract"]["sha256"] == spec.dataset_sha256
+
+    dataset_contract.write_text(
+        json.dumps({"strict_ready": True, "sha256": "wrong"}),
+        encoding="utf-8",
+    )
+    mismatched_contract = audit_native_claim(tmp_path, NativeClaimSpec.from_dict(payload))
+    assert mismatched_contract["passed"] is False
+    assert "DatasetContract SHA256 does not match the native claim" in mismatched_contract["blockers"]
+
+
 def test_official_repo_adapter_binds_predeclared_parameters_per_run(tmp_path: Path) -> None:
     spec = _spec(tmp_path)
     payload = spec.to_dict()

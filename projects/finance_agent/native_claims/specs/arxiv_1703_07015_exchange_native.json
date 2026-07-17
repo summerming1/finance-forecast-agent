@@ -1,0 +1,130 @@
+{
+  "paper_id": "arxiv_1703_07015",
+  "claim_id": "arxiv_1703_07015_exchange_native",
+  "title": "Modeling Long- and Short-Term Temporal Patterns with Deep Neural Networks",
+  "paper_url": "https://arxiv.org/abs/1703.07015",
+  "claim_locator": "SIGIR 2018 paper, Table 2, Exchange-Rate, horizon 12",
+  "model_name": "LSTNet",
+  "experiment_type": "forecast_only",
+  "dataset_id": "exchange_rate_official_7588x8",
+  "dataset_path": "data\\external\\exchange_rate\\exchange_rate.txt",
+  "dataset_sha256": "0127465b51e3cd3c360f8eb2be30cfd294689a2a55903eb8245aafc396626c7f",
+  "source_repository": "https://github.com/laiguokun/LSTNet",
+  "source_revision": "093c4dced7b7f7405be0620d65bb288b6d7ab4f0",
+  "source_archive_path": "sources\\ltsf\\lstnet.zip",
+  "source_archive_sha256": "30201ac5f11503361083779fa0e223e6f35dfde21c3d054e4d77729cece23a83",
+  "source_root": "sources\\ltsf\\lstnet\\LSTNet-093c4dced7b7f7405be0620d65bb288b6d7ab4f0",
+  "source_entrypoint": "main.py",
+  "source_entrypoint_sha256": "d813e49cb2590317f62554c47ec5c1cc4200ba0bb17b707fa21d545749fef746",
+  "source_license": "MIT",
+  "command": [
+    "{python}",
+    "-u",
+    "{source_root}/main.py",
+    "--data",
+    "{dataset_path}",
+    "--save",
+    "{runtime_root}/lstnet.pt",
+    "--hidCNN",
+    "50",
+    "--hidRNN",
+    "50",
+    "--L1Loss",
+    "False",
+    "--output_fun",
+    "None",
+    "--horizon",
+    "12"
+  ],
+  "metrics": {
+    "rse": {
+      "expected": 0.0356,
+      "absolute_tolerance": 0.01,
+      "relative_tolerance": 0.0,
+      "objective": "match"
+    },
+    "corr": {
+      "expected": 0.9511,
+      "absolute_tolerance": 0.02,
+      "relative_tolerance": 0.0,
+      "objective": "maximize"
+    }
+  },
+  "metric_patterns": {
+    "rse": "test rse\\s+([0-9.]+)",
+    "corr": "test corr\\s+([0-9.]+)"
+  },
+  "protocol": {
+    "dataset": "Exchange-Rate",
+    "features": "M",
+    "split": "official chronological loader",
+    "dataset_revision": "frozen local Exchange-Rate bytes",
+    "claim_locator": "SIGIR 2018 paper, Table 2, Exchange-Rate, horizon 12",
+    "protocol_note": "Pinned paper and official command agree on the selected claim.",
+    "metric_observation_contract": 1,
+    "paper_repetitions": 1,
+    "randomness_protocol": "Repository-native stochasticity; any explicit seeds are frozen in the resolved command."
+  },
+  "metric_artifact_glob": "",
+  "metric_artifact_indices": {},
+  "repetitions": 1,
+  "expected_metric_observations": 1,
+  "metric_observation_policy": "last",
+  "timeout_seconds": 14400,
+  "environment": {
+    "PYTHONHASHSEED": "0"
+  },
+  "compatibility_patches": [
+    {
+      "path": "models/LSTNet.py",
+      "classification": "semantic_noop",
+      "old": "self.pt = (self.P - self.Ck)/self.skip",
+      "new": "self.pt = (self.P - self.Ck)//self.skip",
+      "rationale": "Restore Python 2 integer-division semantics required by the pinned implementation."
+    },
+    {
+      "path": "main.py",
+      "classification": "semantic_noop",
+      "old": "evaluateL2(output * scale, Y * scale).data[0]",
+      "new": "evaluateL2(output * scale, Y * scale).item()",
+      "rationale": "Modern scalar tensor access."
+    },
+    {
+      "path": "main.py",
+      "classification": "semantic_noop",
+      "old": "evaluateL1(output * scale, Y * scale).data[0]",
+      "new": "evaluateL1(output * scale, Y * scale).item()",
+      "rationale": "Modern scalar tensor access."
+    },
+    {
+      "path": "main.py",
+      "classification": "semantic_noop",
+      "old": "loss.data[0]",
+      "new": "loss.item()",
+      "rationale": "Modern scalar tensor access."
+    },
+    {
+      "path": "main.py",
+      "classification": "semantic_noop",
+      "old": "torch.load(f)",
+      "new": "torch.load(f, weights_only=False)",
+      "rationale": "Preserve the historical full-model deserialization behavior."
+    }
+  ],
+  "runtime_files": [],
+  "run_parameters": [],
+  "unresolved_assumptions": [],
+  "method_card_path": "method_cards\\arxiv_1703_07015.json",
+  "reproduction_plan_path": "reproduction_plans\\arxiv_1703_07015.json",
+  "dataset_domain": "financial",
+  "plugin_bindings": {
+    "source_resolver": "pinned_archive_v1",
+    "dataset_materializer": "frozen_file_v1",
+    "execution_backend": "local_subprocess_v1",
+    "metric_extractor": "regex_log_v1",
+    "compatibility_recipe": "semantic_noop_text_patch_v1",
+    "acceptance_policy": "paper_metric_tolerance_v1"
+  },
+  "catalog_order": 8,
+  "schema_version": "native_claim_spec_v1"
+}

@@ -1,0 +1,161 @@
+{
+  "paper_id": "arxiv_2306_03620",
+  "method_id": "rf_lstm_stock_forecast",
+  "title": "Forecasting the Performance of US Stock Market Indices During COVID-19: RF vs LSTM",
+  "experiment_type": "forecast_only",
+  "claims": [
+    {
+      "claim_id": "arxiv_2306_03620_primary",
+      "description": "Primary reported result for Forecasting the Performance of US Stock Market Indices During COVID-19: RF vs LSTM",
+      "dataset_id": "unknown",
+      "market": "S&P 500",
+      "asset_class": "Forecasting",
+      "frequency": "unknown",
+      "horizon": "unknown",
+      "target": "index returns",
+      "model_family": "random_forest_regressor",
+      "metrics": [
+        "mae",
+        "mse",
+        "rmse",
+        "r2",
+        "directional_accuracy",
+        "net_return"
+      ],
+      "reported_values": {},
+      "evidence_ids": [
+        "evidence_001"
+      ],
+      "source_conflicts": []
+    }
+  ],
+  "evidence_graph": [
+    {
+      "evidence_id": "evidence_001",
+      "source_type": "paper",
+      "source_id": "arxiv_2306_03620",
+      "quote": "",
+      "quote_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "section": "unknown",
+      "page": null,
+      "table_id": "",
+      "table_row": "",
+      "repository_revision": "",
+      "repository_path": "",
+      "line_start": null,
+      "line_end": null
+    }
+  ],
+  "base_method_card": {
+    "method_id": "rf_lstm_stock_forecast",
+    "paper_id": "arxiv_2306_03620",
+    "title": "Forecasting the Performance of US Stock Market Indices During COVID-19: RF vs LSTM",
+    "venue_or_source": "arxiv",
+    "paper_url": "unknown",
+    "task_type": "Forecasting",
+    "target_asset": "S&P 500",
+    "asset_universe": [
+      "S&P 500",
+      "Russell 2000 (RUT)",
+      "US stock market indices"
+    ],
+    "frequency": "unknown",
+    "horizon": "unknown",
+    "label_definition": "index returns",
+    "data_requirements": [
+      "Data on historical prices after the big recession"
+    ],
+    "feature_groups": [
+      "price_lag_features"
+    ],
+    "model_families": [
+      "random_forest_regressor",
+      "lstm_regressor"
+    ],
+    "training_protocol": "cross-validation, hyperparameter optimizing, regularization (dropouts and weight decays), preprocessing",
+    "evaluation_protocol": "rolling window",
+    "metrics": [
+      "mae",
+      "mse",
+      "rmse",
+      "r2",
+      "directional_accuracy",
+      "net_return"
+    ],
+    "cost_assumptions": "unknown",
+    "reported_results": {
+      "raw": "unknown"
+    },
+    "strict_requirements": [
+      "data cleaning, normalization, hyperparameter optimizing, regularization"
+    ],
+    "unknowns": [
+      "frequency",
+      "horizon",
+      "paper_url",
+      "reported_results",
+      "cost_assumptions"
+    ],
+    "evidence_spans": [
+      {
+        "source_id": "arxiv_2306_03620",
+        "section": "unknown",
+        "quote": "",
+        "summary": "LLM-provided evidence span.",
+        "source_type": "paper",
+        "source_url": "",
+        "source_revision": ""
+      }
+    ],
+    "extraction_metadata": {
+      "extractor": "LLM",
+      "raw_paper_id": "arxiv_2306.03620",
+      "document_text_sha": "1524aaf9d549e2ad",
+      "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2306.03620.pdf",
+      "migrated_from_schema_version": "method_card_v1",
+      "quality_report": {
+        "method_id": "rf_lstm_stock_forecast",
+        "paper_id": "arxiv_2306_03620",
+        "quality_score": 0.65,
+        "approval_required": true,
+        "critical_missing_fields": [
+          "frequency",
+          "horizon"
+        ],
+        "type_errors": [],
+        "semantic_conflicts": [],
+        "unsupported_models": [],
+        "warnings": [
+          "frequency is unknown",
+          "horizon is unknown",
+          "1/1 evidence spans have no source section"
+        ],
+        "recommended_action": "human_review_required_fix_method_card_fields"
+      },
+      "evaluation_protocol_type": "rolling_origin",
+      "evaluation_protocol_description": "rolling window",
+      "frequency_type": "unknown",
+      "horizon_type": "unknown"
+    },
+    "approval_required": true,
+    "evaluation_protocol_type": "rolling_origin",
+    "evaluation_protocol_description": "rolling window",
+    "frequency_type": "unknown",
+    "horizon_type": "unknown",
+    "experiment_type": "forecast_only",
+    "preprocessing_protocol": "unknown",
+    "hyperparameters": {},
+    "required_start_date": "unknown",
+    "required_end_date": "unknown",
+    "schema_version": "method_card_v2"
+  },
+  "source_conflicts": [],
+  "parent_version_sha256": "",
+  "created_at": "2026-07-17T10:30:37.633007+00:00",
+  "schema_version": "method_card_v3",
+  "validation_errors": [
+    "Claim arxiv_2306_03620_primary has no numeric reported values"
+  ],
+  "strict_evidence_ready": false,
+  "version_sha256": "8fc01ce08bcbfe1948c3cbd6150a05b18fb7a8007974252e780a66ce1a791013"
+}

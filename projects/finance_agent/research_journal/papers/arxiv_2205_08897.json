@@ -1,0 +1,126 @@
+{
+  "paper_id": "arxiv_2205_08897",
+  "title": "FiLM: Frequency Improved Legendre Memory Model for Long-term Time Series Forecasting",
+  "scope": {
+    "market": "global_fx_benchmark",
+    "asset_class": "fx",
+    "frequency": "daily",
+    "task": "forecast_only",
+    "target": "multivariate_forecast",
+    "dataset_id": "exchange_rate_official_7588x8"
+  },
+  "status": "strict_verified",
+  "claim_ids": [
+    "arxiv_2205_08897_exchange_native"
+  ],
+  "attempts": [
+    {
+      "attempt_id": "arxiv_2205_08897_exchange_native:claim-curation",
+      "stage": "claim_curation",
+      "action": "Reconstruct the paper claim and official execution protocol",
+      "outcome": "passed",
+      "summary": "Historical reconstruction from the paper, pinned official repository, data manifest, MethodCard and ReproductionPlan.",
+      "artifacts": [
+        "method_cards\\arxiv_2205_08897.json",
+        "reproduction_plans\\arxiv_2205_08897.json",
+        "native_claims/catalog.json"
+      ],
+      "blockers": [],
+      "reusable_capability_ids": [
+        "native_claim_audit"
+      ],
+      "recorded_at": "2026-07-17T10:07:04.203630+00:00"
+    },
+    {
+      "attempt_id": "arxiv_2205_08897_exchange_native:source-data-audit",
+      "stage": "source_data_audit",
+      "action": "Verify frozen dataset, source archive, entrypoint and governance hashes",
+      "outcome": "passed",
+      "summary": "Native claim preflight audit reconstructed from the current frozen catalog.",
+      "artifacts": [
+        "data\\external\\exchange_rate\\exchange_rate.csv",
+        "sources\\ltsf\\film.zip",
+        "run.py"
+      ],
+      "blockers": [],
+      "reusable_capability_ids": [
+        "native_claim_audit"
+      ],
+      "recorded_at": "2026-07-17T10:07:04.203630+00:00"
+    },
+    {
+      "attempt_id": "arxiv_2205_08897_exchange_native:official-execution",
+      "stage": "official_execution",
+      "action": "Execute the pinned official protocol and evaluate the frozen paper claim",
+      "outcome": "passed",
+      "summary": "Official command completed=True; paper metric tolerance passed=True.",
+      "artifacts": [
+        "reports\\native_arxiv_2205_08897_exchange_native.json"
+      ],
+      "blockers": [],
+      "reusable_capability_ids": [
+        "official_repo_command_execution",
+        "native_metric_acceptance"
+      ],
+      "recorded_at": "2026-07-17T10:07:04.205043+00:00"
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "claim_locator",
+      "value": "NeurIPS 2022 paper, Table 1, Exchange, horizon 96",
+      "basis": "paper and primary-source curation"
+    },
+    {
+      "decision": "acceptance_policy",
+      "value": {
+        "mse": {
+          "expected": 0.086,
+          "absolute_tolerance": 0.02,
+          "relative_tolerance": 0.0,
+          "objective": "match"
+        },
+        "mae": {
+          "expected": 0.204,
+          "absolute_tolerance": 0.02,
+          "relative_tolerance": 0.0,
+          "objective": "match"
+        }
+      },
+      "basis": "predeclared NativeClaimSpec"
+    },
+    {
+      "decision": "compatibility_patches",
+      "value": [
+        "utils/tools.py",
+        "exp/exp_main.py",
+        "run.py",
+        "run.py",
+        "run.py"
+      ],
+      "basis": "manually reviewed semantic_noop recipes"
+    }
+  ],
+  "linked_assets": {
+    "method_cards": [
+      "method_cards\\arxiv_2205_08897.json"
+    ],
+    "reproduction_plans": [
+      "reproduction_plans\\arxiv_2205_08897.json"
+    ],
+    "native_claims": [
+      "native_claims/catalog.json"
+    ],
+    "reports": [
+      "reports\\native_arxiv_2205_08897_exchange_native.json"
+    ]
+  },
+  "remaining_manual_steps": [
+    "Claim selection and paper/repository protocol reconciliation were historically curated by a developer.",
+    "Compatibility and tolerance decisions require human review before reuse on a new paper."
+  ],
+  "historical_reconstruction": true,
+  "started_at": "2026-07-17T10:07:04.205043+00:00",
+  "updated_at": "2026-07-17T10:07:04.205043+00:00",
+  "schema_version": "paper_exploration_record_v1"
+}

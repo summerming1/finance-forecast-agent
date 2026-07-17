@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
@@ -12,6 +13,7 @@ import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from .evaluation import CostModel, evaluate_sign_strategy
+from .lineage import LineageStore
 from .method_adapters import MethodAdapter, PredictionArtifact
 from .splitters import make_splits
 
@@ -314,6 +316,18 @@ def run_common_benchmark(
         root = Path(output_dir)
         root.mkdir(parents=True, exist_ok=True)
         path = root / f"benchmark_{task.task_id}_{task.fingerprint}.json"
+        lineage_run_id = hashlib.sha256(
+            f"benchmark:{task.task_id}:{time.time_ns()}".encode()
+        ).hexdigest()[:24]
+        payload["lineage_run_id"] = lineage_run_id
         path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
         payload["report_path"] = str(path)
+        project_root = root.parent if root.name == "reports" else root
+        LineageStore(project_root / "run_lineage").record(
+            run_type="common_benchmark",
+            cwd=project_root,
+            inputs={"dataset": task.dataset_path},
+            outputs={"report": path},
+            run_id=lineage_run_id,
+        )
     return payload

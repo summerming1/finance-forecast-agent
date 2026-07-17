@@ -1,0 +1,1124 @@
+{
+  "method_card_count": 3,
+  "method_cards": [
+    {
+      "method_id": "arxiv_1706_10059_eiie_cnn_backtest1",
+      "paper_id": "arxiv_1706_10059",
+      "title": "Deep Portfolio Management A Deep Reinforcement Learning Framework for the Financial Portfolio Management Problem",
+      "venue_or_source": "arXiv:1706.10059v2 [q-fin.CP] 16 Jul 2017",
+      "paper_url": "unknown",
+      "task_type": "reinforcement_learning_portfolio_management",
+      "target_asset": "cryptocurrency portfolio on Poloniex",
+      "asset_universe": [
+        "cash",
+        "Bitcoin",
+        "unknown selected cryptocurrency asset 1",
+        "unknown selected cryptocurrency asset 2",
+        "unknown selected cryptocurrency asset 3",
+        "unknown selected cryptocurrency asset 4",
+        "unknown selected cryptocurrency asset 5",
+        "unknown selected cryptocurrency asset 6",
+        "unknown selected cryptocurrency asset 7",
+        "unknown selected cryptocurrency asset 8",
+        "unknown selected cryptocurrency asset 9",
+        "unknown selected cryptocurrency asset 10"
+      ],
+      "frequency": "30 minutes",
+      "horizon": "one 30-minute trading period between portfolio redistributions",
+      "label_definition": "No supervised label is defined; the reinforcement learning reward for action wt over the next period is the logarithmic rate of return rt+1 = ln(mu_t+1 * yt+1 · wt).",
+      "data_requirements": [
+        "Use Poloniex cryptocurrency price data accessed through Poloniex official API.",
+        "Use price periods of 30 minutes.",
+        "For Back-Test 1, train on data from 2014-11-01 00:00 UTC to 2016-09-07 04:00 UTC.",
+        "Evaluate Back-Test 1 from 2016-09-07 04:00 UTC to 2016-10-28 08:00 UTC.",
+        "Use closing prices for cross-validation and back-tests.",
+        "Use highest, lowest, and closing prices in the periods for training.",
+        "Preselect 12 assets total including cash and Bitcoin using trading volumes over the last 30 days before the back-test."
+      ],
+      "feature_groups": [
+        "price_lag_features",
+        "cross_asset_features",
+        "sequence_window_features"
+      ],
+      "model_families": [
+        "cnn_sequence_regressor",
+        "rl_portfolio_policy"
+      ],
+      "training_protocol": "For the selected Back-Test 1 experiment, use the EIIE CNN policy network. Pre-train on the Back-Test 1 training set for 2 × 10^6 total steps with mini-batch size 50, input window size 50, Adam learning rate 3 × 10^-5, L2 regularization coefficient 10^-8, and online stochastic batch learning with 30 rolling steps per period during cross-validation and back-tests. Epoch count, random seed, exact CNN layer specification, and stopping rule are unknown from the supplied context.",
+      "evaluation_protocol": "Chronological back-test on Poloniex with Back-Test 1 interval 2016-09-07 04:00 UTC to 2016-10-28 08:00 UTC, using 30-minute periods and closing prices. Hyperparameters are selected using the separate cross-validation interval 2016-05-07 04:00 UTC to 2016-06-27 08:00 UTC. The paper describes this as a fixed historical back-test, not a rolling or walk-forward holdout.",
+      "metrics": [
+        "net_return",
+        "sharpe"
+      ],
+      "cost_assumptions": "{\"commission_rate\": \"0.25%\"}",
+      "reported_results": {
+        "Back-Test 1 CNN EIIE MDD": "unknown",
+        "Back-Test 1 CNN EIIE fAPV": "unknown",
+        "Back-Test 1 CNN EIIE SR": "unknown",
+        "reported_lower_bound_for_EIIE_returns": "at least 4-fold returns"
+      },
+      "strict_requirements": [
+        "Use the CNN EIIE model, not the bRNN or LSTM EIIE rows.",
+        "Use Back-Test 1 only.",
+        "Use Poloniex data in 30-minute periods.",
+        "Use the Back-Test 1 chronological train and test ranges exactly.",
+        "Apply 0.25% commission.",
+        "Use 12 preselected assets including cash and Bitcoin.",
+        "Do not infer exact CNN EIIE MDD, fAPV, or SR values from the supplied context because the numeric row is not visible."
+      ],
+      "unknowns": [
+        "Exact Back-Test 1 CNN EIIE MDD, fAPV, and SR values are not present in the supplied context.",
+        "Exact names of the 10 non-cash, non-Bitcoin selected cryptocurrency assets are not present in the supplied context.",
+        "Exact CNN architecture layer parameters are not present in the supplied context.",
+        "Random seed is not reported in the supplied context.",
+        "Epoch count and early-stopping rule are not reported in the supplied context.",
+        "Normalization or scaling transform details are not present in the supplied context.",
+        "cnn_sequence_regressor",
+        "rl_portfolio_policy",
+        "evidence_verification:unverified_quote:model_families:11"
+      ],
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "title",
+          "quote": "Deep Portfolio Management A Deep Reinforcement Learning Framework for the Financial Portfolio Management Problem",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "task_type",
+          "quote": "This paper presents a ﬁnancial-model- free Reinforcement Learn- ing framework to provide a deep machine learning solution to the port folio management problem.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "target_asset",
+          "quote": "examined in three back-test experiments with a trading period of 30 minutes in a cryptocurrency mar- ket.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "asset_universe",
+          "quote": "number of assets 12 Total number of preselected assets (including the cash, Bitcoin). (Section 3.1)",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "frequency",
+          "quote": "Prices are accessed in periods of 30 minut es.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "horizon",
+          "quote": "trading period (second) 1800 Time interval between two portfolio redistributions. (Section 2.1)",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "label_definition",
+          "quote": "At the end of Period t + 1, the logarithmic rate of return for the period due to decis ion wt can be calculated with the additional information from the price change vecto r yt+1, using Equation (10), rt+1 = ln( µ t+1yt+1 · wt). In the language of RL, rt+1 is the immediate reward to the portfolio management agent for its action wt under environment condition Xt.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "data_requirements",
+          "quote": "All price data is accesse d with Poloniex’s oﬃcial Application Programming Interface (API)",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "data_requirements",
+          "quote": "Back-Test 1 2016-09-07 04:00 to 2016-10-28 08:00 2014-11-01 to 2016-09-07 04:00",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "data_requirements",
+          "quote": "Closing prices are used for cross validation and back-tests, while highest, lo west, and closing prices in the periods are used for training.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "feature_groups",
+          "quote": "window size 50 Number of the columns (number of the trading periods) in each input price matrix. (Section 3.2)",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "model_families",
+          "quote": "The framework is real- ized in three instants in this work with a Convolutional Neural Networ k (CNN), a basic Re- current Neural Network (RNN), and a Long Short-Term Memory ( LSTM).",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "training_protocol",
+          "quote": "total steps 2 × 106 Total number of steps for pre-training in the training set.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "training_protocol",
+          "quote": "batch size 50 Size of mini-batch during training. (Section 3.1)",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "training_protocol",
+          "quote": "learning rate 3 × 10−5 Parameter α (i.e. the step size) of the Adam optimization (Kingma and Ba, 2014).",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "evaluation_protocol",
+          "quote": "Back-Test 1 2016-09-07 04:00 to 2016-10-28 08:00 2014-11-01 to 2016-09-07 04:00",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "evaluation_protocol",
+          "quote": "A cross validation set is used f or determination of the hyper- parameters, whose range is also listed.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "metrics",
+          "quote": "The performance metrics are Maximum Drawdown (MDD), the ﬁnal Accumulated Po rtfolio Value (fAPV) in the unit of initial portfolio amount ( pf /p 0), and the Sharpe ratio (SR).",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "reported_results",
+          "quote": "In term of fAPV or SR, the best performing algorithm in Back-Tes t 1 and 2 is the CNN EIIE whose ﬁnal wealth is more than twice of the runner-up in the ﬁr st experiment.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "reported_results",
+          "quote": "Although with a high commission rate of 0. 25% in the back- tests, the framework is able to achieve at least 4-fold returns in 50 days.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "preprocessing_protocol",
+          "quote": "Data po ints before the existence of a coin are marked as Not A Numbers (NANs) from the exchange. NANs onl y appeared in the training set",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "preprocessing_protocol",
+          "quote": "in this current work, ﬂat fake price-movements (0 decay rate s) are used to ﬁll the missing data points.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "hyperparameters",
+          "quote": "batch size 50 Size of mini-batch during training. (Section 3.1) window size 50 Number of the columns (number of the trading periods) in each input price matrix. (Section 3.2) number of assets 12 Total number of preselected assets (including the cash, Bitcoin). (Section 3.1) trading period (second) 1800 Time interval between two portfolio redistributions.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "hyperparameters",
+          "quote": "regularization coeﬃcient 10−8 The L2 regularization coeﬃcient applied to network training. learning rate 3 × 10−5 Parameter α (i.e. the step size) of the Adam optimization (Kingma and Ba, 2014).",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "hyperparameters",
+          "quote": "commission rate 0. 25% Rate of commission fee applied to each transaction. (Section 2.3) rolling steps 30 Number of online training steps for each period during cross-validation and back-tests. sample bias 5 × 10−5 Parameter of geometric distribution when selecting online training sample batches.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "strict_requirements",
+          "quote": "The best perform ance in each column is highlighted with boldface. All three EIIEs signiﬁcantly outperform all other algorithms in the fAPV and SR columns, showing the proﬁtabil ity and reliability of the EIIE machine-learning solution to the portfolio mana gement problem.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_1706.10059",
+          "section": "unknowns",
+          "quote": "the CNN EIIE whose ﬁnal wealth is more than twice of the runner-up in the ﬁr st experiment",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        }
+      ],
+      "extraction_metadata": {
+        "document_id": "arxiv_1706.10059",
+        "text_sha": "3eacf876a150e5dd",
+        "selected_claim": "CNN EIIE on Back-Test 1 cryptocurrency portfolio management back-test",
+        "result_row_resolution": "partial; exact numeric CNN EIIE row values were not visible in supplied context",
+        "raw_paper_id": "arxiv_1706.10059",
+        "quality_report": {
+          "method_id": "arxiv_1706_10059_eiie_cnn_backtest1",
+          "paper_id": "arxiv_1706_10059",
+          "quality_score": 0.81,
+          "approval_required": true,
+          "critical_missing_fields": [],
+          "type_errors": [],
+          "semantic_conflicts": [],
+          "unsupported_models": [
+            "cnn_sequence_regressor",
+            "rl_portfolio_policy"
+          ],
+          "warnings": [
+            "unsupported model adapters required: cnn_sequence_regressor, rl_portfolio_policy"
+          ],
+          "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+        },
+        "evaluation_protocol_type": "purged_walk_forward",
+        "evaluation_protocol_description": "Chronological back-test on Poloniex with Back-Test 1 interval 2016-09-07 04:00 UTC to 2016-10-28 08:00 UTC, using 30-minute periods and closing prices. Hyperparameters are selected using the separate cross-validation interval 2016-05-07 04:00 UTC to 2016-06-27 08:00 UTC. The paper describes this as a fixed historical back-test, not a rolling or walk-forward holdout.",
+        "frequency_type": "intraday",
+        "horizon_type": "one 30-minute trading period between portfolio redistributions",
+        "document_text_sha": "3eacf876a150e5dd",
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1706.10059.pdf",
+        "prompt_profile": "strict",
+        "claim_selector_consistency": {
+          "passed": true,
+          "errors": []
+        },
+        "evidence_verification": {
+          "passed": false,
+          "span_count": 27,
+          "errors": [
+            "evidence_verification:unverified_quote:model_families:11"
+          ]
+        }
+      },
+      "approval_required": true,
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "Chronological back-test on Poloniex with Back-Test 1 interval 2016-09-07 04:00 UTC to 2016-10-28 08:00 UTC, using 30-minute periods and closing prices. Hyperparameters are selected using the separate cross-validation interval 2016-05-07 04:00 UTC to 2016-06-27 08:00 UTC. The paper describes this as a fixed historical back-test, not a rolling or walk-forward holdout.",
+      "frequency_type": "intraday",
+      "horizon_type": "one 30-minute trading period between portfolio redistributions",
+      "experiment_type": "backtest",
+      "preprocessing_protocol": "Missing historical coin data appearing as NANs in the training set are replaced with flat fake price movements using 0 decay rate. The supplied context does not specify normalization details or whether any statistics are fit on training data only.",
+      "hyperparameters": {
+        "batch_size": 50,
+        "window_size": 50,
+        "number_of_assets": 12,
+        "trading_period_seconds": 1800,
+        "total_pretraining_steps": 2000000,
+        "regularization_coefficient": 1e-08,
+        "learning_rate": 3e-05,
+        "optimizer": "Adam",
+        "volume_observation_days": 30,
+        "commission_rate": "0.25%",
+        "rolling_steps": 30,
+        "sample_bias": 5e-05
+      },
+      "required_start_date": "2014-11-01 00:00 UTC",
+      "required_end_date": "2016-10-28 08:00 UTC",
+      "schema_version": "method_card_v2"
+    },
+    {
+      "method_id": "deep_asset_pricing_gan_us_equities_monthly_oos_1992_2016",
+      "paper_id": "arxiv_1904_00745",
+      "title": "Deep Learning in Asset Pricing ∗",
+      "venue_or_source": "unknown",
+      "paper_url": "unknown",
+      "task_type": "conditional asset pricing / stochastic discount factor estimation",
+      "target_asset": "individual U.S. stock excess returns",
+      "asset_universe": [
+        "CRSP monthly U.S. equity securities"
+      ],
+      "frequency": "monthly",
+      "horizon": "1 month",
+      "label_definition": "Next-month individual stock excess return, defined as stock return minus the one-month Treasury bill risk-free rate.",
+      "data_requirements": [
+        "Monthly equity return data for all securities on CRSP from January 1967 to December 2016.",
+        "One-month Treasury bill rates from the Kenneth French Data Library to compute excess returns.",
+        "Firm-specific characteristics for individual stocks.",
+        "Macroeconomic time series used to extract time-varying economic states."
+      ],
+      "feature_groups": [
+        "return_momentum_features",
+        "cross_asset_features",
+        "sequence_window_features"
+      ],
+      "model_families": [
+        "lstm_regressor",
+        "dnn_asset_pricing_model"
+      ],
+      "training_protocol": "Train the SDF model on 1967-1986 data, tune hyperparameters on 1987-1991 validation data by maximizing the validation Sharpe ratio of the SDF, and evaluate the selected model on 1992-2016 test data. Neural-network models are ensembled by averaging outputs from nine fits with the same architecture and different optimization starting values. The optimal reported GAN configuration has two layers, four economic states, and eight conditioning instruments for the test assets. Optimizer, epochs, batch size, random seeds, and early-stopping rule are unknown from the supplied context.",
+      "evaluation_protocol": "Fixed chronological split: training sample 1967-1986, validation sample 1987-1991, out-of-sample testing sample 1992-2016. The optimal model selected on validation data is evaluated once on the test data. Metrics are computed for the SDF factor and individual stock residuals: unconditional Sharpe ratio, explained variation, and cross-sectional R2.",
+      "metrics": [
+        "r2",
+        "net_return",
+        "sharpe"
+      ],
+      "cost_assumptions": "unknown",
+      "reported_results": {},
+      "strict_requirements": [
+        "Use monthly CRSP equity return data covering January 1967 through December 2016.",
+        "Compute excess returns using one-month Treasury bill rates from the Kenneth French Data Library.",
+        "Use the chronological split 1967-1986 for training, 1987-1991 for validation, and 1992-2016 for out-of-sample testing.",
+        "Select hyperparameters by maximizing the SDF Sharpe ratio on the validation data.",
+        "Use the optimal GAN model configuration with two layers, four economic states, and eight instruments for the test assets.",
+        "Average neural-network outputs across nine model fits for the ensemble.",
+        "Evaluate using SDF Sharpe ratio, explained variation, and XS-R2 on the test sample."
+      ],
+      "unknowns": [
+        "Exact numeric reported results for the selected GAN row are not present in the supplied context.",
+        "Optimizer is unknown.",
+        "Learning rate is unknown.",
+        "Number of epochs is unknown.",
+        "Batch size is unknown.",
+        "Early stopping rule is unknown.",
+        "Random seed protocol is unknown.",
+        "Exact firm characteristic list is unknown from the supplied context.",
+        "Exact macroeconomic time-series list is unknown from the supplied context.",
+        "Characteristic preprocessing, scaling, winsorization, and missing-data handling are unknown from the supplied context.",
+        "Transaction cost assumptions are unknown.",
+        "dnn_asset_pricing_model",
+        "evidence_verification:unverified_quote:training_protocol:13",
+        "evidence_verification:unverified_quote:metrics:18"
+      ],
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "title",
+          "quote": "Deep Learning in Asset Pricing ∗",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "task_type",
+          "quote": "We use deep neural networks to estimate an asset pricing model for individual stock returns that takes advantage of the vast amount of conditioning information, while keeping a fully ﬂexible form and accounting for time-variation.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "target_asset",
+          "quote": "Our goal is to explain the diﬀerences in the cross-section of returns R for individual stocks.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "asset_universe",
+          "quote": "We collect monthly equity return data for all securities on CRSP.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "frequency",
+          "quote": "We collect monthly equity return data for all securities on CRSP.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "horizon",
+          "quote": "Let Rt+1,i denote the return of asset i at time t + 1.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "label_definition",
+          "quote": "We use the one-month Treasury bill rates from the Kenneth French Data Library as the risk-free rate to calculate exce",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "label_definition",
+          "quote": "for any return in excess of the risk-free rate Re t+1,i =Rt+1,i−Rf t+1",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "data_requirements",
+          "quote": "The sample period spans January 1967 to December 2016, totaling 50 years.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "data_requirements",
+          "quote": "The risk exposure to the SDF for individual stocks varies over time because the ﬁrm-speciﬁc characteristics and macroeconomic variables are time-varying",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "feature_groups",
+          "quote": "The risk exposure to the SDF for individual stocks varies over time because the ﬁrm-speciﬁc characteristics and macroeconomic variables are time-varying",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "model_families",
+          "quote": "The key innovations are to use the fundamental no-arbitrage condition as criterion function, to construct the most informative test assets with an adversarial approach and to extract the states of the economy from many macroeconomic time series.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "model_families",
+          "quote": "They are among the most successful commercial AIs and are heavily used for sequences of data such as speech",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "training_protocol",
+          "quote": "We divide the full data into 20 years of training sample (1967 - 1986), 5 years of validation sample (1987 - 1991), and 25 years of out-of-sample 24 testing sample (1992 - 2016).",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "training_protocol",
+          "quote": "All our neural networks including the forecasting approach are averaged over nine model ﬁts.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "training_protocol",
+          "quote": "We choose the best conﬁguration among all possible combinations of hyperparameters by maximizing the Sharpe ratio of the SDF on the validation data.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "training_protocol",
+          "quote": "Our optimal model has two layers, four economic states and eight instruments for the test assets.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "evaluation_protocol",
+          "quote": "The optimal model is evaluated on the test data.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "metrics",
+          "quote": "For each model we report (1) the unconditional Sharpe ratio of the SDF factor, (2) the explained 21 variation in individual stock returns and and (3) the cross-sectional mean 24 R2",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "metrics",
+          "quote": "SR = ˆE [Ft]√ ˆVar (Ft) , EV = 1− ( 1 T ∑T t=1 1 Nt ∑Nt i=1(ˆϵt+1,i)2 ) ( 1 T ∑T t=1 1 Nt ∑Nt i=1(Re t+1,i)2 ), XS-R2 = 1− 1 N ∑N i=1 Ti T ( 1 Ti ∑ t∈Ti ˆϵt+1,i )2 1 N ∑N i=1 Ti T ( 1 Ti ∑ t∈Ti ˆRt+1,i )2.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "reported_results",
+          "quote": "Our asset pricing model outperforms out-of-sample all benchmark approaches in terms of Sharpe ratio, explained variation and pricing errors and identiﬁes the key factors that drive asset prices.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "preprocessing_protocol",
+          "quote": "We use the one-month Treasury bill rates from the Kenneth French Data Library as the risk-free rate to calculate exce",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "hyperparameters",
+          "quote": "Our optimal model has two layers, four economic states and eight instruments for the test assets.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "hyperparameters",
+          "quote": "All our neural networks including the forecasting approach are averaged over nine model ﬁts.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "required_start_date",
+          "quote": "The sample period spans January 1967 to December 2016, totaling 50 years.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "required_end_date",
+          "quote": "The sample period spans January 1967 to December 2016, totaling 50 years.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "strict_requirements",
+          "quote": "We split the data into a training, validation and testing sample. The validation set is used to tune the hyperparameters, which includes the depth of the network (number of layers), the 17A conventional GAN network iterates this procedure until convergence.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        },
+        {
+          "source_id": "arxiv_1904.00745",
+          "section": "unknowns",
+          "quote": "The results are available upon request.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "94f948d7b0af7046"
+        }
+      ],
+      "extraction_metadata": {
+        "document_id": "arxiv_1904.00745",
+        "text_sha": "94f948d7b0af7046",
+        "claim_selection": "Main proposed GAN conditional SDF model for monthly U.S. equities evaluated out-of-sample on 1992-2016 test data.",
+        "migrated_from_schema_version": "strict_reproduction_method_card_v2",
+        "raw_paper_id": "arxiv_1904.00745",
+        "quality_report": {
+          "method_id": "deep_asset_pricing_gan_us_equities_monthly_oos_1992_2016",
+          "paper_id": "arxiv_1904_00745",
+          "quality_score": 0.89,
+          "approval_required": true,
+          "critical_missing_fields": [],
+          "type_errors": [],
+          "semantic_conflicts": [],
+          "unsupported_models": [
+            "dnn_asset_pricing_model"
+          ],
+          "warnings": [
+            "unsupported model adapters required: dnn_asset_pricing_model"
+          ],
+          "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+        },
+        "evaluation_protocol_type": "purged_walk_forward",
+        "evaluation_protocol_description": "Fixed chronological split: training sample 1967-1986, validation sample 1987-1991, out-of-sample testing sample 1992-2016. The optimal model selected on validation data is evaluated once on the test data. Metrics are computed for the SDF factor and individual stock residuals: unconditional Sharpe ratio, explained variation, and cross-sectional R2.",
+        "frequency_type": "monthly",
+        "horizon_type": "next_month_return",
+        "document_text_sha": "94f948d7b0af7046",
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_1904.00745.pdf",
+        "prompt_profile": "strict",
+        "claim_selector_consistency": {
+          "passed": true,
+          "errors": []
+        },
+        "evidence_verification": {
+          "passed": false,
+          "span_count": 28,
+          "errors": [
+            "evidence_verification:unverified_quote:training_protocol:13",
+            "evidence_verification:unverified_quote:metrics:18"
+          ]
+        }
+      },
+      "approval_required": true,
+      "evaluation_protocol_type": "purged_walk_forward",
+      "evaluation_protocol_description": "Fixed chronological split: training sample 1967-1986, validation sample 1987-1991, out-of-sample testing sample 1992-2016. The optimal model selected on validation data is evaluated once on the test data. Metrics are computed for the SDF factor and individual stock residuals: unconditional Sharpe ratio, explained variation, and cross-sectional R2.",
+      "frequency_type": "monthly",
+      "horizon_type": "next_month_return",
+      "experiment_type": "asset_pricing_sdf_estimation",
+      "preprocessing_protocol": "Compute excess returns by subtracting the one-month Treasury bill risk-free rate from monthly stock returns. Use chronological train/validation/test splits. Additional preprocessing of characteristics and macroeconomic time series, including scaling, missing-data handling, and fit scope for normalization, is unknown from the supplied context.",
+      "hyperparameters": {
+        "ensemble_size": 9,
+        "selected_network_layers": 2,
+        "selected_number_of_economic_states": 4,
+        "selected_number_of_conditioning_instruments": 8,
+        "hyperparameter_selection_metric": "validation Sharpe ratio of the SDF",
+        "training_sample": "1967-1986",
+        "validation_sample": "1987-1991",
+        "test_sample": "1992-2016"
+      },
+      "required_start_date": "1967-01",
+      "required_end_date": "2016-12",
+      "schema_version": "method_card_v2"
+    },
+    {
+      "method_id": "arxiv_2004_10178_3feature_intraday_cudnnlstm",
+      "paper_id": "arxiv_2004_10178",
+      "title": "Forecasting directional movements of stock prices for intraday trading using LSTM and random forests",
+      "venue_or_source": "arXiv:2004.10178v2 [cs.LG] 30 Jun 2021",
+      "paper_url": "unknown",
+      "task_type": "cross-sectional binary directional movement forecasting for intraday trading",
+      "target_asset": "constituent stocks of the S&P 500",
+      "asset_universe": [
+        "S&P 500 constituent stocks"
+      ],
+      "frequency": "daily trading days with intraday return target",
+      "horizon": "same trading day intraday return direction relative to cross-sectional median",
+      "label_definition": "For each stock at time t, Class 0 if its intraday return is smaller than the cross-sectional median intraday return of all stocks at time t; Class 1 if its intraday return is bigger than the cross-sectional median intraday return of all stocks at time t.",
+      "data_requirements": [
+        "Daily data for constituent stocks of the S&P 500 from January 1993 through December 2018.",
+        "Opening prices and closing prices sufficient to compute returns with respect to closing prices, returns with respect to opening prices, and intraday returns.",
+        "For each study window, construct per-stock feature matrices, remove the first 240 partially filled rows, and concatenate training data across all stocks in S.",
+        "At each trading day, compute cross-sectional median intraday return across all stocks to form binary labels."
+      ],
+      "feature_groups": [
+        "price_lag_features",
+        "return_momentum_features",
+        "sequence_window_features"
+      ],
+      "model_families": [
+        "lstm_regressor",
+        "dnn_asset_pricing_model"
+      ],
+      "training_protocol": "Within a typical study window with Tstudy = 1008 rows, remove the first 240 rows because lagged returns are partially undefined; split remaining rows chronologically with approximately t = 241 to t = 756 for training and t = 757 to t = Tstudy for testing/trading. Concatenate training data for all stocks in S, yielding approximately 500 x 516 = 258000 training instances and 500 x 252 = 126000 trading instances. LSTM uses CuDNNLSTM. Optimizer, loss, batch size, number of epochs, random seed, validation protocol, and early stopping are unknown from the supplied context.",
+      "evaluation_protocol": "Evaluate the 3-Feature IntraDay LSTM row on the trading/test portion. The trading strategy buys the 10 stocks with the highest predicted probability and sells short the 10 stocks with the lowest predicted probability each trading day, with equal monetary weight, and reports daily returns before transaction costs. The exact outer rolling-window schedule over 1993-2018 is unknown from the supplied context.",
+      "metrics": [
+        "net_return",
+        "sharpe"
+      ],
+      "cost_assumptions": "Returns are reported prior to transaction costs.",
+      "reported_results": {
+        "selected_row": "3-Feature IntraDay LSTM",
+        "Mean (long)": 0.00332,
+        "Mean (short)": 0.00312,
+        "Mean return": 0.00644,
+        "Standard error": 0.00019,
+        "Minimum": -0.1464,
+        "Quartile 1": -0.0017,
+        "Median": 0.00559,
+        "Quartile 3": 0.01433,
+        "Maximum": 0.14101,
+        "Share > 0": 0.69663,
+        "Std. deviation": 0.01572,
+        "Skewness": 0.15599,
+        "Kurtosis": 9.71987,
+        "1-percent VaR": -0.0352,
+        "1-percent CVaR": -0.0519,
+        "5-percent VaR": -0.0157,
+        "5-percent CVaR": -0.0284,
+        "Max. drawdown": 0.22345,
+        "Avg return p.a.": 3.8475,
+        "Std dev. p.a.": 0.24957,
+        "Down dev. p.a.": 0.17144,
+        "Sharpe ratio": 6.34253,
+        "Time per epoch (sec)": 33.1,
+        "Training time (min)": 24.21,
+        "Decision making time (sec)": 0.086924
+      },
+      "strict_requirements": [
+        "Use the 3-Feature IntraDay LSTM configuration only; do not mix with Random Forest or 1-Feature rows.",
+        "Use a 240 trading-day by 3-feature LSTM input representation.",
+        "Remove the first 240 rows of each study matrix before splitting.",
+        "Use chronological split within each study window: approximately t = 241 to t = 756 for training and t = 757 to t = Tstudy for testing/trading, where typically Tstudy = 1008.",
+        "Construct labels using the cross-sectional median intraday return at each time t.",
+        "For the trading-strategy evaluation, buy the 10 stocks with the highest probability and short the 10 stocks with the lowest probability, with equal monetary weight.",
+        "Report returns before transaction costs."
+      ],
+      "unknowns": [
+        "Exact paper URL.",
+        "Exact S&P 500 constituent membership construction and survivorship-bias handling.",
+        "Exact raw data vendor/source.",
+        "Exact formulas for all three feature return groups beyond the descriptions supplied.",
+        "Exact outer rolling-window schedule over January 1993 to December 2018.",
+        "LSTM architecture details other than CuDNNLSTM and input shape, including number of layers, hidden units, dropout, dense layers, activation functions, and initialization.",
+        "Optimizer, loss function, learning rate, batch size, number of epochs, early stopping, validation split, random seed, and hardware/GPU details.",
+        "Scaling or normalization procedure and whether statistics are fit only on training data.",
+        "Transaction cost model, because the reported returns are prior to transaction costs.",
+        "dnn_asset_pricing_model"
+      ],
+      "evidence_spans": [
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "title",
+          "quote": "Forecasting directional movements of stock prices for intr aday trading using LSTM and random forests",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "venue_or_source",
+          "quote": "arXiv:2004.10178v2 [cs.LG] 30 Jun 2021",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "task_type",
+          "quote": "We employ both random forests and LSTM networks (more precisely CuDNNLSTM) as training methodologies to analyze their eﬀectiveness in forecasting out-of-sample directional movement s of constituent stocks of the S&P 500 from January 1993 till December 2018 for intraday trading.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "target_asset",
+          "quote": "constituent stocks of the S&P 500 from January 1993 till December 2018",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "asset_universe",
+          "quote": "constituent stocks of the S&P 500",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "frequency",
+          "quote": "On each trading day, w e buy the 10 stocks with the highest probability and sell short the 10 stocks with the lowest probability",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "horizon",
+          "quote": "based on their intraday returns ir(s) t, 0 . Class 0 is realized if ir(s) t, 0 of stock s is smaller than the cross-sectional median intraday return of all stocks at time t, whereas Class 1 is realized if ir(s) t, 0 of stock s is bigger than the cross-sectional median intraday return of all stocks at time t.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "label_definition",
+          "quote": "we divid e each stock at time t into 2 classes of equal size, based on their intraday returns ir(s) t, 0 . Class 0 is realized if ir(s) t, 0 of stock s is smaller than the cross-sectional median intraday return of all stocks at time t, whereas Class 1 is realized if ir(s) t, 0 of stock s is bigger than the cross-sectional median intraday return of all stocks at time t.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "data_requirements",
+          "quote": "from January 1993 till December 2018",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "feature_groups",
+          "quote": "We introduce a multi-feature setting consisting not only of the returns with respect to the closing prices, but also with respect to the opening prices and intrad ay returns.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "model_families",
+          "quote": "we perform our experiments using CuDNNLSTMs",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "training_protocol",
+          "quote": "Since by deﬁnition, irt,m is not deﬁned when t ≤ m, columns of the top 240 rows are partially ﬁlled and are hence removed. This removal leaves Tstudy − 240 rows (i.e. for t = {241, 242, 243, ..., Tstudy}) which is split into two parts, namely approximately from t = 241 to t = 756, and from t = 757 to t = Tstudy, for training and testing purposes, respectively. Note that typically Tstudy = 1008.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "training_protocol",
+          "quote": "At the end, we concatenate the training data of all stocks in S to get the collective training set. Hence the training set is a matrix with approximate size of 500 × 516 = 258000 rows (instances) and M columns (features), along with their corresponding target, whereas the trading set is a matrix with approximate size of 500 × 252 = 126000 rows (instances) and M columns (features).",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "evaluation_protocol",
+          "quote": "On each trading day, w e buy the 10 stocks with the highest probability and sell short the 10 stocks with the lowest probability to outperform the m arket in terms of intraday returns – all with equal monetary weight.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "metrics",
+          "quote": "Metric of daily returns 3-Feature IntraDay LSTM 3-Feature IntraDay RF 1-Feature NextDay LSTM 1-Feature NextDay RF 1-Feature IntraDay LSTM 1-Feature IntraDay RF SP500 Index Mean (long) 0.00332 0.00273 0.00257 0.00259 0.00094 0.00104 0.00033 Mean (short) 0.00312 0.00266 0.00158 0.00130 0.00180 0.00187 0.00000 Mean return 0.00644",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "cost_assumptions",
+          "quote": "Our empirical results show that the multi-feature setting p rovides a daily return, prior to transaction costs, of 0.64% using LSTM networks",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "reported_results",
+          "quote": "Metric of daily returns 3-Feature IntraDay LSTM 3-Feature IntraDay RF 1-Feature NextDay LSTM 1-Feature NextDay RF 1-Feature IntraDay LSTM 1-Feature IntraDay RF SP500 Index Mean (long) 0.00332 0.00273 0.00257 0.00259 0.00094 0.00104 0.00033 Mean (short) 0.00312 0.00266 0.00158 0.00130 0.00180 0.00187 0.00000 Mean return 0.00644 0.00539 0.00414 0.00389 0.00274 0.00290 0.00033 Standard error 0.00019 0.00020 0.00024 0.00023 0.00021 0.00021 0.00014 Minimum -0.1464 -0.1046 -0.1713 -0.1342 -0.1565 -0.1487 -0.0903 Quartile 1 -0.0017 -0.0028 -0.0052 -0.0051 -0.0054 -0.0050 -0.0044 Median 0.00559 0.00462 0.00352 0.00287 0.00242 0.00221 0.00056 Quartile 3 0.01433 0.01306 0.01294 0.01161 0.01086 0.01036 0.00560 Maximum 0.14101 0.14153 0.19884 0.28139 0.13896 0.16064 0.11580 Share > 0 0.69663 0.65857 0.60598 0.59479 0.58405 0.58937 0.53681 Std. deviation 0.01572 0.01597 0.01961 0.01831 0.01713 0.01683 0.01133 Skewness 0.15599 0.28900 0.36822 1.41199 -0.1828 0.12051 -0.1007 Kurtosis 9.71987 8.32627 ",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "reported_results",
+          "quote": "Metric 3-Feature IntraDay LSTM 3-Feature IntraDay RF 1-Feature NextDay LSTM 1-Feature NextDay RF 1-Feature IntraDay LSTM 1-Feature IntraDay RF Time per epoch (in sec) 33.1 - 166 - 13.8 - Training time (in min) 24.21 7.21 112.3 2.59 10.4 2.56 Decision making time (in sec) 0.086924 0.419563 0.180778 0.380040 0.036128 0.374121",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "preprocessing_protocol",
+          "quote": "Since by deﬁnition, irt,m is not deﬁned when t ≤ m, columns of the top 240 rows are partially ﬁlled and are hence removed.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "hyperparameters",
+          "quote": "Hence M is equal to 93 and (240 , 3) when using random forest and LSTM, respectively.",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "required_start_date",
+          "quote": "from January 1993 till December 2018",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "required_end_date",
+          "quote": "from January 1993 till December 2018",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        },
+        {
+          "source_id": "arxiv_2004.10178",
+          "section": "strict_requirements",
+          "quote": "3-Feature IntraDay LSTM",
+          "summary": "LLM-provided evidence span.",
+          "source_type": "paper",
+          "source_url": "unknown",
+          "source_revision": "v2"
+        }
+      ],
+      "extraction_metadata": {
+        "document_id": "arxiv_2004.10178",
+        "text_sha": "fae585867c07144f",
+        "selected_claim": "3-Feature IntraDay LSTM intraday trading daily return results",
+        "supporting_context_sha": "",
+        "raw_paper_id": "arxiv_2004.10178",
+        "quality_report": {
+          "method_id": "arxiv_2004_10178_3feature_intraday_cudnnlstm",
+          "paper_id": "arxiv_2004_10178",
+          "quality_score": 0.89,
+          "approval_required": true,
+          "critical_missing_fields": [],
+          "type_errors": [],
+          "semantic_conflicts": [],
+          "unsupported_models": [
+            "dnn_asset_pricing_model"
+          ],
+          "warnings": [
+            "unsupported model adapters required: dnn_asset_pricing_model"
+          ],
+          "recommended_action": "add_model_adapter_or_mark_as_non_executable"
+        },
+        "evaluation_protocol_type": "rolling_origin",
+        "evaluation_protocol_description": "Evaluate the 3-Feature IntraDay LSTM row on the trading/test portion. The trading strategy buys the 10 stocks with the highest predicted probability and sells short the 10 stocks with the lowest predicted probability each trading day, with equal monetary weight, and reports daily returns before transaction costs. The exact outer rolling-window schedule over 1993-2018 is unknown from the supplied context.",
+        "frequency_type": "intraday",
+        "horizon_type": "intraday_direction",
+        "document_text_sha": "fae585867c07144f",
+        "source_path": "projects\\finance_agent\\papers\\local\\arxiv_2004.10178.pdf",
+        "prompt_profile": "strict",
+        "claim_selector_consistency": {
+          "passed": true,
+          "errors": []
+        },
+        "evidence_verification": {
+          "passed": true,
+          "span_count": 23,
+          "errors": []
+        }
+      },
+      "approval_required": true,
+      "evaluation_protocol_type": "rolling_origin",
+      "evaluation_protocol_description": "Evaluate the 3-Feature IntraDay LSTM row on the trading/test portion. The trading strategy buys the 10 stocks with the highest predicted probability and sells short the 10 stocks with the lowest predicted probability each trading day, with equal monetary weight, and reports daily returns before transaction costs. The exact outer rolling-window schedule over 1993-2018 is unknown from the supplied context.",
+      "frequency_type": "intraday",
+      "horizon_type": "intraday_direction",
+      "experiment_type": "forecast_with_trading_strategy",
+      "preprocessing_protocol": "For each stock, construct the feature matrix with M columns and Tstudy rows. For LSTM, M is reported as (240, 3). Remove the top 240 rows because lagged return features are partially undefined for t <= m. Split the remaining rows chronologically into training and testing/trading subsets, then concatenate training data across stocks. Scaling, normalization, missing-data handling beyond row removal, and whether any transform statistics are fit on train data only are unknown from the supplied context.",
+      "hyperparameters": {
+        "model": "CuDNNLSTM",
+        "input_shape": [
+          240,
+          3
+        ]
+      },
+      "required_start_date": "1993-01",
+      "required_end_date": "2018-12",
+      "schema_version": "method_card_v2"
+    }
+  ]
+}

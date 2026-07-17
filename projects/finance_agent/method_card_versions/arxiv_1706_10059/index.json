@@ -1,0 +1,20 @@
+{
+  "schema_version": "method_card_version_index_v1",
+  "paper_id": "arxiv_1706_10059",
+  "versions": [
+    {
+      "version_sha256": "52ccd5ded894f0e1ac32cd2cd0b1b5ce96a14d7a4a214fac7aaff8721eb387e6",
+      "created_at": "2026-07-17T10:30:37.600124+00:00",
+      "path": "projects\\finance_agent\\method_card_versions\\arxiv_1706_10059\\52ccd5ded894f0e1ac32cd2cd0b1b5ce96a14d7a4a214fac7aaff8721eb387e6.json",
+      "parent_version_sha256": "",
+      "strict_evidence_ready": false
+    },
+    {
+      "version_sha256": "3b3af107ef422e8299c9d40a4c235bbbd3b81face5379d64a8a0223aa98b4bd5",
+      "created_at": "2026-07-17T10:43:58.421626+00:00",
+      "path": "projects\\finance_agent\\method_card_versions\\arxiv_1706_10059\\3b3af107ef422e8299c9d40a4c235bbbd3b81face5379d64a8a0223aa98b4bd5.json",
+      "parent_version_sha256": "",
+      "strict_evidence_ready": false
+    }
+  ]
+}

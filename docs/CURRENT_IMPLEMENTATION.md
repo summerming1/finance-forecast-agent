@@ -51,6 +51,17 @@ BenchmarkTask -> shared snapshot/features/folds -> MethodAdapter
 -> ExperimentMemory prior -> 结果审计与技术资产
 ```
 
+### 当前流程真正能到达哪里
+
+| 输入情况 | 当前最远可达终点 | 能否自动 strict |
+|---|---|---|
+| DLinear 或 Native Claim Catalog 已登记论文 | 官方原生运行、结果门禁、Portfolio 和前端审计 | 可以，但必须已有通过全部门禁的声明式 claim |
+| 任意本地新论文 | MethodCard、人工审核、ReproductionPlan、数据请求或 Adapter Backlog | 不可以；当前不会自动生成 Native Claim |
+| 新论文方法可映射到现有通用 adapter | AAPL 或四类冻结统一基准、PredictionArtifact 和 Delta | 只能是 benchmark adaptation |
+| 模型、数据或任务协议不受支持 | 结构化 blocker | 不可以，且不允许静默替换模型 |
+
+第 5 阶段的 Catalog selector 是预配置研究资产列表，不是由当前选中的论文动态生成。当前页面顶部显示的 active MethodCard 可能与 selector 中选择的 claim 不同；真正的官方运行门禁来自所选 claim 自己绑定的 MethodCard 和 ReproductionPlan。这是当前 UX 和论文接入闭环的已知缺口。
+
 ## 完整复现定义
 
 完整复现要求同时满足：
@@ -137,7 +148,7 @@ backlog/                 adapter 任务
 
 ```text
 Ruff: passed
-pytest: 125 passed
+pytest: 159 passed
 Seven-stage Streamlit AppTest: 11 passed
 HTTP health: localhost:8501 returned 200
 Multi benchmark: 4 tasks / 5 methods / 20 comparisons, integrity passed
@@ -163,6 +174,34 @@ Live LLM strict DLinear: quality 1.0、claim consistency passed、evidence 31/31
 - 统一基准已有方向准确率 Wilson 区间、机会水平二项检验和训练折多数方向基线；仍缺少方法间配对检验、Diebold-Mariano、多 seed 与市场状态分层。
 - 当前不执行真实下单。
 - 第二批九个 Native Claim 共用 Exchange-Rate 数据，能检验不同深度时序架构、重复实验和多种指标，但不能证明信号回测、截面资产定价或组合强化学习的原生复现通用性；这些仍按 Roadmap 保留为后续独立 strict 样例。
+- 本轮十篇复现中的 claim 选择、论文/源码协议对齐、官方命令、兼容补丁、运行环境、容差冻结和九张主资料卡仍由人工完成；只要新增论文还需要修改 `scripts/build_native_exchange_catalog.py`，就不能称为声明式通用接入。
+- `DataAcquisitionHub` 能审计下载，但 MethodCard 自动请求目前主要使用关键词规则；未知公开数据默认提出 Yahoo 探索性替代，不能自动构造论文原始数据字段映射。
+- 15-claim 原生执行和四类多基准没有统一写入旧 harness 的 MLflow/DVC tracking；当前主要依赖 JSON、SHA256、Git 和环境锁文件追踪。
+- `pytest` 验证控制逻辑、schema、AppTest 和短任务；十篇小时级官方训练结果由已保存报告和源码/数据审计证明，不会在普通测试套件中全部重跑。
+
+## 2026-07-17 通用性评估
+
+当前成熟度定义为 **L2+：同数据域、多模型族的受控原生复现平台**。预测类官方仓库执行内核已接近可配置化，但整个项目尚未达到多种金融实验的严格复现通用性。
+
+最主要的差距不是 strict 数量，而是：
+
+1. 10 篇 strict 全部属于 `forecast_only + Exchange-Rate`。
+2. 只有 1 篇 live LLM strict MethodCard。
+3. 新论文不能自动编译为 Native Claim。
+4. 28 个 exploratory candidate 尚未逐篇执行。
+5. SourceBundle、数据字段映射、异步运行和全链路追踪尚未闭环。
+
+完整规划见 `docs/STRICT_REPRODUCTION_GENERALIZATION_PLAN.md`；用户已批准该规划，P1.G 控制层实施结果和未通过门禁见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。
+
+## 2026-07-17 P1.G 实施更新
+
+- 已实现 Native Claim Compiler、逐论文声明式 spec 和 source/data/command/environment/metric 插件审计。
+- 已实现 MethodCard v3 claim/evidence/history、SourceApproval、DatasetContract 和审批冲突失效。
+- 已实现信号回测、截面资产定价、组合强化学习协议验证；三类纵向样例均产生结构化 blocker，strict 为 0。
+- 已实现 Benchmark Registry、持久化本地任务队列、统一 lineage 和全局 Memory Scheduler。
+- 86 篇研究日志已生成；原 28 个 candidate 未被共享 adapter 虚报为论文级执行，当前与 58 个 blocker 合计为 86 个待消减记录。
+- 使用 provider 可用的 `gpt-5.5` 完成三篇真实 LLM 抽取，全部为 `unknown section=0`；只有日内信号论文达到 v3 证据 strict，仍未达到完整 strict reproduction。
+- 最终验证为 `159 passed`、Ruff 通过；P2 自动门禁为 `ready_for_p2=false`。
 
 ## 推荐命令
 
@@ -183,9 +222,11 @@ python -m streamlit run apps/streamlit_app.py
 
 ## 后续优先级
 
-1. P1.6.5：分别增加信号回测、截面资产定价和组合强化学习严格样例，补齐类型门禁。
-2. P1.6.6：对 28 个 candidate 逐篇抽取/审核 MethodCard、运行并生成 Delta；58 个 blocker 按任务/数据/模型聚类消减。
-3. P1.6.3：提高高影响力正式期刊全文占比；不能合法下载的只保留元数据。
-4. P1.6.5：向 20 个独立 strict claims 扩展时优先新增数据域和实验类型，而不是继续堆叠 Exchange-Rate 模型。
-5. P1.7/P1.8：把 prior 接入旧 harness scheduler，并增加 SourceBundle 人工确认和 publication-date commit。
-6. 之后再进入配对检验、多 seed、市场状态分层和 P2 搜索效率。
+按照已批准的 `STRICT_REPRODUCTION_GENERALIZATION_PLAN.md`，下一轮建议按以下顺序继续：
+
+1. 实现 Native Claim Compiler、插件化协议和前端论文-claim 绑定，让新论文不再依赖修改千行 Catalog 构建脚本。
+2. 完成 section-aware MethodCard v3、SourceBundle、publication-date commit、数据许可和字段映射闭环。
+3. 分别增加信号回测、截面资产定价和组合强化学习 strict 纵向样例，并用第 2 篇 held-out 论文验证插件复用。
+4. 对 28 个 candidate 逐篇执行或阻断，聚类消减 58 个 blocker。
+5. 建立 Benchmark Registry、配对统计、多 seed/市场状态，并接入异步任务、MLflow/DVC lineage 和全局 Memory Scheduler。
+6. 达到至少 20 篇、4 类实验、3 个数据域和 false-strict=0 的门禁后，再进入 P2 搜索效率。

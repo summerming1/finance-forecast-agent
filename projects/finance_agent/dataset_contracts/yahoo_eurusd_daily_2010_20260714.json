@@ -1,0 +1,231 @@
+{
+  "dataset_id": "yahoo_eurusd_daily_2010_20260714",
+  "paper_id": "benchmark_registry",
+  "source_url": "frozen Yahoo chart API snapshot",
+  "local_path": "projects\\finance_agent\\data\\benchmarks\\yahoo_eurusd_daily_2010_20260714.csv",
+  "sha256": "806e99293202bda9de7064d31fdf7e8386114a1f84fbe618ec525a0342983902",
+  "market": "global FX",
+  "asset_class": "spot foreign exchange",
+  "frequency": "daily",
+  "timezone": "UTC",
+  "calendar": "24/7",
+  "start_date": "recorded in acquisition snapshot",
+  "end_date": "recorded in acquisition snapshot",
+  "license_status": "unknown",
+  "redistribution_allowed": false,
+  "field_mappings": [
+    {
+      "source_field": "timestamp",
+      "canonical_field": "timestamp",
+      "dtype": "object",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "eurusd_x_close",
+      "canonical_field": "eurusd_x_close",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "volume",
+      "canonical_field": "volume",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "return_1",
+      "canonical_field": "return_1",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_1",
+      "canonical_field": "sequence_lag_1",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_2",
+      "canonical_field": "sequence_lag_2",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_3",
+      "canonical_field": "sequence_lag_3",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_4",
+      "canonical_field": "sequence_lag_4",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_5",
+      "canonical_field": "sequence_lag_5",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_6",
+      "canonical_field": "sequence_lag_6",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_7",
+      "canonical_field": "sequence_lag_7",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_8",
+      "canonical_field": "sequence_lag_8",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_9",
+      "canonical_field": "sequence_lag_9",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_10",
+      "canonical_field": "sequence_lag_10",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_11",
+      "canonical_field": "sequence_lag_11",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "sequence_lag_12",
+      "canonical_field": "sequence_lag_12",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "rolling_volatility_5",
+      "canonical_field": "rolling_volatility_5",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "rolling_volatility_20",
+      "canonical_field": "rolling_volatility_20",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "volume_change_1",
+      "canonical_field": "volume_change_1",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    },
+    {
+      "source_field": "label",
+      "canonical_field": "label",
+      "dtype": "float64",
+      "unit": "return_or_normalized_feature",
+      "availability_lag": "available after period close",
+      "point_in_time": true,
+      "transformation": "identity",
+      "evidence": "frozen benchmark builder for eurusd_daily_next_return_12lag_v1"
+    }
+  ],
+  "point_in_time_required": true,
+  "approved_by": "",
+  "blockers": [
+    "Yahoo provider terms require explicit human approval before strict native use"
+  ],
+  "created_at": "2026-07-17T10:35:28.233817+00:00",
+  "schema_version": "dataset_contract_v1",
+  "validation_blockers": [
+    "Yahoo provider terms require explicit human approval before strict native use",
+    "dataset license is not approved for strict research use",
+    "dataset contract requires human approval"
+  ],
+  "strict_ready": false
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "p2_readiness_v1",
+  "generated_at": "2026-07-17T11:01:22.323282+00:00",
+  "ready_for_p2": false,
+  "gates": {
+    "strict_papers_at_least_20": false,
+    "experiment_types_at_least_4": false,
+    "data_domains_at_least_3": false,
+    "heldout_routes_at_least_8_of_10": true,
+    "false_strict_zero": true,
+    "candidate_labels_eliminated": true,
+    "vertical_types_have_strict_pairs": false
+  },
+  "observed": {
+    "strict_financial_papers": 10,
+    "strict_experiment_types": [
+      "forecast_only"
+    ],
+    "strict_data_domains": [
+      "financial"
+    ],
+    "heldout_route_count": 10,
+    "false_strict_count": 0,
+    "vertical_strict_count": 0
+  },
+  "next_priority": [
+    "materialize one protocol-identical open-data signal-backtest claim and a held-out second paper",
+    "materialize one open point-in-time cross-sectional claim and a held-out second paper",
+    "find portfolio-RL repositories whose pinned release matches the paper and includes frozen market data",
+    "raise live LLM numeric claim extraction from 1/3 vertical papers before increasing corpus size"
+  ]
+}

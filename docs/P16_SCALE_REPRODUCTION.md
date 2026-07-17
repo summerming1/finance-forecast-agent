@@ -97,6 +97,30 @@ PatchTST 原论文没有 Exchange claim，所以它只能按原论文 ETTm1 clai
 
 Autoformer 与 SCINet 完成官方运行但结果超出预声明容差，未计 strict。MTGNN 静态审计通过，但论文要求 10 次 × 30 epochs，当前 CPU 预算下保留为 `ready_not_run`。没有为凑数量放宽任何已冻结容差。
 
+## 十篇复现的能力沉淀复盘
+
+本轮不是简单运行十条命令。实际工作依次包括 claim 选择、论文表格行核对、官方仓库与 commit 固定、数据格式重建、协议冲突判断、环境安装、现代依赖兼容、重复实验、指标产物核验、长任务恢复和结果门禁。
+
+其中已经沉淀为项目能力的部分：
+
+- 声明式 `NativeClaimSpec` 和统一 `OfficialRepoCommandAdapter`。
+- 数据/source archive/entrypoint SHA256、commit、license、MethodCard 和 ReproductionPlan 审计。
+- 隔离运行副本、短路径、语义不变补丁及前后 hash。
+- 日志与官方指标产物抽取、重复观测策略、指标方向和冻结容差。
+- timeout、blocker、原子 `.partial`、外部重复恢复和 FiLM/FEDformer RNG 边界恢复。
+- Native report、Portfolio 计数和七阶段前端展示。
+
+仍然属于开发者人工工程、尚未产品化的部分：
+
+- 选择论文中唯一可检验的 claim 和正确表格行。
+- 对齐论文、README、脚本和源码默认值。
+- 为每个仓库编写命令、环境、指标提取、补丁和资源预算。
+- 判断补丁是否真的不改变算法语义。
+- 冻结统计容差并解释未通过结果。
+- 为九篇论文人工策展主资料 MethodCard、EvidenceSpan 和 ReproductionPlan。
+
+因此，这 10 篇证明了执行内核在同类预测仓库上的复用性，但不等于任意新文献已经可以自动严格复现。上述人工步骤现已形成 Native Claim Compiler、Source/Data/Command/Metric/Environment 插件和人工审批控制层；科学覆盖门禁仍未完成。批准计划见 `docs/STRICT_REPRODUCTION_GENERALIZATION_PLAN.md`，实施结果见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。
+
 ## 运行命令
 
 ```powershell
@@ -112,4 +136,10 @@ python -m streamlit run apps/streamlit_app.py
 
 ## 下一批验收
 
-下一批不再优先堆叠同类 Exchange-Rate 模型，而是分别完成信号回测、截面资产定价和组合强化学习 strict 样例；同时对 28 个 candidate 逐篇执行 MethodCard、数据绑定和 Delta 审计，并聚类消减 58 个 blocker。扩展到 20 个 strict claims 时仍必须保持独立论文、合法数据、固定源码、原生协议和预声明容差。
+下一批不再优先堆叠同类 Exchange-Rate 模型。建议先修复“本地论文 -> Native Claim”的通用接入断点，再分别完成信号回测、截面资产定价和组合强化学习 strict 样例；每类第 2 篇必须作为 held-out 论文复用同一协议插件。随后对 28 个 candidate 逐篇执行 MethodCard、数据绑定和 Delta 审计，并聚类消减 58 个 blocker。扩展到 20 个 strict claims 时仍必须保持独立论文、合法数据、固定源码、原生协议和预声明容差。
+
+## P1.G 后续实施结果
+
+“本地论文 -> Native Claim”的控制断点已由 Native Claim Compiler、逐论文 spec、MethodCard v3、SourceApproval 和 DatasetContract 补齐。三种类型协议、Benchmark Registry、异步任务、lineage、Memory Scheduler 和自动 P2 门禁也已实现。
+
+这并未完成本节的科学验收：信号回测、截面资产定价、组合强化学习的协议验证均正确阻断，新增 strict 仍为 0；原 28 个 candidate 经论文级资格审计后没有真实执行成功，当前 blocker 总数为 86。详细结果、真实 LLM 三篇抽取和下一步顺序见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。
