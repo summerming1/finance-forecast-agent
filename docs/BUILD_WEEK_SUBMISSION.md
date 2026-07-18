@@ -1,168 +1,105 @@
 # ForecastProof — Build Week submission brief
 
-> Status: product flow, cost controls, deterministic memo eval, Audit Pack, evidence-guided controlled iteration, and local automated tests are implemented. Public demo URL, screenshots, final video URL, eligibility confirmation, and Devpost fields must still be completed before submission.
-
-The current v0.4 live Luna acceptance run completed the two-tool Responses loop in two API requests and passed the seven-check deterministic memo audit at 100/100 while disclosing the failed persistence value gate. It used 3,615 input and 927 output tokens; the OpenAI list-rate reference is `$0.009177` and may differ from compatible-provider billing.
-
-The current v0.5 adds a zero-API-cost Iteration Lab. It pre-registers 28 earlier development folds for diagnosis and reserves 13 later folds for untouched promotion. The committed SPY-volatility child improved holdout RMSE by 1.18%, but regressed the worst holdout MAE slice by 20.30%, so deterministic gates retained the parent and kept deployment unauthorized.
+> Code status: v0.6 golden path, three-paper S&P 500 suite, deterministic audits, cost controls, Audit Pack, controlled iteration, and automated tests are implemented. Public deployment, screenshots, final video, eligibility confirmation, and Devpost fields remain submission tasks.
 
 ## One-line pitch
 
-ForecastProof proves whether a forecasting paper reproduced, challenges whether it beat a naive baseline, turns that boundary into an audited GPT-5.6 decision, and runs one evidence-bound next experiment without hiding weak-slice regressions.
+ForecastProof is an evidence agent that turns forecasting papers into comparable, statistically challenged research decisions—and refuses to promote a model when the evidence is not strong enough.
 
-## What the product does
+## Problem
 
-Research and investment teams regularly inherit impressive forecasting claims but lack a fast way to answer five practical questions:
+A forecasting paper can look promising while hiding practical uncertainty across data revisions, label definitions, temporal leakage, baseline selection, and missing protocol details. A polished LLM summary does not solve that trust problem. Research teams need a system that distinguishes:
 
-1. What exactly did the paper claim?
-2. Did a local run follow the same evidence, data, and protocol?
-3. Did it add value over a simple same-window baseline?
-4. Is the result strong enough to justify the next research step?
-5. What bounded experiment should run next, and did it improve safely enough to earn research promotion?
+- what the paper actually supports;
+- whether a method can run under a shared executable contract;
+- whether it beats a simple leakage-safe baseline with statistical evidence;
+- whether the next model change really ran and earned promotion.
 
-ForecastProof makes that path inspectable. The judge-facing demo uses a strict DLinear claim on the Exchange-Rate benchmark:
+## What ForecastProof does
 
-- **Analyze:** loads a MethodCard with pinned paper, repository, and dataset evidence.
-- **Verify:** replays four deterministic gates against a real native-run report.
-- **Challenge:** recomputes last-value persistence over 1,422 identical test windows and exposes the thresholds that flip the decision.
-- **Decide:** produces a cited memo with verified facts, risks, next actions, and a research-only guardrail.
-- **Iterate:** diagnoses only earlier development folds, binds a proposal to literature and performance evidence, requires human approval, and runs exactly one allow-listed child.
-- **Protect the holdout:** later chronological folds remain untouched until the proposal is fixed, avoiding adaptive reuse of the same test evidence.
-- **Promote or retain:** checks identical target rows, primary and secondary metrics, runtime, finite values, and worst-slice MAE; even a passing child remains research-only.
-- **Audit:** deterministically checks gate authority, tool grounding, citation mappings, evidence coverage, completeness, safety, and naive-challenger honesty; the verified replay scores 100/100.
-- **Export:** downloads a complete versioned Audit Pack with evidence, protocol delta, verification, memo, provenance, response ID, and token/cost metadata.
+The judge-facing flow contains three evidence-backed S&P-related papers. Their Random Forest, GBDT, and LSTM method branches run on one frozen SPY next-day-direction task with identical 12-lag features, 41 purged walk-forward folds, 656 out-of-fold targets, and a fold-train-only majority baseline.
 
-## Why GPT-5.6 is core
+```text
+Select paper
+  → inspect pinned evidence and unknowns
+  → disclose every paper-to-run adaptation
+  → verify frozen data, common protocol, and aligned artifacts
+  → challenge accuracy with baseline + Wilson interval + binomial test
+  → generate an audited GPT-5.6 / replay decision memo
+  → approve one allow-listed child training run
+  → promote or retain on later untouched folds
+```
 
-The live `EvidenceAnalyst` uses the OpenAI Responses API with GPT-5.6. It must call both read-only tools before it may write a memo:
+All three cases pass the four adaptation-integrity gates. None passes the statistical skill gate, so deployment stays on HOLD. This is deliberate and visible. ForecastProof does not call these three runs strict reproductions; the underlying research harness keeps strict reproduction as a separate tier.
+
+## Why it is agentic
+
+GPT-5.6 EvidenceAnalyst uses the Responses API and must call two read-only tools:
 
 - `get_evidence_brief`
 - `get_verification_result`
 
-The final memo uses a strict JSON Schema. The model synthesizes the decision narrative, while deterministic Python gates remain the authority for evidence, protocol, dataset hash, and metric tolerance. This separates agentic reasoning from governance.
+It returns a strict DecisionMemo structured output containing verified facts, rationale, risks, actions, citations, confidence, and a research-only guardrail. Its memo then faces eight deterministic checks: decision authority, tool grounding, citation validity, evidence coverage, completeness, research safety, adaptation-scope honesty, and baseline/statistical honesty.
 
-The judge-facing live form is cost controlled: the recommended GPT-5.6 Luna profile uses low reasoning, a 1,600-token cap per API response, `store=false`, and one attempt. The UI aggregates token usage across the tool loop and displays a reference cost estimate. Compatible proxies may bill differently from OpenAI's public list rates.
+The model owns synthesis, not truth. It cannot change a gate, hide a HOLD result, label an adaptation as strict reproduction, authorize trading, or launch training.
 
-```mermaid
-flowchart LR
-    A["Paper + pinned sources"] --> B["EvidenceBrief tool"]
-    C["Native-run report"] --> D["Deterministic gates"]
-    P["Same-window persistence"] --> D
-    D --> E["VerificationResult tool"]
-    B --> F["GPT-5.6 EvidenceAnalyst"]
-    E --> F
-    F --> G["Strict DecisionMemo"]
-    G --> H["Facts · risks · actions · citations"]
-    H --> I["Evidence-bound IterationProposal"]
-    I --> J["One approved child run"]
-    J --> K["Promote research candidate or retain parent"]
-```
+Iteration proposals bind two evidence types—paper evidence and observed development-fold diagnostics—to allow-listed model parameters. Human approval launches exactly one real child. Later folds were reserved before diagnosis, and deterministic primary, secondary, slice, runtime, finiteness, and comparison-integrity gates decide promotion.
 
-## Verified demo facts
+## Frozen results
 
-| Check | Result |
-|---|---:|
-| Evidence audit | 31 spans passed |
-| Protocol fidelity | split, scaling, model, optimizer, and seed matched |
-| Dataset integrity | SHA-256 matched |
-| Paper MSE / local MSE | 0.081 / 0.0810795 |
-| Paper MAE / local MAE | 0.203 / 0.2060906 |
-| Persistence MSE / MAE | 0.0811257 / 0.1963566 |
-| DLinear vs persistence | MSE +0.06% / MAE −4.96% |
-| Naive value gate | hold |
-| Deployment readiness | hold; out-of-period regime not tested |
-| Acceptance tolerance | 0.01 |
-| Verdict | reproduced |
-| Controlled child untouched-holdout RMSE | +1.18% improvement |
-| Controlled child worst MAE slice | 20.30% regression |
-| Iteration decision | retain parent; deployment unauthorized |
+| Case | Model | Accuracy | Lift vs 49.24% baseline | Adaptation | Skill |
+|---|---|---:|---:|---|---|
+| `arxiv_2004_10178v2` | RF | 51.22% | +1.98% | 4/4 PASS | HOLD |
+| `arxiv_2108_10826` | GBDT | 51.68% | +2.44% | 4/4 PASS | HOLD |
+| `arxiv_2501_17366` | LSTM | 47.71% | −1.52% | 4/4 PASS | HOLD |
 
-The page is explicitly labeled **verified artifact replay**. It reruns deterministic validation against a frozen native training report and does not pretend to retrain during the demo.
+The first bounded child for every model family also runs end to end. RF and LSTM improve the holdout point estimate but fail slice/secondary guardrails; GBDT regresses and fails three gates. Every parent is retained and deployment remains unauthorized.
 
-## What was built during Build Week
+## Cost and reliability
 
-The pre-event baseline is commit `ffa048e` (`2026-07-13 10:42 +08:00`). The official event work is evidenced by the range:
+- Verified replay is the default and needs no API key.
+- Live mode runs only after one explicit form submission.
+- Default live settings: low reasoning, 1,200 output-token cap, one attempt, `store=false`.
+- Usage telemetry records request and token counts without storing the API key.
+- Build and test workflows use replay/mock only and spend no Luna credits.
+- A live failure never removes the audited offline result.
 
-```bash
-git log --oneline ffa048e..codex/openai-build-week
-git diff --stat ffa048e..codex/openai-build-week
-```
+The final v0.6 live Luna acceptance used the GBDT case, low reasoning, and a 1,200-token cap. It called both tools, returned CONDITIONAL with the failed skill gate and deployment HOLD, and passed all eight memo checks at 100/100. The two-request loop used 4,104 total tokens; the list-rate reference was approximately `$0.009324` and compatible-provider billing may differ.
 
-The following commits were created after the event opened, even though the dedicated branch pointer was created later:
+## How we used Codex
 
-| Commit | Work |
-|---|---|
-| `16ab79e` | P1 reproduction and benchmark workflows |
-| `814a08e` | live LLM MethodCard normalization |
-| `4e388cd` | strict LLM reproduction validation |
-| `5681e9b` | multi-paper research generality validation |
-| final branch commits | ForecastProof product, GPT-5.6 Responses agent, controlled iteration, tests, and submission assets |
+Codex helped audit the research harness, isolate hackathon work in a dedicated clone and branch, design the S&P 500 common-task contract, implement the Streamlit product flow and Responses tool loop, build tests that really train all three model families, and keep the scope disclosure honest. The pre-event baseline is commit `ffa048e`; the Build Week work is recorded on `codex/openai-build-week`.
 
-Git branches are movable pointers. The branch creation timestamp does not decide whether work is pre- or post-event; commit timestamps, diffs from the documented baseline, and Codex session history provide the evidence.
+## Challenges
 
-## Local run and test
+The hardest decision was refusing two tempting shortcuts: calling a common benchmark a paper reproduction, and treating a better accuracy point estimate as established skill. We also rejected a fourth candidate from the golden path because its local MethodCard had an empty evidence quote. Fewer trustworthy cases made a stronger product than a larger unsupported claim.
 
-```bash
-pip install -e ".[dev,ui,pdf]"
-python -m streamlit run apps/streamlit_app.py
-python -m pytest -q tests/test_forecastproof.py tests/test_iteration_lab.py tests/test_streamlit_workbench_app.py
-python -m ruff check apps src tests
-```
+## What's next
 
-Live mode:
+1. Add an independent frozen out-of-period SPY regime.
+2. Add paired parent-child confidence intervals or McNemar/paired-bootstrap promotion evidence.
+3. Add pre-registered multi-seed evaluation.
+4. Route uploaded papers to strict, adaptation, or blocked paths with a visible compatibility explanation.
+5. Add user-provided US-equity data mapping and cost-aware economic validation only after forecast skill passes.
 
-```bash
-copy .env.example .env
-# Add OPENAI_API_KEY locally. Never commit .env.
-python -m streamlit run apps/streamlit_app.py
-```
+## Suggested 3-minute demo
 
-## Three-minute judge path
-
-1. Open **Home** and state the promise: “from paper claim to auditable decision.”
-2. Open **Analyze** and expand one paper evidence span and one official-repository span.
-3. Open **Verify** and show the four green reproduction gates, then the persistence challenge and decision stress test.
-4. Open **Decision memo** in verified replay mode, then show live GPT-5.6 and its tool trace if a key is configured.
-5. Show the deterministic 100/100 decision audit and download the complete Audit Pack.
-6. Open **Iteration lab** and show that the saved child improves average RMSE but fails its worst-slice guardrail, so the parent is retained.
-7. End on `Deployment: Unauthorized`: reproduced or improved forecasting error is a research milestone, not an investment recommendation.
-
-## Devpost-ready project description
-
-### Inspiration
-
-Forecasting research moves faster than teams can validate it. A strong metric in a paper is often separated from the exact data split, preprocessing, source revision, and assumptions needed to reproduce it. We wanted an agent that helps teams make a better research decision without asking them to trust an uncited summary.
-
-### What it does
-
-ForecastProof converts a forecasting claim into an evidence brief, checks a local reproduction with deterministic gates, challenges it against same-window persistence, and creates a cited decision memo. Its Iteration Lab then diagnoses earlier development folds, locks the evidence-bound proposal, and evaluates one human-approved child only on later untouched folds. A child earns only research-candidate status when every average and slice guardrail passes.
-
-### How we used GPT-5.6
-
-Our GPT-5.6 EvidenceAnalyst runs on the Responses API. It calls two read-only tools for the evidence brief and verification result—including the naive challenger result—then returns a strict structured memo. GPT-5.6 is responsible for evidence-aware synthesis and decision framing; it cannot override the deterministic gates, hide a failed value gate, or turn a forecasting metric into financial advice.
-
-### How we built with Codex
-
-Codex helped audit the existing research harness, isolate the hackathon work in a dedicated local clone, redesign the Streamlit information architecture, implement the Responses tool loop and schema, add tests, and maintain a documented pre-event baseline. The Codex task history and `ffa048e..HEAD` diff are part of the build evidence.
-
-### Challenges
-
-The hardest design choice was separating “the experiment reproduced a paper metric” from “the model adds practical value,” and then separating “average improvement” from “safe research promotion.” We kept both inconvenient results: DLinear barely beats persistence, and the bounded RF child improves average RMSE while worsening its weakest slice. Deterministic gates disclose both failures and retain the safer incumbent.
-
-### What's next
-
-Next we will add paired tests, pre-registered multi-seed evidence, an ex-ante regime classifier, user-supplied paper ingestion, an out-of-period regime that can close the robustness gate, and team review links.
+1. Home: show three papers, three model families, 656 identical rows, and integrity PASS.
+2. Analyze: select the GBDT case; show original scope versus shared task and two evidence spans.
+3. Verify: show four gates, +2.44% point lift, statistical HOLD, and paper-to-run delta.
+4. Decision memo: show CONDITIONAL, 100/100 audit, tool grounding, and Audit Pack.
+5. Iteration: show allow-listed parameters, approval, a real retained-parent result, and deployment unauthorized.
 
 ## Submission checklist
 
-- [ ] Deploy a public Streamlit URL and test in a clean browser.
+- [ ] Deploy a public Streamlit URL and test it in a clean browser.
 - [ ] Record a 2:30–3:00 minute English demo using `BUILD_WEEK_DEMO_SCRIPT.md`.
-- [ ] Add four screenshots: Home result, reproduction + persistence challenge, Decision memo + agent trace, Iteration lab retain-parent decision.
-- [ ] Add the public repository URL and confirm `codex/openai-build-week` is visible.
-- [ ] Add the baseline and during-event commit evidence.
-- [ ] Confirm live GPT-5.6 works on the deployed environment.
-- [ ] Confirm verified replay works when the key is absent or the API is unavailable.
-- [ ] Include the research-only / not-investment-advice guardrail.
+- [ ] Capture four screenshots: multi-paper Home, Verify statistics, audited memo, retained-parent iteration.
+- [ ] Add public repository and demo URLs to Devpost.
+- [ ] Confirm `codex/openai-build-week` and build-period evidence are visible.
+- [ ] Test replay without a key and live GPT-5.6 once in the deployed environment.
+- [ ] Confirm no `.env`, key, private endpoint, or user data appears in the video or repository.
+- [ ] Include the research-only / not-investment-advice statement.
 
 ## Official references
 
@@ -170,4 +107,3 @@ Next we will add paired tests, pre-registered multi-seed evidence, an ex-ante re
 - [Responses API migration guide](https://developers.openai.com/api/docs/guides/migrate-to-responses)
 - [Function calling guide](https://developers.openai.com/api/docs/guides/function-calling)
 - [Structured Outputs guide](https://developers.openai.com/api/docs/guides/structured-outputs)
-- [GPT-5.6 Luna model page](https://developers.openai.com/api/docs/models/gpt-5.6-luna)

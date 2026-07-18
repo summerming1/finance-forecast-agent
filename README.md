@@ -1,10 +1,10 @@
 # ForecastProof — OpenAI Build Week edition
 
-ForecastProof turns a forecasting paper claim into an auditable decision and one bounded next experiment: cited evidence, deterministic reproduction gates, a safe go/no-go memo, weak-slice diagnostics, and human-approved model iteration. It is the judge-facing product built on top of the Finance Forecast Agent research harness for OpenAI Build Week.
+ForecastProof turns forecasting papers into auditable research decisions and bounded next experiments. The Build Week golden path is now a reusable S&P 500 daily research contract, not a one-paper-only demo: three evidence-backed papers map to Random Forest, GBDT, and LSTM adapters, run on the same frozen SPY data, 41 purged walk-forward folds, 656 identical out-of-fold targets, and one leakage-safe majority baseline.
 
 The default verified demo requires no API key. Live decision synthesis uses GPT-5.6 through the Responses API, calls two read-only evidence tools, and returns a strict Structured Output. Deterministic code—not the model—decides whether the claim passed.
 
-The standout result is intentionally honest: DLinear reproduces the paper, yet improves MSE by only 0.06% over same-window last-value persistence and regresses 4.96% on MAE. ForecastProof therefore accepts the scientific reproduction while holding deployment. Its Iteration Lab binds literature evidence to earlier development-fold diagnostics, reserves later folds as an untouched promotion holdout, permits exactly one approved child run, and refuses research promotion when an average improvement hides a weak-slice regression.
+All three paper-inspired runs pass evidence, frozen-data, common-protocol, and artifact-integrity gates. None passes the statistical skill gate. ForecastProof therefore validates the reusable adaptation workflow while keeping deployment on HOLD. It never presents these runs as strict paper reproductions. The original strict DLinear reproduction remains in the underlying research harness as a separate validation tier.
 
 The default Luna configuration uses low reasoning, a 1,600-token per-response cap, `store=false`, and one attempt in the judge-facing UI.
 
@@ -21,12 +21,13 @@ Then follow the top navigation:
 Home → Analyze → Verify + challenge → Decision memo → Iteration lab
 ```
 
-- `Verified replay` works offline against the frozen DLinear native-run report.
+- Select one of three paper cases in the sidebar; that case stays fixed from Analyze through Iteration.
+- `Verified replay` works offline against the frozen S&P 500 research-suite artifact.
 - `Live GPT-5.6` requires `OPENAI_API_KEY`; copy `.env.example` to `.env` and keep the key local.
 - For the cost-sensitive path, use `OPENAI_RESPONSES_MODEL=gpt-5.6-luna`; the official endpoint is `https://api.openai.com/v1`.
 - The decision memo is research support only and explicitly does not authorize trading.
 
-See [`docs/FORECASTPROOF_VNEXT_ROADMAP_ZH.md`](docs/FORECASTPROOF_VNEXT_ROADMAP_ZH.md), [`docs/BUILD_WEEK_SUBMISSION.md`](docs/BUILD_WEEK_SUBMISSION.md), [`docs/BUILD_WEEK_DEMO_SCRIPT.md`](docs/BUILD_WEEK_DEMO_SCRIPT.md), and the Chinese [`docs/BUILD_WEEK_PRODUCT_GUIDE_ZH.md`](docs/BUILD_WEEK_PRODUCT_GUIDE_ZH.md) for the architecture, next-version plan, interaction, and success checklist.
+See the complete Chinese walkthrough [`docs/SP500_GENERALIZED_FLOW_GUIDE_ZH.md`](docs/SP500_GENERALIZED_FLOW_GUIDE_ZH.md), plus [`docs/BUILD_WEEK_SUBMISSION.md`](docs/BUILD_WEEK_SUBMISSION.md), [`docs/BUILD_WEEK_DEMO_SCRIPT.md`](docs/BUILD_WEEK_DEMO_SCRIPT.md), and [`docs/FORECASTPROOF_VNEXT_ROADMAP_ZH.md`](docs/FORECASTPROOF_VNEXT_ROADMAP_ZH.md).
 
 ## Research harness
 

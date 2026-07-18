@@ -14,7 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_METHOD_CARD = PROJECT_ROOT / "projects" / "finance_agent" / "method_cards_local_llm" / "arxiv_2205_13504.json"
 DEFAULT_REPORT = PROJECT_ROOT / "projects" / "finance_agent" / "reports" / "native_dlinear_exchange_336_96.json"
 DEFAULT_DATASET = PROJECT_ROOT / "projects" / "finance_agent" / "data" / "external" / "exchange_rate" / "exchange_rate.txt"
-APP_VERSION = "0.5.0-build-week"
+APP_VERSION = "0.6.0-build-week"
 AUDIT_PACK_SCHEMA_VERSION = "forecastproof_audit_pack_v2"
 DEFAULT_VALUE_HURDLE = 0.01
 

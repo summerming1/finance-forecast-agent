@@ -13,9 +13,22 @@ if str(SOURCE_ROOT) not in sys.path:
     sys.path.insert(0, str(SOURCE_ROOT))
 
 from finance_forecast_agent.config import load_env_file  # noqa: E402
+from finance_forecast_agent.sp500_research import DEFAULT_CASE_ID, case_options  # noqa: E402
 
 load_env_file()
 st.set_page_config(page_title="ForecastProof", page_icon=":material/fact_check:", layout="wide")
+
+options = [row["paper_id"] for row in case_options()]
+if st.session_state.get("forecastproof_case_id") not in options:
+    st.session_state["forecastproof_case_id"] = DEFAULT_CASE_ID
+st.sidebar.selectbox(
+    "Research case",
+    options,
+    format_func=lambda paper_id: next(row["short_name"] for row in case_options() if row["paper_id"] == paper_id),
+    key="forecastproof_case_id",
+    help="The selected paper stays fixed from Analyze through Iteration.",
+)
+st.sidebar.caption("Shared task: SPY next-day direction")
 
 pages = [
     st.Page("app_pages/home.py", title="Home", icon=":material/home:", default=True),

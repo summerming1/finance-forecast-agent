@@ -1,3 +1,3 @@
-from finance_forecast_agent.forecastproof_ui import render_iteration_lab
+from finance_forecast_agent.sp500_research_ui import render_iteration_lab
 
 render_iteration_lab()

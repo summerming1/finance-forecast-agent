@@ -2,7 +2,7 @@
 
 ## 当前版本
 
-当前最新实现为 **P1.6.3-P1.8 first-batch implementation + ForecastProof v0.5 controlled iteration（未通过规模化总验收）**。项目仍是论文驱动、真实数据驱动、可审计和需人工审批的金融预测研究平台，不是自动交易系统。
+当前最新实现为 **P1.6.3-P1.8 first-batch implementation + ForecastProof v0.6 S&P 500 generalized flow（未通过规模化 strict 总验收）**。黑客松主路径已从单一 DLinear 案例升级为三篇 S&P 相关论文、三种模型族共用同一个 SPY 日频任务的完整闭环；项目仍不是自动交易系统。
 
 本批已实现 50 份合法开放 PDF、86 条论文审计记录、通用数据获取、四类冻结统一基准、带负向证据的 ExperimentMemory prior、十个 SourceBundle 候选和研究流程后端资产。规模化总验收仍未通过，因为严格复现只有 1/10，逐篇探索性运行也尚未覆盖全部非 strict 文献；这些缺口不能由共享 benchmark 或 Replay fixture 代替。
 
@@ -27,6 +27,7 @@ P1.6.8 研究流程服务与审计资产
 P1.7 带上下文隔离、失败降权和解释的 Memory prior
 P1.8 GitHub API/Git fallback SourceBundle 审计
 Build Week v0.5 分层误差诊断、证据绑定 IterationProposal、父子谱系和单次受控迭代
+Build Week v0.6 三篇 S&P 论文统一契约、适配诚实性门禁、统计技能门与同 case 端到端迭代
 ```
 
 P1.6.5 Native Reproduction Portfolio 仍未完成：DLinear 是唯一 strict verified paper/claim，目标缺口为 9 篇。
@@ -83,6 +84,7 @@ PredictionArtifact -> fold/time/realized-move diagnostics
 - 复现覆盖账本：1 篇 strict verified、28 篇 exploratory candidate、58 篇结构化 blocked；candidate 只表示适配路径存在，不表示已执行该论文。
 - 多基准：4 个任务 × 5 个方法共 20 组，目标行/fold/预测数完整性全部通过。SPY 方向与 EURUSD 未显示方向能力；SPY 5 日波动率误差优于训练折均值基线；BTC-LSTM 在该冻结任务上显示方向能力。原论文假设均不能从共享任务直接迁移。
 - Controlled Iteration Lab：先预注册时间顺序的 28 个 development folds 与 13 个 untouched promotion folds；只用前者生成 fold、时间段和 realized-move 分层诊断与提案，只用后者做晋升。每个提案同时引用 MethodCard 文献证据和当前性能证据，并保存 `parent_run_id`。SPY 波动率/RF 实测子配置在 untouched holdout 上的 RMSE 改善约 1.18%，但最差 MAE 切片回退约 20.30%，因此门禁正确选择 `retain_parent`。
+- 黑客松通用主路径：`arxiv_2004_10178v2`、`arxiv_2108_10826`、`arxiv_2501_17366` 分别映射 RF、GBDT、LSTM，共用 SPY 次日方向、12 lag、41 个 purged walk-forward folds 和 656 条相同 OOF 目标。三者适配完整性均为 4/4，方向准确率分别约 51.22%、51.68%、47.71%；统计技能均 HOLD。三种 parent 的首个 child 也都实际训练通过流程，但因 primary/secondary/worst-slice 中至少一项失败而保留 parent。
 
 ## 前端
 

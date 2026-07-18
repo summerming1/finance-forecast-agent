@@ -1,3 +1,3 @@
-from finance_forecast_agent.forecastproof_ui import render_analyze
+from finance_forecast_agent.sp500_research_ui import render_analyze
 
 render_analyze()

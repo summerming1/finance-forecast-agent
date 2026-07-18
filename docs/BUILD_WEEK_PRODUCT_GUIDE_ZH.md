@@ -3,7 +3,9 @@
 > 更新日期：2026-07-18
 > 隔离项目：`D:\AI Agent\finance_forecast_agent_build_week`
 > 黑客松分支：`codex/openai-build-week`
-> 应用版本：`0.5.0-build-week`
+> 应用版本：`0.6.0-build-week`
+>
+> 注意：v0.6 的评委主路径已经升级为三篇 S&P 相关论文的统一日频适配流程。本文后续保留 v0.5 DLinear 严格复现说明作为历史技术背景；当前完整操作与验收请优先阅读 [`SP500_GENERALIZED_FLOW_GUIDE_ZH.md`](SP500_GENERALIZED_FLOW_GUIDE_ZH.md)。
 
 ## 1. 产品是什么
 
@@ -140,7 +142,7 @@ OPENAI_RESPONSES_RETRIES=1
 
 v0.4 最终 Live 验收也已通过：Luna 正确给出“复现通过、incremental value gate 失败、deployment HOLD”的双结论，准确引用 persistence MSE/MAE、1,422 个窗口与 1,092,096 个观测，最终审计为 `100/100`（7/7）。本次仍为 2 个 Responses 请求，累计 input 3,615 token、output 927 token，OpenAI 列表价参考成本 `$0.009177`。连通测试、v0.3 与 v0.4 三次真实验收合计的官方列表价参考约为 `$0.0181`；兼容代理实际账单可能不同。
 
-当前本地 `.env` 实际使用 `https://api.tokln.com/v1`，这是 OpenAI-compatible 代理而非官方 OpenAI endpoint。它已能返回 Luna 响应，但其 credits、实际计费、数据处理、模型映射和服务稳定性由代理提供方负责。正式参赛若条件允许，建议使用 `https://api.openai.com/v1` 和 OpenAI Platform API credits，以强化官方技术使用证据。
+如果使用 OpenAI-compatible 代理，其 credits、实际计费、数据处理、模型映射和服务稳定性由代理提供方负责，不应把代码里的 OpenAI 列表价估算当成真实账单。公开提交不要披露私有 endpoint；正式部署优先使用官方 OpenAI endpoint，并在部署环境中以 secret 配置密钥。
 
 ## 5. 前端完整交互验收流程
 

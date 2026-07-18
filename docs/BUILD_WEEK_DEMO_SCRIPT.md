@@ -1,71 +1,47 @@
-# ForecastProof — three-minute demo script
+# ForecastProof v0.6 — three-minute demo script
 
-## Before recording
+## 0:00–0:25 — Problem and differentiation
 
-- Use a clean browser window at 1440×900 or 1920×1080.
-- Start on Home with the app already warm.
-- Keep `Verified replay` as the reliable path.
-- Configure live GPT-5.6 only if the deployed key and quota have been tested.
-- Do not show `.env`, terminals containing keys, or local absolute paths.
+Show Home and the three-case table.
 
-## 0:00–0:20 — Problem and promise
+> Forecasting teams can discover papers quickly, but they still struggle to know whether a method transfers, beats a simple baseline, and deserves another experiment. ForecastProof is not a paper summarizer. It turns evidence into a governed research decision and one executable next test.
 
-**Say:**
+Point to 3 papers, 3 model families, 656 identical rows, and comparison integrity PASS.
 
-> Forecasting teams can find exciting paper results in minutes, but it can take days to learn whether the claim is reproducible and useful. ForecastProof turns one paper claim into an auditable research decision.
+## 0:25–0:55 — Select and analyze one paper
 
-**Show:** Home title, the reproduction/value split, and the five-layer flow.
+Select `S&P 500 ensemble · GBDT branch`, then open Analyze.
 
-## 0:20–0:55 — Analyze
+> Every case keeps the original paper scope separate from our shared executable task. Evidence IDs and source revisions are pinned; unknowns stay unknown. This is explicitly a paper-inspired SPY adaptation, not a strict reproduction.
 
-Open **Analyze**.
+Expand two evidence spans.
 
-**Say:**
+## 0:55–1:35 — Verify integrity and value
 
-> The demo begins with a strict DLinear claim on the Exchange-Rate benchmark. ForecastProof does not rely on a loose summary: the MethodCard binds the result, data split, scaling, hyperparameters, and unknowns to pinned paper and repository evidence.
+Open Verify.
 
-Expand one `reported results` span and one protocol span. Point to the source revision.
+> Deterministic code checks evidence, frozen data, the common protocol, and prediction artifacts. All four pass. GBDT reaches about 51.68 percent versus a 49.24 percent fold-train majority baseline, but the confidence interval and binomial test do not establish directional skill. So adaptation passes while value and deployment remain on hold.
 
-## 0:55–1:45 — Verify and challenge
+Show the four gates, Wilson interval, p-value, and Paper-to-run delta audit.
 
-Open **Verify**.
+## 1:35–2:15 — GPT-5.6 decision memo
 
-**Say:**
+Open Decision memo in Verified replay.
 
-> The model does not grade itself. Deterministic code checks four things: evidence approval, protocol fidelity, dataset hash, and metric tolerance. All four pass. But ForecastProof does not stop at reproduction. Across the same 1,422 test windows, DLinear improves MSE by only 0.06% over last-value persistence and is 4.96% worse on MAE. So the research result passes while deployment remains on hold.
+> GPT-5.6 can call two read-only Responses tools and return a strict structured memo. It cannot change a gate. A deterministic eight-check audit requires valid citations, adaptation honesty, the failed skill gate, and a not-investment-advice guardrail.
 
-Show the four gates, challenger scorecard, and decision stress test. Change the paper-metric tolerance from `0.0100` to `0.0030` to demonstrate that the research verdict flips deterministically. Return it to `0.0100`. State that this is a frozen artifact replay, not fake instant training.
+Show CONDITIONAL, HOLD, 100/100, and Audit Pack download. Use live mode only if already tested; keep low reasoning and the 1,200-token cap.
 
-## 1:45–2:30 — Decide and audit with GPT-5.6
+## 2:15–2:50 — Real controlled iteration
 
-Open **Decision memo**.
+Open Iteration lab.
 
-**Say:**
+> The selected case stays fixed. ForecastProof diagnoses only earlier folds, reserves later folds for promotion, and produces at most three allow-listed executable changes. After human approval, the parameters are really applied and one child is trained. In this GBDT example the child regresses and fails three guardrails, so the parent is retained. Deployment remains unauthorized.
 
-> GPT-5.6 is the EvidenceAnalyst. Through the Responses API it must call the evidence brief and verification result tools before returning this strict structured memo. The deterministic audit also requires it to disclose the failed persistence gate rather than polishing away an inconvenient result.
+Use an already saved result or run once before recording.
 
-Show `Verified replay` first and point to the deterministic 100/100, 7/7 memo audit. If live mode is tested, switch to **Live GPT-5.6**, keep low reasoning and the 1,600-token cap, run it once, then expand **Agent trace and citations** to show the two tools and token/cost telemetry.
+## 2:50–3:00 — Close
 
-Point to the recommendation and guardrail, then show the complete Audit Pack download.
+> Three papers prove this is no longer a one-paper demo. The most important result is that ForecastProof is willing to say: the pipeline works, but the evidence is not strong enough to deploy.
 
-## 2:30–2:57 — Evidence-guided iteration
-
-Open **Iteration lab**.
-
-**Say:**
-
-> A hold decision now becomes a bounded next experiment. ForecastProof diagnoses only earlier development folds, binds the hypothesis to literature and performance evidence, and reserves later folds as an untouched promotion holdout. It requires human approval for exactly one child run. In this frozen example holdout RMSE improves, but the worst slice regresses, so the deterministic gate retains the parent. It will not optimize away an inconvenient failure.
-
-Show the four diagnostics, two evidence types, bounded parameter JSON, saved gate result, and `Deployment: Unauthorized`. Use the already saved result during recording; do not wait for training.
-
-## 2:57–3:00 — Build evidence and close
-
-Return to Home or Decision memo.
-
-**Say:**
-
-> The pre-event baseline is commit ffa048e. Our during-event diff, Codex task history, and dedicated Build Week branch document the new work. ForecastProof is useful because it is willing to say both things at once: the science reproduced, and the deployment case is not ready.
-
-## Recording fallback
-
-If live GPT-5.6 fails during recording, stay in verified replay mode and show the mocked Responses integration test in the repository afterward. Do not spend the demo waiting on an API call.
+If live GPT-5.6 is unavailable, stay in Verified replay; never expose `.env` or an API key.

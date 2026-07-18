@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from .forecastproof import DecisionMemo, EvidenceBrief, VerificationResult
+from .forecastproof import DecisionMemo
 
 
 DECISION_MEMO_SCHEMA: dict[str, Any] = {
@@ -147,7 +147,19 @@ class OpenAIResponsesDecisionAgent:
             raise ValueError("OPENAI_RESPONSES_RETRIES must be at least 1")
         self._post = post or requests.post
 
-    def generate(self, *, brief: EvidenceBrief, verification: VerificationResult) -> ResponsesAgentRun:
+    def generate(self, *, brief: Any, verification: Any) -> ResponsesAgentRun:
+        validation_tier = str(getattr(verification, "validation_tier", "strict_reproduction"))
+        if validation_tier == "paper_inspired_common_benchmark":
+            scope_instruction = (
+                "This run is a paper-inspired common-benchmark adaptation, not a strict reproduction. "
+                "Explicitly preserve that distinction, compare directional accuracy with the fold-train majority "
+                "baseline, disclose the statistical skill gate, and keep deployment on HOLD."
+            )
+        else:
+            scope_instruction = (
+                "If the naive challenger value gate is false, explicitly compare DLinear with persistence, state "
+                "that deployment remains on HOLD, and propose a measurable next test."
+            )
         context = {
             "role": "user",
             "content": (
@@ -155,9 +167,8 @@ class OpenAIResponsesDecisionAgent:
                 "Call both available tools before deciding. Separate verified facts from risks. "
                 "Cite valid evidence identifiers from at least two distinct MethodCard sections, and set each "
                 "citation claim to the exact evidence section name. A reproduced paper metric may justify a "
-                "CONDITIONAL research baseline, but never GO or a trading recommendation. If the naive challenger "
-                "value gate is false, explicitly compare DLinear with persistence, state that deployment remains "
-                "on HOLD, and propose a measurable next test. The guardrail must include the exact phrase "
+                "CONDITIONAL research baseline, but never GO or a trading recommendation. "
+                f"{scope_instruction} The guardrail must include the exact phrase "
                 "'not investment advice' and keep the memo limited to research use."
             ),
         }
@@ -250,8 +261,8 @@ class OpenAIResponsesDecisionAgent:
         self,
         name: str,
         *,
-        brief: EvidenceBrief,
-        verification: VerificationResult,
+        brief: Any,
+        verification: Any,
     ) -> dict[str, Any]:
         if name == "get_evidence_brief":
             return brief.to_dict()
