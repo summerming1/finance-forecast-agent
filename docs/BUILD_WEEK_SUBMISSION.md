@@ -31,7 +31,6 @@ ForecastProof makes that path inspectable. The judge-facing demo uses a strict D
 - **Promote or retain:** checks identical target rows, primary and secondary metrics, runtime, finite values, and worst-slice MAE; even a passing child remains research-only.
 - **Audit:** deterministically checks gate authority, tool grounding, citation mappings, evidence coverage, completeness, safety, and naive-challenger honesty; the verified replay scores 100/100.
 - **Export:** downloads a complete versioned Audit Pack with evidence, protocol delta, verification, memo, provenance, response ID, and token/cost metadata.
-- **Research lab:** preserves the original seven-stage workbench for advanced users without exposing its complexity in the golden path.
 
 ## Why GPT-5.6 is core
 
@@ -136,7 +135,7 @@ Forecasting research moves faster than teams can validate it. A strong metric in
 
 ### What it does
 
-ForecastProof converts a forecasting claim into an evidence brief, checks a local reproduction with deterministic gates, challenges it against same-window persistence, and creates a cited decision memo. Its Iteration Lab then diagnoses earlier development folds, locks the evidence-bound proposal, and evaluates one human-approved child only on later untouched folds. A child earns only research-candidate status when every average and slice guardrail passes. Advanced users can enter the Research lab for the underlying seven-stage workflow.
+ForecastProof converts a forecasting claim into an evidence brief, checks a local reproduction with deterministic gates, challenges it against same-window persistence, and creates a cited decision memo. Its Iteration Lab then diagnoses earlier development folds, locks the evidence-bound proposal, and evaluates one human-approved child only on later untouched folds. A child earns only research-candidate status when every average and slice guardrail passes.
 
 ### How we used GPT-5.6
 

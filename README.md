@@ -19,7 +19,6 @@ Then follow the top navigation:
 
 ```text
 Home → Analyze → Verify + challenge → Decision memo → Iteration lab
-                                                     ↘ Research lab (advanced seven-stage workflow)
 ```
 
 - `Verified replay` works offline against the frozen DLinear native-run report.
@@ -27,7 +26,7 @@ Home → Analyze → Verify + challenge → Decision memo → Iteration lab
 - For the cost-sensitive path, use `OPENAI_RESPONSES_MODEL=gpt-5.6-luna`; the official endpoint is `https://api.openai.com/v1`.
 - The decision memo is research support only and explicitly does not authorize trading.
 
-See [`docs/OPENAI_BUILD_WEEK_HACKATHON_PLAN.md`](docs/OPENAI_BUILD_WEEK_HACKATHON_PLAN.md), [`docs/BUILD_WEEK_SUBMISSION.md`](docs/BUILD_WEEK_SUBMISSION.md), [`docs/BUILD_WEEK_DEMO_SCRIPT.md`](docs/BUILD_WEEK_DEMO_SCRIPT.md), and the Chinese [`docs/BUILD_WEEK_PRODUCT_GUIDE_ZH.md`](docs/BUILD_WEEK_PRODUCT_GUIDE_ZH.md) for the full interaction and success checklist.
+See [`docs/FORECASTPROOF_VNEXT_ROADMAP_ZH.md`](docs/FORECASTPROOF_VNEXT_ROADMAP_ZH.md), [`docs/BUILD_WEEK_SUBMISSION.md`](docs/BUILD_WEEK_SUBMISSION.md), [`docs/BUILD_WEEK_DEMO_SCRIPT.md`](docs/BUILD_WEEK_DEMO_SCRIPT.md), and the Chinese [`docs/BUILD_WEEK_PRODUCT_GUIDE_ZH.md`](docs/BUILD_WEEK_PRODUCT_GUIDE_ZH.md) for the architecture, next-version plan, interaction, and success checklist.
 
 ## Research harness
 
@@ -56,7 +55,7 @@ Literature corpus -> Data acquisition -> MethodCard v2 -> Review -> Reproduction
 
 No LLM key is required for tests. `scripts/generate_methodcard_fixtures.py` creates deterministic MethodCard fixtures from the built-in paper catalog. `scripts/extract_method_cards.py` then replays those fixtures and lands MethodCard JSON under `projects/finance_agent/method_cards/`.
 
-The first scale batch has 86 audited records, 50 open PDFs and four frozen benchmark tasks. The native catalog now contains 15 pinned official claims: 12 use original financial Exchange-Rate experiments and three use original ETTm1 energy experiments for cross-domain execution checks. Strict coverage is computed only from local reports that pass source, data, governance, observation-count and metric-tolerance gates. See [`docs/P16_SCALE_REPRODUCTION.md`](docs/P16_SCALE_REPRODUCTION.md) and [`docs/FRONTEND_USER_GUIDE.md`](docs/FRONTEND_USER_GUIDE.md).
+The first scale batch has 86 audited records, 50 open PDFs and four frozen benchmark tasks. The native catalog now contains 15 pinned official claims: 12 use original financial Exchange-Rate experiments and three use original ETTm1 energy experiments for cross-domain execution checks. Strict coverage is computed only from local reports that pass source, data, governance, observation-count and metric-tolerance gates. See [`docs/P16_SCALE_REPRODUCTION.md`](docs/P16_SCALE_REPRODUCTION.md).
 
 ```bash
 PYTHONPATH=src python scripts/fetch_native_sources.py --verify-only

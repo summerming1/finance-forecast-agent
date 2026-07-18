@@ -23,7 +23,6 @@ pages = [
     st.Page("app_pages/verify.py", title="Verify", icon=":material/fact_check:"),
     st.Page("app_pages/decision_memo.py", title="Decision memo", icon=":material/description:"),
     st.Page("app_pages/iteration_lab.py", title="Iteration lab", icon=":material/model_training:"),
-    st.Page("app_pages/research_lab.py", title="Research lab", icon=":material/science:"),
 ]
 
 navigation = st.navigation(pages, position="top")

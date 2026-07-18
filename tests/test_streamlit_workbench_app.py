@@ -9,17 +9,6 @@ from streamlit.testing.v1 import AppTest
 ROOT = Path(__file__).parents[1]
 APP_PATH = ROOT / "apps" / "streamlit_app.py"
 PAGE_DIR = ROOT / "apps" / "app_pages"
-STAGES = [
-    "1 文献语料",
-    "2 数据准备",
-    "3 方法卡审核",
-    "4 复现配置",
-    "5 原生/探索运行",
-    "6 多方法基准",
-    "7 结果审计",
-]
-
-
 def _run(path: Path, timeout: int = 30) -> AppTest:
     app = AppTest.from_file(str(path), default_timeout=timeout).run()
     assert not app.exception
@@ -38,6 +27,7 @@ def test_forecastproof_opens_on_a_judge_friendly_home_page() -> None:
         "Deployment",
     }
     assert any("Incremental value on hold" in item.value for item in app.markdown)
+    assert not (PAGE_DIR / "research_lab.py").exists()
 
 
 @pytest.mark.parametrize(
@@ -96,20 +86,3 @@ def test_iteration_lab_exposes_diagnostics_evidence_and_approval_gate() -> None:
     assert app.selectbox(key="iteration_proposal_id").value.startswith("iteration-")
     assert any("Strict reproduction stays immutable" in item.value for item in app.info)
     assert any(button.label == "Run one controlled iteration" for button in app.button)
-
-
-def test_research_lab_preserves_the_seven_stage_workbench() -> None:
-    app = _run(PAGE_DIR / "research_lab.py")
-
-    stage_control = app.segmented_control(key="workflow_stage")
-    assert stage_control.options == STAGES
-    assert stage_control.value == "1 文献语料"
-
-
-@pytest.mark.parametrize("stage", STAGES[1:])
-def test_each_research_lab_stage_renders_without_exception(stage: str) -> None:
-    app = _run(PAGE_DIR / "research_lab.py")
-
-    app.segmented_control(key="workflow_stage").set_value(stage).run()
-    assert not app.exception
-    assert app.segmented_control(key="workflow_stage").value == stage

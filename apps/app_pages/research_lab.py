@@ -1,3 +1,0 @@
-from finance_forecast_agent.forecastproof_ui import render_research_lab
-
-render_research_lab()

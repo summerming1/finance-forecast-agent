@@ -4,7 +4,7 @@
 
 当前最新实现为 **P1.6.3-P1.8 first-batch implementation + ForecastProof v0.5 controlled iteration（未通过规模化总验收）**。项目仍是论文驱动、真实数据驱动、可审计和需人工审批的金融预测研究平台，不是自动交易系统。
 
-本批已实现 50 份合法开放 PDF、86 条论文审计记录、通用数据获取、四类冻结统一基准、带负向证据的 ExperimentMemory prior、十个 SourceBundle 候选和七阶段前端。规模化总验收仍未通过，因为严格复现只有 1/10，逐篇探索性运行也尚未覆盖全部非 strict 文献；这些缺口不能由共享 benchmark 或 Replay fixture 代替。
+本批已实现 50 份合法开放 PDF、86 条论文审计记录、通用数据获取、四类冻结统一基准、带负向证据的 ExperimentMemory prior、十个 SourceBundle 候选和研究流程后端资产。规模化总验收仍未通过，因为严格复现只有 1/10，逐篇探索性运行也尚未覆盖全部非 strict 文献；这些缺口不能由共享 benchmark 或 Replay fixture 代替。
 
 已完成：
 
@@ -23,7 +23,7 @@ P1.6.3 首批 86 篇元数据/50 份开放全文语料与可行性统计
 P1.6.4 数据获取中心与来源、许可、SHA256、字段审计
 P1.6.6 逐篇覆盖账本和 Paper-vs-Run Delta 框架
 P1.6.7 四任务、五方法、20 组统一基准比较
-P1.6.8 七阶段 Research Workbench
+P1.6.8 研究流程服务与审计资产
 P1.7 带上下文隔离、失败降权和解释的 Memory prior
 P1.8 GitHub API/Git fallback SourceBundle 审计
 Build Week v0.5 分层误差诊断、证据绑定 IterationProposal、父子谱系和单次受控迭代
@@ -86,17 +86,7 @@ PredictionArtifact -> fold/time/realized-move diagnostics
 
 ## 前端
 
-入口：`apps/streamlit_app.py`。评委黄金路径为 Home、Analyze、Verify、Decision memo、Iteration lab；高级 Research lab 保留原七步工作台：
-
-1. 文献语料：本地文献、86 篇语料、覆盖账本和 SourceBundle。
-2. 数据准备：人工请求、MethodCard 自动请求和获取历史。
-3. 方法卡审核：阅读结构化摘要和证据，保存唯一审核结果。
-4. 复现配置：逐字段解决 ReproductionPlan。
-5. 原生/探索运行：系统按证据和可比性判定运行层级。
-6. 多方法基准：AAPL 单任务或四类冻结基准。
-7. 结果审计：论文值、本地值、差异、统计门禁和 Memory prior。
-
-原生运行区由 Native Claim Catalog 驱动，可选择 DLinear、12 个金融数据官方论文 claim 和 3 个 ETTm1 跨领域 claim；新增 SAMformer 通过独立的 Python 3.10 / TensorFlow 2.13 Conda 环境运行。页面默认显示论文值、容差、数据领域、源码/治理门禁和已有结果，命令、环境、补丁与日志折叠在技术详情。统一基准至少选择两张具有通用 MethodAdapter 且已批准的方法卡。
+入口：`apps/streamlit_app.py`。参赛产品只保留 Home、Analyze、Verify、Decision memo、Iteration lab 五个页面。旧的七阶段研究工作台、页面入口和专用 Streamlit 模块已经从黑客松副本移除；黄金路径仍复用必要的 MethodCard、原生报告、统一基准、ExperimentMemory 和审计后端资产。
 
 ## 模型能力
 
@@ -147,7 +137,7 @@ backlog/                 adapter 任务
 
 ```text
 Ruff: passed
-pytest: 139 passed
+pytest: 124 passed（移除旧 Research Lab UI 及其专用测试后）
 Seven-stage Streamlit AppTest: passed
 HTTP health and browser smoke: localhost:8510 returned 200; Iteration lab loaded saved result and enforced approval
 Multi benchmark: 4 tasks / 5 methods / 20 comparisons, integrity passed
@@ -188,7 +178,7 @@ python scripts/run_generality_validation.py
 python -m streamlit run apps/streamlit_app.py
 ```
 
-复现设计见 `docs/P1_REPRODUCTION_BENCHMARK_MEMORY.md`，十篇通用性矩阵见 `docs/P1_GENERALITY_VALIDATION.md`，完整前端操作见 `docs/FRONTEND_USER_GUIDE.md`。
+复现设计见 `docs/P1_REPRODUCTION_BENCHMARK_MEMORY.md`，十篇通用性矩阵见 `docs/P1_GENERALITY_VALIDATION.md`，黑客松前端操作见 `docs/BUILD_WEEK_PRODUCT_GUIDE_ZH.md`。
 
 ## 后续优先级
 

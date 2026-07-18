@@ -1,6 +1,6 @@
 # ForecastProof 黑客松版产品与验收指南
 
-> 更新日期：2026-07-17
+> 更新日期：2026-07-18
 > 隔离项目：`D:\AI Agent\finance_forecast_agent_build_week`
 > 黑客松分支：`codex/openai-build-week`
 > 应用版本：`0.5.0-build-week`
@@ -109,10 +109,6 @@ Audit Pack 不写入 API Key。
 - 晋升同时检查平均主指标、次指标、最差 MAE 切片、有限值和运行预算；通过也只进入 research candidate，不授权部署。
 - 保存 `parent_run_id`、proposal、child artifact、门禁和决策到 ExperimentMemory 与 lineage。
 - 默认 SPY 波动率/RF 案例中，28 个早期 folds 用于诊断，13 个后期 folds 保留晋升；paper-informed child 在 untouched holdout 上的 RMSE 改善约 1.18%，但最差切片 MAE 回退约 20.30%，因此结果为 `retain_parent`。这证明系统不会用平均分掩盖局部退化。
-
-### 2.10 Advanced Research lab
-
-原有七阶段研究平台仍保留在 Research lab：文献语料、数据准备、方法卡审核、复现配置、原生/探索运行、多方法基准和结果审计。评委默认路径不需要理解这些复杂能力。
 
 ## 3. 本地启动
 
@@ -243,7 +239,7 @@ ruff check .
 | 评审维度 | 当前可见证据 |
 |---|---|
 | 技术实现 | Responses tool loop、严格 schema、真实 native artifact、四类复现 gate、同窗 baseline、误差切片、受控 child runner、谱系与 promotion gates |
-| 设计与体验 | 五层黄金路径、免密钥 replay、可交互决策边界、一次审批式迭代、Research lab 与黄金路径分离 |
+| 设计与体验 | 五层黄金路径、免密钥 replay、可交互决策边界、一次审批式迭代、复杂内部研究工作台不进入参赛界面 |
 | 潜在影响 | 帮助研究团队在投入更多工程/算力前识别不可复现或不可迁移的预测 claim |
 | 创意质量 | 同时给出“复现通过、部署 HOLD”的诚实双结论，而非只展示成功指标 |
 | GPT-5.6 深度 | 两个只读工具、证据/基线综合、严格结构决策、token/cost trace、输出后 7 项确定性 eval |

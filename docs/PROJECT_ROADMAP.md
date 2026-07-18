@@ -31,7 +31,7 @@ P1.6.3  首批 86 条语料记录与 50 份合法开放 PDF
 P1.6.4  通用数据获取中心
 P1.6.6  复现覆盖账本和 Delta 框架
 P1.6.7  四类冻结多基准
-P1.6.8  七阶段 Research Workbench
+P1.6.8  研究流程服务与审计资产（不进入黑客松 UI）
 P1.7    带上下文门禁和失败降权的多基准 prior
 P1.8    十个 SourceBundle 候选审计
 ```
@@ -122,7 +122,7 @@ P1.6.4  Data Acquisition Hub
 P1.6.5  Native Reproduction Portfolio
 P1.6.6  Exploratory Reproduction & Delta Audit
 P1.6.7  Multi-Benchmark Suite
-P1.6.8  Research Workbench UX
+P1.6.8  Research workflow services（不进入黑客松 UI）
 P1.7    ExperimentMemory Prior
 P1.8    Official Source Automation
 ```
@@ -164,11 +164,11 @@ P1.8    Official Source Automation
 - 验证 task fingerprint、目标行、fold、预测数量、信息集、成本和指标口径一致。
 - 同时报告方法相对原论文的差异，以及统一基准结果能否检验或迁移原论文假设。
 
-#### P1.6.8：Research Workbench UX
+#### P1.6.8：Research workflow services
 
-- 前端按“文献语料 -> 数据 -> 方法卡 -> 复现配置 -> 原生/探索性运行 -> 多基准 -> 结果审计”展示。
-- 默认展示结构化摘要、状态和差异，原始 JSON 仅保留为折叠技术细节。
-- 用户能清楚区分严格复现、探索性复现、统一基准适配和阻断状态。
+- 后端保留文献、数据、方法卡、复现计划、原生/探索运行、多基准和审计的结构化服务。
+- 黑客松 UI 只消费黄金路径所需资产，不提供旧的全量研究工作台。
+- 严格复现、探索性复现、统一基准适配和阻断状态继续由结构化产物区分。
 
 #### P1.7：ExperimentMemory Prior
 

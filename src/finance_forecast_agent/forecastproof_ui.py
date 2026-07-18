@@ -606,13 +606,6 @@ def _render_memo(
         )
 
 
-def render_research_lab() -> None:
-    from .streamlit_p09 import render_app
-
-    st.caption("Advanced workspace · the original seven-stage research control tower")
-    render_app(embedded=True)
-
-
 @st.cache_data(show_spinner=False)
 def _load_iteration_suite() -> dict:
     return json.loads((PROJECT_DIR / "reports" / "multi_benchmark_suite.json").read_text(encoding="utf-8"))

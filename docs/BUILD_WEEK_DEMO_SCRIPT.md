@@ -48,7 +48,7 @@ Show `Verified replay` first and point to the deterministic 100/100, 7/7 memo au
 
 Point to the recommendation and guardrail, then show the complete Audit Pack download.
 
-## 2:30–2:50 — Evidence-guided iteration
+## 2:30–2:57 — Evidence-guided iteration
 
 Open **Iteration lab**.
 
@@ -57,14 +57,6 @@ Open **Iteration lab**.
 > A hold decision now becomes a bounded next experiment. ForecastProof diagnoses only earlier development folds, binds the hypothesis to literature and performance evidence, and reserves later folds as an untouched promotion holdout. It requires human approval for exactly one child run. In this frozen example holdout RMSE improves, but the worst slice regresses, so the deterministic gate retains the parent. It will not optimize away an inconvenient failure.
 
 Show the four diagnostics, two evidence types, bounded parameter JSON, saved gate result, and `Deployment: Unauthorized`. Use the already saved result during recording; do not wait for training.
-
-## 2:50–2:57 — Product depth
-
-Open **Research lab** briefly.
-
-**Say:**
-
-> Behind the three-minute product flow is the original seven-stage research harness: literature, data, MethodCard review, reproduction configuration, native runs, benchmarks, and audit. We kept that depth while removing it from the judge's golden path.
 
 ## 2:57–3:00 — Build evidence and close
 
