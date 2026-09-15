@@ -20,8 +20,8 @@ def rolling_origin_splits(
     n: int,
     *,
     min_train: int = 60,
-    test_size: int = 16,
-    step: int = 16,
+    test_size: int = 12,
+    step: int = 8,
 ) -> list[SplitWindow]:
     windows = []
     train_end = min_train
@@ -42,8 +42,8 @@ def purged_walk_forward_splits(
     n: int,
     *,
     train_size: int = 60,
-    test_size: int = 16,
-    step: int = 16,
+    test_size: int = 12,
+    step: int = 8,
     purge: int = 1,
     embargo: int = 1,
 ) -> list[SplitWindow]:

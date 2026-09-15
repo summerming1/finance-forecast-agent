@@ -18,6 +18,7 @@ from finance_forecast_agent.schemas import CandidateSpec
 from finance_forecast_agent.splitters import (
     purged_walk_forward_splits,
     reject_random_split_for_finance,
+    rolling_origin_splits,
 )
 from finance_forecast_agent.tracking import DVCDataTracker, MLflowTracker
 
@@ -69,6 +70,17 @@ def test_purged_split_and_random_reject():
     assert max(windows[0].train_indices) < min(windows[0].test_indices) - 1
     with pytest.raises(ValueError):
         reject_random_split_for_finance("random_kfold")
+
+
+def test_default_windows_support_development_and_confirmation_on_public_sample():
+    # The hardened packaged-real dataset currently has 92 usable rows after
+    # past-only feature construction. Defaults must leave multiple development
+    # windows plus a final untouched confirmation window.
+    purged = purged_walk_forward_splits(92)
+    rolling = rolling_origin_splits(92)
+    assert len(purged) >= 3
+    assert len(rolling) >= 3
+    assert max(purged[-2].test_indices) < min(purged[-1].test_indices)
 
 
 def test_cost_scenarios_charge_initial_entry_and_report_net_sharpe():
