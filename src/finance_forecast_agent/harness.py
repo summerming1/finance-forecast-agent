@@ -5,7 +5,6 @@ from pathlib import Path
 from statistics import mean
 from typing import Any
 
-import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from .comparability import compare_paper_and_dataset
@@ -109,7 +108,11 @@ def _metrics(actual: list[float], preds: list[float], cost: CostModel) -> dict[s
     metrics = {
         "mae": float(mean_absolute_error(actual, preds)),
         "rmse": float(mean_squared_error(actual, preds) ** 0.5),
-        "r2": float(r2_score(actual, preds)) if len(set(actual)) > 1 else 0.0,
+        "r2": (
+            float(r2_score(actual, preds))
+            if len(actual) > 1 and len(set(actual)) > 1
+            else 0.0
+        ),
         "directional_accuracy": float(
             mean(
                 1.0 if (pred >= 0) == (value >= 0) else 0.0
