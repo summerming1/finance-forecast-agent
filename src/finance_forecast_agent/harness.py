@@ -17,87 +17,322 @@ from .papers import built_in_paper_specs
 from .registry import PaperDatasetRegistry
 from .replay_llm import ReplayLLM
 from .schemas import CandidateSpec, ReproductionAudit
-from .splitters import make_splits
+from .splitters import SplitWindow, make_splits
 from .tracking import DVCDataTracker, MLflowTracker
 
 
 def write_default_fixtures(llm: ReplayLLM) -> None:
     for paper in built_in_paper_specs():
-        cost = {'commission_bps': 1.0, 'half_spread_bps': 2.0, 'market_impact_bps': 1.0, 'latency_penalty_bps': 0.0}
+        cost = {
+            "commission_bps": 1.0,
+            "half_spread_bps": 2.0,
+            "market_impact_bps": 1.0,
+            "latency_penalty_bps": 0.0,
+        }
         candidates = [
-            CandidateSpec(f'cand_{paper.paper_id}_paper', 'closest paper model', paper.required_model_families[0], paper.required_feature_groups, 'purged_walk_forward', cost, 'small', 'offline_replay_llm', 'closest paper-family candidate', False),
-            CandidateSpec(f'cand_{paper.paper_id}_rf', 'random forest baseline', 'random_forest_regressor', list(dict.fromkeys([*paper.required_feature_groups, 'cross_asset_features'])), 'purged_walk_forward', cost, 'small', 'offline_replay_llm', 'tree non-linear baseline', False),
-            CandidateSpec(f'cand_{paper.paper_id}_gb', 'gradient boosting baseline', 'gradient_boosting_regressor', list(dict.fromkeys([*paper.required_feature_groups, 'cross_asset_features'])), 'purged_walk_forward', cost, 'small', 'offline_replay_llm', 'boosted tree baseline', False),
-            CandidateSpec(f'cand_{paper.paper_id}_ridge', 'ridge sanity baseline', 'ridge_regression', ['price_lag_features','return_momentum_features'], 'purged_walk_forward', cost, 'tiny', 'offline_replay_llm', 'cheap linear baseline', False),
+            CandidateSpec(
+                f"cand_{paper.paper_id}_paper",
+                "closest paper model",
+                paper.required_model_families[0],
+                paper.required_feature_groups,
+                "purged_walk_forward",
+                cost,
+                "small",
+                "offline_replay_llm",
+                "closest paper-family candidate",
+                False,
+            ),
+            CandidateSpec(
+                f"cand_{paper.paper_id}_rf",
+                "random forest baseline",
+                "random_forest_regressor",
+                list(
+                    dict.fromkeys(
+                        [*paper.required_feature_groups, "cross_asset_features"]
+                    )
+                ),
+                "purged_walk_forward",
+                cost,
+                "small",
+                "offline_replay_llm",
+                "tree non-linear baseline",
+                False,
+            ),
+            CandidateSpec(
+                f"cand_{paper.paper_id}_gb",
+                "gradient boosting baseline",
+                "gradient_boosting_regressor",
+                list(
+                    dict.fromkeys(
+                        [*paper.required_feature_groups, "cross_asset_features"]
+                    )
+                ),
+                "purged_walk_forward",
+                cost,
+                "small",
+                "offline_replay_llm",
+                "boosted tree baseline",
+                False,
+            ),
+            CandidateSpec(
+                f"cand_{paper.paper_id}_ridge",
+                "ridge sanity baseline",
+                "ridge_regression",
+                ["price_lag_features", "return_momentum_features"],
+                "purged_walk_forward",
+                cost,
+                "tiny",
+                "offline_replay_llm",
+                "cheap linear baseline",
+                False,
+            ),
         ]
-        llm.write_fixture(prompt_payload={'paper_id': paper.paper_id, 'task': 'initial_candidates_v2'}, schema_name='research_advice', response={'candidates': [c.to_dict() for c in candidates], 'human_approval_required': False})
+        llm.write_fixture(
+            prompt_payload={"paper_id": paper.paper_id, "task": "initial_candidates_v2"},
+            schema_name="research_advice",
+            response={
+                "candidates": [candidate.to_dict() for candidate in candidates],
+                "human_approval_required": False,
+            },
+        )
 
 
 def load_candidates(llm: ReplayLLM, paper_id: str) -> list[CandidateSpec]:
-    data = llm.complete_json(prompt_payload={'paper_id': paper_id, 'task': 'initial_candidates_v2'}, schema_name='research_advice')
-    return [CandidateSpec(**c) for c in data['candidates']]
+    data = llm.complete_json(
+        prompt_payload={"paper_id": paper_id, "task": "initial_candidates_v2"},
+        schema_name="research_advice",
+    )
+    return [CandidateSpec(**candidate) for candidate in data["candidates"]]
 
 
-def train_evaluate(df, manifest) -> dict[str, Any]:
+def _metrics(actual: list[float], preds: list[float], cost: CostModel) -> dict[str, float]:
+    metrics = {
+        "mae": float(mean_absolute_error(actual, preds)),
+        "rmse": float(mean_squared_error(actual, preds) ** 0.5),
+        "r2": float(r2_score(actual, preds)) if len(set(actual)) > 1 else 0.0,
+        "directional_accuracy": float(
+            mean(
+                1.0 if (pred >= 0) == (value >= 0) else 0.0
+                for pred, value in zip(preds, actual)
+            )
+        ),
+    }
+    metrics.update(evaluate_sign_strategy(actual, preds, cost=cost))
+    return metrics
+
+
+def _evaluate_windows(df, manifest, windows: list[SplitWindow]) -> dict[str, Any]:
+    if not windows:
+        raise ValueError("at least one evaluation window is required")
     X = df[manifest.feature_columns].astype(float).to_numpy()
     y = df[manifest.label_column].astype(float).to_numpy()
-    preds, actual = [], []
-    for w in make_splits(manifest.split_method, len(df)):
-        model = make_model(manifest.model_family)
-        model.fit(X[w.train_indices], y[w.train_indices])
-        p = model.predict(X[w.test_indices])
-        preds.extend(float(v) for v in p)
-        actual.extend(float(v) for v in y[w.test_indices])
-    metrics = {
-        'mae': float(mean_absolute_error(actual, preds)),
-        'rmse': float(mean_squared_error(actual, preds) ** 0.5),
-        'r2': float(r2_score(actual, preds)) if len(set(actual)) > 1 else 0.0,
-        'directional_accuracy': float(mean([1.0 if (p >= 0) == (a >= 0) else 0.0 for p, a in zip(preds, actual)])),
+    preds: list[float] = []
+    actual: list[float] = []
+    window_summaries = []
+    sequence_lengths: list[int] = []
+    for window_index, window in enumerate(windows):
+        model = make_model(
+            manifest.model_family,
+            feature_columns=manifest.feature_columns,
+        )
+        model.fit(X[window.train_indices], y[window.train_indices])
+        prediction = model.predict(X[window.test_indices])
+        preds.extend(float(value) for value in prediction)
+        actual.extend(float(value) for value in y[window.test_indices])
+        sequence_length = getattr(model, "last_sequence_length_", None)
+        if sequence_length is not None:
+            sequence_lengths.append(int(sequence_length))
+        window_summaries.append(
+            {
+                "window": window_index,
+                "train_count": len(window.train_indices),
+                "test_count": len(window.test_indices),
+                "purge": window.purge,
+                "embargo": window.embargo,
+            }
+        )
+
+    cost = CostModel(**{key: float(value) for key, value in manifest.cost_model.items()})
+    return {
+        "metrics": _metrics(actual, preds, cost),
+        "cost_scenarios": cost_scenarios(actual, preds),
+        "prediction_count": len(preds),
+        "windows": window_summaries,
+        "sequence_length": sequence_lengths[0] if sequence_lengths else None,
     }
-    cost = CostModel(**{k: float(v) for k, v in manifest.cost_model.items()})
-    metrics.update(evaluate_sign_strategy(actual, preds, cost=cost))
-    return {'status': 'success', 'metrics': metrics, 'cost_scenarios': cost_scenarios(actual, preds), 'prediction_count': len(preds)}
 
 
-def audit(paper, comp, candidate: CandidateSpec, result) -> ReproductionAudit:
+def development_evaluate(df, manifest) -> tuple[dict[str, Any], SplitWindow]:
+    windows = make_splits(manifest.split_method, len(df))
+    if len(windows) < 2:
+        raise ValueError(
+            "formal candidate selection requires at least two walk-forward windows"
+        )
+    development = _evaluate_windows(df, manifest, windows[:-1])
+    return development, windows[-1]
+
+
+def confirmation_evaluate(df, manifest, confirmation_window: SplitWindow) -> dict[str, Any]:
+    return _evaluate_windows(df, manifest, [confirmation_window])
+
+
+def audit(paper, comp, candidate: CandidateSpec) -> ReproductionAudit:
     blockers = list(comp.blockers)
     warnings = list(comp.warnings)
     if candidate.proxy_used:
-        blockers.append('proxy model used')
+        blockers.append("proxy model used")
     if candidate.model_family not in paper.required_model_families:
-        warnings.append('candidate model differs from paper protocol')
+        warnings.append("candidate model differs from paper protocol")
     strict = comp.strict_allowed and not candidate.proxy_used and not blockers
-    return ReproductionAudit(paper.paper_id, candidate.candidate_id, 'strict_reproduction' if strict else comp.proposed_mode, strict, candidate.proxy_used, comp.comparability_score, blockers, warnings, candidate.candidate_id)
+    return ReproductionAudit(
+        paper.paper_id,
+        candidate.candidate_id,
+        "strict_reproduction" if strict else comp.proposed_mode,
+        strict,
+        candidate.proxy_used,
+        comp.comparability_score,
+        blockers,
+        warnings,
+        candidate.candidate_id,
+    )
 
 
-def run_harness(project_dir: Path, *, max_candidates_per_paper: int = 4) -> dict[str, Any]:
+def _tracking_metrics(prefix: str, metrics: dict[str, float]) -> dict[str, float]:
+    return {f"{prefix}_{key}": float(value) for key, value in metrics.items()}
+
+
+def run_harness(
+    project_dir: Path,
+    *,
+    max_candidates_per_paper: int = 4,
+) -> dict[str, Any]:
     project_dir.mkdir(parents=True, exist_ok=True)
-    data_path = project_dir / 'data' / 'us_equity_plotly_weekly.csv'
+    data_path = project_dir / "data" / "us_equity_plotly_weekly_v2.csv"
     df = load_or_create_us_equity_dataset(data_path)
     dataset = dataset_card_from_frame(df, data_path)
     dvc = DVCDataTracker(project_dir)
     dvc_info = dvc.track(data_path)
-    tracker = MLflowTracker(project_dir / 'mlruns')
-    llm = ReplayLLM(project_dir / 'llm_fixtures')
+    tracker = MLflowTracker(project_dir / "mlruns")
+    llm = ReplayLLM(project_dir / "llm_fixtures")
     write_default_fixtures(llm)
-    registry = PaperDatasetRegistry(project_dir / 'registry' / 'paper_dataset_registry.json')
+    registry = PaperDatasetRegistry(
+        project_dir / "registry" / "paper_dataset_registry.json"
+    )
+
     reports = []
     for paper in built_in_paper_specs():
-        registry.register(paper.paper_id, {'paper_url': paper.paper_url, 'dataset_id': dataset.dataset_id, 'strict_dataset_available': False, 'local_substitute': dataset.source_name, 'mode': 'exploratory_real_data_reproduction'})
-        comp = compare_paper_and_dataset(paper, dataset, split_method='purged_walk_forward')
+        registry.register(
+            paper.paper_id,
+            {
+                "paper_url": paper.paper_url,
+                "dataset_id": dataset.dataset_id,
+                "strict_dataset_available": False,
+                "local_substitute": dataset.source_name,
+                "mode": "exploratory_real_data_reproduction",
+            },
+        )
+        comp = compare_paper_and_dataset(
+            paper,
+            dataset,
+            split_method="purged_walk_forward",
+        )
         candidates = load_candidates(llm, paper.paper_id)[:max_candidates_per_paper]
         candidate_reports = []
-        for cand in candidates:
-            contract = compile_contract(cand, paper_id=paper.paper_id, dataset=dataset, mode=comp.proposed_mode)
+        confirmation_window: SplitWindow | None = None
+        manifests: dict[str, Any] = {}
+
+        for candidate in candidates:
+            contract = compile_contract(
+                candidate,
+                paper_id=paper.paper_id,
+                dataset=dataset,
+                mode=comp.proposed_mode,
+            )
             manifest = manifest_from_contract(contract, dataset=dataset)
-            result = train_evaluate(df, manifest)
-            audit_report = audit(paper, comp, cand, result)
-            tracking = tracker.log_run(cand.candidate_id, params={'paper_id': paper.paper_id, 'model_family': cand.model_family, 'contract_hash': contract.contract_hash}, metrics=result['metrics'], artifacts={'manifest': manifest.to_dict(), 'audit': audit_report.to_dict()})
-            candidate_reports.append({'candidate': cand.to_dict(), 'contract': contract.to_dict(), 'manifest': manifest.to_dict(), 'result': result, 'audit': audit_report.to_dict(), 'tracking': tracking})
-        best = max(candidate_reports, key=lambda r: r['result']['metrics']['net_return'])
-        reports.append({'paper_spec': paper.to_dict(), 'dataset_card': dataset.to_dict(), 'comparability_report': comp.to_dict(), 'best_candidate_id': best['candidate']['candidate_id'], 'candidate_reports': candidate_reports})
-    payload = {'project_name': 'finance-forecast-agent', 'llm_live_api_used': False, 'dataset_card': dataset.to_dict(), 'dvc': dvc_info, 'paper_dataset_registry': registry.load_all(), 'reports': reports}
-    out = project_dir / 'reports' / 'finance_agent_report.json'
+            manifests[candidate.candidate_id] = manifest
+            development, candidate_confirmation = development_evaluate(df, manifest)
+            if confirmation_window is None:
+                confirmation_window = candidate_confirmation
+            elif confirmation_window != candidate_confirmation:
+                raise RuntimeError("candidate split windows are inconsistent")
+            audit_report = audit(paper, comp, candidate)
+            tracking = tracker.log_run(
+                candidate.candidate_id,
+                params={
+                    "paper_id": paper.paper_id,
+                    "model_family": candidate.model_family,
+                    "contract_hash": contract.contract_hash,
+                    "evaluation_phase": "development",
+                },
+                metrics=_tracking_metrics("dev", development["metrics"]),
+                artifacts={
+                    "manifest": manifest.to_dict(),
+                    "audit": audit_report.to_dict(),
+                },
+            )
+            candidate_reports.append(
+                {
+                    "candidate": candidate.to_dict(),
+                    "contract": contract.to_dict(),
+                    "manifest": manifest.to_dict(),
+                    "result": {
+                        "status": "development_complete",
+                        "development": development,
+                    },
+                    "audit": audit_report.to_dict(),
+                    "tracking": tracking,
+                }
+            )
+
+        selected = max(
+            candidate_reports,
+            key=lambda report: report["result"]["development"]["metrics"]["net_return"],
+        )
+        selected_id = selected["candidate"]["candidate_id"]
+        if confirmation_window is None:
+            raise RuntimeError("confirmation window was not created")
+        confirmation = confirmation_evaluate(
+            df,
+            manifests[selected_id],
+            confirmation_window,
+        )
+        confirmation_tracking = tracker.log_run(
+            selected_id + "_confirmation",
+            params={
+                "paper_id": paper.paper_id,
+                "model_family": selected["candidate"]["model_family"],
+                "contract_hash": selected["contract"]["contract_hash"],
+                "evaluation_phase": "frozen_confirmation",
+            },
+            metrics=_tracking_metrics("confirmation", confirmation["metrics"]),
+            artifacts={"manifest": selected["manifest"]},
+        )
+        reports.append(
+            {
+                "paper_spec": paper.to_dict(),
+                "dataset_card": dataset.to_dict(),
+                "comparability_report": comp.to_dict(),
+                "development_selected_candidate_id": selected_id,
+                "selection_metric": "development.net_return",
+                "confirmation_result": confirmation,
+                "confirmation_tracking": confirmation_tracking,
+                "candidate_reports": candidate_reports,
+            }
+        )
+
+    payload = {
+        "project_name": "finance-forecast-agent",
+        "llm_live_api_used": False,
+        "selection_protocol": (
+            "candidate selection uses development walk-forward windows; "
+            "only the frozen selected candidate is evaluated on the final confirmation window"
+        ),
+        "dataset_card": dataset.to_dict(),
+        "dvc": dvc_info,
+        "paper_dataset_registry": registry.load_all(),
+        "reports": reports,
+    }
+    out = project_dir / "reports" / "finance_agent_report.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
+    out.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     return payload

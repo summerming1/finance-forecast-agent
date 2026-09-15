@@ -1,51 +1,73 @@
-# 当前版本功能与技术实现说明
+# Current implementation and evidence boundaries
 
-## 当前版本目标
+## Purpose
 
-当前版本实现 P0 可信研究内核，并提前引入部分 P1 所需的 PaperDatasetRegistry 与真实深度模型 adapter。它不是 strict 论文复现系统，因为没有论文原始数据；它是使用真实美股数据进行 exploratory real-data reproduction 的自动化研究 harness。
+This public repository is an auditable ML research harness for time-series forecasting experiments. It uses packaged real U.S.-equity sample data for **exploratory real-data studies**, not strict paper reproduction and not a live trading claim.
 
-## 主要模块
+## Trust boundaries
 
-- `schemas.py`：PaperSpecCard、DatasetCard、CandidateSpec、ResearchContract、ExecutionManifest、ReproductionAudit。
-- `papers.py`：内置三篇金融预测论文协议卡，含 RF 技术指标、GA-LSTM、Transformer/LSTM 比较。
-- `data.py`：加载 Plotly packaged real US equity data，构造 AAPL next-return 标签与特征。
-- `comparability.py`：计算论文协议与本地数据的可比性。
-- `splitters.py`：rolling-origin 与 purged walk-forward。
-- `evaluation.py`：交易成本、净收益、换手、成本场景。
-- `models.py`：Ridge、RandomForest、GradientBoosting、真实 PyTorch LSTM、Transformer、GA-LSTM。
-- `tracking.py`：MLflow/DVC adapter；如果环境未安装，降级为本地可测试 tracker。
-- `registry.py`：PaperDatasetRegistry。
-- `replay_llm.py`：无 key 环境固定 LLM 输出。
-- `harness.py`：完整流程编排。
-- `apps/streamlit_app.py`：成熟化前端流程展示。
+- Real-data loading is fail-closed. Synthetic fallback requires explicit `allow_synthetic=True` and is labelled `synthetic`; it is never written into the real-data cache path.
+- Feature engineering is `past_only_v2`: lagged inputs are shifted without future backfilling. The target is next-period return.
+- Unknown model-family identifiers fail instead of silently falling back to another estimator.
+- Sequence adapters use `sequence_lag_N` columns as a real multi-step time axis (`lag_5 → ... → lag_1`). Static contemporaneous features are repeated as side channels; this is a compact portfolio architecture, not a claim of state-of-the-art forecasting.
+- Candidate selection uses development walk-forward windows. Only the frozen selected candidate is evaluated on the final confirmation window.
+- Gross and net Sharpe-style diagnostics are reported separately. Transaction costs include the initial position entry and later position changes.
 
-## 完整流程
+## Workflow
 
 ```text
-PaperSpecCard
-+ DatasetCard
--> ComparabilityReport
--> ReplayLLM research_advice fixture
--> CandidateSpec
--> ResearchContract
--> ExecutionManifest
--> purged walk-forward training
--> cost-aware evaluation
--> ReproductionAudit
--> PaperDatasetRegistry / tracking / UI report
+PaperSpecCard + DatasetCard
+        |
+        v
+ComparabilityReport
+        |
+        v
+ReplayLLM fixture proposes CandidateSpec
+        |
+        v
+ResearchContract -> ExecutionManifest
+        |
+        v
+Purged walk-forward development windows
+        |
+        v
+Select candidate on development.net_return
+        |
+        v
+Freeze candidate
+        |
+        v
+Final confirmation window
+        |
+        v
+ReproductionAudit + tracking/report
 ```
 
-## 真实数据与 strict 边界
+`ReplayLLM` is deterministic fixture data, not a live autonomous research agent. Deterministic code owns data loading, splits, training, metrics, costs, selection and auditing.
 
-当前数据是真实数据，但不是论文原始数据，所以应为 `exploratory_real_data_reproduction`。这符合路线文档提出的 mode selection 原则。
+## Implemented modules
 
-## LLM 使用
+- `data.py`: source-labelled packaged-real/synthetic loading and past-only features.
+- `splitters.py`: rolling-origin and purged walk-forward windows.
+- `models.py`: explicit model registry; Ridge/RF/GB plus real PyTorch LSTM/Transformer/GA-LSTM adapters.
+- `evaluation.py`: forecast metrics, per-period cost accounting, gross/net diagnostics.
+- `harness.py`: development selection and frozen confirmation workflow.
+- `tracking.py`: MLflow/DVC adapters with local fallbacks.
+- `registry.py`: paper/dataset registry.
+- `apps/streamlit_app.py`: report inspection UI.
 
-当前没有 live LLM key。方法理解、候选建议用 `ReplayLLM` 固定 fixture 回放，等价于离线大模型输出被锁定到项目中。确定性代码负责数据、切分、训练、成本、审计。
+## Not claimed
 
-## 运行
+- profitable live trading or future returns;
+- strict reproduction without the original paper datasets;
+- point-in-time institutional-quality market data;
+- brokerage execution, portfolio/risk sizing, or production slippage calibration;
+- a live LLM autonomously changing executable experiments.
+
+## Run
 
 ```bash
-PYTHONPATH=src python scripts/run_finance_agent.py
-PYTHONPATH=src python -m pytest tests -q
+pip install -e '.[dev]'
+python scripts/run_finance_agent.py
+pytest -q
 ```

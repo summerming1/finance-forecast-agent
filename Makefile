@@ -1,14 +1,9 @@
 PYTHON ?= python
 
-.PHONY: test test-unit test-integration demo ui lint
+.PHONY: test demo ui lint
 
-test: test-unit test-integration
-
-test-unit:
+test:
 	PYTHONPATH=src $(PYTHON) -m pytest tests -q
-
-test-integration:
-	PYTHONPATH=src $(PYTHON) -m pytest tests/test_harness.py -q
 
 demo:
 	PYTHONPATH=src $(PYTHON) scripts/run_finance_agent.py
@@ -18,3 +13,4 @@ ui:
 
 lint:
 	PYTHONPATH=src $(PYTHON) -m compileall -q src scripts apps tests
+	PYTHONPATH=src $(PYTHON) -m ruff check --select F src scripts apps tests

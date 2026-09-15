@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+.env
+mlruns/
+**/llm_fixtures/
+**/reports/
+**/registry/
+**/dvc_local_fallback.json
+projects/*/data/*_v2.csv

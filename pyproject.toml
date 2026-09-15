@@ -1,20 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "finance-forecast-agent"
-version = "0.1.0"
-description = "Finance-first autonomous forecasting research harness with reproducibility gates."
+version = "0.2.0"
+description = "Auditable financial time-series ML research harness with reproducibility gates."
 requires-python = ">=3.10"
 dependencies = [
-  "numpy",
-  "pandas",
-  "scikit-learn",
-  "plotly",
-  "torch",
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "scikit-learn>=1.3",
+  "plotly>=5.0",
+  "torch>=2.1",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
-ui = ["streamlit"]
+dev = ["pytest>=8,<10", "ruff>=0.6"]
+ui = ["streamlit>=1.30"]
 tracking = ["mlflow", "dvc"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

@@ -1,280 +1,123 @@
-# Finance Forecast Agent - Automated ML Research & Evaluation Harness
+# Finance Forecast Agent — Auditable ML Research Harness
 
-A public, runnable portfolio project for **reproducible ML experimentation on financial time-series data**.
+A runnable portfolio project for **reproducible ML experimentation on financial time series**. It emphasizes experiment contracts, point-in-time-safe feature construction, walk-forward evaluation, explicit model identity, cost-aware diagnostics, and a frozen confirmation step.
 
-The repository demonstrates how to turn paper-inspired research ideas and real market data into **explicit experiment contracts, executable model candidates, time-aware validation, cost-aware evaluation, tracking, and reproducibility audits**.
+It is **not** presented as a trading bot, profitable strategy, or strict paper reproduction.
 
-It is intentionally **not** presented as a trading bot, a profitable strategy, or a strict reproduction of published papers. The current public version uses real U.S. equity data with explicit comparability and evidence gates so exploratory results are not overstated.
+## 15-second reviewer map
 
-## 15-second verification map
+| Capability | Verify here |
+|---|---|
+| Research orchestration | [`src/finance_forecast_agent/harness.py`](src/finance_forecast_agent/harness.py) |
+| Data provenance + past-only features | [`src/finance_forecast_agent/data.py`](src/finance_forecast_agent/data.py) |
+| Explicit model registry + sequence layout | [`src/finance_forecast_agent/models.py`](src/finance_forecast_agent/models.py) |
+| Purged walk-forward evaluation | [`src/finance_forecast_agent/splitters.py`](src/finance_forecast_agent/splitters.py) |
+| Cost-aware diagnostics | [`src/finance_forecast_agent/evaluation.py`](src/finance_forecast_agent/evaluation.py) |
+| Contracts / manifests | [`src/finance_forecast_agent/contracts.py`](src/finance_forecast_agent/contracts.py) |
+| Reproducibility boundaries | [`docs/CURRENT_IMPLEMENTATION.md`](docs/CURRENT_IMPLEMENTATION.md) |
+| Automated verification | [`tests/`](tests/) |
 
-| Capability | Public evidence | What it demonstrates |
-|---|---|---|
-| Research orchestration | [`src/finance_forecast_agent/harness.py`](src/finance_forecast_agent/harness.py) | Candidate selection, contracts, execution manifests, training, evaluation, tracking, and audit flow |
-| Model adapters | [`src/finance_forecast_agent/models.py`](src/finance_forecast_agent/models.py) | Ridge, Random Forest, Gradient Boosting, PyTorch LSTM, Transformer, and GA-LSTM candidates |
-| Time-series evaluation | [`src/finance_forecast_agent/splitters.py`](src/finance_forecast_agent/splitters.py) | Rolling-origin / purged walk-forward evaluation rather than random train-test splits |
-| Cost-aware metrics | [`src/finance_forecast_agent/evaluation.py`](src/finance_forecast_agent/evaluation.py) | Forecast metrics plus turnover, trading-cost scenarios, net return, hit rate, and Sharpe-style diagnostics |
-| Reproducibility / audit | [`docs/CURRENT_IMPLEMENTATION.md`](docs/CURRENT_IMPLEMENTATION.md) | Dataset cards, comparability checks, research contracts, manifests, registries, and reproduction boundaries |
-| Automated verification | [`tests/`](tests/) | End-to-end harness checks and real PyTorch sequence-model smoke tests |
+**Stack:** Python · PyTorch · scikit-learn · pandas · packaged real U.S.-equity sample data · Ridge / Random Forest / Gradient Boosting / LSTM / Transformer / GA-LSTM · MLflow/DVC adapters.
 
-**Fast snapshot:** Python · PyTorch · scikit-learn · real U.S. equity data · purged walk-forward validation · Ridge / RF / Gradient Boosting / LSTM / Transformer / GA-LSTM · transaction-cost scenarios · MLflow/DVC adapters · experiment manifests · reproducibility audits.
+## What this demonstrates
 
-## What this project demonstrates
+- converting research ideas into explicit `CandidateSpec`, `ResearchContract`, and `ExecutionManifest` artifacts;
+- fail-closed dataset provenance: real-data failure cannot silently become a synthetic run labelled as real;
+- past-only lag construction without future backfilling;
+- explicit model-family registration; typos cannot silently execute a Ridge baseline;
+- PyTorch LSTM/Transformer adapters with a **real multi-step lag time axis**, not a sequence length of one;
+- rolling-origin / purged walk-forward evaluation rather than shuffled train/test splits;
+- development candidate selection separated from a **final frozen confirmation window**;
+- gross versus net cost-aware diagnostics, including entry/turnover costs;
+- deterministic research guidance through `ReplayLLM`, with executable ML behavior owned by normal code.
 
-- Building an **auditable ML research harness**, not just a single forecasting notebook
-- Converting research ideas into explicit `CandidateSpec`, `ResearchContract`, and `ExecutionManifest` artifacts
-- Comparing classical and deep-learning candidates under one evaluation protocol
-- Time-aware validation with **rolling-origin / purged walk-forward** splits
-- Financial evaluation that separates raw prediction quality from **cost-aware strategy diagnostics**
-- Reproducibility controls for dataset identity, candidate configuration, experiment tracking, and audit state
-- Clear distinction between **strict reproduction**, **exploratory real-data reproduction**, and paper-inspired local studies
-- Testable separation between research guidance and deterministic ML execution
-
-## Architecture
-
-```mermaid
-flowchart TD
-    A[PaperSpecCard] --> C[Comparability Report]
-    B[DatasetCard / Real Equity Data] --> C
-    C --> D[Research Guidance / Candidate Specs]
-    D --> E[ResearchContract]
-    E --> F[ExecutionManifest]
-    F --> G[Time-aware Train / Evaluate]
-    G --> H[Forecast Metrics]
-    G --> I[Cost-aware Strategy Metrics]
-    H --> J[Reproduction Audit]
-    I --> J
-    J --> K[Tracking / Registry / Report]
-```
-
-The key design choice is that **research planning does not directly execute arbitrary model code**. Candidate intent is compiled into explicit contracts and manifests before deterministic training and evaluation run.
-
-## End-to-end workflow
+## Evaluation protocol
 
 ```text
-Paper protocol
-+ Real local dataset
+real packaged dataset
         |
         v
-Comparability check
+past-only feature engineering
         |
         v
-Candidate specifications
+candidate contracts / manifests
         |
         v
-Research contract
+development walk-forward windows
+        |
+        +--> forecast metrics
+        +--> cost-aware diagnostics
         |
         v
-Execution manifest
+select on development.net_return
         |
         v
-Purged walk-forward / rolling-origin training
-        |
-        +--> Forecast metrics
-        |
-        +--> Cost-aware evaluation
+freeze selected candidate
         |
         v
-Reproduction audit
-        |
-        v
-Registry / tracking / report
+final confirmation window
 ```
 
-This structure is intended to make it clear **what was actually run, under which assumptions, and how strongly the result may be interpreted**.
+The confirmation result is kept separate from model selection. It is still a small portfolio study, not a production backtest or evidence of future profitability.
 
-## Current model candidates
+## Sequence-model boundary
 
-| Family | Implementation |
-|---|---|
-| Ridge regression | scikit-learn pipeline with scaling |
-| Random Forest | `RandomForestRegressor` |
-| Gradient Boosting | `GradientBoostingRegressor` |
-| LSTM | Small real PyTorch sequence regressor |
-| Transformer | Small real PyTorch Transformer encoder regressor |
-| GA-LSTM | Lightweight genetic search over LSTM hyperparameters |
+For models that request `sequence_window_features`, `sequence_lag_5 ... sequence_lag_1` become the chronological time axis. Other selected features are repeated as contemporaneous side channels. Tests assert that the LSTM, Transformer and GA-LSTM adapters see a five-step sequence.
 
-The sequence models are intentionally compact so the repository stays runnable as a portfolio and testing artifact. This project demonstrates **research-system design and evaluation discipline**, not a claim that these specific small architectures are state-of-the-art forecasters.
+These networks are intentionally compact so CI remains runnable. The repository demonstrates **model/evaluation system design**, not state-of-the-art forecasting accuracy.
 
-## Evaluation design
+## Data boundary
 
-### Forecast-quality metrics
+The normal workflow uses `plotly.data.stocks`, a packaged real market sample. It is not CRSP-grade, is not explicitly survivorship-bias free, and is not the original dataset from the referenced papers.
 
-The harness records standard regression diagnostics including:
+If the real packaged source cannot be loaded, the normal path raises an error. Synthetic data requires explicit opt-in and receives a different dataset ID/source type. The synthetic path is for testing only.
 
-- MAE
-- RMSE
-- R2
-- directional accuracy
+## Cost diagnostics
 
-### Time-series validation
+The sign-strategy diagnostic reports gross/net return, turnover, cost paid, hit rate, and separate gross/net Sharpe-style values under zero/base/stress cost assumptions. Costs are charged for initial position entry and subsequent position changes.
 
-Random shuffling is inappropriate for this use case. The project provides rolling-origin and purged walk-forward style splits so model evaluation respects temporal ordering.
-
-### Cost-aware diagnostics
-
-A sign-based strategy evaluator adds explicit execution assumptions:
-
-- commission
-- half-spread
-- market impact
-- optional latency penalty
-
-The report can compare **zero-cost, base-cost, and stress-cost** scenarios and records metrics such as:
-
-- gross return
-- net return
-- turnover
-- cost paid
-- buy-and-hold return
-- excess return
-- hit rate
-- Sharpe-style diagnostic
-
-These values are research diagnostics only. They are not presented as live-trading performance.
-
-## Reproducibility and evidence boundaries
-
-The project intentionally separates "the experiment ran" from "the paper was reproduced".
-
-The current public workflow uses real packaged U.S. equity data, but it does **not** contain the original datasets used by the referenced papers. Therefore the public runs are classified as **exploratory real-data reproduction**, not strict paper reproduction.
-
-The harness records or derives artifacts such as:
-
-- paper specification
-- dataset card
-- comparability report
-- candidate specification
-- research contract
-- execution manifest
-- model/evaluation result
-- reproduction audit
-- paper/dataset registry state
-- tracking metadata
-
-See:
-
-- [Current implementation](docs/CURRENT_IMPLEMENTATION.md)
-- [Project roadmap](docs/PROJECT_ROADMAP.md)
-
-## Research-guidance boundary
-
-The current public version uses a deterministic `ReplayLLM` fixture for research advice. This means the ML pipeline can be tested without an API key and without allowing an LLM to silently alter experimental execution.
-
-That boundary is deliberate:
-
-- guidance proposes candidates;
-- deterministic code owns data loading, splitting, model execution, metrics, cost assumptions, and audit decisions;
-- unsupported claims are blocked by explicit reproduction rules.
-
-A broader private R&D line explores richer agent-driven candidate planning and experiment memory, but this public repository only claims the capabilities implemented and testable here.
-
-## What is implemented today
-
-- Real U.S. equity dataset loading and dataset cards
-- Paper protocol cards and paper/dataset comparability checks
-- Candidate specifications and explicit experiment contracts
-- Rolling-origin / purged walk-forward evaluation
-- Classical ML and real PyTorch sequence-model adapters
-- Cost-aware evaluation with multiple cost scenarios
-- PaperDatasetRegistry
-- MLflow and DVC adapters with local fallbacks when optional packages are unavailable
-- Reproducibility audits and generated JSON reports
-- Streamlit inspection UI
-- Automated tests for core models and the end-to-end harness
-
-## What is intentionally not claimed
-
-- No claim of profitable live trading
-- No live brokerage execution
-- No claim of strict reproduction without original paper datasets
-- No claim that a lower forecast error automatically implies a superior tradable strategy
-- No claim that the current `ReplayLLM` fixture is a live autonomous research agent
-- No claim that the compact portfolio models are production forecasting models
-
-These boundaries are part of the engineering design, not missing marketing language.
-
-## Roadmap
-
-The public roadmap is organized around progressively stronger research automation:
-
-1. **Trusted research core** - contracts, manifests, time-aware validation, cost-aware evaluation, audit gates
-2. **Research memory / registry** - richer experiment memory and dataset provenance
-3. **Search efficiency** - Hyperband / successive halving / Bayesian optimization and multi-objective candidate selection
-4. **Deployment governance** - shadow / paper / live modes, approvals, kill switches, drift monitoring, and model/risk cards
-
-See [PROJECT_ROADMAP.md](docs/PROJECT_ROADMAP.md) for the explicit implementation boundary between current and planned work.
+These are research diagnostics, not investment advice or executable brokerage performance.
 
 ## Quick start
 
 ```bash
-pip install -e ".[dev]"
-PYTHONPATH=src python scripts/run_finance_agent.py
-PYTHONPATH=src python -m pytest tests -q
+python -m venv .venv
+source .venv/bin/activate
+pip install -e '.[dev]'
+python scripts/run_finance_agent.py
+pytest -q
 ```
 
 Optional UI:
 
 ```bash
-pip install -e ".[ui]"
-PYTHONPATH=src python -m streamlit run apps/streamlit_app.py
+pip install -e '.[ui]'
+python -m streamlit run apps/streamlit_app.py
 ```
 
-Optional experiment tracking adapters:
+## Reproducibility scope
 
-```bash
-pip install -e ".[tracking]"
-```
+The harness records/derives paper specs, dataset cards, comparability reports, candidate specs, research contracts, execution manifests, development metrics, confirmation metrics, audit records, registry state and tracking metadata.
 
-## Repository map
+`ReplayLLM` is an offline deterministic fixture. It does not pretend to be a live autonomous research agent. A broader private R&D line can explore agent-driven hypothesis generation while this public repository keeps the executable evaluation path deterministic and reviewable.
 
-```text
-apps/
-  streamlit_app.py           # inspection UI
+See [`docs/CURRENT_IMPLEMENTATION.md`](docs/CURRENT_IMPLEMENTATION.md) and [`docs/PROJECT_ROADMAP.md`](docs/PROJECT_ROADMAP.md).
 
-docs/
-  CURRENT_IMPLEMENTATION.md  # implemented scope and architecture
-  PROJECT_ROADMAP.md         # planned research-automation stages
+## What is intentionally not claimed
 
-src/finance_forecast_agent/
-  comparability.py           # paper vs local-data comparability
-  contracts.py               # research contracts / execution manifests
-  data.py                    # real-data loading and dataset cards
-  evaluation.py              # forecast + cost-aware evaluation
-  harness.py                 # end-to-end orchestration
-  models.py                  # sklearn + PyTorch model adapters
-  papers.py                  # built-in paper protocol specs
-  registry.py                # paper/dataset registry
-  replay_llm.py              # deterministic research-advice fixture
-  schemas.py                 # typed research artifacts
-  splitters.py               # time-series split logic
-  tracking.py                # MLflow / DVC adapters
+- no profitable-live-trading claim;
+- no brokerage execution;
+- no strict paper reproduction without original data;
+- no claim that forecast error alone implies a tradable strategy;
+- no claim that the compact models are production forecasters;
+- no claim that the offline ReplayLLM fixture is an autonomous ML agent.
 
-tests/
-  test_core.py
-  test_models_and_harness.py
-```
+## Portfolio relevance
 
-## Why this matters for AI / ML engineering work
+This repository supports remote work involving **ML evaluation, time-series modelling, reproducible experiment infrastructure, research agents, automated experimentation, model selection, and evidence/governance tooling**.
 
-The same engineering patterns apply beyond finance:
+Related public work:
 
-- evaluating multiple model candidates under one locked protocol
-- separating AI-generated suggestions from deterministic execution
-- creating reproducible experiment manifests
-- preventing data/evaluation leakage
-- tracking model and dataset provenance
-- distinguishing optimization evidence from real downstream value
-- building automated research loops that can later support agents safely
-
-This makes the repository relevant to work involving **ML evaluation, AI training, research agents, automated experimentation, forecasting systems, and model-quality infrastructure**.
-
-## Related public engineering showcases
-
-- [27B LLM Fine-Tuning, Evaluation & vLLM Deployment](https://github.com/summerming1/llm-posttraining-case-study) - post-training, blinded evaluation, RAG-separated evaluation and multi-GPU serving
-- [Production RAG Agent](https://github.com/summerming1/production-rag-agent) - hybrid retrieval, RRF, reranking, citations, retrieval metrics and bounded orchestration
-- [Industrial CV Production Pipeline](https://github.com/summerming1/industrial-cv-production-pipeline) - segmentation, ROI/spatial logic, temporal event detection and ONNX/TensorRT deployment patterns
-
-## Portfolio interpretation
-
-This repository should be read as evidence of **ML systems engineering, evaluation design, reproducibility, and automated research orchestration**. Numeric outputs from the included datasets are experimental diagnostics, not investment advice or claims of future market performance.
+- [27B LLM Fine-Tuning, Evaluation & vLLM Deployment](https://github.com/summerming1/llm-posttraining-case-study)
+- [Production RAG Agent](https://github.com/summerming1/production-rag-agent)
+- [Industrial CV Production Pipeline](https://github.com/summerming1/industrial-cv-production-pipeline)
