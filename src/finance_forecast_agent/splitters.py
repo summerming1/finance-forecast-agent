@@ -20,7 +20,7 @@ def rolling_origin_splits(
     n: int,
     *,
     min_train: int = 60,
-    test_size: int = 12,
+    test_size: int = 8,
     step: int = 8,
 ) -> list[SplitWindow]:
     windows = []
@@ -42,7 +42,7 @@ def purged_walk_forward_splits(
     n: int,
     *,
     train_size: int = 60,
-    test_size: int = 12,
+    test_size: int = 8,
     step: int = 8,
     purge: int = 1,
     embargo: int = 1,
@@ -61,6 +61,7 @@ def purged_walk_forward_splits(
                 embargo=embargo,
             )
         )
+        # Keep test windows non-overlapping and leave the declared embargo gap.
         test_start += step + embargo
     if not windows:
         raise ValueError("not enough rows for purged walk-forward split")
