@@ -1,0 +1,34 @@
+name: Focused loop validation
+on:
+  push:
+    branches: [feat/p1-focused-us-equity-loop]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test dependencies
+        run: python -m pip install -e '.[dev,ui,pdf]' pytest-json-report
+      - name: Run regression tests
+        run: python -m pytest -q --junitxml=validation-junit.xml
+      - name: Archive source snapshot for reproducible local validation
+        if: always()
+        run: git archive --format=tar.gz -o source-snapshot.tar.gz HEAD
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: focused-validation-source
+          path: |
+            source-snapshot.tar.gz
+            validation-junit.xml
+          retention-days: 7
