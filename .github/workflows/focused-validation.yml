@@ -14,21 +14,40 @@ jobs:
       MKL_NUM_THREADS: '1'
     steps:
       - uses: actions/checkout@v4
+      - name: Archive exact source snapshot
+        run: git archive --format=tar.gz -o source-snapshot.tar.gz HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: focused-source
+          path: source-snapshot.tar.gz
+          retention-days: 7
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install test dependencies
-        run: python -m pip install -e '.[dev,ui,pdf]' pytest-json-report
+      - name: Install CPU test dependencies
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf]' pytest-json-report
       - name: Run regression tests
         run: python -m pytest -q --junitxml=validation-junit.xml
-      - name: Archive source snapshot for reproducible local validation
-        if: always()
-        run: git archive --format=tar.gz -o source-snapshot.tar.gz HEAD
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: focused-validation-source
-          path: |
-            source-snapshot.tar.gz
-            validation-junit.xml
+          name: focused-validation-results
+          path: validation-junit.xml
+          retention-days: 7
+  environment-bundle:
+    if: contains(github.event.head_commit.message, 'environment bundle')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build offline validation wheels
+        run: python -m pip wheel 'streamlit>=1.45,<2' ruff 'mlflow-skinny>=3,<4' dvc exchange-calendars --wheel-dir wheels
+      - uses: actions/upload-artifact@v4
+        with:
+          name: focused-offline-environment-py313-linux
+          path: wheels
           retention-days: 7
