@@ -1,4 +1,5 @@
 name: Mission V1.1 real SPY smoke
+# Release evidence: path-triggered on this file so normal development does not depend on an expiring acquisition artifact.
 
 on:
   push:
