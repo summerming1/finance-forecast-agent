@@ -1,5 +1,39 @@
 # Finance Forecast Agent 项目迭代路线图
 
+## 2026-09-18 ADR-MISSION-002：任务驱动研究产品的实施收敛
+
+用户已批准在 ADR-FOCUS-001 基础上继续收敛：**不改变 SPY / 日频 / 下一交易日收益回归 / forecast-only 主任务，先修 V1.1 可靠性，再把现有 focused loop 产品化为 Mission-driven research。**
+
+### 产品版本与 focused 能力里程碑的映射
+
+```text
+V1      = 已验收 F0 + F1：真实 SPY 数据 + 受控 deterministic/replay/live 建议接口
+V1.1    = 当前下一实现：数据/时间/split/预算/参数/结论语义可靠性补丁
+V2-A    = 薄 Mission + 可复算 PredictionArtifact/Manifest + 强基线 + StructuredFeedback
+V2-B    = 可恢复执行 + Evidence-grounded live/replay Advisor + 少量已审核文献持续参与 + ResearchPackage
+V2.1    = 既有 ExperimentMemory prior + Exposure/Confirmation + 显式 refit ModelBundle
+F3/V3   = Shadow forecasting，累积不可改写的前瞻证据
+F4+     = 仅按真实需求逐维扩展：自动文献检索、BYO、受控 CodingAgent、新资产/任务
+```
+
+这里的 V2 不是旧 P2，也不改变历史 generalization/P2 门禁。旧 20 篇/4 类/3 数据域科学广度目标继续保留，但不是 focused 产品的短期前置。
+
+### 文献路线
+
+- V1.1：不增加文献自动化，先保证实验台正确。
+- V2-B：1–3 张已审核 MethodCard/EvidenceNode 真正进入 ContextBuilder，参与机制、假设、控制实验、结果解释与反证；论文事实与本地结论严格分离。
+- V2.1：文献证据与兼容 ExperimentMemory 同时存在，Memory 为弱 prior，均不能覆盖确定性 Evaluator。
+- 后续：只有当现有资料出现明确知识缺口时，才做有预算、有许可、有版本的自动文献检索；再后续按需要接受控代码实现。
+
+### 防止平台再次无限扩张
+
+一个新能力只有满足至少一项才进入近期开发：解除当前任务的明确阻塞、下一里程碑会实际使用、或者已有真实用户需求。否则进入 backlog。
+
+Mission 是薄元数据层；禁止因此重建 Task/Campaign/Data/Queue/Memory/Evaluator。
+
+详细技术边界见 `docs/ADR_MISSION_RESEARCH_002.md`、`docs/FOCUSED_ARCHITECTURE.md`、`docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`。
+
+
 ## 2026-09-18 已批准的近期主线：P1 Focus
 
 ADR-FOCUS-001 已由用户批准。近期不再把“20 篇 strict / 4 类实验 / 3 数据域”的通用覆盖作为所有后续工作的前置条件；这些科学目标保留为长期广度路线且历史验收状态不改变。
