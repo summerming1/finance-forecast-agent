@@ -59,7 +59,7 @@ Frozen Yahoo SPY chart JSON
 
 Focused 新功能已在本地通过针对性单元/Streamlit AppTest，并用真实 SPY acquisition artifact 完成 3 轮 deterministic smoke campaign。该真实运行正确得到 `completed_no_improvement`，并保持 `confirmation_status=not_run_historical_data_exposed`；这证明闭环和失败/无提升终态，不证明存在可交易优势。
 
-历史全量测试在干净快照仍包含依赖未提交 PDF、DVC 数据、source checkout 和历史生成报告的失败项；本批没有重新运行十篇小时级 native strict 训练，也没有用用户 API key 重新验收 live ResearchAdvisor。详细记录见 `docs/P1_FOCUS_F0_F1.md`。
+历史全量测试在干净快照仍包含依赖未提交 PDF、DVC 数据、source checkout 和历史生成报告的失败项；本批没有重新运行十篇小时级 native strict 训练，也没有用用户 API key 重新验收 live ResearchAdvisor。详细记录见 `docs/P1_FOCUS_F0_F1.md`。Remote focused CI 已通过 focused tests、Ruff 与 compileall；历史资产依赖的全量回归仍按原边界单独解释。
 
 
 ## 历史广度平台基线
