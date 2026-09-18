@@ -109,7 +109,7 @@ apps/pages/8_Focused_Research.py
 - 正确终态：`completed_no_improvement`；
 - confirmation：`not_run_historical_data_exposed`。
 
-这证明的是研究循环和“无改进也能正确结束”，不是预测优势或收益保证。
+这证明的是研究循环和“无改进也能正确结束”，不是预测优势或收益保证。\n\nRemote focused CI（GitHub Actions）已验证本版本的 focused tests、Ruff 与 compileall 通过；该 focused gate 不替代依赖历史外部资产的全量科学回归。
 
 ## 已知边界
 
