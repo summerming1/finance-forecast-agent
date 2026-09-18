@@ -1,0 +1,31 @@
+name: Focused F0 F1 validation
+on:
+  push:
+    branches: [feat/p1-focused-us-equity-loop-v1]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install focused test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf]'
+      - name: Focused tests
+        run: python -m pytest -q tests/test_focused_data_research.py tests/test_focused_streamlit_page.py
+      - name: Focused lint
+        run: |
+          python -m ruff check             src/finance_forecast_agent/focused_data.py             src/finance_forecast_agent/focused_research.py             scripts/run_focused_spy_campaign.py             apps/pages/8_Focused_Research.py             tests/test_focused_data_research.py             tests/test_focused_streamlit_page.py
+      - name: Compile
+        run: python -m compileall -q src/finance_forecast_agent/focused_data.py src/finance_forecast_agent/focused_research.py scripts/run_focused_spy_campaign.py apps/pages/8_Focused_Research.py
