@@ -6,6 +6,7 @@ from pathlib import Path
 import streamlit as st
 
 from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_daily_research_frame
+from finance_forecast_agent.focused_protocol import FocusedSplitSpec
 from finance_forecast_agent.focused_research import FocusedResearchController, ResearchBudget
 
 st.set_page_config(page_title="Focused SPY Research", layout="wide")
@@ -43,6 +44,13 @@ else:
     frame = None
     snapshot = None
 
+split_spec = FocusedSplitSpec()
+baseline_fit_floor = split_spec.baseline_fit_calls(3)
+st.caption(
+    f"Frozen baselines require {baseline_fit_floor} fit calls before research candidates. "
+    "The controller will fail before training if the approved budget is smaller."
+)
+
 with st.form("focused_campaign_form"):
     rounds = st.number_input("Max research rounds", min_value=1, max_value=5, value=3)
     candidates = st.number_input("Max new candidates per round", min_value=1, max_value=3, value=2)
@@ -72,7 +80,7 @@ if run and frame is not None and snapshot is not None:
         st.dataframe([
             {"candidate_id": row["candidate"]["candidate_id"], "model": row["candidate"]["model_family"], "features": ", ".join(row["candidate"]["feature_groups"]), "MAE": row["metrics"]["mae"], "RMSE": row["metrics"]["rmse"], "directional_accuracy": row["metrics"]["directional_accuracy"]}
             for row in result["baseline_results"]
-        ], use_container_width=True, hide_index=True)
+        ], width="stretch", hide_index=True)
         st.subheader("What generated each model-iteration suggestion?")
         for round_row in result["rounds"]:
             st.markdown(f"### Round {round_row['round_index']} · source: `{round_row['advisor_source']}`")
@@ -109,6 +117,6 @@ if root.exists():
         except (ValueError, KeyError, OSError, json.JSONDecodeError):
             continue
 if rows:
-    st.dataframe(rows, use_container_width=True, hide_index=True)
+    st.dataframe(rows, width="stretch", hide_index=True)
 else:
     st.caption("No focused campaign artifacts yet.")

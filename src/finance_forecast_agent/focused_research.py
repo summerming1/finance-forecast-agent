@@ -17,6 +17,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from .focused_data import FocusedDatasetSnapshot, FocusedTaskSpec
+from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, validate_model_params
 from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
 from .replay_llm import ReplayLLM
 
@@ -49,7 +50,9 @@ class ResearchBudget:
     max_rounds: int = 3
     max_new_candidates_per_round: int = 2
     max_fit_calls: int = 40
-    min_relative_mae_improvement: float = 0.0025
+    # Compatibility shim for focused-v1 callers. New code should pass
+    # EvaluationPolicy explicitly; this field will be removed in a future schema version.
+    min_relative_mae_improvement: float | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -118,6 +121,7 @@ class CandidateResult:
             "estimator_params": self.estimator_params,
             "execution_status": self.execution_status,
             "research_verdict": self.research_verdict,
+            "development_evidence_level": self.research_verdict,
             "relative_mae_vs_best_baseline": self.relative_mae_vs_best_baseline,
         }
 
@@ -131,6 +135,8 @@ class CampaignSpec:
     advisor_mode: AdvisorMode
     allowed_models: list[str]
     allowed_feature_groups: list[str]
+    evaluation_policy: EvaluationPolicy
+    split_spec: FocusedSplitSpec
     created_at: str
 
     @property
@@ -143,6 +149,8 @@ class CampaignSpec:
                 "advisor_mode": self.advisor_mode,
                 "allowed_models": sorted(self.allowed_models),
                 "allowed_feature_groups": sorted(self.allowed_feature_groups),
+                "evaluation_policy": self.evaluation_policy.to_dict(),
+                "split_spec": self.split_spec.to_dict(),
             }
         )
 
@@ -166,7 +174,7 @@ def resolve_feature_columns(groups: list[str]) -> list[str]:
 def _make_model(candidate: CandidateConfig):
     if candidate.model_family not in ALLOWED_MODELS:
         raise ValueError(f"unsupported focused model: {candidate.model_family}")
-    params = dict(candidate.model_params)
+    params = validate_model_params(candidate.model_family, candidate.model_params)
     if candidate.model_family == "ridge_regression":
         allowed = {"alpha"}
         unknown = set(params) - allowed
@@ -205,28 +213,13 @@ def make_development_splits(
     purge: int = 1,
     max_folds: int = 4,
 ) -> list[tuple[np.ndarray, np.ndarray]]:
-    """Create a small frozen expanding-window development protocol.
-
-    The focused product deliberately caps fold count so the campaign budget is
-    meaningful on a laptop. Every candidate receives the exact same test rows.
-    """
-    if n_rows < min_train + purge + test_size:
-        raise ValueError("not enough rows for focused development splits")
-    last_start = n_rows - test_size
-    first_start = min_train + purge
-    if last_start <= first_start:
-        raise ValueError("not enough rows for multiple focused folds")
-    starts = np.linspace(first_start, last_start, num=max_folds, dtype=int)
-    starts = sorted({int(value) for value in starts})
-    splits: list[tuple[np.ndarray, np.ndarray]] = []
-    for test_start in starts:
-        train_end = test_start - purge
-        train = np.arange(0, train_end, dtype=int)
-        test = np.arange(test_start, test_start + test_size, dtype=int)
-        splits.append((train, test))
-    if len(splits) < 3:
-        raise ValueError("focused development requires at least three folds")
-    return splits
+    """Build the approved focused development folds with non-overlapping target rows."""
+    return FocusedSplitSpec(
+        min_train=min_train,
+        test_size=test_size,
+        purge=purge,
+        max_folds=max_folds,
+    ).build_splits(n_rows)
 
 
 def evaluate_candidate(
@@ -268,7 +261,11 @@ def evaluate_candidate(
     rmse = float(mean_squared_error(actual_all, pred_all) ** 0.5)
     directional = float(np.mean([(p >= 0) == (a >= 0) for p, a in zip(pred_all, actual_all)]))
     relative = (best_baseline_mae - mae) / best_baseline_mae if best_baseline_mae > 0 else 0.0
-    verdict = "supported" if relative >= min_relative_improvement else "not_supported"
+    verdict = (
+        "development_screen_passed"
+        if relative >= min_relative_improvement
+        else "development_screen_not_passed"
+    )
     return CandidateResult(
         candidate=candidate,
         metrics={"mae": mae, "rmse": rmse, "directional_accuracy": directional},
@@ -283,6 +280,13 @@ def evaluate_candidate(
 
 
 def run_baselines(frame: pd.DataFrame, budget: ResearchBudget) -> list[CandidateResult]:
+    split_spec = FocusedSplitSpec()
+    required_fit_calls = split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
+    if budget.max_fit_calls < required_fit_calls:
+        raise ValueError(
+            "focused fit budget is too small for frozen baselines: "
+            f"need {required_fit_calls}, got {budget.max_fit_calls}; no baseline fit started"
+        )
     prelim: list[tuple[CandidateConfig, float, dict[str, float], list[dict[str, Any]], list[str], dict[str, Any], int]] = []
     for candidate_id, family, params, groups in DEFAULT_BASELINES:
         candidate = CandidateConfig(candidate_id, family, params, groups)
@@ -530,12 +534,23 @@ class FocusedResearchController:
         budget: ResearchBudget | None = None,
         advisor_mode: AdvisorMode = "deterministic",
         fixture_dir: str | Path | None = None,
+        evaluation_policy: EvaluationPolicy | None = None,
+        split_spec: FocusedSplitSpec | None = None,
     ):
         self.project_dir = Path(project_dir)
         self.task = task
         self.dataset = dataset
         self.frame = frame
         self.budget = budget or ResearchBudget()
+        legacy_threshold = self.budget.min_relative_mae_improvement
+        self.evaluation_policy = evaluation_policy or EvaluationPolicy(
+            min_relative_mae_improvement=(
+                float(legacy_threshold)
+                if legacy_threshold is not None
+                else EvaluationPolicy().min_relative_mae_improvement
+            )
+        )
+        self.split_spec = split_spec or FocusedSplitSpec()
         self.advisor = FocusedResearchAdvisor(advisor_mode, fixture_dir)
         self.spec = CampaignSpec(
             campaign_id=f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
@@ -545,17 +560,26 @@ class FocusedResearchController:
             advisor_mode=advisor_mode,
             allowed_models=sorted(ALLOWED_MODELS),
             allowed_feature_groups=sorted(FEATURE_GROUPS),
+            evaluation_policy=self.evaluation_policy,
+            split_spec=self.split_spec,
             created_at=_now(),
         )
 
     def run(self) -> dict[str, Any]:
+        splits = self.split_spec.build_splits(len(self.frame))
+        baseline_fit_calls = self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
+        if self.budget.max_fit_calls < baseline_fit_calls:
+            raise ValueError(
+                "focused fit budget is too small for frozen baselines: "
+                f"need {baseline_fit_calls}, got {self.budget.max_fit_calls}; no model fit started"
+            )
         baseline_results = run_baselines(self.frame, self.budget)
         best_baseline = min(baseline_results, key=lambda x: x.metrics["mae"])
         best_baseline_mae = best_baseline.metrics["mae"]
         research_results: list[CandidateResult] = []
         rounds: list[dict[str, Any]] = []
         seen_fingerprints = {result.candidate.fingerprint for result in baseline_results}
-        fit_calls = len(baseline_results) * len(make_development_splits(len(self.frame)))
+        fit_calls = baseline_fit_calls
         stop_reason = "max_rounds_reached"
         for round_index in range(1, self.budget.max_rounds + 1):
             prompt = advisor_prompt(
@@ -569,25 +593,42 @@ class FocusedResearchController:
             compiled = compile_hypotheses(advice, round_index=round_index, source=source, max_count=self.budget.max_new_candidates_per_round)
             round_rows = []
             new_executable = 0
+            successful_this_round = 0
             for hypothesis, candidate in compiled:
                 if candidate.fingerprint in seen_fingerprints:
                     round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(), "status": "skipped_duplicate"})
                     continue
-                folds = len(make_development_splits(len(self.frame)))
+                folds = len(splits)
                 if fit_calls + folds > self.budget.max_fit_calls:
                     round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(), "status": "blocked_budget"})
                     stop_reason = "fit_budget_exhausted"
                     continue
-                result = evaluate_candidate(
-                    self.frame,
-                    candidate,
-                    best_baseline_mae=best_baseline_mae,
-                    min_relative_improvement=self.budget.min_relative_mae_improvement,
-                )
+                # Reserve the approved fit budget before execution. A failed
+                # attempt still consumes this reservation and is visible.
                 fit_calls += folds
                 seen_fingerprints.add(candidate.fingerprint)
-                research_results.append(result)
                 new_executable += 1
+                try:
+                    result = evaluate_candidate(
+                        self.frame,
+                        candidate,
+                        best_baseline_mae=best_baseline_mae,
+                        min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
+                    )
+                except Exception as exc:
+                    round_rows.append(
+                        {
+                            "hypothesis": hypothesis.to_dict(),
+                            "candidate": candidate.to_dict(),
+                            "status": "failed",
+                            "error_type": type(exc).__name__,
+                            "error": str(exc),
+                            "reserved_fit_calls": folds,
+                        }
+                    )
+                    continue
+                research_results.append(result)
+                successful_this_round += 1
                 round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(), "result": result.to_dict(), "status": "completed"})
             rounds.append({"round_index": round_index, "advisor_source": source, "prompt_hash": _hash(prompt), "items": round_rows})
             if stop_reason == "fit_budget_exhausted":
@@ -595,12 +636,16 @@ class FocusedResearchController:
             if new_executable == 0:
                 stop_reason = "no_new_executable_hypothesis"
                 break
+            if successful_this_round == 0:
+                stop_reason = "round_failed_no_completed_candidate"
+                break
 
         valid_results = [*baseline_results, *research_results]
         best_overall = min(valid_results, key=lambda x: x.metrics["mae"])
         improved = (
             best_overall.candidate.candidate_id not in {x.candidate.candidate_id for x in baseline_results}
-            and best_overall.relative_mae_vs_best_baseline >= self.budget.min_relative_mae_improvement
+            and best_overall.relative_mae_vs_best_baseline
+            >= self.evaluation_policy.min_relative_mae_improvement
         )
         terminal_status = "completed_with_development_improvement" if improved else "completed_no_improvement"
         payload = {
@@ -614,6 +659,9 @@ class FocusedResearchController:
             "terminal_status": terminal_status,
             "stop_reason": stop_reason,
             "fit_calls": fit_calls,
+            "baseline_fit_calls": baseline_fit_calls,
+            "evaluation_policy": self.evaluation_policy.to_dict(),
+            "split_spec": self.split_spec.to_dict(),
             "confirmation_status": "not_run_historical_data_exposed",
             "scientific_claim": "development_only_no_profitability_claim",
             "created_at": _now(),

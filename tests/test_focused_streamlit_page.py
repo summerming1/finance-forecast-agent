@@ -5,12 +5,20 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import exchange_calendars as xcals
 from streamlit.testing.v1 import AppTest
 
 
 def _write_chart(path: Path, n: int = 1200) -> None:
     rng = np.random.default_rng(7)
-    business = pd.bdate_range("2019-01-02", periods=n, tz="America/New_York")
+    calendar = xcals.get_calendar("XNYS")
+    sessions = calendar.sessions_in_range("2019-01-02", "2035-12-31")[:n]
+    business = pd.DatetimeIndex(
+        [
+            pd.Timestamp(session).tz_localize("America/New_York") + pd.Timedelta(hours=9, minutes=30)
+            for session in sessions
+        ]
+    )
     returns = rng.normal(0.0002, 0.01, n)
     prices = 250 * np.cumprod(1 + returns)
     payload = {

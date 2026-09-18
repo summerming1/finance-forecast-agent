@@ -10,6 +10,7 @@ dependencies = [
   "plotly",
   "torch",
   "requests",
+  "exchange-calendars>=4.13,<5",
 ]
 
 [project.optional-dependencies]

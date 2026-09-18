@@ -8,6 +8,9 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+import exchange_calendars as xcals
+
+from .focused_protocol import FocusedSplitSpec
 
 FOCUSED_FEATURE_REGISTRY_VERSION = "spy_daily_features_v1"
 
@@ -43,6 +46,8 @@ class FocusedDatasetSnapshot:
     license_status: str
     exposure: str
     feature_registry_version: str = FOCUSED_FEATURE_REGISTRY_VERSION
+    session_calendar: str = "XNYS"
+    session_validation: str = "complete_observed_sessions"
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -76,9 +81,12 @@ def _extract_yahoo_chart(payload: dict[str, Any]) -> tuple[pd.DataFrame, dict[st
         raise ValueError("Yahoo chart payload is missing timestamps or quotes")
     quote = quote_rows[0]
     adj_rows = (result.get("indicators") or {}).get("adjclose") or []
-    adjusted = (adj_rows[0].get("adjclose") if adj_rows else None) or quote.get("close")
+    adjusted = adj_rows[0].get("adjclose") if adj_rows else None
     if adjusted is None:
-        raise ValueError("Yahoo chart payload has no adjusted close or close series")
+        raise ValueError(
+            "Focused SPY task requires Yahoo adjusted-close data; "
+            "ordinary close is not an allowed fallback"
+        )
     if len(adjusted) != len(timestamps):
         raise ValueError("price and timestamp lengths differ")
     dates = pd.to_datetime(timestamps, unit="s", utc=True).tz_convert("America/New_York").tz_localize(None)
@@ -90,6 +98,32 @@ def _extract_yahoo_chart(payload: dict[str, Any]) -> tuple[pd.DataFrame, dict[st
         }
     ).dropna(subset=["timestamp", "spy_adj_close"])
     return frame, meta
+
+
+def _validate_xnys_session_completeness(frame: pd.DataFrame) -> None:
+    observed = pd.DatetimeIndex(frame["timestamp"]).normalize()
+    if observed.empty:
+        raise ValueError("SPY daily frame has no sessions")
+    calendar = xcals.get_calendar("XNYS")
+    expected = pd.DatetimeIndex(calendar.sessions_in_range(observed.min(), observed.max())).normalize()
+    observed_unique = pd.DatetimeIndex(observed.unique()).sort_values()
+    missing = expected.difference(observed_unique)
+    unexpected = observed_unique.difference(expected)
+    if len(missing) or len(unexpected):
+        parts = []
+        if len(missing):
+            parts.append(
+                "missing XNYS sessions: "
+                + ", ".join(ts.strftime("%Y-%m-%d") for ts in missing[:5])
+                + (" ..." if len(missing) > 5 else "")
+            )
+        if len(unexpected):
+            parts.append(
+                "unexpected non-XNYS dates: "
+                + ", ".join(ts.strftime("%Y-%m-%d") for ts in unexpected[:5])
+                + (" ..." if len(unexpected) > 5 else "")
+            )
+        raise ValueError("; ".join(parts))
 
 
 def _validate_daily_frame(frame: pd.DataFrame) -> None:
@@ -123,6 +157,7 @@ def build_spy_daily_research_frame(
     frame, yahoo_meta = _extract_yahoo_chart(payload)
     frame = frame.sort_values("timestamp").reset_index(drop=True)
     _validate_daily_frame(frame)
+    _validate_xnys_session_completeness(frame)
 
     ret = frame["spy_adj_close"].pct_change()
     frame["return_1"] = ret
@@ -150,8 +185,13 @@ def build_spy_daily_research_frame(
     ]
     frame = frame.dropna(subset=required).reset_index(drop=True)
     _validate_daily_frame(frame)
-    if len(frame) < 504:
-        raise ValueError(f"Focused SPY research requires at least 504 supervised rows, got {len(frame)}")
+    split_spec = FocusedSplitSpec()
+    if len(frame) < split_spec.required_supervised_rows:
+        raise ValueError(
+            "Focused SPY research requires at least "
+            f"{split_spec.required_supervised_rows} supervised rows for the approved split policy, "
+            f"got {len(frame)}"
+        )
 
     frame["timestamp"] = frame["timestamp"].dt.strftime("%Y-%m-%d")
     frame["decision_time"] = frame["decision_time"].dt.strftime("%Y-%m-%d")
