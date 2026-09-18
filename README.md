@@ -1,6 +1,50 @@
 # Finance Forecast Agent
 
-A finance-first automated research harness with MethodCard extraction, evidence-bound ReproductionPlans, native paper reproduction, shared-task benchmarking, standard prediction artifacts, isolated ExperimentMemory, and auditable DVC/MLflow hooks.
+A financial machine-learning research workbench with two compatible paths:
+
+1. **Focused product line** — currently SPY daily next-session return research: frozen real data, controlled baselines, structured hypotheses, real model execution, deterministic evaluation and bounded stopping.
+2. **Professional paper/reproduction line** — MethodCard evidence, ReproductionPlan, native claims, source/data contracts, common benchmarks, lineage and scientific acceptance gates.
+
+The near-term product goal is **not** “support every financial paper or model”. It is to reliably automate a bounded research task and make every hypothesis, implementation, result and limitation auditable.
+
+## Current branch and status
+
+Current Mission-oriented work branch:
+
+```text
+feat/mission-research-v2
+```
+
+Current implemented milestone: **Focused V1.1 reliability**. V2 Mission/literature/queue/Memory/model-delivery capabilities described in the roadmap are planned, not already implemented.
+
+Start with these documents:
+
+- `AGENTS.md` — mandatory contract for Codex/coding agents.
+- `docs/PROJECT_ROADMAP.md` — approved product/research direction.
+- `docs/CURRENT_IMPLEMENTATION.md` — actual current functionality and verified boundaries.
+- `docs/ADR_MISSION_RESEARCH_002.md` — why Mission is thin and how literature participates in research.
+- `docs/FOCUSED_ARCHITECTURE.md` — target architecture and object authority.
+- `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md` — milestone acceptance contract.
+- `docs/CODEX_FOCUSED_HANDOFF.md` — implementation sequence for later Codex sessions.
+- `docs/P1_FOCUS_F0_F1.md` — current focused version history, V1.1 fixes and test evidence.
+
+## Focused V1.1 at a glance
+
+```text
+real Yahoo SPY adjusted-close data
+ -> XNYS/session + time/data contract checks
+ -> frozen non-overlapping development folds
+ -> Ridge/RF/GBDT baselines
+ -> deterministic/replay/live suggestion interface
+ -> allow-listed hypothesis compilation
+ -> actual estimator fit/predict
+ -> development-only MAE/RMSE/directional diagnostics
+ -> next round / budget / duplicate / stop
+ -> completed_no_improvement is a valid result
+```
+
+Current historical SPY data is development-only and already exposed. The focused path is forecast-only and does not claim tradable PnL.
+
 
 ## Quick start
 

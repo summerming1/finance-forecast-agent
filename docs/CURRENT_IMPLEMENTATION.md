@@ -1,65 +1,120 @@
 # 当前版本功能与技术实现说明
 
-## 当前权威实现：P1 Focus F0 + F1
+## 当前权威实现：P1 Focus V1.1 reliability
 
-当前工作分支：`feat/p1-focused-us-equity-loop-v1`。
+当前工作分支：`feat/mission-research-v2`。
 
-近期产品主线已经从“先扩通用 strict 覆盖”收敛为 **SPY 日频下一交易日收益预测的受控自主研究闭环**。历史 P0-P1.G 的 MethodCard、Native Claim、数据/来源合同、ExperimentMemory、lineage、严格复现和七阶段工作台均保留，但不再要求先扩到更多市场/实验类型才允许验证研究 Agent。
+当前代码仍然是 **SPY 日频下一交易日收益回归的受控研究闭环**；V1.1 只加固可靠性。ADR-MISSION-002 已批准后续任务驱动产品路线，但 Mission UI、文献持续参与、后台恢复、长期 Memory prior、独立 confirmation 与 ModelBundle **尚未实现**，不能把 Roadmap 当作当前功能。
 
-当前 focused 主流程：
+### 当前 focused 主流程
 
 ```text
-Frozen Yahoo SPY chart JSON
+Audited Yahoo SPY chart JSON
+→ require adjusted close + XNYS session completeness
 → FocusedTaskSpec / FocusedDatasetSnapshot
-→ past-only features + next-trading-day return label
+→ past-only features + next-trading-session return label
+→ FocusedSplitSpec preflight
+→ baseline budget preflight
 → frozen Ridge / RF / GBDT baselines
 → FocusedResearchAdvisor
    ├─ deterministic_policy
    ├─ ReplayLLM focused_research_advice
    └─ live OpenAI-compatible LLM + fixture recording
 → HypothesisSpec
-→ allow-list CandidateConfig
-→ actual estimator fit/predict on common development folds
+→ allow-list / numeric parameter compilation
+→ CandidateConfig
+→ actual estimator fit/predict on the **same frozen split contract**
 → MAE / RMSE / directional accuracy
-→ deterministic research verdict
-→ prior real results included in next-round prompt
-→ budget/duplicate/stop gates
-→ persisted campaign + events
+→ development_screen_passed / development_screen_not_passed
+→ prior campaign results included in the next-round prompt
+→ budget / duplicate / stop gates
+→ terminal campaign JSON + reconstructed events
 ```
+
+### V1.1 当前可靠性能力
+
+- SPY focused 任务没有 synthetic fallback；
+- 缺 Yahoo adjusted close 直接阻断，不用 ordinary close 冒充；
+- XNYS session 缺口在构造监督数据前阻断；
+- 默认 SplitSpec：minimum train 756、purge 1、test 63、4 folds；最低监督行数 1009；
+- test folds 必须非重叠、无重复 target rows；
+- SplitSpec 同时进入 Campaign contract、baseline 与 candidate 实际执行；
+- frozen baseline 需要 12 fits，预算不足时在任何 fit 前失败；
+- candidate fits 在执行前预留，失败不会“退回”成免费预算；
+- Ridge/RF/GBDT 参数有数值范围，并在 proposal compile 与 estimator build 两层校验；
+- EvaluationPolicy 与 ResearchBudget 已分开，旧 threshold 字段只做兼容；
+- development threshold 只产生 development evidence，不宣称 independent confirmation；
+- focused 页面已移除 `use_container_width` 的本页弃用用法。
 
 ### 当前迭代建议由什么产生
 
-`FocusedResearchAdvisor` 是当前模型迭代建议入口：
+`FocusedResearchAdvisor` 仍有三种模式：
 
-1. **deterministic（默认验收路径）**：代码中的受控研究策略读取冻结 baseline 和前几轮真实 metrics，产生下一轮结构化假设。Round 1 尝试 momentum/volatility；Round 2 根据已有结果尝试更强正则的 richer-feature Ridge；Round 3 在复杂特征无证据时回到更简单的强正则 lag-only Ridge。
-2. **replay**：使用 `ReplayLLM` 按完整请求 hash 回放已录制 `focused_research_advice`，用于无 key 的确定性复现。
-3. **live**：使用 `OpenAIJsonClient` 请求 OpenAI-compatible LLM，输入任务合同、允许能力、冻结基线和历史 research results；响应由 `FixtureRecordingLLM` 保存，之后可 replay。
+1. **deterministic**：当前可审计基准策略。它读取 baseline/prior metrics 并选择 parent，但主要动作模板仍按 round 设计，因此它是控制策略，不是“完全自适应研究 Agent”的证据。
+2. **replay**：按完整 prompt payload 的 fixture hash 回放已录制 `focused_research_advice`。
+3. **live**：OpenAI-compatible LLM；响应由 FixtureRecordingLLM 保存。
 
-无论建议源是什么，Advisor **只能建议** allow-list 内的模型、参数和 feature group。真实 estimator 参数、特征列、数值指标、improvement threshold、confirmation 和 scientific verdict 由确定性代码控制，LLM 不能自己把结果判成成功。
+当前 focused Advisor 的上下文包括任务合同、允许模型/特征、baseline 和本 Campaign 的历史结果；**尚未**把 MethodCard/EvidenceNode 或跨 Campaign ExperimentMemory 作为一等研究上下文。文献持续参与是 V2-B 的下一阶段能力。
+
+无论 Advisor 来源如何，LLM 都没有标签、split、指标、confirmation 或 promotion 的数值裁决权。
 
 ### 当前任务边界
 
-- 市场/实体：SPY。
-- 频率：日频。
-- 目标：下一交易日 adjusted-close 连续收益。
-- 主指标：MAE；RMSE 与方向准确率仅作辅助。
-- 初始模型：Ridge、Random Forest、Gradient Boosting。
-- 数据 exposure：`historical_development_only`；当前历史 SPY 已经被查看，因此 **未执行 blind final confirmation**。
-- 当前任务是 `forecast_only`，没有 ExecutionSpec，不声明可实现交易收益。
+- entity：SPY；
+- frequency：daily；
+- target：next observed XNYS trading-session adjusted-close return；
+- primary metric：MAE；
+- auxiliary：RMSE、directional accuracy；
+- models：Ridge、Random Forest、Gradient Boosting；
+- exposure：`historical_development_only`；
+- claim：`forecast_only`；
+- confirmation：当前历史 SPY 已暴露，因此未运行 blind final；
+- execution/trading：没有 ExecutionSpec，不声明可实现交易收益。
 
-### 当前新增代码与 UI
+### V1.1 新增/修改代码
 
-- `src/finance_forecast_agent/focused_data.py`
-- `src/finance_forecast_agent/focused_research.py`
-- `scripts/run_focused_spy_campaign.py`
-- `apps/pages/8_Focused_Research.py`
-- focused tests 与 ADR/版本/架构/验收/Codex 文档。
+```text
+src/finance_forecast_agent/focused_protocol.py
+src/finance_forecast_agent/focused_data.py
+src/finance_forecast_agent/focused_research.py
+apps/pages/8_Focused_Research.py
+tests/test_focused_data_research.py
+tests/test_focused_streamlit_page.py
+pyproject.toml  # exchange-calendars focused dependency
+```
 
-### 本次验证边界
+### V1.1 最终验证
 
-Focused 新功能已在本地通过针对性单元/Streamlit AppTest，并用真实 SPY acquisition artifact 完成 3 轮 deterministic smoke campaign。该真实运行正确得到 `completed_no_improvement`，并保持 `confirmation_status=not_run_historical_data_exposed`；这证明闭环和失败/无提升终态，不证明存在可交易优势。
+Focused GitHub Actions matrix：
 
-历史全量测试在干净快照仍包含依赖未提交 PDF、DVC 数据、source checkout 和历史生成报告的失败项；本批没有重新运行十篇小时级 native strict 训练，也没有用用户 API key 重新验收 live ResearchAdvisor。详细记录见 `docs/P1_FOCUS_F0_F1.md`。Remote focused CI 已通过 focused tests、Ruff 与 compileall；历史资产依赖的全量回归仍按原边界单独解释。
+```text
+Python 3.11: 16 passed / Ruff passed / compileall passed
+Python 3.13: focused tests / Ruff / compileall job passed
+```
+
+真实 SPY release smoke（audited Yahoo artifact, Python 3.13）：
+
+```text
+rows: 4002
+2010-02-03 -> 2025-12-30
+fits: 28
+best baseline: Ridge, MAE 0.0050337535958270355
+terminal: completed_no_improvement
+confirmation: not_run_historical_data_exposed
+```
+
+这些验证证明 focused V1.1 正常/关键负例路径与真实 SPY deterministic smoke；**不代表**历史 native 论文训练全部重跑，也不代表 live LLM 科研质量、独立确认或盈利能力通过。
+
+### 当前下一里程碑
+
+按 ADR-MISSION-002：
+
+- **V2-A**：薄 Mission + EvaluationPolicy contract + row-level PredictionArtifact/Manifest + naive baselines + deterministic StructuredFeedback；
+- **V2-B**：复用 LocalTaskQueue 的幂等/attempt/恢复 + Evidence-grounded live/replay Advisor + 少量已审核 MethodCard 文献证据持续参与 + ResearchPackage；
+- **V2.1**：现有 ExperimentMemory prior + Exposure/Confirmation + 冻结 refit ModelBundle；
+- **后续**：shadow forecasting，再按实际需求逐维扩展自动文献检索/BYO/受控 CodingAgent/新市场或任务。
+
+权威开发约束见 `AGENTS.md`；路线见 `PROJECT_ROADMAP.md`；架构与验收见 `FOCUSED_ARCHITECTURE.md`、`FOCUSED_ACCEPTANCE_TEST_PLAN.md`。
 
 
 ## 历史广度平台基线
