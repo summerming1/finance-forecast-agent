@@ -1,8 +1,70 @@
 # 当前版本功能与技术实现说明
 
-## 当前版本
+## 当前权威实现：P1 Focus F0 + F1
 
-当前最新实现为 **P1.6.3-P1.8 first-batch implementation（未通过规模化总验收）**。项目仍是论文驱动、真实数据驱动、可审计和需人工审批的金融预测研究平台，不是自动交易系统。
+当前工作分支：`feat/p1-focused-us-equity-loop-v1`。
+
+近期产品主线已经从“先扩通用 strict 覆盖”收敛为 **SPY 日频下一交易日收益预测的受控自主研究闭环**。历史 P0-P1.G 的 MethodCard、Native Claim、数据/来源合同、ExperimentMemory、lineage、严格复现和七阶段工作台均保留，但不再要求先扩到更多市场/实验类型才允许验证研究 Agent。
+
+当前 focused 主流程：
+
+```text
+Frozen Yahoo SPY chart JSON
+→ FocusedTaskSpec / FocusedDatasetSnapshot
+→ past-only features + next-trading-day return label
+→ frozen Ridge / RF / GBDT baselines
+→ FocusedResearchAdvisor
+   ├─ deterministic_policy
+   ├─ ReplayLLM focused_research_advice
+   └─ live OpenAI-compatible LLM + fixture recording
+→ HypothesisSpec
+→ allow-list CandidateConfig
+→ actual estimator fit/predict on common development folds
+→ MAE / RMSE / directional accuracy
+→ deterministic research verdict
+→ prior real results included in next-round prompt
+→ budget/duplicate/stop gates
+→ persisted campaign + events
+```
+
+### 当前迭代建议由什么产生
+
+`FocusedResearchAdvisor` 是当前模型迭代建议入口：
+
+1. **deterministic（默认验收路径）**：代码中的受控研究策略读取冻结 baseline 和前几轮真实 metrics，产生下一轮结构化假设。Round 1 尝试 momentum/volatility；Round 2 根据已有结果尝试更强正则的 richer-feature Ridge；Round 3 在复杂特征无证据时回到更简单的强正则 lag-only Ridge。
+2. **replay**：使用 `ReplayLLM` 按完整请求 hash 回放已录制 `focused_research_advice`，用于无 key 的确定性复现。
+3. **live**：使用 `OpenAIJsonClient` 请求 OpenAI-compatible LLM，输入任务合同、允许能力、冻结基线和历史 research results；响应由 `FixtureRecordingLLM` 保存，之后可 replay。
+
+无论建议源是什么，Advisor **只能建议** allow-list 内的模型、参数和 feature group。真实 estimator 参数、特征列、数值指标、improvement threshold、confirmation 和 scientific verdict 由确定性代码控制，LLM 不能自己把结果判成成功。
+
+### 当前任务边界
+
+- 市场/实体：SPY。
+- 频率：日频。
+- 目标：下一交易日 adjusted-close 连续收益。
+- 主指标：MAE；RMSE 与方向准确率仅作辅助。
+- 初始模型：Ridge、Random Forest、Gradient Boosting。
+- 数据 exposure：`historical_development_only`；当前历史 SPY 已经被查看，因此 **未执行 blind final confirmation**。
+- 当前任务是 `forecast_only`，没有 ExecutionSpec，不声明可实现交易收益。
+
+### 当前新增代码与 UI
+
+- `src/finance_forecast_agent/focused_data.py`
+- `src/finance_forecast_agent/focused_research.py`
+- `scripts/run_focused_spy_campaign.py`
+- `apps/pages/8_Focused_Research.py`
+- focused tests 与 ADR/版本/架构/验收/Codex 文档。
+
+### 本次验证边界
+
+Focused 新功能已在本地通过针对性单元/Streamlit AppTest，并用真实 SPY acquisition artifact 完成 3 轮 deterministic smoke campaign。该真实运行正确得到 `completed_no_improvement`，并保持 `confirmation_status=not_run_historical_data_exposed`；这证明闭环和失败/无提升终态，不证明存在可交易优势。
+
+历史全量测试在干净快照仍包含依赖未提交 PDF、DVC 数据、source checkout 和历史生成报告的失败项；本批没有重新运行十篇小时级 native strict 训练，也没有用用户 API key 重新验收 live ResearchAdvisor。详细记录见 `docs/P1_FOCUS_F0_F1.md`。
+
+
+## 历史广度平台基线
+
+历史记录中的实现为 **P1.6.3-P1.8 first-batch implementation（未通过规模化总验收）**。项目仍是论文驱动、真实数据驱动、可审计和需人工审批的金融预测研究平台，不是自动交易系统。
 
 本批已实现 56 份合法开放 PDF、86 条语料记录、102 篇去重 Research Journal 并集、通用数据获取、四类冻结统一基准、真实 Memory 优先队列、SQLite MLflow、仓库外 DVC remote 和七阶段前端。金融数据严格复现为 10 篇；原 28 个 candidate 已全部完成逐篇探索执行。规模化总验收仍未通过，因为十篇 strict 都属于 Exchange-Rate 时间序列预测，三类纵向 strict pair 为 0，总 blocker 仍为 58。
 
