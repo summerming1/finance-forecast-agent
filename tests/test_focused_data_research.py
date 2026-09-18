@@ -14,6 +14,7 @@ from finance_forecast_agent.focused_research import (
     CandidateConfig,
     FocusedResearchController,
     ResearchBudget,
+    compile_hypotheses,
     evaluate_candidate,
     run_baselines,
 )
@@ -228,3 +229,41 @@ def test_development_threshold_does_not_claim_confirmation(tmp_path: Path) -> No
     )
     assert result.research_verdict == "development_screen_passed"
     assert result.to_dict()["development_evidence_level"] == "development_screen_passed"
+
+
+
+def test_custom_split_spec_is_the_actual_execution_split(tmp_path: Path) -> None:
+    raw = tmp_path / "spy.json"
+    _write_chart(raw)
+    frame, _ = build_spy_daily_research_frame(raw)
+    split_spec = FocusedSplitSpec(min_train=600, test_size=50, purge=1, max_folds=3)
+    candidate = CandidateConfig("ridge-custom-split", "ridge_regression", {"alpha": 1.0}, ["base_lags"])
+    result = evaluate_candidate(
+        frame,
+        candidate,
+        best_baseline_mae=1.0,
+        min_relative_improvement=0.0,
+        split_spec=split_spec,
+    )
+    assert result.prediction_count == 150
+    assert len(result.fold_metrics) == 3
+
+
+def test_advisor_numeric_params_are_validated_during_compile() -> None:
+    advice = {
+        "hypotheses": [
+            {
+                "statement": "Unsafe forest",
+                "mechanism": "test",
+                "parent_candidate_id": "baseline_rf",
+                "model_family": "random_forest_regressor",
+                "model_params": {"n_estimators": 1_000_000},
+                "feature_groups": ["base_lags"],
+                "expected_effect": "none",
+                "counter_evidence_test": "none",
+                "evidence_refs": ["baseline_rf"],
+            }
+        ]
+    }
+    with pytest.raises(ValueError, match="n_estimators"):
+        compile_hypotheses(advice, round_index=1, source="test", max_count=1)

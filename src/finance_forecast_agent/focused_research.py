@@ -228,12 +228,14 @@ def evaluate_candidate(
     *,
     best_baseline_mae: float,
     min_relative_improvement: float,
+    split_spec: FocusedSplitSpec | None = None,
 ) -> CandidateResult:
     features = resolve_feature_columns(candidate.feature_groups)
     missing = [column for column in [*features, "label"] if column not in frame.columns]
     if missing:
         raise ValueError("focused frame missing columns: " + ", ".join(missing))
-    splits = make_development_splits(len(frame))
+    active_split_spec = split_spec or FocusedSplitSpec()
+    splits = active_split_spec.build_splits(len(frame))
     x = frame[features].astype(float).to_numpy()
     y = frame["label"].astype(float).to_numpy()
     actual_all: list[float] = []
@@ -279,9 +281,14 @@ def evaluate_candidate(
     )
 
 
-def run_baselines(frame: pd.DataFrame, budget: ResearchBudget) -> list[CandidateResult]:
-    split_spec = FocusedSplitSpec()
-    required_fit_calls = split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
+def run_baselines(
+    frame: pd.DataFrame,
+    budget: ResearchBudget,
+    *,
+    split_spec: FocusedSplitSpec | None = None,
+) -> list[CandidateResult]:
+    active_split_spec = split_spec or FocusedSplitSpec()
+    required_fit_calls = active_split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
     if budget.max_fit_calls < required_fit_calls:
         raise ValueError(
             "focused fit budget is too small for frozen baselines: "
@@ -291,7 +298,7 @@ def run_baselines(frame: pd.DataFrame, budget: ResearchBudget) -> list[Candidate
     for candidate_id, family, params, groups in DEFAULT_BASELINES:
         candidate = CandidateConfig(candidate_id, family, params, groups)
         features = resolve_feature_columns(groups)
-        splits = make_development_splits(len(frame))
+        splits = active_split_spec.build_splits(len(frame))
         x = frame[features].astype(float).to_numpy()
         y = frame["label"].astype(float).to_numpy()
         actual_all: list[float] = []
@@ -470,7 +477,7 @@ def _results_from_prompt(rows: list[dict[str, Any]]) -> list[CandidateResult]:
         candidate = CandidateConfig(
             candidate_id=str(row["candidate_id"]),
             model_family=str(row["model_family"]),
-            model_params=dict(row.get("model_params") or {}),
+            model_params=model_params,
             feature_groups=list(row.get("feature_groups") or ["base_lags"]),
             parent_candidate_id=row.get("parent_candidate_id"),
             hypothesis_id=row.get("hypothesis_id"),
@@ -493,6 +500,7 @@ def compile_hypotheses(payload: dict[str, Any], *, round_index: int, source: str
         groups = [str(x) for x in row.get("feature_groups") or []]
         if family not in ALLOWED_MODELS:
             raise ValueError(f"advisor proposed unsupported model: {family}")
+        model_params = validate_model_params(family, dict(row.get("model_params") or {}))
         resolve_feature_columns(groups)
         hypothesis_id = f"r{round_index}_h{index+1}_{_hash(row, 8)}"
         candidate_id = f"r{round_index}_c{index+1}_{_hash({'family': family, 'groups': groups, 'params': row.get('model_params')}, 8)}"
@@ -503,7 +511,7 @@ def compile_hypotheses(payload: dict[str, Any], *, round_index: int, source: str
             parent_candidate_id=str(row.get("parent_candidate_id") or "baseline_ridge"),
             proposed_changes=[
                 {"path": "model_family", "new_value": family},
-                {"path": "model_params", "new_value": dict(row.get("model_params") or {})},
+                {"path": "model_params", "new_value": model_params},
                 {"path": "feature_groups", "new_value": groups},
             ],
             expected_effect=str(row.get("expected_effect") or "unknown"),
@@ -573,7 +581,7 @@ class FocusedResearchController:
                 "focused fit budget is too small for frozen baselines: "
                 f"need {baseline_fit_calls}, got {self.budget.max_fit_calls}; no model fit started"
             )
-        baseline_results = run_baselines(self.frame, self.budget)
+        baseline_results = run_baselines(self.frame, self.budget, split_spec=self.split_spec)
         best_baseline = min(baseline_results, key=lambda x: x.metrics["mae"])
         best_baseline_mae = best_baseline.metrics["mae"]
         research_results: list[CandidateResult] = []
@@ -614,6 +622,7 @@ class FocusedResearchController:
                         candidate,
                         best_baseline_mae=best_baseline_mae,
                         min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
+                        split_spec=self.split_spec,
                     )
                 except (ValueError, RuntimeError, FloatingPointError) as exc:
                     round_rows.append(
