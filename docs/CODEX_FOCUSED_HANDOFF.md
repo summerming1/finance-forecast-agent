@@ -24,9 +24,9 @@ Validated base: `feat/p1-focused-us-equity-loop-v1`.
 
 Current work branch: `feat/mission-research-v2`.
 
-The first milestone on this branch is **V1.1 reliability**, not the entire V2 product.
+**V1.1 reliability is complete and is now a permanent regression gate. The next implementation milestone is V2-A.**
 
-## 3. V1.1 implementation order
+## 3. Completed V1.1 implementation (do not redo unless a regression requires it)
 
 1. add negative tests for adjusted-close, XNYS session completeness, short history/split overlap, low baseline budget, parameter bounds and development verdict;
 2. introduce one shared focused split/evaluation policy source instead of duplicating thresholds;
@@ -40,9 +40,9 @@ The first milestone on this branch is **V1.1 reliability**, not the entire V2 pr
 10. run focused tests, Ruff, compileall, and branch CI on Python 3.11/3.13;
 11. update P1_FOCUS_F0_F1 and CURRENT_IMPLEMENTATION with actual results.
 
-Do not implement Mission UI, QQQ, LSTM, long-term Memory or automatic literature retrieval in the V1.1 code batch.
+V1.1 intentionally did not implement Mission UI, QQQ, LSTM, long-term Memory or automatic literature retrieval. Do not reopen those scopes while fixing V1.1 regressions.
 
-## 4. V2 implementation sequence after V1.1 acceptance
+## 4. Current next work: V2 implementation sequence
 
 ### V2-A
 Thin Mission; EvaluationPolicy; row-level PredictionArtifact/Manifest; naive baselines; deterministic FeedbackBuilder; ResearchPackage skeleton.

@@ -8,7 +8,7 @@
 
 ```text
 V1      = 已验收 F0 + F1：真实 SPY 数据 + 受控 deterministic/replay/live 建议接口
-V1.1    = 当前下一实现：数据/时间/split/预算/参数/结论语义可靠性补丁
+V1.1    = 已实现并通过 focused 验收：数据/时间/split/预算/参数/结论语义可靠性补丁
 V2-A    = 薄 Mission + 可复算 PredictionArtifact/Manifest + 强基线 + StructuredFeedback
 V2-B    = 可恢复执行 + Evidence-grounded live/replay Advisor + 少量已审核文献持续参与 + ResearchPackage
 V2.1    = 既有 ExperimentMemory prior + Exposure/Confirmation + 显式 refit ModelBundle
@@ -60,7 +60,7 @@ SPY 日频
 - **F2 暂未实现**：独立未暴露 confirmation、配对统计、多 seed/时段稳健性、QQQ 近域检验和修正后的 LSTM。
 - **F3/F4 延后**：影子预测与按实际需求逐维扩展。
 
-当前 focused 工作分支：`feat/p1-focused-us-equity-loop-v1`。
+已验收 v1 基线分支：`feat/p1-focused-us-equity-loop-v1`；当前 Mission 演进工作分支：`feat/mission-research-v2`。
 
 必须继续遵守：时间因果、真实/合成隔离、计划模型与实际模型一致、LLM 无数值裁决权、strict reproduction 与本地研究不互相冒充、历史已查看 SPY 数据不得重新声明为 blind final。详细约束见 `docs/ADR_FOCUS_001.md`、`docs/FOCUSED_ARCHITECTURE.md`、`docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`。
 

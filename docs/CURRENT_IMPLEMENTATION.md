@@ -88,8 +88,8 @@ pyproject.toml  # exchange-calendars focused dependency
 Focused GitHub Actions matrix：
 
 ```text
-Python 3.11: 16 passed / Ruff passed / compileall passed
-Python 3.13: focused tests / Ruff / compileall job passed
+Python 3.11: 19 passed / Ruff passed / compileall passed
+Python 3.13: 19 focused tests / Ruff / compileall job passed
 ```
 
 真实 SPY release smoke（audited Yahoo artifact, Python 3.13）：

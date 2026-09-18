@@ -145,13 +145,13 @@ V1.1 是同一 F0/F1 里程碑的小版本，不新增 Mission 产品能力，�
 GitHub Actions 在最终代码（文档提交前）上执行同一 focused suite：
 
 ```text
-Python 3.11: 16 passed
-Python 3.13: focused job passed
+Python 3.11: 19 passed
+Python 3.13: 19 focused tests passed
 Ruff: all checks passed
 compileall: passed
 ```
 
-测试覆盖新增负例：缺 adjusted close、缺 XNYS session、短历史/overlap、baseline 预算不足、危险参数、自定义 split 真实贯通、Advisor 参数 compile 校验，以及 development 证据命名。
+测试覆盖新增负例：缺 adjusted close、错误 symbol、缺 XNYS session、短历史/overlap、baseline 预算不足、危险参数、自定义 split 真实贯通、Advisor 参数 compile 校验、路径移动/content 变化 fingerprint，以及失败 attempt 预算计费和 development 证据命名。
 
 实施过程中 CI 还捕获了两类问题并在最终绿灯前修正：
 1. 测试 fixture 曾请求超出 exchange-calendars 当前日历范围的未来 session；改为日历自身 `last_session`，未放宽产品校验；

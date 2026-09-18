@@ -11,7 +11,7 @@
 
 ## 2. V1.1 reliability gate
 
-The next implementation milestone must pass these focused negative/compatibility cases.
+V1.1 has implemented this reliability gate. Keep these cases as permanent regressions while V2 evolves.
 
 | ID | Scenario | Required behavior |
 |---|---|---|
@@ -30,6 +30,8 @@ The next implementation milestone must pass these focused negative/compatibility
 | R13 | same content moved to a different path | semantic identity unchanged |
 | R14 | content changes at same path | data/task fingerprint changes |
 | R15 | Streamlit focused page | no deprecated use_container_width in the focused page; current supported width API renders |
+
+V1.1 release evidence: 19 focused tests passed on the Python 3.11/3.13 CI matrix; Ruff and compileall passed; the audited 4002-row real-SPY smoke passed separately.
 
 Focused compatibility:
 - user-reported 4002-row Yahoo SPY path remains supported;
