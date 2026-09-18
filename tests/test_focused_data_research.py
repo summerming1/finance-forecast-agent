@@ -22,7 +22,7 @@ from finance_forecast_agent.focused_research import (
 def _write_chart(path: Path, n: int = 1400) -> None:
     rng = np.random.default_rng(42)
     calendar = xcals.get_calendar("XNYS")
-    sessions = calendar.sessions_in_range("2018-01-02", "2035-12-31")[:n]
+    sessions = calendar.sessions_in_range("2018-01-02", calendar.last_session)[:n]
     business = pd.DatetimeIndex(
         [
             pd.Timestamp(session).tz_localize("America/New_York") + pd.Timedelta(hours=9, minutes=30)
