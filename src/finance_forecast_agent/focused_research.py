@@ -477,7 +477,7 @@ def _results_from_prompt(rows: list[dict[str, Any]]) -> list[CandidateResult]:
         candidate = CandidateConfig(
             candidate_id=str(row["candidate_id"]),
             model_family=str(row["model_family"]),
-            model_params=model_params,
+            model_params=dict(row.get("model_params") or {}),
             feature_groups=list(row.get("feature_groups") or ["base_lags"]),
             parent_candidate_id=row.get("parent_candidate_id"),
             hypothesis_id=row.get("hypothesis_id"),
