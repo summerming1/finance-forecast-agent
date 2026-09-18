@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from itertools import pairwise
 from typing import Any
 
 import numpy as np
@@ -30,7 +31,7 @@ class FocusedSplitSpec:
         starts = [int(value) for value in np.linspace(first_start, last_start, num=self.max_folds)]
         if len(set(starts)) != self.max_folds:
             raise ValueError("focused development split produced duplicate test starts")
-        if any((right - left) < self.test_size for left, right in zip(starts, starts[1:])):
+        if any((right - left) < self.test_size for left, right in pairwise(starts)):
             raise ValueError(
                 "focused development test windows would overlap; "
                 "provide more history or change the approved split policy"
@@ -75,7 +76,7 @@ class EvaluationPolicy:
 
 def _require_int(name: str, value: Any, *, minimum: int, maximum: int) -> int:
     if isinstance(value, bool) or not isinstance(value, (int, np.integer)):
-        raise ValueError(f"{name} must be an integer")
+        raise TypeError(f"{name} must be an integer")
     value = int(value)
     if value < minimum or value > maximum:
         raise ValueError(f"{name} must be within [{minimum}, {maximum}]")
@@ -84,7 +85,7 @@ def _require_int(name: str, value: Any, *, minimum: int, maximum: int) -> int:
 
 def _require_float(name: str, value: Any, *, minimum_exclusive: float, maximum: float) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float, np.integer, np.floating)):
-        raise ValueError(f"{name} must be numeric")
+        raise TypeError(f"{name} must be numeric")
     value = float(value)
     if not np.isfinite(value) or value <= minimum_exclusive or value > maximum:
         raise ValueError(f"{name} must be > {minimum_exclusive} and <= {maximum}")
