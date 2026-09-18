@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import exchange_calendars as xcals
 import numpy as np
 import pandas as pd
-import exchange_calendars as xcals
 from streamlit.testing.v1 import AppTest
 
 

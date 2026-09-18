@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import exchange_calendars as xcals
 import numpy as np
 import pandas as pd
 import pytest
-import exchange_calendars as xcals
 
 from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_daily_research_frame
 from finance_forecast_agent.focused_protocol import FocusedSplitSpec

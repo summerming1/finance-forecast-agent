@@ -615,7 +615,7 @@ class FocusedResearchController:
                         best_baseline_mae=best_baseline_mae,
                         min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
                     )
-                except Exception as exc:
+                except (ValueError, RuntimeError, FloatingPointError) as exc:
                     round_rows.append(
                         {
                             "hypothesis": hypothesis.to_dict(),

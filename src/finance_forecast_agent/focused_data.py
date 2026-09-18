@@ -6,9 +6,9 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+import exchange_calendars as xcals
 import numpy as np
 import pandas as pd
-import exchange_calendars as xcals
 
 from .focused_protocol import FocusedSplitSpec
 
