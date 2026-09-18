@@ -267,3 +267,63 @@ def test_advisor_numeric_params_are_validated_during_compile() -> None:
     }
     with pytest.raises(ValueError, match="n_estimators"):
         compile_hypotheses(advice, round_index=1, source="test", max_count=1)
+
+
+
+def test_wrong_symbol_is_blocked_before_dataset_artifact(tmp_path: Path) -> None:
+    raw = tmp_path / "not_spy.json"
+    _write_chart(raw)
+    payload = json.loads(raw.read_text())
+    payload["chart"]["result"][0]["meta"]["symbol"] = "QQQ"
+    raw.write_text(json.dumps(payload))
+    with pytest.raises(ValueError, match="requires a SPY"):
+        build_spy_daily_research_frame(raw)
+
+
+def test_semantic_fingerprint_uses_content_not_local_path(tmp_path: Path) -> None:
+    raw = tmp_path / "spy-a.json"
+    _write_chart(raw)
+    _, snapshot_a = build_spy_daily_research_frame(raw)
+
+    moved = tmp_path / "nested" / "spy-b.json"
+    moved.parent.mkdir()
+    moved.write_bytes(raw.read_bytes())
+    _, snapshot_b = build_spy_daily_research_frame(moved)
+    assert snapshot_a.semantic_fingerprint == snapshot_b.semantic_fingerprint
+
+    changed = json.loads(raw.read_text())
+    changed["chart"]["result"][0]["indicators"]["adjclose"][0]["adjclose"][600] *= 1.001
+    raw.write_text(json.dumps(changed))
+    _, snapshot_changed = build_spy_daily_research_frame(raw)
+    assert snapshot_changed.semantic_fingerprint != snapshot_a.semantic_fingerprint
+
+
+def test_failed_candidate_attempt_consumes_reserved_fit_budget(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    raw = tmp_path / "spy.json"
+    _write_chart(raw)
+    frame, snapshot = build_spy_daily_research_frame(raw)
+    import finance_forecast_agent.focused_research as focused_module
+
+    def fail_candidate(*args, **kwargs):
+        raise RuntimeError("simulated training failure")
+
+    monkeypatch.setattr(focused_module, "evaluate_candidate", fail_candidate)
+    result = FocusedResearchController(
+        project_dir=tmp_path / "project",
+        task=FocusedTaskSpec(),
+        dataset=snapshot,
+        frame=frame,
+        budget=ResearchBudget(max_rounds=1, max_new_candidates_per_round=2, max_fit_calls=20),
+        advisor_mode="deterministic",
+    ).run()
+
+    assert result["baseline_fit_calls"] == 12
+    assert result["fit_calls"] == 20
+    assert result["stop_reason"] == "round_failed_no_completed_candidate"
+    failed = [item for item in result["rounds"][0]["items"] if item["status"] == "failed"]
+    assert len(failed) == 2
+    assert all(item["reserved_fit_calls"] == 4 for item in failed)
+    assert all(item["error_type"] == "RuntimeError" for item in failed)
