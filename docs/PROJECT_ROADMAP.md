@@ -1,5 +1,36 @@
 # Finance Forecast Agent 项目迭代路线图
 
+## 2026-09-18 已批准的近期主线：P1 Focus
+
+ADR-FOCUS-001 已由用户批准。近期不再把“20 篇 strict / 4 类实验 / 3 数据域”的通用覆盖作为所有后续工作的前置条件；这些科学目标保留为长期广度路线且历史验收状态不改变。
+
+当前产品主线聚焦一个可完整验收的纵向任务：
+
+```text
+SPY 日频
+→ 下一交易日连续收益回归
+→ 冻结真实历史数据与 development folds
+→ Ridge / Random Forest / Gradient Boosting 冻结基线
+→ ResearchAdvisor 产生结构化假设
+→ allow-list 编译为真实候选
+→ 训练 / 预测 / MAE-RMSE-方向诊断
+→ 研究 verdict
+→ 上一轮真实结果进入下一轮
+→ 达预算或无改进时正确结束
+```
+
+近期里程碑：
+
+- **F0 已实现**：真实 SPY 输入无 synthetic fallback；past-only 特征；数据/task fingerprint；模型参数真实贯通；固定 development folds；forecast-only 边界。
+- **F1 已实现首个纵向切片**：受控多轮 ResearchController；deterministic/replay/live 三类建议源；候选去重与预算；真实结果反馈；`completed_no_improvement` 合法终态；Focused Research Streamlit 页面。
+- **F2 暂未实现**：独立未暴露 confirmation、配对统计、多 seed/时段稳健性、QQQ 近域检验和修正后的 LSTM。
+- **F3/F4 延后**：影子预测与按实际需求逐维扩展。
+
+当前 focused 工作分支：`feat/p1-focused-us-equity-loop-v1`。
+
+必须继续遵守：时间因果、真实/合成隔离、计划模型与实际模型一致、LLM 无数值裁决权、strict reproduction 与本地研究不互相冒充、历史已查看 SPY 数据不得重新声明为 blind final。详细约束见 `docs/ADR_FOCUS_001.md`、`docs/FOCUSED_ARCHITECTURE.md`、`docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`。
+
+
 ## 定位
 
 本项目是从原 `p0-finance-research-core` 分支迁出的独立金融研究项目。近期目标不是无人值守交易，而是金融论文驱动、真实数据驱动、可审计的自动化研究系统。
@@ -13,7 +44,7 @@
 
 ## 当前进展
 
-当前最新实现是 **P1.G1-P1.G6 control-plane + scientific acceptance implementation**。P1.6.5 的 10 个金融数据 strict claim 数值目标已通过；声明式接入、MethodCard v3、协议、Registry、任务、lineage、研究日志、通用 strict 门禁和 P2 门禁已经实现。原 28 个 candidate 已全部完成论文绑定的探索性统一基准执行；三类纵向 strict pair、总 blocker 净消减和 P1 总验收仍未完成，总体 P1 继续进行。
+历史广度平台基线为 **P1.G1-P1.G6 control-plane + scientific acceptance implementation**；其验收状态作为长期能力账本保留，不再是近期 focused 产品闭环的完成前置。P1.6.5 的 10 个金融数据 strict claim 数值目标已通过；声明式接入、MethodCard v3、协议、Registry、任务、lineage、研究日志、通用 strict 门禁和 P2 门禁已经实现。原 28 个 candidate 已全部完成论文绑定的探索性统一基准执行；三类纵向 strict pair、总 blocker 净消减和 P1 总验收仍未完成，总体 P1 继续进行。
 
 已完成：
 
