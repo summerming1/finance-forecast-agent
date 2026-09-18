@@ -1,5 +1,5 @@
 name: Mission V1.1 real SPY smoke
-# Release evidence: path-triggered on this file so normal development does not depend on an expiring acquisition artifact.
+# Release evidence: final V1.1 rerun on the branch HEAD; path-triggered so normal development is not coupled to this external artifact.
 
 on:
   push:
