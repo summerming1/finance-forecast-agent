@@ -1,0 +1,80 @@
+name: Mission V1.1 real SPY smoke
+
+on:
+  push:
+    branches: [feat/mission-research-v2]
+    paths: [.github/workflows/mission-v11-real-smoke.yml]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  real-spy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install focused runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[ui,pdf]'
+      - name: Restore audited SPY acquisition artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: focused-real-inputs
+          path: inputs
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: summerming1/finance-forecast-agent
+          run-id: 35204186327
+      - name: Run three-round deterministic campaign
+        run: |
+          python scripts/run_focused_spy_campaign.py \
+            --project-dir /tmp/mission-v11 \
+            --raw-spy-json inputs/spy_chart_2010_2025.json \
+            --source-metadata inputs/spy_source.json \
+            --rounds 3 \
+            --candidates-per-round 2 \
+            --max-fit-calls 40 | tee /tmp/focused-real-smoke.json
+      - name: Validate real-data outcome
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          summaries = list(Path('/tmp/mission-v11/focused_campaigns').glob('*/campaign.json'))
+          assert len(summaries) == 1, summaries
+          payload = json.loads(summaries[0].read_text())
+          assert payload['campaign']['dataset']['row_count'] > 3000
+          assert payload['campaign']['dataset']['session_validation'] == 'complete_observed_sessions'
+          assert payload['campaign']['task']['execution_claim'] == 'forecast_only'
+          assert payload['confirmation_status'] == 'not_run_historical_data_exposed'
+          assert payload['fit_calls'] <= 40
+          assert payload['terminal_status'] in {
+              'completed_no_improvement',
+              'completed_with_development_improvement',
+          }
+          print(json.dumps({
+              'row_count': payload['campaign']['dataset']['row_count'],
+              'start': payload['campaign']['dataset']['start_date'],
+              'end': payload['campaign']['dataset']['end_date'],
+              'fit_calls': payload['fit_calls'],
+              'terminal_status': payload['terminal_status'],
+              'best_baseline': payload['best_baseline_candidate_id'],
+              'best_candidate': payload['best_candidate_id'],
+              'confirmation_status': payload['confirmation_status'],
+          }, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mission-v11-real-smoke-output
+          path: /tmp/mission-v11
+          retention-days: 7
