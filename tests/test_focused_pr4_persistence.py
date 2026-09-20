@@ -119,14 +119,14 @@ def test_completed_candidate_is_reused_on_same_campaign_resume(
     _write_chart(raw)
     frame, snapshot = build_spy_daily_research_frame(raw)
     project = tmp_path / "project"
-    kwargs = dict(
-        project_dir=project,
-        task=FocusedTaskSpec(),
-        dataset=snapshot,
-        frame=frame,
-        budget=ResearchBudget(max_rounds=1, max_new_candidates_per_round=1, max_fit_calls=20),
-        campaign_id="resume-campaign",
-    )
+    kwargs = {
+        "project_dir": project,
+        "task": FocusedTaskSpec(),
+        "dataset": snapshot,
+        "frame": frame,
+        "budget": ResearchBudget(max_rounds=1, max_new_candidates_per_round=1, max_fit_calls=20),
+        "campaign_id": "resume-campaign",
+    }
     first = FocusedResearchController(**kwargs).run()
     assert first["rounds"][0]["items"][0]["status"] == "completed"
 
