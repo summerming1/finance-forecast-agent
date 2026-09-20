@@ -1,6 +1,6 @@
 # 当前版本功能与技术实现说明
 
-## 当前权威实现：Mission Research V2-B complete through PR-4
+## 当前权威实现：Mission Research V2.1 complete through PR-5
 
 当前工作分支：`feat/mission-research-v2`。
 
@@ -364,3 +364,17 @@ python -m streamlit run apps/streamlit_app.py
 ### 当前下一里程碑
 
 PR-5 / V2.1：复用既有 ExperimentMemory，增加 focused 兼容性/租户隔离、Exposure/Confirmation eligibility、隔离 confirmation 通道、显式 refit 与可加载 ModelBundle。
+
+
+### PR-5 当前能力
+
+- focused 研究结果写入既有 ExperimentMemoryStore，兼容性键增加 tenant / task / protocol / dataset / evaluation identity；工程失败记录为 engineering_failure + inconclusive，不作为科学负证据读取；
+- Confirmation eligibility 基于 semantic dataset fingerprint 与 Exposure Ledger；已暴露历史数据和未知暴露历史均不可独立确认；
+- Advisor prompt 不包含 confirmation labels/tool；confirmation 只接受已冻结 candidate selection 且 eligibility=eligible；
+- 显式 RefitPolicy 在 development 选择完成后固定，ModelBundle 重新训练平台受信任模型并保存 feature/task/cutoff/lineage 关系；
+- ModelBundle 在新 Python 进程中加载并对无 label 输入预测；不开放任意用户 pickle/joblib 加载；
+- PR-5 累计 focused 测试 45 项通过，Python 3.11/3.13、Ruff、compileall 远端 CI 通过。
+
+### 当前下一里程碑
+
+PR-6 / V2.2：受控 BYO Data / reviewed local adapter pilot。仍只支持当前 SPY daily next-session return task；模拟用户必须标记 simulation_only，不开放 arbitrary Python/notebook/pickle/Docker 执行。
