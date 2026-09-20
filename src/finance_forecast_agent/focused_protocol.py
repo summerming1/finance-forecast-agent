@@ -14,6 +14,12 @@ class FocusedSplitSpec:
     purge: int = 1
     max_folds: int = 4
 
+    def __post_init__(self) -> None:
+        for name in ("min_train", "test_size", "max_folds", "purge"):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+                raise ValueError(f"{name} must be a positive integer for the next-session protocol")
+
     @property
     def required_supervised_rows(self) -> int:
         # Enough rows for max_folds pairwise-non-overlapping test windows while
@@ -65,6 +71,8 @@ class EvaluationPolicy:
     evidence_tier: str = "development_only"
 
     def __post_init__(self) -> None:
+        if self.evidence_tier != "development_only":
+            raise ValueError("EvaluationPolicy cannot grant confirmation or forward evidence")
         if self.primary_metric != "mae":
             raise ValueError("focused V1.1 supports MAE as the primary metric")
         if not 0.0 <= self.min_relative_mae_improvement <= 1.0:

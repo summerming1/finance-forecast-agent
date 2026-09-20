@@ -1,6 +1,16 @@
 # 当前版本功能与技术实现说明
 
-## 当前权威实现：P1 Focus V1.1 reliability
+## 2026-09-20 PR-1：V2-A evidence foundation
+
+Implemented and locally verified: the focused learned baselines and candidates share one execution/metric path; each writes the existing PredictionArtifact format, an execution manifest and deterministic feedback. Zero, train-fold mean and train-fold median complement the three learned baselines. `fit_calls` continues to count learned-estimator fits; the eight default mean/median statistic fits are separately recorded as `statistic_fit_calls` (zero uses no fit).
+
+Campaigns persist the frozen contract, batch plans and chronological events when actions occur. Row-level predictions reproduce aggregate/fold metrics and require identical target identities and labels. Manifests contain actual parameters, features, train/test row IDs, code hashes, dependency versions, prediction hashes and exposure. The adjusted-close return interval now explicitly starts at t and matures at t+1; return values are unchanged.
+
+`execution_status` and `research_outcome` are separate. All failed candidate attempts consume reservations and end inconclusive, not as scientific no-improvement. The canonical content/range Exposure Ledger records development access; it does not yet grant independent confirmation. Old report fields remain readable. This commit does not provide Mission UI, async recovery, literature/memory context, confirmation execution, ModelBundle or BYO.
+
+Validation: **33 tests passed, Ruff passed**, local Python 3.13. Audited 4002-row SPY smoke: **28 estimator fits**, **8 statistic fits**, `completed_no_improvement`, `not_run_historical_data_exposed`; the real input was not replaced with simulation. Functional fixtures are synthetic, not market evidence. Historical native and live-provider tests were not run. See `MISSION_PR_SERIES_20260920.md`.
+
+## 历史已验收基线：P1 Focus V1.1 reliability
 
 当前工作分支：`feat/mission-research-v2`。
 

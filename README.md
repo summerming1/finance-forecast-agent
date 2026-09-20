@@ -15,7 +15,7 @@ Current Mission-oriented work branch:
 feat/mission-research-v2
 ```
 
-Current implemented milestone: **Focused V1.1 reliability**. V2 Mission/literature/queue/Memory/model-delivery capabilities described in the roadmap are planned, not already implemented.
+Current implemented milestone on the review series: **V2-A evidence foundation (PR-1), with V1.1 regression gates retained**. Row-level prediction/manifests, six baselines, deterministic feedback and truthful outcomes are implemented. Mission/literature/queue/Memory/model-delivery remain pending at this commit. See `docs/MISSION_PR_SERIES_20260920.md` for tested scope and `docs/ADR_MISSION_RESEARCH_003.md` for the approved sequence.
 
 Start with these documents:
 
