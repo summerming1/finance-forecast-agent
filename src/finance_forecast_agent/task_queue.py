@@ -50,6 +50,10 @@ class TaskRecord:
     scheduling_rationale: str = ""
     created_at: str = ""
     updated_at: str = ""
+    idempotency_key: str = ""
+    attempt: int = 1
+    started_at: str = ""
+    finished_at: str = ""
 
     @classmethod
     def from_dict(cls, payload: dict[str, Any]) -> "TaskRecord":
@@ -81,9 +85,17 @@ class LocalTaskQueue:
         result_path: str = "",
         research_context: dict[str, Any] | None = None,
         start_immediately: bool = True,
+        idempotency_key: str = "",
     ) -> TaskRecord:
         if not command:
             raise ValueError("task command cannot be empty")
+        if idempotency_key:
+            for existing in self.list(dispatch=False):
+                if existing.idempotency_key == idempotency_key:
+                    if start_immediately and existing.status == "queued" and existing.worker_pid is None:
+                        self.dispatch()
+                        return self.load(existing.task_id)
+                    return existing
         task_id = uuid.uuid4().hex
         now = _now()
         context = research_context or {}
@@ -104,9 +116,13 @@ class LocalTaskQueue:
             scheduling_rationale=str(context.get("scheduling_rationale") or ""),
             created_at=now,
             updated_at=now,
+            idempotency_key=idempotency_key,
         )
         _write(self.path(task_id), record.to_dict())
-        return self._start(record) if start_immediately else record
+        if start_immediately:
+            self.dispatch()
+            return self.load(task_id)
+        return record
 
     def _start(self, record: TaskRecord) -> TaskRecord:
         if record.worker_pid or record.status != "queued":
@@ -214,6 +230,58 @@ class LocalTaskQueue:
         records = [started.get(record.task_id, record) for record in records]
         return records
 
+    @staticmethod
+    def _pid_alive(pid: int | None) -> bool:
+        if not pid:
+            return False
+        try:
+            os.kill(int(pid), 0)
+        except OSError:
+            return False
+        return True
+
+    def recover_stale(self) -> list[TaskRecord]:
+        recovered = []
+        for record in self.list(dispatch=False):
+            if record.status not in {"queued", "running"} or not record.worker_pid:
+                continue
+            if self._pid_alive(record.worker_pid):
+                continue
+            updated = TaskRecord(
+                **{
+                    **record.to_dict(),
+                    "status": "resumable",
+                    "worker_pid": None,
+                    "process_pid": None,
+                    "blocker": "worker process is no longer alive",
+                    "updated_at": _now(),
+                }
+            )
+            _write(self.path(record.task_id), updated.to_dict())
+            recovered.append(updated)
+        return recovered
+
+    def resume(self, task_id: str) -> TaskRecord:
+        record = self.load(task_id)
+        if record.status != "resumable":
+            return record
+        queued = TaskRecord(
+            **{
+                **record.to_dict(),
+                "status": "queued",
+                "worker_pid": None,
+                "process_pid": None,
+                "return_code": None,
+                "blocker": "",
+                "attempt": int(record.attempt) + 1,
+                "updated_at": _now(),
+                "finished_at": "",
+            }
+        )
+        _write(self.path(task_id), queued.to_dict())
+        self.dispatch()
+        return self.load(task_id)
+
     def load(self, task_id: str) -> TaskRecord:
         return TaskRecord.from_dict(json.loads(self.path(task_id).read_text(encoding="utf-8")))
 
@@ -255,6 +323,7 @@ class LocalTaskQueue:
                 "status": "cancelled",
                 "blocker": "cancelled by user",
                 "updated_at": _now(),
+                "finished_at": _now(),
             }
         )
         _write(self.path(task_id), cancelled.to_dict())
@@ -268,6 +337,7 @@ def _worker(record_path: Path) -> int:
             **record.to_dict(),
             "status": "running",
             "worker_pid": os.getpid(),
+            "started_at": _now(),
             "updated_at": _now(),
         }
     )
@@ -299,6 +369,7 @@ def _worker(record_path: Path) -> int:
                 "return_code": return_code,
                 "blocker": "" if completed else f"command exited with code {return_code}",
                 "updated_at": _now(),
+                "finished_at": _now(),
             }
         )
         _write(record_path, final.to_dict())
@@ -310,6 +381,8 @@ def _worker(record_path: Path) -> int:
                 **running.to_dict(),
                 "status": "resumable",
                 "blocker": f"worker interrupted: {exc}",
+                "worker_pid": None,
+                "process_pid": None,
                 "updated_at": _now(),
             }
         )
