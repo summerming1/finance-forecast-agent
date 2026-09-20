@@ -23,7 +23,13 @@ from finance_forecast_agent.focused_delivery import (
     write_focused_campaign_memory,
 )
 from finance_forecast_agent.focused_protocol import EvaluationPolicy
-from finance_forecast_agent.focused_research import CandidateConfig, FocusedResearchController, ResearchBudget, advisor_prompt, run_baselines
+from finance_forecast_agent.focused_research import (
+    CandidateConfig,
+    FocusedResearchController,
+    ResearchBudget,
+    advisor_prompt,
+    run_baselines,
+)
 
 
 def _write_chart(path: Path, n: int = 1200) -> None:
