@@ -88,3 +88,12 @@ Focused execution now reuses LocalTaskQueue idempotency/attempt/recovery semanti
 ### Next: PR-5 only
 
 Implement focused ExperimentMemory compatibility, confirmation isolation/eligibility, explicit refit and loadable ModelBundle. Do not begin BYO until PR-5 gates are green and committed.
+
+
+### PR-5 completed
+
+Focused research now writes compatibility-filtered records into the existing ExperimentMemoryStore, enforces semantic exposure/confirmation eligibility, freezes candidate selection before isolated confirmation, and builds a trusted internal ModelBundle via explicit refit. Cumulative focused tests reached 45 and remote Python 3.11/3.13 CI passed.
+
+### Next: PR-6 only
+
+Implement same-task CSV/Parquet BYO contracts and a reviewed local adapter registry without arbitrary code execution. Use simulation_only clients for engineering tests when no real customer data/model is available. Stop after PR-6 and final acceptance; do not begin V3 Shadow Forecasting.
