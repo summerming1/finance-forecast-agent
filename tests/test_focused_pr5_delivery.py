@@ -15,6 +15,7 @@ from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_daily
 from finance_forecast_agent.focused_delivery import (
     assess_confirmation_eligibility,
     focused_compatible_records,
+    focused_task_fingerprint,
     freeze_candidate_selection,
     predict_model_bundle,
     refit_model_bundle,
@@ -22,7 +23,7 @@ from finance_forecast_agent.focused_delivery import (
     write_focused_campaign_memory,
 )
 from finance_forecast_agent.focused_protocol import EvaluationPolicy
-from finance_forecast_agent.focused_research import CandidateConfig, ResearchBudget, advisor_prompt, run_baselines
+from finance_forecast_agent.focused_research import CandidateConfig, FocusedResearchController, ResearchBudget, advisor_prompt, run_baselines
 
 
 def _write_chart(path: Path, n: int = 1200) -> None:
@@ -102,7 +103,7 @@ def test_engineering_failure_is_not_scientific_negative_memory(tmp_path: Path) -
     assert focused_compatible_records(
         store,
         tenant_id="tenant-a",
-        task_fingerprint="task-fp",
+        task_fingerprint=focused_task_fingerprint({"task_id": "spy"}),
         protocol_fingerprint=records[0].protocol_fingerprint,
         dataset_fingerprint="data-fp",
     ) == []
@@ -192,3 +193,48 @@ def test_model_bundle_refit_loads_in_fresh_process_and_predicts_without_label(tm
     )
     completed = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)
     assert completed.stdout.strip() == "8"
+
+
+
+def test_controller_persists_and_reuses_compatible_memory_prior(tmp_path: Path) -> None:
+    raw = tmp_path / "spy-memory.json"
+    _write_chart(raw)
+    frame, snapshot = build_spy_daily_research_frame(raw)
+    project = tmp_path / "project"
+    budget = ResearchBudget(max_rounds=1, max_new_candidates_per_round=1, max_fit_calls=20)
+
+    first = FocusedResearchController(
+        project_dir=project,
+        task=FocusedTaskSpec(),
+        dataset=snapshot,
+        frame=frame,
+        budget=budget,
+        advisor_mode="deterministic",
+        campaign_id="memory-first",
+    ).run()
+    assert first["rounds"][0]["items"]
+    memory_path = project / "experiment_memory.json"
+    assert memory_path.exists()
+
+    captured: dict[str, object] = {}
+    second = FocusedResearchController(
+        project_dir=project,
+        task=FocusedTaskSpec(),
+        dataset=snapshot,
+        frame=frame,
+        budget=budget,
+        advisor_mode="deterministic",
+        campaign_id="memory-second",
+    )
+    original = second.advisor.propose
+
+    def capture(prompt):
+        captured.update(prompt)
+        return original(prompt)
+
+    second.advisor.propose = capture
+    second.run()
+    memory = list(captured.get("compatible_memory") or [])
+    assert memory
+    assert all(row["evidence_type"] == "compatible_memory" for row in memory)
+    assert any(str(row["evidence_id"]).startswith("memory:memory-first:") for row in memory)
