@@ -3,22 +3,35 @@ from __future__ import annotations
 import hashlib
 import json
 import uuid
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
+from time import perf_counter
 from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import Ridge
-from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from .focused_data import FocusedDatasetSnapshot, FocusedTaskSpec
+from .focused_evidence import (
+    ExposureLedger,
+    append_event,
+    assert_comparable,
+    atomic_json,
+    canonical_frame_hash,
+    content_hash,
+    recompute_metrics,
+    runtime_identity,
+    structured_feedback,
+    utc_now,
+)
 from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, validate_model_params
 from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
+from .method_adapters import PredictionArtifact, PredictionRow
 from .replay_llm import ReplayLLM
 
 AdvisorMode = Literal["deterministic", "replay", "live"]
@@ -38,7 +51,7 @@ DEFAULT_BASELINES = [
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    return utc_now()
 
 
 def _hash(payload: dict[str, Any], length: int = 20) -> str:
@@ -53,6 +66,12 @@ class ResearchBudget:
     # Compatibility shim for focused-v1 callers. New code should pass
     # EvaluationPolicy explicitly; this field will be removed in a future schema version.
     min_relative_mae_improvement: float | None = None
+
+    def __post_init__(self) -> None:
+        for name in ("max_rounds", "max_new_candidates_per_round", "max_fit_calls"):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+                raise ValueError(f"{name} must be a positive integer")
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -110,6 +129,11 @@ class CandidateResult:
     execution_status: str
     research_verdict: str
     relative_mae_vs_best_baseline: float
+    prediction_artifact: dict[str, Any] = field(default_factory=dict)
+    manifest: dict[str, Any] = field(default_factory=dict)
+    prediction_path: str = ""
+    manifest_path: str = ""
+    feedback: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -123,6 +147,11 @@ class CandidateResult:
             "research_verdict": self.research_verdict,
             "development_evidence_level": self.research_verdict,
             "relative_mae_vs_best_baseline": self.relative_mae_vs_best_baseline,
+            "prediction_artifact": self.prediction_artifact,
+            "manifest": self.manifest,
+            "prediction_path": self.prediction_path,
+            "manifest_path": self.manifest_path,
+            "feedback": self.feedback,
         }
 
 
@@ -222,121 +251,100 @@ def make_development_splits(
     ).build_splits(n_rows)
 
 
-def evaluate_candidate(
-    frame: pd.DataFrame,
-    candidate: CandidateConfig,
-    *,
-    best_baseline_mae: float,
-    min_relative_improvement: float,
-    split_spec: FocusedSplitSpec | None = None,
+def _execute_candidate(
+    frame: pd.DataFrame, candidate: CandidateConfig, *, split_spec: FocusedSplitSpec,
+    task: FocusedTaskSpec | None = None, exposure: str = "development_only",
 ) -> CandidateResult:
-    features = resolve_feature_columns(candidate.feature_groups)
-    missing = [column for column in [*features, "label"] if column not in frame.columns]
+    """One execution/metric path for frozen baselines and proposed candidates."""
+    task = task or FocusedTaskSpec()
+    naive = candidate.model_family in {"constant_zero", "training_mean", "training_median"}
+    features = [] if naive else resolve_feature_columns(candidate.feature_groups)
+    missing = [column for column in [*features, "label", "timestamp"] if column not in frame.columns]
     if missing:
         raise ValueError("focused frame missing columns: " + ", ".join(missing))
-    active_split_spec = split_spec or FocusedSplitSpec()
-    splits = active_split_spec.build_splits(len(frame))
     x = frame[features].astype(float).to_numpy()
     y = frame["label"].astype(float).to_numpy()
-    actual_all: list[float] = []
-    pred_all: list[float] = []
-    fold_metrics: list[dict[str, Any]] = []
-    effective_params: dict[str, Any] = {}
-    for fold_id, (train_idx, test_idx) in enumerate(splits):
-        model = _make_model(candidate)
-        model.fit(x[train_idx], y[train_idx])
-        pred = np.asarray(model.predict(x[test_idx]), dtype=float)
-        actual = y[test_idx]
-        effective_params = _effective_estimator_params(model)
-        fold_metrics.append(
-            {
-                "fold_id": fold_id,
-                "train_count": len(train_idx),
-                "test_count": len(test_idx),
-                "mae": float(mean_absolute_error(actual, pred)),
-                "rmse": float(mean_squared_error(actual, pred) ** 0.5),
-            }
-        )
-        actual_all.extend(float(v) for v in actual)
-        pred_all.extend(float(v) for v in pred)
-    mae = float(mean_absolute_error(actual_all, pred_all))
-    rmse = float(mean_squared_error(actual_all, pred_all) ** 0.5)
-    directional = float(np.mean([(p >= 0) == (a >= 0) for p, a in zip(pred_all, actual_all)]))
-    relative = (best_baseline_mae - mae) / best_baseline_mae if best_baseline_mae > 0 else 0.0
-    verdict = (
-        "development_screen_passed"
-        if relative >= min_relative_improvement
-        else "development_screen_not_passed"
-    )
-    return CandidateResult(
-        candidate=candidate,
-        metrics={"mae": mae, "rmse": rmse, "directional_accuracy": directional},
-        fold_metrics=fold_metrics,
-        prediction_count=len(pred_all),
-        actual_features=features,
-        estimator_params=effective_params,
-        execution_status="success",
-        research_verdict=verdict,
-        relative_mae_vs_best_baseline=relative,
-    )
+    if not np.isfinite(x).all() or not np.isfinite(y).all():
+        raise ValueError("selected features and labels must be finite")
+    rows: list[PredictionRow] = []
+    folds: list[dict[str, Any]] = []
+    effective: dict[str, Any] = {}
+    started = perf_counter()
+    data_hash = canonical_frame_hash(frame)
+    identity = runtime_identity()
+    for fold_id, (train, test) in enumerate(split_spec.build_splits(len(frame))):
+        if naive:
+            value = (float(np.mean(y[train])) if candidate.model_family == "training_mean" else
+                     float(np.median(y[train])) if candidate.model_family == "training_median" else 0.)
+            pred = np.full(len(test), value)
+            effective = {"strategy": candidate.model_family}
+        else:
+            model = _make_model(candidate)
+            model.fit(x[train], y[train])
+            pred = np.asarray(model.predict(x[test]), dtype=float)
+            effective = _effective_estimator_params(model)
+        if pred.shape != (len(test),) or not np.isfinite(pred).all():
+            raise ValueError("predict must return one finite value per target row")
+        for index, value in zip(test, pred, strict=True):
+            rows.append(PredictionRow(task.entity_id, str(frame.iloc[index]["timestamp"]), task.horizon,
+                                      fold_id, float(y[index]), float(value), candidate.model_family,
+                                      candidate.candidate_id))
+        folds.append({"fold_id": fold_id, "train_count": len(train), "test_count": len(test),
+                      "train_row_ids": frame.iloc[train]["timestamp"].astype(str).tolist(),
+                      "target_row_ids": frame.iloc[test]["timestamp"].astype(str).tolist(),
+                      "fitted_constant": float(pred[0]) if naive else None})
+    task_hash = content_hash({"task": task.to_dict(), "data": data_hash, "split": split_spec.to_dict()})
+    label_end = (dict(zip(frame["timestamp"], frame["label_end_time"], strict=True))
+                 if "label_end_time" in frame else {})
+    artifact = PredictionArtifact(task.task_id, task_hash, candidate.candidate_id, candidate.model_family, rows,
+        {"input_columns": features, "split_spec": split_spec.to_dict(), "exposure": exposure,
+         "row_metadata": [{"timestamp": row.timestamp,
+                           "label_end_time": str(label_end.get(row.timestamp, "unknown"))} for row in rows]}).to_dict()
+    metrics, fold_metrics = recompute_metrics(artifact)
+    for metric, fold in zip(fold_metrics, folds, strict=True):
+        metric["train_count"] = fold["train_count"]
+    manifest = {"schema_version": "focused_execution_manifest_v1", "candidate": candidate.to_dict(),
+                "data_content_hash": data_hash, "task": task.to_dict(), "split_spec": split_spec.to_dict(),
+                "actual_features": features, "actual_estimator_params": effective, "folds": folds,
+                "prediction_hash": content_hash(artifact), "execution_claim": "forecast_only",
+                "exposure": exposure, "elapsed_seconds": perf_counter() - started,
+                "estimator_fit_calls": 0 if naive else len(folds),
+                "statistic_fit_calls": len(folds) if candidate.model_family in {"training_mean", "training_median"} else 0,
+                "timing_precision": "session_date_with_after_close_availability_assumption", **identity}
+    return CandidateResult(candidate, metrics, fold_metrics, len(rows), features, effective, "success", "baseline", 0.,
+                           prediction_artifact=artifact, manifest=manifest)
+
+
+def evaluate_candidate(
+    frame: pd.DataFrame, candidate: CandidateConfig, *, best_baseline_mae: float,
+    min_relative_improvement: float, split_spec: FocusedSplitSpec | None = None,
+    task: FocusedTaskSpec | None = None, exposure: str = "development_only",
+) -> CandidateResult:
+    if candidate.model_family not in ALLOWED_MODELS:
+        raise ValueError(f"unsupported focused model: {candidate.model_family}")
+    result = _execute_candidate(frame, candidate, split_spec=split_spec or FocusedSplitSpec(), task=task, exposure=exposure)
+    relative = (best_baseline_mae - result.metrics["mae"]) / best_baseline_mae if best_baseline_mae > 0 else 0.
+    return replace(result, relative_mae_vs_best_baseline=relative,
+                   research_verdict="development_screen_passed" if relative >= min_relative_improvement
+                   else "development_screen_not_passed")
 
 
 def run_baselines(
-    frame: pd.DataFrame,
-    budget: ResearchBudget,
-    *,
-    split_spec: FocusedSplitSpec | None = None,
+    frame: pd.DataFrame, budget: ResearchBudget, *, split_spec: FocusedSplitSpec | None = None,
+    task: FocusedTaskSpec | None = None, exposure: str = "development_only",
 ) -> list[CandidateResult]:
-    active_split_spec = split_spec or FocusedSplitSpec()
-    required_fit_calls = active_split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
-    if budget.max_fit_calls < required_fit_calls:
-        raise ValueError(
-            "focused fit budget is too small for frozen baselines: "
-            f"need {required_fit_calls}, got {budget.max_fit_calls}; no baseline fit started"
-        )
-    prelim: list[tuple[CandidateConfig, float, dict[str, float], list[dict[str, Any]], list[str], dict[str, Any], int]] = []
-    for candidate_id, family, params, groups in DEFAULT_BASELINES:
-        candidate = CandidateConfig(candidate_id, family, params, groups)
-        features = resolve_feature_columns(groups)
-        splits = active_split_spec.build_splits(len(frame))
-        x = frame[features].astype(float).to_numpy()
-        y = frame["label"].astype(float).to_numpy()
-        actual_all: list[float] = []
-        pred_all: list[float] = []
-        folds: list[dict[str, Any]] = []
-        effective: dict[str, Any] = {}
-        for fold_id, (train_idx, test_idx) in enumerate(splits):
-            model = _make_model(candidate)
-            model.fit(x[train_idx], y[train_idx])
-            pred = np.asarray(model.predict(x[test_idx]), dtype=float)
-            actual = y[test_idx]
-            effective = _effective_estimator_params(model)
-            folds.append({"fold_id": fold_id, "mae": float(mean_absolute_error(actual, pred)), "rmse": float(mean_squared_error(actual, pred) ** 0.5), "train_count": len(train_idx), "test_count": len(test_idx)})
-            actual_all.extend(float(v) for v in actual)
-            pred_all.extend(float(v) for v in pred)
-        metrics = {
-            "mae": float(mean_absolute_error(actual_all, pred_all)),
-            "rmse": float(mean_squared_error(actual_all, pred_all) ** 0.5),
-            "directional_accuracy": float(np.mean([(p >= 0) == (a >= 0) for p, a in zip(pred_all, actual_all)])),
-        }
-        prelim.append((candidate, metrics["mae"], metrics, folds, features, effective, len(pred_all)))
-    best_mae = min(row[1] for row in prelim)
-    results = []
-    for candidate, mae, metrics, folds, features, effective, count in prelim:
-        results.append(
-            CandidateResult(
-                candidate=candidate,
-                metrics=metrics,
-                fold_metrics=folds,
-                prediction_count=count,
-                actual_features=features,
-                estimator_params=effective,
-                execution_status="success",
-                research_verdict="baseline",
-                relative_mae_vs_best_baseline=(best_mae - mae) / best_mae if best_mae > 0 else 0.0,
-            )
-        )
-    return results
+    active = split_spec or FocusedSplitSpec()
+    required = active.baseline_fit_calls(len(DEFAULT_BASELINES))
+    if budget.max_fit_calls < required:
+        raise ValueError(f"focused fit budget is too small for frozen baselines: need {required}, "
+                         f"got {budget.max_fit_calls}; no baseline fit started")
+    configs = [CandidateConfig(cid, family, params, groups) for cid, family, params, groups in DEFAULT_BASELINES]
+    configs += [CandidateConfig(cid, family, {}, []) for cid, family in (
+        ("baseline_zero", "constant_zero"), ("baseline_mean", "training_mean"), ("baseline_median", "training_median"))]
+    results = [_execute_candidate(frame, config, split_spec=active, task=task, exposure=exposure) for config in configs]
+    best = min(result.metrics["mae"] for result in results)
+    return [replace(result, relative_mae_vs_best_baseline=(best - result.metrics["mae"]) / best if best > 0 else 0.)
+            for result in results]
 
 
 def advisor_prompt(
@@ -388,7 +396,7 @@ def advisor_prompt(
 
 def _deterministic_advice(round_index: int, baseline_results: list[CandidateResult], prior_results: list[CandidateResult]) -> dict[str, Any]:
     all_results = [*baseline_results, *prior_results]
-    best = min(all_results, key=lambda x: x.metrics["mae"])
+    best = min((x for x in all_results if x.candidate.model_family in ALLOWED_MODELS), key=lambda x: x.metrics["mae"])
     parent = best.candidate
     if round_index == 1:
         return {
@@ -548,7 +556,7 @@ class FocusedResearchController:
         self.project_dir = Path(project_dir)
         self.task = task
         self.dataset = dataset
-        self.frame = frame
+        self.frame = frame.copy(deep=True)
         self.budget = budget or ResearchBudget()
         legacy_threshold = self.budget.min_relative_mae_improvement
         self.evaluation_policy = evaluation_policy or EvaluationPolicy(
@@ -573,7 +581,43 @@ class FocusedResearchController:
             created_at=_now(),
         )
 
+    @property
+    def root(self) -> Path:
+        return self.project_dir / "focused_campaigns" / self.spec.campaign_id
+
+    def _event(self, event_type: str, **fields: Any) -> None:
+        append_event(self.root, event_type, campaign_id=self.spec.campaign_id, **fields)
+
+    def _save_result(self, result: CandidateResult, baseline: CandidateResult,
+                     parent: CandidateResult | None = None) -> CandidateResult:
+        assert_comparable(result.prediction_artifact, baseline.prediction_artifact)
+        result = replace(result, prediction_path=f"predictions/{result.candidate.candidate_id}.json",
+                         manifest_path=f"manifests/{result.candidate.candidate_id}.json")
+        result = replace(result, feedback=structured_feedback(result.to_dict(), baseline.to_dict(),
+                                                              parent.to_dict() if parent else None))
+        atomic_json(self.root / result.prediction_path, result.prediction_artifact)
+        atomic_json(self.root / result.manifest_path, result.manifest)
+        atomic_json(self.root / "results" / f"{result.candidate.candidate_id}.json", result.to_dict())
+        return result
+
+    def _preflight(self) -> None:
+        if self.task != FocusedTaskSpec():
+            raise ValueError("unsupported task contract: focused research is SPY/daily/next-return/MAE/forecast-only")
+        if self.frame["timestamp"].duplicated().any() or not self.frame["timestamp"].is_monotonic_increasing:
+            raise ValueError("focused timestamp targets must be unique and strictly increasing")
+        if self.dataset.exposure not in {"historical_development_only", "development_only", "external_unknown", "simulation_only"}:
+            raise ValueError("research data must be explicitly development, unknown external, or simulation data")
+        if not np.isfinite(self.frame["label"].astype(float)).all():
+            raise ValueError("target labels must be finite")
+        if "label_end_time" in self.frame and not (pd.to_datetime(self.frame["label_end_time"]) > pd.to_datetime(self.frame["timestamp"])).all():
+            raise ValueError("next-session label must mature after its decision session")
+        if self.dataset.row_count != len(self.frame):
+            raise ValueError("dataset row count does not match frame")
+        if self.root.exists():
+            raise ValueError("campaign already exists; use explicit resume rather than overwriting evidence")
+
     def run(self) -> dict[str, Any]:
+        self._preflight()
         splits = self.split_spec.build_splits(len(self.frame))
         baseline_fit_calls = self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
         if self.budget.max_fit_calls < baseline_fit_calls:
@@ -581,9 +625,27 @@ class FocusedResearchController:
                 "focused fit budget is too small for frozen baselines: "
                 f"need {baseline_fit_calls}, got {self.budget.max_fit_calls}; no model fit started"
             )
-        baseline_results = run_baselines(self.frame, self.budget, split_spec=self.split_spec)
+        atomic_json(self.root / "contract.json", self.spec.to_dict())
+        self._event("campaign.started", contract_hash=self.spec.contract_hash)
+        ExposureLedger(self.project_dir / "exposure.sqlite").record(
+            self.frame, tenant="local", entity=self.task.entity_id, actor="research_controller",
+            purpose="development", exposure=self.dataset.exposure)
+        self._event("baseline.started", reserved_fit_calls=baseline_fit_calls)
+        try:
+            baseline_results = run_baselines(self.frame, self.budget, split_spec=self.split_spec,
+                                            task=self.task, exposure=self.dataset.exposure)
+        except (ValueError, RuntimeError, FloatingPointError) as exc:
+            payload = {"schema_version": "focused_campaign_v2", "campaign": self.spec.to_dict(),
+                       "execution_status": "failed", "research_outcome": "not_evaluated",
+                       "terminal_status": "failed_baselines", "stop_reason": str(exc),
+                       "baseline_results": [], "rounds": [], "fit_calls": baseline_fit_calls,
+                       "confirmation_status": "not_run", "error_type": type(exc).__name__}
+            self._persist(payload)
+            raise
         best_baseline = min(baseline_results, key=lambda x: x.metrics["mae"])
         best_baseline_mae = best_baseline.metrics["mae"]
+        baseline_results = [self._save_result(row, best_baseline) for row in baseline_results]
+        self._event("baseline.completed", candidate_count=len(baseline_results))
         research_results: list[CandidateResult] = []
         rounds: list[dict[str, Any]] = []
         seen_fingerprints = {result.candidate.fingerprint for result in baseline_results}
@@ -599,6 +661,10 @@ class FocusedResearchController:
             )
             advice, source = self.advisor.propose(prompt)
             compiled = compile_hypotheses(advice, round_index=round_index, source=source, max_count=self.budget.max_new_candidates_per_round)
+            atomic_json(self.root / "plans" / f"round-{round_index}.json", {
+                "round_index": round_index, "prompt": prompt, "advice": advice, "source": source,
+                "compiled": [{"hypothesis": h.to_dict(), "candidate": c.to_dict()} for h, c in compiled]})
+            self._event("round.plan_frozen", round_index=round_index, prompt_hash=_hash(prompt))
             round_rows = []
             new_executable = 0
             successful_this_round = 0
@@ -616,14 +682,18 @@ class FocusedResearchController:
                 fit_calls += folds
                 seen_fingerprints.add(candidate.fingerprint)
                 new_executable += 1
+                self._event("candidate.started", candidate_id=candidate.candidate_id, reserved_fit_calls=folds)
                 try:
                     result = evaluate_candidate(
                         self.frame,
                         candidate,
                         best_baseline_mae=best_baseline_mae,
                         min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
-                        split_spec=self.split_spec,
+                        split_spec=self.split_spec, task=self.task, exposure=self.dataset.exposure,
                     )
+                    parent = next((x for x in [*baseline_results, *research_results]
+                                   if x.candidate.candidate_id == candidate.parent_candidate_id), None)
+                    result = self._save_result(result, best_baseline, parent)
                 except (ValueError, RuntimeError, FloatingPointError) as exc:
                     round_rows.append(
                         {
@@ -635,11 +705,15 @@ class FocusedResearchController:
                             "reserved_fit_calls": folds,
                         }
                     )
+                    self._event("candidate.failed", candidate_id=candidate.candidate_id,
+                                error_type=type(exc).__name__, reserved_fit_calls=folds)
                     continue
+                self._event("candidate.completed", candidate_id=candidate.candidate_id)
                 research_results.append(result)
                 successful_this_round += 1
                 round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(), "result": result.to_dict(), "status": "completed"})
             rounds.append({"round_index": round_index, "advisor_source": source, "prompt_hash": _hash(prompt), "items": round_rows})
+            self._event("round.completed", round_index=round_index, advisor_source=source)
             if stop_reason == "fit_budget_exhausted":
                 break
             if new_executable == 0:
@@ -657,37 +731,43 @@ class FocusedResearchController:
             >= self.evaluation_policy.min_relative_mae_improvement
         )
         terminal_status = "completed_with_development_improvement" if improved else "completed_no_improvement"
+        failures = sum(item["status"] == "failed" for row in rounds for item in row["items"])
+        outcome = "improved" if improved else "no_improvement" if research_results else "inconclusive"
+        execution = "partial" if failures and research_results else "failed" if failures else "completed"
+        if outcome == "inconclusive":
+            terminal_status = "completed_inconclusive" if execution == "completed" else "failed_inconclusive"
         payload = {
-            "schema_version": "focused_campaign_v1",
+            "schema_version": "focused_campaign_v2",
+            "execution_status": execution,
+            "research_outcome": outcome,
+            "statistic_fit_calls": sum(x.manifest.get("statistic_fit_calls", 0) for x in baseline_results),
+            "evidence": {"development": self.dataset.exposure, "robustness": "not_run",
+                         "confirmation": "not_eligible_simulation" if self.dataset.exposure == "simulation_only"
+                         else "not_eligible_exposed_or_unknown", "forward": "not_started"},
             "campaign": self.spec.to_dict(),
             "baseline_results": [x.to_dict() for x in baseline_results],
             "rounds": rounds,
             "best_baseline_candidate_id": best_baseline.candidate.candidate_id,
             "best_candidate_id": best_overall.candidate.candidate_id,
-            "best_candidate_is_research_candidate": improved,
+            "best_candidate_is_research_candidate": best_overall.candidate.candidate_id not in {x.candidate.candidate_id for x in baseline_results},
+            "development_screen_passed": improved,
             "terminal_status": terminal_status,
             "stop_reason": stop_reason,
             "fit_calls": fit_calls,
             "baseline_fit_calls": baseline_fit_calls,
             "evaluation_policy": self.evaluation_policy.to_dict(),
             "split_spec": self.split_spec.to_dict(),
-            "confirmation_status": "not_run_historical_data_exposed",
-            "scientific_claim": "development_only_no_profitability_claim",
+            "confirmation_status": ("not_run_simulation" if self.dataset.exposure == "simulation_only" else
+                                    "not_run_external_exposure_unknown" if self.dataset.exposure == "external_unknown" else
+                                    "not_run_historical_data_exposed"),
+            "scientific_claim": ("simulation_only_no_market_evidence" if self.dataset.exposure == "simulation_only"
+                                 else "development_only_no_profitability_claim"),
             "created_at": _now(),
         }
         self._persist(payload)
         return payload
 
     def _persist(self, payload: dict[str, Any]) -> None:
-        root = self.project_dir / "focused_campaigns" / self.spec.campaign_id
-        root.mkdir(parents=True, exist_ok=True)
-        (root / "campaign.json").write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-        events = []
-        sequence = 1
-        events.append({"event_id": sequence, "type": "campaign.started", "campaign_id": self.spec.campaign_id, "time": self.spec.created_at, "contract_hash": self.spec.contract_hash})
-        sequence += 1
-        for round_row in payload["rounds"]:
-            events.append({"event_id": sequence, "type": "round.completed", "campaign_id": self.spec.campaign_id, "time": _now(), "round_index": round_row["round_index"], "advisor_source": round_row["advisor_source"], "prompt_hash": round_row["prompt_hash"]})
-            sequence += 1
-        events.append({"event_id": sequence, "type": "campaign.completed", "campaign_id": self.spec.campaign_id, "time": _now(), "terminal_status": payload["terminal_status"], "stop_reason": payload["stop_reason"]})
-        (root / "events.jsonl").write_text("\n".join(json.dumps(x, ensure_ascii=False) for x in events) + "\n", encoding="utf-8")
+        atomic_json(self.root / "campaign.json", payload)
+        self._event("campaign.completed", terminal_status=payload["terminal_status"],
+                    stop_reason=payload["stop_reason"])

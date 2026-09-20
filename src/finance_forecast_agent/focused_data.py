@@ -170,7 +170,8 @@ def build_spy_daily_research_frame(
     frame["volume_change_1"] = frame["spy_volume"].pct_change().replace([np.inf, -np.inf], np.nan)
     frame["label"] = frame["spy_adj_close"].shift(-1) / frame["spy_adj_close"] - 1.0
     frame["decision_time"] = frame["timestamp"]
-    frame["label_start_time"] = frame["timestamp"].shift(-1)
+    # The return interval begins at t; its label matures at the next session.
+    frame["label_start_time"] = frame["timestamp"]
     frame["label_end_time"] = frame["timestamp"].shift(-1)
 
     required = [
