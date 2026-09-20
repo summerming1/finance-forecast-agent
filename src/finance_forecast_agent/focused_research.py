@@ -452,6 +452,7 @@ def advisor_prompt(
     budget: ResearchBudget,
     structured_feedback: list[dict[str, Any]] | None = None,
     reviewed_evidence: list[dict[str, Any]] | None = None,
+    compatible_memory: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     return {
         "task": "focused_spy_research_hypotheses_v1",
@@ -469,6 +470,7 @@ def advisor_prompt(
         ],
         "structured_feedback": list(structured_feedback or []),
         "reviewed_evidence": list(reviewed_evidence or []),
+        "compatible_memory": list(compatible_memory or []),
         "remaining_budget": {
             "max_rounds": budget.max_rounds,
             "max_new_candidates_per_round": budget.max_new_candidates_per_round,
@@ -683,6 +685,9 @@ class FocusedResearchController:
         reviewed_evidence: list[dict[str, Any]] | None = None,
         campaign_id: str | None = None,
         resume_existing: bool = False,
+        tenant_id: str = "default",
+        memory_store_path: str | Path | None = None,
+        use_memory_prior: bool = True,
     ):
         self.project_dir = Path(project_dir)
         self.task = task
@@ -700,6 +705,9 @@ class FocusedResearchController:
         self.split_spec = split_spec or FocusedSplitSpec()
         self.reviewed_evidence = list(reviewed_evidence or [])
         self.resume_existing = bool(resume_existing)
+        self.tenant_id = tenant_id
+        self.memory_store_path = Path(memory_store_path) if memory_store_path else self.project_dir / "experiment_memory.json"
+        self.use_memory_prior = bool(use_memory_prior)
         self.advisor = FocusedResearchAdvisor(advisor_mode, fixture_dir)
         self.spec = CampaignSpec(
             campaign_id=campaign_id or f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
@@ -949,6 +957,20 @@ class FocusedResearchController:
 
         research_results: list[CandidateResult] = []
         feedback_history: list[dict[str, Any]] = []
+        memory_evidence: list[dict[str, Any]] = []
+        if self.use_memory_prior:
+            from .experiment_memory import ExperimentMemoryStore
+            from .focused_delivery import load_focused_memory_evidence
+
+            memory_evidence = load_focused_memory_evidence(
+                ExperimentMemoryStore(self.memory_store_path),
+                tenant_id=self.tenant_id,
+                task=self.task,
+                dataset_fingerprint=self.dataset.semantic_fingerprint,
+                split_spec=self.split_spec,
+                evaluation_policy=self.evaluation_policy,
+                exclude_campaign_id=self.spec.campaign_id,
+            )
         rounds: list[dict[str, Any]] = []
         seen_fingerprints = {result.candidate.fingerprint for result in baseline_results}
         fit_calls = baseline_fit_calls
@@ -963,6 +985,7 @@ class FocusedResearchController:
                 budget=self.budget,
                 structured_feedback=feedback_history,
                 reviewed_evidence=self.reviewed_evidence,
+                compatible_memory=memory_evidence,
             )
             advice, source = self.advisor.propose(prompt)
             from .focused_adaptive import feedback_evidence, result_evidence
@@ -973,6 +996,7 @@ class FocusedResearchController:
             ]
             visible_evidence = [
                 *self.reviewed_evidence,
+                *memory_evidence,
                 *result_evidence(result_refs),
                 *feedback_evidence(feedback_history),
             ]
@@ -1182,6 +1206,15 @@ class FocusedResearchController:
             "created_at": _now(),
         }
         self._persist(payload)
+        if self.use_memory_prior:
+            from .experiment_memory import ExperimentMemoryStore
+            from .focused_delivery import write_focused_campaign_memory
+
+            write_focused_campaign_memory(
+                payload,
+                ExperimentMemoryStore(self.memory_store_path),
+                tenant_id=self.tenant_id,
+            )
         self._append_event(
             "campaign.completed",
             execution_status=execution_status,
