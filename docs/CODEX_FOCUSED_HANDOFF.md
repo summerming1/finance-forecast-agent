@@ -65,3 +65,12 @@ Synthetic data/users and assistant-authored fixtures are engineering evidence on
 ## 7. Documentation rule
 
 `CURRENT_IMPLEMENTATION.md` describes only verified current behavior. Roadmap/ADR describe approved future direction. Update the V2 release record for each completed PR, preserve historical acceptance records, and report exact commands/results plus untested boundaries.
+
+
+### PR-2 completed
+
+Thin Mission and Research Workspace are implemented on the existing focused Controller. Unsupported natural-language scopes fail closed; workspace history is a projection of actual PR-1 artifacts/config diffs/feedback, not a second state engine. PR-2 cumulative focused/Mission tests and real-SPY smoke passed before submission.
+
+### Next: PR-3 only
+
+Implement feedback/evidence-grounded research actions and the fair four-arm Research Agent Value Benchmark. Do not start PR-4 persistence/recovery until PR-3 tests are green and committed.
