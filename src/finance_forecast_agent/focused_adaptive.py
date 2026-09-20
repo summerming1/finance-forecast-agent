@@ -107,7 +107,9 @@ def adaptive_deterministic_advice(prompt: dict[str, Any]) -> dict[str, Any]:
     feedback_refs = [str(row["feedback_id"]) for row in feedback[-2:]]
     reviewed = [row for row in prompt.get("reviewed_evidence") or [] if row.get("visible")]
     paper_refs = [str(row["evidence_id"]) for row in reviewed if row.get("evidence_type") == "paper_claim"][:1]
-    refs = [*feedback_refs, *paper_refs]
+    memory = [row for row in prompt.get("compatible_memory") or [] if row.get("visible")]
+    memory_refs = [str(row["evidence_id"]) for row in memory if row.get("evidence_type") == "compatible_memory"][:1]
+    refs = [*feedback_refs, *paper_refs, *memory_refs]
 
     if action == "simplify":
         config = ("ridge_regression", {"alpha": 20.0}, ["base_lags"])
