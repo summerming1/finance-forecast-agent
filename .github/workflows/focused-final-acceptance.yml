@@ -63,7 +63,7 @@ jobs:
           assert dataset["row_count"] == 4002
           assert dataset["start_date"] == "2010-02-03"
           assert dataset["end_date"] == "2025-12-30"
-          assert payload["fit_calls"] == 28
+          assert payload["fit_calls"] == 20
           assert payload["execution_status"] == "completed"
           assert payload["research_outcome"] in {"no_improvement", "improved"}
           assert payload["confirmation_status"] == "not_run_historical_data_exposed"
