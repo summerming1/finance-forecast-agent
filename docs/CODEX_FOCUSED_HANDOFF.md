@@ -74,3 +74,8 @@ Thin Mission and Research Workspace are implemented on the existing focused Cont
 ### Next: PR-3 only
 
 Implement feedback/evidence-grounded research actions and the fair four-arm Research Agent Value Benchmark. Do not start PR-4 persistence/recovery until PR-3 tests are green and committed.
+
+
+### PR-3 completed
+
+Feedback/evidence-grounded adaptive research and the four-arm internal value benchmark are implemented. Do not claim agent superiority: the first real-SPY two-candidate comparison did not favor the adaptive arm. The next milestone is PR-4 persistence/recovery + ResearchPackage; reuse LocalTaskQueue.
