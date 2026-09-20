@@ -13,18 +13,35 @@ jobs:
   source:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      staged: ${{ steps.snapshot.outputs.staged }}
+      tree: ${{ steps.snapshot.outputs.tree }}
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Archive exact tracked source (no credentials or untracked files)
-        run: git archive --format=tar.gz -o source-snapshot.tar.gz HEAD
+      - id: snapshot
+        name: Materialize exact stage candidate without credentials
+        run: |
+          if test -f .delivery/stage.patch; then
+            git apply --check .delivery/stage.patch
+            git apply .delivery/stage.patch
+            git rm .delivery/stage.patch
+            git add -A
+            git -c user.name='Mission CI' -c user.email='noreply@openai.com' commit -m 'Stage candidate snapshot'
+            echo 'staged=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'staged=false' >> "$GITHUB_OUTPUT"
+          fi
+          echo "tree=$(git write-tree)" >> "$GITHUB_OUTPUT"
+          git archive --format=tar.gz -o source-snapshot.tar.gz HEAD
       - uses: actions/upload-artifact@v4
         with:
           name: mission-source-${{ github.sha }}
           path: source-snapshot.tar.gz
           retention-days: 7
   focused:
+    needs: source
     runs-on: ubuntu-latest
     timeout-minutes: 25
     strategy:
@@ -34,10 +51,23 @@ jobs:
     env:
       OMP_NUM_THREADS: '1'
       MKL_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Apply stage and verify candidate tree
+        env:
+          EXPECTED_TREE: ${{ needs.source.outputs.tree }}
+        run: |
+          if test -f .delivery/stage.patch; then
+            git apply --check .delivery/stage.patch
+            git apply .delivery/stage.patch
+            git rm .delivery/stage.patch
+            git add -A
+          fi
+          test "$(git write-tree)" = "$EXPECTED_TREE"
+          git diff --cached --check
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -60,18 +90,25 @@ jobs:
           name: mission-tests-py${{ matrix.python-version }}-${{ github.sha }}
           path: mission-junit.xml
           retention-days: 14
-  offline-test-dependencies:
-    if: github.ref == 'refs/heads/feat/mission-pr0-contracts-20260920'
+  publish-tested-stage:
+    needs: [source, focused]
+    if: github.event_name == 'push' && needs.source.outputs.staged == 'true' && startsWith(github.ref, 'refs/heads/feat/mission-pr')
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
     steps:
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-      - name: Prepare wheels for the isolated local test environment
-        run: python -m pip wheel 'streamlit>=1.45,<2' ruff 'mlflow-skinny>=3,<4' dvc exchange-calendars optuna pyarrow --wheel-dir wheels
-      - uses: actions/upload-artifact@v4
-        with:
-          name: mission-offline-wheels-py313
-          path: wheels
-          retention-days: 7
+      - uses: actions/checkout@v4
+      - name: Publish only the exact tested tree to this review branch
+        env:
+          EXPECTED_TREE: ${{ needs.source.outputs.tree }}
+        run: |
+          git apply --check .delivery/stage.patch
+          git apply .delivery/stage.patch
+          git rm .delivery/stage.patch
+          git add -A
+          test "$(git write-tree)" = "$EXPECTED_TREE"
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Apply Mission stage after Python 3.11 and 3.13 gates passed'
+          git push origin HEAD:"${GITHUB_REF#refs/heads/}"
+          echo "Published commit: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"
