@@ -23,6 +23,11 @@ class ExperimentMemoryRecord:
     experiment_type: str = "unknown"
     data_domain: str = "unknown"
     protocol_fingerprint: str = ""
+    tenant_id: str = "default"
+    dataset_fingerprint: str = ""
+    evaluation_fingerprint: str = ""
+    research_outcome: str = ""
+    execution_status: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
