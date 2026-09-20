@@ -1,6 +1,6 @@
 # 当前版本功能与技术实现说明
 
-## 当前权威实现：Mission Research V2-A complete (PR-1 + PR-2)
+## 当前权威实现：Mission Research V2-B complete through PR-4
 
 当前工作分支：`feat/mission-research-v2`。
 
@@ -351,3 +351,16 @@ python -m streamlit run apps/streamlit_app.py
 ### 当前下一里程碑
 
 **PR-4 / V2-B Persistent Execution + ResearchPackage**：复用 LocalTaskQueue 实现幂等提交、attempt ledger、真实并发限制、中断恢复、取消/late-result 语义与完整 ResearchPackage。
+
+
+### PR-4 当前能力
+
+- 复用既有 LocalTaskQueue，新增 idempotency key、attempt 次数、stale-worker recovery 与真实并发上限；
+- focused CLI 支持稳定 campaign_id 与 resume_existing；相同 campaign 重启时复用已持久化 candidate PredictionArtifact/Manifest，不重复 refit 已完成 candidate；
+- POSIX CI 实际 kill worker 后成功 recover/resume；zombie worker 被视为 stale；
+- ResearchPackage 可导出完整或中断/失败 campaign，保存已有 evidence/artifact hash，不伪造缺失结果；
+- PR-4 累计 focused 测试 40 项通过，Python 3.11/3.13、Ruff、compileall 远端 CI 通过。
+
+### 当前下一里程碑
+
+PR-5 / V2.1：复用既有 ExperimentMemory，增加 focused 兼容性/租户隔离、Exposure/Confirmation eligibility、隔离 confirmation 通道、显式 refit 与可加载 ModelBundle。
