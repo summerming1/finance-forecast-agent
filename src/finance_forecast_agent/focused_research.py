@@ -681,6 +681,8 @@ class FocusedResearchController:
         evaluation_policy: EvaluationPolicy | None = None,
         split_spec: FocusedSplitSpec | None = None,
         reviewed_evidence: list[dict[str, Any]] | None = None,
+        campaign_id: str | None = None,
+        resume_existing: bool = False,
     ):
         self.project_dir = Path(project_dir)
         self.task = task
@@ -697,9 +699,10 @@ class FocusedResearchController:
         )
         self.split_spec = split_spec or FocusedSplitSpec()
         self.reviewed_evidence = list(reviewed_evidence or [])
+        self.resume_existing = bool(resume_existing)
         self.advisor = FocusedResearchAdvisor(advisor_mode, fixture_dir)
         self.spec = CampaignSpec(
-            campaign_id=f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
+            campaign_id=campaign_id or f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
             task=task,
             dataset=dataset,
             budget=self.budget,
@@ -740,6 +743,10 @@ class FocusedResearchController:
 
     def _initialize_evidence_ledger(self) -> None:
         root = self._campaign_root
+        exposure_path = root / "exposure" / "exposure.jsonl"
+        if self.resume_existing and exposure_path.exists():
+            self._append_event("campaign.resumed", contract_hash=self.spec.contract_hash)
+            return
         root.mkdir(parents=True, exist_ok=True)
         self._append_event(
             "campaign.started",
@@ -751,7 +758,6 @@ class FocusedResearchController:
             task=self.task,
             dataset=self.dataset,
         )
-        exposure_path = root / "exposure" / "exposure.jsonl"
         exposure_path.parent.mkdir(parents=True, exist_ok=True)
         with exposure_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(exposure, ensure_ascii=False) + "\n")
@@ -862,6 +868,50 @@ class FocusedResearchController:
         )
         return plan_hash, str(rel.as_posix())
 
+    def _load_completed_candidate(
+        self,
+        candidate: CandidateConfig,
+        *,
+        best_baseline_mae: float,
+    ) -> CandidateResult | None:
+        prediction_path = self._campaign_root / "predictions" / f"{candidate.candidate_id}.json"
+        manifest_path = self._campaign_root / "manifests" / f"{candidate.candidate_id}.json"
+        if not prediction_path.exists() or not manifest_path.exists():
+            return None
+        artifact = json.loads(prediction_path.read_text(encoding="utf-8"))
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if artifact.get("candidate_fingerprint") != candidate.fingerprint:
+            return None
+        if manifest.get("candidate_fingerprint") != candidate.fingerprint:
+            return None
+        rows = list(artifact.get("rows") or [])
+        if not rows:
+            return None
+        metrics = prediction_metrics(rows)
+        fold_metrics = fold_metrics_from_rows(rows)
+        relative = (
+            (best_baseline_mae - float(metrics["mae"])) / best_baseline_mae
+            if best_baseline_mae > 0
+            else 0.0
+        )
+        verdict = (
+            "development_screen_passed"
+            if relative >= self.evaluation_policy.min_relative_mae_improvement
+            else "development_screen_not_passed"
+        )
+        return CandidateResult(
+            candidate=candidate,
+            metrics=metrics,
+            fold_metrics=fold_metrics,
+            prediction_count=len(rows),
+            actual_features=list(manifest.get("actual_feature_columns") or []),
+            estimator_params=dict(manifest.get("effective_estimator_params") or {}),
+            execution_status="success",
+            research_verdict=verdict,
+            relative_mae_vs_best_baseline=relative,
+            prediction_rows=rows,
+        )
+
     def run(self) -> dict[str, Any]:
         splits = self.split_spec.build_splits(len(self.frame))
         baseline_fit_calls = self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
@@ -971,42 +1021,56 @@ class FocusedResearchController:
                 fit_calls += folds
                 seen_fingerprints.add(candidate.fingerprint)
                 new_executable += 1
-                self._append_event(
-                    "attempt.reserved",
-                    round_index=round_index,
-                    candidate_id=candidate.candidate_id,
-                    reserved_fit_calls=folds,
+                cached = (
+                    self._load_completed_candidate(candidate, best_baseline_mae=best_baseline_mae)
+                    if self.resume_existing
+                    else None
                 )
-                try:
-                    result = evaluate_candidate(
-                        self.frame,
-                        candidate,
-                        best_baseline_mae=best_baseline_mae,
-                        min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
-                        split_spec=self.split_spec,
-                    )
-                except (ValueError, RuntimeError, FloatingPointError) as exc:
-                    failed_attempts += 1
+                if cached is not None:
+                    result = cached
                     self._append_event(
-                        "attempt.failed",
+                        "attempt.reused",
                         round_index=round_index,
                         candidate_id=candidate.candidate_id,
                         reserved_fit_calls=folds,
-                        error_type=type(exc).__name__,
-                        error=str(exc),
                     )
-                    round_rows.append(
-                        {
-                            "hypothesis": hypothesis.to_dict(),
-                            "candidate": candidate.to_dict(),
-                            "config_diff": config_diff,
-                            "status": "failed",
-                            "error_type": type(exc).__name__,
-                            "error": str(exc),
-                            "reserved_fit_calls": folds,
-                        }
+                else:
+                    self._append_event(
+                        "attempt.reserved",
+                        round_index=round_index,
+                        candidate_id=candidate.candidate_id,
+                        reserved_fit_calls=folds,
                     )
-                    continue
+                    try:
+                        result = evaluate_candidate(
+                            self.frame,
+                            candidate,
+                            best_baseline_mae=best_baseline_mae,
+                            min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
+                            split_spec=self.split_spec,
+                        )
+                    except (ValueError, RuntimeError, FloatingPointError) as exc:
+                        failed_attempts += 1
+                        self._append_event(
+                            "attempt.failed",
+                            round_index=round_index,
+                            candidate_id=candidate.candidate_id,
+                            reserved_fit_calls=folds,
+                            error_type=type(exc).__name__,
+                            error=str(exc),
+                        )
+                        round_rows.append(
+                            {
+                                "hypothesis": hypothesis.to_dict(),
+                                "candidate": candidate.to_dict(),
+                                "config_diff": config_diff,
+                                "status": "failed",
+                                "error_type": type(exc).__name__,
+                                "error": str(exc),
+                                "reserved_fit_calls": folds,
+                            }
+                        )
+                        continue
                 parent_result = result_lookup.get(candidate.parent_candidate_id or "")
                 refs, feedback_payload = self._persist_result_evidence(
                     result=result,
