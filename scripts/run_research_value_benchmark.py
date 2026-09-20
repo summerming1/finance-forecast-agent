@@ -24,12 +24,20 @@ def run_arm(frame, *, arm: str, count: int, seed: int, best_baseline_mae: float,
         if arm == "tpe_like":
             config = tpe_like_next(observations, used)
         elif arm == "adaptive_agent":
+            # Feedback-sensitive but bounded: exploit the best family after the
+            # first observation while retaining a distinct second diagnostic.
             config = tpe_like_next(observations, used) if observations else one_shot_fixture_plan(count)[0]
         else:
             config = planned[index]
         candidate = search_candidate(config, strategy=arm, index=index + 1)
         used.add(candidate.fingerprint)
-        result = evaluate_candidate(frame, candidate, best_baseline_mae=best_baseline_mae, min_relative_improvement=EvaluationPolicy().min_relative_mae_improvement, split_spec=split_spec)
+        result = evaluate_candidate(
+            frame,
+            candidate,
+            best_baseline_mae=best_baseline_mae,
+            min_relative_improvement=EvaluationPolicy().min_relative_mae_improvement,
+            split_spec=split_spec,
+        )
         observations.append((config, result.metrics["mae"]))
         rows.append({"candidate": candidate.to_dict(), "metrics": result.metrics, "verdict": result.research_verdict})
     best = min(rows, key=lambda row: row["metrics"]["mae"])
@@ -50,7 +58,10 @@ def main() -> int:
     split_spec = FocusedSplitSpec()
     baselines = run_baselines(frame, ResearchBudget(max_rounds=1, max_fit_calls=100), split_spec=split_spec)
     best_baseline = min(baselines, key=lambda row: row.metrics["mae"])
-    arms = [run_arm(frame, arm=arm, count=args.candidate_count, seed=args.seed, best_baseline_mae=best_baseline.metrics["mae"], split_spec=split_spec) for arm in ("random", "tpe_like", "one_shot_llm", "adaptive_agent")]
+    arms = [
+        run_arm(frame, arm=arm, count=args.candidate_count, seed=args.seed, best_baseline_mae=best_baseline.metrics["mae"], split_spec=split_spec)
+        for arm in ("random", "tpe_like", "one_shot_llm", "adaptive_agent")
+    ]
     payload = {
         "schema_version": "focused_agent_value_benchmark_v1",
         "task": FocusedTaskSpec().to_dict(),
@@ -58,7 +69,12 @@ def main() -> int:
         "evidence_tier": "internal_exposed_development_comparison",
         "live_llm_validation": "pending",
         "one_shot_source": "assistant_authored_fixture",
-        "shared_contract": {"split_spec": split_spec.to_dict(), "evaluation_policy": EvaluationPolicy().to_dict(), "candidate_count_per_arm": args.candidate_count, "search_space_size": 6},
+        "shared_contract": {
+            "split_spec": split_spec.to_dict(),
+            "evaluation_policy": EvaluationPolicy().to_dict(),
+            "candidate_count_per_arm": args.candidate_count,
+            "search_space_size": 6,
+        },
         "best_baseline": best_baseline.to_dict(),
         "arms": arms,
     }
