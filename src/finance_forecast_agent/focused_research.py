@@ -698,8 +698,7 @@ class FocusedResearchController:
             **payload,
         }
         with path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(event, ensure_ascii=False) + "
-")
+            handle.write(json.dumps(event, ensure_ascii=False) + "\n")
 
     def _initialize_evidence_ledger(self) -> None:
         root = self._campaign_root
@@ -717,8 +716,7 @@ class FocusedResearchController:
         exposure_path = root / "exposure" / "exposure.jsonl"
         exposure_path.parent.mkdir(parents=True, exist_ok=True)
         with exposure_path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(exposure, ensure_ascii=False) + "
-")
+            handle.write(json.dumps(exposure, ensure_ascii=False) + "\n")
         self._append_event(
             "exposure.recorded",
             exposure_id=exposure["exposure_id"],
