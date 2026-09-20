@@ -22,6 +22,8 @@ def main() -> None:
     parser.add_argument("--rounds", type=int, default=3)
     parser.add_argument("--candidates-per-round", type=int, default=2)
     parser.add_argument("--max-fit-calls", type=int, default=40)
+    parser.add_argument("--campaign-id", default=None)
+    parser.add_argument("--resume-existing", action="store_true")
     args = parser.parse_args()
 
     project = Path(args.project_dir)
@@ -38,6 +40,8 @@ def main() -> None:
         budget=budget,
         advisor_mode=args.advisor_mode,
         fixture_dir=args.fixture_dir,
+        campaign_id=args.campaign_id,
+        resume_existing=args.resume_existing,
     )
     result = controller.run()
     print(json.dumps({
