@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+# The broad stdlib import block is intentionally kept stable for cross-platform queue code.  # ruff: noqa: I001
+
 import argparse
 import json
 import os
@@ -56,7 +58,7 @@ class TaskRecord:
     finished_at: str = ""
 
     @classmethod
-    def from_dict(cls, payload: dict[str, Any]) -> "TaskRecord":
+    def from_dict(cls, payload: dict[str, Any]) -> TaskRecord:
         allowed = cls.__dataclass_fields__
         return cls(**{key: value for key, value in payload.items() if key in allowed})
 
@@ -382,7 +384,7 @@ def _worker(record_path: Path) -> int:
         _write(record_path, final.to_dict())
         LocalTaskQueue(record_path.parent.parent).dispatch()
         return return_code
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - worker boundary must persist unexpected failures
         failed = TaskRecord(
             **{
                 **running.to_dict(),
