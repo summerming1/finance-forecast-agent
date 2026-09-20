@@ -278,7 +278,7 @@ def refit_model_bundle(
         "task": task.to_dict(),
         "dataset_fingerprint": dataset.semantic_fingerprint,
         "training_cutoff": str(frame.iloc[-1]["timestamp"]),
-        "training_rows": int(len(frame)),
+        "training_rows": len(frame),
         "refit_policy": active_policy.to_dict(),
         "evidence_relationship": "selected_on_development_then_refit_without_confirmation_tuning",
         "model_file": model_path.name,
