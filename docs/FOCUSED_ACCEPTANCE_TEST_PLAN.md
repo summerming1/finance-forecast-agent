@@ -115,3 +115,9 @@ Record:
 - rollback/compatibility note.
 
 Do not claim that focused CI reran hour-scale historical native reproductions unless it actually did.
+
+## 8. Sequential PR-series gate (2026-09-20)
+
+Run `python scripts/check_mission_gate.py --junit <report.xml>` after each stage. PR-1 adds prediction recomputation, target alignment, naive baselines and all-candidate-failure tests; PR-2 adds Mission/UI projections; PR-3 adds evidence/refusal and fair search tests; PR-4 adds queue/resume/cancel tests; PR-5 adds Memory/exposure/refit tests; PR-6 adds contracted external-input and reviewed-adapter tests.
+
+Synthetic market-shaped data and assistant-authored model responses are functional fixtures only. Real live-record, fair real-data superiority, actual user acceptance, and commercial acceptance remain distinct pending gates until independently executed. No fixtures can waive an earlier scientific invariant.

@@ -117,3 +117,7 @@ Keep test claims precise:
 - external/native: original repositories/data/environments, often expensive.
 
 A passing focused test suite does not mean historical native paper training was rerun.
+
+## 10. Approved 2026-09-20 delivery addendum
+
+Read `docs/ADR_MISSION_RESEARCH_003.md` and `docs/MISSION_PR_SERIES_20260920.md` for the PR-0 to PR-6 sequence. The user has approved this sequence and explicitly labeled simulation/assistant fixtures for functional tests. Never relabel these as real market data, live provider results, independent confirmation, external-user acceptance or business validation. Run `python scripts/check_mission_gate.py` before advancing.
