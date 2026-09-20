@@ -39,3 +39,8 @@ PR-1 does not add Mission UI or asynchronous recovery. It establishes the eviden
 ### Next
 
 PR-2 converts the supported SPY research flow into a thin Mission product entry and auditable Research Workspace without duplicating Task/Campaign/Controller/Queue/Evaluator semantics.
+
+
+## PR-3 — Adaptive Research + Agent Value Benchmark
+
+Implemented feedback/evidence-grounded adaptive actions, evidence visibility/type gates, and a fair four-arm internal benchmark. Real frozen SPY internal comparison did not favor the adaptive arm in the initial two-candidate budget. One-shot LLM is an assistant-authored fixture; live-provider quality remains unverified. Next: PR-4 persistent execution and ResearchPackage.
