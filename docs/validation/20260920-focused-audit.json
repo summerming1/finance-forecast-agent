@@ -1,0 +1,77 @@
+{
+  "verified_source_revision": "9f8148d674030cfaa5462662d54f30cd053944cb",
+  "verified_git_tree": "a3e22f44f774fa84e29562fef291e1097b0c5c6b",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "dependencies": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.8.0",
+    "exchange-calendars": "4.13.1",
+    "pytest": "9.0.2",
+    "streamlit": "1.64.0",
+    "ruff": "0.16.8",
+    "torch": "2.10.0+cpu",
+    "optuna": "4.8.0",
+    "pyarrow": "25.0.1"
+  },
+  "focused_pytest": {
+    "passed": 19,
+    "failed": 0,
+    "seconds": 9.77
+  },
+  "collection_only": {
+    "collected": 191,
+    "executed_all": false
+  },
+  "ruff_exitcode": 0,
+  "compile_exitcode": 0,
+  "smoke": {
+    "input_archive_sha256": "ff90e7f9409bcecdfa1ab7f24bd7f345265bb58fe2a6bba99c209d7eeca4c090",
+    "raw_sha256": "5fb282f6278d14000592e0e432fe69a5c00fdb6f7b48cbb56368fc0e3185bbcd",
+    "rows": 4002,
+    "start": "2010-02-03",
+    "end": "2025-12-30",
+    "fit_calls": 28,
+    "terminal_status": "completed_no_improvement",
+    "confirmation": "not_run_historical_data_exposed",
+    "baselines": {
+      "baseline_ridge": {
+        "mae": 0.0050337535958270355,
+        "rmse": 0.0068399706873753215,
+        "directional_accuracy": 0.5158730158730159
+      },
+      "baseline_rf": {
+        "mae": 0.005064543925634767,
+        "rmse": 0.006887747989464422,
+        "directional_accuracy": 0.5634920634920635
+      },
+      "baseline_gbdt": {
+        "mae": 0.005042945383947814,
+        "rmse": 0.0068572603181048155,
+        "directional_accuracy": 0.5793650793650794
+      }
+    }
+  },
+  "unverified_prior_claims": [
+    "PR-1..PR-4 implementation",
+    "48 passed",
+    "finance_mission_pr0_pr4_checkpoint.zip"
+  ],
+  "known_gap_failure_probe": {
+    "test_kind": "injected_execution_failure_not_market_result",
+    "candidate_failures": 2,
+    "fit_calls": 20,
+    "stop_reason": "round_failed_no_completed_candidate",
+    "actual_terminal_status": "completed_no_improvement",
+    "required_future_behavior": "execution failure / inconclusive, not scientific no_improvement",
+    "acceptance_passed": false
+  },
+  "missing_replay_probe": {
+    "kind": "negative_replay_fixture_missing",
+    "returncode": 1,
+    "expected_exception": "FileNotFoundError",
+    "passed": true,
+    "live_api_called": false,
+    "assertion_note": "Check the actual exception type/path, not an assumed error-message string."
+  }
+}
