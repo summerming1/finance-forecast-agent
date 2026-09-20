@@ -92,3 +92,7 @@ Ask before:
 - changing the roadmap milestone order.
 
 For a pure bug fix inside the approved milestone, proceed and update current docs.
+
+## 8. Approved sequential delivery override (2026-09-20)
+
+ADR-MISSION-003 authorizes PR-0 through PR-6 in order, with `scripts/check_mission_gate.py` between stages. Preserve prior user work. Engineering acceptance may use explicitly tagged simulated data and assistant-authored fixtures; these do not satisfy live-provider, scientific or user-value acceptance. See `MISSION_PR_SERIES_20260920.md` before inferring current completion.

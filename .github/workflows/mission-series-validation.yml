@@ -1,0 +1,114 @@
+name: Mission PR series validation
+on:
+  push:
+    branches: ['feat/mission-pr*-20260920']
+  pull_request:
+    branches: ['feat/mission-research-v2', 'feat/mission-pr*-20260920']
+permissions:
+  contents: read
+concurrency:
+  group: mission-series-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      staged: ${{ steps.snapshot.outputs.staged }}
+      tree: ${{ steps.snapshot.outputs.tree }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: snapshot
+        name: Materialize exact stage candidate without credentials
+        run: |
+          if test -f .delivery/stage.patch; then
+            git apply --check .delivery/stage.patch
+            git apply .delivery/stage.patch
+            git rm .delivery/stage.patch
+            git add -A
+            git -c user.name='Mission CI' -c user.email='noreply@openai.com' commit -m 'Stage candidate snapshot'
+            echo 'staged=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'staged=false' >> "$GITHUB_OUTPUT"
+          fi
+          echo "tree=$(git write-tree)" >> "$GITHUB_OUTPUT"
+          git archive --format=tar.gz -o source-snapshot.tar.gz HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mission-source-${{ github.sha }}
+          path: source-snapshot.tar.gz
+          retention-days: 7
+  focused:
+    needs: source
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.13']
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Apply stage and verify candidate tree
+        env:
+          EXPECTED_TREE: ${{ needs.source.outputs.tree }}
+        run: |
+          if test -f .delivery/stage.patch; then
+            git apply --check .delivery/stage.patch
+            git apply .delivery/stage.patch
+            git rm .delivery/stage.patch
+            git add -A
+          fi
+          test "$(git write-tree)" = "$EXPECTED_TREE"
+          git diff --cached --check
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install CPU test dependencies
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf]' optuna pyarrow
+      - name: Permanent regression and current Mission gates
+        run: |
+          if test -f scripts/check_mission_gate.py; then
+            python scripts/check_mission_gate.py --junit mission-junit.xml
+          else
+            python -m pytest -q tests/test_focused_data_research.py tests/test_focused_streamlit_page.py --junitxml=mission-junit.xml
+            python -m ruff check src/finance_forecast_agent/focused_data.py src/finance_forecast_agent/focused_protocol.py src/finance_forecast_agent/focused_research.py apps/pages/8_Focused_Research.py
+          fi
+          python -m compileall -q src/finance_forecast_agent apps scripts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mission-tests-py${{ matrix.python-version }}-${{ github.sha }}
+          path: mission-junit.xml
+          retention-days: 14
+  publish-tested-stage:
+    needs: [source, focused]
+    if: github.event_name == 'push' && needs.source.outputs.staged == 'true' && startsWith(github.ref, 'refs/heads/feat/mission-pr')
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish only the exact tested tree to this review branch
+        env:
+          EXPECTED_TREE: ${{ needs.source.outputs.tree }}
+        run: |
+          git apply --check .delivery/stage.patch
+          git apply .delivery/stage.patch
+          git rm .delivery/stage.patch
+          git add -A
+          test "$(git write-tree)" = "$EXPECTED_TREE"
+          git diff --cached --check
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Apply Mission stage after Python 3.11 and 3.13 gates passed'
+          git push origin HEAD:"${GITHUB_REF#refs/heads/}"
+          echo "Published commit: $(git rev-parse HEAD)" >> "$GITHUB_STEP_SUMMARY"

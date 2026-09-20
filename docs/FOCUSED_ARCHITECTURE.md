@@ -226,3 +226,7 @@ RD-Agent: separate research proposal, implementation/execution and feedback; res
 DeepSeek Harness: stable tool interfaces, provider/consumer separation, approval/policy gates and observable execution.
 
 We borrow principles, not whole runtimes. This repository remains the authority on financial time semantics, reproducibility and evidence quality.
+
+## 13. Accepted PR-series refinement (2026-09-20)
+
+See ADR-MISSION-003. Add row-level reproducibility and exposure records before adaptive research; split execution status from scientific outcome. Research trees are read-only projections of real parent/config differences, not causal proof. BYO adds data/model/execution contracts to the existing adapter path; no arbitrary code service. Confirmation and refit keep their exact evaluated object and evidence scope. Assistant-authored responses and simulated data are permitted only with explicit provenance.

@@ -336,3 +336,7 @@ P1 验收重点：
 - 研究资产的可追踪性和可回滚性。
 
 通过评估后再修改代码；只有发生用户确认的方向调整时，才修改总体路线。
+
+## 2026-09-20: accepted delivery addendum (ADR-MISSION-003)
+
+The approved sequence is now V2-A (PR-1/2) -> V2-B (PR-3/4) -> V2.1 (PR-5) -> V2.2 controlled BYO pilot infrastructure (PR-6) -> V3 Shadow. Research-value benchmarking and early user contact are separate gates; neither is inferred from synthetic fixtures. See `ADR_MISSION_RESEARCH_003.md` and `MISSION_PR_SERIES_20260920.md` for actual implementation and remaining acceptance. Historical scientific gates are unchanged.
