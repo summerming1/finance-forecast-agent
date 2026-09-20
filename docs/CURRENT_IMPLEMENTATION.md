@@ -1,6 +1,6 @@
 # 当前版本功能与技术实现说明
 
-## 当前权威实现：Mission Research V2-A / PR-1 Evidence Foundation
+## 当前权威实现：Mission Research V2-A complete (PR-1 + PR-2)
 
 当前工作分支：`feat/mission-research-v2`。
 
@@ -323,3 +323,17 @@ python -m streamlit run apps/streamlit_app.py
 4. 对 28 个 candidate 逐篇执行或阻断，聚类消减 58 个 blocker。
 5. 建立 Benchmark Registry、配对统计、多 seed/市场状态，并接入异步任务、MLflow/DVC lineage 和全局 Memory Scheduler。
 6. 达到至少 20 篇、4 类实验、3 个数据域和 false-strict=0 的门禁后，再进入 P2 搜索效率。
+
+
+### PR-2 当前能力
+
+- 薄 Mission 只保存用户研究问题、类型和 Task/Campaign 引用，不复制预算、数据或运行状态；
+- 当前只接受 SPY 日频 next-session return 的 model_improvement Mission；QQQ/intraday/trading/portfolio 等明确拒绝；
+- Streamlit 入口升级为 Research Mission，工程路径与 fixture/provider 设置移入 Advanced settings；
+- Workspace 直接投影 PR-1 的实际 Campaign、config diff、Feedback、evidence 和状态，不建立第二套研究状态；
+- Mission 与 Campaign 是多对一引用关系，同一 Mission 可追加 Campaign；
+- PR-2 累计 focused/Mission 自动测试 30 项通过，并单独运行真实冻结 SPY deterministic smoke。
+
+### 当前下一里程碑
+
+**PR-3 / V2-B Adaptive Research + Agent Value Benchmark**：让 StructuredFeedback 和少量已审核 Evidence 真正参与下一轮研究决策，并在同一冻结合同下比较 Random / TPE-like / One-shot LLM / Adaptive Agent。PR-3 不包含后台恢复；恢复和 ResearchPackage 属于 PR-4。
