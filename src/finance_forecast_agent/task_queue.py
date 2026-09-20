@@ -234,6 +234,13 @@ class LocalTaskQueue:
     def _pid_alive(pid: int | None) -> bool:
         if not pid:
             return False
+        if os.name != "nt":
+            stat = Path(f"/proc/{int(pid)}/stat")
+            try:
+                if stat.exists() and stat.read_text(encoding="utf-8").split()[2] == "Z":
+                    return False
+            except (OSError, IndexError):
+                pass
         try:
             os.kill(int(pid), 0)
         except OSError:
