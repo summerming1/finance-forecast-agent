@@ -44,3 +44,32 @@ PR-2 converts the supported SPY research flow into a thin Mission product entry 
 ## PR-3 — Adaptive Research + Agent Value Benchmark
 
 Implemented feedback/evidence-grounded adaptive actions, evidence visibility/type gates, and a fair four-arm internal benchmark. Real frozen SPY internal comparison did not favor the adaptive arm in the initial two-candidate budget. One-shot LLM is an assistant-authored fixture; live-provider quality remains unverified. Next: PR-4 persistent execution and ResearchPackage.
+
+
+## PR-1 through PR-6 final engineering acceptance
+
+Date: 2026-09-20.
+
+The approved gated implementation has reached V2.2 engineering-pilot scope. PR-1 evidence, PR-2 Mission workspace, PR-3 adaptive/evidence benchmark, PR-4 persistence/ResearchPackage, PR-5 Memory/confirmation/ModelBundle, and PR-6 controlled BYO are implemented on `feat/mission-research-v2`.
+
+Final cumulative focused gate:
+- Python 3.11: 62 passed;
+- Python 3.13: 62 passed;
+- Ruff and compileall passed;
+- assistant-authored Replay fixture path passed and is explicitly not a live-provider claim;
+- real worker process interruption/recovery passed.
+
+Frozen real-SPY final smoke:
+```text
+4002 rows
+2010-02-03 -> 2025-12-30
+20 fits
+best baseline: baseline_ridge
+best candidate: baseline_ridge
+research outcome: no_improvement
+confirmation: not_run_historical_data_exposed
+ResearchPackage export: passed
+ModelBundle refit/unlabeled prediction: passed
+```
+
+This closes engineering PR-1–PR-6 only. It does not close live-LLM quality, independent confirmation, prospective/shadow evidence, real-customer BYO, Agent-superiority, commercial validation, or the historical native scientific breadth program.

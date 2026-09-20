@@ -28,19 +28,21 @@ Start with these documents:
 - `docs/CODEX_FOCUSED_HANDOFF.md` — implementation sequence for later Codex sessions.
 - `docs/P1_FOCUS_F0_F1.md` — current focused version history, V1.1 fixes and test evidence.
 
-## Focused V1.1 at a glance
+## Focused Mission V2.2 at a glance
 
 ```text
-real Yahoo SPY adjusted-close data
- -> XNYS/session + time/data contract checks
- -> frozen non-overlapping development folds
- -> Ridge/RF/GBDT baselines
- -> deterministic/replay/live suggestion interface
+supported SPY Research Mission
+ -> frozen data/time/evaluation/capability/budget contract
+ -> naive + Ridge/RF/GBDT baselines
+ -> reviewed evidence + compatible Memory weak prior
+ -> deterministic/replay/live Advisor interface
  -> allow-listed hypothesis compilation
- -> actual estimator fit/predict
- -> development-only MAE/RMSE/directional diagnostics
- -> next round / budget / duplicate / stop
- -> completed_no_improvement is a valid result
+ -> persistent attempts / recovery
+ -> actual fit/predict + PredictionArtifact + Manifest
+ -> deterministic Feedback -> adaptive next action / stop
+ -> ResearchPackage
+ -> explicit refit ModelBundle
+ -> optional controlled same-task CSV/Parquet + reviewed built-in Adapter
 ```
 
 Current historical SPY data is development-only and already exposed. The focused path is forecast-only and does not claim tradable PnL.

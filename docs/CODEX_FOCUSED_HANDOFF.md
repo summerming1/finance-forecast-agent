@@ -1,99 +1,84 @@
 # Codex development handoff — Mission Research line
 
-> Status: APPROVED under ADR-FOCUS-001, ADR-MISSION-002 and ADR-MISSION-PRODUCT-003.
+> Status: PR-1 through PR-6 engineering implementation is complete on the authoritative branch. Do not start V3 automatically.
 
-## 1. Start every Codex session with a read-only audit
+## 1. Authoritative source
 
-Read AGENTS.md and the mandatory documents listed there, then inspect branch/HEAD/status. Do not stash/reset user work automatically and do not infer implementation from roadmap names.
+Repository: `summerming1/finance-forecast-agent`  
+Branch: `feat/mission-research-v2`
 
-Repository: `summerming1/finance-forecast-agent`
-Authoritative work branch: `feat/mission-research-v2`
+Start every session with:
+```bash
+git status --short
+git fetch origin
+git branch --show-current
+git rev-parse HEAD
+git log -5 --oneline
+```
 
-## 2. Current verified milestone
+Read in order: `AGENTS.md`, `PROJECT_ROADMAP.md`, `CURRENT_IMPLEMENTATION.md`, accepted ADRs, `FOCUSED_ARCHITECTURE.md`, `FOCUSED_ACCEPTANCE_TEST_PLAN.md`, this handoff, and `V2_MISSION_RESEARCH.md`.
 
-V1.1 remains a permanent regression gate.
-**PR-1 / V2-A Evidence Foundation is implemented and targeted acceptance passed.**
-The next implementation milestone is **PR-2 / V2-A Mission + Research Workspace**.
+Never reset/stash/force-push user work automatically.
 
-PR-1 delivered:
-- execution status / research outcome separation;
-- row-level PredictionArtifact and recomputable metrics;
-- train-only zero/mean/median naive baselines plus existing Ridge/RF/GBDT;
-- actual ExecutionManifest;
-- real parent→child config diff;
-- deterministic StructuredFeedback;
-- Exposure Ledger v0;
-- batch-plan freeze and fact-time focused events.
-
-Do not reimplement PR-1 unless a regression requires it.
-
-## 3. Approved gated sequence
+## 2. Completed focused sequence
 
 ```text
 PR-1 / V2-A  Evidence Foundation                         COMPLETE
-PR-2 / V2-A  Mission + Research Workspace                NEXT
-PR-3 / V2-B  Adaptive Research + Agent Value Benchmark   PLANNED
-PR-4 / V2-B  Persistent Execution + ResearchPackage      PLANNED
-PR-5 / V2.1  Memory + Confirmation + ModelBundle         PLANNED
-PR-6 / V2.2  Controlled BYO Data/Model Pilot             PLANNED
-V3           Shadow Forecasting                           LATER
+PR-2 / V2-A  Mission + Research Workspace                COMPLETE
+PR-3 / V2-B  Adaptive Research + Agent Value Benchmark   COMPLETE
+PR-4 / V2-B  Persistent Execution + ResearchPackage      COMPLETE
+PR-5 / V2.1  Memory + Confirmation + ModelBundle         COMPLETE
+PR-6 / V2.2  Controlled BYO Data/Model Pilot             COMPLETE
+V3           Shadow Forecasting                           NOT STARTED
 ```
 
-Do not start a later PR until the previous PR's new tests and all affected cumulative regressions pass.
+Keep one Controller, one LocalTaskQueue, one numeric evaluator and one ExperimentMemory semantic store.
 
-## 4. PR-2 scope
+## 3. Latest cumulative evidence
 
-Mission stays thin: user question/type and Task/Campaign references only. Do not duplicate label/data/budget/runtime state.
-Build the product flow around Create → Overview → Research history/tree → Candidate detail. Research Tree is a projection of recorded facts, not a graph runtime. Low-level paths/fixture settings belong in advanced settings. Unsupported natural-language tasks must be rejected rather than silently mapped to SPY.
+Focused Mission validation:
+- Python 3.11: 62 passed;
+- Python 3.13: 62 passed;
+- Ruff passed;
+- compileall passed;
+- includes real process interruption/recovery and assistant-authored replay regression.
 
-## 5. Later boundaries
+Final real-SPY acceptance:
+- audited frozen SPY artifact downloaded by digest;
+- 4002 supervised rows, 2010-02-03 → 2025-12-30;
+- current adaptive run: 20 fits;
+- best baseline/candidate: baseline_ridge;
+- outcome: no_improvement;
+- confirmation remains not_run_historical_data_exposed;
+- ResearchPackage exported;
+- trusted internal ModelBundle refit and unlabeled prediction smoke passed.
 
-PR-3 must prove feedback/evidence can affect research decisions and implement a matched-budget Random/TPE/One-shot/Adaptive Agent benchmark. Fixture success is not Agent value proof.
+## 4. What still needs independent testing
 
-PR-4 reuses LocalTaskQueue for persistent attempts/idempotency/recovery/cancel and completes ResearchPackage. Do not create another queue/controller.
+Do not implement new product scope while doing these checks.
 
-PR-5 reuses ExperimentMemory as a compatibility-filtered weak prior, adds confirmation isolation and explicit refit ModelBundle.
+1. **Live LLM**: real provider call → fixture recording → network-disabled replay; inspect prompt/evidence IDs and ensure invalid proposal fails closed.
+2. **Real external user BYO**: one non-core CSV/Parquet dataset + one reviewed supported model from a real user; measure integration hours and whether a second Mission is requested.
+3. **Independent/forward evidence**: obtain genuinely eligible unexposed data or start prospective prediction recording; do not recycle exposed SPY history.
+4. **Value Benchmark expansion**: multiple frozen periods/seeds with equal search/budget contracts; compare Random, stronger TPE/Bayesian baseline, one-shot LLM and Adaptive Agent; report distributions and human-operation cost.
+5. **Historical/native suite**: only when required, prepare external PDFs/DVC/native source/env assets and run the legacy scientific suite separately. Do not equate focused CI with it.
+6. **Manual browser acceptance**: run Streamlit in a real browser and exercise supported/unsupported Mission creation, campaign history, refresh/recovery, and artifact inspection.
+7. **Platform matrix**: focused CI covers Linux Python 3.11/3.13; Windows/macOS process semantics remain separate validation targets.
 
-PR-6 accepts only controlled same-task external data and reviewed local adapters. No arbitrary Python/notebook/pickle/Docker execution. Controlled BYO precedes full Shadow Forecasting.
+## 5. Current safety/claim boundaries
 
-## 6. Testing and claims
+- forecast_only; no automatic trading or profitability claim;
+- exposed SPY history is development evidence, never blind final;
+- simulation_only BYO and offline_assistant fixture are engineering evidence only;
+- ModelBundle is platform-generated/trusted; arbitrary uploaded pickle/joblib/python/notebook/Docker remains blocked;
+- no claim that Adaptive Agent currently beats simpler search;
+- no claim of customer demand/PMF.
 
-Use `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md` as the acceptance contract. Keep focused/unit, integration/recovery, UI, live LLM, external/native and commercial-value evidence separate.
+## 6. Next product decision
 
-Synthetic data/users and assistant-authored fixtures are engineering evidence only and must be labeled. Never use focused CI to claim historical native training, live scientific quality, independent confirmation, Agent superiority, or customer demand.
+After the independent tests above, review results before approving V3. Likely next choices are:
+- Shadow Forecasting if prospective evidence is the main bottleneck;
+- deeper Agent/diagnostic work if Value Benchmark remains weak;
+- real BYO onboarding/productization if external-user friction is the main bottleneck.
 
-## 7. Documentation rule
-
-`CURRENT_IMPLEMENTATION.md` describes only verified current behavior. Roadmap/ADR describe approved future direction. Update the V2 release record for each completed PR, preserve historical acceptance records, and report exact commands/results plus untested boundaries.
-
-
-### PR-2 completed
-
-Thin Mission and Research Workspace are implemented on the existing focused Controller. Unsupported natural-language scopes fail closed; workspace history is a projection of actual PR-1 artifacts/config diffs/feedback, not a second state engine. PR-2 cumulative focused/Mission tests and real-SPY smoke passed before submission.
-
-### Next: PR-3 only
-
-Implement feedback/evidence-grounded research actions and the fair four-arm Research Agent Value Benchmark. Do not start PR-4 persistence/recovery until PR-3 tests are green and committed.
-
-
-### PR-3 completed
-
-Feedback/evidence-grounded adaptive research and the four-arm internal value benchmark are implemented. Do not claim agent superiority: the first real-SPY two-candidate comparison did not favor the adaptive arm. The next milestone is PR-4 persistence/recovery + ResearchPackage; reuse LocalTaskQueue.
-
-
-### PR-4 completed
-
-Focused execution now reuses LocalTaskQueue idempotency/attempt/recovery semantics and can reuse completed candidate artifacts when the same campaign resumes. ResearchPackage export works for complete and partial/interrupted campaigns. Remote 3.11/3.13 CI passed the real process-kill recovery gate.
-
-### Next: PR-5 only
-
-Implement focused ExperimentMemory compatibility, confirmation isolation/eligibility, explicit refit and loadable ModelBundle. Do not begin BYO until PR-5 gates are green and committed.
-
-
-### PR-5 completed
-
-Focused research now writes compatibility-filtered records into the existing ExperimentMemoryStore, enforces semantic exposure/confirmation eligibility, freezes candidate selection before isolated confirmation, and builds a trusted internal ModelBundle via explicit refit. Cumulative focused tests reached 45 and remote Python 3.11/3.13 CI passed.
-
-### Next: PR-6 only
-
-Implement same-task CSV/Parquet BYO contracts and a reviewed local adapter registry without arbitrary code execution. Use simulation_only clients for engineering tests when no real customer data/model is available. Stop after PR-6 and final acceptance; do not begin V3 Shadow Forecasting.
+Do not expand assets, frequencies, arbitrary mission types, or execution privileges merely because PR-1–PR-6 are complete.

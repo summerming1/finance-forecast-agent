@@ -150,3 +150,28 @@ Record:
 - rollback/compatibility note.
 
 Do not claim that focused CI reran hour-scale historical native reproductions unless it actually did.
+
+
+## 8. PR-1–PR-6 final engineering acceptance evidence
+
+Final branch evidence on 2026-09-20:
+
+- cumulative focused tests: 62 passed on Python 3.11 and 62 passed on Python 3.13;
+- targeted Ruff: passed;
+- compileall: passed;
+- PR-4 real process-kill recovery probe: passed after waiting for the actual child command to start, preserving the real interruption assertion;
+- assistant-authored Replay fixture: passed; fixture metadata remains `offline_assistant`;
+- PR-5 ModelBundle fresh-process/unlabeled-input test: passed;
+- PR-6 CSV + Parquet, temporal/label/feature contracts, arbitrary-code rejection, reviewed Adapter and second simulated-client tests: passed;
+- frozen audited SPY final smoke: 4002 rows, 2010-02-03–2025-12-30, 20 fits, completed/no_improvement, exposed-history confirmation not run;
+- final ResearchPackage export and real-data ModelBundle prediction smoke: passed.
+
+Still separate/pending gates:
+- real live-provider research-quality record→replay;
+- independent confirmation on genuinely eligible data;
+- prospective Shadow evidence;
+- real external-customer BYO/paid pilot;
+- broader multi-period/multi-seed Value Benchmark showing whether Adaptive Agent has incremental value;
+- legacy external/native scientific suite and real-browser/platform-matrix acceptance where applicable.
+
+Passing this section means V2.2 engineering-pilot acceptance, not financial performance, Agent superiority, PMF, or V3 completion.

@@ -1,86 +1,131 @@
 # 当前版本功能与技术实现说明
 
-## 当前权威实现：Mission Research V2.1 complete through PR-5
+## 当前权威实现：Mission Research V2.2 engineering pilot complete through PR-6
 
 当前工作分支：`feat/mission-research-v2`。
 
-PR-1 已在 V1.1 受控 SPY 研究闭环上实现可复算、可审计的证据底座；PR-2 Mission / Research Workspace 尚未实现。因此 V2-A 只完成了一半，不能把 V2-B、V2.1、V2.2 或 V3 计划当成当前功能。
+当前 focused 产品主线已经完成本轮批准的 **PR-1 → PR-6 工程实现与累计验收**。近期任务边界仍固定为 **SPY / 日频 / 下一交易日 adjusted-close return 回归 / MAE 主指标 / forecast-only**；历史 SPY 数据仍是已暴露 development evidence，不因版本升级获得独立确认资格。
 
 ### 当前 focused 主流程
 
 ```text
-Audited Yahoo SPY adjusted-close data
-→ time/session/data contract + frozen split/budget preflight
-→ train-only naive baselines + Ridge/RF/GBDT baselines
-→ deterministic/replay/live suggestion interface
-→ allow-listed Hypothesis/Candidate compilation
-→ actual estimator fit/predict
-→ row-level PredictionArtifact
-→ actual ExecutionManifest
-→ deterministic metrics + StructuredFeedback
-→ real parent→child config diff
-→ next round / budget / duplicate / stop
-→ campaign + exposure + frozen batch plans + fact-time events
+Supported Mission
+→ frozen Task / data / evaluation / capability / budget contract
+→ train-only naive baselines + Ridge/RF/GBDT
+→ reviewed evidence + compatible Memory weak prior
+→ deterministic / replay / live Advisor interface
+→ allow-listed hypothesis / candidate compilation
+→ persistent LocalTaskQueue attempt / recovery path
+→ actual fit/predict
+→ row-level PredictionArtifact + ExecutionManifest
+→ deterministic StructuredFeedback + real config diff
+→ adaptive next action / stop
+→ ResearchPackage
+→ explicit selected-candidate refit → trusted internal ModelBundle
+→ optional controlled same-task CSV/Parquet + reviewed built-in Adapter
 ```
 
-### PR-1 已实现
+### PR-1 / V2-A — Evidence Foundation
 
-- `execution_status` 与 `research_outcome` 成为独立权威维度；所有候选执行失败时为 `failed/partial + inconclusive`，不再冒充科学 `no_improvement`。
-- 每个 baseline/candidate 写 row-level PredictionArtifact；只读取预测记录即可重新计算 MAE、RMSE、方向准确率和 fold 指标。
-- 新增 zero、train-fold mean、train-fold median 朴素基线；mean/median 不读取测试标签。
-- ExecutionManifest 保存 requested/effective estimator params、requested/actual features、seed、split、数据/任务/evaluation identity 和 fold row contract。
-- 配置差异从实际 parent / child CandidateConfig 计算，区分 single-component、joint、no-change。
-- StructuredFeedback 由确定性代码生成，包含 relative-to-baseline/parent、fold deltas、执行一致性、资源与证据边界。
-- Exposure Ledger v0 从当前阶段写入语义数据 identity、时间范围、暴露类别、来源与用途；移动相同内容不会洗成未暴露数据。
-- 每轮建议在候选执行前冻结为 batch plan；关键 campaign/baseline/batch/attempt/feedback/round 事件在发生时写入。
+已实现：
+- execution status 与 research outcome 分离；工程失败不会冒充科学无改善；
+- row-level PredictionArtifact 可独立复算 MAE/RMSE/方向准确率/fold 指标；
+- zero / train-mean / train-median + Ridge/RF/GBDT 基线；
+- ExecutionManifest 记录实际 params/features/split/row contract；
+- parent→child 真实 config diff、StructuredFeedback、Exposure Ledger v0、batch freeze 和事实事件。
 
-### PR-1 验收
+### PR-2 / V2-A — Mission + Research Workspace
 
-本次定向累计回归：
-- 原 V1.1 focused/AppTest 19 项保留；
-- PR-1 新增 evidence 测试 7 项；
-- 合计 `26 passed`；
-- 修改范围 Ruff 与 compileall 通过；
-- 全库可收集 `198 tests`，但本次没有执行全部 198 项。
+已实现：
+- 薄 Mission 只保存用户问题/类型和 Task/Campaign 引用，不复制运行状态；
+- 当前仅接受支持范围内的 SPY model-improvement Mission，QQQ/intraday/trading/portfolio 等明确拒绝；
+- Streamlit 入口升级为 Research Mission；Overview、研究历史/树投影、Candidate detail 读取真实 PR-1 artifacts/feedback/config diff；
+- 没有新增第二套 Controller/Queue/Evaluator。
 
-冻结真实 SPY smoke：
+### PR-3 / V2-B — Adaptive Research + Agent Value Benchmark
+
+已实现：
+- StructuredFeedback、reviewed evidence、current-experiment evidence 和 compatible Memory 可进入 Advisor 上下文；
+- evidence refs 必须存在且对 campaign 可见；
+- action type 支持 improve/diagnose/ablate/simplify/stop/request_review；
+- Random / TPE-like / One-shot fixture / Adaptive Agent 四臂共享同一 evaluator 与预算口径的内部 benchmark；
+- 第一轮真实 SPY 内部 benchmark **没有证明 Adaptive Agent 优于简单方法**，因此不作 superiority claim。
+
+### PR-4 / V2-B — Persistent Execution + ResearchPackage
+
+已实现：
+- 复用 LocalTaskQueue；增加 idempotency key、attempt、并发限制、stale worker recovery/resume、cancel 状态；
+- 相同 campaign 恢复时可复用已完成 Candidate 的 PredictionArtifact/Manifest，不重复 refit；
+- complete / partial / interrupted campaign 均可导出 ResearchPackage；
+- CI 中真实 kill 进程组 → recover → attempt=2 → completed 的恢复测试通过。
+
+### PR-5 / V2.1 — Memory + Confirmation + ModelBundle
+
+已实现：
+- focused 结果写入既有 ExperimentMemoryStore，并按 tenant/task/data/protocol 兼容过滤；
+- engineering failure 不进入 scientific-negative prior；
+- compatible Memory 作为 weak prior 进入 Advisor 上下文；
+- Exposure 语义 identity 驱动 confirmation eligibility；已暴露或未知暴露状态不能独立确认；
+- Candidate selection 在 confirmation 前冻结，Advisor 看不到 confirmation labels；
+- 显式 refit 后生成 trusted internal ModelBundle；fresh process / unlabeled input 推理测试通过。
+
+### PR-6 / V2.2 — Controlled BYO Pilot
+
+已实现：
+- 受控 CSV / Parquet 同任务输入合同；
+- 必须声明时间、label semantics、feature availability、provenance/exposure；
+- 列映射不能改变任务/标签语义，重复/乱序时间、缺 decision time、未来 feature、错误 label 均 fail closed；
+- 拒绝任意 .py/.pkl/.joblib/notebook/Docker 上传执行；
+- ReviewedAdapterRegistry 只接受 approved + platform-built-in allow-list Adapter；
+- simulated_client_A / simulated_client_B 工程测试表明第二个同类客户仅更换合同/Adapter，不修改 Controller/Evaluator；
+- simulation_only 不构成真实客户或商业验证。
+
+### 最终累计工程验收（2026-09-20）
+
+GitHub Actions `Focused Mission validation`：
+- Python 3.11：**62 passed**；
+- Python 3.13：**62 passed**；
+- targeted Ruff：passed；
+- compileall：passed；
+- 覆盖 PR-1～PR-6 + assistant-authored Replay fixture；
+- Replay fixture 明确是 `offline_assistant`，不是 live provider。
+
+GitHub Actions `Focused final acceptance` 使用冻结、已审计 Yahoo SPY artifact：
 ```text
 rows: 4002
-2010-02-03 -> 2025-12-30
-fits: 28 / 40
-best baseline: Ridge
-baseline MAE: 0.0050337535958270355
-best challenger MAE: 0.005032396791571372
+period: 2010-02-03 -> 2025-12-30
+fit_calls: 20
+best_baseline: baseline_ridge
+best_candidate: baseline_ridge
 execution_status: completed
 research_outcome: no_improvement
-terminal_status: completed_no_improvement
-confirmation: not_run_historical_data_exposed
+confirmation_status: not_run_historical_data_exposed
+ResearchPackage: exported
+ModelBundle: refit + 8 unlabeled predictions passed
 ```
 
-候选故障注入探针：
-```text
-candidate failures: 2
-fit_calls: 20
-execution_status: failed
-research_outcome: inconclusive
-terminal_status: failed_inconclusive
-acceptance_passed: true
-```
+当前 20 fits 与 V1.1 历史记录的 28 fits 不冲突：PR-3 的 adaptive policy 在当前冻结数据上首批之后没有生成新的可执行非重复假设，因此合法提前停止。
 
-### 当前仍未实现 / 未验证
+### 当前仍未验证 / 不得宣称
 
-- PR-2：Mission 用户入口、Research Workspace / Tree / Candidate detail。
-- PR-3：Evidence-grounded adaptive research 与 Random/TPE/One-shot/Adaptive Value Benchmark。
-- PR-4：LocalTaskQueue focused 持久 attempts、幂等、恢复、取消与完整 ResearchPackage。
-- PR-5：focused ExperimentMemory、独立 confirmation 隔离、显式 refit、ModelBundle。
-- PR-6：受控外部 CSV/Parquet 与 reviewed local adapter。
-- V3：Shadow Forecasting。
-- 本 PR 未重新验证真实 live-provider 科研质量或 live→replay 成功路径。
-- 本 PR 未运行独立 confirmation、前瞻评价或历史小时级 native strict 全量训练。
+- **真实 live-provider 科研质量**：本批没有重新跑真实 provider → record → offline replay 完整成功路径；
+- **真实 independent confirmation**：没有新的可信未暴露金融数据；现有历史 SPY 明确不可用于 blind confirmation；
+- **Shadow / forward evidence**：V3 尚未开始；
+- **真实 BYO 客户**：PR-6 使用 simulation_only 客户/数据/Adapter，不等于外部用户接入、付费或留存；
+- **Agent superiority**：内部 Value Benchmark 尚未证明 Adaptive Agent 相比 Random/TPE-like/One-shot 有优势；
+- **完整历史/native 全量回归**：本批 focused CI 不等于重新执行全部历史论文原生训练、外部源码/数据资产和小时级实验；
+- **任意客户代码执行**：明确不支持，也不是近期目标。
 
-### 下一里程碑
+### 下一步
 
-PR-2 / V2-A：在不复制 Task/Campaign/Controller/Queue/Evaluator 状态的前提下，实现薄 Mission 创建、Research Overview、Research history/tree 投影和 Candidate details，使非项目作者能够完成当前唯一受支持的 SPY research Mission。
+**不要自动开始 V3 Shadow Forecasting。** 先做一次本批独立 review，并优先补：
+1. 真实 live LLM record → replay；
+2. 一个真实设计合作用户的同任务 BYO 数据/模型试点；
+3. 合格未暴露数据或前瞻方式的 confirmation 方案；
+4. 更充分的多 seed / 多冻结时段 Agent Value Benchmark。
+
+完成上述验证后，再决定 V3 Shadow Forecasting 与更开放 Mission Type 的优先级。
+
 
 ## 历史广度平台基线
 
