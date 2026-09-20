@@ -1,6 +1,20 @@
 # Focused / Mission Research Architecture
 
-> Status: APPROVED. ADR-FOCUS-001 establishes the SPY focused line; ADR-MISSION-002 consolidates the product architecture and literature role. Actual implementation status is always defined by CURRENT_IMPLEMENTATION.md.
+> Status: APPROVED. ADR-FOCUS-001 establishes the SPY focused line; ADR-MISSION-002 consolidates the Mission architecture/literature role; ADR-MISSION-PRODUCT-003 adds gated PR delivery, Agent value validation and controlled BYO-before-Shadow ordering. Actual implementation status is always defined by CURRENT_IMPLEMENTATION.md.
+
+## 0. Approved gated delivery sequence
+
+```text
+PR-1 / V2-A  Evidence Foundation
+PR-2 / V2-A  Mission + Research Workspace
+PR-3 / V2-B  Adaptive Research + Agent Value Benchmark
+PR-4 / V2-B  Persistent Execution + ResearchPackage
+PR-5 / V2.1  Memory + Confirmation + ModelBundle
+PR-6 / V2.2  Controlled BYO Data/Model Pilot
+V3           Shadow Forecasting
+```
+
+Research Tree is a read-only/product projection of recorded parent/hypothesis/experiment/config-diff/result facts, not a second graph execution engine. Exposure recording starts in V2-A; confirmation isolation remains V2.1. Execution status and research outcome are separate dimensions so engineering failure cannot become a scientific negative result.
 
 ## 1. Product definition
 

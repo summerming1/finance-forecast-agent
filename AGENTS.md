@@ -10,7 +10,7 @@ Read, in this order:
 2. `docs/PROJECT_ROADMAP.md`
 3. `docs/CURRENT_IMPLEMENTATION.md`
 4. the latest one or two version notes, currently `docs/P1_FOCUS_F0_F1.md`
-5. accepted ADRs relevant to the work, especially `docs/ADR_FOCUS_001.md` and `docs/ADR_MISSION_RESEARCH_002.md`
+5. accepted ADRs relevant to the work, especially `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, and the latest supplement `docs/ADR_MISSION_PRODUCT_003.md`
 6. `docs/FOCUSED_ARCHITECTURE.md`
 7. `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`
 8. `docs/CODEX_FOCUSED_HANDOFF.md`
@@ -117,3 +117,22 @@ Keep test claims precise:
 - external/native: original repositories/data/environments, often expensive.
 
 A passing focused test suite does not mean historical native paper training was rerun.
+
+
+## 10. Gated Mission product delivery
+
+The authoritative Mission work branch is `feat/mission-research-v2`. The approved product delivery sequence is cumulative and gated:
+
+```text
+PR-1  V2-A Evidence Foundation
+PR-2  V2-A Mission + Research Workspace
+PR-3  V2-B Adaptive Research + Agent Value Benchmark
+PR-4  V2-B Persistent Execution + ResearchPackage
+PR-5  V2.1 Memory + Confirmation + ModelBundle
+PR-6  V2.2 Controlled BYO Data/Model Pilot
+V3    Shadow Forecasting
+```
+
+Do not start the next increment until the previous increment's relevant new tests and all affected prior regressions pass. Synthetic users/data and assistant-authored LLM fixtures are allowed for engineering tests only and must be marked `simulation_only` / `assistant_authored_fixture`; they are not customer, live-provider, confirmation, or financial-performance evidence.
+
+Controlled BYO now precedes the complete Shadow product. It must not become arbitrary uploaded Python/notebook/pickle/Docker execution. Agent Value Benchmark is a required PR-3 product gate, not a claim that the Agent is already superior.

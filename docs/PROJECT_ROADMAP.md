@@ -1,5 +1,29 @@
 # Finance Forecast Agent 项目迭代路线图
 
+## 2026-09-20 ADR-MISSION-PRODUCT-003：产品化门禁与最新实施顺序
+
+在 ADR-MISSION-002 的 Mission-driven research 方向上继续收敛，不改变 SPY / 日频 / next-session return / forecast-only 主任务。最新产品顺序为：
+
+```text
+V1.1   = 已完成：focused reliability
+V2-A   = PR-1 Evidence Foundation（已实现） + PR-2 Mission / Research Workspace（下一步）
+V2-B   = PR-3 Adaptive Research + Agent Value Benchmark + PR-4 Persistent Execution / ResearchPackage
+V2.1   = PR-5 ExperimentMemory + Exposure/Confirmation + explicit refit ModelBundle
+V2.2   = PR-6 Controlled BYO Data/Model Pilot
+V3     = Shadow Forecasting
+V4+    = Research Question Mode / Continuous Research，按真实用户需求扩展
+```
+
+最新调整：
+- Agent Value Benchmark 成为 PR-3 必须通过的产品价值门禁，比较 Random、TPE/Bayesian、One-shot LLM 与 Adaptive Agent；不预设 Agent 必胜。
+- Exposure 从 V2-A 开始记录；完整独立确认资格和隔离仍在 PR-5。
+- 最小受控 BYO 提前到完整 Shadow 前，用于尽早验证外部用户工作流；仍禁止任意用户代码托管和未审核可执行模型。
+- 工程失败、科学负结果与证据不足分开；`no_improvement` 只用于存在有效研究证据的负结果。
+- 当前 PR-1 已建立逐行预测、执行 Manifest、朴素基线、StructuredFeedback、真实配置 diff、Exposure v0 和 batch/event 事实链；PR-2 及以后不能写成已实现。
+
+详细增补见 `docs/ADR_MISSION_PRODUCT_003.md`；实际能力始终以 `docs/CURRENT_IMPLEMENTATION.md` 为准。
+
+
 ## 2026-09-18 ADR-MISSION-002：任务驱动研究产品的实施收敛
 
 用户已批准在 ADR-FOCUS-001 基础上继续收敛：**不改变 SPY / 日频 / 下一交易日收益回归 / forecast-only 主任务，先修 V1.1 可靠性，再把现有 focused loop 产品化为 Mission-driven research。**

@@ -12,11 +12,20 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import Ridge
-from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 from .focused_data import FocusedDatasetSnapshot, FocusedTaskSpec
+from .focused_evidence import (
+    build_execution_manifest,
+    build_exposure_record,
+    build_feedback,
+    build_prediction_artifact,
+    candidate_config_diff,
+    fold_metrics_from_rows,
+    prediction_metrics,
+    prediction_row,
+)
 from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, validate_model_params
 from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
 from .replay_llm import ReplayLLM
@@ -30,6 +39,11 @@ FEATURE_GROUPS: dict[str, list[str]] = {
     "liquidity": ["volume_change_1"],
 }
 ALLOWED_MODELS = {"ridge_regression", "random_forest_regressor", "gradient_boosting_regressor"}
+NAIVE_BASELINES = [
+    ("baseline_zero", "naive_zero", {"strategy": "zero"}, []),
+    ("baseline_mean", "naive_train_mean", {"strategy": "train_mean"}, []),
+    ("baseline_median", "naive_train_median", {"strategy": "train_median"}, []),
+]
 DEFAULT_BASELINES = [
     ("baseline_ridge", "ridge_regression", {"alpha": 1.0}, ["base_lags"]),
     ("baseline_rf", "random_forest_regressor", {"n_estimators": 80, "max_depth": 4, "min_samples_leaf": 5}, ["base_lags"]),
@@ -110,6 +124,7 @@ class CandidateResult:
     execution_status: str
     research_verdict: str
     relative_mae_vs_best_baseline: float
+    prediction_rows: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -123,6 +138,7 @@ class CandidateResult:
             "research_verdict": self.research_verdict,
             "development_evidence_level": self.research_verdict,
             "relative_mae_vs_best_baseline": self.relative_mae_vs_best_baseline,
+            "prediction_row_count": len(self.prediction_rows),
         }
 
 
@@ -238,9 +254,7 @@ def evaluate_candidate(
     splits = active_split_spec.build_splits(len(frame))
     x = frame[features].astype(float).to_numpy()
     y = frame["label"].astype(float).to_numpy()
-    actual_all: list[float] = []
-    pred_all: list[float] = []
-    fold_metrics: list[dict[str, Any]] = []
+    prediction_rows: list[dict[str, Any]] = []
     effective_params: dict[str, Any] = {}
     for fold_id, (train_idx, test_idx) in enumerate(splits):
         model = _make_model(candidate)
@@ -248,21 +262,22 @@ def evaluate_candidate(
         pred = np.asarray(model.predict(x[test_idx]), dtype=float)
         actual = y[test_idx]
         effective_params = _effective_estimator_params(model)
-        fold_metrics.append(
-            {
-                "fold_id": fold_id,
-                "train_count": len(train_idx),
-                "test_count": len(test_idx),
-                "mae": float(mean_absolute_error(actual, pred)),
-                "rmse": float(mean_squared_error(actual, pred) ** 0.5),
-            }
-        )
-        actual_all.extend(float(v) for v in actual)
-        pred_all.extend(float(v) for v in pred)
-    mae = float(mean_absolute_error(actual_all, pred_all))
-    rmse = float(mean_squared_error(actual_all, pred_all) ** 0.5)
-    directional = float(np.mean([(p >= 0) == (a >= 0) for p, a in zip(pred_all, actual_all)]))
-    relative = (best_baseline_mae - mae) / best_baseline_mae if best_baseline_mae > 0 else 0.0
+        for row_index, target, prediction in zip(test_idx, actual, pred):
+            prediction_rows.append(
+                prediction_row(
+                    frame=frame,
+                    row_index=int(row_index),
+                    fold_id=fold_id,
+                    train_count=len(train_idx),
+                    candidate_id=candidate.candidate_id,
+                    candidate_fingerprint=candidate.fingerprint,
+                    y_true=float(target),
+                    y_pred=float(prediction),
+                )
+            )
+    metrics = prediction_metrics(prediction_rows)
+    fold_metrics = fold_metrics_from_rows(prediction_rows)
+    relative = (best_baseline_mae - metrics["mae"]) / best_baseline_mae if best_baseline_mae > 0 else 0.0
     verdict = (
         "development_screen_passed"
         if relative >= min_relative_improvement
@@ -270,14 +285,105 @@ def evaluate_candidate(
     )
     return CandidateResult(
         candidate=candidate,
-        metrics={"mae": mae, "rmse": rmse, "directional_accuracy": directional},
+        metrics=metrics,
         fold_metrics=fold_metrics,
-        prediction_count=len(pred_all),
+        prediction_count=len(prediction_rows),
         actual_features=features,
         estimator_params=effective_params,
         execution_status="success",
         research_verdict=verdict,
         relative_mae_vs_best_baseline=relative,
+        prediction_rows=prediction_rows,
+    )
+
+
+def _evaluate_naive_baseline(
+    frame: pd.DataFrame,
+    candidate: CandidateConfig,
+    *,
+    split_spec: FocusedSplitSpec,
+) -> CandidateResult:
+    splits = split_spec.build_splits(len(frame))
+    y = frame["label"].astype(float).to_numpy()
+    prediction_rows: list[dict[str, Any]] = []
+    strategy = str(candidate.model_params["strategy"])
+    for fold_id, (train_idx, test_idx) in enumerate(splits):
+        if strategy == "zero":
+            predicted = 0.0
+        elif strategy == "train_mean":
+            predicted = float(np.mean(y[train_idx]))
+        elif strategy == "train_median":
+            predicted = float(np.median(y[train_idx]))
+        else:
+            raise ValueError(f"unsupported naive baseline strategy: {strategy}")
+        for row_index in test_idx:
+            prediction_rows.append(
+                prediction_row(
+                    frame=frame,
+                    row_index=int(row_index),
+                    fold_id=fold_id,
+                    train_count=len(train_idx),
+                    candidate_id=candidate.candidate_id,
+                    candidate_fingerprint=candidate.fingerprint,
+                    y_true=float(y[row_index]),
+                    y_pred=predicted,
+                )
+            )
+    metrics = prediction_metrics(prediction_rows)
+    return CandidateResult(
+        candidate=candidate,
+        metrics=metrics,
+        fold_metrics=fold_metrics_from_rows(prediction_rows),
+        prediction_count=len(prediction_rows),
+        actual_features=[],
+        estimator_params={"strategy": strategy},
+        execution_status="success",
+        research_verdict="baseline",
+        relative_mae_vs_best_baseline=0.0,
+        prediction_rows=prediction_rows,
+    )
+
+
+def _evaluate_model_baseline(
+    frame: pd.DataFrame,
+    candidate: CandidateConfig,
+    *,
+    split_spec: FocusedSplitSpec,
+) -> CandidateResult:
+    features = resolve_feature_columns(candidate.feature_groups)
+    x = frame[features].astype(float).to_numpy()
+    y = frame["label"].astype(float).to_numpy()
+    prediction_rows: list[dict[str, Any]] = []
+    effective_params: dict[str, Any] = {}
+    for fold_id, (train_idx, test_idx) in enumerate(split_spec.build_splits(len(frame))):
+        model = _make_model(candidate)
+        model.fit(x[train_idx], y[train_idx])
+        pred = np.asarray(model.predict(x[test_idx]), dtype=float)
+        effective_params = _effective_estimator_params(model)
+        for row_index, target, prediction in zip(test_idx, y[test_idx], pred):
+            prediction_rows.append(
+                prediction_row(
+                    frame=frame,
+                    row_index=int(row_index),
+                    fold_id=fold_id,
+                    train_count=len(train_idx),
+                    candidate_id=candidate.candidate_id,
+                    candidate_fingerprint=candidate.fingerprint,
+                    y_true=float(target),
+                    y_pred=float(prediction),
+                )
+            )
+    return CandidateResult(
+        candidate=candidate,
+        metrics=prediction_metrics(prediction_rows),
+        fold_metrics=fold_metrics_from_rows(prediction_rows),
+        prediction_count=len(prediction_rows),
+        actual_features=features,
+        estimator_params=effective_params,
+        execution_status="success",
+        research_verdict="baseline",
+        relative_mae_vs_best_baseline=0.0,
+        prediction_rows=prediction_rows,
     )
 
 
@@ -294,46 +400,40 @@ def run_baselines(
             "focused fit budget is too small for frozen baselines: "
             f"need {required_fit_calls}, got {budget.max_fit_calls}; no baseline fit started"
         )
-    prelim: list[tuple[CandidateConfig, float, dict[str, float], list[dict[str, Any]], list[str], dict[str, Any], int]] = []
+    prelim: list[CandidateResult] = []
+    for candidate_id, family, params, groups in NAIVE_BASELINES:
+        prelim.append(
+            _evaluate_naive_baseline(
+                frame,
+                CandidateConfig(candidate_id, family, params, groups),
+                split_spec=active_split_spec,
+            )
+        )
     for candidate_id, family, params, groups in DEFAULT_BASELINES:
         candidate = CandidateConfig(candidate_id, family, params, groups)
-        features = resolve_feature_columns(groups)
-        splits = active_split_spec.build_splits(len(frame))
-        x = frame[features].astype(float).to_numpy()
-        y = frame["label"].astype(float).to_numpy()
-        actual_all: list[float] = []
-        pred_all: list[float] = []
-        folds: list[dict[str, Any]] = []
-        effective: dict[str, Any] = {}
-        for fold_id, (train_idx, test_idx) in enumerate(splits):
-            model = _make_model(candidate)
-            model.fit(x[train_idx], y[train_idx])
-            pred = np.asarray(model.predict(x[test_idx]), dtype=float)
-            actual = y[test_idx]
-            effective = _effective_estimator_params(model)
-            folds.append({"fold_id": fold_id, "mae": float(mean_absolute_error(actual, pred)), "rmse": float(mean_squared_error(actual, pred) ** 0.5), "train_count": len(train_idx), "test_count": len(test_idx)})
-            actual_all.extend(float(v) for v in actual)
-            pred_all.extend(float(v) for v in pred)
-        metrics = {
-            "mae": float(mean_absolute_error(actual_all, pred_all)),
-            "rmse": float(mean_squared_error(actual_all, pred_all) ** 0.5),
-            "directional_accuracy": float(np.mean([(p >= 0) == (a >= 0) for p, a in zip(pred_all, actual_all)])),
-        }
-        prelim.append((candidate, metrics["mae"], metrics, folds, features, effective, len(pred_all)))
-    best_mae = min(row[1] for row in prelim)
-    results = []
-    for candidate, mae, metrics, folds, features, effective, count in prelim:
+        prelim.append(
+            _evaluate_model_baseline(
+                frame,
+                candidate,
+                split_spec=active_split_spec,
+            )
+        )
+    best_mae = min(result.metrics["mae"] for result in prelim)
+    results: list[CandidateResult] = []
+    for result in prelim:
+        mae = result.metrics["mae"]
         results.append(
             CandidateResult(
-                candidate=candidate,
-                metrics=metrics,
-                fold_metrics=folds,
-                prediction_count=count,
-                actual_features=features,
-                estimator_params=effective,
-                execution_status="success",
+                candidate=result.candidate,
+                metrics=result.metrics,
+                fold_metrics=result.fold_metrics,
+                prediction_count=result.prediction_count,
+                actual_features=result.actual_features,
+                estimator_params=result.estimator_params,
+                execution_status=result.execution_status,
                 research_verdict="baseline",
                 relative_mae_vs_best_baseline=(best_mae - mae) / best_mae if best_mae > 0 else 0.0,
+                prediction_rows=result.prediction_rows,
             )
         )
     return results
@@ -573,6 +673,159 @@ class FocusedResearchController:
             created_at=_now(),
         )
 
+    @property
+    def _campaign_root(self) -> Path:
+        return self.project_dir / "focused_campaigns" / self.spec.campaign_id
+
+    def _write_json(self, path: Path, payload: dict[str, Any]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix(path.suffix + ".tmp")
+        temporary.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        temporary.replace(path)
+
+    def _append_event(self, event_type: str, **payload: Any) -> None:
+        root = self._campaign_root
+        root.mkdir(parents=True, exist_ok=True)
+        path = root / "events.jsonl"
+        existing = 0
+        if path.exists():
+            existing = sum(1 for line in path.read_text(encoding="utf-8").splitlines() if line.strip())
+        event = {
+            "event_id": existing + 1,
+            "type": event_type,
+            "campaign_id": self.spec.campaign_id,
+            "time": _now(),
+            **payload,
+        }
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(event, ensure_ascii=False) + "
+")
+
+    def _initialize_evidence_ledger(self) -> None:
+        root = self._campaign_root
+        root.mkdir(parents=True, exist_ok=True)
+        self._append_event(
+            "campaign.started",
+            contract_hash=self.spec.contract_hash,
+            created_at=self.spec.created_at,
+        )
+        exposure = build_exposure_record(
+            campaign_id=self.spec.campaign_id,
+            task=self.task,
+            dataset=self.dataset,
+        )
+        exposure_path = root / "exposure" / "exposure.jsonl"
+        exposure_path.parent.mkdir(parents=True, exist_ok=True)
+        with exposure_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(exposure, ensure_ascii=False) + "
+")
+        self._append_event(
+            "exposure.recorded",
+            exposure_id=exposure["exposure_id"],
+            dataset_fingerprint=self.dataset.semantic_fingerprint,
+            exposure_class=self.dataset.exposure,
+        )
+
+    def _persist_result_evidence(
+        self,
+        *,
+        result: CandidateResult,
+        role: str,
+        splits: list[tuple[np.ndarray, np.ndarray]],
+        config_diff: dict[str, Any],
+        reserved_fit_calls: int,
+        parent_result: CandidateResult | None = None,
+        best_baseline_result: CandidateResult | None = None,
+    ) -> tuple[dict[str, Any], dict[str, Any] | None]:
+        root = self._campaign_root
+        if role == "naive_baseline":
+            expected_features: list[str] = []
+        else:
+            expected_features = resolve_feature_columns(result.candidate.feature_groups)
+        artifact = build_prediction_artifact(
+            campaign_id=self.spec.campaign_id,
+            candidate=result.candidate,
+            result=result,
+            task=self.task,
+            dataset=self.dataset,
+            split_spec=self.split_spec,
+            evaluation_policy=self.evaluation_policy,
+        )
+        manifest = build_execution_manifest(
+            campaign_id=self.spec.campaign_id,
+            candidate=result.candidate,
+            role=role,
+            result=result,
+            task=self.task,
+            dataset=self.dataset,
+            split_spec=self.split_spec,
+            evaluation_policy=self.evaluation_policy,
+            splits=splits,
+            expected_feature_columns=expected_features,
+        )
+        prediction_rel = Path("predictions") / f"{result.candidate.candidate_id}.json"
+        manifest_rel = Path("manifests") / f"{result.candidate.candidate_id}.json"
+        self._write_json(root / prediction_rel, artifact.to_dict())
+        self._write_json(root / manifest_rel, manifest.to_dict())
+        refs = {
+            "prediction_artifact_ref": str(prediction_rel.as_posix()),
+            "execution_manifest_ref": str(manifest_rel.as_posix()),
+            "config_diff": config_diff,
+        }
+        feedback_payload = None
+        if role == "research_candidate" and best_baseline_result is not None:
+            feedback = build_feedback(
+                candidate_result=result,
+                parent_result=parent_result,
+                best_baseline_result=best_baseline_result,
+                config_diff=config_diff,
+                reserved_fit_calls=reserved_fit_calls,
+                manifest=manifest,
+            )
+            feedback_rel = Path("feedback") / f"{feedback.feedback_id}.json"
+            feedback_payload = feedback.to_dict()
+            self._write_json(root / feedback_rel, feedback_payload)
+            refs["feedback_ref"] = str(feedback_rel.as_posix())
+            refs["feedback_id"] = feedback.feedback_id
+            self._append_event(
+                "feedback.created",
+                feedback_id=feedback.feedback_id,
+                candidate_id=result.candidate.candidate_id,
+            )
+        return refs, feedback_payload
+
+    def _freeze_batch_plan(
+        self,
+        *,
+        round_index: int,
+        source: str,
+        prompt_hash: str,
+        compiled: list[tuple[HypothesisSpec, CandidateConfig]],
+    ) -> tuple[str, str]:
+        plan = {
+            "schema_version": "focused_batch_plan_v1",
+            "campaign_id": self.spec.campaign_id,
+            "round_index": round_index,
+            "advisor_source": source,
+            "prompt_hash": prompt_hash,
+            "frozen_at": _now(),
+            "items": [
+                {"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict()}
+                for hypothesis, candidate in compiled
+            ],
+        }
+        plan_hash = _hash(plan)
+        plan["plan_hash"] = plan_hash
+        rel = Path("batch_plans") / f"round_{round_index}.json"
+        self._write_json(self._campaign_root / rel, plan)
+        self._append_event(
+            "batch.frozen",
+            round_index=round_index,
+            plan_hash=plan_hash,
+            plan_ref=str(rel.as_posix()),
+        )
+        return plan_hash, str(rel.as_posix())
+
     def run(self) -> dict[str, Any]:
         splits = self.split_spec.build_splits(len(self.frame))
         baseline_fit_calls = self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
@@ -581,14 +834,39 @@ class FocusedResearchController:
                 "focused fit budget is too small for frozen baselines: "
                 f"need {baseline_fit_calls}, got {self.budget.max_fit_calls}; no model fit started"
             )
+        self._initialize_evidence_ledger()
         baseline_results = run_baselines(self.frame, self.budget, split_spec=self.split_spec)
         best_baseline = min(baseline_results, key=lambda x: x.metrics["mae"])
         best_baseline_mae = best_baseline.metrics["mae"]
+        result_lookup: dict[str, CandidateResult] = {
+            result.candidate.candidate_id: result for result in baseline_results
+        }
+        candidate_lookup: dict[str, CandidateConfig] = {
+            result.candidate.candidate_id: result.candidate for result in baseline_results
+        }
+        baseline_payloads: list[dict[str, Any]] = []
+        for result in baseline_results:
+            role = "naive_baseline" if result.candidate.model_family.startswith("naive_") else "model_baseline"
+            refs, _ = self._persist_result_evidence(
+                result=result,
+                role=role,
+                splits=splits,
+                config_diff={"change_type": "baseline", "parent_candidate_id": None, "changes": []},
+                reserved_fit_calls=0 if role == "naive_baseline" else len(splits),
+            )
+            baseline_payloads.append({**result.to_dict(), **refs})
+            self._append_event(
+                "baseline.completed",
+                candidate_id=result.candidate.candidate_id,
+                model_family=result.candidate.model_family,
+            )
+
         research_results: list[CandidateResult] = []
         rounds: list[dict[str, Any]] = []
         seen_fingerprints = {result.candidate.fingerprint for result in baseline_results}
         fit_calls = baseline_fit_calls
         stop_reason = "max_rounds_reached"
+        failed_attempts = 0
         for round_index in range(1, self.budget.max_rounds + 1):
             prompt = advisor_prompt(
                 round_index=round_index,
@@ -598,24 +876,56 @@ class FocusedResearchController:
                 budget=self.budget,
             )
             advice, source = self.advisor.propose(prompt)
-            compiled = compile_hypotheses(advice, round_index=round_index, source=source, max_count=self.budget.max_new_candidates_per_round)
-            round_rows = []
+            compiled = compile_hypotheses(
+                advice,
+                round_index=round_index,
+                source=source,
+                max_count=self.budget.max_new_candidates_per_round,
+            )
+            prompt_hash = _hash(prompt)
+            plan_hash, plan_ref = self._freeze_batch_plan(
+                round_index=round_index,
+                source=source,
+                prompt_hash=prompt_hash,
+                compiled=compiled,
+            )
+            round_rows: list[dict[str, Any]] = []
             new_executable = 0
             successful_this_round = 0
             for hypothesis, candidate in compiled:
+                parent_candidate = candidate_lookup.get(candidate.parent_candidate_id or "")
+                config_diff = candidate_config_diff(parent_candidate, candidate)
                 if candidate.fingerprint in seen_fingerprints:
-                    round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(), "status": "skipped_duplicate"})
+                    round_rows.append(
+                        {
+                            "hypothesis": hypothesis.to_dict(),
+                            "candidate": candidate.to_dict(),
+                            "config_diff": config_diff,
+                            "status": "skipped_duplicate",
+                        }
+                    )
                     continue
                 folds = len(splits)
                 if fit_calls + folds > self.budget.max_fit_calls:
-                    round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(), "status": "blocked_budget"})
+                    round_rows.append(
+                        {
+                            "hypothesis": hypothesis.to_dict(),
+                            "candidate": candidate.to_dict(),
+                            "config_diff": config_diff,
+                            "status": "blocked_budget",
+                        }
+                    )
                     stop_reason = "fit_budget_exhausted"
                     continue
-                # Reserve the approved fit budget before execution. A failed
-                # attempt still consumes this reservation and is visible.
                 fit_calls += folds
                 seen_fingerprints.add(candidate.fingerprint)
                 new_executable += 1
+                self._append_event(
+                    "attempt.reserved",
+                    round_index=round_index,
+                    candidate_id=candidate.candidate_id,
+                    reserved_fit_calls=folds,
+                )
                 try:
                     result = evaluate_candidate(
                         self.frame,
@@ -625,10 +935,20 @@ class FocusedResearchController:
                         split_spec=self.split_spec,
                     )
                 except (ValueError, RuntimeError, FloatingPointError) as exc:
+                    failed_attempts += 1
+                    self._append_event(
+                        "attempt.failed",
+                        round_index=round_index,
+                        candidate_id=candidate.candidate_id,
+                        reserved_fit_calls=folds,
+                        error_type=type(exc).__name__,
+                        error=str(exc),
+                    )
                     round_rows.append(
                         {
                             "hypothesis": hypothesis.to_dict(),
                             "candidate": candidate.to_dict(),
+                            "config_diff": config_diff,
                             "status": "failed",
                             "error_type": type(exc).__name__,
                             "error": str(exc),
@@ -636,10 +956,53 @@ class FocusedResearchController:
                         }
                     )
                     continue
+                parent_result = result_lookup.get(candidate.parent_candidate_id or "")
+                refs, feedback_payload = self._persist_result_evidence(
+                    result=result,
+                    role="research_candidate",
+                    splits=splits,
+                    config_diff=config_diff,
+                    reserved_fit_calls=folds,
+                    parent_result=parent_result,
+                    best_baseline_result=best_baseline,
+                )
                 research_results.append(result)
+                result_lookup[candidate.candidate_id] = result
+                candidate_lookup[candidate.candidate_id] = candidate
                 successful_this_round += 1
-                round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(), "result": result.to_dict(), "status": "completed"})
-            rounds.append({"round_index": round_index, "advisor_source": source, "prompt_hash": _hash(prompt), "items": round_rows})
+                self._append_event(
+                    "attempt.completed",
+                    round_index=round_index,
+                    candidate_id=candidate.candidate_id,
+                    reserved_fit_calls=folds,
+                )
+                row = {
+                    "hypothesis": hypothesis.to_dict(),
+                    "candidate": candidate.to_dict(),
+                    "result": {**result.to_dict(), **refs},
+                    "config_diff": config_diff,
+                    "status": "completed",
+                }
+                if feedback_payload is not None:
+                    row["feedback"] = feedback_payload
+                round_rows.append(row)
+            rounds.append(
+                {
+                    "round_index": round_index,
+                    "advisor_source": source,
+                    "prompt_hash": prompt_hash,
+                    "plan_hash": plan_hash,
+                    "plan_ref": plan_ref,
+                    "items": round_rows,
+                }
+            )
+            self._append_event(
+                "round.completed",
+                round_index=round_index,
+                advisor_source=source,
+                prompt_hash=prompt_hash,
+                plan_hash=plan_hash,
+            )
             if stop_reason == "fit_budget_exhausted":
                 break
             if new_executable == 0:
@@ -656,38 +1019,60 @@ class FocusedResearchController:
             and best_overall.relative_mae_vs_best_baseline
             >= self.evaluation_policy.min_relative_mae_improvement
         )
-        terminal_status = "completed_with_development_improvement" if improved else "completed_no_improvement"
+        if stop_reason == "round_failed_no_completed_candidate":
+            execution_status = "failed" if not research_results else "partial"
+            research_outcome = "inconclusive"
+        elif not research_results:
+            execution_status = "partial" if failed_attempts else "completed"
+            research_outcome = "inconclusive" if failed_attempts else "not_evaluated"
+        else:
+            execution_status = "partial" if failed_attempts else "completed"
+            research_outcome = "improved" if improved else "no_improvement"
+
+        if research_outcome == "improved":
+            terminal_status = "completed_with_development_improvement"
+        elif research_outcome == "no_improvement":
+            terminal_status = "completed_no_improvement"
+        elif research_outcome == "inconclusive":
+            terminal_status = f"{execution_status}_inconclusive"
+        else:
+            terminal_status = "completed_not_evaluated"
+
         payload = {
-            "schema_version": "focused_campaign_v1",
+            "schema_version": "focused_campaign_v2",
             "campaign": self.spec.to_dict(),
-            "baseline_results": [x.to_dict() for x in baseline_results],
+            "baseline_results": baseline_payloads,
             "rounds": rounds,
             "best_baseline_candidate_id": best_baseline.candidate.candidate_id,
             "best_candidate_id": best_overall.candidate.candidate_id,
             "best_candidate_is_research_candidate": improved,
+            "execution_status": execution_status,
+            "research_outcome": research_outcome,
             "terminal_status": terminal_status,
             "stop_reason": stop_reason,
             "fit_calls": fit_calls,
             "baseline_fit_calls": baseline_fit_calls,
             "evaluation_policy": self.evaluation_policy.to_dict(),
             "split_spec": self.split_spec.to_dict(),
+            "evidence_status": {
+                "development": "available",
+                "robustness": "not_run",
+                "confirmation": "not_run_historical_data_exposed",
+                "forward": "not_started",
+            },
             "confirmation_status": "not_run_historical_data_exposed",
             "scientific_claim": "development_only_no_profitability_claim",
             "created_at": _now(),
         }
         self._persist(payload)
+        self._append_event(
+            "campaign.completed",
+            execution_status=execution_status,
+            research_outcome=research_outcome,
+            terminal_status=terminal_status,
+            stop_reason=stop_reason,
+        )
         return payload
 
     def _persist(self, payload: dict[str, Any]) -> None:
-        root = self.project_dir / "focused_campaigns" / self.spec.campaign_id
-        root.mkdir(parents=True, exist_ok=True)
-        (root / "campaign.json").write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-        events = []
-        sequence = 1
-        events.append({"event_id": sequence, "type": "campaign.started", "campaign_id": self.spec.campaign_id, "time": self.spec.created_at, "contract_hash": self.spec.contract_hash})
-        sequence += 1
-        for round_row in payload["rounds"]:
-            events.append({"event_id": sequence, "type": "round.completed", "campaign_id": self.spec.campaign_id, "time": _now(), "round_index": round_row["round_index"], "advisor_source": round_row["advisor_source"], "prompt_hash": round_row["prompt_hash"]})
-            sequence += 1
-        events.append({"event_id": sequence, "type": "campaign.completed", "campaign_id": self.spec.campaign_id, "time": _now(), "terminal_status": payload["terminal_status"], "stop_reason": payload["stop_reason"]})
-        (root / "events.jsonl").write_text("\n".join(json.dumps(x, ensure_ascii=False) for x in events) + "\n", encoding="utf-8")
+        self._write_json(self._campaign_root / "campaign.json", payload)

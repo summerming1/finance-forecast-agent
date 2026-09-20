@@ -1,121 +1,86 @@
 # 当前版本功能与技术实现说明
 
-## 当前权威实现：P1 Focus V1.1 reliability
+## 当前权威实现：Mission Research V2-A / PR-1 Evidence Foundation
 
 当前工作分支：`feat/mission-research-v2`。
 
-当前代码仍然是 **SPY 日频下一交易日收益回归的受控研究闭环**；V1.1 只加固可靠性。ADR-MISSION-002 已批准后续任务驱动产品路线，但 Mission UI、文献持续参与、后台恢复、长期 Memory prior、独立 confirmation 与 ModelBundle **尚未实现**，不能把 Roadmap 当作当前功能。
+PR-1 已在 V1.1 受控 SPY 研究闭环上实现可复算、可审计的证据底座；PR-2 Mission / Research Workspace 尚未实现。因此 V2-A 只完成了一半，不能把 V2-B、V2.1、V2.2 或 V3 计划当成当前功能。
 
 ### 当前 focused 主流程
 
 ```text
-Audited Yahoo SPY chart JSON
-→ require adjusted close + XNYS session completeness
-→ FocusedTaskSpec / FocusedDatasetSnapshot
-→ past-only features + next-trading-session return label
-→ FocusedSplitSpec preflight
-→ baseline budget preflight
-→ frozen Ridge / RF / GBDT baselines
-→ FocusedResearchAdvisor
-   ├─ deterministic_policy
-   ├─ ReplayLLM focused_research_advice
-   └─ live OpenAI-compatible LLM + fixture recording
-→ HypothesisSpec
-→ allow-list / numeric parameter compilation
-→ CandidateConfig
-→ actual estimator fit/predict on the **same frozen split contract**
-→ MAE / RMSE / directional accuracy
-→ development_screen_passed / development_screen_not_passed
-→ prior campaign results included in the next-round prompt
-→ budget / duplicate / stop gates
-→ terminal campaign JSON + reconstructed events
+Audited Yahoo SPY adjusted-close data
+→ time/session/data contract + frozen split/budget preflight
+→ train-only naive baselines + Ridge/RF/GBDT baselines
+→ deterministic/replay/live suggestion interface
+→ allow-listed Hypothesis/Candidate compilation
+→ actual estimator fit/predict
+→ row-level PredictionArtifact
+→ actual ExecutionManifest
+→ deterministic metrics + StructuredFeedback
+→ real parent→child config diff
+→ next round / budget / duplicate / stop
+→ campaign + exposure + frozen batch plans + fact-time events
 ```
 
-### V1.1 当前可靠性能力
+### PR-1 已实现
 
-- SPY focused 任务没有 synthetic fallback；
-- 缺 Yahoo adjusted close 直接阻断，不用 ordinary close 冒充；
-- XNYS session 缺口在构造监督数据前阻断；
-- 默认 SplitSpec：minimum train 756、purge 1、test 63、4 folds；最低监督行数 1009；
-- test folds 必须非重叠、无重复 target rows；
-- SplitSpec 同时进入 Campaign contract、baseline 与 candidate 实际执行；
-- frozen baseline 需要 12 fits，预算不足时在任何 fit 前失败；
-- candidate fits 在执行前预留，失败不会“退回”成免费预算；
-- Ridge/RF/GBDT 参数有数值范围，并在 proposal compile 与 estimator build 两层校验；
-- EvaluationPolicy 与 ResearchBudget 已分开，旧 threshold 字段只做兼容；
-- development threshold 只产生 development evidence，不宣称 independent confirmation；
-- focused 页面已移除 `use_container_width` 的本页弃用用法。
+- `execution_status` 与 `research_outcome` 成为独立权威维度；所有候选执行失败时为 `failed/partial + inconclusive`，不再冒充科学 `no_improvement`。
+- 每个 baseline/candidate 写 row-level PredictionArtifact；只读取预测记录即可重新计算 MAE、RMSE、方向准确率和 fold 指标。
+- 新增 zero、train-fold mean、train-fold median 朴素基线；mean/median 不读取测试标签。
+- ExecutionManifest 保存 requested/effective estimator params、requested/actual features、seed、split、数据/任务/evaluation identity 和 fold row contract。
+- 配置差异从实际 parent / child CandidateConfig 计算，区分 single-component、joint、no-change。
+- StructuredFeedback 由确定性代码生成，包含 relative-to-baseline/parent、fold deltas、执行一致性、资源与证据边界。
+- Exposure Ledger v0 从当前阶段写入语义数据 identity、时间范围、暴露类别、来源与用途；移动相同内容不会洗成未暴露数据。
+- 每轮建议在候选执行前冻结为 batch plan；关键 campaign/baseline/batch/attempt/feedback/round 事件在发生时写入。
 
-### 当前迭代建议由什么产生
+### PR-1 验收
 
-`FocusedResearchAdvisor` 仍有三种模式：
+本次定向累计回归：
+- 原 V1.1 focused/AppTest 19 项保留；
+- PR-1 新增 evidence 测试 7 项；
+- 合计 `26 passed`；
+- 修改范围 Ruff 与 compileall 通过；
+- 全库可收集 `198 tests`，但本次没有执行全部 198 项。
 
-1. **deterministic**：当前可审计基准策略。它读取 baseline/prior metrics 并选择 parent，但主要动作模板仍按 round 设计，因此它是控制策略，不是“完全自适应研究 Agent”的证据。
-2. **replay**：按完整 prompt payload 的 fixture hash 回放已录制 `focused_research_advice`。
-3. **live**：OpenAI-compatible LLM；响应由 FixtureRecordingLLM 保存。
-
-当前 focused Advisor 的上下文包括任务合同、允许模型/特征、baseline 和本 Campaign 的历史结果；**尚未**把 MethodCard/EvidenceNode 或跨 Campaign ExperimentMemory 作为一等研究上下文。文献持续参与是 V2-B 的下一阶段能力。
-
-无论 Advisor 来源如何，LLM 都没有标签、split、指标、confirmation 或 promotion 的数值裁决权。
-
-### 当前任务边界
-
-- entity：SPY；
-- frequency：daily；
-- target：next observed XNYS trading-session adjusted-close return；
-- primary metric：MAE；
-- auxiliary：RMSE、directional accuracy；
-- models：Ridge、Random Forest、Gradient Boosting；
-- exposure：`historical_development_only`；
-- claim：`forecast_only`；
-- confirmation：当前历史 SPY 已暴露，因此未运行 blind final；
-- execution/trading：没有 ExecutionSpec，不声明可实现交易收益。
-
-### V1.1 新增/修改代码
-
-```text
-src/finance_forecast_agent/focused_protocol.py
-src/finance_forecast_agent/focused_data.py
-src/finance_forecast_agent/focused_research.py
-apps/pages/8_Focused_Research.py
-tests/test_focused_data_research.py
-tests/test_focused_streamlit_page.py
-pyproject.toml  # exchange-calendars focused dependency
-```
-
-### V1.1 最终验证
-
-Focused GitHub Actions matrix：
-
-```text
-Python 3.11: 19 passed / Ruff passed / compileall passed
-Python 3.13: 19 focused tests / Ruff / compileall job passed
-```
-
-真实 SPY release smoke（audited Yahoo artifact, Python 3.13）：
-
+冻结真实 SPY smoke：
 ```text
 rows: 4002
 2010-02-03 -> 2025-12-30
-fits: 28
-best baseline: Ridge, MAE 0.0050337535958270355
-terminal: completed_no_improvement
+fits: 28 / 40
+best baseline: Ridge
+baseline MAE: 0.0050337535958270355
+best challenger MAE: 0.005032396791571372
+execution_status: completed
+research_outcome: no_improvement
+terminal_status: completed_no_improvement
 confirmation: not_run_historical_data_exposed
 ```
 
-这些验证证明 focused V1.1 正常/关键负例路径与真实 SPY deterministic smoke；**不代表**历史 native 论文训练全部重跑，也不代表 live LLM 科研质量、独立确认或盈利能力通过。
+候选故障注入探针：
+```text
+candidate failures: 2
+fit_calls: 20
+execution_status: failed
+research_outcome: inconclusive
+terminal_status: failed_inconclusive
+acceptance_passed: true
+```
 
-### 当前下一里程碑
+### 当前仍未实现 / 未验证
 
-按 ADR-MISSION-002：
+- PR-2：Mission 用户入口、Research Workspace / Tree / Candidate detail。
+- PR-3：Evidence-grounded adaptive research 与 Random/TPE/One-shot/Adaptive Value Benchmark。
+- PR-4：LocalTaskQueue focused 持久 attempts、幂等、恢复、取消与完整 ResearchPackage。
+- PR-5：focused ExperimentMemory、独立 confirmation 隔离、显式 refit、ModelBundle。
+- PR-6：受控外部 CSV/Parquet 与 reviewed local adapter。
+- V3：Shadow Forecasting。
+- 本 PR 未重新验证真实 live-provider 科研质量或 live→replay 成功路径。
+- 本 PR 未运行独立 confirmation、前瞻评价或历史小时级 native strict 全量训练。
 
-- **V2-A**：薄 Mission + EvaluationPolicy contract + row-level PredictionArtifact/Manifest + naive baselines + deterministic StructuredFeedback；
-- **V2-B**：复用 LocalTaskQueue 的幂等/attempt/恢复 + Evidence-grounded live/replay Advisor + 少量已审核 MethodCard 文献证据持续参与 + ResearchPackage；
-- **V2.1**：现有 ExperimentMemory prior + Exposure/Confirmation + 冻结 refit ModelBundle；
-- **后续**：shadow forecasting，再按实际需求逐维扩展自动文献检索/BYO/受控 CodingAgent/新市场或任务。
+### 下一里程碑
 
-权威开发约束见 `AGENTS.md`；路线见 `PROJECT_ROADMAP.md`；架构与验收见 `FOCUSED_ARCHITECTURE.md`、`FOCUSED_ACCEPTANCE_TEST_PLAN.md`。
-
+PR-2 / V2-A：在不复制 Task/Campaign/Controller/Queue/Evaluator 状态的前提下，实现薄 Mission 创建、Research Overview、Research history/tree 投影和 Candidate details，使非项目作者能够完成当前唯一受支持的 SPY research Mission。
 
 ## 历史广度平台基线
 

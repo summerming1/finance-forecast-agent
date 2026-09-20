@@ -15,7 +15,7 @@ Current Mission-oriented work branch:
 feat/mission-research-v2
 ```
 
-Current implemented milestone: **Focused V1.1 reliability**. V2 Mission/literature/queue/Memory/model-delivery capabilities described in the roadmap are planned, not already implemented.
+Current implemented milestone: **Mission V2-A / PR-1 Evidence Foundation**. PR-1 adds auditable row-level predictions, execution manifests, train-only naive baselines, deterministic feedback, exposure records, frozen batch plans/events, and truthful execution/research outcome semantics. Mission UI (PR-2), adaptive literature-grounded research/value benchmark (PR-3), recovery/ResearchPackage (PR-4), Memory/Confirmation/ModelBundle (PR-5), and controlled BYO (PR-6) remain planned.
 
 Start with these documents:
 

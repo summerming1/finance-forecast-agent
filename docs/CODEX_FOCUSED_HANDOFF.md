@@ -1,94 +1,67 @@
 # Codex development handoff — Mission Research line
 
-> Status: APPROVED under ADR-FOCUS-001 and ADR-MISSION-002.
+> Status: APPROVED under ADR-FOCUS-001, ADR-MISSION-002 and ADR-MISSION-PRODUCT-003.
 
 ## 1. Start every Codex session with a read-only audit
 
-Read AGENTS.md and the mandatory documents listed there. Then:
+Read AGENTS.md and the mandatory documents listed there, then inspect branch/HEAD/status. Do not stash/reset user work automatically and do not infer implementation from roadmap names.
 
-```powershell
-git status --short
-git fetch origin
-git branch --show-current
-git log -1 --oneline
-git log -1 --oneline origin/feat/p1-focused-us-equity-loop-v1
+Repository: `summerming1/finance-forecast-agent`
+Authoritative work branch: `feat/mission-research-v2`
+
+## 2. Current verified milestone
+
+V1.1 remains a permanent regression gate.
+**PR-1 / V2-A Evidence Foundation is implemented and targeted acceptance passed.**
+The next implementation milestone is **PR-2 / V2-A Mission + Research Workspace**.
+
+PR-1 delivered:
+- execution status / research outcome separation;
+- row-level PredictionArtifact and recomputable metrics;
+- train-only zero/mean/median naive baselines plus existing Ridge/RF/GBDT;
+- actual ExecutionManifest;
+- real parent→child config diff;
+- deterministic StructuredFeedback;
+- Exposure Ledger v0;
+- batch-plan freeze and fact-time focused events.
+
+Do not reimplement PR-1 unless a regression requires it.
+
+## 3. Approved gated sequence
+
+```text
+PR-1 / V2-A  Evidence Foundation                         COMPLETE
+PR-2 / V2-A  Mission + Research Workspace                NEXT
+PR-3 / V2-B  Adaptive Research + Agent Value Benchmark   PLANNED
+PR-4 / V2-B  Persistent Execution + ResearchPackage      PLANNED
+PR-5 / V2.1  Memory + Confirmation + ModelBundle         PLANNED
+PR-6 / V2.2  Controlled BYO Data/Model Pilot             PLANNED
+V3           Shadow Forecasting                           LATER
 ```
 
-Do not stash/reset user work automatically.
+Do not start a later PR until the previous PR's new tests and all affected cumulative regressions pass.
 
-## 2. Branch and milestone
+## 4. PR-2 scope
 
-Repository: `summerming1/finance-forecast-agent`.
+Mission stays thin: user question/type and Task/Campaign references only. Do not duplicate label/data/budget/runtime state.
+Build the product flow around Create → Overview → Research history/tree → Candidate detail. Research Tree is a projection of recorded facts, not a graph runtime. Low-level paths/fixture settings belong in advanced settings. Unsupported natural-language tasks must be rejected rather than silently mapped to SPY.
 
-Validated base: `feat/p1-focused-us-equity-loop-v1`.
+## 5. Later boundaries
 
-Current work branch: `feat/mission-research-v2`.
+PR-3 must prove feedback/evidence can affect research decisions and implement a matched-budget Random/TPE/One-shot/Adaptive Agent benchmark. Fixture success is not Agent value proof.
 
-**V1.1 reliability is complete and is now a permanent regression gate. The next implementation milestone is V2-A.**
+PR-4 reuses LocalTaskQueue for persistent attempts/idempotency/recovery/cancel and completes ResearchPackage. Do not create another queue/controller.
 
-## 3. Completed V1.1 implementation (do not redo unless a regression requires it)
+PR-5 reuses ExperimentMemory as a compatibility-filtered weak prior, adds confirmation isolation and explicit refit ModelBundle.
 
-1. add negative tests for adjusted-close, XNYS session completeness, short history/split overlap, low baseline budget, parameter bounds and development verdict;
-2. introduce one shared focused split/evaluation policy source instead of duplicating thresholds;
-3. require adjusted close; no close fallback;
-4. align minimum supervised rows with split requirements and reject overlapping test folds;
-5. check baseline fit budget before any fit;
-6. validate numeric parameter ranges before model construction;
-7. reserve candidate fit budget before execution and record failure in the round;
-8. rename successful development threshold semantics to `development_screen_passed` (keep legacy field only for compatibility);
-9. update focused Streamlit width API and preflight messaging;
-10. run focused tests, Ruff, compileall, and branch CI on Python 3.11/3.13;
-11. update P1_FOCUS_F0_F1 and CURRENT_IMPLEMENTATION with actual results.
-
-V1.1 intentionally did not implement Mission UI, QQQ, LSTM, long-term Memory or automatic literature retrieval. Do not reopen those scopes while fixing V1.1 regressions.
-
-## 4. Current next work: V2 implementation sequence
-
-### V2-A
-Thin Mission; EvaluationPolicy; row-level PredictionArtifact/Manifest; naive baselines; deterministic FeedbackBuilder; ResearchPackage skeleton.
-
-### V2-B
-Persistent queue/attempt/idempotency/recovery; Evidence-grounded live-record/replay Advisor; reviewed MethodCard evidence in ContextBuilder; literature/experiment citation gate; ResearchPackage complete.
-
-### V2.1
-Existing ExperimentMemory read/write; exposure/confirmation gates; explicit refit; loadable ModelBundle.
-
-Do not create second Controller/Queue/Memory/Evaluator.
-
-## 5. Literature implementation rule
-
-Next V2 does not begin by building a crawler.
-
-First prove that 1–3 reviewed MethodCards materially participate in research:
-- mechanism/condition evidence is visible in ContextBuilder;
-- hypotheses cite stable evidence IDs;
-- compiler validates cited evidence;
-- later rounds combine paper evidence with actual experiment feedback;
-- local results never mutate paper facts;
-- applicability mismatches are shown.
-
-Only after this is useful should bounded automatic literature retrieval be added.
+PR-6 accepts only controlled same-task external data and reviewed local adapters. No arbitrary Python/notebook/pickle/Docker execution. Controlled BYO precedes full Shadow Forecasting.
 
 ## 6. Testing and claims
 
-Use `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md` as the acceptance contract.
+Use `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md` as the acceptance contract. Keep focused/unit, integration/recovery, UI, live LLM, external/native and commercial-value evidence separate.
 
-Separate:
-- focused deterministic/unit/integration;
-- UI AppTest/manual browser;
-- live LLM;
-- external/native paper environments.
+Synthetic data/users and assistant-authored fixtures are engineering evidence only and must be labeled. Never use focused CI to claim historical native training, live scientific quality, independent confirmation, Agent superiority, or customer demand.
 
-Never use a focused green CI badge to claim all historical native reproduction was rerun.
+## 7. Documentation rule
 
-## 7. When to ask the user
-
-Ask before:
-- changing SPY/daily/next-return primary scope;
-- changing primary metric or confirmation policy;
-- adding trading/profitability claims;
-- replacing the runtime with RD-Agent/DeepSeek/LangGraph/etc.;
-- opening arbitrary code execution;
-- changing the roadmap milestone order.
-
-For a pure bug fix inside the approved milestone, proceed and update current docs.
+`CURRENT_IMPLEMENTATION.md` describes only verified current behavior. Roadmap/ADR describe approved future direction. Update the V2 release record for each completed PR, preserve historical acceptance records, and report exact commands/results plus untested boundaries.

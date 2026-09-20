@@ -42,6 +42,8 @@ def main() -> None:
     result = controller.run()
     print(json.dumps({
         "campaign_id": result["campaign"]["campaign_id"],
+        "execution_status": result["execution_status"],
+        "research_outcome": result["research_outcome"],
         "terminal_status": result["terminal_status"],
         "stop_reason": result["stop_reason"],
         "best_baseline_candidate_id": result["best_baseline_candidate_id"],

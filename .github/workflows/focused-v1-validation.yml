@@ -1,4 +1,4 @@
-name: Focused F0 F1 validation
+name: Focused Mission validation
 on:
   push:
     branches: [feat/p1-focused-us-equity-loop-v1, feat/mission-research-v2]
@@ -27,9 +27,19 @@ jobs:
           python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -e '.[dev,ui,pdf]'
       - name: Focused tests
-        run: python -m pytest -q tests/test_focused_data_research.py tests/test_focused_streamlit_page.py
+        run: python -m pytest -q tests/test_focused_data_research.py tests/test_focused_streamlit_page.py tests/test_focused_pr1_evidence.py
       - name: Focused lint
         run: |
-          python -m ruff check             src/finance_forecast_agent/focused_data.py             src/finance_forecast_agent/focused_protocol.py             src/finance_forecast_agent/focused_research.py             scripts/run_focused_spy_campaign.py             apps/pages/8_Focused_Research.py             tests/test_focused_data_research.py             tests/test_focused_streamlit_page.py
+          python -m ruff check \
+            src/finance_forecast_agent/focused_data.py \
+            src/finance_forecast_agent/focused_protocol.py \
+            src/finance_forecast_agent/focused_research.py \
+            src/finance_forecast_agent/focused_evidence.py \
+            scripts/run_focused_spy_campaign.py \
+            scripts/probe_focused_failure_semantics.py \
+            apps/pages/8_Focused_Research.py \
+            tests/test_focused_data_research.py \
+            tests/test_focused_streamlit_page.py \
+            tests/test_focused_pr1_evidence.py
       - name: Compile
-        run: python -m compileall -q src/finance_forecast_agent/focused_data.py src/finance_forecast_agent/focused_protocol.py src/finance_forecast_agent/focused_research.py scripts/run_focused_spy_campaign.py apps/pages/8_Focused_Research.py
+        run: python -m compileall -q src/finance_forecast_agent/focused_data.py src/finance_forecast_agent/focused_protocol.py src/finance_forecast_agent/focused_research.py src/finance_forecast_agent/focused_evidence.py scripts/run_focused_spy_campaign.py scripts/probe_focused_failure_semantics.py apps/pages/8_Focused_Research.py

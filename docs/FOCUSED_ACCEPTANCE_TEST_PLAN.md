@@ -8,6 +8,7 @@
 2. Research-process: hypotheses map to real experiments and results can change later actions.
 3. Scientific evidence: development, robustness, confirmation and strict reproduction are not conflated.
 4. Product: a non-author can create a supported task, run it, understand it, and take away the result.
+5. Agent/commercial value: matched-budget comparisons and real user workflow evidence are evaluated separately from engineering correctness; fixtures cannot prove market value.
 
 ## 2. V1.1 reliability gate
 
@@ -39,6 +40,30 @@ Focused compatibility:
 - Python 3.11 CI plus Python 3.13 focused CI are both targeted where dependencies support them.
 
 ## 3. V2-A task/evidence gate
+
+### PR-1 Evidence Foundation — implemented
+
+- execution status is separated from research outcome; failed candidate execution cannot become `no_improvement`;
+- zero/train-mean/train-median baselines use training-fold information only;
+- every completed baseline/candidate writes row-level PredictionArtifact;
+- saved prediction rows reproduce aggregate and fold metrics;
+- all compared candidates share identical target rows;
+- ExecutionManifest records effective params, actual features and fold row contracts;
+- deterministic StructuredFeedback reports relative-to-baseline/parent diagnostics;
+- real parent→child config diff distinguishes single/joint changes;
+- Exposure Ledger v0 binds semantic data identity and exposure class;
+- batch plan is frozen before candidate execution and key events are written when they happen.
+
+Targeted acceptance on 2026-09-20: 19 prior focused/AppTest regressions + 7 PR-1 tests = 26 passed; real frozen-SPY deterministic smoke passed; injected all-candidate-failure probe returns failed/inconclusive.
+
+### PR-2 Mission / Workspace — pending
+
+- thin Mission links to Task/Campaign without duplicating contract state;
+- a non-author can create the one supported Mission and understand Overview/Research history/Candidate detail;
+- changing data/evaluation contract creates a new Campaign/version rather than overwriting history;
+- Research Tree reflects actual config diffs and does not assert causal attribution for joint changes.
+
+
 
 - thin Mission links to Task/Campaign without duplicating contract state;
 - frozen EvaluationPolicy is separate from ResearchBudget;
@@ -90,7 +115,17 @@ Focused compatibility:
 - ModelBundle loads in a fresh process and predicts on unlabeled latest-input schema;
 - confirmation labels are never used to decide refit settings.
 
-## 6. Shadow and future expansion
+## 6. V2.2 controlled BYO gate
+
+- same-task CSV/Parquet import preserves time/label semantics and provenance;
+- unavailable/future features are blocked;
+- unknown external exposure is not independent confirmation;
+- unreviewed executable model files/code are rejected;
+- a reviewed local adapter declares framework/version, allowed params/actions and artifact contract;
+- a second similar simulated/external-like client can be configured without modifying the core Controller/Evaluator;
+- simulated clients are explicitly `simulation_only`, not commercial validation.
+
+## 7. Shadow and future expansion
 
 Shadow:
 - prediction record is immutable and time-stamped;
@@ -102,7 +137,7 @@ Demand-driven expansion:
 - broad literature retrieval is bounded, licensed, versioned and budgeted;
 - new CodingAgent capability cannot modify evaluator, confirmation data, secrets or policy.
 
-## 7. Required report for every submitted milestone
+## 8. Required report for every submitted milestone
 
 Record:
 - base/head SHA;
