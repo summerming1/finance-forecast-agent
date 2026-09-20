@@ -58,8 +58,63 @@ class RefitPolicy:
         return asdict(self)
 
 
-def _protocol_fingerprint(split_spec: dict[str, Any], evaluation_policy: dict[str, Any]) -> str:
-    return _hash({"split_spec": split_spec, "evaluation_policy": evaluation_policy})
+def focused_task_fingerprint(task: FocusedTaskSpec | dict[str, Any]) -> str:
+    payload = task.to_dict() if isinstance(task, FocusedTaskSpec) else dict(task)
+    return _hash(payload)
+
+
+def focused_protocol_fingerprint(
+    split_spec: FocusedSplitSpec | dict[str, Any],
+    evaluation_policy: EvaluationPolicy | dict[str, Any],
+) -> str:
+    split_payload = split_spec.to_dict() if isinstance(split_spec, FocusedSplitSpec) else dict(split_spec)
+    evaluation_payload = (
+        evaluation_policy.to_dict()
+        if isinstance(evaluation_policy, EvaluationPolicy)
+        else dict(evaluation_policy)
+    )
+    return _hash({"split_spec": split_payload, "evaluation_policy": evaluation_payload})
+
+
+def focused_memory_evidence(records: list[ExperimentMemoryRecord]) -> list[dict[str, Any]]:
+    rows = []
+    for record in records:
+        rows.append(
+            {
+                "evidence_id": f"memory:{record.run_id}",
+                "evidence_type": "compatible_memory",
+                "summary": (
+                    f"Compatible prior {record.method_id}: status={record.status}; "
+                    f"metrics={record.metrics}; research_outcome={record.research_outcome or 'unknown'}"
+                ),
+                "visible": True,
+                "source_ref": record.artifact_path,
+                "applicability": "exact_focused_task_data_protocol_match",
+            }
+        )
+    return rows
+
+
+def load_focused_memory_evidence(
+    store: ExperimentMemoryStore,
+    *,
+    tenant_id: str,
+    task: FocusedTaskSpec,
+    dataset_fingerprint: str,
+    split_spec: FocusedSplitSpec,
+    evaluation_policy: EvaluationPolicy,
+    exclude_campaign_id: str | None = None,
+) -> list[dict[str, Any]]:
+    records = focused_compatible_records(
+        store,
+        tenant_id=tenant_id,
+        task_fingerprint=focused_task_fingerprint(task),
+        protocol_fingerprint=focused_protocol_fingerprint(split_spec, evaluation_policy),
+        dataset_fingerprint=dataset_fingerprint,
+    )
+    if exclude_campaign_id:
+        records = [row for row in records if not row.run_id.startswith(f"{exclude_campaign_id}:")]
+    return focused_memory_evidence(records)
 
 
 def write_focused_campaign_memory(
@@ -71,8 +126,8 @@ def write_focused_campaign_memory(
     campaign = dict(payload.get("campaign") or {})
     task = dict(campaign.get("task") or {})
     dataset = dict(campaign.get("dataset") or {})
-    task_fp = str(campaign.get("contract_hash") or task.get("semantic_fingerprint") or task.get("task_id") or "")
-    protocol_fp = _protocol_fingerprint(
+    task_fp = focused_task_fingerprint(task)
+    protocol_fp = focused_protocol_fingerprint(
         dict(payload.get("split_spec") or campaign.get("split_spec") or {}),
         dict(payload.get("evaluation_policy") or campaign.get("evaluation_policy") or {}),
     )
