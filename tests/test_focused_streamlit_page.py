@@ -47,7 +47,7 @@ def test_focused_research_page_loads_without_market_file() -> None:
     app = AppTest.from_file(str(_page()), default_timeout=10)
     app.run()
     assert not app.exception
-    assert any("Focused SPY Daily Research" in title.value for title in app.title)
+    assert any("Research Mission" in title.value for title in app.title)
     next(x for x in app.text_input if x.label == "Frozen SPY Yahoo JSON").set_value("missing-spy.json")
     app.run()
     assert any("No synthetic fallback" in info.value for info in app.info)
@@ -67,9 +67,9 @@ def test_focused_research_page_runs_real_shaped_campaign(tmp_path: Path) -> None
     next(x for x in app.number_input if x.label == "Max new candidates per round").set_value(1)
     next(x for x in app.number_input if x.label == "Max fit calls").set_value(30)
     app.run()
-    next(button for button in app.button if button.label == "Run focused campaign").click().run(timeout=60)
+    next(button for button in app.button if button.label == "Start research mission").click().run(timeout=60)
     assert not app.exception
-    assert any("Campaign finished" in item.value for item in app.success)
+    assert any("Mission completed" in item.value for item in app.success)
     campaigns = list((project / "focused_campaigns").glob("*/campaign.json"))
     assert len(campaigns) == 1
     payload = json.loads(campaigns[0].read_text(encoding="utf-8"))
