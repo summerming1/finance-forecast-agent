@@ -108,6 +108,10 @@ class HypothesisSpec:
     counter_evidence_test: str
     source: str
     evidence_refs: list[str] = field(default_factory=list)
+    action_type: str = "improve"
+    based_on_feedback_ids: list[str] = field(default_factory=list)
+    control_candidate_id: str | None = None
+    expected_observation: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -446,6 +450,8 @@ def advisor_prompt(
     baseline_results: list[CandidateResult],
     prior_results: list[CandidateResult],
     budget: ResearchBudget,
+    structured_feedback: list[dict[str, Any]] | None = None,
+    reviewed_evidence: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     return {
         "task": "focused_spy_research_hypotheses_v1",
@@ -461,6 +467,13 @@ def advisor_prompt(
             {"candidate_id": x.candidate.candidate_id, "parent_candidate_id": x.candidate.parent_candidate_id, "hypothesis_id": x.candidate.hypothesis_id, "model_family": x.candidate.model_family, "feature_groups": x.candidate.feature_groups, "model_params": x.candidate.model_params, "metrics": x.metrics, "verdict": x.research_verdict}
             for x in prior_results
         ],
+        "structured_feedback": list(structured_feedback or []),
+        "reviewed_evidence": list(reviewed_evidence or []),
+        "remaining_budget": {
+            "max_rounds": budget.max_rounds,
+            "max_new_candidates_per_round": budget.max_new_candidates_per_round,
+            "max_fit_calls": budget.max_fit_calls,
+        },
         "max_hypotheses": budget.max_new_candidates_per_round,
         "rules": [
             "Propose only structured changes inside the allowed model/feature space.",
@@ -471,6 +484,9 @@ def advisor_prompt(
         "response_schema": {
             "hypotheses": [
                 {
+                    "action_type": "improve|diagnose|ablate|simplify|stop|request_review",
+                    "based_on_feedback_ids": ["feedback id"],
+                    "control_candidate_id": "candidate id",
                     "statement": "string",
                     "mechanism": "string",
                     "parent_candidate_id": "candidate id",
@@ -557,6 +573,10 @@ class FocusedResearchAdvisor:
 
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         if self.mode == "deterministic":
+            if prompt.get("structured_feedback"):
+                from .focused_adaptive import adaptive_deterministic_advice
+
+                return adaptive_deterministic_advice(prompt), "adaptive_deterministic_policy"
             return _deterministic_advice(
                 int(prompt["round_index"]),
                 _results_from_prompt(prompt["baseline_results"]),
@@ -588,7 +608,14 @@ def _results_from_prompt(rows: list[dict[str, Any]]) -> list[CandidateResult]:
     return results
 
 
-def compile_hypotheses(payload: dict[str, Any], *, round_index: int, source: str, max_count: int) -> list[tuple[HypothesisSpec, CandidateConfig]]:
+def compile_hypotheses(
+    payload: dict[str, Any],
+    *,
+    round_index: int,
+    source: str,
+    max_count: int,
+    visible_evidence: list[dict[str, Any]] | None = None,
+) -> list[tuple[HypothesisSpec, CandidateConfig]]:
     rows = payload.get("hypotheses")
     if not isinstance(rows, list):
         raise TypeError("research advice must contain a hypotheses list")
@@ -602,6 +629,11 @@ def compile_hypotheses(payload: dict[str, Any], *, round_index: int, source: str
             raise ValueError(f"advisor proposed unsupported model: {family}")
         model_params = validate_model_params(family, dict(row.get("model_params") or {}))
         resolve_feature_columns(groups)
+        evidence_refs = [str(x) for x in row.get("evidence_refs") or []]
+        if visible_evidence is not None and evidence_refs:
+            from .focused_adaptive import validate_evidence_refs
+
+            validate_evidence_refs(evidence_refs, visible_evidence)
         hypothesis_id = f"r{round_index}_h{index+1}_{_hash(row, 8)}"
         candidate_id = f"r{round_index}_c{index+1}_{_hash({'family': family, 'groups': groups, 'params': row.get('model_params')}, 8)}"
         hypothesis = HypothesisSpec(
@@ -617,7 +649,11 @@ def compile_hypotheses(payload: dict[str, Any], *, round_index: int, source: str
             expected_effect=str(row.get("expected_effect") or "unknown"),
             counter_evidence_test=str(row.get("counter_evidence_test") or "development MAE does not improve"),
             source=source,
-            evidence_refs=[str(x) for x in row.get("evidence_refs") or []],
+            evidence_refs=evidence_refs,
+            action_type=str(row.get("action_type") or "improve"),
+            based_on_feedback_ids=[str(x) for x in row.get("based_on_feedback_ids") or []],
+            control_candidate_id=(str(row["control_candidate_id"]) if row.get("control_candidate_id") else None),
+            expected_observation=str(row.get("expected_observation") or row.get("expected_effect") or ""),
         )
         candidate = CandidateConfig(
             candidate_id=candidate_id,
@@ -644,6 +680,7 @@ class FocusedResearchController:
         fixture_dir: str | Path | None = None,
         evaluation_policy: EvaluationPolicy | None = None,
         split_spec: FocusedSplitSpec | None = None,
+        reviewed_evidence: list[dict[str, Any]] | None = None,
     ):
         self.project_dir = Path(project_dir)
         self.task = task
@@ -659,6 +696,7 @@ class FocusedResearchController:
             )
         )
         self.split_spec = split_spec or FocusedSplitSpec()
+        self.reviewed_evidence = list(reviewed_evidence or [])
         self.advisor = FocusedResearchAdvisor(advisor_mode, fixture_dir)
         self.spec = CampaignSpec(
             campaign_id=f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
@@ -860,6 +898,7 @@ class FocusedResearchController:
             )
 
         research_results: list[CandidateResult] = []
+        feedback_history: list[dict[str, Any]] = []
         rounds: list[dict[str, Any]] = []
         seen_fingerprints = {result.candidate.fingerprint for result in baseline_results}
         fit_calls = baseline_fit_calls
@@ -872,13 +911,27 @@ class FocusedResearchController:
                 baseline_results=baseline_results,
                 prior_results=research_results,
                 budget=self.budget,
+                structured_feedback=feedback_history,
+                reviewed_evidence=self.reviewed_evidence,
             )
             advice, source = self.advisor.propose(prompt)
+            from .focused_adaptive import feedback_evidence, result_evidence
+
+            result_refs = [
+                {"candidate_id": row.candidate.candidate_id}
+                for row in [*baseline_results, *research_results]
+            ]
+            visible_evidence = [
+                *self.reviewed_evidence,
+                *result_evidence(result_refs),
+                *feedback_evidence(feedback_history),
+            ]
             compiled = compile_hypotheses(
                 advice,
                 round_index=round_index,
                 source=source,
                 max_count=self.budget.max_new_candidates_per_round,
+                visible_evidence=visible_evidence if visible_evidence else None,
             )
             prompt_hash = _hash(prompt)
             plan_hash, plan_ref = self._freeze_batch_plan(
@@ -965,6 +1018,8 @@ class FocusedResearchController:
                     best_baseline_result=best_baseline,
                 )
                 research_results.append(result)
+                if feedback_payload is not None:
+                    feedback_history.append(feedback_payload)
                 result_lookup[candidate.candidate_id] = result
                 candidate_lookup[candidate.candidate_id] = candidate
                 successful_this_round += 1
