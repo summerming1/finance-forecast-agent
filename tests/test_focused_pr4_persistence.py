@@ -99,6 +99,10 @@ def test_queue_recovers_real_interrupted_worker(tmp_path: Path) -> None:
     )
     running = _wait(queue, record.task_id, {"running"}, timeout=10)
     assert running.worker_pid
+    marker_deadline = time.time() + 5
+    while time.time() < marker_deadline and not marker.exists():
+        time.sleep(0.02)
+    assert marker.exists(), "the actual child command must start before the interruption probe"
     os.killpg(int(running.worker_pid), signal.SIGKILL)
     deadline = time.time() + 5
     while time.time() < deadline and queue._pid_alive(running.worker_pid):
