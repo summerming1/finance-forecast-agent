@@ -47,20 +47,20 @@ def _write_chart(path: Path, n: int = 1200) -> None:
 
 def test_focused_memory_filters_tenant_task_protocol_and_dataset(tmp_path: Path) -> None:
     store = ExperimentMemoryStore(tmp_path / "memory.json")
-    base = dict(
-        run_mode="focused",
-        task_fingerprint="task-a",
-        method_id="ridge",
-        model_family="ridge_regression",
-        status="success",
-        metrics={"mae": 0.1},
-        blockers=[],
-        artifact_path="x",
-        experiment_type="forecast_only",
-        data_domain="us_equity",
-        protocol_fingerprint="proto-a",
-        dataset_fingerprint="data-a",
-    )
+    base = {
+        "run_mode": "focused",
+        "task_fingerprint": "task-a",
+        "method_id": "ridge",
+        "model_family": "ridge_regression",
+        "status": "success",
+        "metrics": {"mae": 0.1},
+        "blockers": [],
+        "artifact_path": "x",
+        "experiment_type": "forecast_only",
+        "data_domain": "us_equity",
+        "protocol_fingerprint": "proto-a",
+        "dataset_fingerprint": "data-a",
+    }
     store.append(ExperimentMemoryRecord(run_id="a", tenant_id="tenant-a", **base))
     store.append(ExperimentMemoryRecord(run_id="b", tenant_id="tenant-b", **base))
     store.append(ExperimentMemoryRecord(run_id="c", tenant_id="tenant-a", **{**base, "protocol_fingerprint": "proto-b"}))
