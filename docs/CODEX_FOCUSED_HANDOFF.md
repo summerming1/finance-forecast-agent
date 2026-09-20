@@ -79,3 +79,12 @@ Implement feedback/evidence-grounded research actions and the fair four-arm Rese
 ### PR-3 completed
 
 Feedback/evidence-grounded adaptive research and the four-arm internal value benchmark are implemented. Do not claim agent superiority: the first real-SPY two-candidate comparison did not favor the adaptive arm. The next milestone is PR-4 persistence/recovery + ResearchPackage; reuse LocalTaskQueue.
+
+
+### PR-4 completed
+
+Focused execution now reuses LocalTaskQueue idempotency/attempt/recovery semantics and can reuse completed candidate artifacts when the same campaign resumes. ResearchPackage export works for complete and partial/interrupted campaigns. Remote 3.11/3.13 CI passed the real process-kill recovery gate.
+
+### Next: PR-5 only
+
+Implement focused ExperimentMemory compatibility, confirmation isolation/eligibility, explicit refit and loadable ModelBundle. Do not begin BYO until PR-5 gates are green and committed.
