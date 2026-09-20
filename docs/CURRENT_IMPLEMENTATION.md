@@ -337,3 +337,17 @@ python -m streamlit run apps/streamlit_app.py
 ### 当前下一里程碑
 
 **PR-3 / V2-B Adaptive Research + Agent Value Benchmark**：让 StructuredFeedback 和少量已审核 Evidence 真正参与下一轮研究决策，并在同一冻结合同下比较 Random / TPE-like / One-shot LLM / Adaptive Agent。PR-3 不包含后台恢复；恢复和 ResearchPackage 属于 PR-4。
+
+
+### PR-3 当前能力
+
+- Advisor prompt 包含 StructuredFeedback、剩余预算与少量 reviewed evidence；Round N+1 可以引用真实 Round N feedback。
+- Evidence ref 经过存在性、可见性和类型门禁；paper claim、本地 observation 与本地 hypothesis 分离。
+- Hypothesis 支持 action_type、based_on_feedback_ids、control_candidate_id、expected_observation；确定性策略在后续轮次根据真实反馈选择 diagnose/ablate/simplify。
+- 新增四臂内部 Agent Value Benchmark：Random / TPE-like / One-shot LLM fixture / Adaptive Agent，共用同一 evaluator、split 与 candidate budget。
+- 冻结真实 SPY、每臂 2 candidates 的内部对照：Random/One-shot fixture best MAE 0.0050226598，TPE-like 0.0050337901，Adaptive 0.0050405368。本次 exposed-development 对照**没有证明 Adaptive Agent 优于简单搜索**。
+- One-shot 来源明确为 assistant_authored_fixture；真实 live-provider Research Agent 质量验收仍 pending。
+
+### 当前下一里程碑
+
+**PR-4 / V2-B Persistent Execution + ResearchPackage**：复用 LocalTaskQueue 实现幂等提交、attempt ledger、真实并发限制、中断恢复、取消/late-result 语义与完整 ResearchPackage。
