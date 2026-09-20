@@ -1,0 +1,109 @@
+name: Focused final acceptance
+
+on:
+  push:
+    branches: [feat/mission-research-v2]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  real-spy-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install focused dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf,byo]'
+      - name: Download frozen audited SPY inputs
+        uses: actions/download-artifact@v4
+        with:
+          name: focused-real-inputs
+          path: /tmp/focused-real-inputs
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 35204186327
+      - name: Run current HEAD on frozen real SPY data
+        run: |
+          RAW="$(find /tmp/focused-real-inputs -name spy_chart_2010_2025.json -print -quit)"
+          META="$(find /tmp/focused-real-inputs -name spy_source.json -print -quit)"
+          test -n "$RAW"
+          test -n "$META"
+          python scripts/run_focused_spy_campaign.py             --project-dir /tmp/final-real-spy             --raw-spy-json "$RAW"             --source-metadata "$META"             --advisor-mode deterministic             --rounds 3             --candidates-per-round 2             --max-fit-calls 40
+      - name: Verify real smoke, ResearchPackage, and ModelBundle
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_daily_research_frame
+          from finance_forecast_agent.focused_delivery import predict_model_bundle, refit_model_bundle
+          from finance_forecast_agent.focused_persistence import build_research_package
+          from finance_forecast_agent.focused_research import CandidateConfig
+
+          inputs = Path("/tmp/focused-real-inputs")
+          raw = next(inputs.rglob("spy_chart_2010_2025.json"))
+          meta = next(inputs.rglob("spy_source.json"))
+          campaigns = list(Path("/tmp/final-real-spy/focused_campaigns").glob("*/campaign.json"))
+          assert len(campaigns) == 1, campaigns
+          campaign_path = campaigns[0]
+          payload = json.loads(campaign_path.read_text(encoding="utf-8"))
+          dataset = payload["campaign"]["dataset"]
+          assert dataset["row_count"] == 4002
+          assert dataset["start_date"] == "2010-02-03"
+          assert dataset["end_date"] == "2025-12-30"
+          assert payload["fit_calls"] == 28
+          assert payload["execution_status"] == "completed"
+          assert payload["research_outcome"] in {"no_improvement", "improved"}
+          assert payload["confirmation_status"] == "not_run_historical_data_exposed"
+          assert payload["scientific_claim"] == "development_only_no_profitability_claim"
+
+          index_path, zip_path = build_research_package(campaign_path.parent)
+          package = json.loads(index_path.read_text(encoding="utf-8"))
+          assert package["complete_campaign"] is True
+          assert zip_path.exists()
+
+          frame, snapshot = build_spy_daily_research_frame(
+              raw,
+              task=FocusedTaskSpec(),
+              source_metadata_path=meta,
+          )
+          candidate = CandidateConfig(
+              "real-smoke-ridge",
+              "ridge_regression",
+              {"alpha": 1.0},
+              ["base_lags"],
+          )
+          bundle = refit_model_bundle(
+              frame,
+              candidate,
+              task=FocusedTaskSpec(),
+              dataset=snapshot,
+              out_dir="/tmp/final-real-model-bundle",
+          )
+          unlabeled = frame.drop(columns=["label"]).tail(8).copy()
+          predictions = predict_model_bundle(bundle, unlabeled)
+          assert predictions.shape == (8,)
+          print(json.dumps({
+              "rows": dataset["row_count"],
+              "period": [dataset["start_date"], dataset["end_date"]],
+              "fit_calls": payload["fit_calls"],
+              "best_baseline": payload["best_baseline_candidate_id"],
+              "best_candidate": payload["best_candidate_id"],
+              "research_outcome": payload["research_outcome"],
+              "confirmation_status": payload["confirmation_status"],
+              "research_package": str(zip_path),
+              "model_bundle_predictions": len(predictions),
+          }, indent=2))
+          PY
