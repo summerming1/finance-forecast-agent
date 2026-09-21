@@ -35,7 +35,13 @@ jobs:
           assert re.fullmatch(r'R[3-6]', p['stage'])
           for k in ('base', 'commit', 'tree'):
               assert re.fullmatch(r'[0-9a-f]{40}', p[k])
-          patch = gzip.decompress(base64.b64decode(p['patch_gzip_b64']))
+          chunks = []
+          for part in p['parts']:
+              assert re.fullmatch(r'delivery/R[3-6]-[0-9]+\.b64', part['path'])
+              data = Path(part['path']).read_bytes()
+              assert hashlib.sha256(data).hexdigest() == part['sha256'], part['path']
+              chunks.append(data)
+          patch = gzip.decompress(base64.b64decode(b''.join(chunks)))
           assert hashlib.sha256(patch).hexdigest() == p['patch_sha256']
           subprocess.run(['git', 'checkout', '--detach', p['base']], check=True)
           subprocess.run(['git', 'apply', '--index', '--whitespace=error', '-'], input=patch, check=True)
