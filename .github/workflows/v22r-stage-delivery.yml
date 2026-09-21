@@ -1,0 +1,137 @@
+name: V22R staged delivery
+on:
+  push:
+    branches: [validation/v22r-continuation]
+    paths: [.github/v22r-delivery.json]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: v22r-staged-delivery
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.13']
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Materialize exact tested source commit
+        run: |
+          cp .github/v22r-delivery.json /tmp/v22r-delivery.json
+          python - <<'PY'
+          import base64, json, pathlib, re, subprocess, zlib
+          m = json.loads(pathlib.Path('/tmp/v22r-delivery.json').read_text())
+          for key in ('base', 'tree', 'commit'):
+              assert re.fullmatch('[0-9a-f]{40}', m[key]), key
+          subprocess.run(['git', 'checkout', '--detach', m['base']], check=True)
+          patch = zlib.decompress(base64.b64decode(m['patch_zlib_base64']))
+          subprocess.run(['git', 'apply', '--index', '--binary', '-'], input=patch, check=True)
+          tree = subprocess.check_output(['git', 'write-tree'], text=True).strip()
+          assert tree == m['tree'], (tree, m['tree'])
+          raw = base64.b64decode(m['commit_base64'])
+          assert raw.startswith(('tree '+tree+'\nparent '+m['base']+'\n').encode())
+          commit = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'], input=raw).decode().strip()
+          assert commit == m['commit']
+          subprocess.run(['git', 'checkout', '--detach', commit], check=True)
+          assert not subprocess.check_output(['git', 'status', '--porcelain']).strip()
+          print('SOURCE_COMMIT='+commit+'\nSOURCE_TREE='+tree)
+          PY
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install focused and shared test dependencies
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf,byo]' optuna
+      - name: Cumulative focused and affected shared regressions
+        run: |
+          mkdir -p validation
+          python -m pytest -q tests/test_focused*.py tests/test_task_queue_lineage.py tests/test_p1_benchmark_memory.py --junitxml=validation/cumulative.xml
+      - name: Lint and compile
+        run: |
+          python -m ruff check src/finance_forecast_agent/focused*.py src/finance_forecast_agent/research_mission.py src/finance_forecast_agent/task_queue.py src/finance_forecast_agent/experiment_memory.py src/finance_forecast_agent/replay_llm.py src/finance_forecast_agent/llm_adapters.py scripts/run_focused_spy_campaign.py scripts/run_research_value_benchmark.py scripts/probe_focused_failure_semantics.py apps/pages/8_Focused_Research.py tests/test_focused*.py
+          python -m compileall -q src/finance_forecast_agent apps/pages/8_Focused_Research.py scripts
+      - uses: actions/download-artifact@v4
+        with:
+          name: focused-real-inputs
+          path: /tmp/focused-real-inputs
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 35204186327
+      - name: Frozen real SPY regression
+        run: |
+          RAW="$(find /tmp/focused-real-inputs -name spy_chart_2010_2025.json -print -quit)"
+          META="$(find /tmp/focused-real-inputs -name spy_source.json -print -quit)"
+          test -n "$RAW" && test -n "$META"
+          python scripts/run_focused_spy_campaign.py --project-dir /tmp/v22r-real-smoke --raw-spy-json "$RAW" --source-metadata "$META" --advisor-mode deterministic --rounds 3 --candidates-per-round 2 --max-fit-calls 40 > validation/real-smoke.log
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from finance_forecast_agent.focused_evidence import prediction_metrics
+          p = next(Path('/tmp/v22r-real-smoke/focused_campaigns').glob('*/campaign.json'))
+          result = json.loads(p.read_text())
+          assert result['campaign']['dataset']['row_count'] == 4002
+          assert result['execution_status'] == 'completed'
+          assert result['confirmation_status'] == 'not_run_historical_data_exposed'
+          assert 12 <= result['fit_calls'] <= 40
+          assert result['fit_calls'] == result['resource_usage']['charged_fit_calls']
+          for artifact in p.parent.glob('attempts/*/predictions.json'):
+              a = json.loads(artifact.read_text())
+              assert prediction_metrics(a['rows'])
+          print(json.dumps({'source_campaign':str(p),'fit_calls':result['fit_calls'],'outcome':result['research_outcome']}, indent=2))
+          PY
+      - name: Preserve actual source identity and environment
+        if: always()
+        run: |
+          mkdir -p validation
+          git rev-parse HEAD > validation/HEAD.txt
+          git rev-parse HEAD^{tree} > validation/TREE.txt
+          python -m pip freeze > validation/environment.txt
+          cp /tmp/v22r-delivery.json validation/delivery.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v22r-stage-${{ matrix.python }}-${{ github.sha }}
+          path: validation
+          retention-days: 30
+  deliver:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Deliver exact green commit without force
+        run: |
+          cp .github/v22r-delivery.json /tmp/v22r-delivery.json
+          python - <<'PY'
+          import base64, json, pathlib, re, subprocess, zlib
+          m = json.loads(pathlib.Path('/tmp/v22r-delivery.json').read_text())
+          for key in ('base','tree','commit'):
+              assert re.fullmatch('[0-9a-f]{40}', m[key])
+          remote = subprocess.check_output(['git','ls-remote','origin','refs/heads/feat/mission-research-v2'],text=True).split()[0]
+          assert remote == m['base'], 'Formal branch changed during validation; stop rather than overwrite'
+          subprocess.run(['git','checkout','--detach',m['base']],check=True)
+          subprocess.run(['git','apply','--index','--binary','-'],input=zlib.decompress(base64.b64decode(m['patch_zlib_base64'])),check=True)
+          tree = subprocess.check_output(['git','write-tree'],text=True).strip()
+          assert tree == m['tree']
+          raw = base64.b64decode(m['commit_base64'])
+          assert raw.startswith(('tree '+tree+'\nparent '+m['base']+'\n').encode())
+          commit = subprocess.check_output(['git','hash-object','-t','commit','-w','--stdin'],input=raw).decode().strip()
+          assert commit == m['commit']
+          subprocess.run(['git','push','origin',commit+':refs/heads/feat/mission-research-v2'],check=True)
+          print('DELIVERED_TESTED_SOURCE='+commit)
+          PY
