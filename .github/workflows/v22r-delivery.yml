@@ -44,8 +44,9 @@ jobs:
           subprocess.run(['git','fetch',str(bundle),'refs/heads/feat/mission-research-v2:refs/remotes/delivery/target'],check=True)
           assert subprocess.check_output(['git','rev-parse','refs/remotes/delivery/target'],text=True).strip()==r['target']
           subprocess.run(['git','merge-base','--is-ancestor',r['base'],r['target']],check=True)
-          subprocess.run(['git','checkout','--detach',r['target']],check=True)
           Path('/tmp/delivery-request.json').write_text(json.dumps(r))
+          # Only an ephemeral CI checkout is reset; no user work or remote ref is changed.
+          subprocess.run(['git','checkout','--force','--detach',r['target']],check=True)
           PY
       - uses: actions/setup-python@v5
         with:
