@@ -1,0 +1,30 @@
+name: V22R source snapshot
+on:
+  push:
+    branches: [validation/v22r-continue-20260921]
+permissions:
+  contents: read
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Preserve verified R2 source and offline dependencies
+        run: |
+          mkdir -p /tmp/v22r-source/wheels
+          git archive --format=tar.gz -o /tmp/v22r-source/source.tar.gz 06bb4f6411e50232e44f28ba4c05aa6121f9b899
+          git rev-parse 06bb4f6411e50232e44f28ba4c05aa6121f9b899^{tree} > /tmp/v22r-source/tree.txt
+          git cat-file commit 06bb4f6411e50232e44f28ba4c05aa6121f9b899 > /tmp/v22r-source/commit.txt
+          python -m pip download --only-binary=:all: -d /tmp/v22r-source/wheels optuna psutil filelock streamlit ruff 'exchange-calendars>=4.13,<5' pyarrow
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v22r-source-and-wheels
+          path: /tmp/v22r-source
+          retention-days: 14
