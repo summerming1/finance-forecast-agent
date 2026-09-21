@@ -28,24 +28,8 @@ jobs:
       - name: Materialize exact tested source commit
         run: |
           cp .github/v22r-delivery.json /tmp/v22r-delivery.json
-          python - <<'PY'
-          import base64, json, pathlib, re, subprocess, zlib
-          m = json.loads(pathlib.Path('/tmp/v22r-delivery.json').read_text())
-          for key in ('base', 'tree', 'commit'):
-              assert re.fullmatch('[0-9a-f]{40}', m[key]), key
-          subprocess.run(['git', 'checkout', '--detach', m['base']], check=True)
-          patch = zlib.decompress(base64.b64decode(m['patch_zlib_base64']))
-          subprocess.run(['git', 'apply', '--index', '--binary', '-'], input=patch, check=True)
-          tree = subprocess.check_output(['git', 'write-tree'], text=True).strip()
-          assert tree == m['tree'], (tree, m['tree'])
-          raw = base64.b64decode(m['commit_base64'])
-          assert raw.startswith(('tree '+tree+'\nparent '+m['base']+'\n').encode())
-          commit = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'], input=raw).decode().strip()
-          assert commit == m['commit']
-          subprocess.run(['git', 'checkout', '--detach', commit], check=True)
-          assert not subprocess.check_output(['git', 'status', '--porcelain']).strip()
-          print('SOURCE_COMMIT='+commit+'\nSOURCE_TREE='+tree)
-          PY
+          cp .github/v22r_gate.py /tmp/v22r_gate.py
+          python /tmp/v22r_gate.py checkout
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
@@ -74,22 +58,7 @@ jobs:
           META="$(find /tmp/focused-real-inputs -name spy_source.json -print -quit)"
           test -n "$RAW" && test -n "$META"
           python scripts/run_focused_spy_campaign.py --project-dir /tmp/v22r-real-smoke --raw-spy-json "$RAW" --source-metadata "$META" --advisor-mode deterministic --rounds 3 --candidates-per-round 2 --max-fit-calls 40 > validation/real-smoke.log
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          from finance_forecast_agent.focused_evidence import prediction_metrics
-          p = next(Path('/tmp/v22r-real-smoke/focused_campaigns').glob('*/campaign.json'))
-          result = json.loads(p.read_text())
-          assert result['campaign']['dataset']['row_count'] == 4002
-          assert result['execution_status'] == 'completed'
-          assert result['confirmation_status'] == 'not_run_historical_data_exposed'
-          assert 12 <= result['fit_calls'] <= 40
-          assert result['fit_calls'] == result['resource_usage']['charged_fit_calls']
-          for artifact in p.parent.glob('attempts/*/predictions.json'):
-              a = json.loads(artifact.read_text())
-              assert prediction_metrics(a['rows'])
-          print(json.dumps({'source_campaign':str(p),'fit_calls':result['fit_calls'],'outcome':result['research_outcome']}, indent=2))
-          PY
+          python /tmp/v22r_gate.py smoke > validation/real-recompute.log
       - name: Preserve actual source identity and environment
         if: always()
         run: |
@@ -117,21 +86,5 @@ jobs:
       - name: Deliver exact green commit without force
         run: |
           cp .github/v22r-delivery.json /tmp/v22r-delivery.json
-          python - <<'PY'
-          import base64, json, pathlib, re, subprocess, zlib
-          m = json.loads(pathlib.Path('/tmp/v22r-delivery.json').read_text())
-          for key in ('base','tree','commit'):
-              assert re.fullmatch('[0-9a-f]{40}', m[key])
-          remote = subprocess.check_output(['git','ls-remote','origin','refs/heads/feat/mission-research-v2'],text=True).split()[0]
-          assert remote == m['base'], 'Formal branch changed during validation; stop rather than overwrite'
-          subprocess.run(['git','checkout','--detach',m['base']],check=True)
-          subprocess.run(['git','apply','--index','--binary','-'],input=zlib.decompress(base64.b64decode(m['patch_zlib_base64'])),check=True)
-          tree = subprocess.check_output(['git','write-tree'],text=True).strip()
-          assert tree == m['tree']
-          raw = base64.b64decode(m['commit_base64'])
-          assert raw.startswith(('tree '+tree+'\nparent '+m['base']+'\n').encode())
-          commit = subprocess.check_output(['git','hash-object','-t','commit','-w','--stdin'],input=raw).decode().strip()
-          assert commit == m['commit']
-          subprocess.run(['git','push','origin',commit+':refs/heads/feat/mission-research-v2'],check=True)
-          print('DELIVERED_TESTED_SOURCE='+commit)
-          PY
+          cp .github/v22r_gate.py /tmp/v22r_gate.py
+          python /tmp/v22r_gate.py deliver
