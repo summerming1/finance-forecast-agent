@@ -1,0 +1,112 @@
+name: V2.2-R gated delivery
+on:
+  push:
+    branches: [validation/v22r-source-20260921]
+    paths: ['.delivery/**', '.github/workflows/v22r-delivery.yml']
+permissions:
+  contents: read
+concurrency:
+  group: v22r-delivery
+  cancel-in-progress: false
+jobs:
+  validate:
+    if: contains(github.event.head_commit.message, 'validate(R')
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.13']
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify and checkout exact tested commit
+        run: |
+          python - <<'PY'
+          import hashlib,json,re,subprocess
+          from pathlib import Path
+          request=json.loads(Path('.delivery/request.json').read_text())
+          for key in ['base','target','bundle_sha256']:
+              assert re.fullmatch('[0-9a-f]{40}' if key!='bundle_sha256' else '[0-9a-f]{64}',request[key])
+          bundle=Path('.delivery/source.bundle').resolve()
+          assert hashlib.sha256(bundle.read_bytes()).hexdigest()==request['bundle_sha256']
+          subprocess.run(['git','bundle','verify',str(bundle)],check=True)
+          subprocess.run(['git','fetch',str(bundle),'refs/heads/feat/mission-research-v2:refs/remotes/delivery/target'],check=True)
+          assert subprocess.check_output(['git','rev-parse','refs/remotes/delivery/target'],text=True).strip()==request['target']
+          subprocess.run(['git','merge-base','--is-ancestor',request['base'],request['target']],check=True)
+          subprocess.run(['git','checkout','--detach',request['target']],check=True)
+          Path('/tmp/delivery-request.json').write_text(json.dumps(request))
+          PY
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install validation dependencies
+        run: |
+          python -m pip install --no-deps -e .
+          python -m pip install numpy pandas scikit-learn scipy plotly requests 'exchange-calendars>=4.13,<5' pytest ruff streamlit pyarrow 'optuna==4.8.0' 'psutil>=7.2,<8' pypdf
+      - name: Cumulative focused tests
+        env:
+          PYTHONPATH: src
+        run: |
+          mkdir -p validation-delivery
+          python -m pytest -q tests/test_focused*.py --junitxml=validation-delivery/focused.xml 2>&1 | tee validation-delivery/focused.log
+      - name: Changed-file lint and compile
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          r=json.loads(Path('/tmp/delivery-request.json').read_text())
+          files=subprocess.check_output(['git','diff','--name-only',r['base'],r['target']],text=True).splitlines()
+          files=[f for f in files if f.endswith('.py') and Path(f).exists()]
+          if files:
+              subprocess.run(['python','-m','ruff','check',*files],check=True)
+              subprocess.run(['python','-m','compileall','-q',*files],check=True)
+          PY
+      - name: Preserve exact source and environment
+        if: always()
+        run: |
+          mkdir -p validation-delivery
+          git rev-parse HEAD > validation-delivery/HEAD.txt
+          git rev-parse HEAD^{tree} > validation-delivery/TREE.txt
+          git archive --format=tar.gz -o validation-delivery/source.tar.gz HEAD
+          python -m pip freeze > validation-delivery/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v22r-validation-${{ matrix.python }}-${{ github.run_id }}
+          path: validation-delivery
+          retention-days: 14
+  promote:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fast-forward only after both validation jobs pass
+        run: |
+          python - <<'PY'
+          import hashlib,json,re,subprocess
+          from pathlib import Path
+          r=json.loads(Path('.delivery/request.json').read_text())
+          assert re.fullmatch('[0-9a-f]{40}',r['base']) and re.fullmatch('[0-9a-f]{40}',r['target'])
+          assert hashlib.sha256(Path('.delivery/source.bundle').read_bytes()).hexdigest()==r['bundle_sha256']
+          subprocess.run(['git','fetch','.delivery/source.bundle','refs/heads/feat/mission-research-v2:refs/remotes/delivery/target'],check=True)
+          assert subprocess.check_output(['git','rev-parse','refs/remotes/delivery/target'],text=True).strip()==r['target']
+          remote=subprocess.check_output(['git','ls-remote','origin','refs/heads/feat/mission-research-v2'],text=True).split()[0]
+          if remote==r['target']:
+              print('Already delivered exact target')
+          else:
+              assert remote==r['base'], 'Remote moved; do not overwrite concurrent changes'
+              subprocess.run(['git','merge-base','--is-ancestor',r['base'],r['target']],check=True)
+              subprocess.run(['git','push','origin',r['target']+':refs/heads/feat/mission-research-v2'],check=True)
+          PY
