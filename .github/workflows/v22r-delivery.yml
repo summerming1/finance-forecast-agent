@@ -17,6 +17,9 @@ jobs:
         python: ['3.11', '3.13']
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
     env:
       OMP_NUM_THREADS: '1'
       MKL_NUM_THREADS: '1'
@@ -26,34 +29,36 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Verify and checkout exact tested commit
+      - name: Verify and checkout exact locally tested commit
         run: |
           python - <<'PY'
           import hashlib,json,re,subprocess
           from pathlib import Path
-          request=json.loads(Path('.delivery/request.json').read_text())
+          r=json.loads(Path('.delivery/request.json').read_text())
           for key in ['base','target','bundle_sha256']:
-              assert re.fullmatch('[0-9a-f]{40}' if key!='bundle_sha256' else '[0-9a-f]{64}',request[key])
+              assert re.fullmatch('[0-9a-f]{40}' if key!='bundle_sha256' else '[0-9a-f]{64}',r[key])
           bundle=Path('.delivery/source.bundle').resolve()
-          assert hashlib.sha256(bundle.read_bytes()).hexdigest()==request['bundle_sha256']
+          assert hashlib.sha256(bundle.read_bytes()).hexdigest()==r['bundle_sha256']
           subprocess.run(['git','bundle','verify',str(bundle)],check=True)
           subprocess.run(['git','fetch',str(bundle),'refs/heads/feat/mission-research-v2:refs/remotes/delivery/target'],check=True)
-          assert subprocess.check_output(['git','rev-parse','refs/remotes/delivery/target'],text=True).strip()==request['target']
-          subprocess.run(['git','merge-base','--is-ancestor',request['base'],request['target']],check=True)
-          subprocess.run(['git','checkout','--detach',request['target']],check=True)
-          Path('/tmp/delivery-request.json').write_text(json.dumps(request))
+          assert subprocess.check_output(['git','rev-parse','refs/remotes/delivery/target'],text=True).strip()==r['target']
+          subprocess.run(['git','merge-base','--is-ancestor',r['base'],r['target']],check=True)
+          subprocess.run(['git','checkout','--detach',r['target']],check=True)
+          Path('/tmp/delivery-request.json').write_text(json.dumps(r))
           PY
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
       - name: Install validation dependencies
         run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install --no-deps -e .
           python -m pip install numpy pandas scikit-learn scipy plotly requests 'exchange-calendars>=4.13,<5' pytest ruff streamlit pyarrow 'optuna==4.8.0' 'psutil>=7.2,<8' pypdf
       - name: Cumulative focused tests
         env:
           PYTHONPATH: src
         run: |
+          set -euo pipefail
           mkdir -p validation-delivery
           python -m pytest -q tests/test_focused*.py --junitxml=validation-delivery/focused.xml 2>&1 | tee validation-delivery/focused.log
       - name: Changed-file lint and compile
@@ -82,7 +87,7 @@ jobs:
           name: v22r-validation-${{ matrix.python }}-${{ github.run_id }}
           path: validation-delivery
           retention-days: 14
-  promote:
+  stage:
     needs: validate
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -92,7 +97,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Fast-forward only after both validation jobs pass
+      - name: Publish verified objects to temporary ref only
         run: |
           python - <<'PY'
           import hashlib,json,re,subprocess
@@ -103,10 +108,8 @@ jobs:
           subprocess.run(['git','fetch','.delivery/source.bundle','refs/heads/feat/mission-research-v2:refs/remotes/delivery/target'],check=True)
           assert subprocess.check_output(['git','rev-parse','refs/remotes/delivery/target'],text=True).strip()==r['target']
           remote=subprocess.check_output(['git','ls-remote','origin','refs/heads/feat/mission-research-v2'],text=True).split()[0]
-          if remote==r['target']:
-              print('Already delivered exact target')
-          else:
-              assert remote==r['base'], 'Remote moved; do not overwrite concurrent changes'
-              subprocess.run(['git','merge-base','--is-ancestor',r['base'],r['target']],check=True)
-              subprocess.run(['git','push','origin',r['target']+':refs/heads/feat/mission-research-v2'],check=True)
+          assert remote in {r['base'],r['target']}, 'Remote moved; do not overwrite concurrent changes'
+          subprocess.run(['git','merge-base','--is-ancestor',r['base'],r['target']],check=True)
+          subprocess.run(['git','push','origin',r['target']+':refs/heads/validation/v22r-tested'],check=True)
+          print('Exact verified source is staged. Formal branch is NOT changed by this workflow.')
           PY
