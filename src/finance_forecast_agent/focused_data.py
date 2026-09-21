@@ -10,6 +10,7 @@ import exchange_calendars as xcals
 import numpy as np
 import pandas as pd
 
+from .focused_identity import data_identity, identity
 from .focused_protocol import FocusedSplitSpec
 
 FOCUSED_FEATURE_REGISTRY_VERSION = "spy_daily_features_v1"
@@ -49,21 +50,18 @@ class FocusedDatasetSnapshot:
     session_calendar: str = "XNYS"
     session_validation: str = "complete_observed_sessions"
 
+    identity_version: str = "legacy_unverified"
+    frame_fingerprint: str = ""
+    target_fingerprint: str = ""
+    target_content_fingerprint: str = ""
+    observation_fingerprint: str = ""
+
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
 def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
-
-
-def _semantic_fingerprint(raw_sha256: str, task: FocusedTaskSpec) -> str:
-    payload = {
-        "raw_sha256": raw_sha256,
-        "task": task.to_dict(),
-        "feature_registry_version": FOCUSED_FEATURE_REGISTRY_VERSION,
-    }
-    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()[:20]
 
 
 def _extract_yahoo_chart(payload: dict[str, Any]) -> tuple[pd.DataFrame, dict[str, Any]]:
@@ -202,7 +200,8 @@ def build_spy_daily_research_frame(
     if source_metadata_path and Path(source_metadata_path).exists():
         source_meta = json.loads(Path(source_metadata_path).read_text(encoding="utf-8"))
     raw_sha = _sha256_bytes(raw)
-    fingerprint = _semantic_fingerprint(raw_sha, task)
+    identities = data_identity(frame, task.to_dict())
+    fingerprint = identity(identities, domain="focused-dataset-v2")
     snapshot = FocusedDatasetSnapshot(
         dataset_id=f"spy_yahoo_daily_{fingerprint}",
         raw_sha256=raw_sha,
@@ -213,7 +212,8 @@ def build_spy_daily_research_frame(
         source_name=str(source_meta.get("provider") or yahoo_meta.get("exchangeName") or "Yahoo Finance chart"),
         source_url=str(source_meta.get("source_url") or "unknown"),
         license_status=str(source_meta.get("license_status") or "provider_terms_review_required"),
-        exposure=str(source_meta.get("exposure") or task.exposure),
+        exposure=task.exposure,
+        **identities,
     )
     return frame, snapshot
 

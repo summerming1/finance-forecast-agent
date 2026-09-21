@@ -26,7 +26,8 @@ from .focused_evidence import (
     prediction_metrics,
     prediction_row,
 )
-from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, validate_model_params
+from .focused_identity import identity
+from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, effective_model_params, validate_model_params
 from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
 from .replay_llm import ReplayLLM
 
@@ -83,18 +84,20 @@ class CandidateConfig:
     hypothesis_id: str | None = None
 
     @property
+    def config_identity(self) -> str:
+        params = (self.model_params if self.model_family.startswith("naive_")
+                  else effective_model_params(self.model_family, self.model_params))
+        return identity({"model_family": self.model_family, "effective_params": params,
+                         "feature_groups": sorted(set(self.feature_groups))}, domain="focused-config-v2")
+
+    @property
     def fingerprint(self) -> str:
-        return _hash(
-            {
-                "model_family": self.model_family,
-                "model_params": self.model_params,
-                "feature_groups": sorted(self.feature_groups),
-                "seed": self.seed,
-            }
-        )
+        if isinstance(self.seed, bool) or not isinstance(self.seed, int) or not 0 <= self.seed <= 2**32 - 1:
+            raise ValueError("Estimator seed must be a non-negative 32-bit integer")
+        return identity({"config_identity": self.config_identity, "seed": self.seed}, domain="focused-execution-config-v2")
 
     def to_dict(self) -> dict[str, Any]:
-        return {**asdict(self), "candidate_fingerprint": self.fingerprint}
+        return {**asdict(self), "candidate_fingerprint": self.fingerprint, "config_identity": self.config_identity}
 
 
 @dataclass(frozen=True)
@@ -180,7 +183,7 @@ class CampaignSpec:
 
 def resolve_feature_columns(groups: list[str]) -> list[str]:
     columns: list[str] = []
-    for group in groups:
+    for group in sorted(set(groups)):
         if group not in FEATURE_GROUPS:
             raise ValueError(f"unsupported feature group: {group}")
         for column in FEATURE_GROUPS[group]:
@@ -194,7 +197,7 @@ def resolve_feature_columns(groups: list[str]) -> list[str]:
 def _make_model(candidate: CandidateConfig):
     if candidate.model_family not in ALLOWED_MODELS:
         raise ValueError(f"unsupported focused model: {candidate.model_family}")
-    params = validate_model_params(candidate.model_family, candidate.model_params)
+    params = effective_model_params(candidate.model_family, candidate.model_params)
     if candidate.model_family == "ridge_regression":
         allowed = {"alpha"}
         unknown = set(params) - allowed
@@ -454,13 +457,18 @@ def advisor_prompt(
     reviewed_evidence: list[dict[str, Any]] | None = None,
     compatible_memory: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    available_evidence_ids = list(dict.fromkeys([
-        *(x.candidate.candidate_id for x in baseline_results),
-        *(x.candidate.candidate_id for x in prior_results),
-        *(str(row["feedback_id"]) for row in (structured_feedback or []) if row.get("feedback_id")),
-        *(str(row["evidence_id"]) for row in (reviewed_evidence or []) if row.get("evidence_id") and row.get("visible", True)),
-        *(str(row["evidence_id"]) for row in (compatible_memory or []) if row.get("evidence_id") and row.get("visible", True)),
-    ]))
+    from .focused_adaptive import EvidenceIndex, feedback_evidence, result_evidence
+
+    all_evidence = [
+        *result_evidence([{"candidate_id": x.candidate.candidate_id} for x in [*baseline_results, *prior_results]]),
+        *feedback_evidence(list(structured_feedback or [])),
+        *(reviewed_evidence or []), *(compatible_memory or []),
+    ]
+    index = EvidenceIndex(all_evidence)
+    projected = index.rows
+    visible_ids = set(index.ids)
+    reviewed_ids = {row["evidence_id"] for row in (reviewed_evidence or [])}
+    memory_ids = {row["evidence_id"] for row in (compatible_memory or [])}
     return {
         "task": "focused_spy_research_hypotheses_v1",
         "round_index": round_index,
@@ -475,10 +483,12 @@ def advisor_prompt(
             {"candidate_id": x.candidate.candidate_id, "parent_candidate_id": x.candidate.parent_candidate_id, "hypothesis_id": x.candidate.hypothesis_id, "model_family": x.candidate.model_family, "feature_groups": x.candidate.feature_groups, "model_params": x.candidate.model_params, "metrics": x.metrics, "verdict": x.research_verdict}
             for x in prior_results
         ],
-        "structured_feedback": list(structured_feedback or []),
-        "reviewed_evidence": list(reviewed_evidence or []),
-        "compatible_memory": list(compatible_memory or []),
-        "available_evidence_ids": available_evidence_ids,
+        "structured_feedback": [row for row in (structured_feedback or []) if row.get("feedback_id") in visible_ids],
+        "reviewed_evidence": [row for row in projected if row["evidence_id"] in reviewed_ids],
+        "compatible_memory": [row for row in projected if row["evidence_id"] in memory_ids],
+        "available_evidence_ids": index.ids,
+        "evidence_projection": projected,
+        "evidence_projection_hash": identity(projected, domain="evidence-projection-v1"),
         "remaining_budget": {
             "max_rounds": budget.max_rounds,
             "max_new_candidates_per_round": budget.max_new_candidates_per_round,
@@ -578,9 +588,15 @@ def _deterministic_advice(round_index: int, baseline_results: list[CandidateResu
 
 
 class FocusedResearchAdvisor:
-    def __init__(self, mode: AdvisorMode, fixture_dir: str | Path | None = None):
+    def __init__(self, mode: AdvisorMode, fixture_dir: str | Path | None = None,
+                 *, replay_call_ids: dict[str, str] | None = None):
+        if mode not in {"deterministic", "replay", "live"}:
+            raise ValueError(f"Unsupported Advisor mode: {mode}")
         self.mode = mode
         self.fixture_dir = Path(fixture_dir) if fixture_dir else None
+        self.replay_call_ids = dict(replay_call_ids or {})
+        self.last_record: dict[str, Any] | None = None
+        self.last_fixture_path: Path | None = None
 
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         if self.mode == "deterministic":
@@ -596,9 +612,16 @@ class FocusedResearchAdvisor:
         if self.fixture_dir is None:
             raise ValueError("fixture_dir is required for replay/live advisor modes")
         if self.mode == "replay":
-            return ReplayLLM(self.fixture_dir).complete_json(prompt_payload=prompt, schema_name="focused_research_advice"), "replay_fixture"
+            reader = ReplayLLM(self.fixture_dir, call_ids=self.replay_call_ids)
+            response = reader.complete_json(prompt_payload=prompt, schema_name="focused_research_advice")
+            self.last_record, self.last_fixture_path = reader.last_record, reader.last_fixture_path
+            return response, "replay_fixture"
         client = FixtureRecordingLLM(OpenAIJsonClient(), self.fixture_dir)
-        return client.complete_json(prompt_payload=prompt, schema_name="focused_research_advice"), "live_llm_recorded"
+        try:
+            response = client.complete_json(prompt_payload=prompt, schema_name="focused_research_advice")
+        finally:
+            self.last_record, self.last_fixture_path = client.replay.last_record, client.last_fixture_path
+        return response, "live_llm_recorded"
 
 
 def _results_from_prompt(rows: list[dict[str, Any]]) -> list[CandidateResult]:
@@ -641,10 +664,17 @@ def compile_hypotheses(
         model_params = validate_model_params(family, dict(row.get("model_params") or {}))
         resolve_feature_columns(groups)
         evidence_refs = [str(x) for x in row.get("evidence_refs") or []]
-        if visible_evidence is not None and evidence_refs:
-            from .focused_adaptive import validate_evidence_refs
+        from .focused_adaptive import EvidenceIndex
 
-            validate_evidence_refs(evidence_refs, visible_evidence)
+        evidence_index = EvidenceIndex(visible_evidence or [])
+        for ref in evidence_refs:
+            evidence_index.require(ref)
+        for ref in row.get("based_on_feedback_ids") or []:
+            evidence_index.require(str(ref), "feedback")
+        parent_id = str(row.get("parent_candidate_id") or "baseline_ridge")
+        evidence_index.require(parent_id, "candidate_result")
+        if row.get("control_candidate_id"):
+            evidence_index.require(str(row["control_candidate_id"]), "candidate_result")
         hypothesis_id = f"r{round_index}_h{index+1}_{_hash(row, 8)}"
         candidate_id = f"r{round_index}_c{index+1}_{_hash({'family': family, 'groups': groups, 'params': row.get('model_params')}, 8)}"
         hypothesis = HypothesisSpec(
@@ -697,6 +727,7 @@ class FocusedResearchController:
         tenant_id: str = "default",
         memory_store_path: str | Path | None = None,
         use_memory_prior: bool = True,
+        replay_call_ids: dict[str, str] | None = None,
     ):
         self.project_dir = Path(project_dir)
         self.task = task
@@ -717,7 +748,7 @@ class FocusedResearchController:
         self.tenant_id = tenant_id
         self.memory_store_path = Path(memory_store_path) if memory_store_path else self.project_dir / "experiment_memory.json"
         self.use_memory_prior = bool(use_memory_prior)
-        self.advisor = FocusedResearchAdvisor(advisor_mode, fixture_dir)
+        self.advisor = FocusedResearchAdvisor(advisor_mode, fixture_dir, replay_call_ids=replay_call_ids)
         self.spec = CampaignSpec(
             campaign_id=campaign_id or f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
             task=task,
@@ -997,25 +1028,23 @@ class FocusedResearchController:
                 compatible_memory=memory_evidence,
             )
             advice, source = self.advisor.propose(prompt)
-            from .focused_adaptive import feedback_evidence, result_evidence
-
-            result_refs = [
-                {"candidate_id": row.candidate.candidate_id}
-                for row in [*baseline_results, *research_results]
-            ]
-            visible_evidence = [
-                *self.reviewed_evidence,
-                *memory_evidence,
-                *result_evidence(result_refs),
-                *feedback_evidence(feedback_history),
-            ]
-            compiled = compile_hypotheses(
-                advice,
-                round_index=round_index,
-                source=source,
-                max_count=self.budget.max_new_candidates_per_round,
-                visible_evidence=visible_evidence if visible_evidence else None,
-            )
+            if self.advisor.last_record:
+                self._append_event("advisor.call_recorded", round_index=round_index,
+                                   call_id=self.advisor.last_record.get("call_id"),
+                                   record_hash=self.advisor.last_record.get("record_hash"),
+                                   prompt_hash=self.advisor.last_record.get("prompt_hash"))
+            try:
+                compiled = compile_hypotheses(
+                    advice,
+                    round_index=round_index,
+                    source=source,
+                    max_count=self.budget.max_new_candidates_per_round,
+                    visible_evidence=prompt["evidence_projection"],
+                )
+            except (ValueError, TypeError) as exc:
+                self._append_event("proposal.rejected", round_index=round_index,
+                                   prompt_hash=_hash(prompt), error_type=type(exc).__name__)
+                raise
             prompt_hash = _hash(prompt)
             plan_hash, plan_ref = self._freeze_batch_plan(
                 round_index=round_index,

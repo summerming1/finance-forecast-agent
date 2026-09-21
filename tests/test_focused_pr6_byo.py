@@ -78,7 +78,10 @@ def test_simulated_client_csv_and_parquet_load_same_supported_task(tmp_path: Pat
     assert pq_snapshot.exposure == "external_unknown"
     assert csv_provenance["provenance_type"] == "simulation_only"
     assert pq_provenance["provenance_type"] == "simulation_only"
-    assert csv_snapshot.semantic_fingerprint != pq_snapshot.semantic_fingerprint
+    # R1 separates container bytes from observation identity; equivalent formats
+    # must not reset exposure. Original raw hashes remain independently traceable.
+    assert csv_snapshot.raw_sha256 != pq_snapshot.raw_sha256
+    assert csv_snapshot.semantic_fingerprint == pq_snapshot.semantic_fingerprint
 
 
 def test_column_mapping_cannot_change_task_or_label_semantics(tmp_path: Path) -> None:
@@ -214,7 +217,9 @@ def test_second_simulated_client_changes_contract_and_adapter_not_core_executor(
     )
     _, snapshot_a, _ = load_external_focused_dataset(path_a, contract_a)
     _, snapshot_b, _ = load_external_focused_dataset(path_b, contract_b)
-    assert snapshot_a.semantic_fingerprint != snapshot_b.semantic_fingerprint
+    # A display-only provider name is not a new set of observations.
+    assert snapshot_a.source_name != snapshot_b.source_name
+    assert snapshot_a.semantic_fingerprint == snapshot_b.semantic_fingerprint
 
     registry = ReviewedAdapterRegistry()
     registry.register(ReviewedLocalAdapterSpec(

@@ -101,15 +101,17 @@ def test_live_fixture_records_provider_model_and_response_hash(tmp_path: Path) -
 
     fixture_dir = tmp_path / "fixtures"
     prompt = {"task": "live provenance test"}
-    FixtureRecordingLLM(FakeLiveClient(), fixture_dir).complete_json(
+    recording = FixtureRecordingLLM(FakeLiveClient(), fixture_dir)
+    recording.complete_json(
         prompt_payload=prompt,
         schema_name="focused_research_advice",
     )
-    fixture_path = fixture_dir / "focused_research_advice" / f"{ReplayLLM.prompt_hash(prompt)}.json"
+    fixture_path = recording.last_fixture_path
+    assert fixture_path is not None
     payload = json.loads(fixture_path.read_text(encoding="utf-8"))
     assert payload["created_by"] == "live_provider_record"
-    assert payload["provider"] == "bailian"
-    assert payload["model"] == "qwen-test"
+    assert payload["provider_metadata"]["provider"] == "bailian"
+    assert payload["provider_metadata"]["model"] == "qwen-test"
     assert payload["response_hash"]
 
 

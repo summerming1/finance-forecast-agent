@@ -5,7 +5,7 @@
   "stages": {
     "R0": {
       "scope": "status truth and prototype claim guard",
-      "status": "local_gate_passed",
+      "status": "delivered",
       "test_evidence": [
         {
           "command": "python -m pytest -q tests/test_focused*.py",
@@ -18,12 +18,48 @@
           "command": "python -m ruff check <modified .py files>",
           "exit_code": 0
         }
+      ],
+      "commit": "007abc9af30a6c42d1c11b81e19cc4dc537d8144",
+      "ci_runs": [
+        35559291562,
+        35559291567
       ]
     },
     "R1": {
       "scope": "identity evidence replay",
-      "status": "not_started",
-      "test_evidence": []
+      "status": "local_gate_passed",
+      "test_evidence": [
+        {
+          "command": "python -m pytest -q tests/test_focused*.py",
+          "passed": 87,
+          "failed": 0,
+          "seconds": 49.57,
+          "exit_code": 0
+        },
+        {
+          "command": "focused R1 + legacy core replay + methodcard tests",
+          "passed": 24,
+          "failed": 0,
+          "exit_code": 0
+        },
+        {
+          "command": "frozen SPY deterministic 3 rounds / 2 candidates / 40 fits",
+          "exit_code": 0,
+          "rows": 4002,
+          "fits": 20,
+          "outcome": "no_improvement"
+        }
+      ],
+      "clauses": [
+        "hidden_body_filtered",
+        "evidence_role_binding",
+        "record_hash_verified",
+        "immutable_call_ids",
+        "explicit_replay_selection",
+        "no_network_replay",
+        "canonical_data_identity",
+        "candidate_default_identity"
+      ]
     },
     "R2": {
       "scope": "transactional recovery",

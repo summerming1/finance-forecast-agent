@@ -88,6 +88,8 @@ def test_compile_hypothesis_keeps_paper_fact_separate_and_requires_visible_ref()
         }]
     }
     evidence = [EvidenceNode("paper-1", "paper_claim", "Paper states a volatility mechanism.", source_ref="paper#p3").to_dict()]
+    evidence.append({"evidence_id": "baseline_ridge", "evidence_type": "current_experiment",
+                     "role": "candidate_result", "visible": True, "summary": "frozen baseline"})
     hypothesis, _ = compile_hypotheses(advice, round_index=1, source="test", max_count=1, visible_evidence=evidence)[0]
     assert hypothesis.evidence_refs == ["paper-1"]
     assert hypothesis.mechanism.startswith("Local hypothesis")

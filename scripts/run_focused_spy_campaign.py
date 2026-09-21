@@ -18,6 +18,7 @@ def main() -> None:
     parser.add_argument("--raw-spy-json", required=True, help="Frozen Yahoo Finance SPY chart JSON. No synthetic fallback.")
     parser.add_argument("--source-metadata", default=None, help="Optional source metadata JSON produced during acquisition.")
     parser.add_argument("--advisor-mode", choices=["deterministic", "replay", "live"], default="deterministic")
+    parser.add_argument("--replay-call-map", type=Path, help="JSON prompt hash -> immutable call ID selection")
     parser.add_argument("--fixture-dir", default="projects/finance_agent/llm_fixtures_focused")
     parser.add_argument("--rounds", type=int, default=3)
     parser.add_argument("--candidates-per-round", type=int, default=2)
@@ -42,6 +43,7 @@ def main() -> None:
         fixture_dir=args.fixture_dir,
         campaign_id=args.campaign_id,
         resume_existing=args.resume_existing,
+        replay_call_ids=json.loads(args.replay_call_map.read_text()) if args.replay_call_map else None,
     )
     result = controller.run()
     print(json.dumps({

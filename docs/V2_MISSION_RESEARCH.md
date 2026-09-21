@@ -1,3 +1,10 @@
+
+## R1 — identity / evidence / immutable replay（2026-09-21）
+
+实现统一数据身份与有效默认配置身份；prompt 与 validator 共享先过滤正文的 EvidenceIndex；parent/control/feedback 按角色校验；每次调用不可变保存，读取时校验完整响应与 envelope hash，重复 prompt 明确选择 call_id。metadata 不可覆盖核心字段，endpoint 移除凭证和 query；失败调用保存类型与可用资源信息，不保存可能带密钥的异常正文。
+
+红测：原实现 16 failed / 1 passed；修复后累计 focused 87 passed（49.57s），共享 replay/MethodCard 定向 24 passed。Ruff/compile passed。真实冻结 SPY 4002 行，20 fits，Ridge MAE 0.0050337535958270355，no_improvement，历史曝光 confirmation 未运行。未调用真实 provider；离线测试禁止网络及 provider 入口。BYO 旧的“换格式/来源就换语义身份”断言按批准的新合同迁移，同时新增原始哈希差异和同目标身份断言，没有修改数值指标求绿。
+
 # V2 Mission Research — incremental delivery record
 
 ## Current authority

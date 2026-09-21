@@ -140,3 +140,16 @@ def validate_model_params(model_family: str, params: dict[str, Any]) -> dict[str
         return params
 
     raise ValueError(f"unsupported focused model: {model_family}")
+
+
+def effective_model_params(model_family: str, requested: dict[str, Any]) -> dict[str, Any]:
+    """Defaults consumed by both the estimator factory and config identity."""
+    defaults = {
+        "ridge_regression": {"alpha": 1.0},
+        "random_forest_regressor": {"n_estimators": 100, "max_depth": None, "min_samples_leaf": 1, "max_features": 1.0},
+        "gradient_boosting_regressor": {"n_estimators": 100, "learning_rate": 0.1, "max_depth": 3, "min_samples_leaf": 1},
+    }
+    if model_family not in defaults:
+        raise ValueError(f"unsupported focused model: {model_family}")
+    validated = validate_model_params(model_family, requested)
+    return {**defaults[model_family], **validated}

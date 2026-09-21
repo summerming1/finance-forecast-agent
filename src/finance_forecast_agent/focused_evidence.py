@@ -335,6 +335,10 @@ def build_exposure_record(
     payload = {
         "dataset_fingerprint": dataset.semantic_fingerprint,
         "raw_sha256": dataset.raw_sha256,
+        "identity_version": dataset.identity_version,
+        "target_fingerprint": dataset.target_fingerprint,
+        "target_content_fingerprint": dataset.target_content_fingerprint,
+        "frame_fingerprint": dataset.frame_fingerprint,
         "start_date": dataset.start_date,
         "end_date": dataset.end_date,
         "exposure_class": dataset.exposure,

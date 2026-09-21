@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import time
@@ -47,6 +48,7 @@ class OpenAIJsonClient:
         )
         self.timeout = int(timeout or os.getenv('LLM_TIMEOUT') or os.getenv('TEACHER_TIMEOUT') or os.getenv('TEACHER_REQUEST_TIMEOUT') or 180)
         self.max_tokens = int(os.getenv('LLM_MAX_TOKENS') or os.getenv('TEACHER_MAX_TOKENS') or 4096)
+        self.last_call_metadata: dict[str, Any] = {}
         self.retries = int(os.getenv('LLM_RETRIES') or os.getenv('TEACHER_RETRY') or 2)
         if not self.api_key:
             raise RuntimeError('OPENAI_API_KEY or DASHSCOPE_API_KEY is required for OpenAIJsonClient')
@@ -64,17 +66,27 @@ class OpenAIJsonClient:
         }
         if self.provider not in BAILIAN_PROVIDERS:
             payload['response_format'] = {'type': 'json_object'}
+        started = time.monotonic()
+        self.last_call_metadata = {"generation_parameters": {"temperature": 0, "max_tokens": self.max_tokens},
+                                   "usage": None, "cost": None, "http_attempts": 0}
         resp = self._post_with_retries(payload)
-        content = resp.json()['choices'][0]['message']['content']
+        self.last_call_metadata["elapsed_seconds"] = time.monotonic() - started
+        response_json = resp.json()
+        content = response_json['choices'][0]['message']['content']
+        self.last_call_metadata.update({
+            "raw_response_hash": hashlib.sha256(str(content).encode('utf-8')).hexdigest(),
+            "usage": response_json.get('usage'), "request_id": response_json.get('id'),
+        })
         data = _parse_json_object(content)
         if not isinstance(data, dict):
-            raise ValueError('LLM response must be a JSON object')
+            raise ValueError('LLM response must be a JSON object')  # noqa: TRY004 - public client compatibility
         return data
 
     def _post_with_retries(self, payload: dict[str, Any]) -> requests.Response:
         last_error: Exception | None = None
         url = _chat_completions_url(self.base_url)
         for attempt in range(1, self.retries + 1):
+            self.last_call_metadata["http_attempts"] = attempt
             try:
                 resp = requests.post(
                     url,
@@ -148,14 +160,14 @@ def _parse_json_object(content: str) -> dict[str, Any]:
         except json.JSONDecodeError as exc:
             raise ValueError(f'LLM response could not be parsed as JSON. Preview: {text[:500]}') from exc
     if not isinstance(data, dict):
-        raise ValueError(f'LLM response must be a JSON object, got {type(data).__name__}')
+        raise ValueError(f'LLM response must be a JSON object, got {type(data).__name__}')  # noqa: TRY004 - public client compatibility
     return data
 
 
 def _response_error_detail(resp: requests.Response) -> str:
     try:
         payload = resp.json()
-    except Exception:
+    except ValueError:
         return resp.text[:500]
     if isinstance(payload, dict):
         error = payload.get('error')
@@ -168,23 +180,29 @@ def _response_error_detail(resp: requests.Response) -> str:
 
 
 class FixtureRecordingLLM:
-    """Wrap a real LLM and write every approved response into ReplayLLM fixtures."""
+    """Record calls, including failures. Recorded is not approved/validated."""
 
     def __init__(self, live_client: LLMJsonClient, fixture_dir: str | Path):
         self.live_client = live_client
         self.replay = ReplayLLM(fixture_dir)
+        self.last_fixture_path: Path | None = None
 
     def complete_json(self, *, prompt_payload: dict[str, Any], schema_name: str) -> dict[str, Any]:
-        response = self.live_client.complete_json(prompt_payload=prompt_payload, schema_name=schema_name)
-        self.replay.write_fixture(
-            prompt_payload=prompt_payload,
-            schema_name=schema_name,
-            response=response,
-            created_by='live_provider_record',
-            metadata={
-                'provider': str(getattr(self.live_client, 'provider', 'unknown')),
-                'model': str(getattr(self.live_client, 'model', 'unknown')),
-                'base_url': str(getattr(self.live_client, 'base_url', 'unknown')),
-            },
-        )
+        started = time.monotonic()
+        metadata = {key: str(getattr(self.live_client, key, 'unknown')) for key in ('provider', 'model', 'base_url')}
+        try:
+            response = self.live_client.complete_json(prompt_payload=prompt_payload, schema_name=schema_name)
+        except Exception as exc:
+            # No exception text: HTTP errors may contain private content or URLs.
+            metadata.update(getattr(self.live_client, 'last_call_metadata', {}))
+            metadata.update(error_type=type(exc).__name__, elapsed_seconds=time.monotonic() - started)
+            self.last_fixture_path = self.replay.write_fixture(
+                prompt_payload=prompt_payload, schema_name=schema_name, response=None,
+                created_by='live_provider_record', metadata=metadata, call_status='failed')
+            raise
+        metadata.update(getattr(self.live_client, 'last_call_metadata', {}))
+        metadata['elapsed_seconds'] = time.monotonic() - started
+        self.last_fixture_path = self.replay.write_fixture(
+            prompt_payload=prompt_payload, schema_name=schema_name, response=response,
+            created_by='live_provider_record', metadata=metadata)
         return response

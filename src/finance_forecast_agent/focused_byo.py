@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 
 from .focused_data import FocusedDatasetSnapshot, FocusedTaskSpec
+from .focused_identity import data_identity, identity
 from .focused_protocol import FocusedSplitSpec, validate_model_params
 from .focused_research import (
     ALLOWED_MODELS,
@@ -29,15 +30,6 @@ _KNOWN_FEATURE_COLUMNS = {column for columns in FEATURE_GROUPS.values() for colu
 
 def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
-
-
-def _semantic_fingerprint(raw_sha256: str, contract: dict[str, Any], task: FocusedTaskSpec) -> str:
-    payload = {
-        "raw_sha256": raw_sha256,
-        "task": task.to_dict(),
-        "contract": contract,
-    }
-    return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:20]
 
 
 @dataclass(frozen=True)
@@ -165,7 +157,7 @@ def _read_external(path: Path, dataset_format: DatasetFormat) -> pd.DataFrame:
     if dataset_format == "csv":
         if path.suffix.lower() != ".csv":
             raise ValueError("dataset format says csv but file extension is not .csv")
-        return pd.read_csv(path)
+        return pd.read_csv(path, float_precision="round_trip")
     if dataset_format == "parquet":
         if path.suffix.lower() not in {".parquet", ".pq"}:
             raise ValueError("dataset format says parquet but file extension is not .parquet/.pq")
@@ -234,7 +226,8 @@ def load_external_focused_dataset(
             f"external dataset requires at least {split_spec.required_supervised_rows} supervised rows, got {len(frame)}"
         )
     raw_sha = _sha256_bytes(raw)
-    fingerprint = _semantic_fingerprint(raw_sha, contract.to_dict(), active_task)
+    identities = data_identity(frame, active_task.to_dict())
+    fingerprint = identity(identities, domain="focused-dataset-v2")
     snapshot = FocusedDatasetSnapshot(
         dataset_id=f"external_spy_daily_{fingerprint}",
         raw_sha256=raw_sha,
@@ -247,11 +240,13 @@ def load_external_focused_dataset(
         license_status=contract.license_status,
         exposure=contract.exposure,
         feature_registry_version="focused_external_features_v1",
+        **identities,
     )
     provenance = {
         "schema_version": "focused_byo_provenance_v1",
         "dataset_fingerprint": fingerprint,
         "raw_sha256": raw_sha,
+        **identities,
         "source_name": contract.source_name,
         "source_url": contract.source_url,
         "license_status": contract.license_status,

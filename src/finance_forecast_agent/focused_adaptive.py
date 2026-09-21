@@ -27,21 +27,60 @@ class EvidenceNode:
         return asdict(self)
 
 
-def validate_evidence_refs(refs: list[str], visible_evidence: list[dict[str, Any]]) -> None:
-    index = {str(row.get("evidence_id")): row for row in visible_evidence}
-    for ref in refs:
-        row = index.get(ref)
-        if row is None:
-            raise ValueError(f"unknown evidence ref: {ref}")
-        if not bool(row.get("visible", False)):
+class EvidenceIndex:
+    """A permission-filtered projection of existing facts, never a second store."""
+
+    def __init__(self, rows: list[dict[str, Any]]):
+        from copy import deepcopy
+
+        from .focused_identity import identity
+
+        self._rows: dict[str, dict[str, Any]] = {}
+        self._hidden: set[str] = set()
+        allowed = {"evidence_id", "evidence_type", "summary", "visible", "source_ref", "applicability",
+                   "role", "revision", "candidate_id", "config", "config_diff", "conditions", "limitations"}
+        seen: dict[str, str] = {}
+        for original in rows:
+            key = original.get("evidence_id")
+            if not isinstance(key, str) or not key:
+                raise ValueError("Evidence requires an explicit ID")
+            row = deepcopy({k: v for k, v in original.items() if k in allowed})
+            row["visible"] = original.get("visible") is True
+            digest = identity(row, domain="evidence-node-v1")
+            if key in seen and seen[key] != digest:
+                raise ValueError(f"Conflicting duplicate evidence ID: {key}")
+            seen[key] = digest
+            if not row["visible"]:
+                self._hidden.add(key)
+                continue
+            if row.get("evidence_type") not in {
+                "paper_claim", "current_experiment", "compatible_memory", "domain_hypothesis"
+            }:
+                raise ValueError(f"Unsupported evidence type: {key}")
+            self._rows[key] = row
+
+    @property
+    def rows(self) -> list[dict[str, Any]]:
+        from copy import deepcopy
+        return deepcopy(list(self._rows.values()))
+
+    @property
+    def ids(self) -> list[str]:
+        return list(self._rows)
+
+    def require(self, ref: str, role: str | None = None) -> None:
+        if ref in self._hidden:
             raise ValueError(f"evidence ref is not visible to campaign: {ref}")
-        if row.get("evidence_type") not in {
-            "paper_claim",
-            "current_experiment",
-            "compatible_memory",
-            "domain_hypothesis",
-        }:
-            raise ValueError(f"unsupported evidence type for ref {ref}: {row.get('evidence_type')}")
+        if ref not in self._rows:
+            raise ValueError(f"unknown evidence ref: {ref}")
+        if role is not None and self._rows[ref].get("role") != role:
+            raise ValueError(f"evidence role must be {role}: {ref}")
+
+
+def validate_evidence_refs(refs: list[str], visible_evidence: list[dict[str, Any]]) -> None:
+    index = EvidenceIndex(visible_evidence)
+    for ref in refs:
+        index.require(ref)
 
 
 def feedback_evidence(feedback_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -59,6 +98,8 @@ def feedback_evidence(feedback_rows: list[dict[str, Any]]) -> list[dict[str, Any
                 source_ref=f"feedback/{feedback_id}.json",
             ).to_dict()
         )
+    for node in nodes:
+        node["role"] = "feedback"
     return nodes
 
 
@@ -76,6 +117,8 @@ def result_evidence(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 source_ref=f"candidate/{candidate_id}",
             ).to_dict()
         )
+    for node in nodes:
+        node["role"] = "candidate_result"
     return nodes
 
 
