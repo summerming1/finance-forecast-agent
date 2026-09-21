@@ -136,3 +136,7 @@ V3    Shadow Forecasting
 Do not start the next increment until the previous increment's relevant new tests and all affected prior regressions pass. Synthetic users/data and assistant-authored LLM fixtures are allowed for engineering tests only and must be marked `simulation_only` / `assistant_authored_fixture`; they are not customer, live-provider, confirmation, or financial-performance evidence.
 
 Controlled BYO now precedes the complete Shadow product. It must not become arbitrary uploaded Python/notebook/pickle/Docker execution. Agent Value Benchmark is a required PR-3 product gate, not a claim that the Agent is already superior.
+
+## 11. Approved V2.2-R hardening (2026-09-21)
+
+User approved sequential R0→R6 inside the existing scope. `CURRENT_IMPLEMENTATION.md` is the only current status table; ADR/version entries are historical decisions. Read the R log in `V2_MISSION_RESEARCH.md` and clause map in `docs/validation/v22r_acceptance.json`. Test before each delivery and never rewrite historical evidence. Temporary verification refs may validate an exact locally tested source commit before a non-force fast-forward; no new long-term product branch.

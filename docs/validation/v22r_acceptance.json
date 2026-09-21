@@ -1,0 +1,62 @@
+{
+  "schema_version": "v22r_acceptance_v1",
+  "base_sha": "6e4f194453f77037929052a0a978cc76bc2017b7",
+  "scope": "SPY_daily_next_session_return_forecast_only",
+  "stages": {
+    "R0": {
+      "scope": "status truth and prototype claim guard",
+      "status": "local_gate_passed",
+      "test_evidence": [
+        {
+          "command": "python -m pytest -q tests/test_focused*.py",
+          "passed": 68,
+          "failed": 0,
+          "seconds": 43.57,
+          "exit_code": 0
+        },
+        {
+          "command": "python -m ruff check <modified .py files>",
+          "exit_code": 0
+        }
+      ]
+    },
+    "R1": {
+      "scope": "identity evidence replay",
+      "status": "not_started",
+      "test_evidence": []
+    },
+    "R2": {
+      "scope": "transactional recovery",
+      "status": "not_started",
+      "test_evidence": []
+    },
+    "R3": {
+      "scope": "research actions memory",
+      "status": "not_started",
+      "test_evidence": []
+    },
+    "R4": {
+      "scope": "confirmation and model trust",
+      "status": "not_started",
+      "test_evidence": []
+    },
+    "R5": {
+      "scope": "actual-policy value benchmark",
+      "status": "not_started",
+      "test_evidence": []
+    },
+    "R6": {
+      "scope": "workspace BYO integration",
+      "status": "not_started",
+      "test_evidence": []
+    }
+  },
+  "external_gates": {
+    "live_provider": "not_run_this_round",
+    "real_customer": "blocked_no_user",
+    "real_confirmation": "blocked_no_eligible_data",
+    "macos": "not_run",
+    "windows": "pending_CI_or_local",
+    "historical_native": "baseline_227_pass_10_asset_fail_1_dvc_env_fail"
+  }
+}

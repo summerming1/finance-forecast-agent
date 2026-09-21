@@ -1,5 +1,18 @@
 # V2 Mission Research — incremental delivery record
 
+## Current authority
+
+Current capabilities are defined only in `CURRENT_IMPLEMENTATION.md`. All entries below the R log are historical snapshots, not current acceptance.
+
+## V2.2-R approved execution log — 2026-09-21
+
+User approved R0→R6 sequential implementation/testing/publication. Scope remains the existing SPY daily forecast-only research product. R0 reopens evidence, recovery, action, benchmark and UI acceptance; no old numerical result is deleted or retrospectively changed.
+
+R0: original confirmation wrapper now requires explicit simulation and cannot emit real independent evidence. Legacy benchmark labels are corrected. Test `test_focused_r0_status.py` failed before the fix and must pass after it. Original confirmation test was migrated to explicit simulation; its guards were not weakened. Exact test results are stored in `docs/validation/v22r_acceptance.json`.
+
+## Historical delivery record (claims below are not current gates)
+
+
 ## PR-1 Evidence Foundation — 2026-09-20
 
 Status: implemented and targeted acceptance passed on `feat/mission-research-v2`.

@@ -269,9 +269,12 @@ def run_confirmation(
     eligibility: ConfirmationEligibility,
     *,
     split_spec: FocusedSplitSpec | None = None,
+    simulation_only: bool = False,
 ) -> dict[str, Any]:
     if eligibility.status != "eligible":
         raise PermissionError(f"confirmation is not eligible: {eligibility.status}")
+    if not simulation_only:
+        raise PermissionError("confirmation prototype: only explicit simulation is available before trusted grants")
     payload = dict(selection.candidate)
     candidate = CandidateConfig(
         candidate_id=str(payload["candidate_id"]),
@@ -298,7 +301,7 @@ def run_confirmation(
         "dataset_fingerprint": eligibility.dataset_fingerprint,
         "metrics": result.metrics,
         "fold_metrics": result.fold_metrics,
-        "evidence_level": "independent_confirmation",
+        "evidence_level": "simulation_only_confirmation",
         "completed_at": _now(),
     }
 

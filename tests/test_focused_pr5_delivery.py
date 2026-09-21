@@ -164,9 +164,9 @@ def test_confirmation_is_isolated_from_advisor_and_requires_frozen_eligible_cand
         [{"dataset_fingerprint": snapshot.semantic_fingerprint, "exposure_class": "sealed_unexposed"}],
         dataset_fingerprint=snapshot.semantic_fingerprint,
     )
-    result = run_confirmation(frame, selection, eligible)
+    result = run_confirmation(frame, selection, eligible, simulation_only=True)
     assert result["candidate_fingerprint"] == candidate.fingerprint
-    assert result["evidence_level"] == "independent_confirmation"
+    assert result["evidence_level"] == "simulation_only_confirmation"
 
 
 def test_model_bundle_refit_loads_in_fresh_process_and_predicts_without_label(tmp_path: Path) -> None:

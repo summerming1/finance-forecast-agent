@@ -27,7 +27,9 @@ jobs:
           python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -e '.[dev,ui,pdf,byo]'
       - name: Focused tests
-        run: python -m pytest -q tests/test_focused_data_research.py tests/test_focused_streamlit_page.py tests/test_focused_pr1_evidence.py tests/test_focused_pr2_mission.py tests/test_focused_pr3_adaptive.py tests/test_focused_pr4_persistence.py tests/test_focused_pr5_delivery.py tests/test_focused_pr6_byo.py tests/test_focused_final_acceptance.py
+        run: |
+          mkdir -p validation
+          python -m pytest -q tests/test_focused*.py --junitxml=validation/focused.xml
       - name: Focused lint
         run: |
           python -m ruff check \
@@ -57,3 +59,16 @@ jobs:
             tests/test_focused_final_acceptance.py
       - name: Compile
         run: python -m compileall -q src/finance_forecast_agent/focused_data.py src/finance_forecast_agent/focused_protocol.py src/finance_forecast_agent/focused_research.py src/finance_forecast_agent/focused_evidence.py src/finance_forecast_agent/research_mission.py src/finance_forecast_agent/focused_adaptive.py src/finance_forecast_agent/focused_persistence.py src/finance_forecast_agent/focused_delivery.py src/finance_forecast_agent/focused_byo.py src/finance_forecast_agent/experiment_memory.py src/finance_forecast_agent/task_queue.py scripts/run_focused_spy_campaign.py scripts/run_research_value_benchmark.py scripts/probe_focused_failure_semantics.py apps/pages/8_Focused_Research.py
+      - name: Save validation identity
+        if: always()
+        run: |
+          mkdir -p validation
+          git rev-parse HEAD > validation/HEAD.txt
+          git rev-parse HEAD^{tree} > validation/TREE.txt
+          python -m pip freeze > validation/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: focused-validation-${{ matrix.python-version }}-${{ github.sha }}
+          path: validation
+          retention-days: 14

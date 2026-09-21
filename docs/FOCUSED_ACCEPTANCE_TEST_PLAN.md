@@ -1,5 +1,8 @@
 # Focused / Mission Research Acceptance Plan
 
+Current status: `CURRENT_IMPLEMENTATION.md`. Historical PR success counts do not close reopened R contracts. The machine-readable clause map is `validation/v22r_acceptance.json`. Every new R gate needs a negative test plus related regressions, and exact source/command/artifact identity.
+
+
 > Status: APPROVED. Tests are divided by milestone. Passing one layer never implies all historical native or live-LLM work was rerun.
 
 ## 1. Acceptance categories
@@ -56,7 +59,7 @@ Focused compatibility:
 
 Targeted acceptance on 2026-09-20: 19 prior focused/AppTest regressions + 7 PR-1 tests = 26 passed; real frozen-SPY deterministic smoke passed; injected all-candidate-failure probe returns failed/inconclusive.
 
-### PR-2 Mission / Workspace — pending
+### PR-2 Mission / Workspace — original requirement (current integration under R6)
 
 - thin Mission links to Task/Campaign without duplicating contract state;
 - a non-author can create the one supported Mission and understand Overview/Research history/Candidate detail;
@@ -152,7 +155,7 @@ Record:
 Do not claim that focused CI reran hour-scale historical native reproductions unless it actually did.
 
 
-## 8. PR-1–PR-6 final engineering acceptance evidence
+## Historical 2026-09-20 test evidence — incomplete acceptance, reopened by R0
 
 Final branch evidence on 2026-09-20:
 
@@ -174,4 +177,4 @@ Still separate/pending gates:
 - broader multi-period/multi-seed Value Benchmark showing whether Adaptive Agent has incremental value;
 - legacy external/native scientific suite and real-browser/platform-matrix acceptance where applicable.
 
-Passing this section means V2.2 engineering-pilot acceptance, not financial performance, Agent superiority, PMF, or V3 completion.
+These historical tests passed, but do not close the reopened V2.2-R contracts or establish financial performance, Agent superiority, PMF, or V3 completion.

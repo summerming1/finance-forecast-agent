@@ -15,7 +15,7 @@ Current Mission-oriented work branch:
 feat/mission-research-v2
 ```
 
-Current implemented milestone: **Mission Research V2-B / PR-3 Adaptive Research + Agent Value Benchmark**, on top of completed V2-A (PR-1 + PR-2). Persistence/recovery remains PR-4; Memory/confirmation/model delivery and controlled BYO remain later milestones.
+Current status is defined only by [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md). V2.2-R closes reopened contracts; module presence is not complete product acceptance.
 
 Start with these documents:
 

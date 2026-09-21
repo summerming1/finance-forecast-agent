@@ -66,7 +66,9 @@ def main() -> int:
         "schema_version": "focused_agent_value_benchmark_v1",
         "task": FocusedTaskSpec().to_dict(),
         "dataset_fingerprint": snapshot.semantic_fingerprint,
-        "evidence_tier": "internal_exposed_development_comparison",
+        "evidence_tier": "legacy_proxy_comparison",
+        "comparison_valid_for_agent_value": False,
+        "limitations": ["legacy selector identity and algorithm substitution are under repair; not Agent evidence"],
         "live_llm_validation": "pending",
         "one_shot_source": "assistant_authored_fixture",
         "shared_contract": {

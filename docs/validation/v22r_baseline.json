@@ -1,0 +1,93 @@
+{
+  "source_sha": "6e4f194453f77037929052a0a978cc76bc2017b7",
+  "focused": {
+    "passed": 66,
+    "failed": 0,
+    "seconds": 45.96
+  },
+  "whole_repo": {
+    "passed": 227,
+    "failed": 11,
+    "seconds": 80.8
+  },
+  "failures": [
+    {
+      "nodeid": "tests/test_core.py::test_registry_and_tracking_fallback",
+      "message": "subprocess.CalledProcessError: Command '['/opt/pyvenv/bin/python', '-m', 'dvc', 'remote', 'add', '-f', '-d', 'finance_agent_remote', '/tmp/pytest-of-root/pytest-3/test_registry_and_tracking_fal0/remote']' returned non-zero exit status 1.",
+      "classification": "blocked_environment_dvc",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_multi_benchmark_suite.py::test_multi_benchmark_artifact_covers_four_tasks_and_five_methods",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'projects/finance_agent/reports/multi_benchmark_suite.json'",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_multi_benchmark_suite.py::test_every_multi_benchmark_run_has_comparability_and_delta_audit",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'projects/finance_agent/reports/multi_benchmark_suite.json'",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_multi_benchmark_suite.py::test_volatility_benchmark_uses_error_baseline_not_direction_accuracy_claim",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: 'projects/finance_agent/reports/multi_benchmark_suite.json'",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_native_catalog_builder.py::test_etsformer_checkpoint_patch_preserves_cli_directory",
+      "message": "StopIteration",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_native_catalog_builder.py::test_film_claim_keeps_official_internal_repetitions_and_rng_resume_state",
+      "message": "AssertionError: assert 'RNG state' in ''",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_native_catalog_builder.py::test_fedformer_claim_uses_artifact_metrics_and_rng_resume_state",
+      "message": "AssertionError: assert 'FEDformer repetition boundaries' in ''",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_native_execution.py::test_mtgnn_curated_card_binds_protocol_fields_to_paper_evidence",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: '/mnt/data/v22r_full_baseline/projects/finance_agent/method_cards/arxiv_2005_11650.json'",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_prompt_contains_result_row_and_pinned_primary_sources",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: '/mnt/data/v22r_full_baseline/projects/finance_agent/papers/local/arxiv_2205.13504.pdf'",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call",
+      "message": "FileNotFoundError: [Errno 2] No such file or directory: '/mnt/data/v22r_full_baseline/projects/finance_agent/papers/local/arxiv_2205.13504.pdf'",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    },
+    {
+      "nodeid": "tests/test_streamlit_workbench_app.py::test_existing_methodcard_moves_through_review_and_setup",
+      "message": "StopIteration",
+      "classification": "blocked_asset_to_restore",
+      "expected_asset_hash": null,
+      "baseline_reproduced": true
+    }
+  ],
+  "note": "Ten missing historical asset cases match the supplied report; one extra baseline DVC environment failure. Unknown asset hashes are not invented."
+}

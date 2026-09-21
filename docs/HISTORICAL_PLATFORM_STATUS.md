@@ -1,0 +1,245 @@
+# Historical platform status (archived at 6e4f194)
+
+This is an unchanged historical record, NOT current focused capability or this round's test evidence. Current status: `CURRENT_IMPLEMENTATION.md`.
+
+## 历史广度平台基线
+
+历史记录中的实现为 **P1.6.3-P1.8 first-batch implementation（未通过规模化总验收）**。项目仍是论文驱动、真实数据驱动、可审计和需人工审批的金融预测研究平台，不是自动交易系统。
+
+本批已实现 56 份合法开放 PDF、86 条语料记录、102 篇去重 Research Journal 并集、通用数据获取、四类冻结统一基准、真实 Memory 优先队列、SQLite MLflow、仓库外 DVC remote 和七阶段前端。金融数据严格复现为 10 篇；原 28 个 candidate 已全部完成逐篇探索执行。规模化总验收仍未通过，因为十篇 strict 都属于 Exchange-Rate 时间序列预测，三类纵向 strict pair 为 0，总 blocker 仍为 58。
+
+已完成：
+
+```text
+P0-P0.9 可信研究内核、MethodCard、质量门禁、Control Tower 与治理
+P1.0 严格复现条件门禁
+P1.1 MethodCard v2 与旧卡迁移
+P1.2 结构化 ReproductionPlan
+P1.3 标准 MethodAdapter / PredictionArtifact
+P1.4 原生复现与统一基准双轨
+P1.5 隔离 ExperimentMemory
+P1.6 真实论文、真实数据和端到端验证
+P1.6.1 严格 LLM 抽取、方法卡驱动原生协议和统一基准方向能力审计
+P1.6.2 十篇异构论文能力路由、语义一致性门禁和五方法统一基准
+P1.6.3 首批 86 篇元数据/56 份开放全文语料与可行性统计
+P1.6.4 数据获取中心与来源、许可、SHA256、字段审计
+P1.6.5 十个金融数据原生 strict claims
+P1.6.6 逐篇覆盖账本和 Paper-vs-Run Delta 框架
+P1.6.7 四任务、五方法、20 组统一基准比较
+P1.6.8 七阶段 Research Workbench
+P1.7 带上下文隔离、失败降权和解释的 Memory prior
+P1.8 GitHub API/Git fallback SourceBundle 审计
+```
+
+P1.6.5 Native Reproduction Portfolio 的数量门禁已完成：10 篇/10 claims、数量缺口 0；信号回测、截面资产定价和组合强化学习类型门禁仍未完成。
+
+## 当前主流程
+
+```text
+本地 PDF/TXT/MD
+-> MethodCardAgent / 已有 MethodCard
+-> MethodCard v2 normalization + quality gate
+-> 人工审核
+-> ReproductionPlan 字段、来源与证据门禁
+-> 选择原生复现或统一基准
+
+原生复现:
+Paper data/protocol -> dedicated/native adapter -> paper claim audit
+
+统一基准:
+BenchmarkTask -> shared snapshot/features/folds -> MethodAdapter
+-> PredictionArtifact -> comparable metrics
+
+-> ExperimentMemory prior -> 结果审计与技术资产
+
+所有运行:
+-> MLflow run ID + DVC pointer + lineage envelope
+-> ScientificAcceptanceLedger -> P2 自动门禁
+```
+
+### 当前流程真正能到达哪里
+
+| 输入情况 | 当前最远可达终点 | 能否自动 strict |
+|---|---|---|
+| DLinear 或 Native Claim Catalog 已登记论文 | 官方原生运行、结果门禁、Portfolio 和前端审计 | 可以，但必须已有通过全部门禁的声明式 claim |
+| 任意本地新论文 | MethodCard v3、人工审核、ReproductionPlan、数据合同、Native Claim 草案或 Adapter Backlog | 不可以；Compiler 只生成带 blocker 的声明式草案 |
+| 新论文方法可映射到现有通用 adapter | AAPL 或四类冻结统一基准、PredictionArtifact 和 Delta | 只能是 benchmark adaptation |
+| 模型、数据或任务协议不受支持 | 结构化 blocker | 不可以，且不允许静默替换模型 |
+
+第 5 阶段默认只显示当前论文绑定的 Native Claim；只有显式选择“浏览 Catalog”才允许跨论文查看。真正的官方运行门禁来自 claim 自己绑定的方法卡、来源、数据、环境、观测合同和预冻结容差。
+
+## 完整复现定义
+
+完整复现要求同时满足：
+
+1. MethodCard 已审核。
+2. ReproductionPlan 的条件必填字段均已解决，并绑定论文证据或固定 revision 的官方实现/数据证据。
+3. 数据快照、资产池、频率、horizon 和标签一致。
+4. 预处理、模型结构、超参数和随机种子一致。
+5. 时间切分、回测规则、成本口径和指标定义一致；不适用项由实验类型决定。
+6. 有结构化论文 claim 和报告值。
+7. 本地结果通过预设容差或统计验收规则。
+
+只搭建相似模型不算完整复现。使用人工假设、替代数据或统一 benchmark contract 时只能标记探索性复现或 benchmark adaptation。
+
+## 当前数据与实验
+
+- DLinear Exchange-Rate 原生复现：严格 live LLM 卡质量 `1.0`、claim selector 一致性与 31/31 证据逐字校验通过；卡内协议动态构造 runner 后，MSE `0.0810795` 对论文 `0.081`、MAE `0.2060906` 对论文 `0.203`，该具体 claim 完整复现通过。
+- 另外九个严格原生 claim：LSTNet、FEDformer、ETSformer、FiLM、Non-stationary Transformer、TimesNet、Koopa、iTransformer、SAMformer 均通过官方数据/源码、观测次数和结果容差门禁。FiLM 为 MSE `0.0870995` / MAE `0.2054089`；FEDformer 为 `0.1373342` / `0.2653925`。
+- AAPL 周频统一基准：849 行、8 folds，五篇 MethodCard 对应的 GBDT、LSTM、RF、RF、GA-LSTM 各产生 128 个完全相同目标行的预测；方向准确率依次为 `0.4609375`、`0.484375`、`0.484375`、`0.484375`、`0.4296875`，均未显示方向预测能力。
+- 十篇异构论文的 Replay PDF 流程全部完成能力路由：1 篇原生严格就绪、5 篇统一基准候选、4 篇受控阻断；五篇统一基准候选已全部实际执行。
+- 14 张本地 MethodCard；DLinear 正式卡为真实严格 LLM 产物，十篇验收样例均有确定性 Replay fixture。
+- Exchange-Rate 官方数据、Yahoo Finance AAPL 冻结响应与派生周频数据均保存在 `projects/finance_agent/data/external/`。
+- 规模化语料：86 条审计记录、56 份开放 PDF；新增 6 份来自 OpenAlex 的合法 OA PDF 使全文根因 36→30。期刊层级与全文可得性分开统计，不能统称“顶刊全文”。
+- 复现覆盖账本：10 篇 strict verified、28 篇 exploratory executed、58 篇结构化 blocked。28 篇均有真实模型运行和 Delta，但 strict 数量为 0。
+- TLOB 官方 FI-2010 和 checkpoint 在 current 与 paper-period revision 上均完整执行，macro F1 `0.455313` 对论文 `0.9281`，因此正确保持 blocked。
+- Pyraformer 官方 ETTm1 五次重复在 CPU 上运行 `3632s` 后仍未完成首个指标观测或 checkpoint，按 compute blocker 落地，未缩短协议。
+- 多基准：4 个任务 × 5 个方法共 20 组，目标行/fold/预测数完整性全部通过。SPY 方向与 EURUSD 未显示方向能力；SPY 5 日波动率误差优于训练折均值基线；BTC-LSTM 在该冻结任务上显示方向能力。原论文假设均不能从共享任务直接迁移。
+
+## 前端
+
+入口：`apps/streamlit_app.py`，页面为七步工作台：
+
+1. 文献语料：本地文献、86 篇语料、覆盖账本和 SourceBundle。
+2. 数据准备：人工请求、MethodCard 自动请求和获取历史。
+3. 方法卡审核：阅读结构化摘要和证据，保存唯一审核结果。
+4. 复现配置：逐字段解决 ReproductionPlan。
+5. 原生/探索运行：系统按证据和可比性判定运行层级。
+6. 多方法基准：AAPL 单任务或四类冻结基准。
+7. 结果审计：论文值、本地值、差异、统计门禁和 Memory prior。
+
+原生运行区由 Native Claim Catalog 驱动，可选择 DLinear、12 个金融数据官方论文 claim 和 3 个 ETTm1 跨领域 claim；新增 SAMformer 通过独立的 Python 3.10 / TensorFlow 2.13 Conda 环境运行。页面默认显示论文值、容差、数据领域、源码/治理门禁和已有结果，命令、环境、补丁与日志折叠在技术详情。统一基准至少选择两张具有通用 MethodAdapter 且已批准的方法卡。
+
+## 模型能力
+
+通用 benchmark adapters：
+
+```text
+ridge_regression
+random_forest_regressor
+gradient_boosting_regressor
+lstm_regressor
+transformer_regressor
+ga_lstm_regressor
+```
+
+专用原生 adapter：
+
+```text
+dlinear_forecaster
+official_repo_command_adapter
+```
+
+`official_repo_command_adapter` 支持 MSE/MAE、RSE/CORR 等不同指标，支持最小化、最大化或双向匹配目标，以及 `all` 独立重复和 `last` 最终测试两种观测策略。官方测试产物优先于日志正则；每次重复记录产物 SHA256。长任务保存 `.partial`，FiLM/FEDformer 在官方内部重复边界保存 RNG 状态并可恢复。Portfolio 不再硬编码 DLinear，而是只扫描实际通过全部门禁的本地报告。
+
+已识别但未实现或不能进入通用 benchmark 的模型包括 ARIMA、GPR、GRU、CNN sequence、RL portfolio policy 和 DNN asset pricing。未知模型不再静默降级为 Ridge。
+
+## 研究资产
+
+```text
+method_cards_local_llm/  MethodCard v2 与目录
+reproduction_plans/      字段解决、证据和计划 hash
+data/external/           冻结外部数据
+reports/                 原生与统一基准报告
+experiment_memory/       按任务和运行模式隔离的历史记录
+literature/              语料目录与统计
+data_requests/           数据请求和落地审计
+source_bundles/          官方来源候选、固定 commit 与许可审计
+native_claims/           论文 claim、官方源码/数据哈希、命令、观测次数与容差
+review_state/            人工审核
+run_timelines/           旧 harness 运行历史
+golden_method_cards/     已批准资产集合
+backlog/                 adapter 任务
+```
+
+## 验证状态
+
+```text
+Ruff: passed
+pytest full suite: 170 passed
+post-Portfolio/UI consistency regression: 18 passed
+Seven-stage Streamlit AppTest: 11 passed
+HTTP health: localhost:8501 returned 200
+Browser E2E: seven stages, acceptance/tracking, candidate 28/28 and Delta passed; console errors 0
+Candidate Delta table: nested/scalar values normalized to Arrow-safe strings; focused frontend tests 24 passed
+Multi benchmark: 4 tasks / 5 methods / 20 comparisons, integrity passed
+Literature: 86 records / 50 downloaded PDFs
+Native source bundles: 15/15 pinned commits verified; 15/15 claim audits passed
+Next-candidate source audit: 10/10 APIs reachable; 0 strict-source-ready before human and data-license approval
+DLinear real native protocol: complete reproduction passed
+Common benchmark: shared data/folds/prediction schema passed
+Native financial portfolio: 10 papers / 10 claims strict verified; numeric gap 0
+Ten-paper generality routing: 10/10 passed; 5 benchmark executed, 4 governed blocks
+Live LLM strict DLinear: quality 1.0、claim consistency passed、evidence 31/31、Replay passed
+```
+
+## 当前边界
+
+- 新 `.env` 已通过真实 LLM 请求。DLinear 首轮宽泛抽取质量 `0.55`；严格抽取曾因结果行错配被一致性门禁拒绝；最终卡质量 `1.0`、目标行一致性通过，并已晋升为正式卡。该成功不能外推为任意论文都可一次自动严格抽取。
+- 当前十个 native strict claims 证明同一金融时间序列数据上的原生执行、随机重复、环境隔离和结果门禁；只有 DLinear 同时证明了严格 live LLM 抽取。其余九篇使用主资料人工策展卡，不是九次 live LLM strict 成功。
+- 统一基准已覆盖五篇方法卡和四种不同 adapter；它证明同任务可比较性，不代表保留了每篇论文的原始数据、特征、超参数或结论。
+- MethodCard v2 已兼容 LLM 返回的嵌套协议对象和字符串形式的未知超参数，避免后续 ReproductionPlan 类型错误。
+- ExperimentMemory 已改变多基准候选执行顺序，并输出完全同任务/相似任务证据、失败率和降权原因；旧 harness 的 Replay 候选生成尚未接入该 prior。
+- PaperDatasetRegistry 的许可、字段映射和可替代性说明仍需增强。
+- MethodCard diff/history、后台任务和断点已实现；当前队列仍是本机进程级单 worker，不是分布式研究集群。
+- 统一基准已有方向准确率 Wilson 区间、机会水平二项检验和训练折多数方向基线；仍缺少方法间配对检验、Diebold-Mariano、多 seed 与市场状态分层。
+- 当前不执行真实下单。
+- 第二批九个 Native Claim 共用 Exchange-Rate 数据，能检验不同深度时序架构、重复实验和多种指标，但不能证明信号回测、截面资产定价或组合强化学习的原生复现通用性；这些仍按 Roadmap 保留为后续独立 strict 样例。
+- 本轮十篇复现中的 claim 选择、论文/源码协议对齐、官方命令、兼容补丁、运行环境、容差冻结和九张主资料卡仍由人工完成；只要新增论文还需要修改 `scripts/build_native_exchange_catalog.py`，就不能称为声明式通用接入。
+- `DataAcquisitionHub` 能审计下载，但 MethodCard 自动请求目前主要使用关键词规则；未知公开数据默认提出 Yahoo 探索性替代，不能自动构造论文原始数据字段映射。
+- Native、四类多基准和逐篇 candidate 已统一写入 MLflow/DVC/lineage；MLflow health-check run 使用真实 SQLite backend，DVC push/pull 与 remote status 已验证。
+- 接入 tracking 前的 12 份 Native 报告已用 `historical_reconciliation` 回填 run ID，并保留回填前报告 SHA256；新报告继续使用 execution-time run ID。
+- `pytest` 验证控制逻辑、schema、AppTest 和短任务；十篇小时级官方训练结果由已保存报告和源码/数据审计证明，不会在普通测试套件中全部重跑。
+
+## 2026-07-17 通用性评估
+
+当前成熟度定义为 **L2+：同数据域、多模型族的受控原生复现平台**。预测类官方仓库执行内核已接近可配置化，但整个项目尚未达到多种金融实验的严格复现通用性。
+
+最主要的差距不是 strict 数量，而是：
+
+1. 10 篇 strict 全部属于 `forecast_only + Exchange-Rate`。
+2. 只有 1 篇 live LLM strict MethodCard。
+3. 新论文不能自动编译为 Native Claim。
+4. 28 个 exploratory candidate 已逐篇执行，但没有一篇因此升级为 native strict。
+5. SourceBundle、数据字段映射和追踪控制面已闭环；三类纵向数据/协议/环境的科学闭环仍未完成。
+
+完整规划见 `docs/STRICT_REPRODUCTION_GENERALIZATION_PLAN.md`；用户已批准该规划，P1.G 控制层实施结果和未通过门禁见 `docs/P1G_GENERALIZATION_IMPLEMENTATION.md`。
+
+## 2026-07-17 P1.G 实施更新
+
+- 已实现 Native Claim Compiler、逐论文声明式 spec 和 source/data/command/environment/metric 插件审计。
+- 已实现 MethodCard v3 claim/evidence/history、SourceApproval、DatasetContract 和审批冲突失效。
+- 已实现信号回测、截面资产定价、组合强化学习协议验证；三类纵向样例均产生结构化 blocker，strict 为 0。
+- 已实现 Benchmark Registry、Memory 排序的持久化本地任务队列、SQLite MLflow、仓库外 DVC remote 和统一 lineage。
+- 102 篇去重 Research Journal 记录均有探索过程；原 28 个 candidate 已真实执行且没有被虚报为 strict。OA 全文根因减少 6，但总 blocker 仍为 58。
+- 已实现通用 ScientificAcceptanceLedger，并用 TLOB 验证“官方产物可运行但指标不匹配”不会产生 false-strict。
+- 使用 provider 可用的 `gpt-5.5` 完成三篇真实 LLM 抽取，全部为 `unknown section=0`；只有日内信号论文达到 v3 证据 strict，仍未达到完整 strict reproduction。
+- 本轮最终测试数以 `docs/P1G_SCIENTIFIC_ACCEPTANCE_LOG.md` 和提交时测试输出为准；P2 自动门禁仍为 `ready_for_p2=false`。
+
+## 推荐命令
+
+```powershell
+conda activate finance_fa
+$env:PYTHONPATH="src"
+$env:OMP_NUM_THREADS="1"
+$env:MKL_NUM_THREADS="1"
+
+python -m pytest -q
+python -m ruff check src tests scripts
+python scripts/run_p1_validation.py
+python scripts/run_generality_validation.py
+python -m streamlit run apps/streamlit_app.py
+```
+
+复现设计见 `docs/P1_REPRODUCTION_BENCHMARK_MEMORY.md`，十篇通用性矩阵见 `docs/P1_GENERALITY_VALIDATION.md`，完整前端操作见 `docs/FRONTEND_USER_GUIDE.md`。
+
+## 后续优先级
+
+按照已批准的 `STRICT_REPRODUCTION_GENERALIZATION_PLAN.md`，下一轮建议按以下顺序继续：
+
+1. 实现 Native Claim Compiler、插件化协议和前端论文-claim 绑定，让新论文不再依赖修改千行 Catalog 构建脚本。
+2. 完成 section-aware MethodCard v3、SourceBundle、publication-date commit、数据许可和字段映射闭环。
+3. 分别增加信号回测、截面资产定价和组合强化学习 strict 纵向样例，并用第 2 篇 held-out 论文验证插件复用。
+4. 对 28 个 candidate 逐篇执行或阻断，聚类消减 58 个 blocker。
+5. 建立 Benchmark Registry、配对统计、多 seed/市场状态，并接入异步任务、MLflow/DVC lineage 和全局 Memory Scheduler。
+6. 达到至少 20 篇、4 类实验、3 个数据域和 false-strict=0 的门禁后，再进入 P2 搜索效率。

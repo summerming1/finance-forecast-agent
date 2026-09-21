@@ -1,6 +1,13 @@
 # Finance Forecast Agent 项目迭代路线图
 
-## 2026-09-20 ADR-MISSION-PRODUCT-003：产品化门禁与最新实施顺序
+## 当前批准路线
+
+当前能力与开放缺口只以 `CURRENT_IMPLEMENTATION.md` 为准，不在本文件复制完成状态。
+产品顺序保持 V2-A → V2-B → V2.1 → V2.2 → V3；先按批准的 R0→R6 关闭原合同缺口。
+内部前瞻记录准备、客户工作流、研究价值、真实科学证据分别验收，不以版本号代替。
+下列内容是历史决策快照；其中“下一步”等词只表达当时状态。
+
+## 历史决策快照：2026-09-20（非当前状态）
 
 在 ADR-MISSION-002 的 Mission-driven research 方向上继续收敛，不改变 SPY / 日频 / next-session return / forecast-only 主任务。最新产品顺序为：
 
