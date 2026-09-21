@@ -1,0 +1,28 @@
+name: V22R pinned source export
+on:
+  push:
+    branches: [validation/v22r-source-06bb4f6]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/mission-research-v2
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Export exact committed source only
+        run: |
+          test "$(git rev-parse HEAD)" = "06bb4f6411e50232e44f28ba4c05aa6121f9b899"
+          mkdir -p /tmp/source-export
+          git bundle create /tmp/source-export/repository.bundle HEAD refs/heads/feat/mission-research-v2
+          git rev-parse HEAD > /tmp/source-export/HEAD.txt
+          git rev-parse HEAD^{tree} > /tmp/source-export/TREE.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v22r-source-06bb4f6
+          path: /tmp/source-export
+          retention-days: 14
