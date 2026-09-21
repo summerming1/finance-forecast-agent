@@ -51,7 +51,7 @@ PR-1 does not add Mission UI or asynchronous recovery. It establishes the eviden
 - live-provider ResearchAdvisor scientific quality and live→replay success were not revalidated in this PR;
 - independent confirmation and forward evidence remain unavailable;
 - Mission/Research Workspace is PR-2;
-- adaptive evidence-grounded research and Agent Value Benchmark are PR-3;
+- adaptive evidence-grounded research and Agent Value Benchmark is PR-3;
 - persistent queue/recovery/ResearchPackage is PR-4;
 - Memory/Confirmation/ModelBundle is PR-5;
 - controlled BYO is PR-6.
@@ -119,3 +119,8 @@ Fixed-source local gate: 104 focused + 4 shared legacy queue tests passed in 110
 2026-09-21: action compilation now distinguishes training from stop/review/read-only diagnostics. Ablation derives from the actual parent; simplification checks its complexity dimension. Waiting review survives re-opening without extra advisor calls. Actual reserved/completed/remaining resource context is sent to the advisor. Existing Memory gains complete configuration/experiment lineage, atomic tenant-aware writes, and corruption rejection.
 
 Red probes reproduced missing controls and tenant overwrite. Fixed-source cumulative/affected shared regression: 128 passed in 191.05 seconds; real frozen SPY remains 4002 rows/20 fits/no_improvement. Exact-task cold/warm engineering test reduces 20 fits to 12 by declining already examined initial configurations; this is not held-out capability evidence. A legacy fixture was updated to contain actual baseline resource usage, and numeric/role negative fixtures now provide the required valid context; no checks were loosened. Real provider/browser review flow remain pending.
+
+
+### R3 CI follow-up — process-group exit ordering
+
+R3 commit `1204a91` passed Python 3.11 but its 3.13 CI exposed a legacy recovery test race: it waited only for the worker, then asserted immediate recovery while the killed child could still be exiting. The production guard correctly prevents overlap with a live child. The test now waits for the actual persisted resumable transition and still requires the old worker to be dead; the independent orphan-child test continues to require refusal while that child is alive. No runtime guard was loosened. Original failed JUnit remains in run `35576165733`.

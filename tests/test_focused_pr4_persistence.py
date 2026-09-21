@@ -104,11 +104,17 @@ def test_queue_recovers_real_interrupted_worker(tmp_path: Path) -> None:
         time.sleep(0.02)
     assert marker.exists(), "the actual child command must start before the interruption probe"
     os.killpg(int(running.worker_pid), signal.SIGKILL)
-    deadline = time.time() + 5
-    while time.time() < deadline and queue._pid_alive(running.worker_pid):
-        time.sleep(0.05)
-    recovered = queue.recover_stale()
+    # SIGKILL reaches the process group, but the OS may reap the worker
+    # before the child. Recovery intentionally refuses that overlap. Poll the
+    # actual recovery transition, not only the worker PID; keep both guards.
+    deadline = time.monotonic() + 5
+    recovered = []
+    while time.monotonic() < deadline and not recovered:
+        recovered = queue.recover_stale()
+        if not recovered:
+            time.sleep(0.02)
     assert any(row.task_id == record.task_id and row.status == "resumable" for row in recovered)
+    assert not queue._pid_alive(running.worker_pid, running.worker_created_at)
     resumed = queue.resume(record.task_id)
     assert resumed.attempt == 2
     final = _wait(queue, record.task_id, {"completed"}, timeout=10)
