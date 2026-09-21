@@ -1,0 +1,182 @@
+name: V22R tested patch delivery
+on:
+  push:
+    branches: [validation/v22r-tested-delivery]
+    paths: [delivery.json]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.13']
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      FFA_TRUST_DB: /tmp/v22r-test-trust/registry.sqlite3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: delivery
+          persist-credentials: false
+      - id: payload
+        name: Validate delivery identity
+        run: |
+          python - <<'PY'
+          import base64,gzip,json,os,re
+          from pathlib import Path
+          p=json.loads(Path('delivery/delivery.json').read_text())
+          assert re.fullmatch('[0-9a-f]{40}',p['base_sha'])
+          assert re.fullmatch('[0-9a-f]{40}',p['expected_tree'])
+          diff=gzip.decompress(base64.b64decode(p['patch_gzip_base64']))
+          assert len(diff)<5000000
+          Path('/tmp/v22r-delivery.patch').write_bytes(diff)
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+              f.write('base='+p['base_sha']+'\n')
+              f.write('tree='+p['expected_tree']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.payload.outputs.base }}
+          path: work
+          persist-credentials: false
+      - name: Apply only the declared source tree
+        working-directory: work
+        env:
+          EXPECTED_TREE: ${{ steps.payload.outputs.tree }}
+        run: |
+          git apply --index --whitespace=error /tmp/v22r-delivery.patch
+          git diff --cached --check
+          test "$(git write-tree)" = "$EXPECTED_TREE"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        working-directory: work
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf,byo]'
+          python - <<'PY'
+          import subprocess,sys,tomllib
+          from pathlib import Path
+          extras=tomllib.loads(Path('pyproject.toml').read_text())['project'].get('optional-dependencies',{})
+          if 'research' in extras:
+              subprocess.run([sys.executable,'-m','pip','install','-e','.[research]'],check=True)
+          PY
+      - name: Cumulative focused and shared queue tests
+        working-directory: work
+        run: |
+          mkdir -p validation
+          python -m pytest -q tests/test_focused*.py tests/test_task_queue_lineage.py --junitxml=validation/focused.xml
+      - name: Lint and compile changed scope
+        working-directory: work
+        run: |
+          python - <<'PY'
+          import subprocess,sys
+          paths=subprocess.check_output(['git','diff','--cached','--name-only','--diff-filter=ACMR'],text=True).splitlines()
+          files=[p for p in paths if p.endswith('.py')]
+          if files: subprocess.run([sys.executable,'-m','ruff','check',*files],check=True)
+          PY
+          python -m compileall -q src scripts apps
+      - uses: actions/download-artifact@v4
+        with:
+          name: focused-real-inputs
+          path: /tmp/v22r-real-inputs
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: 35204186327
+      - name: Frozen real SPY and model delivery smoke
+        working-directory: work
+        run: |
+          RAW="$(find /tmp/v22r-real-inputs -name spy_chart_2010_2025.json -print -quit)"
+          META="$(find /tmp/v22r-real-inputs -name spy_source.json -print -quit)"
+          test -n "$RAW"; test -n "$META"
+          python scripts/run_focused_spy_campaign.py --project-dir /tmp/v22r-real-run --raw-spy-json "$RAW" --source-metadata "$META" --advisor-mode deterministic --rounds 3 --candidates-per-round 2 --max-fit-calls 40 > validation/real-spy.log
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from finance_forecast_agent.focused_data import FocusedTaskSpec,build_spy_daily_research_frame
+          from finance_forecast_agent.focused_delivery import refit_model_bundle,predict_model_bundle
+          from finance_forecast_agent.focused_persistence import build_research_package
+          from finance_forecast_agent.focused_research import CandidateConfig
+          path=next(Path('/tmp/v22r-real-run/focused_campaigns').glob('*/campaign.json'))
+          payload=json.loads(path.read_text())
+          assert payload['execution_status']=='completed'
+          assert payload['campaign']['dataset']['row_count']==4002
+          assert payload['confirmation_status']=='not_run_historical_data_exposed'
+          build_research_package(path.parent)
+          inputs=Path('/tmp/v22r-real-inputs')
+          frame,snapshot=build_spy_daily_research_frame(next(inputs.rglob('spy_chart_2010_2025.json')),source_metadata_path=next(inputs.rglob('spy_source.json')))
+          bundle=refit_model_bundle(frame,CandidateConfig('smoke','ridge_regression',{'alpha':1.0},['base_lags']),task=FocusedTaskSpec(),dataset=snapshot,out_dir='/tmp/v22r-real-bundle')
+          assert len(predict_model_bundle(bundle,frame.drop(columns=['label']).tail(8)))==8
+          Path('validation/smoke.json').write_text(json.dumps({'campaign':payload['campaign']['campaign_id'],'rows':4002,'fit_calls':payload['fit_calls'],'outcome':payload['research_outcome'],'bundle_unlabeled_rows':8},indent=2))
+          PY
+      - name: Preserve tested source and environment
+        if: always()
+        working-directory: work
+        run: |
+          mkdir -p validation
+          git rev-parse HEAD > validation/BASE.txt
+          git write-tree > validation/TESTED_TREE.txt
+          git diff --cached --stat > validation/DIFF_STAT.txt
+          python -m pip freeze > validation/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v22r-gate-${{ matrix.python }}-${{ github.run_id }}
+          path: work/validation
+          retention-days: 14
+  create-tested-commit:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: delivery
+          persist-credentials: false
+      - id: payload
+        run: |
+          python - <<'PY'
+          import base64,gzip,json,os,re
+          from pathlib import Path
+          p=json.loads(Path('delivery/delivery.json').read_text())
+          assert re.fullmatch('[0-9a-f]{40}',p['base_sha']) and re.fullmatch('[0-9a-f]{40}',p['expected_tree'])
+          Path('/tmp/v22r.patch').write_bytes(gzip.decompress(base64.b64decode(p['patch_gzip_base64'])))
+          Path('/tmp/v22r-message.txt').write_text(p['message']+'\n')
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+              f.write('base='+p['base_sha']+'\n'+'tree='+p['expected_tree']+'\n')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.payload.outputs.base }}
+          path: work
+          persist-credentials: false
+      - name: Publish tested object to temporary result ref only
+        working-directory: work
+        env:
+          EXPECTED_TREE: ${{ steps.payload.outputs.tree }}
+          BASE: ${{ steps.payload.outputs.base }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git apply --index --whitespace=error /tmp/v22r.patch
+          test "$(git write-tree)" = "$EXPECTED_TREE"
+          git config user.name ChatGPT
+          git config user.email chatgpt@users.noreply.github.com
+          COMMIT="$(git commit-tree "$EXPECTED_TREE" -p "$BASE" < /tmp/v22r-message.txt)"
+          AUTH="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" push origin "$COMMIT:refs/heads/validation/v22r-delivery-result"
+          mkdir -p /tmp/commit-identity
+          printf '%s\n' "$COMMIT" > /tmp/commit-identity/COMMIT.txt
+          git cat-file commit "$COMMIT" > /tmp/commit-identity/commit-object.txt
+          printf '%s\n' "$EXPECTED_TREE" > /tmp/commit-identity/TREE.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v22r-tested-commit-${{ github.run_id }}
+          path: /tmp/commit-identity
+          retention-days: 14
