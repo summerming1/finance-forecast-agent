@@ -178,3 +178,9 @@ Still separate/pending gates:
 - legacy external/native scientific suite and real-browser/platform-matrix acceptance where applicable.
 
 These historical tests passed, but do not close the reopened V2.2-R contracts or establish financial performance, Agent superiority, PMF, or V3 completion.
+
+### R2 acceptance mapping
+
+`tests/test_focused_r2_runtime.py`: cross-process idempotency; side-effect-free liveness and PID birth binding; accepted campaign no-refit/no-Advisor resume; data/split/budget/cache mismatch; stale generation/cancel fencing; real process crash with budget retention; complete queued campaign interruption after candidate A; orphan artifact write before acceptance; DB-first frozen plan export restoration; orphan child prevents retry; actual focused queue submission; queued input mutation rejection. Run together with `tests/test_task_queue_lineage.py` whenever the shared queue changes.
+
+SQLite records, not mutable JSON exports, are authoritative. Old asset paths in historical tests do not imply current running-task authority. A retry is a new paid attempt, not a guaranteed exactly-once physical computation. Preserve both failed development probes and the final fixed-source JUnit; never compare partial logs from overlapping runs as final evidence.

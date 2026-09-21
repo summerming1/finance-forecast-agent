@@ -1,33 +1,27 @@
 from __future__ import annotations
 
-# The broad stdlib import block is intentionally kept stable for cross-platform queue code.  # ruff: noqa: I001
-
 import argparse
 import json
 import os
-import signal
 import subprocess
 import sys
-import time
 import uuid
-from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
 
+from .focused_identity import canonical_json, identity
+from .focused_state import (
+    RuntimeDB,
+    atomic_json,
+    now,
+    process_alive,
+    process_birth,
+    safe_id,
+    terminate_owned_tree,
+)
 
-TaskStatus = Literal["queued", "running", "resumable", "completed", "blocked", "cancelled"]
-
-
-def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
-def _write(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    temporary.replace(path)
+TaskStatus = Literal["queued", "starting", "running", "resumable", "completed", "blocked", "cancelled"]
 
 
 @dataclass(frozen=True)
@@ -56,6 +50,12 @@ class TaskRecord:
     attempt: int = 1
     started_at: str = ""
     finished_at: str = ""
+    generation: str = ""
+    worker_created_at: float | None = None
+    process_created_at: float | None = None
+    dispatch_pid: int | None = None
+    dispatch_created_at: float | None = None
+    research_context: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, payload: dict[str, Any]) -> TaskRecord:
@@ -67,119 +67,119 @@ class TaskRecord:
 
 
 class LocalTaskQueue:
-    def __init__(self, root: str | Path, *, max_workers: int = 1):
-        self.root = Path(root)
+    """Existing local queue API; SQLite is the sole mutable state authority."""
+
+    def __init__(self, root: str | Path, *, max_workers: int | None = None, state_path: str | Path | None = None):
+        self.root = Path(root).resolve()
         self.records = self.root / "records"
         self.logs = self.root / "logs"
-        if max_workers < 1:
-            raise ValueError("max_workers must be at least one")
-        self.max_workers = max_workers
+        self.db = RuntimeDB(state_path or self.root / "runtime.sqlite3")
+        with self.db.transaction() as db:
+            settings = self.db.read(db, "queue", "settings", {})
+            if max_workers is not None and max_workers < 1:
+                raise ValueError("max_workers must be at least one")
+            if settings.get("root") and settings["root"] != str(self.root):
+                raise ValueError("one queue root is allowed per runtime database")
+            self.max_workers = int(max_workers if max_workers is not None else settings.get("max_workers", 1))
+            self.db.write(db, "queue", "settings", {"max_workers": self.max_workers, "root": str(self.root)})
+            if not self.db.read(db, "queue", "legacy_imported", False):
+                # Import legacy records once. Old running PIDs are not trusted
+                # for automatic resume or cancellation without a birth identity.
+                for path in sorted(self.records.glob("*.json")):
+                    record = TaskRecord.from_dict(json.loads(path.read_text(encoding="utf-8")))
+                    safe_id(record.task_id)
+                    payload = record.to_dict()
+                    if record.status not in {"completed", "cancelled", "blocked"}:
+                        payload.update(status="blocked", blocker="legacy task requires explicit re-submission", worker_pid=None, process_pid=None)
+                    db.execute("INSERT OR IGNORE INTO queue_tasks VALUES(?,?,?)", (record.task_id, record.idempotency_key or None, json.dumps(payload)))
+                self.db.write(db, "queue", "legacy_imported", True)
 
     def path(self, task_id: str) -> Path:
-        return self.records / f"{task_id}.json"
+        return self.records / f"{safe_id(task_id)}.json"
 
-    def submit(
-        self,
-        *,
-        task_type: str,
-        command: list[str],
-        cwd: str | Path,
-        result_path: str = "",
-        research_context: dict[str, Any] | None = None,
-        start_immediately: bool = True,
-        idempotency_key: str = "",
-    ) -> TaskRecord:
+    @staticmethod
+    def _record(db, task_id: str) -> TaskRecord:
+        row = db.execute("SELECT payload FROM queue_tasks WHERE task_id=?", (safe_id(task_id),)).fetchone()
+        if row is None:
+            raise FileNotFoundError(f"unknown task {task_id}")
+        return TaskRecord.from_dict(json.loads(row[0]))
+
+    def _save(self, db, record: TaskRecord) -> None:
+        db.execute("UPDATE queue_tasks SET payload=? WHERE task_id=?", (json.dumps(record.to_dict(), ensure_ascii=False, sort_keys=True), record.task_id))
+
+    def _export(self, task_id: str) -> None:
+        with self.db.transaction() as db:
+            record = self._record(db, task_id)
+            atomic_json(self.path(task_id), record.to_dict())
+
+    def submit(self, *, task_type: str, command: list[str], cwd: str | Path,
+               result_path: str = "", research_context: dict[str, Any] | None = None,
+               start_immediately: bool = True, idempotency_key: str = "") -> TaskRecord:
         if not command:
             raise ValueError("task command cannot be empty")
-        if idempotency_key:
-            for existing in self.list(dispatch=False):
-                if existing.idempotency_key == idempotency_key:
-                    if start_immediately and existing.status == "queued" and existing.worker_pid is None:
-                        self.dispatch()
-                        return self.load(existing.task_id)
-                    return existing
-        task_id = uuid.uuid4().hex
-        now = _now()
-        context = research_context or {}
-        record = TaskRecord(
-            task_id=task_id,
-            task_type=task_type,
-            status="queued",
-            command=[str(item) for item in command],
-            cwd=str(Path(cwd).resolve()),
-            log_path=str((self.logs / f"{task_id}.log").resolve()),
-            result_path=result_path,
-            paper_id=str(context.get("paper_id") or ""),
-            run_mode=str(context.get("run_mode") or ""),
-            experiment_type=str(context.get("experiment_type") or ""),
-            data_domain=str(context.get("data_domain") or ""),
-            required_capabilities=tuple(context.get("required_capabilities") or ()),
-            priority_score=float(context.get("priority_score") or 0.0),
-            scheduling_rationale=str(context.get("scheduling_rationale") or ""),
-            created_at=now,
-            updated_at=now,
-            idempotency_key=idempotency_key,
-        )
-        _write(self.path(task_id), record.to_dict())
+        context = json.loads(canonical_json(research_context or {}))
+        operation = identity({"tenant": context.get("tenant_id", "default"),
+                              "project": context.get("project_dir", str(Path(cwd).resolve())),
+                              "key": idempotency_key}, domain="queue-operation-v2") if idempotency_key else None
+        with self.db.transaction() as db:
+            existing = db.execute("SELECT payload FROM queue_tasks WHERE operation_key=?", (operation,)).fetchone() if operation else None
+            if existing:
+                record = TaskRecord.from_dict(json.loads(existing[0]))
+                if (record.command != list(map(str, command)) or record.cwd != str(Path(cwd).resolve())
+                        or record.research_context != context):
+                    raise ValueError("idempotency key reused with different execution contract")
+            else:
+                task_id = uuid.uuid4().hex
+                record = TaskRecord(
+                    task_id=task_id, task_type=task_type, status="queued", command=list(map(str, command)),
+                    cwd=str(Path(cwd).resolve()), log_path=str(self.logs / f"{task_id}.log"),
+                    result_path=result_path, idempotency_key=idempotency_key,
+                    paper_id=str(context.get("paper_id") or ""), run_mode=str(context.get("run_mode") or ""),
+                    experiment_type=str(context.get("experiment_type") or ""), data_domain=str(context.get("data_domain") or ""),
+                    required_capabilities=tuple(context.get("required_capabilities") or ()),
+                    priority_score=float(context.get("priority_score") or 0),
+                    scheduling_rationale=str(context.get("scheduling_rationale") or ""),
+                    created_at=now(), updated_at=now(), research_context=context)
+                db.execute("INSERT INTO queue_tasks VALUES(?,?,?)", (task_id, operation, json.dumps(record.to_dict())))
+                self.db.event(db, "queue", "task.created", task_id=task_id)
+        self._export(record.task_id)
         if start_immediately:
             self.dispatch()
-            return self.load(task_id)
-        return record
-
-    def _start(self, record: TaskRecord) -> TaskRecord:
-        if record.worker_pid or record.status != "queued":
-            return record
-        kwargs: dict[str, Any] = {}
-        if os.name == "nt":
-            kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW
-        else:
-            kwargs["start_new_session"] = True
-        worker = subprocess.Popen(
-            [
-                sys.executable,
-                "-m",
-                "finance_forecast_agent.task_queue",
-                "--worker",
-                str(self.path(record.task_id)),
-            ],
-            cwd=record.cwd,
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            **kwargs,
-        )
-        updated = TaskRecord(**{**record.to_dict(), "worker_pid": worker.pid, "updated_at": _now()})
-        _write(self.path(record.task_id), updated.to_dict())
-        return updated
+        return self.load(record.task_id)
 
     def dispatch(self) -> list[TaskRecord]:
-        """Start the highest-priority queued tasks up to the concurrency limit."""
-        self.root.mkdir(parents=True, exist_ok=True)
-        lock = self.root / ".dispatch.lock"
-        try:
-            descriptor = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-            os.close(descriptor)
-        except FileExistsError:
-            try:
-                if time.time() - lock.stat().st_mtime > 60:
-                    lock.unlink(missing_ok=True)
-            except OSError:
-                pass
-            return []
-        try:
-            records = self.list(dispatch=False)
-            active = sum(
-                record.status in {"queued", "running", "resumable"} and record.worker_pid is not None
-                for record in records
-            )
-            capacity = max(0, self.max_workers - active)
-            pending = sorted(
-                [record for record in records if record.status == "queued" and record.worker_pid is None],
-                key=lambda record: (-record.priority_score, record.created_at, record.task_id),
-            )
-            return [self._start(record) for record in pending[:capacity]]
-        finally:
-            lock.unlink(missing_ok=True)
+        started = []
+        with self.db.transaction() as db:
+            records = [TaskRecord.from_dict(json.loads(row[0])) for row in db.execute("SELECT payload FROM queue_tasks")]
+            capacity = int(self.db.read(db, "queue", "settings")["max_workers"])
+            capacity -= sum(r.status in {"starting", "running"} or
+                (r.status in {"cancelled", "resumable"} and
+                 (process_alive(r.worker_pid, r.worker_created_at) or process_alive(r.process_pid, r.process_created_at)))
+                for r in records)
+            pending = sorted((r for r in records if r.status == "queued"), key=lambda r: (-r.priority_score, r.created_at, r.task_id))
+            for record in pending[:max(0, capacity)]:
+                token = uuid.uuid4().hex
+                claimed = TaskRecord(**{**record.to_dict(), "status": "starting", "generation": token,
+                    "dispatch_pid": os.getpid(), "dispatch_created_at": process_birth(os.getpid()), "updated_at": now()})
+                self._save(db, claimed)
+                # The child blocks on this transaction until its PID/birth are
+                # committed; no stale pre-spawn object overwrites running state.
+                kwargs = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {"start_new_session": True}
+                try:
+                    worker = subprocess.Popen([sys.executable, "-m", "finance_forecast_agent.task_queue",
+                        "--worker", record.task_id, "--state-db", str(self.db.path),
+                        "--queue-root", str(self.root), "--generation", token],
+                        cwd=record.cwd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, **kwargs)
+                    claimed = TaskRecord(**{**claimed.to_dict(), "worker_pid": worker.pid,
+                        "worker_created_at": process_birth(worker.pid)})
+                except OSError as exc:
+                    claimed = TaskRecord(**{**claimed.to_dict(), "status": "blocked", "blocker": type(exc).__name__})
+                self._save(db, claimed)
+                self.db.event(db, "queue", "task.claimed", task_id=record.task_id, generation=token)
+                started.append(claimed)
+        for r in started:
+            self._export(r.task_id)
+        return started
 
     def submit_research_batch(
         self,
@@ -232,178 +232,137 @@ class LocalTaskQueue:
         records = [started.get(record.task_id, record) for record in records]
         return records
 
+
     @staticmethod
-    def _pid_alive(pid: int | None) -> bool:
-        if not pid:
-            return False
-        if os.name != "nt":
-            stat = Path(f"/proc/{int(pid)}/stat")
-            try:
-                if stat.exists() and stat.read_text(encoding="utf-8").split()[2] == "Z":
-                    return False
-            except (OSError, IndexError):
-                pass
-        try:
-            os.kill(int(pid), 0)
-        except OSError:
-            return False
-        return True
+    def _pid_alive(pid: int | None, created_at: float | None = None) -> bool:
+        return process_alive(pid, created_at)
+
+    def load(self, task_id: str) -> TaskRecord:
+        with self.db.transaction() as db:
+            return self._record(db, task_id)
+
+    def list(self, *, dispatch: bool = True) -> list[TaskRecord]:
+        if dispatch:
+            self.dispatch()
+        with self.db.transaction() as db:
+            return [TaskRecord.from_dict(json.loads(row[0])) for row in db.execute("SELECT payload FROM queue_tasks ORDER BY task_id")]
 
     def recover_stale(self) -> list[TaskRecord]:
         recovered = []
-        for record in self.list(dispatch=False):
-            if record.status not in {"queued", "running"} or not record.worker_pid:
-                continue
-            if self._pid_alive(record.worker_pid):
-                continue
-            updated = TaskRecord(
-                **{
-                    **record.to_dict(),
-                    "status": "resumable",
-                    "worker_pid": None,
-                    "process_pid": None,
-                    "blocker": "worker process is no longer alive",
-                    "updated_at": _now(),
-                }
-            )
-            _write(self.path(record.task_id), updated.to_dict())
-            recovered.append(updated)
+        with self.db.transaction() as db:
+            records = [TaskRecord.from_dict(json.loads(row[0])) for row in db.execute("SELECT payload FROM queue_tasks")]
+            for r in records:
+                if r.status not in {"starting", "running"}:
+                    continue
+                if process_alive(r.worker_pid, r.worker_created_at):
+                    continue
+                if r.worker_pid is None and process_alive(r.dispatch_pid, r.dispatch_created_at):
+                    continue
+                # An orphan training process must not overlap with a retry.
+                if process_alive(r.process_pid, r.process_created_at):
+                    continue
+                r = TaskRecord(**{**r.to_dict(), "status": "resumable", "blocker": "worker and child no longer alive",
+                    "worker_pid": None, "process_pid": None, "updated_at": now()})
+                self._save(db, r)
+                self.db.event(db, "queue", "task.interrupted", task_id=r.task_id, generation=r.generation)
+                recovered.append(r)
+        for r in recovered:
+            self._export(r.task_id)
         return recovered
 
     def resume(self, task_id: str) -> TaskRecord:
-        record = self.load(task_id)
-        if record.status != "resumable":
-            return record
-        queued = TaskRecord(
-            **{
-                **record.to_dict(),
-                "status": "queued",
-                "worker_pid": None,
-                "process_pid": None,
-                "return_code": None,
-                "blocker": "",
-                "attempt": int(record.attempt) + 1,
-                "updated_at": _now(),
-                "finished_at": "",
-            }
-        )
-        _write(self.path(task_id), queued.to_dict())
+        with self.db.transaction() as db:
+            r = self._record(db, task_id)
+            if r.status != "resumable":
+                return r
+            if process_alive(r.worker_pid, r.worker_created_at) or process_alive(r.process_pid, r.process_created_at):
+                raise RuntimeError("cannot resume while previous generation is alive")
+            r = TaskRecord(**{**r.to_dict(), "status": "queued", "attempt": r.attempt + 1,
+                "generation": "", "worker_pid": None, "process_pid": None, "return_code": None,
+                "blocker": "", "finished_at": "", "updated_at": now()})
+            self._save(db, r)
         self.dispatch()
         return self.load(task_id)
 
-    def load(self, task_id: str) -> TaskRecord:
-        return TaskRecord.from_dict(json.loads(self.path(task_id).read_text(encoding="utf-8")))
-
-    def list(self, *, dispatch: bool = True) -> list[TaskRecord]:
-        if not self.records.exists():
-            return []
-        records = [
-            TaskRecord.from_dict(json.loads(path.read_text(encoding="utf-8")))
-            for path in sorted(self.records.glob("*.json"))
-        ]
-        if dispatch:
-            self.dispatch()
-            records = [
-                TaskRecord.from_dict(json.loads(path.read_text(encoding="utf-8")))
-                for path in sorted(self.records.glob("*.json"))
-            ]
-        return records
+    def finish(self, task_id: str, *, generation: str, return_code: int) -> bool:
+        with self.db.transaction() as db:
+            r = self._record(db, task_id)
+            if r.status != "running" or r.generation != generation:
+                return False
+            r = TaskRecord(**{**r.to_dict(), "status": "completed" if return_code == 0 else "blocked",
+                "return_code": return_code, "finished_at": now(), "updated_at": now(),
+                "blocker": "" if return_code == 0 else f"command exited with code {return_code}"})
+            self._save(db, r)
+            self.db.event(db, "queue", "task.finished", task_id=task_id, generation=generation, return_code=return_code)
+        self._export(task_id)
+        return True
 
     def cancel(self, task_id: str) -> TaskRecord:
-        record = self.load(task_id)
-        if record.status in {"completed", "blocked", "cancelled"}:
-            return record
-        pid = record.worker_pid
-        if pid:
-            try:
-                if os.name == "nt":
-                    subprocess.run(
-                        ["taskkill", "/PID", str(pid), "/T", "/F"],
-                        check=False,
-                        capture_output=True,
-                    )
-                else:
-                    os.killpg(pid, signal.SIGTERM)
-            except OSError:
-                pass
-        cancelled = TaskRecord(
-            **{
-                **record.to_dict(),
-                "status": "cancelled",
-                "blocker": "cancelled by user",
-                "updated_at": _now(),
-                "finished_at": _now(),
-            }
-        )
-        _write(self.path(task_id), cancelled.to_dict())
-        return cancelled
+        with self.db.transaction() as db:
+            r = self._record(db, task_id)
+            if r.status in {"completed", "blocked", "cancelled"}:
+                return r
+            cancelled = TaskRecord(**{**r.to_dict(), "status": "cancelled", "blocker": "cancelled by user", "updated_at": now(), "finished_at": now()})
+            self._save(db, cancelled)
+            campaign_id = r.research_context.get("campaign_id")
+            if campaign_id:
+                ns = "campaign:" + safe_id(str(campaign_id))
+                self.db.write(db, ns, "cancelled", True)
+                self.db.event(db, ns, "campaign.cancelled", campaign_id=campaign_id)
+            self.db.event(db, "queue", "task.cancelled", task_id=task_id, generation=r.generation)
+        # State first, termination second. Late generations cannot commit results.
+        self._export(task_id)
+        terminate_owned_tree(r.worker_pid, r.worker_created_at)
+        terminate_owned_tree(r.process_pid, r.process_created_at)
+        return self.load(task_id)
 
 
-def _worker(record_path: Path) -> int:
-    record = TaskRecord.from_dict(json.loads(record_path.read_text(encoding="utf-8")))
-    running = TaskRecord(
-        **{
-            **record.to_dict(),
-            "status": "running",
-            "worker_pid": os.getpid(),
-            "started_at": _now(),
-            "updated_at": _now(),
-        }
-    )
-    _write(record_path, running.to_dict())
-    log_path = Path(running.log_path)
-    log_path.parent.mkdir(parents=True, exist_ok=True)
+def _worker(queue: LocalTaskQueue, task_id: str, generation: str) -> int:
+    with queue.db.transaction() as db:
+        r = queue._record(db, task_id)
+        if r.generation != generation or r.status != "starting":
+            return 1
+        r = TaskRecord(**{**r.to_dict(), "status": "running", "worker_pid": os.getpid(),
+            "worker_created_at": process_birth(os.getpid()), "started_at": now(), "updated_at": now()})
+        queue._save(db, r)
+    queue._export(task_id)
+    Path(r.log_path).parent.mkdir(parents=True, exist_ok=True)
     try:
-        with log_path.open("ab") as log:
-            process = subprocess.Popen(
-                running.command,
-                cwd=running.cwd,
-                stdin=subprocess.DEVNULL,
-                stdout=log,
-                stderr=subprocess.STDOUT,
-            )
-            running = TaskRecord(
-                **{**running.to_dict(), "process_pid": process.pid, "updated_at": _now()}
-            )
-            _write(record_path, running.to_dict())
-            return_code = process.wait()
-        current = TaskRecord.from_dict(json.loads(record_path.read_text(encoding="utf-8")))
-        if current.status == "cancelled":
-            return return_code
-        completed = return_code == 0
-        final = TaskRecord(
-            **{
-                **current.to_dict(),
-                "status": "completed" if completed else "blocked",
-                "return_code": return_code,
-                "blocker": "" if completed else f"command exited with code {return_code}",
-                "updated_at": _now(),
-                "finished_at": _now(),
-            }
-        )
-        _write(record_path, final.to_dict())
-        LocalTaskQueue(record_path.parent.parent).dispatch()
-        return return_code
-    except Exception as exc:  # noqa: BLE001 - worker boundary must persist unexpected failures
-        failed = TaskRecord(
-            **{
-                **running.to_dict(),
-                "status": "resumable",
-                "blocker": f"worker interrupted: {exc}",
-                "worker_pid": None,
-                "process_pid": None,
-                "updated_at": _now(),
-            }
-        )
-        _write(record_path, failed.to_dict())
+        with open(r.log_path, "ab") as log:
+            env = {**os.environ, "FFA_STATE_DB": str(queue.db.path), "FFA_TASK_ID": task_id, "FFA_TASK_GENERATION": generation}
+            # Start child under the same state transaction used by cancel().
+            with queue.db.transaction() as db:
+                current = queue._record(db, task_id)
+                if current.status != "running" or current.generation != generation:
+                    return 1
+                process = subprocess.Popen(r.command, cwd=r.cwd, env=env,
+                    stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT)
+                queue._save(db, TaskRecord(**{**current.to_dict(), "process_pid": process.pid,
+                    "process_created_at": process_birth(process.pid), "updated_at": now()}))
+            queue._export(task_id)
+            code = process.wait()
+        queue.finish(task_id, generation=generation, return_code=code)
+        queue.dispatch()  # reads persisted max_workers, never resets capacity to one
+        return code
+    except Exception as exc:  # noqa: BLE001 - persist worker-boundary failure; no stale state overwrite
+        with queue.db.transaction() as db:
+            current = queue._record(db, task_id)
+            if current.generation == generation and current.status == "running":
+                queue._save(db, TaskRecord(**{**current.to_dict(), "status": "resumable", "blocker": type(exc).__name__, "updated_at": now()}))
+        queue._export(task_id)
         return 1
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--worker", type=Path)
-    args = parser.parse_args()
-    return _worker(args.worker) if args.worker else 0
+    p = argparse.ArgumentParser()
+    p.add_argument("--worker")
+    p.add_argument("--state-db", type=Path)
+    p.add_argument("--queue-root", type=Path)
+    p.add_argument("--generation")
+    args = p.parse_args()
+    if not args.worker:
+        return 0
+    return _worker(LocalTaskQueue(args.queue_root, state_path=args.state_db), args.worker, args.generation)
 
 
 if __name__ == "__main__":

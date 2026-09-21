@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import platform
 import uuid
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any, Literal
 
@@ -26,8 +29,10 @@ from .focused_evidence import (
     prediction_metrics,
     prediction_row,
 )
-from .focused_identity import identity
+from .focused_identity import data_identity, file_sha256, identity
 from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, effective_model_params, validate_model_params
+from .focused_runtime import BudgetExhausted, CampaignCancelled, CampaignRuntime
+from .focused_state import atomic_json, safe_id
 from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
 from .replay_llm import ReplayLLM
 
@@ -65,6 +70,7 @@ class ResearchBudget:
     max_rounds: int = 3
     max_new_candidates_per_round: int = 2
     max_fit_calls: int = 40
+    max_advisor_calls: int = 12
     # Compatibility shim for focused-v1 callers. New code should pass
     # EvaluationPolicy explicitly; this field will be removed in a future schema version.
     min_relative_mae_improvement: float | None = None
@@ -252,6 +258,7 @@ def evaluate_candidate(
     best_baseline_mae: float,
     min_relative_improvement: float,
     split_spec: FocusedSplitSpec | None = None,
+    fit_observer=None,
 ) -> CandidateResult:
     features = resolve_feature_columns(candidate.feature_groups)
     missing = [column for column in [*features, "label"] if column not in frame.columns]
@@ -265,7 +272,11 @@ def evaluate_candidate(
     effective_params: dict[str, Any] = {}
     for fold_id, (train_idx, test_idx) in enumerate(splits):
         model = _make_model(candidate)
+        if fit_observer:
+            fit_observer("started")
         model.fit(x[train_idx], y[train_idx])
+        if fit_observer:
+            fit_observer("completed")
         pred = np.asarray(model.predict(x[test_idx]), dtype=float)
         actual = y[test_idx]
         effective_params = _effective_estimator_params(model)
@@ -356,6 +367,7 @@ def _evaluate_model_baseline(
     candidate: CandidateConfig,
     *,
     split_spec: FocusedSplitSpec,
+    fit_observer=None,
 ) -> CandidateResult:
     features = resolve_feature_columns(candidate.feature_groups)
     x = frame[features].astype(float).to_numpy()
@@ -364,7 +376,11 @@ def _evaluate_model_baseline(
     effective_params: dict[str, Any] = {}
     for fold_id, (train_idx, test_idx) in enumerate(split_spec.build_splits(len(frame))):
         model = _make_model(candidate)
+        if fit_observer:
+            fit_observer("started")
         model.fit(x[train_idx], y[train_idx])
+        if fit_observer:
+            fit_observer("completed")
         pred = np.asarray(model.predict(x[test_idx]), dtype=float)
         effective_params = _effective_estimator_params(model)
         for row_index, target, prediction in zip(test_idx, y[test_idx], pred):
@@ -727,9 +743,15 @@ class FocusedResearchController:
         tenant_id: str = "default",
         memory_store_path: str | Path | None = None,
         use_memory_prior: bool = True,
+        state_path: str | Path | None = None,
+        checkpoint_hook=None,
         replay_call_ids: dict[str, str] | None = None,
     ):
-        self.project_dir = Path(project_dir)
+        self.project_dir = Path(project_dir).resolve()
+        self.state_path = Path(state_path or os.getenv("FFA_STATE_DB") or self.project_dir / "runtime.sqlite3")
+        self.checkpoint_hook = checkpoint_hook
+        self._runtime: CampaignRuntime | None = None
+        self._active_attempt: str | None = None
         self.task = task
         self.dataset = dataset
         self.frame = frame
@@ -748,6 +770,8 @@ class FocusedResearchController:
         self.tenant_id = tenant_id
         self.memory_store_path = Path(memory_store_path) if memory_store_path else self.project_dir / "experiment_memory.json"
         self.use_memory_prior = bool(use_memory_prior)
+        if campaign_id is not None:
+            safe_id(campaign_id)
         self.advisor = FocusedResearchAdvisor(advisor_mode, fixture_dir, replay_call_ids=replay_call_ids)
         self.spec = CampaignSpec(
             campaign_id=campaign_id or f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
@@ -767,54 +791,27 @@ class FocusedResearchController:
         return self.project_dir / "focused_campaigns" / self.spec.campaign_id
 
     def _write_json(self, path: Path, payload: dict[str, Any]) -> None:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        temporary = path.with_suffix(path.suffix + ".tmp")
-        temporary.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-        temporary.replace(path)
+        if self._runtime is not None:
+            self._runtime.artifact(path.relative_to(self._campaign_root).as_posix(), payload)
+        else:
+            atomic_json(path, payload)
 
     def _append_event(self, event_type: str, **payload: Any) -> None:
-        root = self._campaign_root
-        root.mkdir(parents=True, exist_ok=True)
-        path = root / "events.jsonl"
-        existing = 0
-        if path.exists():
-            existing = sum(1 for line in path.read_text(encoding="utf-8").splitlines() if line.strip())
-        event = {
-            "event_id": existing + 1,
-            "type": event_type,
-            "campaign_id": self.spec.campaign_id,
-            "time": _now(),
-            **payload,
-        }
-        with path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(event, ensure_ascii=False) + "\n")
+        if self._runtime is None:
+            raise RuntimeError("campaign runtime is not initialized")
+        self._runtime.event(event_type, **payload)
+        if self.checkpoint_hook:
+            self.checkpoint_hook(event_type, payload)
 
     def _initialize_evidence_ledger(self) -> None:
-        root = self._campaign_root
-        exposure_path = root / "exposure" / "exposure.jsonl"
-        if self.resume_existing and exposure_path.exists():
-            self._append_event("campaign.resumed", contract_hash=self.spec.contract_hash)
-            return
-        root.mkdir(parents=True, exist_ok=True)
-        self._append_event(
-            "campaign.started",
-            contract_hash=self.spec.contract_hash,
-            created_at=self.spec.created_at,
-        )
-        exposure = build_exposure_record(
-            campaign_id=self.spec.campaign_id,
-            task=self.task,
-            dataset=self.dataset,
-        )
-        exposure_path.parent.mkdir(parents=True, exist_ok=True)
-        with exposure_path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(exposure, ensure_ascii=False) + "\n")
-        self._append_event(
-            "exposure.recorded",
-            exposure_id=exposure["exposure_id"],
-            dataset_fingerprint=self.dataset.semantic_fingerprint,
-            exposure_class=self.dataset.exposure,
-        )
+        assert self._runtime is not None
+        exposure = self._runtime.get("exposure")
+        if exposure is None:
+            exposure = build_exposure_record(campaign_id=self.spec.campaign_id, task=self.task, dataset=self.dataset)
+            self._runtime.put("exposure", exposure, immutable=True)
+            self._append_event("exposure.recorded", exposure_id=exposure["exposure_id"],
+                               dataset_fingerprint=self.dataset.semantic_fingerprint, exposure_class=self.dataset.exposure)
+        self._runtime.artifact("exposure/exposure.jsonl", exposure)
 
     def _persist_result_evidence(
         self,
@@ -853,8 +850,8 @@ class FocusedResearchController:
             splits=splits,
             expected_feature_columns=expected_features,
         )
-        prediction_rel = Path("predictions") / f"{result.candidate.candidate_id}.json"
-        manifest_rel = Path("manifests") / f"{result.candidate.candidate_id}.json"
+        prediction_rel = Path("predictions") / f"{result.candidate.candidate_id}-{self._active_attempt}.json"
+        manifest_rel = Path("manifests") / f"{result.candidate.candidate_id}-{self._active_attempt}.json"
         self._write_json(root / prediction_rel, artifact.to_dict())
         self._write_json(root / manifest_rel, manifest.to_dict())
         refs = {
@@ -872,7 +869,7 @@ class FocusedResearchController:
                 reserved_fit_calls=reserved_fit_calls,
                 manifest=manifest,
             )
-            feedback_rel = Path("feedback") / f"{feedback.feedback_id}.json"
+            feedback_rel = Path("feedback") / f"{feedback.feedback_id}-{self._active_attempt}.json"
             feedback_payload = feedback.to_dict()
             self._write_json(root / feedback_rel, feedback_payload)
             refs["feedback_ref"] = str(feedback_rel.as_posix())
@@ -907,297 +904,259 @@ class FocusedResearchController:
         plan_hash = _hash(plan)
         plan["plan_hash"] = plan_hash
         rel = Path("batch_plans") / f"round_{round_index}.json"
-        self._write_json(self._campaign_root / rel, plan)
-        self._append_event(
-            "batch.frozen",
-            round_index=round_index,
-            plan_hash=plan_hash,
-            plan_ref=str(rel.as_posix()),
-        )
+        assert self._runtime is not None
+        self._runtime.freeze_plan(round_index, plan, rel.as_posix())
+        if self.checkpoint_hook:
+            self.checkpoint_hook("batch.frozen", {"round_index": round_index, "plan_hash": plan_hash})
         return plan_hash, str(rel.as_posix())
 
-    def _load_completed_candidate(
-        self,
-        candidate: CandidateConfig,
-        *,
-        best_baseline_mae: float,
-    ) -> CandidateResult | None:
-        prediction_path = self._campaign_root / "predictions" / f"{candidate.candidate_id}.json"
-        manifest_path = self._campaign_root / "manifests" / f"{candidate.candidate_id}.json"
-        if not prediction_path.exists() or not manifest_path.exists():
-            return None
-        artifact = json.loads(prediction_path.read_text(encoding="utf-8"))
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if artifact.get("candidate_fingerprint") != candidate.fingerprint:
-            return None
-        if manifest.get("candidate_fingerprint") != candidate.fingerprint:
-            return None
-        rows = list(artifact.get("rows") or [])
-        if not rows:
-            return None
-        metrics = prediction_metrics(rows)
-        fold_metrics = fold_metrics_from_rows(rows)
-        relative = (
-            (best_baseline_mae - float(metrics["mae"])) / best_baseline_mae
-            if best_baseline_mae > 0
-            else 0.0
-        )
-        verdict = (
-            "development_screen_passed"
-            if relative >= self.evaluation_policy.min_relative_mae_improvement
-            else "development_screen_not_passed"
-        )
-        return CandidateResult(
-            candidate=candidate,
-            metrics=metrics,
-            fold_metrics=fold_metrics,
-            prediction_count=len(rows),
-            actual_features=list(manifest.get("actual_feature_columns") or []),
-            estimator_params=dict(manifest.get("effective_estimator_params") or {}),
-            execution_status="success",
-            research_verdict=verdict,
-            relative_mae_vs_best_baseline=relative,
-            prediction_rows=rows,
-        )
+    def _execution_contract(self) -> dict[str, Any]:
+        from .focused_adaptive import EvidenceIndex
+
+        actual = data_identity(self.frame, self.task.to_dict())
+        if self.dataset.frame_fingerprint and actual["frame_fingerprint"] != self.dataset.frame_fingerprint:
+            raise ValueError("dataset snapshot does not match actual frame identity")
+        package = Path(__file__).resolve().parent
+        source = {path.name: file_sha256(path) for path in sorted(package.glob("*.py"))}
+        provider = {}
+        if self.advisor.mode == "live":
+            client = OpenAIJsonClient()
+            from .replay_llm import sanitized_endpoint
+            provider = {"provider": client.provider, "model": client.model,
+                        "base_url": sanitized_endpoint(client.base_url), "max_tokens": client.max_tokens,
+                        "temperature": 0, "http_retries": client.retries}
+        return {
+            "schema_version": "focused_execution_contract_v1", "project_root": str(self.project_dir), "task": self.task.to_dict(),
+            "dataset": actual, "dataset_semantic_identity": self.dataset.semantic_fingerprint,
+            "raw_artifact_hash": self.dataset.raw_sha256,
+            "provenance": {"exposure": self.dataset.exposure, "source": self.dataset.source_name},
+            "budget": self.budget.to_dict(), "split": self.split_spec.to_dict(),
+            "evaluation": self.evaluation_policy.to_dict(), "tenant_id": self.tenant_id,
+            "capability": {"models": sorted(ALLOWED_MODELS), "feature_groups": FEATURE_GROUPS},
+            "source": identity(source, domain="research-execution-source-v1"),
+            "environment": {"python": platform.python_version(), **{name: version(name) for name in ("numpy", "pandas", "scikit-learn", "exchange-calendars")}},
+            "advisor_mode": self.advisor.mode, "provider": provider,
+            "replay_call_ids": self.advisor.replay_call_ids,
+            "fixture_dir": str(self.advisor.fixture_dir.resolve()) if self.advisor.fixture_dir else None,
+            "reviewed_evidence": EvidenceIndex(self.reviewed_evidence).rows,
+            "use_memory_prior": self.use_memory_prior, "max_attempts_per_candidate": 2,
+        }
+
+    def _restore_result(self, accepted: dict) -> CandidateResult:
+        row = accepted["row"]
+        saved = row.get("result") or row
+        candidate_payload = saved["candidate"]
+        candidate = CandidateConfig(**{k: v for k, v in candidate_payload.items() if k in CandidateConfig.__dataclass_fields__})
+        artifact = json.loads((self._campaign_root / saved["prediction_artifact_ref"]).read_text(encoding="utf-8"))
+        if artifact["candidate_fingerprint"] != candidate.fingerprint or artifact["dataset_fingerprint"] != self.dataset.semantic_fingerprint:
+            raise ValueError("artifact identity does not match frozen campaign")
+        metrics = prediction_metrics(artifact["rows"])
+        if metrics != saved["metrics"]:
+            raise ValueError("artifact metrics do not match accepted result")
+        return CandidateResult(candidate=candidate, metrics=metrics, fold_metrics=fold_metrics_from_rows(artifact["rows"]),
+            prediction_count=len(artifact["rows"]), actual_features=saved["actual_features"],
+            estimator_params=saved["estimator_params"], execution_status=saved["execution_status"],
+            research_verdict=saved["research_verdict"], relative_mae_vs_best_baseline=saved["relative_mae_vs_best_baseline"],
+            prediction_rows=artifact["rows"])
+
+    def _execute(self, candidate: CandidateConfig, *, role: str, splits, best_baseline=None,
+                 parent_result=None, hypothesis=None):
+        runtime = self._runtime
+        assert runtime is not None
+        cached = runtime.accepted(candidate.candidate_id)
+        if cached:
+            if cached["row"]["candidate"]["candidate_fingerprint"] != candidate.fingerprint:
+                raise ValueError("accepted candidate identity mismatch")
+            self._append_event("attempt.reused", candidate_id=candidate.candidate_id, attempt_id=cached["attempt_id"])
+            return self._restore_result(cached), cached["row"]
+        old_failure = runtime.get("failure:" + candidate.candidate_id)
+        if old_failure:
+            return None, old_failure
+        diff = candidate_config_diff(parent_result.candidate if parent_result else None, candidate) if role == "research_candidate" else {"change_type": "baseline", "parent_candidate_id": None, "changes": []}
+        fits = 0 if role == "naive_baseline" else len(splits)
+        attempt_id = runtime.reserve(candidate.to_dict(), role=role, fits=fits)
+        self._active_attempt = attempt_id
+        runtime.start(attempt_id)
+        self._append_event("attempt.started", candidate_id=candidate.candidate_id, role=role, attempt_id=attempt_id)
+        def observe(phase):
+            runtime.fit_observer(attempt_id, phase)
+            if self.checkpoint_hook:
+                self.checkpoint_hook("fit." + phase, {"candidate_id": candidate.candidate_id, "role": role, "attempt_id": attempt_id})
+        try:
+            if role == "naive_baseline":
+                result = _evaluate_naive_baseline(self.frame, candidate, split_spec=self.split_spec)
+            elif role == "model_baseline":
+                result = _evaluate_model_baseline(self.frame, candidate, split_spec=self.split_spec, fit_observer=observe)
+            else:
+                result = evaluate_candidate(self.frame, candidate, best_baseline_mae=best_baseline.metrics["mae"],
+                    min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
+                    split_spec=self.split_spec, fit_observer=observe)
+        except CampaignCancelled:
+            raise
+        except (ValueError, RuntimeError, FloatingPointError) as exc:
+            runtime.fail(attempt_id, type(exc).__name__)
+            failed = {"hypothesis": hypothesis.to_dict() if hypothesis else None, "candidate": candidate.to_dict(),
+                "config_diff": diff, "status": "failed", "error_type": type(exc).__name__,
+                "error": str(exc), "reserved_fit_calls": fits, "attempt_id": attempt_id}
+            runtime.put("failure:" + candidate.candidate_id, failed, immutable=True)
+            return None, failed
+        refs, feedback = self._persist_result_evidence(result=result, role=role, splits=splits,
+            config_diff=diff, reserved_fit_calls=fits, parent_result=parent_result, best_baseline_result=best_baseline)
+        saved_result = {**result.to_dict(), **refs}
+        row = ({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(), "result": saved_result,
+                "config_diff": diff, "status": "completed", "feedback": feedback, "attempt_id": attempt_id}
+               if hypothesis else saved_result)
+        artifacts = [{"path": refs[key], "sha256": file_sha256(self._campaign_root / refs[key])}
+                     for key in ("prediction_artifact_ref", "execution_manifest_ref", "feedback_ref") if key in refs]
+        self._append_event("attempt.artifacts_written", candidate_id=candidate.candidate_id, attempt_id=attempt_id)
+        runtime.accept(attempt_id, row, artifacts)
+        return result, row
 
     def run(self) -> dict[str, Any]:
-        splits = self.split_spec.build_splits(len(self.frame))
-        baseline_fit_calls = self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
-        if self.budget.max_fit_calls < baseline_fit_calls:
-            raise ValueError(
-                "focused fit budget is too small for frozen baselines: "
-                f"need {baseline_fit_calls}, got {self.budget.max_fit_calls}; no model fit started"
-            )
-        self._initialize_evidence_ledger()
-        baseline_results = run_baselines(self.frame, self.budget, split_spec=self.split_spec)
-        best_baseline = min(baseline_results, key=lambda x: x.metrics["mae"])
-        best_baseline_mae = best_baseline.metrics["mae"]
-        result_lookup: dict[str, CandidateResult] = {
-            result.candidate.candidate_id: result for result in baseline_results
-        }
-        candidate_lookup: dict[str, CandidateConfig] = {
-            result.candidate.candidate_id: result.candidate for result in baseline_results
-        }
-        baseline_payloads: list[dict[str, Any]] = []
-        for result in baseline_results:
-            role = "naive_baseline" if result.candidate.model_family.startswith("naive_") else "model_baseline"
-            refs, _ = self._persist_result_evidence(
-                result=result,
-                role=role,
-                splits=splits,
-                config_diff={"change_type": "baseline", "parent_candidate_id": None, "changes": []},
-                reserved_fit_calls=0 if role == "naive_baseline" else len(splits),
-            )
-            baseline_payloads.append({**result.to_dict(), **refs})
-            self._append_event(
-                "baseline.completed",
-                candidate_id=result.candidate.candidate_id,
-                model_family=result.candidate.model_family,
-            )
-
-        research_results: list[CandidateResult] = []
-        feedback_history: list[dict[str, Any]] = []
-        memory_evidence: list[dict[str, Any]] = []
-        if self.use_memory_prior:
-            from .experiment_memory import ExperimentMemoryStore
-            from .focused_delivery import load_focused_memory_evidence
-
-            memory_evidence = load_focused_memory_evidence(
-                ExperimentMemoryStore(self.memory_store_path),
-                tenant_id=self.tenant_id,
-                task=self.task,
-                dataset_fingerprint=self.dataset.semantic_fingerprint,
-                split_spec=self.split_spec,
-                evaluation_policy=self.evaluation_policy,
-                exclude_campaign_id=self.spec.campaign_id,
-            )
-        rounds: list[dict[str, Any]] = []
-        seen_fingerprints = {result.candidate.fingerprint for result in baseline_results}
-        fit_calls = baseline_fit_calls
-        stop_reason = "max_rounds_reached"
-        failed_attempts = 0
-        for round_index in range(1, self.budget.max_rounds + 1):
-            prompt = advisor_prompt(
-                round_index=round_index,
-                task=self.task,
-                baseline_results=baseline_results,
-                prior_results=research_results,
-                budget=self.budget,
-                structured_feedback=feedback_history,
-                reviewed_evidence=self.reviewed_evidence,
-                compatible_memory=memory_evidence,
-            )
-            advice, source = self.advisor.propose(prompt)
-            if self.advisor.last_record:
-                self._append_event("advisor.call_recorded", round_index=round_index,
-                                   call_id=self.advisor.last_record.get("call_id"),
-                                   record_hash=self.advisor.last_record.get("record_hash"),
-                                   prompt_hash=self.advisor.last_record.get("prompt_hash"))
+        self.split_spec.build_splits(len(self.frame))
+        minimum = self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
+        if self.budget.max_fit_calls < minimum:
+            raise ValueError(f"focused fit budget is too small for frozen baselines: need {minimum}, got {self.budget.max_fit_calls}; no model fit started")
+        runtime = CampaignRuntime(self._campaign_root, state_path=self.state_path,
+                                  contract=self._execution_contract(), spec=self.spec.to_dict(), resume=self.resume_existing)
+        self._runtime = runtime
+        with runtime.lease():
+            runtime.verify_all()
+            final = runtime.get("final")
+            if final:
+                self._append_event("attempt.reused", scope="accepted_campaign", refits=0)
+                atomic_json(self._campaign_root / "campaign.json", final)
+                return final
+            self._initialize_evidence_ledger()
             try:
-                compiled = compile_hypotheses(
-                    advice,
-                    round_index=round_index,
-                    source=source,
-                    max_count=self.budget.max_new_candidates_per_round,
-                    visible_evidence=prompt["evidence_projection"],
-                )
-            except (ValueError, TypeError) as exc:
-                self._append_event("proposal.rejected", round_index=round_index,
-                                   prompt_hash=_hash(prompt), error_type=type(exc).__name__)
+                return self._run_resumable()
+            except CampaignCancelled:
                 raise
-            prompt_hash = _hash(prompt)
-            plan_hash, plan_ref = self._freeze_batch_plan(
-                round_index=round_index,
-                source=source,
-                prompt_hash=prompt_hash,
-                compiled=compiled,
-            )
-            round_rows: list[dict[str, Any]] = []
-            new_executable = 0
-            successful_this_round = 0
+            except BaseException as exc:
+                # A process kill cannot run finally; durable attempts/plans still
+                # remain authoritative. Ordinary exceptions also get a snapshot.
+                if not runtime.get("cancelled", False):
+                    partial = {"schema_version": "focused_campaign_v3", "campaign": runtime.get("spec"),
+                        "execution_status": "partial", "research_outcome": "inconclusive", "terminal_status": "partial_inconclusive",
+                        "stop_reason": type(exc).__name__, "resource_usage": runtime.resource_usage(),
+                        "fit_calls": runtime.resource_usage()["charged_fit_calls"], "confirmation_status": "not_run_historical_data_exposed"}
+                    atomic_json(self._campaign_root / "campaign.partial.json", partial)
+                    self._append_event("campaign.interrupted", error_type=type(exc).__name__)
+                raise
+
+    def _run_resumable(self) -> dict[str, Any]:
+        runtime = self._runtime
+        assert runtime is not None
+        splits = self.split_spec.build_splits(len(self.frame))
+        memory_evidence = runtime.get("memory_snapshot")
+        if memory_evidence is None:
+            memory_evidence = []
+            if self.use_memory_prior:
+                from .experiment_memory import ExperimentMemoryStore
+                from .focused_delivery import load_focused_memory_evidence
+                memory_evidence = load_focused_memory_evidence(ExperimentMemoryStore(self.memory_store_path),
+                    tenant_id=self.tenant_id, task=self.task, dataset_fingerprint=self.dataset.semantic_fingerprint,
+                    split_spec=self.split_spec, evaluation_policy=self.evaluation_policy, exclude_campaign_id=self.spec.campaign_id)
+            runtime.put("memory_snapshot", memory_evidence, immutable=True)
+        baseline_results, baseline_payloads = [], []
+        for candidate_id, family, params, groups in [*NAIVE_BASELINES, *DEFAULT_BASELINES]:
+            candidate = CandidateConfig(candidate_id, family, params, groups)
+            role = "naive_baseline" if family.startswith("naive_") else "model_baseline"
+            result, saved = self._execute(candidate, role=role, splits=splits)
+            if result is None:
+                raise RuntimeError("baseline failed; research evidence is inconclusive")
+            baseline_results.append(result)
+            baseline_payloads.append(saved)
+        best_baseline = min(baseline_results, key=lambda r: r.metrics["mae"])
+        result_lookup = {r.candidate.candidate_id: r for r in baseline_results}
+        seen = {r.candidate.fingerprint for r in baseline_results}
+        research_results, feedback_history, rounds = [], [], []
+        stop_reason, failed_attempts = "max_rounds_reached", 0
+        for round_index in range(1, self.budget.max_rounds + 1):
+            frozen = runtime.get(f"plan:{round_index}")
+            if frozen is None:
+                recorded = runtime.get(f"advice:{round_index}")
+                if recorded is None:
+                    prompt = advisor_prompt(round_index=round_index, task=self.task, baseline_results=baseline_results,
+                        prior_results=research_results, budget=self.budget, structured_feedback=feedback_history,
+                        reviewed_evidence=self.reviewed_evidence, compatible_memory=memory_evidence)
+                    calls = runtime.get("advisor_call_reservations", 0)
+                    if calls >= self.budget.max_advisor_calls:
+                        stop_reason = "advisor_budget_exhausted"
+                        break
+                    runtime.put("advisor_call_reservations", calls + 1)
+                    self._append_event("advisor.call_reserved", round_index=round_index, call_number=calls + 1)
+                    advice, source = self.advisor.propose(prompt)
+                    recorded = {"prompt": prompt, "advice": advice, "source": source,
+                                "call_record": self.advisor.last_record}
+                    runtime.put(f"advice:{round_index}", recorded, immutable=True)
+                    if self.advisor.last_record:
+                        self._append_event("advisor.call_recorded", round_index=round_index,
+                            call_id=self.advisor.last_record.get("call_id"), record_hash=self.advisor.last_record.get("record_hash"))
+                prompt, advice, source = recorded["prompt"], recorded["advice"], recorded["source"]
+                try:
+                    compiled = compile_hypotheses(advice, round_index=round_index, source=source,
+                        max_count=self.budget.max_new_candidates_per_round, visible_evidence=prompt["evidence_projection"])
+                except (ValueError, TypeError) as exc:
+                    self._append_event("proposal.rejected", round_index=round_index, error_type=type(exc).__name__)
+                    raise
+                prompt_hash = _hash(prompt)
+                plan_hash, plan_ref = self._freeze_batch_plan(round_index=round_index, source=source,
+                                                            prompt_hash=prompt_hash, compiled=compiled)
+                plan = json.loads((self._campaign_root / plan_ref).read_text())
+                frozen = {"plan": plan, "plan_ref": plan_ref, "artifacts": [{"path": plan_ref, "sha256": file_sha256(self._campaign_root / plan_ref)}]}
+                runtime.put(f"plan:{round_index}", frozen, immutable=True)
+            else:
+                plan = frozen["plan"]
+                source, prompt_hash, plan_hash = plan["advisor_source"], plan["prompt_hash"], plan["plan_hash"]
+                plan_ref = frozen["plan_ref"]
+                compiled = [(HypothesisSpec(**item["hypothesis"]), CandidateConfig(**{k: v for k, v in item["candidate"].items() if k in CandidateConfig.__dataclass_fields__})) for item in plan["items"]]
+            round_rows, new_executable, successful = [], 0, 0
             for hypothesis, candidate in compiled:
-                parent_candidate = candidate_lookup.get(candidate.parent_candidate_id or "")
-                config_diff = candidate_config_diff(parent_candidate, candidate)
-                if candidate.fingerprint in seen_fingerprints:
-                    round_rows.append(
-                        {
-                            "hypothesis": hypothesis.to_dict(),
-                            "candidate": candidate.to_dict(),
-                            "config_diff": config_diff,
-                            "status": "skipped_duplicate",
-                        }
-                    )
+                parent = result_lookup.get(candidate.parent_candidate_id)
+                diff = candidate_config_diff(parent.candidate if parent else None, candidate)
+                if candidate.fingerprint in seen:
+                    round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(),
+                                       "config_diff": diff, "status": "skipped_duplicate"})
                     continue
-                folds = len(splits)
-                if fit_calls + folds > self.budget.max_fit_calls:
-                    round_rows.append(
-                        {
-                            "hypothesis": hypothesis.to_dict(),
-                            "candidate": candidate.to_dict(),
-                            "config_diff": config_diff,
-                            "status": "blocked_budget",
-                        }
-                    )
+                seen.add(candidate.fingerprint)
+                try:
+                    result, row = self._execute(candidate, role="research_candidate", splits=splits,
+                                                best_baseline=best_baseline, parent_result=parent, hypothesis=hypothesis)
+                except BudgetExhausted:
+                    round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(),
+                                       "config_diff": diff, "status": "blocked_budget"})
                     stop_reason = "fit_budget_exhausted"
                     continue
-                fit_calls += folds
-                seen_fingerprints.add(candidate.fingerprint)
                 new_executable += 1
-                cached = (
-                    self._load_completed_candidate(candidate, best_baseline_mae=best_baseline_mae)
-                    if self.resume_existing
-                    else None
-                )
-                if cached is not None:
-                    result = cached
-                    self._append_event(
-                        "attempt.reused",
-                        round_index=round_index,
-                        candidate_id=candidate.candidate_id,
-                        reserved_fit_calls=folds,
-                    )
-                else:
-                    self._append_event(
-                        "attempt.reserved",
-                        round_index=round_index,
-                        candidate_id=candidate.candidate_id,
-                        reserved_fit_calls=folds,
-                    )
-                    try:
-                        result = evaluate_candidate(
-                            self.frame,
-                            candidate,
-                            best_baseline_mae=best_baseline_mae,
-                            min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
-                            split_spec=self.split_spec,
-                        )
-                    except (ValueError, RuntimeError, FloatingPointError) as exc:
-                        failed_attempts += 1
-                        self._append_event(
-                            "attempt.failed",
-                            round_index=round_index,
-                            candidate_id=candidate.candidate_id,
-                            reserved_fit_calls=folds,
-                            error_type=type(exc).__name__,
-                            error=str(exc),
-                        )
-                        round_rows.append(
-                            {
-                                "hypothesis": hypothesis.to_dict(),
-                                "candidate": candidate.to_dict(),
-                                "config_diff": config_diff,
-                                "status": "failed",
-                                "error_type": type(exc).__name__,
-                                "error": str(exc),
-                                "reserved_fit_calls": folds,
-                            }
-                        )
-                        continue
-                parent_result = result_lookup.get(candidate.parent_candidate_id or "")
-                refs, feedback_payload = self._persist_result_evidence(
-                    result=result,
-                    role="research_candidate",
-                    splits=splits,
-                    config_diff=config_diff,
-                    reserved_fit_calls=folds,
-                    parent_result=parent_result,
-                    best_baseline_result=best_baseline,
-                )
-                research_results.append(result)
-                if feedback_payload is not None:
-                    feedback_history.append(feedback_payload)
-                result_lookup[candidate.candidate_id] = result
-                candidate_lookup[candidate.candidate_id] = candidate
-                successful_this_round += 1
-                self._append_event(
-                    "attempt.completed",
-                    round_index=round_index,
-                    candidate_id=candidate.candidate_id,
-                    reserved_fit_calls=folds,
-                )
-                row = {
-                    "hypothesis": hypothesis.to_dict(),
-                    "candidate": candidate.to_dict(),
-                    "result": {**result.to_dict(), **refs},
-                    "config_diff": config_diff,
-                    "status": "completed",
-                }
-                if feedback_payload is not None:
-                    row["feedback"] = feedback_payload
                 round_rows.append(row)
-            rounds.append(
-                {
-                    "round_index": round_index,
-                    "advisor_source": source,
-                    "prompt_hash": prompt_hash,
-                    "plan_hash": plan_hash,
-                    "plan_ref": plan_ref,
-                    "items": round_rows,
-                }
-            )
-            self._append_event(
-                "round.completed",
-                round_index=round_index,
-                advisor_source=source,
-                prompt_hash=prompt_hash,
-                plan_hash=plan_hash,
-            )
+                if result is None:
+                    failed_attempts += 1
+                    continue
+                research_results.append(result)
+                result_lookup[candidate.candidate_id] = result
+                successful += 1
+                if row.get("feedback"):
+                    feedback_history.append(row["feedback"])
+            round_payload = {"round_index": round_index, "advisor_source": source, "prompt_hash": prompt_hash,
+                             "plan_hash": plan_hash, "plan_ref": plan_ref, "items": round_rows}
+            if not runtime.get(f"round:{round_index}"):
+                runtime.put(f"round:{round_index}", round_payload, immutable=True)
+                self._append_event("round.completed", round_index=round_index, plan_hash=plan_hash)
+            rounds.append(round_payload)
             if stop_reason == "fit_budget_exhausted":
                 break
             if new_executable == 0:
                 stop_reason = "no_new_executable_hypothesis"
                 break
-            if successful_this_round == 0:
+            if successful == 0:
                 stop_reason = "round_failed_no_completed_candidate"
                 break
 
         valid_results = [*baseline_results, *research_results]
         best_overall = min(valid_results, key=lambda x: x.metrics["mae"])
-        improved = (
-            best_overall.candidate.candidate_id not in {x.candidate.candidate_id for x in baseline_results}
-            and best_overall.relative_mae_vs_best_baseline
-            >= self.evaluation_policy.min_relative_mae_improvement
-        )
+        improved = (best_overall.candidate.candidate_id not in {x.candidate.candidate_id for x in baseline_results}
+                    and best_overall.relative_mae_vs_best_baseline >= self.evaluation_policy.min_relative_mae_improvement)
         if stop_reason == "round_failed_no_completed_candidate":
             execution_status = "failed" if not research_results else "partial"
             research_outcome = "inconclusive"
@@ -1207,60 +1166,32 @@ class FocusedResearchController:
         else:
             execution_status = "partial" if failed_attempts else "completed"
             research_outcome = "improved" if improved else "no_improvement"
-
-        if research_outcome == "improved":
-            terminal_status = "completed_with_development_improvement"
-        elif research_outcome == "no_improvement":
-            terminal_status = "completed_no_improvement"
-        elif research_outcome == "inconclusive":
-            terminal_status = f"{execution_status}_inconclusive"
-        else:
-            terminal_status = "completed_not_evaluated"
-
-        payload = {
-            "schema_version": "focused_campaign_v2",
-            "campaign": self.spec.to_dict(),
-            "baseline_results": baseline_payloads,
-            "rounds": rounds,
-            "best_baseline_candidate_id": best_baseline.candidate.candidate_id,
-            "best_candidate_id": best_overall.candidate.candidate_id,
-            "best_candidate_is_research_candidate": improved,
-            "execution_status": execution_status,
-            "research_outcome": research_outcome,
-            "terminal_status": terminal_status,
-            "stop_reason": stop_reason,
-            "fit_calls": fit_calls,
-            "baseline_fit_calls": baseline_fit_calls,
-            "evaluation_policy": self.evaluation_policy.to_dict(),
-            "split_spec": self.split_spec.to_dict(),
-            "evidence_status": {
-                "development": "available",
-                "robustness": "not_run",
-                "confirmation": "not_run_historical_data_exposed",
-                "forward": "not_started",
-            },
-            "confirmation_status": "not_run_historical_data_exposed",
-            "scientific_claim": "development_only_no_profitability_claim",
-            "created_at": _now(),
-        }
-        self._persist(payload)
+        terminal_status = ("completed_with_development_improvement" if improved else
+            "completed_no_improvement" if research_outcome == "no_improvement" else
+            f"{execution_status}_inconclusive" if research_outcome == "inconclusive" else "completed_not_evaluated")
+        usage = runtime.resource_usage()
+        payload = {"schema_version": "focused_campaign_v3", "campaign": runtime.get("spec"),
+            "execution_contract_hash": runtime.contract_hash, "baseline_results": baseline_payloads,
+            "rounds": rounds, "best_baseline_candidate_id": best_baseline.candidate.candidate_id,
+            "best_candidate_id": best_overall.candidate.candidate_id, "best_candidate_is_research_candidate": improved,
+            "execution_status": execution_status, "research_outcome": research_outcome, "terminal_status": terminal_status,
+            "stop_reason": stop_reason, "fit_calls": usage["charged_fit_calls"],
+            "baseline_fit_calls": self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES)),
+            "resource_usage": {**usage, "advisor_call_reservations": runtime.get("advisor_call_reservations", 0)},
+            "evaluation_policy": self.evaluation_policy.to_dict(), "split_spec": self.split_spec.to_dict(),
+            "evidence_status": {"development": "available", "robustness": "not_run", "confirmation": "not_run_historical_data_exposed", "forward": "not_started"},
+            "confirmation_status": "not_run_historical_data_exposed", "scientific_claim": "development_only_no_profitability_claim", "created_at": _now()}
+        runtime.complete(payload)
         if self.use_memory_prior:
             from .experiment_memory import ExperimentMemoryStore
             from .focused_delivery import write_focused_campaign_memory
-
-            write_focused_campaign_memory(
-                payload,
-                ExperimentMemoryStore(self.memory_store_path),
-                tenant_id=self.tenant_id,
-            )
-        self._append_event(
-            "campaign.completed",
-            execution_status=execution_status,
-            research_outcome=research_outcome,
-            terminal_status=terminal_status,
-            stop_reason=stop_reason,
-        )
+            write_focused_campaign_memory(payload, ExperimentMemoryStore(self.memory_store_path), tenant_id=self.tenant_id)
+        self._append_event("campaign.completed", execution_status=execution_status, research_outcome=research_outcome,
+                           terminal_status=terminal_status, stop_reason=stop_reason)
         return payload
 
     def _persist(self, payload: dict[str, Any]) -> None:
-        self._write_json(self._campaign_root / "campaign.json", payload)
+        if self._runtime:
+            self._runtime.complete(payload)
+        else:
+            atomic_json(self._campaign_root / "campaign.json", payload)

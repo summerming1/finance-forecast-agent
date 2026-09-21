@@ -7,6 +7,7 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
+from .focused_identity import identity
 from .task_queue import LocalTaskQueue, TaskRecord
 
 
@@ -51,6 +52,9 @@ def submit_focused_campaign(
     candidates_per_round: int = 2,
     max_fit_calls: int = 40,
     start_immediately: bool = True,
+    tenant_id: str = "default",
+    use_memory_prior: bool = True,
+    operation_id: str | None = None,
 ) -> TaskRecord:
     key = focused_campaign_key(
         raw_spy_json=raw_spy_json,
@@ -60,18 +64,32 @@ def submit_focused_campaign(
         candidates_per_round=candidates_per_round,
         max_fit_calls=max_fit_calls,
     )
-    campaign_id = f"persistent-{key}"
+    project = Path(project_dir).resolve()
+    repo = Path(__file__).resolve().parents[2]
+    source = {p.name: _sha256(p) for p in sorted(Path(__file__).parent.glob("*.py"))}
+    provider = {}
+    if advisor_mode == "live":
+        from .llm_adapters import OpenAIJsonClient
+        from .replay_llm import sanitized_endpoint
+        client = OpenAIJsonClient()
+        provider = {"provider": client.provider, "model": client.model,
+                    "base_url": sanitized_endpoint(client.base_url), "max_tokens": client.max_tokens,
+                    "temperature": 0, "http_retries": client.retries}
+    key = identity({"data_request": key, "provider": provider, "project": str(project), "tenant": tenant_id,
+                    "memory": use_memory_prior, "source": source,
+                    "fixture_dir": str(Path(fixture_dir).resolve()), "operation_id": operation_id}, domain="focused-submit-v2")
+    campaign_id = f"persistent-{key[:24]}"
     command = [
         sys.executable,
-        "scripts/run_focused_spy_campaign.py",
+        str(repo / "scripts" / "run_focused_spy_campaign.py"),
         "--project-dir",
-        str(Path(project_dir)),
+        str(project),
         "--raw-spy-json",
-        str(Path(raw_spy_json)),
+        str(Path(raw_spy_json).resolve()),
         "--advisor-mode",
         advisor_mode,
         "--fixture-dir",
-        str(fixture_dir),
+        str(Path(fixture_dir).resolve()),
         "--rounds",
         str(int(rounds)),
         "--candidates-per-round",
@@ -81,18 +99,25 @@ def submit_focused_campaign(
         "--campaign-id",
         campaign_id,
         "--resume-existing",
+        "--state-db", str(queue.db.path),
+        "--tenant-id", tenant_id,
     ]
     if source_metadata:
-        command.extend(["--source-metadata", str(Path(source_metadata))])
+        command.extend(["--source-metadata", str(Path(source_metadata).resolve())])
+    if not use_memory_prior:
+        command.append("--no-memory")
     return queue.submit(
         task_type="focused_campaign",
         command=command,
-        cwd=Path.cwd(),
-        result_path=str(Path(project_dir) / "focused_campaigns" / campaign_id / "campaign.json"),
+        cwd=repo,
+        result_path=str(project / "focused_campaigns" / campaign_id / "campaign.json"),
         research_context={
             "run_mode": advisor_mode,
             "experiment_type": "forecast_only",
             "data_domain": "us_equity",
+            "tenant_id": tenant_id, "project_dir": str(project), "campaign_id": campaign_id,
+            "expected_source": identity(source, domain="research-execution-source-v1"), "expected_provider": provider,
+            "expected_raw_sha256": _sha256(Path(raw_spy_json)),
         },
         start_immediately=start_immediately,
         idempotency_key=f"focused:{key}",

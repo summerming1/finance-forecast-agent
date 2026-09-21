@@ -107,3 +107,9 @@ Validation evidence:
 - a 3-window × 3-seed internal four-arm benchmark still does not establish Adaptive Agent superiority. The One-shot and Adaptive arms remain fixture/deterministic engineering comparators, not new live-LLM quality evidence.
 
 This addendum does not change the approved roadmap or authorize V3.
+
+## R2 — transactional execution acceptance
+
+Existing LocalTaskQueue/FocusedResearchController interfaces now use SQLite authority; file records are exports. Frozen plans and context, accepted result hashes, conservative fit reservations and worker generations survive interruption. No second execution engine was added. Pre-transactional campaigns remain readable but cannot be falsely resumed.
+
+Fixed-source local gate: 104 focused + 4 shared legacy queue tests passed in 110.27 seconds; Ruff/compile/diff checks passed. Frozen SPY smoke: 4002 rows, 20 fits, completed/no_improvement, historical confirmation not run. The actual queued campaign kill/resume test preserves baseline/first-candidate files and plan hashes and charges an interrupted attempt plus retry. Windows/macOS and complete browser integration remain separate pending gates.

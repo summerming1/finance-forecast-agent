@@ -10,6 +10,7 @@ dependencies = [
   "plotly",
   "torch",
   "requests",
+  "psutil>=7.2,<8",
   "exchange-calendars>=4.13,<5",
 ]
 

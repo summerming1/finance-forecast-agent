@@ -27,7 +27,7 @@
     },
     "R1": {
       "scope": "identity evidence replay",
-      "status": "local_gate_passed",
+      "status": "delivered",
       "test_evidence": [
         {
           "command": "python -m pytest -q tests/test_focused*.py",
@@ -59,12 +59,56 @@
         "no_network_replay",
         "canonical_data_identity",
         "candidate_default_identity"
+      ],
+      "commit": "79674f643db7498a69bed0f68db18252f39bd91c",
+      "ci_runs": [
+        35560944134,
+        35560944174
       ]
     },
     "R2": {
       "scope": "transactional recovery",
-      "status": "not_started",
-      "test_evidence": []
+      "status": "local_gate_passed",
+      "test_evidence": [
+        {
+          "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue_lineage.py",
+          "passed": 108,
+          "failed": 0,
+          "seconds": 110.27,
+          "focused_cases": 104,
+          "shared_legacy_queue_cases": 4,
+          "exit_code": 0
+        },
+        {
+          "command": "frozen SPY smoke 3 rounds/2 candidates/40 fits",
+          "exit_code": 0,
+          "rows": 4002,
+          "fits": 20,
+          "outcome": "no_improvement"
+        },
+        {
+          "command": "changed-source Ruff + compileall + git diff --check",
+          "exit_code": 0
+        }
+      ],
+      "clauses": [
+        "atomic_idempotency",
+        "side_effect_free_liveness",
+        "generation_fencing",
+        "immutable_accepted_artifacts",
+        "frozen_plan_replay",
+        "full_queued_campaign_kill_resume",
+        "budget_reservation_survives_crash",
+        "queued_input_identity",
+        "legacy_json_read_only"
+      ],
+      "limitations": [
+        "single trusted local operator; not OS/SaaS isolation",
+        "legacy pre-R2 campaigns are read-only; no fabricated migration of attempt costs",
+        "physical computations may be repeated after an unaccepted crash, with retry charged and orphan artifacts preserved",
+        "Windows native process path awaits platform CI/local test",
+        "the development gate changed source once while an earlier test ran; that run is not acceptance evidence; final fixed-source run passed"
+      ]
     },
     "R3": {
       "scope": "research actions memory",

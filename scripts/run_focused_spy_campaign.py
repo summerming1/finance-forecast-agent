@@ -25,6 +25,9 @@ def main() -> None:
     parser.add_argument("--max-fit-calls", type=int, default=40)
     parser.add_argument("--campaign-id", default=None)
     parser.add_argument("--resume-existing", action="store_true")
+    parser.add_argument("--state-db", type=Path)
+    parser.add_argument("--tenant-id", default="default")
+    parser.add_argument("--no-memory", action="store_true")
     args = parser.parse_args()
 
     project = Path(args.project_dir)
@@ -43,6 +46,7 @@ def main() -> None:
         fixture_dir=args.fixture_dir,
         campaign_id=args.campaign_id,
         resume_existing=args.resume_existing,
+        state_path=args.state_db, tenant_id=args.tenant_id, use_memory_prior=not args.no_memory,
         replay_call_ids=json.loads(args.replay_call_map.read_text()) if args.replay_call_map else None,
     )
     result = controller.run()
