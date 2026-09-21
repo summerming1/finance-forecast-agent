@@ -10,7 +10,8 @@ import subprocess
 import sys
 
 root = Path(sys.argv[1]).resolve()
-batch = json.loads(Path(sys.argv[2]).read_text())
+batch_path = Path(sys.argv[2]).resolve()
+batch = json.loads(batch_path.read_text())
 if batch['stage'] not in {'R3', 'R4', 'R5', 'R6'}:
     raise ValueError('unsupported batch')
 for key in ('base', 'tree', 'commit'):
@@ -20,7 +21,13 @@ def git(*args, **kw):
     return subprocess.check_output(['git', *args], cwd=root, **kw).decode().strip()
 if git('rev-parse', 'HEAD') != batch['base']:
     raise ValueError('formal branch advanced; reconcile rather than overwrite')
-patch = gzip.decompress(base64.b64decode(batch['patch_gzip_base64'], validate=True))
+encoded = batch.get('patch_gzip_base64', '')
+if not encoded:
+    for part in batch['patch_parts']:
+        if not re.fullmatch(r'R[3-6]_patch_[0-9]+\.b64', part):
+            raise ValueError('invalid transport filename')
+        encoded += (batch_path.parent / part).read_text().strip()
+patch = gzip.decompress(base64.b64decode(encoded, validate=True))
 if hashlib.sha256(patch).hexdigest() != batch['patch_sha256']:
     raise ValueError('patch digest mismatch')
 subprocess.run(['git', 'apply', '--index', '--binary', '-'], cwd=root, input=patch, check=True)
