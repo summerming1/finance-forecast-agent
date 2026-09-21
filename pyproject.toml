@@ -11,6 +11,7 @@ dependencies = [
   "torch",
   "requests",
   "psutil>=7.2,<8",
+  "filelock>=3.16,<5",
   "exchange-calendars>=4.13,<5",
 ]
 

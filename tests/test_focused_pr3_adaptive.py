@@ -75,7 +75,7 @@ def test_evidence_gate_rejects_unknown_and_invisible_refs() -> None:
 def test_compile_hypothesis_keeps_paper_fact_separate_and_requires_visible_ref() -> None:
     advice = {
         "hypotheses": [{
-            "action_type": "diagnose",
+            "action_type": "improve",
             "statement": "Test local volatility transfer.",
             "mechanism": "Local hypothesis, not a rewrite of the paper claim.",
             "parent_candidate_id": "baseline_ridge",
@@ -104,7 +104,7 @@ def test_different_feedback_produces_different_adaptive_actions() -> None:
 
 def test_adaptive_advice_cites_real_feedback_and_reviewed_evidence() -> None:
     prompt = {
-        "baseline_results": [{"candidate_id": "baseline_ridge", "metrics": {"mae": 0.01}}],
+        "baseline_results": [{"candidate_id": "baseline_ridge", "model_family": "ridge_regression", "model_params": {"alpha": 1.0}, "feature_groups": ["base_lags", "volatility"], "metrics": {"mae": 0.01}}],
         "prior_research_results": [],
         "structured_feedback": [_feedback(-0.02, [0.1, 0.1, 0.1, 0.1])],
         "reviewed_evidence": [EvidenceNode("paper-1", "paper_claim", "reviewed").to_dict()],
@@ -151,7 +151,8 @@ def test_compile_hypothesis_rejects_unsupported_model() -> None:
         }]
     }
     with pytest.raises(ValueError, match="unsupported model"):
-        compile_hypotheses(advice, round_index=1, source="test", max_count=1)
+        compile_hypotheses(advice, round_index=1, source="test", max_count=1,
+                           visible_evidence=[{"evidence_id": "baseline_ridge", "evidence_type": "current_experiment", "role": "candidate", "visible": True}])
 
 
 def test_controller_round_two_is_feedback_driven(tmp_path: Path) -> None:

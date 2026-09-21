@@ -11,7 +11,7 @@
 | 预测/Manifest/确定性反馈 | 是 | focused 通过 | 冻结历史 SPY | 非独立金融证据 | 身份已加固；恢复绑定 R2 |
 | Mission/Workspace | 是 | AppTest 通过 | Codex 报告浏览器可运行 | 完整持久流程未验收 | R6 |
 | Live/Replay | 是 | 录制单测通过 | Codex 报告百炼两轮与无凭证回放 | 不是科研质量证明 | R1 已加固；本轮真实 provider 待测 |
-| 动作与 Memory | 原型 | 基础测试通过 | 有限规则策略 | 未证明研究增益 | R3 |
+| 动作与 Memory | R3 实际分发 | 停止/审核/诊断/消融/租户隔离通过 | 规则策略与真实历史 smoke | 未证明 LLM 研究增益 | live 与网页集成待测 |
 | Queue/恢复 | R2 事务路径 | 原子提交/代次/预算/缓存通过 | Linux 完整 Campaign kill/resume 已测 | 单机工程验收 | UI 集成与其他平台 R6 |
 | Confirmation | 原型，默认禁用真实标签 | 模拟保护测试 | 无可信未见金融数据 | 未完成 | R4 |
 | ModelBundle | 显式 refit/加载 | 无 label/新进程通过 | 历史数据推理 | 不是样本外效果 | 包外信任 R4 |
@@ -23,7 +23,8 @@
 - R0：统一状态、默认关闭原型独立确认标签、标记旧对照结果；本批测试记录见版本日志。
 - R1：统一内容/目标/配置身份，可见证据共享投影，v2 不可变 LLM 录制与哈希校验；本地 87 项累计回归及真实 SPY smoke 通过。
 - R2：既有 Queue/Controller 使用事务状态，冻结计划、缓存和预算可恢复；本地 focused 104 项加共享队列 4 项通过，真实 SPY smoke 通过。
-- R3～R6：待实施。每批先测试，再提交、核验远端，再开始下一批。
+- R3：实际控制动作、父模型约束、剩余资源上下文和有界 Memory 已实现；本地 128 项累计及共享回归通过。
+- R4～R6：待实施。每批先测试，再提交、核验远端，再开始下一批。
 
 ## 当前边界
 
@@ -52,3 +53,9 @@
 旧 worker 的 generation 不能提交新 attempt 的结果；取消先持久化再终止经过 PID+创建时间核对的进程树。存活检测不发送信号。真实 queued Campaign 在候选 A 完成、B 一折训练完成时强制终止后由新进程恢复：A/基线/计划哈希保持，重试消耗计费，最终研究包可导出。
 
 旧 R2 之前 Campaign 可查看，但无足够 attempt 事实时不伪造恢复。代码更新前应完成或取消运行中的 Campaign；跨执行合同的继续研究应创建新 Campaign。当前网页仍在 R6 接入队列前，不据此宣称整条网页异步流程已经完成。
+
+## R3 动作与记忆
+
+`stop` 不创建虚假 Candidate；`diagnose` 对已有预测做只读残差/fold 摘要；`request_review` 保存暂停，不再调用模型。通过 `focused_runtime.resolve_campaign_review(state_path, campaign_id, review_id, tenant_id=..., decision="approve"|"reject", reviewer=...)` 记录操作者决定，再以相同冻结合同恢复。批准只允许继续原研究合同，不修改数据或评价。
+
+消融从实际对照派生，只移除一个已有特征组；简化保持模型族/seed，减少声明的维度。未知动作、LLM 自报指标或评价覆盖被拒绝。Memory 保存真实配置、假设、diff 与可定位预测；写入按租户和 run_id 隔离，损坏文件不会当空库覆盖。相同数据的 warm Memory 可减少重复研究，但不把旧分数当本轮结果，也不声称泛化增益。

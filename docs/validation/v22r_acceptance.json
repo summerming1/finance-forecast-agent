@@ -68,7 +68,7 @@
     },
     "R2": {
       "scope": "transactional recovery",
-      "status": "local_gate_passed",
+      "status": "delivered",
       "test_evidence": [
         {
           "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue_lineage.py",
@@ -108,12 +108,50 @@
         "physical computations may be repeated after an unaccepted crash, with retry charged and orphan artifacts preserved",
         "Windows native process path awaits platform CI/local test",
         "the development gate changed source once while an earlier test ran; that run is not acceptance evidence; final fixed-source run passed"
+      ],
+      "commit": "06bb4f6411e50232e44f28ba4c05aa6121f9b899",
+      "ci_runs": [
+        35563570735,
+        35563570741
       ]
     },
     "R3": {
       "scope": "research actions memory",
-      "status": "not_started",
-      "test_evidence": []
+      "status": "local_gate_passed",
+      "test_evidence": [
+        {
+          "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
+          "passed": 128,
+          "failed": 0,
+          "seconds": 191.05,
+          "exit_code": 0
+        },
+        {
+          "command": "frozen real SPY 3 rounds/2 candidates/40 fits",
+          "rows": 4002,
+          "fits": 20,
+          "outcome": "no_improvement",
+          "exit_code": 0
+        }
+      ],
+      "clauses": [
+        "typed_control_actions",
+        "stop_zero_candidate_fits",
+        "persistent_review_approve_reject",
+        "actual_parent_ablation",
+        "deterministic_no_fit_diagnostics",
+        "actual_remaining_budget",
+        "tenant_safe_memory",
+        "corrupted_memory_preserved",
+        "complete_memory_lineage",
+        "exact_rerun_memory_efficiency"
+      ],
+      "limitations": [
+        "No fresh live provider call; schemas changed and require local live-record/replay verification.",
+        "Memory efficiency test reuses identical development history; it is not unseen-data generalization.",
+        "Review resolution API is implemented; web integration belongs to R6.",
+        "Legacy tests received valid context/statement prerequisites to keep testing intended numeric/role rejection; guards were not relaxed."
+      ]
     },
     "R4": {
       "scope": "confirmation and model trust",

@@ -266,7 +266,8 @@ def test_advisor_numeric_params_are_validated_during_compile() -> None:
         ]
     }
     with pytest.raises(ValueError, match="n_estimators"):
-        compile_hypotheses(advice, round_index=1, source="test", max_count=1)
+        compile_hypotheses(advice, round_index=1, source="test", max_count=1,
+                           visible_evidence=[{"evidence_id": "baseline_rf", "evidence_type": "current_experiment", "role": "candidate_result", "visible": True}])
 
 
 

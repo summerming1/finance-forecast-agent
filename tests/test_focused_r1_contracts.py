@@ -44,7 +44,7 @@ def test_feedback_cannot_reference_paper_role():
     rows = [EvidenceNode('paper', 'paper_claim', 'p').to_dict(),
             {'evidence_id': 'baseline_ridge', 'evidence_type': 'current_experiment', 'role': 'candidate_result',
              'visible': True, 'summary': 'baseline'}]
-    advice = {'hypotheses': [{'model_family': 'ridge_regression', 'model_params': {},
+    advice = {'hypotheses': [{'statement': 'Reject paper as feedback', 'model_family': 'ridge_regression', 'model_params': {},
                             'feature_groups': ['base_lags'], 'evidence_refs': ['paper'],
                             'based_on_feedback_ids': ['paper'], 'parent_candidate_id': 'baseline_ridge'}]}
     with pytest.raises(ValueError, match='role|feedback'):

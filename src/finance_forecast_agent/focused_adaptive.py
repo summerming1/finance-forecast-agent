@@ -138,59 +138,49 @@ def choose_adaptive_action(feedback_rows: list[dict[str, Any]]) -> ActionType:
 
 
 def adaptive_deterministic_advice(prompt: dict[str, Any]) -> dict[str, Any]:
+    """A bounded, honest control policy. Never invent a causal ablation."""
     feedback = list(prompt.get("structured_feedback") or [])
     action = choose_adaptive_action(feedback)
-    baseline_results = list(prompt.get("baseline_results") or [])
-    prior_results = list(prompt.get("prior_research_results") or [])
-    all_results = [*baseline_results, *prior_results]
-    if not all_results:
-        raise ValueError("adaptive advisor requires baseline results")
-    parent = min(all_results, key=lambda row: float((row.get("metrics") or {})["mae"]))
-    parent_id = str(parent["candidate_id"])
-    feedback_refs = [str(row["feedback_id"]) for row in feedback[-2:]]
-    reviewed = [row for row in prompt.get("reviewed_evidence") or [] if row.get("visible")]
-    paper_refs = [str(row["evidence_id"]) for row in reviewed if row.get("evidence_type") == "paper_claim"][:1]
-    memory = [row for row in prompt.get("compatible_memory") or [] if row.get("visible")]
-    memory_refs = [str(row["evidence_id"]) for row in memory if row.get("evidence_type") == "compatible_memory"][:1]
-    refs = [*feedback_refs, *paper_refs, *memory_refs]
-
-    if action == "simplify":
-        config = ("ridge_regression", {"alpha": 20.0}, ["base_lags"])
-        statement = "Simplify after broad fold degradation."
-        mechanism = "Broad degradation is more consistent with variance/noise than a robust incremental signal."
-    elif action == "ablate":
-        config = ("ridge_regression", {"alpha": 5.0}, ["base_lags", "momentum"])
-        statement = "Ablate the richer candidate to isolate whether momentum carries the observed gain."
-        mechanism = "A controlled reduction can test whether an observed gain survives after removing extra state variables."
-    elif action == "diagnose":
-        config = ("random_forest_regressor", {"n_estimators": 100, "max_depth": 4, "min_samples_leaf": 8}, ["base_lags", "volatility"])
-        statement = "Diagnose heterogeneous errors with an explicit volatility-state candidate."
-        mechanism = "Mixed fold behavior can reflect state dependence rather than a stable unconditional effect."
+    results = [*prompt.get("baseline_results", []), *prompt.get("prior_research_results", [])]
+    if not results:
+        raise ValueError("adaptive advisor requires completed results")
+    latest_id = feedback[-1].get("candidate_id") if feedback else None
+    parent = next((row for row in results if row["candidate_id"] == latest_id),
+                  min(results, key=lambda row: float(row["metrics"]["mae"])))
+    parent_id = parent["candidate_id"]
+    feedback_refs = [row["feedback_id"] for row in feedback[-2:]]
+    paper_refs = [r["evidence_id"] for r in prompt.get("reviewed_evidence", [])
+                  if r.get("visible") is True and r.get("evidence_type") == "paper_claim"][:1]
+    memory_refs = [r["evidence_id"] for r in prompt.get("compatible_memory", [])
+                   if r.get("visible") is True and r.get("evidence_type") == "compatible_memory"][:1]
+    row = {"action_type": action, "based_on_feedback_ids": feedback_refs,
+           "parent_candidate_id": parent_id, "control_candidate_id": parent_id,
+           "evidence_refs": [*feedback_refs, *paper_refs, *memory_refs],
+           "expected_effect": "Explain the observed development behavior, without a confirmation claim.",
+           "counter_evidence_test": "Retain negative and mixed fold outcomes under the frozen protocol."}
+    groups = sorted(set(parent.get("feature_groups") or []))
+    family, params = parent.get("model_family"), dict(parent.get("model_params") or {})
+    seed = parent.get("seed", 42)
+    removable = [g for g in groups if g != "base_lags"]
+    if action == "ablate" and removable:
+        row.update(statement="Remove one feature group from the actual control; preserve model, parameters and seed.",
+                   mechanism="A paired, single-component comparison tests whether this group contributes locally.",
+                   ablation_component="feature_group:" + removable[-1])
+    elif action == "simplify" and removable:
+        row.update(statement="Reduce the actual control's feature set after broad fold degradation.",
+                   mechanism="Fewer input groups are an explicit complexity reduction, not proof of generalization.",
+                   model_family=family, model_params=params, seed=seed,
+                   feature_groups=[g for g in groups if g != removable[-1]], simplification_dimension="feature_count")
+    elif action == "simplify" and family in {"random_forest_regressor", "gradient_boosting_regressor"} and params.get("n_estimators", 100) > 10:
+        row.update(statement="Reduce tree count with all other control settings fixed.",
+                   mechanism="Tree count is a declared complexity dimension; compare performance rather than assume improvement.",
+                   model_family=family, model_params={**params, "n_estimators": max(10, params.get("n_estimators", 100)//2)},
+                   seed=seed, feature_groups=groups, simplification_dimension="n_estimators")
     else:
-        config = ("gradient_boosting_regressor", {"n_estimators": 100, "learning_rate": 0.03, "max_depth": 2}, ["base_lags", "momentum"])
-        statement = "Test medium-horizon momentum as the first bounded improvement hypothesis."
-        mechanism = "Recent trend information may add incremental information to short return lags."
-
-    family, params, groups = config
-    return {
-        "hypotheses": [
-            {
-                "action_type": action,
-                "based_on_feedback_ids": feedback_refs,
-                "control_candidate_id": parent_id,
-                "statement": statement,
-                "mechanism": mechanism,
-                "parent_candidate_id": parent_id,
-                "model_family": family,
-                "model_params": params,
-                "feature_groups": groups,
-                "expected_effect": "Improve or explain development MAE under the frozen target-row contract.",
-                "expected_observation": "A consistent fold-level MAE pattern under the pre-frozen development folds.",
-                "counter_evidence_test": "Reject the local hypothesis if the controlled candidate does not improve the expected fold pattern.",
-                "evidence_refs": refs,
-            }
-        ]
-    }
+        row.update(action_type="diagnose", statement="Inspect existing residuals and fold metrics before changing a model.",
+                   mechanism="No valid single-component reduction is available, or the fold pattern is mixed.",
+                   diagnostic="residual_summary")
+    return {"hypotheses": [row]}
 
 
 SEARCH_SPACE: tuple[dict[str, Any], ...] = (

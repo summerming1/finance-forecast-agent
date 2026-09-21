@@ -52,10 +52,11 @@ def test_assistant_authored_replay_fixture_runs_offline_without_live_provider(tm
         baseline_results=baselines,
         prior_results=[],
         budget=budget,
+        resource_usage={"charged_fit_calls": 12, "observed_completed_fits": 12},
     )
     response = {
         "hypotheses": [{
-            "action_type": "diagnose",
+            "action_type": "improve",
             "statement": "Assistant-authored replay fixture: test stronger Ridge shrinkage.",
             "mechanism": "A deterministic fixture verifies the replay plumbing only.",
             "parent_candidate_id": "baseline_ridge",

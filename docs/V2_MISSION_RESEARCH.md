@@ -113,3 +113,9 @@ This addendum does not change the approved roadmap or authorize V3.
 Existing LocalTaskQueue/FocusedResearchController interfaces now use SQLite authority; file records are exports. Frozen plans and context, accepted result hashes, conservative fit reservations and worker generations survive interruption. No second execution engine was added. Pre-transactional campaigns remain readable but cannot be falsely resumed.
 
 Fixed-source local gate: 104 focused + 4 shared legacy queue tests passed in 110.27 seconds; Ruff/compile/diff checks passed. Frozen SPY smoke: 4002 rows, 20 fits, completed/no_improvement, historical confirmation not run. The actual queued campaign kill/resume test preserves baseline/first-candidate files and plan hashes and charges an interrupted attempt plus retry. Windows/macOS and complete browser integration remain separate pending gates.
+
+## R3 — real actions / bounded Memory
+
+2026-09-21: action compilation now distinguishes training from stop/review/read-only diagnostics. Ablation derives from the actual parent; simplification checks its complexity dimension. Waiting review survives re-opening without extra advisor calls. Actual reserved/completed/remaining resource context is sent to the advisor. Existing Memory gains complete configuration/experiment lineage, atomic tenant-aware writes, and corruption rejection.
+
+Red probes reproduced missing controls and tenant overwrite. Fixed-source cumulative/affected shared regression: 128 passed in 191.05 seconds; real frozen SPY remains 4002 rows/20 fits/no_improvement. Exact-task cold/warm engineering test reduces 20 fits to 12 by declining already examined initial configurations; this is not held-out capability evidence. A legacy fixture was updated to contain actual baseline resource usage, and numeric/role negative fixtures now provide the required valid context; no checks were loosened. Real provider/browser review flow remain pending.

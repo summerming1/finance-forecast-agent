@@ -5,7 +5,7 @@ import json
 import os
 import platform
 import uuid
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 from importlib.metadata import version
 from pathlib import Path
@@ -111,7 +111,7 @@ class HypothesisSpec:
     hypothesis_id: str
     statement: str
     mechanism: str
-    parent_candidate_id: str
+    parent_candidate_id: str | None
     proposed_changes: list[dict[str, Any]]
     expected_effect: str
     counter_evidence_test: str
@@ -121,6 +121,9 @@ class HypothesisSpec:
     based_on_feedback_ids: list[str] = field(default_factory=list)
     control_candidate_id: str | None = None
     expected_observation: str = ""
+    ablation_component: str | None = None
+    simplification_dimension: str | None = None
+    diagnostic: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -472,6 +475,9 @@ def advisor_prompt(
     structured_feedback: list[dict[str, Any]] | None = None,
     reviewed_evidence: list[dict[str, Any]] | None = None,
     compatible_memory: list[dict[str, Any]] | None = None,
+    resource_usage: dict[str, Any] | None = None,
+    advisor_calls_used: int = 0,
+    diagnostics: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     from .focused_adaptive import EvidenceIndex, feedback_evidence, result_evidence
 
@@ -479,6 +485,9 @@ def advisor_prompt(
         *result_evidence([{"candidate_id": x.candidate.candidate_id} for x in [*baseline_results, *prior_results]]),
         *feedback_evidence(list(structured_feedback or [])),
         *(reviewed_evidence or []), *(compatible_memory or []),
+        *({"evidence_id": row["diagnostic_id"], "evidence_type": "current_experiment", "role": "diagnostic",
+           "visible": True, "summary": "Deterministic residual diagnostic", "source_ref": row["diagnostic_id"]}
+          for row in (diagnostics or [])),
     ]
     index = EvidenceIndex(all_evidence)
     projected = index.rows
@@ -492,11 +501,11 @@ def advisor_prompt(
         "allowed_models": sorted(ALLOWED_MODELS),
         "allowed_feature_groups": sorted(FEATURE_GROUPS),
         "baseline_results": [
-            {"candidate_id": x.candidate.candidate_id, "model_family": x.candidate.model_family, "feature_groups": x.candidate.feature_groups, "model_params": x.candidate.model_params, "metrics": x.metrics}
+            {"candidate_id": x.candidate.candidate_id, "model_family": x.candidate.model_family, "feature_groups": x.candidate.feature_groups, "model_params": x.candidate.model_params, "seed": x.candidate.seed, "config_identity": x.candidate.config_identity, "metrics": x.metrics}
             for x in baseline_results
         ],
         "prior_research_results": [
-            {"candidate_id": x.candidate.candidate_id, "parent_candidate_id": x.candidate.parent_candidate_id, "hypothesis_id": x.candidate.hypothesis_id, "model_family": x.candidate.model_family, "feature_groups": x.candidate.feature_groups, "model_params": x.candidate.model_params, "metrics": x.metrics, "verdict": x.research_verdict}
+            {"candidate_id": x.candidate.candidate_id, "parent_candidate_id": x.candidate.parent_candidate_id, "hypothesis_id": x.candidate.hypothesis_id, "model_family": x.candidate.model_family, "feature_groups": x.candidate.feature_groups, "model_params": x.candidate.model_params, "seed": x.candidate.seed, "config_identity": x.candidate.config_identity, "metrics": x.metrics, "verdict": x.research_verdict}
             for x in prior_results
         ],
         "structured_feedback": [row for row in (structured_feedback or []) if row.get("feedback_id") in visible_ids],
@@ -505,10 +514,16 @@ def advisor_prompt(
         "available_evidence_ids": index.ids,
         "evidence_projection": projected,
         "evidence_projection_hash": identity(projected, domain="evidence-projection-v1"),
+        "diagnostics": list(diagnostics or []),
         "remaining_budget": {
             "max_rounds": budget.max_rounds,
             "max_new_candidates_per_round": budget.max_new_candidates_per_round,
             "max_fit_calls": budget.max_fit_calls,
+            "charged_fit_calls": (resource_usage or {}).get("charged_fit_calls", 0),
+            "known_completed_fit_calls": (resource_usage or {}).get("observed_completed_fits", 0),
+            "remaining_fit_calls": max(0, budget.max_fit_calls - (resource_usage or {}).get("charged_fit_calls", 0)),
+            "remaining_rounds": max(0, budget.max_rounds - round_index + 1),
+            "remaining_advisor_calls": max(0, budget.max_advisor_calls - advisor_calls_used),
         },
         "max_hypotheses": budget.max_new_candidates_per_round,
         "rules": [
@@ -516,8 +531,21 @@ def advisor_prompt(
             "Use actual previous-round metrics when round_index > 1.",
             "Do not claim profitability or strict reproduction.",
             "A simpler or stronger-regularized model is a valid hypothesis.",
+            "stop/request_review must be a sole decision with statement and optional evidence references; omit all model fields.",
+            "diagnose uses control_candidate_id and diagnostic=residual_summary|fold_summary; omit model fields.",
+            "ablate declares ablation_component=feature_group:<existing group>; executor derives the child from the actual parent.",
+            "simplify must preserve model family and seed and reduce simplification_dimension=feature_count|n_estimators|max_depth.",
+            "Never supply metrics, verdict, split, budget overrides, or unlisted fields. Same-model alpha changes are improve, not proven simplification.",
             "Every evidence_refs entry must match exactly one string from available_evidence_ids; do not append metrics, descriptions, prefixes, or suffixes.",
         ],
+        "action_contracts": {
+            "improve": "model_family, model_params, feature_groups; valid parent, seed optional",
+            "ablate": "parent_candidate_id=control_candidate_id, ablation_component; child derived by compiler",
+            "simplify": "parent, unchanged family/seed, simplification_dimension and reduced configuration",
+            "diagnose": "control_candidate_id, diagnostic; no model configuration",
+            "stop": "statement and optional references only; sole decision; no model configuration",
+            "request_review": "statement and optional references only; sole decision; persists a pause",
+        },
         "response_schema": {
             "hypotheses": [
                 {
@@ -620,11 +648,19 @@ class FocusedResearchAdvisor:
                 from .focused_adaptive import adaptive_deterministic_advice
 
                 return adaptive_deterministic_advice(prompt), "adaptive_deterministic_policy"
-            return _deterministic_advice(
-                int(prompt["round_index"]),
-                _results_from_prompt(prompt["baseline_results"]),
-                _results_from_prompt(prompt["prior_research_results"]),
-            ), "deterministic_policy"
+            advice = _deterministic_advice(
+                int(prompt["round_index"]), _results_from_prompt(prompt["baseline_results"]),
+                _results_from_prompt(prompt["prior_research_results"]))
+            # Exact-task historical knowledge avoids redundant proposals, without
+            # importing old scores as current-run measurements.
+            examined = {row.get("config", {}).get("config_identity") for row in prompt.get("compatible_memory", [])}
+            advice["hypotheses"] = [row for row in advice["hypotheses"] if
+                CandidateConfig("proposal", row["model_family"], row["model_params"], row["feature_groups"]).config_identity not in examined]
+            advice["hypotheses"] = advice["hypotheses"][:int(prompt["max_hypotheses"])]
+            if not advice["hypotheses"]:
+                advice = {"hypotheses": [{"action_type": "stop", "statement": "Bounded initial ideas already examined in exact-task memory; no new experiment proposed.",
+                    "evidence_refs": [row["evidence_id"] for row in prompt.get("compatible_memory", [])]}]}
+            return advice, "deterministic_policy"
         if self.fixture_dir is None:
             raise ValueError("fixture_dir is required for replay/live advisor modes")
         if self.mode == "replay":
@@ -651,6 +687,7 @@ def _results_from_prompt(rows: list[dict[str, Any]]) -> list[CandidateResult]:
             feature_groups=list(row.get("feature_groups") or ["base_lags"]),
             parent_candidate_id=row.get("parent_candidate_id"),
             hypothesis_id=row.get("hypothesis_id"),
+            seed=int(row.get("seed", 42)),
         )
         results.append(
             CandidateResult(candidate, {k: float(v) for k, v in dict(row.get("metrics") or {}).items()}, [], 0, [], {}, "success", str(row.get("verdict") or "baseline"), 0.0)
@@ -665,61 +702,121 @@ def compile_hypotheses(
     source: str,
     max_count: int,
     visible_evidence: list[dict[str, Any]] | None = None,
-) -> list[tuple[HypothesisSpec, CandidateConfig]]:
-    rows = payload.get("hypotheses")
+    candidate_lookup: dict[str, CandidateConfig] | None = None,
+) -> list[tuple[HypothesisSpec, CandidateConfig | None]]:
+    """Compile a bounded decision, including controls which do not train models.
+
+    Numeric evaluation remains outside this schema. An ablation is derived from
+    its actual control; an LLM cannot label arbitrary joint changes as ablation.
+    """
+    from .focused_adaptive import EvidenceIndex
+
+    if not isinstance(payload, dict) or set(payload) != {"hypotheses"}:
+        raise ValueError("advice must contain only the hypotheses field")
+    rows = payload["hypotheses"]
     if not isinstance(rows, list):
         raise TypeError("research advice must contain a hypotheses list")
-    compiled: list[tuple[HypothesisSpec, CandidateConfig]] = []
-    for index, row in enumerate(rows[:max_count]):
+    if len(rows) > max_count:
+        raise ValueError("proposal exceeds frozen batch limit")
+    allowed = {"action_type", "statement", "mechanism", "parent_candidate_id", "control_candidate_id",
+        "model_family", "model_params", "feature_groups", "seed", "expected_effect", "expected_observation",
+        "counter_evidence_test", "evidence_refs", "based_on_feedback_ids", "ablation_component",
+        "simplification_dimension", "diagnostic"}
+    actions = {"improve", "ablate", "simplify", "diagnose", "stop", "request_review"}
+    index = EvidenceIndex(visible_evidence or [])
+    candidates = candidate_lookup or {}
+    compiled = []
+    for ordinal, row in enumerate(rows):
         if not isinstance(row, dict):
             raise TypeError("hypothesis must be an object")
-        family = str(row.get("model_family") or "")
-        groups = [str(x) for x in row.get("feature_groups") or []]
-        if family not in ALLOWED_MODELS:
-            raise ValueError(f"advisor proposed unsupported model: {family}")
-        model_params = validate_model_params(family, dict(row.get("model_params") or {}))
-        resolve_feature_columns(groups)
-        evidence_refs = [str(x) for x in row.get("evidence_refs") or []]
-        from .focused_adaptive import EvidenceIndex
-
-        evidence_index = EvidenceIndex(visible_evidence or [])
-        for ref in evidence_refs:
-            evidence_index.require(ref)
-        for ref in row.get("based_on_feedback_ids") or []:
-            evidence_index.require(str(ref), "feedback")
-        parent_id = str(row.get("parent_candidate_id") or "baseline_ridge")
-        evidence_index.require(parent_id, "candidate_result")
-        if row.get("control_candidate_id"):
-            evidence_index.require(str(row["control_candidate_id"]), "candidate_result")
-        hypothesis_id = f"r{round_index}_h{index+1}_{_hash(row, 8)}"
-        candidate_id = f"r{round_index}_c{index+1}_{_hash({'family': family, 'groups': groups, 'params': row.get('model_params')}, 8)}"
-        hypothesis = HypothesisSpec(
-            hypothesis_id=hypothesis_id,
-            statement=str(row.get("statement") or ""),
-            mechanism=str(row.get("mechanism") or ""),
-            parent_candidate_id=str(row.get("parent_candidate_id") or "baseline_ridge"),
-            proposed_changes=[
-                {"path": "model_family", "new_value": family},
-                {"path": "model_params", "new_value": model_params},
-                {"path": "feature_groups", "new_value": groups},
-            ],
-            expected_effect=str(row.get("expected_effect") or "unknown"),
-            counter_evidence_test=str(row.get("counter_evidence_test") or "development MAE does not improve"),
-            source=source,
-            evidence_refs=evidence_refs,
-            action_type=str(row.get("action_type") or "improve"),
-            based_on_feedback_ids=[str(x) for x in row.get("based_on_feedback_ids") or []],
-            control_candidate_id=(str(row["control_candidate_id"]) if row.get("control_candidate_id") else None),
-            expected_observation=str(row.get("expected_observation") or row.get("expected_effect") or ""),
-        )
-        candidate = CandidateConfig(
-            candidate_id=candidate_id,
-            model_family=family,
-            model_params=dict(row.get("model_params") or {}),
-            feature_groups=groups,
-            parent_candidate_id=hypothesis.parent_candidate_id,
-            hypothesis_id=hypothesis_id,
-        )
+        if set(row) - allowed:
+            raise ValueError("unsupported proposal fields: " + ", ".join(sorted(set(row) - allowed)))
+        action = row.get("action_type", "improve")
+        if action not in actions:
+            raise ValueError("unsupported research action")
+        if not isinstance(row.get("statement"), str) or not row["statement"].strip():
+            raise ValueError("research action requires a non-empty statement")
+        if action in {"stop", "request_review"} and len(rows) != 1:
+            raise ValueError("stop/review must be the sole decision in a batch")
+        for field_name, role in (("evidence_refs", None), ("based_on_feedback_ids", "feedback")):
+            refs = row.get(field_name, [])
+            if not isinstance(refs, list) or any(not isinstance(ref, str) or not ref for ref in refs):
+                raise TypeError("reference fields must be lists of exact IDs")
+            for ref in refs:
+                index.require(ref, role)
+        training = action in {"improve", "ablate", "simplify"}
+        # Validate unsupported models before resolving parent IDs for useful errors.
+        if training and action != "ablate" and row.get("model_family") not in ALLOWED_MODELS:
+            raise ValueError(f"advisor proposed unsupported model: {row.get('model_family')}")
+        parent_id = row.get("parent_candidate_id") or ("baseline_ridge" if training else None)
+        control_id = row.get("control_candidate_id") or (parent_id if action in {"ablate", "simplify", "diagnose"} else None)
+        for ref in (parent_id, control_id):
+            if ref is not None:
+                index.require(ref, "candidate_result")
+        hid = f"r{round_index}_h{ordinal+1}_{_hash(row, 8)}"
+        cid = f"r{round_index}_c{ordinal+1}_{_hash(row, 8)}"
+        candidate = None
+        if not training:
+            forbidden = {"model_family", "model_params", "feature_groups", "seed", "ablation_component", "simplification_dimension"}
+            if forbidden & set(row):
+                raise ValueError("control/diagnosis decisions cannot specify model configuration")
+            if action == "diagnose":
+                if control_id is None:
+                    raise ValueError("diagnosis requires a completed control candidate")
+                if row.get("diagnostic", "residual_summary") not in {"residual_summary", "fold_summary"}:
+                    raise ValueError("unsupported deterministic diagnostic")
+        elif action == "ablate":
+            if parent_id != control_id or control_id not in candidates:
+                raise ValueError("ablation requires an actual matching parent/control")
+            parent = candidates[control_id]
+            component = row.get("ablation_component")
+            if not isinstance(component, str) or not component.startswith("feature_group:"):
+                raise ValueError("supported ablation_component is feature_group:<existing group>")
+            removed = component.split(":", 1)[1]
+            if removed not in parent.feature_groups or len(set(parent.feature_groups)) < 2:
+                raise ValueError("ablation must remove one present group while retaining features")
+            candidate = replace(parent, candidate_id=cid, parent_candidate_id=parent_id, hypothesis_id=hid,
+                                feature_groups=sorted(set(parent.feature_groups) - {removed}))
+            # Full configs may be supplied for clarity, but cannot contradict the derived control.
+            for key in ("model_family", "model_params", "feature_groups", "seed"):
+                if key in row and row[key] != getattr(candidate, key):
+                    raise ValueError("ablation contains a joint/contradictory change")
+        else:
+            groups = row.get("feature_groups")
+            if not isinstance(groups, list) or any(not isinstance(g, str) for g in groups):
+                raise TypeError("feature_groups must be a list")
+            resolve_feature_columns(groups)
+            params = validate_model_params(row["model_family"], row.get("model_params", {}))
+            candidate = CandidateConfig(cid, row["model_family"], params, sorted(set(groups)),
+                seed=row.get("seed", 42), parent_candidate_id=parent_id, hypothesis_id=hid)
+            _ = candidate.fingerprint  # Validate the exact estimator seed before a fit is possible.
+            if action == "simplify":
+                parent = candidates.get(control_id)
+                if parent is None or parent_id != control_id or parent.model_family != candidate.model_family or parent.seed != candidate.seed:
+                    raise ValueError("simplification requires the same parent model family and seed")
+                old = effective_model_params(parent.model_family, parent.model_params)
+                new = effective_model_params(candidate.model_family, candidate.model_params)
+                dimension = row.get("simplification_dimension")
+                valid = False
+                if dimension == "feature_count":
+                    valid = set(candidate.feature_groups) < set(parent.feature_groups) and new == old
+                elif dimension in {"n_estimators", "max_depth"} and parent.model_family != "ridge_regression":
+                    valid = (set(candidate.feature_groups) == set(parent.feature_groups)
+                             and all(new[k] == old[k] for k in old if k != dimension)
+                             and isinstance(old.get(dimension), (int, float))
+                             and isinstance(new.get(dimension), (int, float)) and new[dimension] < old[dimension])
+                if not valid:
+                    raise ValueError("simplification does not reduce its declared complexity dimension")
+        hypothesis = HypothesisSpec(hypothesis_id=hid, statement=row["statement"].strip(),
+            mechanism=str(row.get("mechanism", "")), parent_candidate_id=parent_id,
+            proposed_changes=(candidate_config_diff(candidates.get(parent_id), candidate).get("changes", []) if candidate else []),
+            expected_effect=str(row.get("expected_effect", "not_applicable")),
+            counter_evidence_test=str(row.get("counter_evidence_test", "not_applicable")), source=source,
+            evidence_refs=list(row.get("evidence_refs", [])), action_type=action,
+            based_on_feedback_ids=list(row.get("based_on_feedback_ids", [])), control_candidate_id=control_id,
+            expected_observation=str(row.get("expected_observation", "")),
+            ablation_component=row.get("ablation_component"), simplification_dimension=row.get("simplification_dimension"),
+            diagnostic=row.get("diagnostic", "residual_summary") if action == "diagnose" else None)
         compiled.append((hypothesis, candidate))
     return compiled
 
@@ -887,17 +984,17 @@ class FocusedResearchController:
         round_index: int,
         source: str,
         prompt_hash: str,
-        compiled: list[tuple[HypothesisSpec, CandidateConfig]],
+        compiled: list[tuple[HypothesisSpec, CandidateConfig | None]],
     ) -> tuple[str, str]:
         plan = {
-            "schema_version": "focused_batch_plan_v1",
+            "schema_version": "focused_batch_plan_v2",
             "campaign_id": self.spec.campaign_id,
             "round_index": round_index,
             "advisor_source": source,
             "prompt_hash": prompt_hash,
             "frozen_at": _now(),
             "items": [
-                {"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict()}
+                {"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict() if candidate else None}
                 for hypothesis, candidate in compiled
             ],
         }
@@ -1070,7 +1167,7 @@ class FocusedResearchController:
         best_baseline = min(baseline_results, key=lambda r: r.metrics["mae"])
         result_lookup = {r.candidate.candidate_id: r for r in baseline_results}
         seen = {r.candidate.fingerprint for r in baseline_results}
-        research_results, feedback_history, rounds = [], [], []
+        research_results, feedback_history, rounds, diagnostic_history = [], [], [], []
         stop_reason, failed_attempts = "max_rounds_reached", 0
         for round_index in range(1, self.budget.max_rounds + 1):
             frozen = runtime.get(f"plan:{round_index}")
@@ -1079,7 +1176,8 @@ class FocusedResearchController:
                 if recorded is None:
                     prompt = advisor_prompt(round_index=round_index, task=self.task, baseline_results=baseline_results,
                         prior_results=research_results, budget=self.budget, structured_feedback=feedback_history,
-                        reviewed_evidence=self.reviewed_evidence, compatible_memory=memory_evidence)
+                        reviewed_evidence=self.reviewed_evidence, compatible_memory=memory_evidence,
+                        resource_usage=runtime.resource_usage(), advisor_calls_used=runtime.get("advisor_call_reservations", 0), diagnostics=diagnostic_history)
                     calls = runtime.get("advisor_call_reservations", 0)
                     if calls >= self.budget.max_advisor_calls:
                         stop_reason = "advisor_budget_exhausted"
@@ -1096,7 +1194,8 @@ class FocusedResearchController:
                 prompt, advice, source = recorded["prompt"], recorded["advice"], recorded["source"]
                 try:
                     compiled = compile_hypotheses(advice, round_index=round_index, source=source,
-                        max_count=self.budget.max_new_candidates_per_round, visible_evidence=prompt["evidence_projection"])
+                        max_count=self.budget.max_new_candidates_per_round, visible_evidence=prompt["evidence_projection"],
+                        candidate_lookup={key: value.candidate for key, value in result_lookup.items()})
                 except (ValueError, TypeError) as exc:
                     self._append_event("proposal.rejected", round_index=round_index, error_type=type(exc).__name__)
                     raise
@@ -1110,9 +1209,31 @@ class FocusedResearchController:
                 plan = frozen["plan"]
                 source, prompt_hash, plan_hash = plan["advisor_source"], plan["prompt_hash"], plan["plan_hash"]
                 plan_ref = frozen["plan_ref"]
-                compiled = [(HypothesisSpec(**item["hypothesis"]), CandidateConfig(**{k: v for k, v in item["candidate"].items() if k in CandidateConfig.__dataclass_fields__})) for item in plan["items"]]
+                compiled = [(HypothesisSpec(**item["hypothesis"]), (CandidateConfig(**{k: v for k, v in item["candidate"].items() if k in CandidateConfig.__dataclass_fields__}) if item.get("candidate") else None)) for item in plan["items"]]
             round_rows, new_executable, successful = [], 0, 0
             for hypothesis, candidate in compiled:
+                if candidate is None:
+                    row = self._control_decision(hypothesis, result_lookup)
+                    round_rows.append(row)
+                    new_executable += 1
+                    successful += 1
+                    if row.get("diagnostic_result"):
+                        diagnostic_history.append(row["diagnostic_result"])
+                    if row["status"] == "waiting_review":
+                        round_snapshot = {"round_index": round_index, "advisor_source": source, "prompt_hash": prompt_hash,
+                            "plan_hash": plan_hash, "plan_ref": plan_ref, "items": round_rows}
+                        waiting = self._campaign_summary(baseline_results, baseline_payloads, research_results,
+                            [*rounds, round_snapshot], failed_attempts, "waiting_review")
+                        waiting.update(execution_status="waiting_review", research_outcome="not_evaluated" if not research_results else "inconclusive",
+                            terminal_status="waiting_review", review_id=hypothesis.hypothesis_id)
+                        runtime.put("pause", waiting)
+                        atomic_json(self._campaign_root / "campaign.partial.json", waiting)
+                        self._append_event("campaign.waiting_review", review_id=hypothesis.hypothesis_id)
+                        return waiting
+                    if row["status"] in {"stopped", "review_rejected"}:
+                        stop_reason = "advisor_stop" if row["status"] == "stopped" else "review_rejected"
+                        break
+                    continue
                 parent = result_lookup.get(candidate.parent_candidate_id)
                 diff = candidate_config_diff(parent.candidate if parent else None, candidate)
                 if candidate.fingerprint in seen:
@@ -1144,7 +1265,7 @@ class FocusedResearchController:
                 runtime.put(f"round:{round_index}", round_payload, immutable=True)
                 self._append_event("round.completed", round_index=round_index, plan_hash=plan_hash)
             rounds.append(round_payload)
-            if stop_reason == "fit_budget_exhausted":
+            if stop_reason in {"fit_budget_exhausted", "advisor_stop", "review_rejected"}:
                 break
             if new_executable == 0:
                 stop_reason = "no_new_executable_hypothesis"
@@ -1153,6 +1274,57 @@ class FocusedResearchController:
                 stop_reason = "round_failed_no_completed_candidate"
                 break
 
+        payload = self._campaign_summary(baseline_results, baseline_payloads, research_results, rounds, failed_attempts, stop_reason)
+        runtime.complete(payload)
+        if self.use_memory_prior:
+            from .experiment_memory import ExperimentMemoryStore
+            from .focused_delivery import write_focused_campaign_memory
+            write_focused_campaign_memory(payload, ExperimentMemoryStore(self.memory_store_path), tenant_id=self.tenant_id,
+                                          campaign_dir=self._campaign_root)
+        self._append_event("campaign.completed", execution_status=payload["execution_status"], research_outcome=payload["research_outcome"],
+                           terminal_status=payload["terminal_status"], stop_reason=stop_reason)
+        return payload
+
+    def _control_decision(self, hypothesis: HypothesisSpec, results: dict[str, CandidateResult]) -> dict:
+        runtime = self._runtime
+        assert runtime is not None
+        action, key = hypothesis.action_type, "decision:" + hypothesis.hypothesis_id
+        old = runtime.get(key)
+        if old:
+            return old
+        row = {"hypothesis": hypothesis.to_dict(), "candidate": None}
+        if action == "request_review":
+            request = runtime.request_review(hypothesis.to_dict())
+            status = request["status"]
+            if status == "pending":
+                return {**row, "status": "waiting_review", "review_id": hypothesis.hypothesis_id}
+            row.update(status="review_approved" if status == "approved" else "review_rejected", review=request)
+        elif action == "stop":
+            row["status"] = "stopped"
+        elif action == "diagnose":
+            control = results.get(hypothesis.control_candidate_id)
+            if control is None:
+                raise ValueError("diagnosis control has no completed predictions")
+            predictions = control.prediction_rows
+            residuals = np.asarray([float(x["y_pred"]) - float(x["y_true"]) for x in predictions])
+            diagnostic = {"diagnostic_id": "diagnostic:" + hypothesis.hypothesis_id,
+                "control_candidate_id": control.candidate.candidate_id, "kind": hypothesis.diagnostic,
+                "prediction_count": len(predictions), "metrics": prediction_metrics(predictions),
+                "fold_metrics": fold_metrics_from_rows(predictions),
+                "mean_signed_error": float(np.mean(residuals)), "p90_absolute_error": float(np.quantile(np.abs(residuals), .9)),
+                "evidence_level": "development_only", "fit_calls": 0}
+            runtime.artifact("diagnostics/" + hypothesis.hypothesis_id + ".json", diagnostic)
+            row.update(status="diagnosed", diagnostic_result=diagnostic)
+        else:
+            raise ValueError("unknown non-training action")
+        runtime.put(key, row, immutable=True)
+        self._append_event("decision.executed", hypothesis_id=hypothesis.hypothesis_id, action_type=action, status=row["status"], fit_calls=0)
+        return row
+
+    def _campaign_summary(self, baseline_results, baseline_payloads, research_results, rounds, failed_attempts, stop_reason):
+        best_baseline = min(baseline_results, key=lambda row: row.metrics["mae"])
+        runtime = self._runtime
+        assert runtime is not None
         valid_results = [*baseline_results, *research_results]
         best_overall = min(valid_results, key=lambda x: x.metrics["mae"])
         improved = (best_overall.candidate.candidate_id not in {x.candidate.candidate_id for x in baseline_results}
@@ -1177,17 +1349,11 @@ class FocusedResearchController:
             "execution_status": execution_status, "research_outcome": research_outcome, "terminal_status": terminal_status,
             "stop_reason": stop_reason, "fit_calls": usage["charged_fit_calls"],
             "baseline_fit_calls": self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES)),
+            "campaign_root": str(self._campaign_root),
             "resource_usage": {**usage, "advisor_call_reservations": runtime.get("advisor_call_reservations", 0)},
             "evaluation_policy": self.evaluation_policy.to_dict(), "split_spec": self.split_spec.to_dict(),
             "evidence_status": {"development": "available", "robustness": "not_run", "confirmation": "not_run_historical_data_exposed", "forward": "not_started"},
-            "confirmation_status": "not_run_historical_data_exposed", "scientific_claim": "development_only_no_profitability_claim", "created_at": _now()}
-        runtime.complete(payload)
-        if self.use_memory_prior:
-            from .experiment_memory import ExperimentMemoryStore
-            from .focused_delivery import write_focused_campaign_memory
-            write_focused_campaign_memory(payload, ExperimentMemoryStore(self.memory_store_path), tenant_id=self.tenant_id)
-        self._append_event("campaign.completed", execution_status=execution_status, research_outcome=research_outcome,
-                           terminal_status=terminal_status, stop_reason=stop_reason)
+            "confirmation_status": "not_run_historical_data_exposed", "scientific_claim": "development_only_no_profitability_claim", "limitations": ["No-improvement is limited to the executed candidates, frozen development rows and budget; not a claim of no market signal."], "created_at": _now()}
         return payload
 
     def _persist(self, payload: dict[str, Any]) -> None:

@@ -90,6 +90,10 @@ def focused_memory_evidence(records: list[ExperimentMemoryRecord]) -> list[dict[
                 "visible": True,
                 "source_ref": record.artifact_path,
                 "applicability": "exact_focused_task_data_protocol_match",
+                "config": record.candidate_config,
+                "config_diff": record.config_diff,
+                "conditions": {"hypothesis": record.hypothesis, "evidence_level": record.evidence_level},
+                "limitations": ["Exact-task research prior; not new out-of-sample evidence"],
             }
         )
     return rows
@@ -122,6 +126,7 @@ def write_focused_campaign_memory(
     store: ExperimentMemoryStore,
     *,
     tenant_id: str,
+    campaign_dir: str | Path | None = None,
 ) -> list[ExperimentMemoryRecord]:
     campaign = dict(payload.get("campaign") or {})
     task = dict(campaign.get("task") or {})
@@ -154,6 +159,12 @@ def write_focused_campaign_memory(
                 )
                 execution_status = str(result_dict.get("execution_status") or "success")
                 artifact_path = str(result_dict.get("prediction_artifact_ref") or "")
+                if artifact_path and campaign_dir:
+                    root = Path(campaign_dir).resolve()
+                    artifact = (root / artifact_path).resolve()
+                    if root not in artifact.parents or not artifact.is_file():
+                        raise ValueError("memory artifact is outside campaign or missing")
+                    artifact_path = str(artifact)
             else:
                 metrics = {}
                 status = "engineering_failure" if item.get("status") == "failed" else "inconclusive"
@@ -179,6 +190,11 @@ def write_focused_campaign_memory(
                 evaluation_fingerprint=evaluation_fp,
                 research_outcome=research_outcome,
                 execution_status=execution_status,
+                candidate_config=candidate,
+                config_diff=dict(item.get("config_diff") or {}),
+                hypothesis=dict(item.get("hypothesis") or {}),
+                evidence_level=str(dataset.get("exposure") or "development_only"),
+                execution_contract_hash=str(payload.get("execution_contract_hash") or "legacy_unknown"),
             )
             store.append(record)
             records.append(record)

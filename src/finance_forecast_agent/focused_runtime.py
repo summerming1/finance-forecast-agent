@@ -261,8 +261,52 @@ class CampaignRuntime:
                 self.artifact(stored['plan_ref'], stored['plan'])
             self.verify_artifacts(stored.get('artifacts', []))
 
+    def request_review(self, hypothesis: dict) -> dict:
+        review_id = safe_id(hypothesis["hypothesis_id"])
+        key = "review:" + review_id
+        with self.db.transaction() as db:
+            self.guard(db)
+            existing = self.db.read(db, self.ns, key)
+            if existing:
+                if existing["hypothesis"] != hypothesis or existing["contract_hash"] != self.contract_hash:
+                    raise ValueError("review request does not match frozen decision")
+                return existing
+            request = {"review_id": review_id, "hypothesis": hypothesis, "status": "pending",
+                       "contract_hash": self.contract_hash, "requested_at": now()}
+            self.db.write(db, self.ns, key, request, immutable=True)
+            self.db.event(db, self.ns, "review.requested", campaign_id=self.campaign_id, review_id=review_id)
+            return request
+
     def complete(self, payload: dict) -> None:
         with self.db.transaction() as db:
             self.guard(db)
             self.db.write(db, self.ns, 'final', payload, immutable=True)
         atomic_json(self.root / 'campaign.json', payload)
+
+
+def resolve_campaign_review(state_path: str | Path, campaign_id: str, review_id: str, *,
+                            tenant_id: str, decision: str, reviewer: str) -> dict:
+    """Trusted local operator entry; does not execute, change contracts, or spend budget."""
+    if decision not in {"approve", "reject"} or not reviewer.strip():
+        raise ValueError("review requires approve/reject and an operator identity")
+    dbstore = RuntimeDB(state_path)
+    ns = "campaign:" + safe_id(campaign_id)
+    key = "review:" + safe_id(review_id)
+    with dbstore.transaction() as db:
+        contract = dbstore.read(db, ns, "contract")
+        if contract is None or contract["body"]["tenant_id"] != tenant_id:
+            raise PermissionError("review tenant mismatch")
+        if dbstore.read(db, ns, "cancelled", False) or dbstore.read(db, ns, "final"):
+            raise ValueError("terminal campaign cannot accept review changes")
+        request = dbstore.read(db, ns, key)
+        if request is None or request["contract_hash"] != contract["hash"]:
+            raise ValueError("unknown or modified frozen review request")
+        status = "approved" if decision == "approve" else "rejected"
+        if request["status"] != "pending":
+            if request["status"] == status:
+                return request
+            raise ValueError("review decision already finalized")
+        request.update(status=status, reviewer=reviewer, decided_at=now())
+        dbstore.write(db, ns, key, request)
+        dbstore.event(db, ns, "review.decided", campaign_id=campaign_id, review_id=review_id, decision=status, reviewer=reviewer)
+        return request
