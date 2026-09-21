@@ -1,0 +1,29 @@
+name: V2.2-R source snapshot
+on:
+  push:
+    branches: [validation/v22r-source-20260921]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 6e4f194453f77037929052a0a978cc76bc2017b7
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Archive exact baseline and history
+        run: |
+          mkdir -p /tmp/v22r-source
+          git archive --format=tar.gz -o /tmp/v22r-source/source.tar.gz HEAD
+          git bundle create /tmp/v22r-source/source.bundle --all
+          git rev-parse HEAD > /tmp/v22r-source/HEAD.txt
+          git rev-parse HEAD^{tree} > /tmp/v22r-source/TREE.txt
+          sha256sum /tmp/v22r-source/source.tar.gz /tmp/v22r-source/source.bundle > /tmp/v22r-source/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v22r-source-6e4f194
+          path: /tmp/v22r-source
+          retention-days: 7
