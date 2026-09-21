@@ -1,0 +1,101 @@
+name: V22R exact-source verification
+on:
+  push:
+    branches: [validation/v22r-continue-20260921]
+    paths: [v22r_payload.json]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    outputs:
+      commit: ${{ steps.import.outputs.commit }}
+      stage: ${{ steps.import.outputs.stage }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Import exact tested source
+        id: import
+        run: |
+          python - <<'PY'
+          import base64, gzip, hashlib, json, os, re, subprocess
+          from pathlib import Path
+          p = json.loads(Path('v22r_payload.json').read_text())
+          assert re.fullmatch(r'R[3-6]', p['stage'])
+          for k in ('base', 'commit', 'tree'):
+              assert re.fullmatch(r'[0-9a-f]{40}', p[k])
+          patch = gzip.decompress(base64.b64decode(p['patch_gzip_b64']))
+          assert hashlib.sha256(patch).hexdigest() == p['patch_sha256']
+          subprocess.run(['git', 'checkout', '--detach', p['base']], check=True)
+          subprocess.run(['git', 'apply', '--index', '--whitespace=error', '-'], input=patch, check=True)
+          tree = subprocess.check_output(['git', 'write-tree'], text=True).strip()
+          assert tree == p['tree'], (tree, p['tree'])
+          raw = base64.b64decode(p['commit_raw_b64'])
+          assert raw.startswith(('tree ' + p['tree'] + '\nparent ' + p['base'] + '\n').encode())
+          sha = subprocess.check_output(['git', 'hash-object', '-t', 'commit', '-w', '--stdin'], input=raw).decode().strip()
+          assert sha == p['commit']
+          subprocess.run(['git', 'checkout', '--detach', sha], check=True)
+          Path('/tmp/v22r-source.json').write_text(json.dumps({k:p[k] for k in ('base','commit','tree','stage')}))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write('commit=' + sha + '\nstage=' + p['stage'] + '\n')
+          PY
+      - name: Install test dependencies
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf,byo]' optuna filelock
+      - name: Cumulative and affected legacy tests
+        run: |
+          mkdir -p /tmp/v22r-evidence
+          python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py --junitxml=/tmp/v22r-evidence/tests.xml
+          python -m ruff check src/finance_forecast_agent/focused*.py src/finance_forecast_agent/research_mission.py src/finance_forecast_agent/task_queue.py src/finance_forecast_agent/experiment_memory.py src/finance_forecast_agent/replay_llm.py src/finance_forecast_agent/llm_adapters.py scripts/run_focused_spy_campaign.py scripts/run_research_value_benchmark.py scripts/probe_focused_failure_semantics.py apps/pages/8_Focused_Research.py tests/test_focused*.py
+          python -m compileall -q src scripts apps/pages/8_Focused_Research.py
+          git diff --exit-code
+      - name: Freeze validated commit bundle
+        run: |
+          cp /tmp/v22r-source.json /tmp/v22r-evidence/source.json
+          python -m pip freeze > /tmp/v22r-evidence/environment.txt
+          BASE=$(python -c "import json; print(json.load(open('/tmp/v22r-source.json'))['base'])")
+          git bundle create /tmp/v22r-evidence/source.bundle HEAD ^"$BASE"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v22r-tested-${{ steps.import.outputs.stage }}-${{ steps.import.outputs.commit }}
+          path: /tmp/v22r-evidence
+          retention-days: 30
+  preserve:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: v22r-tested-${{ needs.verify.outputs.stage }}-${{ needs.verify.outputs.commit }}
+          path: /tmp/v22r-tested
+      - name: Preserve tested source on validation ref only
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ needs.verify.outputs.commit }}
+          STAGE: ${{ needs.verify.outputs.stage }}
+        run: |
+          git bundle verify /tmp/v22r-tested/source.bundle
+          git fetch /tmp/v22r-tested/source.bundle HEAD
+          test "$(git rev-parse FETCH_HEAD)" = "$EXPECTED_SHA"
+          AUTH=$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $AUTH" push origin "$EXPECTED_SHA:refs/heads/validation/v22r-tested-$STAGE"
