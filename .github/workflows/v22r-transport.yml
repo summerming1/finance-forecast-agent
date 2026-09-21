@@ -1,0 +1,21 @@
+name: V2.2-R transport verification
+on:
+  push:
+    branches: [validation/v22r-source-20260921]
+    paths: ['.delivery/source.bundle']
+permissions:
+  contents: read
+jobs:
+  transport:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v22r-transport
+          path: .delivery/source.bundle
+          include-hidden-files: true
+          retention-days: 7
