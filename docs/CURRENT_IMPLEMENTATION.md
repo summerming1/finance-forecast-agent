@@ -108,7 +108,7 @@ ModelBundle: refit + 8 unlabeled predictions passed
 
 ### 当前仍未验证 / 不得宣称
 
-- **真实 live-provider 科研质量**：本批没有重新跑真实 provider → record → offline replay 完整成功路径；
+- **真实 live-provider 科研质量**：已完成一次百炼兼容 provider 的两轮 live → record → 无凭证 replay 工程链路；这只证明接口、provenance 和可重放性，不证明 LLM 科研质量或 Agent superiority；
 - **真实 independent confirmation**：没有新的可信未暴露金融数据；现有历史 SPY 明确不可用于 blind confirmation；
 - **Shadow / forward evidence**：V3 尚未开始；
 - **真实 BYO 客户**：PR-6 使用 simulation_only 客户/数据/Adapter，不等于外部用户接入、付费或留存；
@@ -125,6 +125,16 @@ ModelBundle: refit + 8 unlabeled predictions passed
 4. 更充分的多 seed / 多冻结时段 Agent Value Benchmark。
 
 完成上述验证后，再决定 V3 Shadow Forecasting 与更开放 Mission Type 的优先级。
+
+### 独立补充验证（2026-09-21）
+
+- Advisor prompt 现在显式给出 `available_evidence_ids`，要求 `evidence_refs` 精确匹配，避免 provider 在 ID 后追加解释文字导致合法建议无法进入确定性编译门禁；
+- live fixture 标记为 `live_provider_record`，并记录 provider/model/base URL/response hash；`offline_assistant` 语义保持不变；
+- 真实 Bailian live campaign 与移除 API key 后 replay 的 prompt hash、CandidateConfig 和数值结果一致；
+- missing fixture、unsupported model、越界参数、未知/不可见 evidence ref 均有 fail-closed 负例；
+- 真实 Streamlit 浏览器已验证支持 Mission 完成与范围/路径负例；完整 POSIX process-group SIGKILL campaign 恢复仍只能在 Linux CI/兼容环境验证；
+- 3 个冻结窗口 × 3 个 seed 的内部四臂对照仍未证明 Adaptive Agent 优势；未将结果优化为“必胜”；
+- 当前 ModelBundle 已有明确 feature columns、task、model/candidate version 和 training cutoff，但尚无正式 prospective prediction timestamp / label maturation lifecycle，因此本次不启动 V3。
 
 
 ## 历史广度平台基线

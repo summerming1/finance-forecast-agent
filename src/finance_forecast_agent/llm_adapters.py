@@ -176,5 +176,15 @@ class FixtureRecordingLLM:
 
     def complete_json(self, *, prompt_payload: dict[str, Any], schema_name: str) -> dict[str, Any]:
         response = self.live_client.complete_json(prompt_payload=prompt_payload, schema_name=schema_name)
-        self.replay.write_fixture(prompt_payload=prompt_payload, schema_name=schema_name, response=response)
+        self.replay.write_fixture(
+            prompt_payload=prompt_payload,
+            schema_name=schema_name,
+            response=response,
+            created_by='live_provider_record',
+            metadata={
+                'provider': str(getattr(self.live_client, 'provider', 'unknown')),
+                'model': str(getattr(self.live_client, 'model', 'unknown')),
+                'base_url': str(getattr(self.live_client, 'base_url', 'unknown')),
+            },
+        )
         return response

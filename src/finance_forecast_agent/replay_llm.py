@@ -14,8 +14,19 @@ class ReplayLLM:
     def prompt_hash(payload: dict[str, Any]) -> str:
         return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:16]
 
-    def write_fixture(self, *, prompt_payload: dict[str, Any], schema_name: str, response: dict[str, Any]) -> Path:
+    def write_fixture(
+        self,
+        *,
+        prompt_payload: dict[str, Any],
+        schema_name: str,
+        response: dict[str, Any],
+        created_by: str = 'offline_assistant',
+        metadata: dict[str, Any] | None = None,
+    ) -> Path:
         digest = self.prompt_hash(prompt_payload)
+        response_hash = hashlib.sha256(
+            json.dumps(response, sort_keys=True, ensure_ascii=False).encode()
+        ).hexdigest()[:16]
         path = self.fixture_dir / schema_name / f'{digest}.json'
         path.parent.mkdir(parents=True, exist_ok=True)
         payload = {
@@ -23,9 +34,11 @@ class ReplayLLM:
             'schema_name': schema_name,
             'schema_version': 'v1',
             'response': response,
-            'created_by': 'offline_assistant',
+            'response_hash': response_hash,
+            'created_by': created_by,
             'approved': True,
         }
+        payload.update(dict(metadata or {}))
         path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
         self._update_catalog(schema_name=schema_name, digest=digest, payload=payload)
         return path

@@ -19,6 +19,7 @@ from finance_forecast_agent.focused_protocol import FocusedSplitSpec
 from finance_forecast_agent.focused_research import (
     FocusedResearchController,
     ResearchBudget,
+    advisor_prompt,
     compile_hypotheses,
     run_baselines,
 )
@@ -110,6 +111,45 @@ def test_adaptive_advice_cites_real_feedback_and_reviewed_evidence() -> None:
     assert row["action_type"] == "simplify"
     assert row["based_on_feedback_ids"] == ["fb-1"]
     assert set(row["evidence_refs"]) == {"fb-1", "paper-1"}
+
+
+def test_live_advisor_prompt_exposes_exact_evidence_ids() -> None:
+    prompt = advisor_prompt(
+        round_index=2,
+        task=FocusedTaskSpec(),
+        baseline_results=[],
+        prior_results=[],
+        budget=ResearchBudget(max_rounds=2, max_new_candidates_per_round=1, max_fit_calls=20),
+        structured_feedback=[_feedback(-0.02, [0.1, 0.1, 0.1, 0.1])],
+        reviewed_evidence=[EvidenceNode("paper-1", "paper_claim", "reviewed").to_dict()],
+        compatible_memory=[EvidenceNode("memory-1", "compatible_memory", "compatible prior").to_dict()],
+    )
+    # Baseline/result IDs are supplied by their result rows in real calls; this
+    # focused assertion verifies that every explicit evidence node is exposed as
+    # an exact machine-readable choice rather than an illustrative free-text ref.
+    assert set(prompt["available_evidence_ids"]) == {"fb-1", "paper-1", "memory-1"}
+    assert any("exactly" in rule.lower() and "available_evidence_ids" in rule for rule in prompt["rules"])
+    assert prompt["response_schema"]["hypotheses"][0]["evidence_refs"] == [
+        "exact ID from available_evidence_ids"
+    ]
+
+
+def test_compile_hypothesis_rejects_unsupported_model() -> None:
+    advice = {
+        "hypotheses": [{
+            "statement": "Unsupported model must not be proxied",
+            "mechanism": "negative validation",
+            "parent_candidate_id": "baseline_ridge",
+            "model_family": "xgboost_regressor",
+            "model_params": {},
+            "feature_groups": ["base_lags"],
+            "expected_effect": "none",
+            "counter_evidence_test": "not applicable",
+            "evidence_refs": ["baseline_ridge"],
+        }]
+    }
+    with pytest.raises(ValueError, match="unsupported model"):
+        compile_hypotheses(advice, round_index=1, source="test", max_count=1)
 
 
 def test_controller_round_two_is_feedback_driven(tmp_path: Path) -> None:

@@ -6,6 +6,7 @@ from pathlib import Path
 import exchange_calendars as xcals
 import numpy as np
 import pandas as pd
+import pytest
 
 from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_daily_research_frame
 from finance_forecast_agent.focused_research import (
@@ -14,6 +15,7 @@ from finance_forecast_agent.focused_research import (
     advisor_prompt,
     run_baselines,
 )
+from finance_forecast_agent.llm_adapters import FixtureRecordingLLM
 from finance_forecast_agent.replay_llm import ReplayLLM
 
 
@@ -86,3 +88,34 @@ def test_assistant_authored_replay_fixture_runs_offline_without_live_provider(tm
     assert result["rounds"][0]["advisor_source"] == "replay_fixture"
     assert result["rounds"][0]["items"][0]["status"] == "completed"
     assert result["confirmation_status"] == "not_run_historical_data_exposed"
+
+
+def test_live_fixture_records_provider_model_and_response_hash(tmp_path: Path) -> None:
+    class FakeLiveClient:
+        provider = "bailian"
+        model = "qwen-test"
+        base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
+        def complete_json(self, *, prompt_payload: dict, schema_name: str) -> dict:
+            return {"hypotheses": []}
+
+    fixture_dir = tmp_path / "fixtures"
+    prompt = {"task": "live provenance test"}
+    FixtureRecordingLLM(FakeLiveClient(), fixture_dir).complete_json(
+        prompt_payload=prompt,
+        schema_name="focused_research_advice",
+    )
+    fixture_path = fixture_dir / "focused_research_advice" / f"{ReplayLLM.prompt_hash(prompt)}.json"
+    payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+    assert payload["created_by"] == "live_provider_record"
+    assert payload["provider"] == "bailian"
+    assert payload["model"] == "qwen-test"
+    assert payload["response_hash"]
+
+
+def test_missing_replay_fixture_fails_closed(tmp_path: Path) -> None:
+    with pytest.raises(FileNotFoundError):
+        ReplayLLM(tmp_path / "missing").complete_json(
+            prompt_payload={"task": "no matching fixture"},
+            schema_name="focused_research_advice",
+        )

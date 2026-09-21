@@ -454,6 +454,13 @@ def advisor_prompt(
     reviewed_evidence: list[dict[str, Any]] | None = None,
     compatible_memory: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
+    available_evidence_ids = list(dict.fromkeys([
+        *(x.candidate.candidate_id for x in baseline_results),
+        *(x.candidate.candidate_id for x in prior_results),
+        *(str(row["feedback_id"]) for row in (structured_feedback or []) if row.get("feedback_id")),
+        *(str(row["evidence_id"]) for row in (reviewed_evidence or []) if row.get("evidence_id") and row.get("visible", True)),
+        *(str(row["evidence_id"]) for row in (compatible_memory or []) if row.get("evidence_id") and row.get("visible", True)),
+    ]))
     return {
         "task": "focused_spy_research_hypotheses_v1",
         "round_index": round_index,
@@ -471,6 +478,7 @@ def advisor_prompt(
         "structured_feedback": list(structured_feedback or []),
         "reviewed_evidence": list(reviewed_evidence or []),
         "compatible_memory": list(compatible_memory or []),
+        "available_evidence_ids": available_evidence_ids,
         "remaining_budget": {
             "max_rounds": budget.max_rounds,
             "max_new_candidates_per_round": budget.max_new_candidates_per_round,
@@ -482,6 +490,7 @@ def advisor_prompt(
             "Use actual previous-round metrics when round_index > 1.",
             "Do not claim profitability or strict reproduction.",
             "A simpler or stronger-regularized model is a valid hypothesis.",
+            "Every evidence_refs entry must match exactly one string from available_evidence_ids; do not append metrics, descriptions, prefixes, or suffixes.",
         ],
         "response_schema": {
             "hypotheses": [
@@ -497,7 +506,7 @@ def advisor_prompt(
                     "feature_groups": ["allowed groups"],
                     "expected_effect": "string",
                     "counter_evidence_test": "string",
-                    "evidence_refs": ["candidate/result refs"],
+                    "evidence_refs": ["exact ID from available_evidence_ids"],
                 }
             ]
         },
