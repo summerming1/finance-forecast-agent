@@ -1,0 +1,26 @@
+name: V22R isolated source export
+on:
+  push:
+    branches: [validation/v22r-source-1204a91]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 1204a91e321a5a3dfda1e89eb231ebd4bba46c16
+          persist-credentials: false
+      - name: Preserve exact source and commit identity
+        run: |
+          mkdir -p /tmp/v22r-export
+          git archive --format=tar.gz --output=/tmp/v22r-export/source.tar.gz HEAD
+          git cat-file commit HEAD > /tmp/v22r-export/commit.txt
+          git rev-parse HEAD > /tmp/v22r-export/HEAD.txt
+          git rev-parse HEAD^{tree} > /tmp/v22r-export/TREE.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v22r-source-1204a91
+          path: /tmp/v22r-export
+          retention-days: 14
