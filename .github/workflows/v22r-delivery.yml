@@ -31,6 +31,7 @@ jobs:
           persist-credentials: false
       - name: Verify and checkout exact locally tested commit
         run: |
+          python .delivery/hydrate.py
           python - <<'PY'
           import hashlib,json,re,subprocess
           from pathlib import Path
@@ -99,6 +100,7 @@ jobs:
           fetch-depth: 0
       - name: Publish verified objects to temporary ref only
         run: |
+          python .delivery/hydrate.py
           python - <<'PY'
           import hashlib,json,re,subprocess
           from pathlib import Path
