@@ -1,5 +1,6 @@
 """Temporary delivery helper; never copied into the product branch."""
 import base64
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -13,8 +14,13 @@ def checkout():
     for key in ('base', 'tree', 'commit'):
         if not re.fullmatch('[0-9a-f]{40}', m[key]):
             raise ValueError('invalid source identity')
+    parts = []
+    for name in m['patch_files']:
+        assert re.fullmatch(r'\.github/v22r-patches/R[0-6]-\d+\.b64', name)
+        parts.append(Path(name).read_text().strip())
+    patch = zlib.decompress(base64.b64decode(''.join(parts), validate=True))
+    assert hashlib.sha256(patch).hexdigest() == m['patch_sha256'], 'patch digest mismatch'
     subprocess.run(['git', 'checkout', '--detach', m['base']], check=True)
-    patch = zlib.decompress(base64.b64decode(m['patch_zlib_base64']))
     subprocess.run(['git', 'apply', '--index', '--binary', '-'], input=patch, check=True)
     tree = subprocess.check_output(['git', 'write-tree'], text=True).strip()
     assert tree == m['tree'], (tree, m['tree'])
