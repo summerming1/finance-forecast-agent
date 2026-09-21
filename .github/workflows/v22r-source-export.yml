@@ -1,0 +1,31 @@
+name: V22R source export
+on:
+  push:
+    branches: [validation/v22r-continuation]
+    paths: [.github/workflows/v22r-source-export.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 06bb4f6411e50232e44f28ba4c05aa6121f9b899
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Archive pinned source and offline dependencies
+        run: |
+          mkdir -p /tmp/v22r-export
+          git bundle create /tmp/v22r-export/source.bundle HEAD
+          git rev-parse HEAD > /tmp/v22r-export/HEAD.txt
+          python -m pip download --only-binary=:all: --dest /tmp/v22r-export/wheels numpy pandas scikit-learn exchange-calendars streamlit pytest ruff requests optuna pyarrow psutil
+      - uses: actions/upload-artifact@v4
+        with:
+          name: v22r-pinned-source-and-deps
+          path: /tmp/v22r-export
+          retention-days: 7
