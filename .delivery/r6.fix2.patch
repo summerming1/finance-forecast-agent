@@ -1,0 +1,36 @@
+diff --git a/docs/V2_MISSION_RESEARCH.md b/docs/V2_MISSION_RESEARCH.md
+index a2b219f..0af1bf5 100644
+--- a/docs/V2_MISSION_RESEARCH.md
++++ b/docs/V2_MISSION_RESEARCH.md
+@@ -191,3 +191,5 @@ while locating dropdown options. Candidate selection now uses keyboard control
+ and asserts an actual selected-value change; form budget values are blurred and
+ checked against the durable request. Failure screenshots/DOM are captured before
+ Playwright closes. The same complete workflow must pass before publication.
++
++The second Chromium attempt demonstrated that selection changed and detail rendered, but the assertion read the label container text rather than the combobox value. The test now selects two actual completed research candidates, checks both input values and corresponding rendered detail, and retains the no-extra-fit assertion.
+diff --git a/tests/browser/test_research_workspace.py b/tests/browser/test_research_workspace.py
+index 5a6b1ca..b7fc6bb 100644
+--- a/tests/browser/test_research_workspace.py
++++ b/tests/browser/test_research_workspace.py
+@@ -83,11 +83,17 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
+                 return tuple(db.execute('SELECT COUNT(*),SUM(reserved) FROM attempts').fetchone())
+         before=counts()
+         page.screenshot(path=str(out/'completed.png'),full_page=True)
+-        candidate_box=page.get_by_test_id('stSelectbox').filter(has=page.get_by_role('combobox',name='Research candidate',exact=True))
+-        before_selection=candidate_box.inner_text()
++        completed_payload=workspace_campaign(state,pid,first_cid)['payload']
++        research_ids=[item['candidate']['candidate_id'] for row in completed_payload['rounds']
++                      for item in row['items'] if item.get('status')=='completed' and item.get('candidate')]
++        assert len(research_ids)>=2, "the browser test must switch two actually trained research candidates"
+         candidate_control=page.get_by_role('combobox',name='Research candidate',exact=True)
+-        candidate_control.press('ArrowDown');candidate_control.press('ArrowDown');candidate_control.press('Enter')
+-        expect(candidate_box).not_to_have_text(before_selection)
++        for cid in research_ids[:2]:
++            candidate_control.fill(cid)
++            candidate_control.press('ArrowDown');candidate_control.press('Enter')
++            expect(candidate_control).to_have_value(cid)
++            expect(page.get_by_test_id('stJson').filter(has_text='actual_config_diff')).to_contain_text(cid)
++        report['switched_research_candidates']=research_ids[:2]
+         expect(page.get_by_role('heading',name='Candidate detail',exact=True)).to_be_visible()
+         page.screenshot(path=str(out/'candidate_switched.png'),full_page=True)
+         context.close()
