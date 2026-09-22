@@ -1,0 +1,98 @@
+name: R4 verified delivery gate
+on:
+  push:
+    branches: [validation/r4-20260922]
+    paths: [.r4/**, .github/workflows/r4-verify-publish.yml]
+permissions:
+  contents: read
+concurrency:
+  group: r4-verified-delivery
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.13']
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: e8a74b536ec747ab47d1cf6d1ded6b457e8d6d7f
+          path: target
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Restore exact locally tested R4 tree
+        working-directory: target
+        run: python ../transport/.r4/apply.py
+      - name: Install focused dependencies
+        working-directory: target
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf,byo]'
+      - name: Cumulative contracts, real process crash, queue and Memory
+        working-directory: target
+        run: |
+          mkdir -p validation-r4
+          python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py --junitxml=validation-r4/cumulative.xml
+      - name: Lint and compile
+        working-directory: target
+        run: |
+          python -m ruff check src/finance_forecast_agent/focused*.py src/finance_forecast_agent/research_mission.py src/finance_forecast_agent/task_queue.py src/finance_forecast_agent/experiment_memory.py src/finance_forecast_agent/replay_llm.py src/finance_forecast_agent/llm_adapters.py scripts/run_focused_spy_campaign.py scripts/run_research_value_benchmark.py scripts/run_focused_confirmation.py scripts/probe_focused_failure_semantics.py apps/pages/8_Focused_Research.py tests/test_focused*.py
+          python -m compileall -q src/finance_forecast_agent apps/pages/8_Focused_Research.py scripts
+          git diff --cached --check
+      - name: Preserve validation identity
+        if: always()
+        working-directory: target
+        run: |
+          mkdir -p validation-r4
+          git write-tree > validation-r4/TESTED_TREE.txt
+          git rev-parse HEAD > validation-r4/BASE_HEAD.txt
+          git diff --cached --binary > validation-r4/R4.patch
+          python -m pip freeze > validation-r4/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: r4-verified-tests-${{ matrix.python }}
+          path: target/validation-r4
+          retention-days: 14
+  publish-tested-objects:
+    needs: validate
+    if: github.repository == 'summerming1/finance-forecast-agent'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: e8a74b536ec747ab47d1cf6d1ded6b457e8d6d7f
+          path: target
+          persist-credentials: false
+      - name: Recheck exact bytes before creating Git objects
+        working-directory: target
+        run: python ../transport/.r4/apply.py
+      - name: Create verified tree and commit only, never update branch refs
+        working-directory: target
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python ../transport/.r4/publish_objects.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r4-tested-candidate
+          path: r4-publish
+          retention-days: 14
