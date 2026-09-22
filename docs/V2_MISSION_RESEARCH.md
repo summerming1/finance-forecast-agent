@@ -163,3 +163,38 @@ Validation: restored R4 baseline 160 passed; new R5 tests first failed as expect
 Frozen real SPY smoke: 4002 rows, 2010-02-03–2025-12-30, 20 fits, completed/no_improvement. Three overlapping start windows × three search seeds × four actual strategy paths completed. Candidate fits: random216, TPE216, deterministic one-shot72, deterministic adaptive60. TPE entered model-based sampling36 times. Shorter deterministic plans were not padded to fabricate equal actual spend. These are development/control-policy results, **not real LLM quality or Agent superiority**. A final four-arm run also checks the shared-source/provider/environment report contract. Detailed run files remain validation artifacts, not repository market data.
 
 Pending: true live One-shot/Adaptive multi-run record/replay quality, externally supplied pricing/cost reconciliation and measured human-operation minutes; stronger/richer search spaces and provider-seed reproducibility where supported; real users, genuinely unseen confirmation and other platforms/native tests. R6 has not yet started at this checkpoint. Old proxy reports are historical and not used to infer Research Agent strength.
+
+## R6 — persistent workspace and controlled external feature (2026-09-22)
+
+Base: R5 `1bfe5ef78dd475d12f386c528ace44638e27434c`, already published after 179 cumulative tests on Linux/Python3.11 and3.13; its official workflows also passed. R6 began only after that gate.
+
+R6 connects the existing LocalTaskQueue/RuntimeDB/Controller to the actual Streamlit workspace: immutable request intent, held task until Mission link is durable, explicit activation, held-link repair, authoritative result projections, review decisions/resume, cancel, reload/history, verified ResearchPackage and explicit registered refit. Render callbacks never train a research candidate. Repeated unchanged form submissions retain their operation identity; explicit intentional repeats create a new operation. The registry is operator configuration, not URL/upload metadata, and an existing project cannot silently switch to an empty authority database.
+
+A per-execution extension of the shared feature registry accepts one reviewed ext_* numeric column. CSV/Parquet, compiler, matrix, Manifest, Memory compatibility and ModelBundle receive the same frozen feature contract; no process-global mutation or second evaluator. BYO parses the hashed bytes, verifies exact next-XNYS-session labels and finite values, rejects duplicate headers/maps and self-sealed exposure. Price-derived label checks and provided availability timestamps are reported separately from unverified source/causality declarations. A last label without its next price stays unverified. Simulation stays simulation; arbitrary executable/model upload remains blocked.
+
+The initial negative suite reproduced missing guards and task/template bugs. Subsequent cumulative testing found an old R1 test's intentionally forged sealed metadata: it now tests permitted identity changes and separately requires rejection of the forged seal. A new UI repeated-submit test found relative/absolute fixture paths changed operation identity; canonical path handling fixed this without weakening the no-extra-attempt assertion. The empty-authority test first failed, then the original-registry guard was added. Original red logs remain evidence.
+
+Release acceptance consists of cumulative focused/shared Queue/Memory, scoped Ruff/compile/diff, frozen real-SPY queue/metric-recompute/ResearchPackage/fresh-process ModelBundle, and a separate real Chromium CI against the actual app/worker with two simulated clients. Exact code-tree identities, JUnit and command exits are preserved by the release gate. Local Chromium was blocked by administrative policy; no bypass was attempted and it is not counted as a local browser pass. 原发布门禁要求 Dedicated CI 通过后再发布；按用户 2026-09-22 的明确要求，R6 代码先提交到正式分支以便本地 Codex 验收。该动作只表示 code committed，不表示浏览器门禁通过或 R6 已完成验收。
+
+User instructions are in FRONTEND_USER_GUIDE.md. All R0–R6 unresolved external tests are consolidated in CODEX_V22R_REMAINING_VALIDATION.md, not duplicated as a new runtime. No real provider was called in R5/R6; no real customer or genuine unseen financial confirmation was obtained. Windows/macOS, declared-feature causal correctness, provider pricing/human time, trusted-registry portability, long native/GPU work and V3 remain separate limits. Passing engineering contracts does not establish forecasting or commercial superiority.
+
+
+R6 supplemental validation before publication: a bounded full-repository run completed
+with 354 passed, 11 failed and 1 dedicated-browser skip (263.57s, exit 1).
+Ten failures require missing legacy reports, method cards, PDF/fixture or native
+source/patch assets; the eleventh is the optional DVC module missing from the
+active interpreter. This is not a green whole-repository/scientific gate. Raw
+node IDs and traces are retained externally; no assets or successful reports were fabricated.
+
+The first real Chromium gate completed a queued research but the test timed out
+while locating dropdown options. Candidate selection now uses keyboard control
+and asserts an actual selected-value change; form budget values are blurred and
+checked against the durable request. Failure screenshots/DOM are captured before
+Playwright closes. The same complete workflow must pass before publication.
+
+The second Chromium attempt demonstrated that selection changed and detail rendered, but the assertion read the label container text rather than the combobox value. The test now selects two actual completed research candidates, checks both input values and corresponding rendered detail, and retains the no-extra-fit assertion.
+
+
+## R6 code-committed / validation-pending handoff
+
+候选产品树 `29bdf788caf73287d6a845a98eacc2b0cfbd83a4` 的 Python 3.11/3.13 核心累计回归及 lint/compile 已在 CI 通过；真实 Chromium job 在 run `35686627733` 仍失败。按用户要求先将这棵功能代码提交到正式分支，后续由本地 Codex 在该提交上完成浏览器 E2E、真实 provider、Windows/native 等剩余验收。失败记录不可删除或改写为通过。

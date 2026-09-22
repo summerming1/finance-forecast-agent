@@ -23,19 +23,31 @@ def main() -> None:
     parser.add_argument("--rounds", type=int, default=3)
     parser.add_argument("--candidates-per-round", type=int, default=2)
     parser.add_argument("--max-fit-calls", type=int, default=40)
+    parser.add_argument("--max-advisor-calls", type=int, default=12)
     parser.add_argument("--campaign-id", default=None)
     parser.add_argument("--resume-existing", action="store_true")
     parser.add_argument("--state-db", type=Path)
     parser.add_argument("--tenant-id", default="default")
     parser.add_argument("--no-memory", action="store_true")
+    parser.add_argument("--request-json", type=Path)
+    parser.add_argument("--request-hash")
     args = parser.parse_args()
 
     project = Path(args.project_dir)
     task = FocusedTaskSpec()
-    frame, snapshot = build_spy_daily_research_frame(args.raw_spy_json, task=task, source_metadata_path=args.source_metadata)
-    dataset_dir = project / "focused_data"
-    write_focused_dataset_artifacts(args.raw_spy_json, dataset_dir, source_metadata_path=args.source_metadata, task=task)
-    budget = ResearchBudget(max_rounds=args.rounds, max_new_candidates_per_round=args.candidates_per_round, max_fit_calls=args.max_fit_calls)
+    from finance_forecast_agent.focused_persistence import load_research_request
+    options = load_research_request(args.request_json, args.request_hash)
+    provenance, feature_specs = {}, []
+    if options.get("input_contract"):
+        from finance_forecast_agent.focused_byo import ExternalDatasetContract, load_external_focused_dataset
+        contract = ExternalDatasetContract(**options["input_contract"])
+        frame, snapshot, provenance = load_external_focused_dataset(args.raw_spy_json, contract, task=task)
+        feature_specs = contract.reviewed_features
+    else:
+        frame, snapshot = build_spy_daily_research_frame(args.raw_spy_json, task=task, source_metadata_path=args.source_metadata)
+        dataset_dir = project / "focused_data"
+        write_focused_dataset_artifacts(args.raw_spy_json, dataset_dir, source_metadata_path=args.source_metadata, task=task)
+    budget = ResearchBudget(max_rounds=args.rounds, max_new_candidates_per_round=args.candidates_per_round, max_fit_calls=args.max_fit_calls, max_advisor_calls=args.max_advisor_calls)
     controller = FocusedResearchController(
         project_dir=project,
         task=task,
@@ -47,7 +59,10 @@ def main() -> None:
         campaign_id=args.campaign_id,
         resume_existing=args.resume_existing,
         state_path=args.state_db, tenant_id=args.tenant_id, use_memory_prior=not args.no_memory,
-        replay_call_ids=json.loads(args.replay_call_map.read_text()) if args.replay_call_map else None,
+        replay_call_ids=json.loads(args.replay_call_map.read_text()) if args.replay_call_map else options.get("replay_call_ids"),
+        feature_specs=feature_specs, input_provenance=provenance,
+        starting_baseline=options.get("starting_baseline"), allowed_feature_groups=options.get("allowed_feature_groups"),
+        research_notes=options.get("research_notes", ""), reviewed_evidence=options.get("reviewed_evidence"),
     )
     result = controller.run()
     print(json.dumps({

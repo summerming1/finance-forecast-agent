@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass
 from itertools import pairwise
 from typing import Any
@@ -153,3 +154,50 @@ def effective_model_params(model_family: str, requested: dict[str, Any]) -> dict
         raise ValueError(f"unsupported focused model: {model_family}")
     validated = validate_model_params(model_family, requested)
     return {**defaults[model_family], **validated}
+
+
+# One shared feature contract. This is not a second executor or mutable registry.
+FEATURE_GROUPS: dict[str, list[str]] = {
+    "base_lags": [f"return_lag_{lag}" for lag in range(1, 6)],
+    "momentum": ["momentum_5", "momentum_20"],
+    "volatility": ["volatility_5", "volatility_20"],
+    "liquidity": ["volume_change_1"],
+}
+
+
+@dataclass(frozen=True)
+class ReviewedNumericFeature:
+    name: str
+    version: str
+    reviewer: str
+    source_description: str
+    review_status: str = "draft"
+    available_at_column: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+def reviewed_feature_registry(specs: list[dict] | None = None) -> dict[str, list[str]]:
+    """Trusted-operator registration, not an authenticity claim from uploaded JSON.
+
+    R6 supports one numeric ext_* feature. No Python expressions, aliases for
+    labels, dynamically imported adapters, or mutation of global feature groups.
+    """
+    registry = {k: list(v) for k, v in FEATURE_GROUPS.items()}
+    if len(specs or []) > 1:
+        raise ValueError("R6 supports one reviewed external numeric feature")
+    for payload in specs or []:
+        spec = ReviewedNumericFeature(**payload)
+        if any(not isinstance(v,str) for v in (spec.name,spec.version,spec.reviewer,spec.source_description,spec.review_status)):
+            raise TypeError("reviewed feature identity and approval fields must be strings")
+        if spec.review_status != "approved" or not spec.reviewer.strip():
+            raise PermissionError("external feature requires trusted operator approval")
+        if not re.fullmatch(r"ext_[a-z][a-z0-9_]{0,47}", spec.name):
+            raise ValueError("reviewed feature name must be an ext_* numeric column")
+        if not spec.version.strip() or not spec.source_description.strip():
+            raise ValueError("reviewed feature needs version and source description")
+        if spec.available_at_column is not None and not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", spec.available_at_column):
+            raise ValueError("invalid feature availability column")
+        registry["external_numeric"] = [spec.name]
+    return registry

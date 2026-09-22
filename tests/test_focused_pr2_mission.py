@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
 
 import exchange_calendars as xcals
@@ -92,7 +93,8 @@ def test_workspace_projection_uses_real_config_diff_and_status(tmp_path: Path) -
     assert research_node["changes"] == item["config_diff"]["changes"]
 
 
-def test_mission_page_rejects_unsupported_goal_and_runs_supported_mission(tmp_path: Path) -> None:
+def test_mission_page_rejects_unsupported_goal_and_runs_supported_mission(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setenv("FFA_WORKSPACE_STATE_DB", str(tmp_path / "workspace.sqlite3"))
     raw = tmp_path / "spy.json"
     project = tmp_path / "project"
     _write_chart(raw)
@@ -117,7 +119,14 @@ def test_mission_page_rejects_unsupported_goal_and_runs_supported_mission(tmp_pa
     app.run()
     next(button for button in app.button if button.label == "Start research mission").click().run(timeout=60)
     assert not app.exception
-    assert any("Mission completed" in item.value for item in app.success)
+    # R6: the submit operation returns a durable queue ID, not a fitted model.
+    # Poll actual execution; preserve the original completion/artifact assertions.
+    deadline = time.monotonic() + 40
+    while time.monotonic() < deadline and not any("Mission completed" in item.value for item in app.success):
+        time.sleep(.2)
+        app.run(timeout=20)
+        assert not app.exception
+    assert any("Mission completed" in item.value for item in app.success), [e.value for e in app.error]
     missions = list((project / "missions").glob("*/mission.json"))
     campaigns = list((project / "focused_campaigns").glob("*/campaign.json"))
     assert len(missions) == 1

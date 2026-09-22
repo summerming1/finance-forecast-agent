@@ -21,7 +21,7 @@ import pandas as pd
 from .experiment_memory import ExperimentMemoryRecord, ExperimentMemoryStore
 from .focused_data import FocusedDatasetSnapshot, FocusedTaskSpec
 from .focused_identity import canonical_json, data_identity, file_sha256, identity, target_row_ids
-from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, validate_model_params
+from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, reviewed_feature_registry, validate_model_params
 from .focused_research import CandidateConfig, _make_model, evaluate_candidate, resolve_feature_columns
 from .focused_state import RuntimeDB, atomic_json, now, safe_id
 
@@ -76,12 +76,17 @@ def focused_task_fingerprint(task: FocusedTaskSpec | dict[str, Any]) -> str:
 def focused_protocol_fingerprint(
     split_spec: FocusedSplitSpec | dict[str, Any],
     evaluation_policy: EvaluationPolicy | dict[str, Any],
+    feature_specs: list[dict] | None = None,
 ) -> str:
     split_payload = split_spec.to_dict() if isinstance(split_spec, FocusedSplitSpec) else dict(split_spec)
     evaluation_payload = (
         evaluation_policy.to_dict() if isinstance(evaluation_policy, EvaluationPolicy) else dict(evaluation_policy)
     )
-    return _hash({"split_spec": split_payload, "evaluation_policy": evaluation_payload})
+    payload = {"split_spec": split_payload, "evaluation_policy": evaluation_payload}
+    if feature_specs:
+        reviewed_feature_registry(feature_specs)
+        payload["reviewed_numeric_features"] = feature_specs
+    return _hash(payload)
 
 
 def focused_memory_evidence(records: list[ExperimentMemoryRecord]) -> list[dict[str, Any]]:
@@ -116,12 +121,13 @@ def load_focused_memory_evidence(
     split_spec: FocusedSplitSpec,
     evaluation_policy: EvaluationPolicy,
     exclude_campaign_id: str | None = None,
+    feature_specs: list[dict] | None = None,
 ) -> list[dict[str, Any]]:
     records = focused_compatible_records(
         store,
         tenant_id=tenant_id,
         task_fingerprint=focused_task_fingerprint(task),
-        protocol_fingerprint=focused_protocol_fingerprint(split_spec, evaluation_policy),
+        protocol_fingerprint=focused_protocol_fingerprint(split_spec, evaluation_policy, feature_specs),
         dataset_fingerprint=dataset_fingerprint,
     )
     if exclude_campaign_id:
@@ -145,6 +151,7 @@ def write_focused_campaign_memory(
     protocol_fp = focused_protocol_fingerprint(
         dict(payload.get("split_spec") or campaign.get("split_spec") or {}),
         dict(payload.get("evaluation_policy") or campaign.get("evaluation_policy") or {}),
+        (campaign.get("research_options") or {}).get("feature_specs"),
     )
     evaluation_fp = _hash(dict(payload.get("evaluation_policy") or campaign.get("evaluation_policy") or {}))
     dataset_fp = str(dataset.get("semantic_fingerprint") or "")
@@ -621,10 +628,10 @@ def _load_dataset(store: RuntimeDB, dataset_id: str, tenant_id: str) -> tuple[pd
     return frame, record
 
 
-def _candidate(payload: dict) -> CandidateConfig:
+def _candidate(payload: dict, feature_specs: list[dict] | None = None) -> CandidateConfig:
     cfg = CandidateConfig(**{k: v for k, v in payload.items() if k in CandidateConfig.__dataclass_fields__})
     validate_model_params(cfg.model_family, cfg.model_params)
-    resolve_feature_columns(cfg.feature_groups)
+    resolve_feature_columns(cfg.feature_groups, reviewed_feature_registry(feature_specs))
     if isinstance(cfg.seed, bool) or not isinstance(cfg.seed, int) or not 0 <= cfg.seed < 2**32:
         raise ValueError("model seed must be a valid integer")
     if cfg.fingerprint != payload.get("candidate_fingerprint", cfg.fingerprint):
@@ -864,14 +871,15 @@ def refit_model_bundle(
     policy: RefitPolicy | None = None,
     state_path: str | Path | None = None,
     tenant_id: str = "default",
+    feature_specs: list[dict] | None = None,
     training_asof: str | None = None,
 ) -> Path:
     active_policy = policy or RefitPolicy()
     if not active_policy.fit_all_available_labels:
         raise ValueError("only the explicit all-matured-development-label refit policy is supported")
     _validated_frame(frame, task, dataset)
-    _candidate(candidate.to_dict())
-    features = resolve_feature_columns(candidate.feature_groups)
+    _candidate(candidate.to_dict(), feature_specs)
+    features = resolve_feature_columns(candidate.feature_groups, reviewed_feature_registry(feature_specs))
     if not np.isfinite(frame[features].to_numpy(dtype=float)).all():
         raise ValueError("refit features must be finite")
     available = _session_times(frame, "label_end_time", "label_available_at")
@@ -896,6 +904,7 @@ def refit_model_bundle(
         "bundle_id": "bundle-" + uuid.uuid4().hex,
         "candidate": candidate.to_dict(),
         "feature_columns": features,
+        "reviewed_features": feature_specs or [],
         "preprocessing": "identity_float64_in_declared_column_order",
         "task": task.to_dict(),
         "dataset_fingerprint": dataset.semantic_fingerprint,

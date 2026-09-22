@@ -9,14 +9,14 @@
 | 能力 | 有实现 | 原工程测试 | 真实运行 | 用户/科学验收 | 尚未关闭的合同 |
 |---|---|---|---|---|---|
 | 预测/Manifest/确定性反馈 | 是 | focused 通过 | 冻结历史 SPY | 非独立金融证据 | 身份已加固；恢复绑定 R2 |
-| Mission/Workspace | 是 | AppTest 通过 | Codex 报告浏览器可运行 | 完整持久流程未验收 | R6 |
+| Mission/Workspace | R6 持久工作区代码已提交 | AppTest/队列/导出/刷新及双版本核心 CI 通过 | Chromium E2E 尚未通过，交由本地 Codex 补测 | 非技术用户试用待测 | 单机可信操作者；浏览器/其他平台待验收 |
 | Live/Replay | 是 | 录制单测通过 | Codex 报告百炼两轮与无凭证回放 | 不是科研质量证明 | R1 已加固；本轮真实 provider 待测 |
-| 动作与 Memory | R3 实际分发 | 停止/审核/诊断/消融/租户隔离通过 | 规则策略与真实历史 smoke | 未证明 LLM 研究增益 | live 与网页集成待测 |
-| Queue/恢复 | R2 事务路径 | 原子提交/代次/预算/缓存通过 | Linux 完整 Campaign kill/resume 已测 | 单机工程验收 | UI 集成与其他平台 R6 |
+| 动作与 Memory | R3 分发 + R6 审核/继续入口 | 停止/审核/诊断/消融/租户隔离 | 规则策略、队列审核集成 | 未证明 LLM 研究增益 | 新合同 live 需补测 |
+| Queue/恢复 | R2 事务 + R6 提交关联 | 原子提交/代次/预算/缓存/held-link修复 | Linux 完整 Campaign kill/resume、工作区队列 | 单机工程验收 | Windows/macOS 原生故障矩阵待测 |
 | Confirmation | R4 封存登记/一次性授权/固定留出 | 错配、篡改、并发及崩溃测试通过 | 只有模拟封存证据 | 真实未见金融数据待测 | 不允许 Advisor 调用；可信单机操作 |
 | ModelBundle | R4 包外可信登记与完整性检查 | 篡改/路径/租户/环境/新进程通过 | 历史 SPY 无标签推理 | 不是样本外效果 | 旧包须重发；跨平台待测 |
 | Benchmark | R5 实际 Controller 策略接入 | 去重/seed/真实TPE/Advisor回放/账本通过 | 冻结 SPY 九组内部对照 | 本轮无真实 LLM 质量或人工时间证据 | 真实 provider 对照需本地补测 |
-| BYO | 内置模型配置/受控表格 | 两模拟客户 | 无真实客户 | 未完成 | 完整特征/时间与用户路径 R6 |
+| BYO | R6 表格 + 一个审核数值特征 + 内置模型配置 | CSV/Parquet/时间/声明分级/实际训练及交付 | 模拟客户端到端 | 无真实客户 | 特征因果与来源仍须人工审核；非任意模型上传 |
 
 ## R 批次执行状态
 
@@ -26,7 +26,7 @@
 - R3：实际控制动作、父模型约束、剩余资源上下文和有界 Memory 已实现；本地 128 项累计及共享回归通过。
 - R4：封存数据与冻结确认授权、单次执行、包外可信 ModelBundle 已实现；验收记录见版本日志和条款映射。
 - R5：实际策略对照已接入同一 Controller，使用真正 Optuna TPE；默认规则/回放仅为工程证据，验收见版本日志。
-- R6：待实施；R5 测试和远端提交完成后再打通网页/BYO。
+- R6：持久网页、受控特征 BYO、导出/审核/恢复接口代码已实现并按用户要求先提交，供本地 Codex 完整验收。Python 3.11/3.13 累计核心回归与 lint/compile 已通过；Chromium E2E 在 CI 仍失败，因此 R6 当前是 `code_committed_validation_pending`，不是已验收完成。
 
 ## 当前边界
 
@@ -54,7 +54,7 @@
 
 旧 worker 的 generation 不能提交新 attempt 的结果；取消先持久化再终止经过 PID+创建时间核对的进程树。存活检测不发送信号。真实 queued Campaign 在候选 A 完成、B 一折训练完成时强制终止后由新进程恢复：A/基线/计划哈希保持，重试消耗计费，最终研究包可导出。
 
-旧 R2 之前 Campaign 可查看，但无足够 attempt 事实时不伪造恢复。代码更新前应完成或取消运行中的 Campaign；跨执行合同的继续研究应创建新 Campaign。当前网页仍在 R6 接入队列前，不据此宣称整条网页异步流程已经完成。
+旧 R2 之前 Campaign 可查看，但无足够 attempt 事实时不伪造恢复。代码更新前应完成或取消运行中的 Campaign；跨执行合同的继续研究应创建新 Campaign。R6 网页现在使用同一队列并从账本读取状态，不通过浏览器请求同步执行研究。显式单模型 refit 是独立操作者操作，不自动推广或部署。
 
 ## R3 动作与记忆
 
@@ -98,7 +98,7 @@ predictions = predict_model_bundle(bundle, unlabeled_frame, state_path=state_db,
 
 ### R4 未测边界
 
-没有取得合法未暴露真实金融数据、没有真实独立确认结论；没有本轮 live LLM 调用；Windows/macOS 实机、安全隔离部署及实际客户端模型搬迁仍未验收。当前真实 SPY 仍为历史 development；删除训练尾部 label 后推理只证明接口，不是样本外表现。R5 真实策略对照和 R6 持久网页/BYO 集成仍待实施。
+没有取得合法未暴露真实金融数据、没有真实独立确认结论；没有本轮 live LLM 调用；Windows/macOS 实机、安全隔离部署及实际客户端模型搬迁仍未验收。当前真实 SPY 仍为历史 development；删除训练尾部 label 后推理只证明接口，不是样本外表现。R5、R6 已继续补齐，见下方当前接口；这里的真实金融确认与跨平台限制并未因此关闭。
 
 
 ## R5 真实策略对照及使用边界
@@ -112,3 +112,35 @@ predictions = predict_model_bundle(bundle, unlabeled_frame, state_path=state_db,
 `--memory-mode ablation --memory-store <审核过的固定先验>` 为每组复制独立先验并冻结；cold/warm不得混合成为同一公平四臂结果。输出分别记录唯一配置、已计费fit、成功/失败/重复/无改善实验、逐fold稳定性、真实调用与回放、usage/cost及未知值。wall_seconds 是本次命令耗时；恢复运行不伪造历史停机耗时。人工分钟数未测时为null。search_seed、estimator_seed分开；deterministic重跑和重叠窗口不能增加独立样本量。
 
 六配置空间仅作枚举正确性参照，较大目录仍是受控离散空间；不将TPE离散ID采样包装成任意连续参数优化。旧R5前的greedy/fixture报告保留但不用于真实Agent强弱判断。新版工程验收要求比较对象正确，不要求Agent获胜。
+
+
+## R6 持久工作区、受控外部特征与交付流程
+
+正式产品入口仍是现有 Streamlit 的 Research Mission 页面。启动前由可信操作者固定 `FFA_WORKSPACE_STATE_DB`（默认 `projects/workspace/runtime.sqlite3`）及可选 `FFA_WORKSPACE_TENANT`。关联项目共用同一权威数据库；不从 URL、上传的模型包或客户备注获取信任数据库路径。不支持多租户 SaaS 身份认证或 OS 级隔离。
+
+模板只接受固定 SPY 日频 next-session return 的中英文名称。备注单列，明确不改变任务/评价/权限。允许特征、起点内置基线配置、预算、选中的至多三条已审核文献/领域证据、录制模式共同冻结在 Campaign 合同；改变它们应开始新 Campaign，不能强行恢复旧执行。
+
+提交过程：持久保存提交意图 → 创建薄 Mission → 既有队列 held task → 写入 Mission/Campaign 引用 → 激活队列。关联完成前任务不能执行；中断后可修复 held 关联并由操作者恢复。查看、切换候选、刷新、打开历史任务及下载均不重新训练。相同表单的重复提交在该会话保持同一 operation ID；有意重复研究须点击“Prepare a new intentional repeat”。新浏览器用已注册 project/campaign ID 恢复，不依赖旧 WebSocket 会话。
+
+工作区显示实际状态、研究结论、预算、基线/候选详情、真实 diff、Feedback、Exposure 和事件。request_review 是持久暂停，可在页面批准/拒绝并恢复；取消与恢复沿用 R2 generation/预算逻辑。ResearchPackage 从权威状态生成，检查被接受的产物哈希与路径；符号链接和篡改拒绝。ModelBundle 必须显式 refit 并写入 R4 包外可信登记；下载文件不授予另一台机器加载信任。
+
+### 最小 BYO 合同
+
+仅接 CSV/Parquet 和内置 Ridge/RF/GBDT 的配置，保留原任务。可附加**一个**已审核 `ext_*` 数值列，注册为 `external_numeric` 特征组，复用相同特征注册/编译/执行/评价/Manifest/模型包路径。审核项包含名称、版本、审核者、来源说明和可选逐行 available_at 列。没有任意代码、动态 import、表达式执行或陌生 pickle 模型加载。
+
+按同一份原始字节解析并哈希；重复 CSV 列、映射碰撞、非数值/非有限值、缺失或多余交易日、周级标签冒充 next-session、无效时间、未来特征及自报 sealed 状态都会拒绝。session 字段用无时区日期，实际时刻另列 timezone-aware `decision_at` / `label_available_at`。没有实测到达时间的情况明确标为收盘假定。
+
+标签有供给价格时复算；最后目标没有 next_adj_close 时明确记为未验证。有 next_adj_close 则核对整段及最后目标。没有原始价格则为 `user_declared_unverified`，不能称系统已核验。特征 availability 时间戳检查只证明提供的时间声明一致，不证明来源无前视泄漏。改变来源备注、CSV/Parquet 格式或 exposure 声明不能清洗同一目标的暴露身份。
+
+模拟输入仍输出 `simulation_only_no_financial_evidence`；真实未知来源不获得独立确认。R4 固定确认接口暂不接自定义外部特征，明确拒绝而非代理执行。
+
+### 验收和下一步
+
+R0–R6 的本轮定向/累计工程证据、精确源码树和运行层级见 `docs/validation/v22r_acceptance.json`、CI 与 `V2_MISSION_RESEARCH.md`。本地浏览器被管理员策略阻止，未绕过；真实 Chromium 页面测试放在独立 GitHub CI，不能把 AppTest 当该门禁的替代。
+
+未闭合的外部证据集中在 `CODEX_V22R_REMAINING_VALIDATION.md`：新 prompt/合同的 live→严格离线 replay、真实 LLM 多窗口对照与人工时间、真实客户、合法封存金融确认、Windows/macOS 进程和浏览器、完整历史资产/native/GPU。V3 尚未开始；标签成熟时刻合同不等于已实现前瞻记录生命周期。
+
+
+### R6 当前提交边界
+
+R6 正式分支可供本地拉取和继续修复，但浏览器真实 E2E 尚未关闭。已知 CI run `35686627733` 中 Python 3.11/3.13 核心累计回归、Ruff/compile 通过，browser job 失败；失败证据必须保留并由本地 Codex 从当前正式分支继续复现/修复。不能据此宣称 R6 用户工作流已经验收。

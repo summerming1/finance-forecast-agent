@@ -1,20 +1,11 @@
 # Codex handoff — V2.2-R
 
-唯一当前状态：`CURRENT_IMPLEMENTATION.md`。正式分支 `feat/mission-research-v2`；不要按旧 PR 数字推断完成。
-先读 AGENTS、Roadmap、当前状态、ADRs、Architecture、Acceptance 和 V2_MISSION_RESEARCH。
+当前状态唯一来源：`CURRENT_IMPLEMENTATION.md`；实际门禁：`validation/v22r_acceptance.json` 和同 SHA 的 CI。正式分支 `feat/mission-research-v2`。先检查工作区、远端 HEAD，再按 AGENTS 阅读 Roadmap、当前状态、ADRs、Architecture、Acceptance 和 V2 版本日志。不要按旧 PR/R 编号或包版本推断完成。
 
-本轮只做批准的 R0→R6：状态收口；身份/Evidence/Replay；持久执行；真实动作/Memory；确认/模型信任；真实策略对照；Workspace/BYO 集成。前一批新旧相关测试通过并提交后才能开始下一批。
+R0–R6 是原能力的验收加固，不是新产品主线。保留同一个 Controller/Queue/Evaluator/Memory；RuntimeDB 是唯一运行状态权威，JSON 是导出。R5 先独立测试并提交为 `1bfe5ef78dd475d12f386c528ace44638e27434c`，之后才实施 R6。R6 接通持久工作区、审核/继续/导出和一个已审核数值特征的同任务 BYO。没有启动 V3。
 
-保留一个 Controller/Queue/Evaluator/Memory。单机事务存储可以替换脆弱文件状态，JSON 是导出而非第二个状态真源。旧 Campaign 只读，缺合同不得自动恢复。默认不信任外部文献指令、任意代码、包内 trusted 标记或 self-declared sealed。
+下一轮只做 `CODEX_V22R_REMAINING_VALIDATION.md` 的补充验收与最小 bug 修复，不重复实现 R0–R6，不扩资产/任务/任意代码权限。每个修复先留失败证据，再定向/累计测试，最后逐批提交与正常推送，不能静默放宽门禁。
 
-测试要绑定条款、源码 SHA/tree、命令/exit code、环境和真实/模拟等级。资产缺失和真正科学/客户证据不足单列；不能把阻塞悄悄变成跳过后“全部通过”。本轮不得启动完整 V3。
+升级前完成或取消旧运行。旧 Campaign 缺合同只读；跨代码/环境/特征/数据协议不强行恢复。旧 ModelBundle 不因包内 trusted 字段获得信任，需操作者重发；复制包不迁移注册授权。相关项目必须共用原权威数据库，空数据库不代表历史未暴露。
 
-
-## R4 已交付后继续点
-
-R0～R4 有实现和定向/累计证据；下一批是 R5，未经请求不继续。R4 在既有 RuntimeDB 上实现封存注册、冻结固定留出协议、单次授权和包外模型信任。CLI 仅接收 grant ID；模型加载必须显式 state_path 或可信 FFA_DELIVERY_STATE_DB，不从包内字段自动信任。旧包需要重发，旧原型确认仅保留 simulation 兼容。具体接口、环境和未测项见 CURRENT_IMPLEMENTATION 与 V2_MISSION_RESEARCH。
-
-
-## R5 后续点
-
-R5 已用原 Controller 接通 random/真实 Optuna TPE/one-shot Advisor/adaptive Advisor；执行、评价与预算没有复制。先完成同SHA CI，再进入R6。缺省deterministic与人工回放均非live科研质量。R6只打通受支持模板、持久任务/历史/导出与受审核数值特征BYO，不扩大资产/任务/任意代码权限。R0–R5未测的真实provider、真客户、合法确认、Windows/macOS及native资产验收仍需单列。
+live 与 replay 分开；模型/人工成本未知时保持 null。确定性或手写 fixture 只作工程证据。真实客户、未见金融数据、前瞻和研究优越性需要独立证据；一组通过的单元测试或模型包加载不关闭这些门禁。

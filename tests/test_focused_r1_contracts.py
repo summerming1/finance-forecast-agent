@@ -189,10 +189,14 @@ def test_reformatted_yahoo_bytes_preserve_observation_identity(tmp_path):
     frame.to_csv(a, index=False)
     frame.to_parquet(b, index=False)
     _, sa, _ = load_external_focused_dataset(a, _contract('csv'))
-    _, sb, _ = load_external_focused_dataset(b, replace(_contract('parquet'), source_name='renamed', exposure='sealed_unexposed'))
+    _, sb, _ = load_external_focused_dataset(b, replace(_contract('parquet'), source_name='renamed', exposure='development'))
     assert sa.raw_sha256 != sb.raw_sha256
     assert sa.semantic_fingerprint == sb.semantic_fingerprint
     assert sa.target_fingerprint == sb.target_fingerprint
+    # R6 is stronger than the old importer: a caller can no longer self-assert
+    # sealed status. The identity invariant above still covers metadata changes.
+    with pytest.raises(PermissionError, match="self-declare"):
+        load_external_focused_dataset(b, replace(_contract('parquet'), exposure='sealed_unexposed'))
 
 
 def test_canonical_feature_order_matches_executed_matrix_order():

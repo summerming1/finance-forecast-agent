@@ -31,7 +31,14 @@ from .focused_evidence import (
     prediction_row,
 )
 from .focused_identity import data_identity, file_sha256, identity
-from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, effective_model_params, validate_model_params
+from .focused_protocol import (
+    FEATURE_GROUPS,
+    EvaluationPolicy,
+    FocusedSplitSpec,
+    effective_model_params,
+    reviewed_feature_registry,
+    validate_model_params,
+)
 from .focused_runtime import BudgetExhausted, CampaignCancelled, CampaignRuntime
 from .focused_state import atomic_json, safe_id
 from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
@@ -39,12 +46,6 @@ from .replay_llm import ReplayLLM
 
 AdvisorMode = Literal["deterministic", "replay", "live"]
 
-FEATURE_GROUPS: dict[str, list[str]] = {
-    "base_lags": [f"return_lag_{lag}" for lag in range(1, 6)],
-    "momentum": ["momentum_5", "momentum_20"],
-    "volatility": ["volatility_5", "volatility_20"],
-    "liquidity": ["volume_change_1"],
-}
 ALLOWED_MODELS = {"ridge_regression", "random_forest_regressor", "gradient_boosting_regressor"}
 NAIVE_BASELINES = [
     ("baseline_zero", "naive_zero", {"strategy": "zero"}, []),
@@ -171,12 +172,14 @@ class CampaignSpec:
     evaluation_policy: EvaluationPolicy
     split_spec: FocusedSplitSpec
     created_at: str
+    research_options: dict[str, Any] = field(default_factory=dict)
 
     @property
     def contract_hash(self) -> str:
         return _hash(
             {
                 "task": self.task.to_dict(),
+                "research_options": self.research_options,
                 "dataset_fingerprint": self.dataset.semantic_fingerprint,
                 "budget": self.budget.to_dict(),
                 "advisor_mode": self.advisor_mode,
@@ -191,12 +194,13 @@ class CampaignSpec:
         return {**asdict(self), "contract_hash": self.contract_hash}
 
 
-def resolve_feature_columns(groups: list[str]) -> list[str]:
+def resolve_feature_columns(groups: list[str], registry: dict[str, list[str]] | None = None) -> list[str]:
+    active = registry if registry is not None else FEATURE_GROUPS
     columns: list[str] = []
     for group in sorted(set(groups)):
-        if group not in FEATURE_GROUPS:
+        if group not in active:
             raise ValueError(f"unsupported feature group: {group}")
-        for column in FEATURE_GROUPS[group]:
+        for column in active[group]:
             if column not in columns:
                 columns.append(column)
     if not columns:
@@ -263,8 +267,9 @@ def evaluate_candidate(
     min_relative_improvement: float,
     split_spec: FocusedSplitSpec | None = None,
     fit_observer=None,
+    feature_registry: dict[str, list[str]] | None = None,
 ) -> CandidateResult:
-    features = resolve_feature_columns(candidate.feature_groups)
+    features = resolve_feature_columns(candidate.feature_groups, feature_registry)
     missing = [column for column in [*features, "label"] if column not in frame.columns]
     if missing:
         raise ValueError("focused frame missing columns: " + ", ".join(missing))
@@ -372,8 +377,9 @@ def _evaluate_model_baseline(
     *,
     split_spec: FocusedSplitSpec,
     fit_observer=None,
+    feature_registry: dict[str, list[str]] | None = None,
 ) -> CandidateResult:
-    features = resolve_feature_columns(candidate.feature_groups)
+    features = resolve_feature_columns(candidate.feature_groups, feature_registry)
     x = frame[features].astype(float).to_numpy()
     y = frame["label"].astype(float).to_numpy()
     prediction_rows: list[dict[str, Any]] = []
@@ -501,6 +507,7 @@ def advisor_prompt(
         "task_contract": task.to_dict(),
         "allowed_models": sorted(ALLOWED_MODELS),
         "allowed_feature_groups": sorted(FEATURE_GROUPS),
+        "feature_registry": {g: FEATURE_GROUPS[g] for g in sorted(FEATURE_GROUPS)},
         "baseline_results": [
             {"candidate_id": x.candidate.candidate_id, "model_family": x.candidate.model_family, "feature_groups": x.candidate.feature_groups, "model_params": x.candidate.model_params, "seed": x.candidate.seed, "config_identity": x.candidate.config_identity, "metrics": x.metrics}
             for x in baseline_results
@@ -653,6 +660,25 @@ class FocusedResearchAdvisor:
             advice = _deterministic_advice(
                 int(prompt["round_index"]), _results_from_prompt(prompt["baseline_results"]),
                 _results_from_prompt(prompt["prior_research_results"]))
+            allowed = set(prompt.get("allowed_feature_groups", FEATURE_GROUPS))
+            # The fixed policy is a regression control, not a natural-language interpreter.
+            # Respect frozen capabilities by construction, never execute a disallowed proxy.
+            if "external_numeric" in allowed:
+                parent = next(row for row in prompt["baseline_results"] if row["candidate_id"] == "baseline_ridge")
+                advice["hypotheses"].insert(0, {
+                    "action_type": "improve", "statement": "Test the reviewed numeric feature with the actual Ridge control unchanged.",
+                    "mechanism": "Paired feature addition; provenance and timing remain user-supplied evidence.",
+                    "parent_candidate_id": parent["candidate_id"], "model_family": parent["model_family"],
+                    "model_params": parent["model_params"], "feature_groups": sorted(set(parent["feature_groups"]) | {"external_numeric"}),
+                    "seed": parent.get("seed", 42), "evidence_refs": [parent["candidate_id"]],
+                    "counter_evidence_test": "No improvement on frozen development targets."})
+            advice["hypotheses"] = [row for row in advice["hypotheses"] if set(row["feature_groups"]) <= allowed]
+            if not advice["hypotheses"]:
+                parent = next(row for row in prompt["baseline_results"] if row["candidate_id"] == "baseline_ridge")
+                advice = {"hypotheses": [{"action_type": "improve", "statement": "Test stronger Ridge regularization within the selected feature contract.",
+                    "parent_candidate_id": parent["candidate_id"], "model_family": parent["model_family"],
+                    "model_params": {"alpha": min(1e6, max(1e-6, float(parent["model_params"]["alpha"]) * 2))},
+                    "feature_groups": parent["feature_groups"], "seed": parent.get("seed", 42), "evidence_refs": [parent["candidate_id"]]}]}
             # Exact-task historical knowledge avoids redundant proposals, without
             # importing old scores as current-run measurements.
             examined = {row.get("config", {}).get("config_identity") for row in prompt.get("compatible_memory", [])}
@@ -706,6 +732,7 @@ def compile_hypotheses(
     visible_evidence: list[dict[str, Any]] | None = None,
     candidate_lookup: dict[str, CandidateConfig] | None = None,
     default_seed: int = 42,
+    feature_registry: dict[str, list[str]] | None = None,
 ) -> list[tuple[HypothesisSpec, CandidateConfig | None]]:
     """Compile a bounded decision, including controls which do not train models.
 
@@ -788,7 +815,7 @@ def compile_hypotheses(
             groups = row.get("feature_groups")
             if not isinstance(groups, list) or any(not isinstance(g, str) for g in groups):
                 raise TypeError("feature_groups must be a list")
-            resolve_feature_columns(groups)
+            resolve_feature_columns(groups, feature_registry)
             params = validate_model_params(row["model_family"], row.get("model_params", {}))
             candidate = CandidateConfig(cid, row["model_family"], params, sorted(set(groups)),
                 seed=row.get("seed", default_seed), parent_candidate_id=parent_id, hypothesis_id=hid)
@@ -847,6 +874,11 @@ class FocusedResearchController:
         checkpoint_hook=None,
         replay_call_ids: dict[str, str] | None = None,
         benchmark_strategy: dict[str, Any] | None = None,
+        feature_specs: list[dict[str, Any]] | None = None,
+        allowed_feature_groups: list[str] | None = None,
+        starting_baseline: dict[str, Any] | None = None,
+        research_notes: str = "",
+        input_provenance: dict[str, Any] | None = None,
     ):
         self.project_dir = Path(project_dir).resolve()
         self.state_path = Path(state_path or os.getenv("FFA_STATE_DB") or self.project_dir / "runtime.sqlite3")
@@ -856,6 +888,31 @@ class FocusedResearchController:
         self.task = task
         self.dataset = dataset
         self.frame = frame
+        self.feature_specs = json.loads(json.dumps(feature_specs or []))
+        self.feature_registry = reviewed_feature_registry(self.feature_specs)
+        allowed_groups = sorted(set(allowed_feature_groups or self.feature_registry))
+        if "base_lags" not in allowed_groups or not set(allowed_groups) <= set(self.feature_registry):
+            raise ValueError("research feature scope must include base_lags and only reviewed groups")
+        self.allowed_feature_groups = allowed_groups
+        self.input_provenance = json.loads(json.dumps(input_provenance or {}))
+        if not isinstance(research_notes, str) or len(research_notes) > 4000:
+            raise ValueError("research notes must be text with at most 4000 characters")
+        self.research_notes = research_notes
+        self.starting_baseline = json.loads(json.dumps(starting_baseline or {}))
+        if self.starting_baseline:
+            if set(self.starting_baseline) != {"model_family", "model_params", "feature_groups"}:
+                raise ValueError("starting baseline must be a platform model configuration")
+            if self.starting_baseline["model_family"] not in ALLOWED_MODELS:
+                raise ValueError("unsupported starting baseline model")
+            validate_model_params(self.starting_baseline["model_family"], self.starting_baseline["model_params"])
+            if not set(self.starting_baseline["feature_groups"]) <= set(allowed_groups):
+                raise ValueError("starting baseline outside allowed feature scope")
+            resolve_feature_columns(self.starting_baseline["feature_groups"], self.feature_registry)
+        required = resolve_feature_columns(allowed_groups, self.feature_registry)
+        if set(required) - set(frame.columns):
+            raise ValueError("data lacks columns required by selected research feature groups")
+        if not np.isfinite(frame[[*required, "label"]].to_numpy(dtype=float)).all():
+            raise ValueError("research features and labels must be finite numeric values")
         self.budget = budget or ResearchBudget()
         legacy_threshold = self.budget.min_relative_mae_improvement
         self.evaluation_policy = evaluation_policy or EvaluationPolicy(
@@ -886,10 +943,13 @@ class FocusedResearchController:
             budget=self.budget,
             advisor_mode=advisor_mode,
             allowed_models=sorted(ALLOWED_MODELS),
-            allowed_feature_groups=sorted(FEATURE_GROUPS),
+            allowed_feature_groups=self.allowed_feature_groups,
             evaluation_policy=self.evaluation_policy,
             split_spec=self.split_spec,
             created_at=_now(),
+            research_options={"feature_specs": self.feature_specs, "starting_baseline": self.starting_baseline,
+                              "notes": self.research_notes, "notes_are_non_executable": True,
+                              "input_provenance": self.input_provenance},
         )
 
     @property
@@ -937,7 +997,7 @@ class FocusedResearchController:
         if role == "naive_baseline":
             expected_features: list[str] = []
         else:
-            expected_features = resolve_feature_columns(result.candidate.feature_groups)
+            expected_features = resolve_feature_columns(result.candidate.feature_groups, self.feature_registry)
         artifact = build_prediction_artifact(
             campaign_id=self.spec.campaign_id,
             candidate=result.candidate,
@@ -1041,7 +1101,8 @@ class FocusedResearchController:
             "provenance": {"exposure": self.dataset.exposure, "source": self.dataset.source_name},
             "budget": self.budget.to_dict(), "split": self.split_spec.to_dict(),
             "evaluation": self.evaluation_policy.to_dict(), "tenant_id": self.tenant_id,
-            "capability": {"models": sorted(ALLOWED_MODELS), "feature_groups": FEATURE_GROUPS},
+            "capability": {"models": sorted(ALLOWED_MODELS), "feature_groups": {g: self.feature_registry[g] for g in self.allowed_feature_groups}},
+            "research_options": self.spec.research_options,
             "source": identity(source, domain="research-execution-source-v1"),
             "environment": {"python": platform.python_version(), **{name: version(name) for name in ("numpy", "pandas", "scikit-learn", "exchange-calendars")}},
             "advisor_mode": self.advisor.mode, "provider": provider,
@@ -1096,11 +1157,11 @@ class FocusedResearchController:
             if role == "naive_baseline":
                 result = _evaluate_naive_baseline(self.frame, candidate, split_spec=self.split_spec)
             elif role == "model_baseline":
-                result = _evaluate_model_baseline(self.frame, candidate, split_spec=self.split_spec, fit_observer=observe)
+                result = _evaluate_model_baseline(self.frame, candidate, split_spec=self.split_spec, fit_observer=observe, feature_registry=self.feature_registry)
             else:
                 result = evaluate_candidate(self.frame, candidate, best_baseline_mae=best_baseline.metrics["mae"],
                     min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
-                    split_spec=self.split_spec, fit_observer=observe)
+                    split_spec=self.split_spec, fit_observer=observe, feature_registry=self.feature_registry)
         except CampaignCancelled:
             raise
         except (ValueError, RuntimeError, FloatingPointError) as exc:
@@ -1138,6 +1199,9 @@ class FocusedResearchController:
                 atomic_json(self._campaign_root / "campaign.json", final)
                 return final
             self._initialize_evidence_ledger()
+            if self.input_provenance:
+                runtime.put("input_provenance", self.input_provenance, immutable=True)
+                runtime.artifact("external_input/provenance.json", self.input_provenance)
             try:
                 return self._run_resumable()
             except CampaignCancelled:
@@ -1166,10 +1230,12 @@ class FocusedResearchController:
                 from .focused_delivery import load_focused_memory_evidence
                 memory_evidence = load_focused_memory_evidence(ExperimentMemoryStore(self.memory_store_path),
                     tenant_id=self.tenant_id, task=self.task, dataset_fingerprint=self.dataset.semantic_fingerprint,
-                    split_spec=self.split_spec, evaluation_policy=self.evaluation_policy, exclude_campaign_id=self.spec.campaign_id)
+                    split_spec=self.split_spec, evaluation_policy=self.evaluation_policy, exclude_campaign_id=self.spec.campaign_id, feature_specs=self.feature_specs)
             runtime.put("memory_snapshot", memory_evidence, immutable=True)
         baseline_results, baseline_payloads = [], []
         for candidate_id, family, params, groups in [*NAIVE_BASELINES, *DEFAULT_BASELINES]:
+            if family == self.starting_baseline.get("model_family"):
+                params, groups = self.starting_baseline["model_params"], self.starting_baseline["feature_groups"]
             candidate = CandidateConfig(candidate_id, family, params, groups, seed=self.estimator_seed)
             role = "naive_baseline" if family.startswith("naive_") else "model_baseline"
             result, saved = self._execute(candidate, role=role, splits=splits)
@@ -1191,6 +1257,10 @@ class FocusedResearchController:
                         prior_results=research_results, budget=self.budget, structured_feedback=feedback_history,
                         reviewed_evidence=self.reviewed_evidence, compatible_memory=memory_evidence,
                         resource_usage=runtime.resource_usage(), advisor_calls_used=runtime.get("advisor_call_reservations", 0), diagnostics=diagnostic_history)
+                    prompt["allowed_feature_groups"] = self.allowed_feature_groups
+                    prompt["feature_registry"] = {g: self.feature_registry[g] for g in self.allowed_feature_groups}
+                    if self.research_notes:
+                        prompt["user_notes"] = {"text": self.research_notes, "authority": "untrusted_non_executable_notes"}
                     if self.benchmark_strategy:
                         prompt = self.advisor.prepare_prompt(prompt, runtime)
                     calls = runtime.get("advisor_call_reservations", 0)
@@ -1219,7 +1289,7 @@ class FocusedResearchController:
                     compiled = compile_hypotheses(advice, round_index=round_index, source=source,
                         max_count=self.budget.max_new_candidates_per_round, visible_evidence=prompt["evidence_projection"],
                         candidate_lookup={key: value.candidate for key, value in result_lookup.items()},
-                        default_seed=self.estimator_seed)
+                        default_seed=self.estimator_seed, feature_registry={g: self.feature_registry[g] for g in self.allowed_feature_groups})
                     if self.benchmark_strategy:
                         self.advisor.validate_compiled(compiled)
                 except (ValueError, TypeError) as exc:
@@ -1380,6 +1450,13 @@ class FocusedResearchController:
             "evaluation_policy": self.evaluation_policy.to_dict(), "split_spec": self.split_spec.to_dict(),
             "evidence_status": {"development": "available", "robustness": "not_run", "confirmation": "not_run_historical_data_exposed", "forward": "not_started"},
             "confirmation_status": "not_run_historical_data_exposed", "scientific_claim": "development_only_no_profitability_claim", "limitations": ["No-improvement is limited to the executed candidates, frozen development rows and budget; not a claim of no market signal."], "created_at": _now()}
+        if self.input_provenance:
+            simulated = self.input_provenance.get("provenance_type") == "simulation_only"
+            payload["input_verification"] = self.input_provenance.get("verification", {})
+            payload["confirmation_status"] = "not_run_simulation_only" if simulated else "not_run_external_input_not_independently_verified"
+            payload["evidence_status"]["confirmation"] = payload["confirmation_status"]
+            if simulated:
+                payload["scientific_claim"] = "simulation_only_no_financial_evidence"
         return payload
 
     def _persist(self, payload: dict[str, Any]) -> None:

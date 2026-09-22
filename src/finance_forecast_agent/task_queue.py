@@ -21,7 +21,7 @@ from .focused_state import (
     terminate_owned_tree,
 )
 
-TaskStatus = Literal["queued", "starting", "running", "resumable", "completed", "blocked", "cancelled"]
+TaskStatus = Literal["held", "waiting_review", "queued", "starting", "running", "resumable", "completed", "blocked", "cancelled"]
 
 
 @dataclass(frozen=True)
@@ -114,7 +114,7 @@ class LocalTaskQueue:
 
     def submit(self, *, task_type: str, command: list[str], cwd: str | Path,
                result_path: str = "", research_context: dict[str, Any] | None = None,
-               start_immediately: bool = True, idempotency_key: str = "") -> TaskRecord:
+               start_immediately: bool = True, idempotency_key: str = "", hold: bool = False) -> TaskRecord:
         if not command:
             raise ValueError("task command cannot be empty")
         context = json.loads(canonical_json(research_context or {}))
@@ -131,7 +131,7 @@ class LocalTaskQueue:
             else:
                 task_id = uuid.uuid4().hex
                 record = TaskRecord(
-                    task_id=task_id, task_type=task_type, status="queued", command=list(map(str, command)),
+                    task_id=task_id, task_type=task_type, status="held" if hold else "queued", command=list(map(str, command)),
                     cwd=str(Path(cwd).resolve()), log_path=str(self.logs / f"{task_id}.log"),
                     result_path=result_path, idempotency_key=idempotency_key,
                     paper_id=str(context.get("paper_id") or ""), run_mode=str(context.get("run_mode") or ""),
@@ -146,6 +146,17 @@ class LocalTaskQueue:
         if start_immediately:
             self.dispatch()
         return self.load(record.task_id)
+
+    def activate(self, task_id: str) -> TaskRecord:
+        """Release a submitted task only after its product references are durable."""
+        with self.db.transaction() as db:
+            record = self._record(db, task_id)
+            if record.status == "held":
+                record = TaskRecord(**{**record.to_dict(), "status": "queued", "updated_at": now()})
+                self._save(db, record)
+                self.db.event(db, "queue", "task.activated", task_id=task_id)
+        self._export(task_id)
+        return record
 
     def dispatch(self) -> list[TaskRecord]:
         started = []
@@ -273,8 +284,14 @@ class LocalTaskQueue:
     def resume(self, task_id: str) -> TaskRecord:
         with self.db.transaction() as db:
             r = self._record(db, task_id)
-            if r.status != "resumable":
+            if r.status not in {"resumable", "waiting_review"}:
                 return r
+            if r.status == "waiting_review":
+                ns = "campaign:" + safe_id(r.research_context["campaign_id"])
+                pause = self.db.read(db, ns, "pause", {})
+                review = self.db.read(db, ns, "review:" + safe_id(pause.get("review_id", "")), {})
+                if review.get("status") not in {"approved", "rejected"}:
+                    raise ValueError("review decision is pending; no execution may resume")
             if process_alive(r.worker_pid, r.worker_created_at) or process_alive(r.process_pid, r.process_created_at):
                 raise RuntimeError("cannot resume while previous generation is alive")
             r = TaskRecord(**{**r.to_dict(), "status": "queued", "attempt": r.attempt + 1,
@@ -289,7 +306,13 @@ class LocalTaskQueue:
             r = self._record(db, task_id)
             if r.status != "running" or r.generation != generation:
                 return False
-            r = TaskRecord(**{**r.to_dict(), "status": "completed" if return_code == 0 else "blocked",
+            status = "completed" if return_code == 0 else "blocked"
+            campaign = r.research_context.get("campaign_id")
+            if return_code == 0 and campaign:
+                ns = "campaign:" + safe_id(campaign)
+                if self.db.read(db, ns, "pause") and not self.db.read(db, ns, "final"):
+                    status = "waiting_review"
+            r = TaskRecord(**{**r.to_dict(), "status": status,
                 "return_code": return_code, "finished_at": now(), "updated_at": now(),
                 "blocker": "" if return_code == 0 else f"command exited with code {return_code}"})
             self._save(db, r)

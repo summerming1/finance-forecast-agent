@@ -25,3 +25,15 @@ projects/finance_agent/method_cards_local_llm_replay_check/
 projects/finance_agent/papers/
 projects/finance_agent/registry/
 projects/finance_agent/reports/
+
+# Local research inputs/state/artifacts are not release source.
+/inputs/
+/validation/
+/validation_artifacts/
+/projects/workspace/
+projects/**/runtime.sqlite3*
+projects/**/focused_campaigns/
+projects/**/task_queue/
+projects/**/requests/
+projects/**/missions/
+projects/**/models/

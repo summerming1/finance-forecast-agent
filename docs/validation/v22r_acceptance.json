@@ -247,13 +247,13 @@
       ],
       "commit": "81d0040767fc6b318f705bd2cf34797fc51d7a8f",
       "ci_runs": [
-        35675661567,
-        35675661548
+        35675661548,
+        35675661567
       ]
     },
     "R5": {
       "scope": "actual-policy value benchmark",
-      "status": "local_gate_passed",
+      "status": "delivered",
       "test_evidence": [
         {
           "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
@@ -327,20 +327,103 @@
         "tests.test_focused_r5_benchmark::test_default_deterministic_arms_are_honestly_labeled",
         "tests.test_focused_r5_benchmark::test_failed_provider_attempt_has_unknown_cost_not_zero",
         "tests.test_focused_r5_benchmark::test_cold_warm_isolation_uses_frozen_exact_task_prior"
+      ],
+      "commit": "1bfe5ef78dd475d12f386c528ace44638e27434c",
+      "ci_runs": [
+        35681261130,
+        35681806391,
+        35681806411
       ]
     },
     "R6": {
-      "scope": "workspace BYO integration",
-      "status": "not_started",
-      "test_evidence": []
+      "scope": "persistent workspace and one reviewed external numeric feature",
+      "status": "code_committed_validation_pending",
+      "base_sha": "1bfe5ef78dd475d12f386c528ace44638e27434c",
+      "release_rule": "Per user instruction, R6 code may be committed for local Codex validation after dual-Python core regression/lint passes even though browser E2E remains failing. This status is not acceptance.",
+      "test_nodeids": [
+        "test_fixed_template_accepts_chinese_and_rejects_changed_task",
+        "test_external_temporal_numeric_and_exposure_guards",
+        "test_external_duplicate_header_fails_before_dataframe_mangling",
+        "test_absent_price_does_not_claim_verified_label_values",
+        "test_reviewed_numeric_feature_executes_and_delivers_same_controller",
+        "test_unreviewed_external_feature_cannot_execute",
+        "test_workspace_links_before_dispatch_and_idempotent_refresh",
+        "test_mutated_queued_options_fail_before_training",
+        "test_package_rejects_symlink",
+        "test_review_pause_is_persistent_queue_state_and_resumes_without_refit",
+        "test_external_feature_availability_and_mapping_cannot_bypass_guards",
+        "test_held_task_cannot_dispatch_before_product_link",
+        "test_interrupted_submission_can_recover_link_without_starting_compute",
+        "test_workspace_refuses_artifact_tampering",
+        "test_apptest_switch_candidate_new_session_and_download_never_refits",
+        "test_invalid_external_contract_types_fail_closed",
+        "test_workspace_cannot_silently_switch_existing_project_authority"
+      ],
+      "test_evidence": [
+        {
+          "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
+          "kind": "final exact-tree cumulative; see CI JUnit"
+        },
+        {
+          "command": "FFA_BROWSER_E2E=1 python -m pytest -q tests/browser/test_research_workspace.py",
+          "kind": "dedicated real Chromium CI; simulation_only inputs + real child processes"
+        },
+        {
+          "command": "frozen SPY queued Workspace + independent PredictionArtifact metrics + ResearchPackage hashes + refit + fresh process",
+          "rows": 4002,
+          "fits": 20,
+          "outcome": "no_improvement",
+          "prediction_artifacts_recomputed": 8,
+          "unlabeled_predictions": 8,
+          "raw_sha256": "5fb282f6278d14000592e0e432fe69a5c00fdb6f7b48cbb56368fc0e3185bbcd"
+        }
+      ],
+      "clauses": [
+        "supported_bilingual_template",
+        "explicit_research_options_frozen",
+        "held_submission_link_before_dispatch",
+        "crashed_link_repair_no_auto_fit",
+        "same_form_idempotency",
+        "candidate_switch_and_fresh_context_restore",
+        "review_pause_and_resume",
+        "artifact_tamper_rejected_before_export",
+        "package_same_bytes_hashed_and_zipped",
+        "existing_project_original_authority",
+        "one_reviewed_numeric_feature_without_global_registry",
+        "exact_XNYS_next_session",
+        "duplicate_header_map_finite_values",
+        "declared_versus_verified_labels",
+        "external_feature_availability",
+        "simulation_claim_preserved",
+        "same_controller_real_byo_training_refit"
+      ],
+      "limitations": [
+        "No new live provider call after changed prompt/capabilities",
+        "No real customer",
+        "No genuine unexposed financial confirmation",
+        "Local browser blocked by administrator policy; only dedicated CI qualifies browser gate",
+        "Windows/macOS not physically run here",
+        "Custom-feature confirmation protocol not implemented",
+        "Feature causality/provenance remains operator responsibility",
+        "No portable trust migration/OS multiuser security/V3"
+      ],
+      "submitted_tree": "29bdf788caf73287d6a845a98eacc2b0cfbd83a4",
+      "core_ci_run": 35686627733,
+      "browser_ci": {
+        "run": 35686627733,
+        "status": "failed",
+        "note": "dual-Python core jobs passed; Chromium E2E remains to be reproduced/fixed locally"
+      }
     }
   },
   "external_gates": {
-    "live_provider": "not_run_this_round",
+    "live_provider": "R1/R3/R5/R6 final contracts require new real record/replay",
     "real_customer": "blocked_no_user",
     "real_confirmation": "blocked_no_eligible_data",
     "macos": "not_run",
-    "windows": "pending_CI_or_local",
-    "historical_native": "baseline_227_pass_10_asset_fail_1_dvc_env_fail"
+    "windows": "physical native tests pending",
+    "historical_native": "see bounded full-suite report; asset/env failures not waived",
+    "browser": "pending_local_codex; CI run 35686627733 browser failed while Python 3.11/3.13 core jobs passed",
+    "value_quality": "real LLM comparison and measured human minutes pending"
   }
 }

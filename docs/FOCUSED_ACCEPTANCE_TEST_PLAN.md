@@ -196,3 +196,16 @@ Success means a trusted local operator can run the declared fixed-training/stati
 ## R5 同链路策略对照门禁
 
 同一Controller/编译器/RuntimeDB/evaluator；配置身份与执行seed分离；实际Optuna TPE ask/tell并记录启动阶段；One-shot仅一次规划，Adaptive逐轮消费真实Feedback；所有arm目标行、基线、预算、环境和来源合同一致；非法/失败/重复实验不消失。cold/warm独立先验不跨臂写入；费用和人工时间未知不得填零。真实数据的deterministic运行、人工record/replay、真实live质量是不同证据层。强行要求Agent获胜不是验收条件。
+
+
+## R6 — integrated workspace and controlled numeric feature acceptance
+
+- One shared RuntimeDB/LocalTaskQueue: submit intent → held task → durable Mission link → activation. A crashed link can be repaired without starting compute.
+- Canonical accepted results are read independently of form buttons; switch, reload, history and export never add research attempts. Table projections are type-stable; raw evidence is unchanged.
+- Exact supported bilingual template; notes cannot change evaluation/scope. Explicit feature/baseline/budget options bind to the execution contract.
+- CSV/Parquet input bytes, next-session calendar, finite numbers, duplicate columns and self-declared seals fail closed. Label/feature declarations are distinguished from verified observations.
+- One reviewed ext_* numeric feature uses the existing compile/evaluate/Manifest/refit path. No new controller or arbitrary model runtime.
+- Cumulative focused/shared queue/Memory tests plus dedicated real Chromium CI. Browser job is explicit (`FFA_BROWSER_E2E=1`); unavailable browser is a blocked/failed gate, never a substitute AppTest pass.
+- Browser scenario: actual queued worker → candidates A/B → new context / reload / history → ResearchPackage SHA audit and ModelBundle download → second simulated Parquet client with reviewed numeric feature.
+- Preserve old failure logs. Prior R1 identity test now uses allowed development metadata and separately asserts that fake sealed input is rejected; no permission check was relaxed.
+- Detailed R0–R6 pending environment/scientific/customer gates: CODEX_V22R_REMAINING_VALIDATION.md.

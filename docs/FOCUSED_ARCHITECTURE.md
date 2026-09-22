@@ -246,3 +246,12 @@ We borrow principles, not whole runtimes. This repository remains the authority 
 R2 retains LocalTaskQueue and FocusedResearchController as the only scheduling and research authorities. RuntimeDB is an embedded SQLite persistence primitive, not another runtime. CampaignRuntime owns only durable contracts, leases, attempts, frozen plans and accepted artifact references; it does not choose research actions or evaluate models. JSON/JSONL are exports. Queue-submitted campaigns share the queue's database so cancellation and generation checks participate in the same transaction boundary.
 
 An accepted artifact is immutable and hash-bound to its execution contract. A file written before acceptance is an orphan audit artifact, not a reusable completed experiment. Interrupted reservations remain charged; retries receive new attempt identities. No exactly-once physical computation guarantee is made. Multi-host scheduling, OS security isolation and automatic migration of unverifiable legacy attempts remain out of scope.
+
+
+## R6 integration within existing authorities
+
+`research_mission.py` contains thin product composition functions; it does not own a second execution state. Project/Mission links, held submissions and immutable input requests share RuntimeDB with LocalTaskQueue and the existing Controller. The Streamlit view renders canonical accepted result projections regardless of submission-button state. Query navigation contains only validated IDs; filesystem/tenant authority is operator configuration.
+
+ReviewedNumericFeature extends the existing feature registry per execution, never the process-global registry. Controller → compiler → evaluator → Manifest → refit consume the same frozen registry; Memory compatibility includes feature-spec identity. BYO time checks use sessions plus separate timezone-aware actual instants and report declared versus verified provenance.
+
+ResearchPackage is an export, not runtime authority. ModelBundle uses R4 external registration; download alone does not authorize deserialization elsewhere. UI-triggered explicit refit is a single controlled delivery operation, not automatic promotion/ongoing model deployment. Shared worker semantics and research budget remain independent of browser redraws.

@@ -1,3 +1,94 @@
+# 当前 Focused Research Mission 使用说明
+
+权威能力状态见 `CURRENT_IMPLEMENTATION.md`，外部补测见 `CODEX_V22R_REMAINING_VALIDATION.md`。以下是 R6 的单机研究工作区，不是自动交易平台。
+
+## 1. 更新与安装
+
+先检查 `git status --short`，保留本地修改；在 `feat/mission-research-v2` 执行 fetch / pull --ff-only。已有运行先完成或取消；代码/依赖/数据合同变化后不能直接恢复旧Campaign。
+
+```bash
+python -m pip install -e ".[dev,ui,byo,benchmark]"
+```
+
+选定**原来受控的权威状态库**。新项目可以首次建立；已有项目不要通过换空库丢弃暴露、模型信任及运行历史。Linux示例：
+
+```bash
+export FFA_WORKSPACE_STATE_DB=/absolute/path/to/controlled/runtime.sqlite3
+python -m streamlit run apps/streamlit_app.py
+```
+
+Windows PowerShell示例：
+
+```powershell
+$env:FFA_WORKSPACE_STATE_DB = "D:\YourProject\runtime.sqlite3"
+python -m streamlit run apps/streamlit_app.py
+```
+
+路径是操作者配置，不能取自上传包。启动后打开侧栏 **Focused Research / Research Mission**。仓库不提交真实原始输入、密钥、客户数据或状态数据库。
+
+## 2. 一个普通研究例子
+
+问题：在固定的SPY日频下一交易日收益任务上，检查波动率或动量特征是否改善Ridge基线。不是询问明天买卖什么。
+
+在“Advanced settings”选择本地项目目录，提供冻结的Yahoo原始JSON及可选source metadata。没有数据时明确阻断，不自动生成假行情。选择deterministic先验证工程；live需要操作者已有合法provider环境配置；replay必须匹配不可变call_id。
+
+模板使用 `Improve SPY next-session return prediction` 或 `改进 SPY 下一交易日收益预测模型`。研究备注可以补充想检查的问题，但不会自动扩成新任务、改变MAE阈值或权限。
+
+起点基线示例：
+
+```json
+{"model_family":"ridge_regression","model_params":{"alpha":1.0},"feature_groups":["base_lags"]}
+```
+
+允许特征选base_lags、momentum、volatility；例如3轮、每轮2候选、40次fit预算。任务摘要与数据/证据等级核对后点击 **Start research mission**。页面立即关联Mission和后台队列；基线及研究在子进程运行。停止可能早于上限，未改善或重复耗尽也是合法结果，不会一直搜索到出现赢家。
+
+## 3. 查看、恢复、审核和带走成果
+
+Overview显示实际执行状态和研究结论；Research history区分训练与stop/diagnose/review动作。Candidate detail可切换基线/候选，查看真实配置、diff、Feedback和预测引用。切换、刷新、关闭后从已登记project/campaign URL重新打开不会触发重训。历史selector能重开任务。相同表单的重复点击复用提交，主动再做一次请先点击 **Prepare a new intentional repeat**。
+
+遇到request_review，页面显示冻结请求；批准/拒绝后点击恢复，不能在批准时修改标签或评价。中断后Refresh status检查stale进程，再Resume；活着的子进程或错误合同会阻断，不强行重跑。取消先持久化，旧worker不能覆盖取消状态。
+
+**Prepare ResearchPackage → Download ResearchPackage** 导出带索引和哈希的研究证据。包包括Mission、Campaign、计划、预测、Manifest、Feedback、事件、失败和外部来源。可以独立读取逐行预测复算指标。
+
+**Refit selected model and register bundle → Download ModelBundle** 显式训练并登记一个已接受候选。这个操作不是最后一个fold estimator的复制，不自动推广/部署。模型包在原环境加载需要同一个包外可信状态库；复制到另一台机器不自动授予信任。新环境迁移尚需审核，不要改trusted字段绕过。
+
+## 4. 一个受控BYO例子
+
+用自己的同任务表格增加一个已经审核的数值因子`ext_signal`。选 **Controlled CSV / Parquet**，填写文件路径和数据合同；不接受任意Python、notebook或已有陌生pickle模型。基线仍是内置Ridge/RF/GBDT。
+
+表格至少有timestamp、decision_time、label_start_time、label_end_time、label、已声明的研究列；日期必须是连续的真实XNYS session，标签区间必须精确对应下一session。base_lags为return_lag_1至return_lag_5。可提供spy_adj_close和next_adj_close复算收益。实际到达/可用时刻用另外的timezone-aware列，不把日期当供应商实测时刻。
+
+合同的关键增量示例（在页面已有合同上追加，不省略原feature_columns和availability）：
+
+```json
+{
+  "name":"ext_signal",
+  "version":"1",
+  "reviewer":"local_research_operator",
+  "source_description":"Describe the actual reviewed numeric factor and availability",
+  "review_status":"approved",
+  "available_at_column":"ext_signal_available_at"
+}
+```
+
+将该对象加入reviewed_features、ext_signal加入feature_columns和feature_availability；有available_at_column时表格必须提供该列和decision_at，且可用时刻不晚于决策。没有逐行可用时刻则只标用户声明，不声称无泄漏。真实外部数据默认external_unknown；simulation_only仅用于明确的模拟数据，不允许自报sealed。
+
+选择允许特征中的external_numeric，启动相同研究流程。系统必须在实际矩阵/Manifest中出现ext_signal，不只是报告里写了它。Data/provenance区分已核对交易日/标签时序、供给价格复算、最后标签未核验和特征因果未证明。
+
+## 5. 模式与证据边界
+
+- deterministic：实际规则Advisor，适合工程/快速演示，不是真实LLM质量。
+- live：真实provider提案，数值和权限仍由代码裁决；必须保留调用与cost未知值。
+- replay：按固定prompt/call_id读取校验过的响应，不重新请求provider；prompt/schema变更要新录制。
+- 同期历史SPY是development。无改善只针对实际完成的搜索范围；不能推断市场不存在任何有效信号。
+- 确认授权是可信操作者的独立接口，不在普通研究按钮里执行；没有合法封存数据就不能取得真实独立确认。
+
+研究路线下一步是补真实LLM/用户/跨平台证据，再决定是否批准V3。当前没有定时前瞻记录、正式标签成熟生命周期或自动交易。
+
+---
+
+## 历史广度平台操作说明（保留，不代表R6主线已重跑native验收）
+
 # Finance Forecast Agent 前端使用指南
 
 ## 启动
