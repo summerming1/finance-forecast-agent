@@ -1,6 +1,6 @@
 # V2.2-R Windows supplemental validation — 2026-09-22
 
-Status: **IN PROGRESS**. This report is not a full-acceptance claim. Cumulative/full-repository runs and same-test-SHA Linux/Chromium CI have finished; the user-authorized live 3×3 matrix must finish before the final verdict is written.
+Status: **COMPLETED SUPPLEMENTAL AUDIT — ENGINEERING PARTIAL**. All 9 requested live-matrix groups / 36 arms were attempted; the command exited 1 because all 18 LLM arms failed. This is not full acceptance. Deterministic engineering successes, provider failures and missing real-user/financial/platform evidence remain separate.
 
 ## Scope and Git identity
 
@@ -9,7 +9,7 @@ Status: **IN PROGRESS**. This report is not a full-acceptance claim. Cumulative/
 - `git status --short`, `git fetch origin`, `git checkout feat/mission-research-v2`, `git pull --ff-only`, `git branch --show-current`, `git rev-parse HEAD`, `git log -15 --oneline`: exit 0; no newer origin commit at the initial audit.
 - Initially no tracked modifications. Pre-existing untracked `.pytest-*` and `projects/validation_*` directories were preserved. No reset, stash, clean, merge, force push, or V3 implementation.
 - Test changes only so far: browser option selection, bounded Windows test wait times, additional adversarial tests. No product Controller/Queue/evaluator/Memory has been added or replaced.
-- Completed and normally pushed commits: `2680539482ce826c7d386859c0e351b3c9ca3b3b` (browser selection), `9d266451f5616edd28e3294cfea68a92b1d7ea59` (Windows test waits), `6299ca4de9e9a1453339d68be26f1ba47e07cabe` (29 adversarial cases). All production files under `src/apps/scripts` are unchanged relative to the initial SHA. Final documentation commit/HEAD: pending. Full local artifacts: `validation/supplement_20260922/` (ignored; provider market data is not committed).
+- Completed and normally pushed commits: `2680539482ce826c7d386859c0e351b3c9ca3b3b` (browser selection), `9d266451f5616edd28e3294cfea68a92b1d7ea59` (Windows test waits), `6299ca4de9e9a1453339d68be26f1ba47e07cabe` (29 adversarial cases), `a4ea6072c0762f29f1c7a2b010cc1ae68d8f6f98` (explicit in-progress evidence checkpoint). All production files under `src/apps/scripts` are unchanged relative to the initial SHA. The final docs-only commit contains this completed report; its exact SHA and same-SHA CI are supplied in the final Git handoff (a document cannot embed its own commit hash). Full local artifacts: `validation/supplement_20260922/` (ignored; provider market data is not committed).
 
 ## Environment and input identity
 
@@ -91,7 +91,26 @@ Real browser's trusted ModelBundle passes a separate Python process's feature-on
 
 ### R5 — 3 windows × 3 seeds × 4 actual arms
 
-User explicitly approved completion of the full, potentially multi-hour real-provider matrix after provider failures appeared. Frozen catalog: 41 configurations; twelve candidate slots, 4 TPE startup trials, estimator seed 42, search seeds 17/42/91; windows start 2010/2013/2016. All arms invoke the existing Controller/compiler/evaluator. Logical LLM calls and HTTP retries must be distinguished. No failed arm will be replaced with deterministic output or rerun to select a winner. Matrix is still running; conclusions pending.
+User explicitly approved completion of the full, potentially multi-hour real-provider matrix after provider failures appeared. Frozen catalog: 41 configurations; twelve candidate slots, 4 TPE startup trials, estimator seed 42, search seeds 17/42/91; windows start 2010/2013/2016. All arms invoke the existing Controller/compiler/evaluator. **All 9 groups / 36 arms were attempted, exit 1**. No failed arm was replaced with deterministic output or rerun to select a winner.
+
+The complete derived per-arm report, including MAE, fold stability, actual cost/usage counters, identities and durations, is [V22R_LIVE_BENCHMARK_20260922.json](V22R_LIVE_BENCHMARK_20260922.json). Raw matrix SHA256: `4d7ef46eac305724565165f7144a083a1db9ac2c3450e0920140efc13ff7c65e`. All 36 execution contracts have unchanged runtime source signature `ffd9d27856f5a20c5cc2d35cd433fffb6052966f7f347bd766bfd10f73b770c3`; test/docs commits did not alter the running product code.
+
+| Arm | Completed / failed | Within-group unique candidate counts summed | Globally distinct accepted configs | Charged fits | Logical LLM calls / HTTP attempts | Measured arm wall sum |
+|---|---:|---:|---:|---:|---:|---:|
+| Random | 9 / 0 | 108 | 24 | 540 | 0 / 0 | 997.97s |
+| Optuna TPE | 9 / 0 | 108 | 35 | 540 | 0 / 0 | 1004.75s |
+| One-shot live | 0 / 9 | 0 | 0 | 108 (baselines only) | 9 / 18 | 2030.89s |
+| Adaptive live | 0 / 9 | 29 | 12 | 224 | 38 / 53 | 6343.89s |
+
+TPE actually used **36 startup decisions / 72 model-based decisions**; 65 duplicate sampler draws were rejected before fit. All arms recorded 0 invalid proposals, 0 executed duplicate proposals and 0 failed fit attempts. These zeros do not erase **18 failed provider calls**. Total charged fits: 1412. One-shot attempted one logical planning call per group (two HTTP attempts each), never feedback replanning; no successful one-shot plan was obtained. Adaptive accepted 7/7/6/7/2/0/0/0/0 candidates across the nine groups before request failure. No completed Adaptive arm exists.
+
+Across the dependent completed Random/TPE runs, descriptive median relative MAE improvements are **0.370084% / 0.129354%** versus their same-window best baselines. This is not a significance test or independent financial evidence. Partial Adaptive best observed MAE is 0.005014199810696815 in the 2010-start groups and 0.007601125102680281 in the first two 2013-start groups, sometimes better than the matched baselines/other arms; nevertheless those arms failed operationally. There is no defensible complete LLM superiority or inferiority conclusion from these partial trajectories. Lower LLM fit consumption caused by request failure is not proven efficiency.
+
+47 logical provider calls / 71 HTTP attempts: 29 returned responses, 18 failures. Known usage is 323304 prompt + 155450 completion = **478754 tokens**; 18 failed calls have unknown usage. Provider cost and human-operation minutes remain `null`, not zero. Per-arm measured wall times sum to **10377.50s**; this is not a separately instrumented whole-shell elapsed time. Many early failed requests consumed about 362s; later failures returned in about 2.7s. Records retain only `RuntimeError`, not private exception text: timeout/quota/rate-limit root cause cannot be conclusively assigned from these records alone.
+
+Independent read-only audit: all **29 successful live prompts** match accepted baseline/candidate metrics, actual StructuredFeedback and remaining budget, and load through immutable Replay hash validation. All **461 accepted PredictionArtifacts** have independently matching aggregate/fold metrics; **1167 raw artifact hashes** match authoritative records; targets/labels/folds/training counts match within each comparison window. The audit does not upgrade failed arms to successful campaigns. Main comparison is Memory cold; the separate cold/warm engineering ablation is described under R3.
+
+Research-value verdict: **FAIL for the complete live benchmark gate; value not established**. The system demonstrably executes feedback-driven valid experiments, but this run does not demonstrate reliable end-to-end live research, reduced human work, or generalization. Future provider diagnosis/retesting would be a separate task; it was not silently appended to this matrix.
 
 ### R6 — browser and controlled BYO
 
@@ -132,6 +151,7 @@ Linux exact-SHA command: `python -m pytest -q tests/test_focused*.py tests/test_
 - Linux CI on exact initial SHA: run `35692084674`, Python 3.11 **203 passed / 298.652s**, Python 3.13 **203 passed / 281.046s**. Initial-SHA browser run `35692084666` failed; it is not rewritten as successful. These are not claims about a later local commit.
 - Browser-fix SHA `2680539482ce826c7d386859c0e351b3c9ca3b3b`: Linux core `35698878652` passed both Python versions (203 each), browser `35698878635` **1 passed / 51.382s**, final real-SPY `35698878636` passed its actual execution and package/bundle steps. The final workflow does not upload an artifact; its complete log is retained locally. These passes apply to this SHA, not automatically to the subsequent new-test commit.
 - All test fixes/additions at SHA `6299ca4de9e9a1453339d68be26f1ba47e07cabe`: Linux core `35699872200`, Python 3.11 **232 passed / 322.932s**, Python 3.13 **232 passed / 246.742s**, no failures/skips; scoped Ruff/compile passed. Chromium `35699872277`: **1 passed / 50.444s**; frozen real-SPY `35699872203`: execution/package/bundle checks passed. JUnit and HEAD/TREE artifacts downloaded and matched. Windows long-path/symlink limits are still separately reported, not erased by Linux success.
+- Documentation checkpoint `a4ea6072c0762f29f1c7a2b010cc1ae68d8f6f98` was normally pushed while the matrix remained explicitly in progress. Same-SHA core `35704316009`: Python 3.11 **232 passed / 288.179s**, Python 3.13 **232 passed / 301.061s**; browser `35704316032`: **1 passed / 51.750s**; final real-SPY `35704316027`: passed. Exact-SHA artifacts/logs retained locally. This checkpoint did not claim matrix completion or full acceptance.
 - Local WSL probe: Linux 6.18.33.1, Python 3.10.12; pytest missing (`BLOCKED_ENV` for additional local WSL execution). macOS: `BLOCKED_ENV`, no environment.
 - No hour-scale/GPU/original-native training rerun: `NOT_RUN_COST`; full pytest's asset/env failures will be listed separately.
 
@@ -182,9 +202,9 @@ Existing training-frame `decision_time` / `label_end_time` and bundle `created_a
 
 `EXTERNAL_PRODUCT_V3: NOT_READY`
 
-No Shadow/V3 code was created. Real-user and independent-financial-evidence gates remain blocked. Final engineering verdict and exact final Git state are pending the running validations.
+No Shadow/V3 code was created. Real-user and independent-financial-evidence gates remain blocked. This supplemental audit ends with the explicit verdicts below, not a new product increment.
 
-## Explicit acceptance questions (final matrix/regression entries pending)
+## Explicit acceptance questions
 
 | Question | Evidence-backed answer |
 |---|---|
@@ -199,9 +219,32 @@ No Shadow/V3 code was created. Real-user and independent-financial-evidence gate
 | Real independent confirmation? | No: `BLOCKED_NO_ELIGIBLE_DATA`. No historical-SPY relabeling. |
 | Fresh-process ModelBundle? | Yes for historical-SPY and both simulated external-feature clients; delivery/serialization evidence only. |
 | Same Controller for all four strategies? | Yes: shared compiler/evaluator/budget/catalog/estimator seed, plus same-window comparison/target/baseline audit. |
-| Real LLM benchmark performed? | Running full user-authorized 3×3 matrix. Preserve failed arms; final completion/quality verdict pending. |
+| Real LLM benchmark performed? | Yes: all 9 groups / 36 arms attempted, exit 1. Random/TPE 18 completed; all 18 LLM arms failed. Full quality/value gate FAIL, not an unrun or fabricated comparison. |
 | Memory cold/warm? | Yes: frozen deterministic exact-task prior, cold 20 fits/2 candidates vs warm 12 baseline fits/0 new candidates; not live LLM superiority. |
 | Windows / Linux / macOS? | Windows real flows plus native privilege/long-path limits; Linux exact-SHA dual-Python and Chromium passed; macOS `BLOCKED_ENV`. |
 | Historical/native? | Full pytest executed and all 20 failures itemized; ten historical asset blockers. Hour/GPU/original-native training `NOT_RUN_COST`. |
 
 Unknown human-operation minutes and unmeasured manual-flow durations remain `null`. JUnit and instrumented scripts supply measured durations where available; elapsed filesystem timestamps are not substituted for measurements. All automated commands listed above returned the stated process exits, not a guessed status from a green UI badge.
+
+## Final stage and product verdicts
+
+| Stage | Overall supplemental result | Boundary |
+|---|---|---|
+| R0 | PASS | Status/history reconciled; source commits verified; no full-acceptance overclaim. |
+| R1 | PASS | Real two-round record→strict offline Replay and adversarial references/records. |
+| R2 | PASS | Actual Windows full Campaign crash/recovery, budget/generation/idempotency; Linux same-SHA tests. |
+| R3 | PASS | Engineering actions, actual browser review and frozen deterministic Memory ablation; not LLM superiority. |
+| R4 | BLOCKED_NO_ELIGIBLE_DATA | Engineering trust tests pass on Linux; Windows symlink setup BLOCKED_ENV; no genuine independent confirmation. |
+| R5 | FAIL | Full real matrix attempted; 18 provider-failed LLM arms, complete research value not established. |
+| R6 | BLOCKED_NO_REAL_USER | Actual browser/BYO engineering workflows pass; simulated clients are not real users. |
+
+```text
+V2.2-R ENGINEERING ACCEPTANCE: PARTIAL
+REAL USER VALIDATION: BLOCKED
+INDEPENDENT FINANCIAL EVIDENCE: BLOCKED
+INTERNAL PROSPECTIVE RECORDING: NOT_READY
+EXTERNAL_PRODUCT_V3: NOT_READY
+V3 PRODUCT DEVELOPMENT: NOT_READY
+```
+
+Remaining concrete limits: real users, eligible unexposed financial data, macOS, native Windows symlink privilege/long-root configuration, historical external assets/native-GPU training, portable trust migration, unmeasured human time, and real-provider operational reliability. One historical PermissionError did not recur in targeted/five-repeat/final cumulative tests but its root cause is unresolved; it was not erased. Stop after this validation/report handoff; no V3 work or automatic follow-on research is started.

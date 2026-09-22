@@ -21,6 +21,8 @@ Current status is defined only by [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLE
 
 R0–R5 are delivered; R6 product code was committed at `3fdd2d6403bc425d172d15eba749bcdc925f33e2` and remains **validation pending**, not fully accepted. Supplemental Windows validation starts from `625283636cef4faa080f8521683f81491611b5ff`: actual Chromium E2E passed twice after a test-only selection repair; real Bailian live→strict offline replay and complete Campaign crash/resume passed. Original failed CI records are preserved. Cumulative results, same-SHA CI, live benchmark failures and outstanding real-user/financial/platform gates are in [the supplemental report](docs/validation/V22R_WINDOWS_SUPPLEMENT_20260922.md) and the authoritative current-state document. V3 has not started.
 
+The full live 3×3×4 matrix was attempted: Random/TPE completed, but all 18 LLM arms failed provider requests. Overall supplemental engineering acceptance is **PARTIAL**, not proof of Agent superiority or independent financial performance. Real users and eligible unseen confirmation data remain unavailable.
+
 
 Start with these documents:
 

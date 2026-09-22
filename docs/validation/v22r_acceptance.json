@@ -433,7 +433,7 @@
     "validated_test_code_sha": "6299ca4de9e9a1453339d68be26f1ba47e07cabe",
     "production_code_changed": false,
     "report": "docs/validation/V22R_WINDOWS_SUPPLEMENT_20260922.md",
-    "status": "in_progress_not_full_acceptance",
+    "status": "completed_supplemental_audit_engineering_partial",
     "same_sha_linux_ci": {
       "core_run": 35699872200,
       "python_311": {"passed": 232, "failed": 0, "seconds": 322.932},
@@ -462,19 +462,46 @@
     },
     "windows_real_campaign_crash_resume": {"status": "PASS", "seconds": 59.45, "charged_fits": 24},
     "real_browser_review": {"approve": "PASS", "reject": "PASS", "advice_provenance": "assistant_authored_fixture"},
-    "simulated_byo_csv_parquet": "PASS_simulation_only_not_real_users",
-    "model_bundle_fresh_process": "PASS_serialization_consistency_not_out_of_sample_performance",
-    "portable_trust_migration": "NOT_IMPLEMENTED"
+    "simulated_byo_csv_parquet": {"status": "PASS", "provenance": "simulation_only", "real_users": false},
+    "model_bundle_fresh_process": {"status": "PASS", "evidence": "serialization_consistency_not_out_of_sample_performance"},
+    "portable_trust_migration": "NOT_IMPLEMENTED",
+    "real_live_matrix": {
+      "status": "FAIL",
+      "report": "docs/validation/V22R_LIVE_BENCHMARK_20260922.json",
+      "groups_attempted": 9, "arms_attempted": 36, "exit_code": 1,
+      "random_completed": 9, "tpe_completed": 9,
+      "one_shot_failed": 9, "adaptive_failed": 9,
+      "provider_logical_calls": 47, "provider_http_attempts": 71,
+      "returned_records": 29, "failed_records": 18,
+      "known_tokens": 478754, "unknown_usage_calls": 18,
+      "provider_cost": null, "human_minutes": null,
+      "charged_fits": 1412, "failed_fit_attempts": 0,
+      "tpe_startup_decisions": 36, "tpe_model_based_decisions": 72,
+      "accepted_predictions_independently_recomputed": 461,
+      "raw_artifact_hashes_checked": 1167,
+      "matrix_sha256": "4d7ef46eac305724565165f7144a083a1db9ac2c3450e0920140efc13ff7c65e",
+      "agent_superiority_claim": false
+    },
+    "final_verdicts": {
+      "R0": "PASS", "R1": "PASS", "R2": "PASS", "R3": "PASS",
+      "R4": "BLOCKED_NO_ELIGIBLE_DATA", "R5": "FAIL", "R6": "BLOCKED_NO_REAL_USER",
+      "V2.2-R ENGINEERING ACCEPTANCE": "PARTIAL",
+      "REAL USER VALIDATION": "BLOCKED",
+      "INDEPENDENT FINANCIAL EVIDENCE": "BLOCKED",
+      "INTERNAL PROSPECTIVE RECORDING": "NOT_READY",
+      "EXTERNAL_PRODUCT_V3": "NOT_READY",
+      "V3 PRODUCT DEVELOPMENT": "NOT_READY"
+    }
   },
   "external_gates": {
     "live_provider": "PASS: new real two-round Bailian record and strict offline replay; value matrix is separate",
-    "real_customer": "blocked_no_user",
-    "real_confirmation": "blocked_no_eligible_data",
+    "real_customer": "BLOCKED_NO_REAL_USER",
+    "real_confirmation": "BLOCKED_NO_ELIGIBLE_DATA",
     "macos": "BLOCKED_ENV",
     "windows": "real browser/queue/crash/resume/Parquet/fresh-process delivery tested; corrected cumulative 229 passed / 1 WinError 1314 BLOCKED_ENV / 2 skipped; exit 1 retained",
     "historical_native": "343 passed / 20 failed / 3 skipped full-run evidence retained; 10 missing historical assets BLOCKED_ASSET; long native/GPU NOT_RUN_COST",
     "browser": "PASS: Windows E2E twice; same test-code SHA 6299ca4 Linux Chromium run 35699872277 passed; historical failed runs unchanged",
-    "value_quality": "full real 3x3 matrix authorized and running; failed provider arms retained; measured human minutes null"
+    "value_quality": "FAIL: all 9 groups / 36 arms attempted; Random/TPE completed, all 18 live LLM arms failed; no superiority/efficiency claim; human minutes and provider cost null"
   },
   "authoritative_checkpoint": {
     "branch": "feat/mission-research-v2",

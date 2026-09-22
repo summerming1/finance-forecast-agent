@@ -11,11 +11,11 @@
 | 预测/Manifest/确定性反馈 | 是 | focused 通过 | 冻结历史 SPY | 非独立金融证据 | 身份已加固；恢复绑定 R2 |
 | Mission/Workspace | R6 持久工作区代码已提交 | AppTest/队列/导出/刷新及双版本核心 CI；补测见下 | 本轮 Windows Chromium 完整 E2E 两次通过；候选切换/新上下文/下载不增研究 fit | 非技术用户试用待测 | 单机可信操作者；同 SHA 新 CI 和平台缺口见验收报告 |
 | Live/Replay | 是 | 录制与对抗测试通过 | 本轮百炼 qwen3.8-27b 两轮真实录制→新进程清凭证并阻断网络回放一致 | 不是科研质量证明 | 真实请求无隐藏哨兵；Replay 零请求；费用未知 |
-| 动作与 Memory | R3 分发 + R6 审核/继续入口 | 停止/审核/诊断/消融/租户隔离 | 规则策略、队列审核集成 | 未证明 LLM 研究增益 | 新合同 live 需补测 |
+| 动作与 Memory | R3 分发 + R6 审核/继续入口 | 停止/审核/诊断/消融/租户隔离 | 规则策略、实际网页 Replay 审核及冻结 Memory 消融 | 未证明 LLM 研究增益 | 动作专项 live 未验证；已跑的 live 质量边界见 R5 |
 | Queue/恢复 | R2 事务 + R6 提交关联 | 原子提交/代次/预算/缓存/held-link修复 | 本轮 Windows 真实 SPY 完整 Campaign 进程树终止→新进程恢复，基线/A不重训、预算不退回 | 单机工程验收 | macOS 未测；Windows 原生符号链接权限受限 |
 | Confirmation | R4 封存登记/一次性授权/固定留出 | 错配、篡改、并发及崩溃测试通过 | 只有模拟封存证据 | 真实未见金融数据待测 | 不允许 Advisor 调用；可信单机操作 |
 | ModelBundle | R4 包外可信登记与完整性检查 | 篡改/路径/租户/环境/新进程通过 | 历史 SPY 无标签推理 | 不是样本外效果 | 旧包须重发；跨平台待测 |
-| Benchmark | R5 实际 Controller 策略接入 | 去重/seed/真实TPE/Advisor回放/账本通过 | 本轮经用户批准执行 3窗口×3种子真实 provider 四臂对照；失败保留 | 不能预设 Adaptive 获胜；人工时间未测 | 进度与最终完整性见补充报告；无规则 fallback |
+| Benchmark | R5 实际 Controller 策略接入 | 去重/seed/真实TPE/Advisor回放/账本通过 | 真实 3窗口×3种子×4臂全部尝试，exit 1；Random/TPE 18臂完成，LLM 18臂失败 | 完整 live 研究价值未证明；人工时间/费用未知 | 47逻辑调用/71 HTTP尝试，29返回/18失败；无规则 fallback；不能把失败省 fit 称效率提升 |
 | BYO | R6 表格 + 一个审核数值特征 + 内置模型配置 | CSV/Parquet/时间/声明分级/实际训练及交付 | 模拟客户端到端 | 无真实客户 | 特征因果与来源仍须人工审核；非任意模型上传 |
 
 ## R 批次执行状态
@@ -140,7 +140,7 @@ predictions = predict_model_bundle(bundle, unlabeled_frame, state_path=state_db,
 
 R0–R6 的定向/累计工程证据、精确源码树和运行层级见 `docs/validation/v22r_acceptance.json`、CI、`V2_MISSION_RESEARCH.md` 与补充报告。此前环境的浏览器管理策略阻塞是历史边界；本轮 Windows 正常安装 Chromium 的实际 E2E 已运行两次并通过，没有绕过主机策略，也没有用 AppTest 替代浏览器。
 
-剩余外部证据集中在 `CODEX_V22R_REMAINING_VALIDATION.md`：真实 LLM 对照的完整性及研究质量、实际人工时间、真实客户、合法封存金融确认、macOS、Windows 原生 symlink 权限、历史资产/native/GPU。本轮 Live→严格离线 Replay、Windows 完整 crash/resume 和浏览器已补测，不能继续当作“从未测试”。V3 尚未开始；标签成熟时刻合同不等于已实现前瞻记录生命周期。
+剩余外部证据集中在 `CODEX_V22R_REMAINING_VALIDATION.md`：真实 provider 失败原因与可靠性/研究质量、实际人工时间、真实客户、合法封存金融确认、macOS、Windows 原生 symlink 权限、历史资产/native/GPU。本轮真实 3×3 矩阵已完整尝试但 live 门禁 FAIL，不是没跑；Live→严格离线 Replay、Windows 完整 crash/resume 和浏览器已通过相应补测。整体工程验收 **PARTIAL**，不启动 V3；标签成熟时刻合同不等于已实现前瞻记录生命周期。
 
 
 ### R6 原始提交边界（历史检查点）
@@ -156,4 +156,4 @@ R6 正式分支可供本地拉取和继续修复，但浏览器真实 E2E 尚未
 - Focused final acceptance run `35691460205`：冻结真实 SPY **4002 rows**、**20 fit calls**、`research_outcome=no_improvement`、`confirmation_status=not_run_historical_data_exposed`，ResearchPackage / ModelBundle smoke 成功。
 - Focused browser acceptance run `35691460214`：**FAILED**。当前失败点是候选切换后，Playwright 期望 combobox value 为 `r1_c1_e78a28dd`，实际断言未满足。该失败保留为 R6 工程验收开放项，不能被 AppTest 或核心回归替代。
 
-因此当前产品口径是：**R0～R5 delivered；R6 code committed / validation pending；V3 not started。**
+该历史检查点的产品口径是：**R0～R5 delivered；R6 code committed / validation pending；V3 not started。** 本轮补测的新证据与限制见本文顶部当前表和补充报告。

@@ -2,7 +2,7 @@
 
 ## 2026-09-22 补测更新
 
-本轮从 `625283636cef4faa080f8521683f81491611b5ff` 继续，没有重新应用 R6。Windows 正常 Chromium 完整 E2E 已两次通过；真实百炼两轮录制→清凭证并禁止网络的新进程 Replay、真实 SPY Campaign 进程树终止/恢复、实际网页 approve/reject、模拟 CSV/Parquet 交付及可信模型新进程一致性均已补测。真实 3窗口×3种子对照经用户授权继续，失败不替换为规则结果。详细最终数量/提交/CI 和未闭合项见 `validation/V22R_WINDOWS_SUPPLEMENT_20260922.md` 与 `CURRENT_IMPLEMENTATION.md`。
+本轮从 `625283636cef4faa080f8521683f81491611b5ff` 继续，没有重新应用 R6。Windows 正常 Chromium 完整 E2E 已两次通过；真实百炼两轮录制→清凭证并禁止网络的新进程 Replay、真实 SPY Campaign 进程树终止/恢复、实际网页 approve/reject、模拟 CSV/Parquet 交付及可信模型新进程一致性均已补测。真实 3窗口×3种子×4臂已全部尝试（exit 1）：Random/TPE 18臂完成，18个 LLM 臂失败；47逻辑请求中29返回/18失败，费用和人工分钟数未知。不能以规则结果替换失败或声明 Agent 优势。详细最终数量/提交/CI 和未闭合项见 `validation/V22R_WINDOWS_SUPPLEMENT_20260922.md`、派生矩阵 JSON 与 `CURRENT_IMPLEMENTATION.md`。本轮结束后停止，后续诊断/重跑须另行启动，不自动开发 V3。
 
 下方“正式提交结果”和原始阻塞是历史基线；验收流程仍保留供复验，不表示上述项目尚未测试。真实用户、合法未暴露确认、macOS、历史资产/native/GPU、实际人工时间和可移植信任迁移仍不能宣称已通过。Windows symlink 创建权限阻塞没有通过改 skip 消除。
 
@@ -27,7 +27,7 @@
 
 每阶段报告 PASS / FAIL / BLOCKED_ENV / BLOCKED_ASSET / BLOCKED_CREDENTIAL / NOT_RUN_COST。给出实际命令、exit code、JUnit或日志路径、源码身份、输入身份、模拟/真实等级。不能仅说“测试通过”。无法运行要记录原因，不将其写成自动 skip 后的全绿。
 
-已经覆盖的工程路径请先复验，不重新实现：R0状态一致性；R1身份、隐藏正文过滤、不可变录制和严格回放；R2事务预算/generation/真实进程中断；R3停止/审核/消融/诊断和Memory；R4封存授权、篡改/并发/崩溃和包外模型信任；R5真正Optuna TPE、实际Advisor/共享Controller与账本遥测；R6持久网页/审核继续/研究包/受控数值特征。专用 Chromium CI 使用模拟输入和真实后台子进程，不是客户验收；本地助手浏览器被管理策略阻断，不曾绕过。
+已经覆盖的工程路径请先复验，不重新实现：R0状态一致性；R1身份、隐藏正文过滤、不可变录制和严格回放；R2事务预算/generation/真实进程中断；R3停止/审核/消融/诊断和Memory；R4封存授权、篡改/并发/崩溃和包外模型信任；R5真正Optuna TPE、实际Advisor/共享Controller与账本遥测；R6持久网页/审核继续/研究包/受控数值特征。专用 Chromium CI 使用模拟输入和真实后台子进程，不是客户验收。此前环境的本地浏览器策略阻塞是历史记录；本轮 Windows 使用正常安装的 Chromium 通过实际 E2E，没有绕过主机策略。
 
 ## 1. 当前源代码累计回归与平台矩阵
 
