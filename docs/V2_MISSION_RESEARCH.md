@@ -9,6 +9,10 @@
 
 ## User-authorized live retry: response envelope clarification — 2026-09-22
 
+### Completed user-authorized quota replacement matrix
+
+The replacement-model 3×3×4 matrix finished with exit 1: Random/TPE 9/9 each, One-shot 3/9, Adaptive 0/9 complete. `qwen3.8-27b` quota failure was independently confirmed. `qwen3.7-flash-2026-07-15` also exhausted allocation at the last Adaptive arm; its failed 12-fit attempt was retained and a new `qwen3.8-flash` campaign started. That campaign returned 11 successful calls but ultimately failed read-timeout retries. Fourteen proposal contract failures were independently reproduced, never rotated away as quota errors. New matrix: 73 logical calls / 78 HTTP attempts / 71 returned records, 1,180,254 known tokens, 1660 charged fits; cost/human minutes null. Independent audit: 526 predictions, 1356 raw hashes, 71 actual feedback/budget prompts, equal actual same-window targets/baselines and one source signature. Detailed commands/per-arm metrics are in `validation/V22R_LLM_RETRY_20260922.md` and JSON; old matrix remains historical. Real Live→offline Replay, Live Memory cold/warm and new browser delivery also pass with their explicit evidence limits. Engineering remains PARTIAL, research value FAIL/unproven, real-user/independent confirmation BLOCKED, V3 NOT_READY. No automatic further search or V3 work.
+
 ### Historical workbench fixture isolation — separately tested repair
 
 Restoring the original historical assets exposed an old navigation test's assumption that the user's saved reproduction plan must be unapproved. An approved plan correctly enables execution. The test now creates its own `simulation_only` MethodCard and tests both approved and unapproved plans, preserving approval-gate assertions and verifying navigation does not modify saved plan bytes. No production UI change. Original failure is retained in full/targeted reports; the first fixture setup failure (missing source_path) is retained too. Corrected file: 12 passed / 10.20s; combined historical/workbench files with isolated matching PDF parser: 27 passed / 11.71s, exit 0.

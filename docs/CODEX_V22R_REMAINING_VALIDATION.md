@@ -2,6 +2,8 @@
 
 ## 2026-09-22 补测更新
 
+**最新续测**：用户另行批准了额度耗尽时依次换模型。本轮从 `5040c61` 开始的真实 3×3 补跑已结束：Random/TPE 各 9/9、One-shot 3/9、Adaptive 0/9；原始及新模型额度 403 均实际记录，最后切到 qwen3.8-flash 后仍有最终超时。14 项建议合同失败没有用换模型抹去。当前代码 Windows 累计 231/1/2、Chromium 1/1；真实 Live→离线 Replay、Live Memory cold/warm、下载包复算/新进程均补测。原始缺失资产恢复，匹配 PDF 环境的 27 项相关复验通过。精确命令、失败与当前发布边界见 `validation/V22R_LLM_RETRY_20260922.md`。下段 18 个 LLM 臂失败是**此前历史矩阵**，不是本次新结果。工程仍 PARTIAL，R6 仍 validation pending；不继续自动重跑或开发 V3。
+
 本轮从 `625283636cef4faa080f8521683f81491611b5ff` 继续，没有重新应用 R6。Windows 正常 Chromium 完整 E2E 已两次通过；真实百炼两轮录制→清凭证并禁止网络的新进程 Replay、真实 SPY Campaign 进程树终止/恢复、实际网页 approve/reject、模拟 CSV/Parquet 交付及可信模型新进程一致性均已补测。真实 3窗口×3种子×4臂已全部尝试（exit 1）：Random/TPE 18臂完成，18个 LLM 臂失败；47逻辑请求中29返回/18失败，费用和人工分钟数未知。不能以规则结果替换失败或声明 Agent 优势。详细最终数量/提交/CI 和未闭合项见 `validation/V22R_WINDOWS_SUPPLEMENT_20260922.md`、派生矩阵 JSON 与 `CURRENT_IMPLEMENTATION.md`。本轮结束后停止，后续诊断/重跑须另行启动，不自动开发 V3。
 
 下方“正式提交结果”和原始阻塞是历史基线；验收流程仍保留供复验，不表示上述项目尚未测试。真实用户、合法未暴露确认、macOS、历史资产/native/GPU、实际人工时间和可移植信任迁移仍不能宣称已通过。Windows symlink 创建权限阻塞没有通过改 skip 消除。

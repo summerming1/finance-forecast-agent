@@ -2,7 +2,7 @@
   "schema_version": "v22r_acceptance_v1",
   "base_sha": "6e4f194453f77037929052a0a978cc76bc2017b7",
   "scope": "SPY_daily_next_session_return_forecast_only",
-  "record_semantics": "stages and authoritative_checkpoint preserve original delivery evidence; supplemental_validation_20260922 and external_gates record the newer supplemental audit; CURRENT_IMPLEMENTATION.md is the current capability authority",
+  "record_semantics": "stages and authoritative_checkpoint preserve original delivery evidence; supplemental_validation_20260922 is the first audit; quota_retry_20260922 and external_gates reflect the user-authorized model replacement continuation; CURRENT_IMPLEMENTATION.md is the current capability authority",
   "stages": {
     "R0": {
       "scope": "status truth and prototype claim guard",
@@ -493,15 +493,48 @@
       "V3 PRODUCT DEVELOPMENT": "NOT_READY"
     }
   },
+  "quota_retry_20260922": {
+    "report": "docs/validation/V22R_LLM_RETRY_20260922.md",
+    "matrix": "docs/validation/V22R_LLM_RETRY_20260922.json",
+    "initial_sha": "5040c6126373d436d1cc8db90f1318e3c62b0229",
+    "production_fix_sha": "02acafe0e137f4c5b72be915906dfd5d796e6582",
+    "test_fix_sha": "92a81895824ff29ab09981dcf3e8e5ca335e9c9c",
+    "publication": "local_commits_new_production_push_confirmation_pending",
+    "input_sha256": "0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b",
+    "source_signature": "c738ad775168781299f7507eaa2a4d9adaa00ca86d367995bb60100cc36fab2e",
+    "original_quota_error": "qwen3.8-27b: HTTP 403 AllocationQuota.FreeTierOnly",
+    "models_used": ["qwen3.7-flash-2026-07-15", "qwen3.8-flash"],
+    "rotation": "explicit quota only; failed attempt retained and new campaign/model contract used",
+    "windows_cumulative": {"passed": 231, "failed": 1, "skipped": 2, "seconds": 2290.47, "exit_code": 1, "failure": "BLOCKED_ENV: symlink WinError 1314"},
+    "windows_full": {"passed": 391, "failed": 3, "skipped": 3, "seconds": 3245.62, "exit_code": 1, "note": "old workbench test collected; PDF parser mismatch and native symlink also retained"},
+    "historical_corrected": {"passed": 27, "seconds": 11.71, "exit_code": 0, "environment": "isolated pypdf 6.14.2; main 6.19.0 unchanged; original missing assets restored"},
+    "browser": {"passed": 1, "seconds": 137.25, "exit_code": 0, "browser": "Chromium 153.0.8010.12", "input": "simulation_only", "fresh_context": true, "no_extra_research_fits": true},
+    "live_replay": {"status": "PASS", "model": "qwen3.7-flash-2026-07-15", "live_calls": 2, "offline_calls": 0, "live_fits": 20, "replay_fits": 20, "equal_predictions": true},
+    "live_memory": {"status": "PASS", "frozen_sha256": "00bf9021fa7b0919ff58087da8a6fcdb3580ca3c23a9f15dcf80c19eebc8831c", "cold_repeats": 1, "warm_repeats": 0, "fits_each": 20, "calls_each": 2, "claim": "historical_development_only"},
+    "new_browser_delivery": {"status": "PASS", "package_hashes": 24, "prediction_metrics": 8, "fresh_process_equal": true, "original_registry_used": true, "portable_trust_migration": "NOT_IMPLEMENTED"},
+    "matrix_result": {
+      "status": "FAIL", "exit_code": 1, "logical_arms": 36, "execution_attempts": 37,
+      "random_completed": 9, "tpe_completed": 9, "one_shot_completed": 3, "one_shot_failed": 6,
+      "adaptive_completed": 0, "adaptive_terminal_failed": 9, "additional_quota_failed_attempts": 1,
+      "invalid_proposals": 14, "logical_llm_calls": 73, "http_attempts": 78, "http_200": 71,
+      "quota_http_errors": 2, "transport_exceptions": 5, "known_tokens": 1180254,
+      "charged_fits": 1660, "failed_fit_attempts": 0,
+      "tpe_startup_decisions": 36, "tpe_model_based_decisions": 72,
+      "predictions_recomputed": 526, "artifact_hashes_checked": 1356, "prompts_audited": 71,
+      "provider_cost": null, "human_minutes": null, "agent_superiority_claim": false,
+      "single_model_causal_comparison": false
+    },
+    "verdicts": {"R0": "PASS", "R1": "PASS", "R2": "PASS", "R3": "PASS", "R4": "BLOCKED_NO_ELIGIBLE_DATA", "R5": "FAIL", "R6": "BLOCKED_NO_REAL_USER", "engineering": "PARTIAL", "real_users": "BLOCKED", "independent_financial_evidence": "BLOCKED", "prospective": "NOT_READY", "V3": "NOT_READY"}
+  },
   "external_gates": {
     "live_provider": "PASS: new real two-round Bailian record and strict offline replay; value matrix is separate",
     "real_customer": "BLOCKED_NO_REAL_USER",
     "real_confirmation": "BLOCKED_NO_ELIGIBLE_DATA",
     "macos": "BLOCKED_ENV",
-    "windows": "real browser/queue/crash/resume/Parquet/fresh-process delivery tested; corrected cumulative 229 passed / 1 WinError 1314 BLOCKED_ENV / 2 skipped; exit 1 retained",
-    "historical_native": "343 passed / 20 failed / 3 skipped full-run evidence retained; 10 missing historical assets BLOCKED_ASSET; long native/GPU NOT_RUN_COST",
-    "browser": "PASS: Windows E2E twice; same test-code SHA 6299ca4 Linux Chromium run 35699872277 passed; historical failed runs unchanged",
-    "value_quality": "FAIL: all 9 groups / 36 arms attempted; Random/TPE completed, all 18 live LLM arms failed; no superiority/efficiency claim; human minutes and provider cost null"
+    "windows": "new corrected cumulative 231 passed / 1 WinError 1314 BLOCKED_ENV / 2 skipped; actual Chromium 1 passed; original crash/resume evidence retained",
+    "historical_native": "new full 391 passed / 3 failed / 3 skipped retained; original missing assets recovered, isolated parser + corrected workbench combined 27 passed; main parser mismatch BLOCKED_ENV; native/GPU NOT_RUN_COST",
+    "browser": "PASS: new current-source Windows Chromium 1 passed / 137.25s with fresh context and delivery; old Linux CI not represented as new-SHA CI",
+    "value_quality": "FAIL: replacement-model 3x3x4 attempted, Random/TPE 9/9 each, One-shot 3/9, Adaptive 0/9; additional quota attempt retained; cost/human minutes null"
   },
   "authoritative_checkpoint": {
     "branch": "feat/mission-research-v2",

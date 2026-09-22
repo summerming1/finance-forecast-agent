@@ -13,6 +13,8 @@ live 与 replay 分开；模型/人工成本未知时保持 null。确定性或�
 
 ## 当前第一优先级
 
+最新用户授权的额度切换续测已经结束，当前详细结果以 `validation/V22R_LLM_RETRY_20260922.md`、对应 JSON 和 `CURRENT_IMPLEMENTATION.md` 为准。新矩阵 Random/TPE 各 9/9、One-shot 3/9、Adaptive 0/9 完成；真实 API 可用与完整研究价值是两回事。新 Windows 累计 231 passed / 1 symlink 权限失败 / 2 skipped，实际 Chromium 1 passed；历史资产恢复和匹配解析器复验已补上。生产最小修复 `02acafe`、测试隔离 `92a8189`；新生产改动发布确认尚待回复，不将旧 Linux CI 算作新 SHA。下方是此前审计的历史交接，不要求重新实现 R0～R6。结束本轮后停止，不自动追加研究或 V3。
+
 从正式分支最新 HEAD 开始，不重新应用 R6 patch，也不要 merge `validation/r6-20260922`。原始 run `35691460214` 的 candidate-selection 失败已经在 Windows 复现；本轮测试修复后完整 Chromium E2E 连续两次通过。真实百炼录制→严格离线回放、Windows 完整 Campaign 崩溃恢复、真实网页审核及模拟 CSV/Parquet 交付也已补测。精确提交、累计回归、同 SHA CI 和失败保留见 `validation/V22R_WINDOWS_SUPPLEMENT_20260922.md`，不要把这些已完成工作重新标成未实现。
 
 真实 3×3×4 对照已完整尝试，Random/TPE 18臂完成，但18个 LLM 臂因 provider 请求失败，完整研究价值未证明。后续若用户另行启动任务，再按 `CODEX_V22R_REMAINING_VALIDATION.md` 处理 provider 原因/可靠性/研究质量、macOS、真实用户、合法 confirmation 和历史资产/native 等独立门禁。本轮补测到此停止；不自动追加重跑、扩产品范围或启动 V3。
