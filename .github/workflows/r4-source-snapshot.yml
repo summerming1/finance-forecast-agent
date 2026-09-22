@@ -1,0 +1,26 @@
+name: R4 exact source snapshot
+on:
+  push:
+    branches: [validation/r4-20260922]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: e8a74b536ec747ab47d1cf6d1ded6b457e8d6d7f
+          persist-credentials: false
+      - name: Archive verified R3 source
+        run: |
+          mkdir -p /tmp/r4-source
+          git archive --format=tar.gz -o /tmp/r4-source/source.tar.gz HEAD
+          git rev-parse HEAD > /tmp/r4-source/HEAD.txt
+          git rev-parse HEAD^{tree} > /tmp/r4-source/TREE.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: r4-source-e8a74b5
+          path: /tmp/r4-source
+          retention-days: 7
