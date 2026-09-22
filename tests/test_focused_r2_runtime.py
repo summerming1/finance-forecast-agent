@@ -18,6 +18,12 @@ from finance_forecast_agent.focused_research import FocusedResearchController, R
 from finance_forecast_agent.task_queue import LocalTaskQueue
 
 
+def _campaign_wait_seconds(default):
+    # These assert recovery semantics, not a 15/20-second performance SLA.
+    # Windows process startup and durable SQLite writes need a bounded margin.
+    return 120 if os.name == 'nt' else default
+
+
 def _duplicate_submit(root, out):
     q = LocalTaskQueue(root)
     r = q.submit(task_type="test", command=[sys.executable, "-c", "pass"],
@@ -129,7 +135,7 @@ FocusedResearchController(project_dir=root/'project',frame=frame,dataset=data,ta
 ''')
     proc = subprocess.Popen([sys.executable, str(script), str(tmp_path)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
-        deadline = time.monotonic() + 15
+        deadline = time.monotonic() + _campaign_wait_seconds(15)
         while not marker.exists() and proc.poll() is None and time.monotonic() < deadline:
             time.sleep(.05)
         assert marker.exists(), proc.communicate(timeout=1)
@@ -198,7 +204,7 @@ assert result['fit_calls']==24, result['resource_usage']
     marker = tmp_path / 'during-second'
     root = tmp_path / 'project' / 'focused_campaigns' / 'full-crash'
     try:
-        deadline = time.monotonic() + 20
+        deadline = time.monotonic() + _campaign_wait_seconds(20)
         while not marker.exists() and time.monotonic() < deadline:
             if q.load(record.task_id).status == 'blocked':
                 break
@@ -225,7 +231,7 @@ assert result['fit_calls']==24, result['resource_usage']
             time.sleep(.05)
         assert any(r.task_id == record.task_id for r in recovered)
         q.resume(record.task_id)
-        deadline = time.monotonic() + 20
+        deadline = time.monotonic() + _campaign_wait_seconds(20)
         while q.load(record.task_id).status not in {'completed', 'blocked'} and time.monotonic() < deadline:
             time.sleep(.05)
         assert q.load(record.task_id).status == 'completed', Path(record.log_path).read_text()
@@ -336,7 +342,7 @@ def test_queue_submission_runs_complete_real_shaped_campaign(tmp_path):
     r = submit_focused_campaign(q,project_dir=tmp_path/'project',raw_spy_json=raw,
                                rounds=1,candidates_per_round=1,max_fit_calls=20,use_memory_prior=False)
     try:
-        deadline = time.monotonic()+20
+        deadline = time.monotonic()+_campaign_wait_seconds(20)
         while q.load(r.task_id).status not in {'completed','blocked'} and time.monotonic()<deadline:
             time.sleep(.05)
         assert q.load(r.task_id).status == 'completed', Path(r.log_path).read_text()

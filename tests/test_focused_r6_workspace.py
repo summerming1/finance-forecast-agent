@@ -1,6 +1,7 @@
 """R6 contract probes. All constructed clients/data are simulation_only."""
 from __future__ import annotations
 
+import os
 from dataclasses import replace
 from pathlib import Path
 
@@ -116,6 +117,8 @@ def test_unreviewed_external_feature_cannot_execute(tmp_path):
 
 def _wait_task(queue, task_id, statuses=('completed','blocked','waiting_review'), timeout=40):
     import time
+    if os.name == 'nt':
+        timeout = max(timeout, 120)  # Durable Windows execution is not a 40s SLA.
     until = time.monotonic()+timeout
     while time.monotonic()<until:
         task = queue.load(task_id)
@@ -351,7 +354,7 @@ def test_apptest_switch_candidate_new_session_and_download_never_refits(tmp_path
     next(x for x in app.number_input if x.label=='Max research rounds').set_value(1)
     next(x for x in app.number_input if x.label=='Max fit calls').set_value(20)
     app.run();next(x for x in app.button if x.label=='Start research mission').click().run()
-    until=time.monotonic()+40
+    until=time.monotonic()+(120 if os.name == 'nt' else 40)
     while time.monotonic()<until and not any('Mission completed' in x.value for x in app.success):
         time.sleep(.2);app.run()
     assert not app.exception

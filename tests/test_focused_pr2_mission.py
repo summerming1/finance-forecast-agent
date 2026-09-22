@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 from pathlib import Path
 
@@ -121,7 +122,7 @@ def test_mission_page_rejects_unsupported_goal_and_runs_supported_mission(tmp_pa
     assert not app.exception
     # R6: the submit operation returns a durable queue ID, not a fitted model.
     # Poll actual execution; preserve the original completion/artifact assertions.
-    deadline = time.monotonic() + 40
+    deadline = time.monotonic() + (120 if os.name == 'nt' else 40)
     while time.monotonic() < deadline and not any("Mission completed" in item.value for item in app.success):
         time.sleep(.2)
         app.run(timeout=20)
