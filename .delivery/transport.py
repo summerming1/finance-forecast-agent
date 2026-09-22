@@ -10,8 +10,10 @@ import urllib.request
 from pathlib import Path
 
 BASE = '1bfe5ef78dd475d12f386c528ace44638e27434c'
-TREE = '9481be1af3f9a00cbf00f616f482b514816d9b95'
+INITIAL_TREE = '9481be1af3f9a00cbf00f616f482b514816d9b95'
+TREE = '1e5095c25be23957c7de3b26f6a37250b972bad8'
 PATCH_HASH = '21fae3453e09708403e6241546165225338dd1286d9c5e1a46a53819d5e1a150'
+FIX_HASH = '3459ecb18689d90ed78b27fb839079bb111a9d85a9a73e9ad95eebfa169d12aa'
 ALLOWED = {'.env.example','.github/workflows/focused-browser-acceptance.yml',
  '.github/workflows/focused-v1-validation.yml','.gitignore','apps/pages/8_Focused_Research.py',
  'docs/CODEX_FOCUSED_HANDOFF.md','docs/CODEX_V22R_REMAINING_VALIDATION.md',
@@ -26,11 +28,13 @@ ALLOWED = {'.env.example','.github/workflows/focused-browser-acceptance.yml',
  'tests/test_focused_r6_workspace.py','tests/test_focused_streamlit_page.py'}
 parts = Path(__file__).parent
 patch = lzma.decompress(base64.b64decode(''.join((parts / f'r6.part{i}').read_text().strip() for i in range(1,7)), validate=True))
-assert hashlib.sha256(patch).hexdigest() == PATCH_HASH
+fix = lzma.decompress(base64.b64decode((parts / 'r6.fix1.b64').read_text().strip(), validate=True))
 assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip() == BASE
-subprocess.run(['git','apply','--check','--index','-'],input=patch,check=True)
-subprocess.run(['git','apply','--index','-'],input=patch,check=True)
-assert subprocess.check_output(['git','write-tree'],text=True).strip() == TREE
+for content, digest, tree in ((patch, PATCH_HASH, INITIAL_TREE), (fix, FIX_HASH, TREE)):
+    assert hashlib.sha256(content).hexdigest() == digest
+    subprocess.run(['git','apply','--check','--index','-'],input=content,check=True)
+    subprocess.run(['git','apply','--index','-'],input=content,check=True)
+    assert subprocess.check_output(['git','write-tree'],text=True).strip() == tree
 paths = subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
 assert set(paths) == ALLOWED
 print('Verified R6 tree:',TREE)
