@@ -901,6 +901,9 @@ class FocusedResearchController:
             self.checkpoint_hook(event_type, payload)
 
     def _initialize_evidence_ledger(self) -> None:
+        from .focused_delivery import record_development_exposure
+
+        record_development_exposure(self._runtime.db, self.frame, self.task, subject=self.spec.campaign_id)
         assert self._runtime is not None
         exposure = self._runtime.get("exposure")
         if exposure is None:

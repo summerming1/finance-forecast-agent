@@ -180,13 +180,14 @@ def test_model_bundle_refit_loads_in_fresh_process_and_predicts_without_label(tm
         task=FocusedTaskSpec(),
         dataset=snapshot,
         out_dir=tmp_path / "bundle",
+        state_path=tmp_path / "runtime.sqlite3",
     )
     metadata = json.loads((bundle / "bundle.json").read_text(encoding="utf-8"))
     assert metadata["candidate"]["model_params"]["alpha"] == 7.0
     assert metadata["evidence_relationship"] == "selected_on_development_then_refit_without_confirmation_tuning"
 
     unlabeled = frame.drop(columns=["label"]).tail(8).copy()
-    predictions = predict_model_bundle(bundle, unlabeled)
+    predictions = predict_model_bundle(bundle, unlabeled, state_path=tmp_path / "runtime.sqlite3")
     assert predictions.shape == (8,)
     csv_path = tmp_path / "unlabeled.csv"
     unlabeled.to_csv(csv_path, index=False)
@@ -194,7 +195,7 @@ def test_model_bundle_refit_loads_in_fresh_process_and_predicts_without_label(tm
         "import pandas as pd; "
         "from finance_forecast_agent.focused_delivery import predict_model_bundle; "
         f"x=pd.read_csv({str(csv_path)!r}); "
-        f"p=predict_model_bundle({str(bundle)!r}, x); "
+        f"p=predict_model_bundle({str(bundle)!r}, x, state_path={str(tmp_path / 'runtime.sqlite3')!r}); "
         "print(len(p))"
     )
     completed = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, check=True)

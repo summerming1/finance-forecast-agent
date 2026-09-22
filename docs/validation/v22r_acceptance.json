@@ -117,7 +117,7 @@
     },
     "R3": {
       "scope": "research actions memory",
-      "status": "local_gate_passed",
+      "status": "delivered",
       "test_evidence": [
         {
           "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
@@ -151,12 +151,100 @@
         "Memory efficiency test reuses identical development history; it is not unseen-data generalization.",
         "Review resolution API is implemented; web integration belongs to R6.",
         "Legacy tests received valid context/statement prerequisites to keep testing intended numeric/role rejection; guards were not relaxed."
+      ],
+      "commit": "1204a91e321a5a3dfda1e89eb231ebd4bba46c16",
+      "followup_commit": "e8a74b536ec747ab47d1cf6d1ded6b457e8d6d7f",
+      "ci_runs": [
+        35610742989,
+        35610743222
       ]
     },
     "R4": {
-      "scope": "confirmation and model trust",
-      "status": "not_started",
-      "test_evidence": []
+      "scope": "confirmation grants and model trust",
+      "status": "local_gate_passed",
+      "base_sha": "e8a74b536ec747ab47d1cf6d1ded6b457e8d6d7f",
+      "test_evidence": [
+        {
+          "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
+          "passed": 160,
+          "failed": 0,
+          "seconds": 153.35,
+          "exit_code": 0,
+          "new_R4_cases": 32
+        },
+        {
+          "command": "scoped Ruff + compileall + git diff --check",
+          "exit_code": 0
+        },
+        {
+          "command": "frozen SPY + ResearchPackage hash audit + refit/new process",
+          "exit_code": 0,
+          "rows": 4002,
+          "fits": 20,
+          "outcome": "no_improvement",
+          "package_files": 27,
+          "prediction_count": 8,
+          "raw_sha256": "5fb282f6278d14000592e0e432fe69a5c00fdb6f7b48cbb56368fc0e3185bbcd"
+        }
+      ],
+      "clauses": [
+        "sealed_actual_input_binding",
+        "full_selection_and_grant_hash",
+        "one_shot_concurrent_authorization",
+        "fixed_training_recipe_maturity",
+        "crash_consumes_grant",
+        "simulation_claim_preserved",
+        "development_target_exposure",
+        "confirmation_not_in_memory",
+        "external_bundle_authority",
+        "pre_load_hash_path_symlink_check",
+        "environment_binding",
+        "fresh_process_numerical_parity"
+      ],
+      "test_nodeids": [
+        "test_legacy_simulation_checks_full_selection_hash",
+        "test_confirmation_loads_bound_data_once_and_is_simulation_only",
+        "test_confirmation_wrong_tenant_fails_before_fit",
+        "test_confirmation_tampered_sealed_bytes_rejected",
+        "test_modified_grant_rejected[selection_reason]",
+        "test_modified_grant_rejected[evaluation_policy]",
+        "test_modified_grant_rejected[confirmation_dataset_id]",
+        "test_modified_grant_rejected[source]",
+        "test_consumed_targets_cannot_get_second_grant",
+        "test_failed_confirmation_consumes_grant_without_free_retry",
+        "test_exposed_targets_cannot_be_resealed_by_renaming_or_revising_labels",
+        "test_model_bundle_requires_external_trust_before_deserialization",
+        "test_model_bundle_tamper_rejected_before_load[model]",
+        "test_model_bundle_tamper_rejected_before_load[metadata]",
+        "test_model_bundle_tamper_rejected_before_load[symlink]",
+        "test_trusted_bundle_fresh_process_predictions_and_maturity",
+        "test_concurrent_workers_evaluate_once_and_replay_same_result",
+        "test_grant_rejects_environment_change_before_evaluation",
+        "test_registered_bundle_rejects_environment_mismatch_before_load",
+        "test_model_refit_rejects_unmatured_labels_and_rebinding",
+        "test_legacy_simulation_split_cannot_change_after_freeze",
+        "test_confirmation_cannot_enter_research_memory",
+        "test_sealed_targets_cannot_be_exposed_by_normal_research",
+        "test_legacy_campaign_exposure_blocks_false_seal",
+        "test_real_unknown_provenance_cannot_create_a_seal",
+        "test_grant_rejects_training_labels_available_after_holdout_start",
+        "test_completed_confirmation_rejects_mutated_result",
+        "test_refit_cannot_overwrite_existing_trusted_bundle",
+        "test_equivalent_session_serializations_cannot_reset_target_exposure",
+        "test_worker_crash_after_fit_cannot_reuse_confirmation_grant",
+        "test_training_registration_preserves_first_exposure",
+        "test_legacy_exposure_endpoint_uses_session_not_text_comparison"
+      ],
+      "limitations": [
+        "single trusted host/operator; no OS authorization isolation",
+        "all projects must share authoritative registry; an empty DB does not reset real exposure",
+        "no real independently sealed financial dataset",
+        "XNYS label availability may be a declared close assumption, not measured receipt",
+        "legacy unregistered ModelBundles must be reissued; explicit state_path/FFA_DELIVERY_STATE_DB required",
+        "Windows/macOS, live provider, and actual external customers not rerun",
+        "no rolling confirmation refit; only fixed training/static holdout",
+        "R5/R6 and V3 not started"
+      ]
     },
     "R5": {
       "scope": "actual-policy value benchmark",

@@ -13,8 +13,8 @@
 | Live/Replay | 是 | 录制单测通过 | Codex 报告百炼两轮与无凭证回放 | 不是科研质量证明 | R1 已加固；本轮真实 provider 待测 |
 | 动作与 Memory | R3 实际分发 | 停止/审核/诊断/消融/租户隔离通过 | 规则策略与真实历史 smoke | 未证明 LLM 研究增益 | live 与网页集成待测 |
 | Queue/恢复 | R2 事务路径 | 原子提交/代次/预算/缓存通过 | Linux 完整 Campaign kill/resume 已测 | 单机工程验收 | UI 集成与其他平台 R6 |
-| Confirmation | 原型，默认禁用真实标签 | 模拟保护测试 | 无可信未见金融数据 | 未完成 | R4 |
-| ModelBundle | 显式 refit/加载 | 无 label/新进程通过 | 历史数据推理 | 不是样本外效果 | 包外信任 R4 |
+| Confirmation | R4 封存登记/一次性授权/固定留出 | 错配、篡改、并发及崩溃测试通过 | 只有模拟封存证据 | 真实未见金融数据待测 | 不允许 Advisor 调用；可信单机操作 |
+| ModelBundle | R4 包外可信登记与完整性检查 | 篡改/路径/租户/环境/新进程通过 | 历史 SPY 无标签推理 | 不是样本外效果 | 旧包须重发；跨平台待测 |
 | Benchmark | 旧代理策略脚本 | 流程测试通过 | 旧结果保留 | 不具备 Agent 比较资格 | R5 |
 | BYO | 内置模型配置/受控表格 | 两模拟客户 | 无真实客户 | 未完成 | 完整特征/时间与用户路径 R6 |
 
@@ -24,7 +24,8 @@
 - R1：统一内容/目标/配置身份，可见证据共享投影，v2 不可变 LLM 录制与哈希校验；本地 87 项累计回归及真实 SPY smoke 通过。
 - R2：既有 Queue/Controller 使用事务状态，冻结计划、缓存和预算可恢复；本地 focused 104 项加共享队列 4 项通过，真实 SPY smoke 通过。
 - R3：实际控制动作、父模型约束、剩余资源上下文和有界 Memory 已实现；本地 128 项累计及共享回归通过。
-- R4～R6：待实施。每批先测试，再提交、核验远端，再开始下一批。
+- R4：封存数据与冻结确认授权、单次执行、包外可信 ModelBundle 已实现；验收记录见版本日志和条款映射。
+- R5～R6：待实施。本次按用户要求在 R4 提交后停止，不开始 Benchmark 或网页/BYO 扩展。
 
 ## 当前边界
 
@@ -59,3 +60,41 @@
 `stop` 不创建虚假 Candidate；`diagnose` 对已有预测做只读残差/fold 摘要；`request_review` 保存暂停，不再调用模型。通过 `focused_runtime.resolve_campaign_review(state_path, campaign_id, review_id, tenant_id=..., decision="approve"|"reject", reviewer=...)` 记录操作者决定，再以相同冻结合同恢复。批准只允许继续原研究合同，不修改数据或评价。
 
 消融从实际对照派生，只移除一个已有特征组；简化保持模型族/seed，减少声明的维度。未知动作、LLM 自报指标或评价覆盖被拒绝。Memory 保存真实配置、假设、diff 与可定位预测；写入按租户和 run_id 隔离，损坏文件不会当空库覆盖。相同数据的 warm Memory 可减少重复研究，但不把旧分数当本轮结果，也不声称泛化增益。
+
+
+## R4 确认与模型交付：使用、信任和兼容
+
+沿用 `RuntimeDB`，不新增数据库后端、Queue、Controller 或数值 Evaluator。API 属于**单机可信操作者**，不是给不可信用户/Advisor 的权限系统；调用者能修改主机文件或权威数据库时，不宣称 OS 级安全。所有关联项目必须使用同一受控 `runtime.sqlite3`，创建空库不代表已有历史变成未暴露。
+
+### 确认协议
+
+`register_delivery_dataset` 登记实际训练/确认帧、Task/Snapshot、原始来源、审核者、目标集合与实际文件哈希。确认帧被复制到受控 Parquet，工作者只接受授权 ID；不接受调用者任意指定的 frame、split 或模型路径。登记过的开发目标（含旧 Campaign 暴露区间）不能再封存；改标签值、文件名、来源名或等价日期写法不产生新的未见目标。日频 session 字段只接受无时区的午夜/日期表示，实际时刻使用额外的 `decision_at`、`label_available_at`。
+
+`create_confirmation_grant` 冻结候选、基线、Task、训练/确认登记、评价阈值、代码和依赖环境。首版协议仅 `fit_training_once_fixed_holdout_v1`：基线与候选各训练一次，评价相同留出目标。训练标签可用时刻必须严格早于首个留出决策时刻。不支持静默滚动再训练。真实数据需要可信操作者审核封存来源；`sealed_before_research` 是需负责核实的来源声明，不是系统自动证明人类从未见过数据。
+
+```bash
+python scripts/run_focused_confirmation.py --state-db projects/finance_agent/runtime.sqlite3 --grant-id <已登记的授权ID> --tenant-id default
+```
+
+授权在执行前原子消费。并发调用不能重复训练；成功重读返回相同封存结果。异常/进程崩溃保留已消费状态，无自动重试、更不能重发授权反复看结果。失败只能由操作者调查，不提供自动“重置资格”接口。结果存于权威账本及 `delivery_artifacts/confirmations/<grant>/result.json`，不进入当前研究 Memory。任何模拟输入使输出保持 `simulation_only_confirmation`。
+
+### ModelBundle
+
+模型包只能由平台 refit 产生，必须由**包外**权威数据库登记。包内 `trusted_internal_bundle` 不再授予信任。加载前检查来源、租户、环境、元数据和模型字节哈希、路径和符号链接；反序列化使用已验证的同一份字节。输出目录已存在则拒绝覆盖。
+
+```python
+from finance_forecast_agent.focused_delivery import refit_model_bundle, predict_model_bundle
+state_db = project_dir / "runtime.sqlite3"   # 固定受控配置，不从上传的模型包取得
+bundle = refit_model_bundle(frame, selected_candidate, task=task, dataset=snapshot,
+                            out_dir=project_dir / "models" / "new_bundle_id",
+                            state_path=state_db, tenant_id="default")
+predictions = predict_model_bundle(bundle, unlabeled_frame, state_path=state_db, tenant_id="default")
+```
+
+省略 `state_path` 仅允许操作者预设 `FFA_DELIVERY_STATE_DB`；未配置就拒绝。不自动相信包旁的数据库。旧未登记包不自动迁移为可信，需从原训练数据重新 refit/签发。复制/导出包不自动把另一个环境变为可信加载端；可信转移登记与跨环境转换尚未提供。
+
+训练截止同时记录最后 session、最后标签可用时刻及 `training_asof`。有 timezone-aware `label_available_at` 时使用显式值；否则**明确记为按 XNYS 收盘假定的可用时刻，不是实测供应商到达时间**。这不是 V3 前瞻生命周期实现。
+
+### R4 未测边界
+
+没有取得合法未暴露真实金融数据、没有真实独立确认结论；没有本轮 live LLM 调用；Windows/macOS 实机、安全隔离部署及实际客户端模型搬迁仍未验收。当前真实 SPY 仍为历史 development；删除训练尾部 label 后推理只证明接口，不是样本外表现。R5 真实策略对照和 R6 持久网页/BYO 集成仍待实施。

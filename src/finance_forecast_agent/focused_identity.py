@@ -73,9 +73,20 @@ def target_row_ids(frame: pd.DataFrame, task: dict[str, Any]) -> list[str]:
     definition = {key: task.get(key) for key in ('entity_id', 'frequency', 'horizon', 'label_definition')}
     if not {'timestamp', 'label_end_time'} <= set(frame.columns):
         raise ValueError('Target identity requires session and label end time')
-    return [identity({'target': definition, 'session': str(row.timestamp), 'end': str(row.label_end_time)},
+    def session_key(value):
+        if task.get('frequency') != 'daily':
+            return str(value)
+        # These fields identify sessions, not instants. Actual provider receipt
+        # / decision instants belong in separate timezone-aware columns.
+        stamp = pd.Timestamp(value)
+        if pd.isna(stamp) or stamp.tzinfo is not None or stamp != stamp.normalize():
+            raise ValueError('Daily target identity requires unambiguous session dates')
+        return stamp.date().isoformat()
+
+    return [identity({'target': definition, 'session': session_key(row.timestamp), 'end': session_key(row.label_end_time)},
                      domain='focused-target-key-v1')
             for row in frame[['timestamp', 'label_end_time']].itertuples(index=False)]
+
 
 
 def data_identity(frame: pd.DataFrame, task: dict[str, Any]) -> dict[str, str]:

@@ -184,3 +184,10 @@ These historical tests passed, but do not close the reopened V2.2-R contracts or
 `tests/test_focused_r2_runtime.py`: cross-process idempotency; side-effect-free liveness and PID birth binding; accepted campaign no-refit/no-Advisor resume; data/split/budget/cache mismatch; stale generation/cancel fencing; real process crash with budget retention; complete queued campaign interruption after candidate A; orphan artifact write before acceptance; DB-first frozen plan export restoration; orphan child prevents retry; actual focused queue submission; queued input mutation rejection. Run together with `tests/test_task_queue_lineage.py` whenever the shared queue changes.
 
 SQLite records, not mutable JSON exports, are authoritative. Old asset paths in historical tests do not imply current running-task authority. A retry is a new paid attempt, not a guaranteed exactly-once physical computation. Preserve both failed development probes and the final fixed-source JUnit; never compare partial logs from overlapping runs as final evidence.
+
+
+## R4 additional adversarial acceptance (2026-09-22)
+
+New tests in `tests/test_focused_r4_trust.py` bind the frozen selection, actual sealed input, target identities, one-shot authorization, shared evaluator, accepted results and externally registered ModelBundle. Required negatives include wrong tenant/data/hash/protocol/source/environment, duplicate/concurrent grants, failure or real child-process crash after a baseline fit, resealing development targets including equivalent date serialization, spoofed trust flags, path/symlink escape and corrupt model bytes before deserialization.
+
+Success means a trusted local operator can run the declared fixed-training/static-holdout protocol and load its registered internal bundle. It does not demonstrate real financial independent evidence, OS-level isolation, cross-host trust, live LLM quality or the future rolling-refit/Shadow protocol. Model and frame hashes detect changes; the separately controlled registry supplies local authority. Legacy compatibility never upgrades unknown evidence.

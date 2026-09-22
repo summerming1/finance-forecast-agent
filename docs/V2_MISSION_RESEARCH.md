@@ -124,3 +124,29 @@ Red probes reproduced missing controls and tenant overwrite. Fixed-source cumula
 ### R3 CI follow-up — process-group exit ordering
 
 R3 commit `1204a91` passed Python 3.11 but its 3.13 CI exposed a legacy recovery test race: it waited only for the worker, then asserted immediate recovery while the killed child could still be exiting. The production guard correctly prevents overlap with a live child. The test now waits for the actual persisted resumable transition and still requires the old worker to be dead; the independent orphan-child test continues to require refusal while that child is alive. No runtime guard was loosened. Original failed JUnit remains in run `35576165733`.
+
+
+## R4 — trusted confirmation and ModelBundle authority (2026-09-22)
+
+Implementation base: `e8a74b536ec747ab47d1cf6d1ded6b457e8d6d7f` (tree `3431c3a0781f5babf12b51bf4afaf3786dcc7539`). R4 reuses RuntimeDB and the existing numeric evaluator; it adds no second queue, research controller or semantic Memory.
+
+Trusted dataset registration binds actual Parquet bytes, frame/target identity, tenant, role, task and provenance. Development exposure blocks resealing; equivalent daily date serialization preserves target identity. Grant creation freezes selected candidate, baseline, training/holdout registrations, evaluation policy, source/environment and static fit-once recipe. The worker receives only registry/grant/tenant IDs. Concurrent calls compute once; completed requests read the same sealed result; failures and real process crashes consume authorization with no automatic retry. Simulation remains simulation_only_confirmation. No real unexposed financial confirmation was performed.
+
+ModelBundle v2 requires a package-external registered source. Hash, environment, tenant, regular-file and path/symlink checks run before joblib; verified bytes are the same bytes deserialized. Full-frame refit uses matured labels only and records last label availability, not just final session date. Without explicit receipt timestamps, XNYS close is an explicitly declared assumption, not evidence of observed provider receipt. Existing package directories cannot be overwritten. Legacy unregistered models must be rebuilt/reissued; there is no self-reported trust migration.
+
+Validation:
+- restored exact R3 tree baseline: 122 passed (focused + legacy queue), 132.24s;
+- initial red suite: 16 failing tests before implementation (including selection-hash flaw and absent grant/trust interfaces);
+- final R4 source: 32 added adversarial cases;
+- final cumulative focused + shared queue + Memory: **160 passed in 153.35s**, exit 0;
+- targeted/full scoped Ruff, compileall, diff whitespace checks passed;
+- real frozen SPY final smoke: **4002 rows, 2010-02-03 to 2025-12-30, 20 fits, completed/no_improvement**;
+- ResearchPackage: 27 included files verified by SHA256;
+- externally registered refit bundle: 8 unlabeled predictions, identical in a new Python process;
+- the latter inputs were historical training-tail rows, not an out-of-sample performance claim.
+
+The baseline 122 count intentionally excludes the six additional shared Memory tests used by the final cumulative command. It does not mean prior cases were deleted. Final code is frozen before cumulative execution; no red run is rewritten into green evidence. Small test implementation/lint errors were fixed and rerun without weakening control assertions.
+
+Remaining: real eligible heldout financial input, live provider after changed contracts, Windows/macOS real execution, multi-host/OS security, portable trusted-registry migration, R5 benchmark, R6 web/BYO integration, and V3 prospective recording. This delivery stops after R4 per the user's latest request.
+
+R4 final boundary follow-up: legacy ISO-midnight exposure endpoints are compared as session dates, not lexicographic text; the added endpoint regression passes without loosening the seal guard.
