@@ -14,6 +14,24 @@ from finance_forecast_agent.focused_research import compile_hypotheses
 from finance_forecast_agent.replay_llm import ReplayLLM
 
 
+def test_advisor_prompt_explicitly_forbids_schema_name_response_wrapper():
+    from finance_forecast_agent.focused_data import FocusedTaskSpec
+    from finance_forecast_agent.focused_research import ResearchBudget, advisor_prompt
+
+    prompt = advisor_prompt(round_index=2, task=FocusedTaskSpec(), baseline_results=[],
+                            prior_results=[], budget=ResearchBudget())
+    assert any('only the key hypotheses' in rule and 'focused_research_advice' in rule
+               for rule in prompt['rules'])
+
+
+def test_schema_name_wrapped_response_still_fails_closed():
+    # Minimized shape from a real HTTP-200 response; never silently unwrap advice.
+    payload = {'focused_research_advice': {'hypotheses': [
+        {'action_type': 'stop', 'statement': 'assistant_authored_fixture'}]}}
+    with pytest.raises(ValueError, match='only the hypotheses field'):
+        compile_hypotheses(payload, round_index=2, source='assistant_authored_fixture', max_count=1)
+
+
 @pytest.mark.parametrize('field', ['evidence_refs', 'based_on_feedback_ids', 'parent_candidate_id', 'control_candidate_id'])
 @pytest.mark.parametrize('visibility', ['missing', 'hidden', 'unspecified'])
 def test_all_reference_positions_fail_closed(field, visibility):

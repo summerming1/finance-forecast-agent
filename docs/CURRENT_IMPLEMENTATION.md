@@ -42,6 +42,8 @@
 
 ## R1 使用与兼容说明
 
+2026-09-22 替换模型补测：Advisor prompt 明确要求既有顶层 `hypotheses` JSON，不允许以 schema 名再包一层；validator 保持严格拒绝。`qwen3.7-flash-2026-07-15` 两轮真实调用和新进程断网 Replay 已复验一致，31 项 supplemental 测试通过。完整价值矩阵与工程总验收仍须单独判定，不能由小预算 smoke 推定通过；测试进程覆盖模型名，不修改用户 `.env`。
+
 新录制位于 `<fixture_dir>/<schema>/records/`，每次调用有独立 call_id；相同 prompt 的多个调用不会覆盖，回放须明确选择。CLI 的 `--replay-call-map path.json` 接受 prompt hash → call_id 映射。未指定且存在多份记录时拒绝歧义，不选“最新一条”。
 
 新记录校验完整 response/record SHA256，provider metadata 与核心字段隔离；录制不等于通过研究校验。旧 v1 fixture 可按显式 legacy 兼容读取，已有 response_hash 会校验，缺完整性信息不会被升级成 v2。

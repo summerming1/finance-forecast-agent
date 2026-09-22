@@ -535,6 +535,7 @@ def advisor_prompt(
         },
         "max_hypotheses": budget.max_new_candidates_per_round,
         "rules": [
+            "Return exactly one top-level JSON object with only the key hypotheses; do not wrap it in focused_research_advice or response_schema.",
             "Propose only structured changes inside the allowed model/feature space.",
             "Use actual previous-round metrics when round_index > 1.",
             "Do not claim profitability or strict reproduction.",

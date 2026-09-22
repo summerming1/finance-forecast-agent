@@ -7,6 +7,12 @@
 
 # V2 Mission Research — incremental delivery record
 
+## User-authorized live retry: response envelope clarification — 2026-09-22
+
+New live provider evidence reproduced a schema-name wrapper (`focused_research_advice`) instead of the required top-level `hypotheses`. The validator correctly rejected it. One prompt rule now explicitly requests the existing envelope; no response unwrapping, fallback, catalog expansion or validator relaxation was added. The preserved red run was 1 failed / 2 passed / 28 deselected (2.51s); the repaired supplemental file passed 31 tests (4.39s). The full run's cumulative focused/queue/memory subset was 231 passed / 1 native symlink-privilege failure / 2 skipped (234 cases, 3198.962s summed testcase time). Full-suite and final cumulative results are reported separately.
+
+Real `qwen3.7-flash-2026-07-15` two-round live execution completed with 20 charged fits and two recorded provider calls. A separate process cleared all three supported credential variables and blocked provider/network entry points: strict replay completed with 20 fits, zero provider/network attempts, identical prompts/configs/metrics/predictions. The actual live request contained no hidden sentinel. A fresh frozen-SPY deterministic smoke also completed with 4002 rows and 20 fits; historical exposure still blocks confirmation. Scoped Ruff/compile passed. The user-authorized full replacement-model matrix is separate from this small smoke and is not presumed successful.
+
 ## Current authority
 
 Current capabilities are defined only in `CURRENT_IMPLEMENTATION.md`. All entries below the R log are historical snapshots, not current acceptance.
