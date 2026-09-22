@@ -1,0 +1,142 @@
+name: R6 verified delivery
+on:
+  push:
+    branches: [validation/r6-20260922]
+permissions:
+  contents: read
+concurrency:
+  group: r6-delivery
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.13']
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 1bfe5ef78dd475d12f386c528ace44638e27434c
+          path: target
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Restore exact R6 tree
+        working-directory: target
+        run: python ../transport/.delivery/transport.py
+      - name: Install dependencies
+        working-directory: target
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf,byo,benchmark]'
+      - name: Cumulative regressions
+        working-directory: target
+        run: |
+          mkdir -p validation
+          python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py --junitxml=validation/cumulative.xml
+      - name: Lint and compile
+        working-directory: target
+        run: |
+          python -m ruff check src/finance_forecast_agent/focused*.py src/finance_forecast_agent/research_mission.py src/finance_forecast_agent/task_queue.py src/finance_forecast_agent/experiment_memory.py src/finance_forecast_agent/replay_llm.py src/finance_forecast_agent/llm_adapters.py scripts/run_focused_spy_campaign.py scripts/run_research_value_benchmark.py scripts/run_focused_confirmation.py scripts/probe_focused_failure_semantics.py apps/pages/8_Focused_Research.py tests/test_focused*.py tests/browser/test_research_workspace.py
+          python -m compileall -q src/finance_forecast_agent apps/pages/8_Focused_Research.py scripts tests/browser
+          git diff --cached --check
+      - name: Save exact tested identity
+        if: always()
+        working-directory: target
+        run: |
+          mkdir -p validation
+          git write-tree > validation/TREE.txt
+          git rev-parse HEAD > validation/BASE.txt
+          git diff --cached --binary > validation/R6.patch
+          python -m pip freeze > validation/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: R6-tests-${{ matrix.python }}
+          path: target/validation
+          retention-days: 14
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      FFA_BROWSER_E2E: '1'
+      FFA_BROWSER_ARTIFACTS: validation/browser
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 1bfe5ef78dd475d12f386c528ace44638e27434c
+          path: target
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Restore exact R6 tree
+        working-directory: target
+        run: python ../transport/.delivery/transport.py
+      - name: Install declared browser environment
+        working-directory: target
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,byo,benchmark,browser]'
+          python -m playwright install --with-deps chromium
+      - name: Real browser against queued workers (simulation only)
+        working-directory: target
+        run: |
+          mkdir -p validation/browser
+          python -m pytest -q tests/browser/test_research_workspace.py --junitxml=validation/browser/browser.xml
+      - name: Preserve identity
+        if: always()
+        working-directory: target
+        run: |
+          mkdir -p validation/browser
+          git write-tree > validation/browser/TREE.txt
+          python -m pip freeze > validation/browser/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: R6-real-browser
+          path: target/validation/browser
+          retention-days: 14
+  publish-blobs:
+    needs: [validate, browser]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 1bfe5ef78dd475d12f386c528ace44638e27434c
+          path: target
+          persist-credentials: false
+      - name: Publish tested content objects only
+        working-directory: target
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python ../transport/.delivery/transport.py --publish-blobs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: R6-tested-blobs
+          path: published
+          retention-days: 14
