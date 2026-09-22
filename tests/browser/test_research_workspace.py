@@ -63,6 +63,22 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
         report['browser_version']=browser.version
         context=browser.new_context(viewport={'width':1440,'height':1100},accept_downloads=True)
         page=context.new_page();page.set_default_timeout(30000)
+        def select_option(label,value):
+            control=page.get_by_role('combobox',name=label,exact=True)
+            expect(page.get_by_test_id('stApp')).to_have_attribute('data-test-script-state','notRunning')
+            # Streamlit reruns can replace a widget while its menu opens.
+            # Retry opening only; value and candidate-detail assertions stay strict.
+            for opening in range(3):
+                page.get_by_test_id('stSelectbox').filter(has=control).get_by_role('button',name='Open',exact=True).click()
+                try:
+                    expect(page.get_by_role('option',name=value,exact=True)).to_be_visible(timeout=2000)
+                    break
+                except AssertionError:
+                    if opening==2:
+                        raise
+            page.get_by_role('option',name=value,exact=True).click()
+            expect(control).to_have_value(value)
+            report.setdefault('selections',[]).append({'label':label,'value':value,'open_attempts':opening+1})
         page.goto(base+'/Focused_Research')
         expect(page.get_by_role('heading',name='Research Mission',exact=True)).to_be_visible()
         page.get_by_text('Advanced settings',exact=True).click()
@@ -87,11 +103,10 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
         research_ids=[item['candidate']['candidate_id'] for row in completed_payload['rounds']
                       for item in row['items'] if item.get('status')=='completed' and item.get('candidate')]
         assert len(research_ids)>=2, "the browser test must switch two actually trained research candidates"
-        candidate_control=page.get_by_role('combobox',name='Research candidate',exact=True)
         for cid in research_ids[:2]:
-            candidate_control.fill(cid)
-            candidate_control.press('ArrowDown');candidate_control.press('Enter')
-            expect(candidate_control).to_have_value(cid)
+            # Select an actual option. Typing then ArrowDown can race React's
+            # filter update and choose the next baseline instead of this ID.
+            select_option('Research candidate',cid)
             expect(page.get_by_test_id('stJson').filter(has_text='actual_config_diff')).to_contain_text(cid)
         report['switched_research_candidates']=research_ids[:2]
         expect(page.get_by_role('heading',name='Candidate detail',exact=True)).to_be_visible()
@@ -143,8 +158,7 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
         # Open a fresh creation page but retain the registered project ID.
         page.goto(base+'/Focused_Research?project='+pid)
         page.get_by_text('Advanced settings',exact=True).click()
-        input_control=page.get_by_role('combobox',name='Input type',exact=True)
-        input_control.press('ArrowDown');input_control.press('ArrowDown');input_control.press('Enter')
+        select_option('Input type','Controlled CSV / Parquet')
         expect(page.get_by_label('External dataset contract JSON',exact=True)).to_be_visible()
         page.get_by_label('Controlled data file',exact=True).fill(str(byo));page.get_by_label('Controlled data file',exact=True).press('Tab')
         page.get_by_label('External dataset contract JSON',exact=True).fill(json.dumps(contract.to_dict()))
