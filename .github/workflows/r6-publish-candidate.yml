@@ -1,0 +1,34 @@
+name: R6 candidate blob publication
+
+on:
+  push:
+    branches: [validation/r6-20260922]
+    paths: [.github/workflows/r6-publish-candidate.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 1bfe5ef78dd475d12f386c528ace44638e27434c
+          path: target
+          persist-credentials: false
+      - name: Restore exact R6 candidate tree and publish blobs
+        working-directory: target
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python ../transport/.delivery/transport.py --publish-blobs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: R6-candidate-tested-blobs
+          path: published
+          retention-days: 14
