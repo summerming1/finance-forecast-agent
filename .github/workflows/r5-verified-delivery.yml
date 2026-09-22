@@ -1,0 +1,94 @@
+name: R5 verified delivery
+on:
+  push:
+    branches: [validation/r5-20260922]
+permissions:
+  contents: read
+concurrency:
+  group: r5-delivery
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.13']
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 81d0040767fc6b318f705bd2cf34797fc51d7a8f
+          path: target
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Restore exact R5 tree
+        working-directory: target
+        run: python ../transport/.delivery/transport.py
+      - name: Install dependencies
+        working-directory: target
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf,byo,benchmark]'
+      - name: Cumulative regressions
+        working-directory: target
+        run: |
+          mkdir -p validation
+          python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py --junitxml=validation/cumulative.xml
+      - name: Lint and compile
+        working-directory: target
+        run: |
+          python -m ruff check src/finance_forecast_agent/focused*.py src/finance_forecast_agent/research_mission.py src/finance_forecast_agent/task_queue.py src/finance_forecast_agent/experiment_memory.py src/finance_forecast_agent/replay_llm.py src/finance_forecast_agent/llm_adapters.py scripts/run_focused_spy_campaign.py scripts/run_research_value_benchmark.py scripts/run_focused_confirmation.py scripts/probe_focused_failure_semantics.py apps/pages/8_Focused_Research.py tests/test_focused*.py
+          python -m compileall -q src/finance_forecast_agent apps/pages/8_Focused_Research.py scripts
+          git diff --cached --check
+      - name: Save exact tested identity
+        if: always()
+        working-directory: target
+        run: |
+          mkdir -p validation
+          git write-tree > validation/TREE.txt
+          git rev-parse HEAD > validation/BASE.txt
+          git diff --cached --binary > validation/R5.patch
+          python -m pip freeze > validation/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: R5-tests-${{ matrix.python }}
+          path: target/validation
+          retention-days: 14
+  publish-blobs:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 81d0040767fc6b318f705bd2cf34797fc51d7a8f
+          path: target
+          persist-credentials: false
+      - name: Publish tested content objects only
+        working-directory: target
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python ../transport/.delivery/transport.py --publish-blobs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: R5-tested-blobs
+          path: published
+          retention-days: 14
