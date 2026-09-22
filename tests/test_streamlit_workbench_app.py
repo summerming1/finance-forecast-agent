@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 from streamlit.testing.v1 import AppTest
 
 from finance_forecast_agent.native_execution import load_native_claim_catalog
-
 
 APP_PATH = Path(__file__).parents[1] / "apps" / "streamlit_app.py"
 NATIVE_CATALOG_PATH = (
@@ -82,7 +83,29 @@ def test_native_stage_uses_each_claims_dataset_label(app: AppTest) -> None:
     assert any(item.value == "PatchTST · ETTm1" for item in app.subheader)
 
 
-def test_existing_methodcard_moves_through_review_and_setup(app: AppTest) -> None:
+@pytest.mark.parametrize("approved", [False, True])
+def test_existing_methodcard_moves_through_review_and_setup(tmp_path: Path, monkeypatch, approved: bool) -> None:
+    from test_p1_protocol import _card
+
+    from finance_forecast_agent.p1_protocol import plan_from_method_card, save_reproduction_plan
+
+    # Simulation-only UI fixture: do not infer readiness from whichever real
+    # paper/approved plan happens to be installed in the user's project.
+    monkeypatch.chdir(tmp_path)
+    project = tmp_path / "projects" / "finance_agent"
+    cards = project / "method_cards_local_llm"
+    papers = project / "papers" / "local"
+    cards.mkdir(parents=True)
+    papers.mkdir(parents=True)
+    card = replace(_card(), extraction_metadata={"source_path": "paper_p1.txt", "simulation_only": True})
+    (cards / f"{card.paper_id}.json").write_text(json.dumps(card.to_dict()), encoding="utf-8")
+    (papers / f"{card.paper_id}.txt").write_text("Simulation-only paper fixture.", encoding="utf-8")
+    plan = replace(plan_from_method_card(card), approved_for_execution=approved)
+    assert plan.execution_ready is approved
+    plan_path = save_reproduction_plan(project, plan)
+    before = plan_path.read_bytes()
+    app = AppTest.from_file(str(APP_PATH), default_timeout=30).run()
+    assert not app.exception
     next(button for button in app.button if button.label == "使用已有方法卡").click().run()
     assert not app.exception
     assert app.segmented_control(key="workflow_stage").value == "3 方法卡审核"
@@ -92,4 +115,5 @@ def test_existing_methodcard_moves_through_review_and_setup(app: AppTest) -> Non
     assert app.segmented_control(key="workflow_stage").value == "4 复现配置"
 
     assert any(button.label == "保存复现计划" for button in app.button)
-    assert next(button for button in app.button if button.label == "进入运行").disabled is True
+    assert next(button for button in app.button if button.label == "进入运行").disabled is (not approved)
+    assert plan_path.read_bytes() == before
