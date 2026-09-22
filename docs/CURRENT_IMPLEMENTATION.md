@@ -2,20 +2,20 @@
 
 ## 唯一当前状态来源：V2.2-R 能力与验收加固
 
-正式分支：`feat/mission-research-v2`。V2.2-R 实施起点：`6e4f194453f77037929052a0a978cc76bc2017b7`。当前正式实现 HEAD：`3fdd2d6403bc425d172d15eba749bcdc925f33e2`。
+正式分支：`feat/mission-research-v2`。V2.2-R 实施起点：`6e4f194453f77037929052a0a978cc76bc2017b7`。R6 产品实现提交：`3fdd2d6403bc425d172d15eba749bcdc925f33e2`；本轮补充验收起点：`625283636cef4faa080f8521683f81491611b5ff`。后续测试/文档提交不表示新增产品能力。
 
 原 PR-1～PR-6 已有模块实现；此前“全部验收完成”的表述过度。验收缺口现在按 R0→R6 修复，不重写项目，也不自动开始 V3。
 
 | 能力 | 有实现 | 原工程测试 | 真实运行 | 用户/科学验收 | 尚未关闭的合同 |
 |---|---|---|---|---|---|
 | 预测/Manifest/确定性反馈 | 是 | focused 通过 | 冻结历史 SPY | 非独立金融证据 | 身份已加固；恢复绑定 R2 |
-| Mission/Workspace | R6 持久工作区代码已提交 | AppTest/队列/导出/刷新及双版本核心 CI 通过 | Chromium E2E 尚未通过，交由本地 Codex 补测 | 非技术用户试用待测 | 单机可信操作者；浏览器/其他平台待验收 |
-| Live/Replay | 是 | 录制单测通过 | Codex 报告百炼两轮与无凭证回放 | 不是科研质量证明 | R1 已加固；本轮真实 provider 待测 |
+| Mission/Workspace | R6 持久工作区代码已提交 | AppTest/队列/导出/刷新及双版本核心 CI；补测见下 | 本轮 Windows Chromium 完整 E2E 两次通过；候选切换/新上下文/下载不增研究 fit | 非技术用户试用待测 | 单机可信操作者；同 SHA 新 CI 和平台缺口见验收报告 |
+| Live/Replay | 是 | 录制与对抗测试通过 | 本轮百炼 qwen3.8-27b 两轮真实录制→新进程清凭证并阻断网络回放一致 | 不是科研质量证明 | 真实请求无隐藏哨兵；Replay 零请求；费用未知 |
 | 动作与 Memory | R3 分发 + R6 审核/继续入口 | 停止/审核/诊断/消融/租户隔离 | 规则策略、队列审核集成 | 未证明 LLM 研究增益 | 新合同 live 需补测 |
-| Queue/恢复 | R2 事务 + R6 提交关联 | 原子提交/代次/预算/缓存/held-link修复 | Linux 完整 Campaign kill/resume、工作区队列 | 单机工程验收 | Windows/macOS 原生故障矩阵待测 |
+| Queue/恢复 | R2 事务 + R6 提交关联 | 原子提交/代次/预算/缓存/held-link修复 | 本轮 Windows 真实 SPY 完整 Campaign 进程树终止→新进程恢复，基线/A不重训、预算不退回 | 单机工程验收 | macOS 未测；Windows 原生符号链接权限受限 |
 | Confirmation | R4 封存登记/一次性授权/固定留出 | 错配、篡改、并发及崩溃测试通过 | 只有模拟封存证据 | 真实未见金融数据待测 | 不允许 Advisor 调用；可信单机操作 |
 | ModelBundle | R4 包外可信登记与完整性检查 | 篡改/路径/租户/环境/新进程通过 | 历史 SPY 无标签推理 | 不是样本外效果 | 旧包须重发；跨平台待测 |
-| Benchmark | R5 实际 Controller 策略接入 | 去重/seed/真实TPE/Advisor回放/账本通过 | 冻结 SPY 九组内部对照 | 本轮无真实 LLM 质量或人工时间证据 | 真实 provider 对照需本地补测 |
+| Benchmark | R5 实际 Controller 策略接入 | 去重/seed/真实TPE/Advisor回放/账本通过 | 本轮经用户批准执行 3窗口×3种子真实 provider 四臂对照；失败保留 | 不能预设 Adaptive 获胜；人工时间未测 | 进度与最终完整性见补充报告；无规则 fallback |
 | BYO | R6 表格 + 一个审核数值特征 + 内置模型配置 | CSV/Parquet/时间/声明分级/实际训练及交付 | 模拟客户端到端 | 无真实客户 | 特征因果与来源仍须人工审核；非任意模型上传 |
 
 ## R 批次执行状态
@@ -26,7 +26,7 @@
 - R3：实际控制动作、父模型约束、剩余资源上下文和有界 Memory 已实现；本地 128 项累计及共享回归通过。
 - R4：封存数据与冻结确认授权、单次执行、包外可信 ModelBundle 已实现；验收记录见版本日志和条款映射。
 - R5：实际策略对照已接入同一 Controller，使用真正 Optuna TPE；默认规则/回放仅为工程证据，验收见版本日志。
-- R6：持久网页、受控特征 BYO、导出/审核/恢复接口代码已实现并提交为 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`，供本地 Codex 完整验收。该正式提交的 Python 3.11/3.13 累计核心回归各 **203 passed**，Ruff/compile 通过，冻结真实 SPY final acceptance 通过；Chromium E2E run `35691460214` 仍失败，因此 R6 当前是 `code_committed_validation_pending`，不是已验收完成。
+- R6：持久网页、受控特征 BYO、导出/审核/恢复接口代码已实现并提交为 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`。原始提交的 Python 3.11/3.13 累计核心回归各 **203 passed**，Ruff/compile、冻结真实 SPY final acceptance 通过；原始 Chromium run `35691460214` 失败记录保留。本轮 Windows 修复后浏览器两次通过，但剩余外部门禁仍须分别报告，R6 保持 `code_committed_validation_pending`，不是全部验收完成。
 
 ## 当前边界
 
@@ -34,7 +34,9 @@
 
 ## 已有证据与未测
 
-基线本地 Linux/Python 3.13.5：66 passed（45.96s）；原远端 3.11/3.13 CI 也成功。Windows 65 passed/1 skipped、百炼与浏览器结果来自 Codex 报告，不是本轮重跑。真正未暴露确认、真实用户、前瞻和 macOS 仍缺证据。
+2026-09-22 Windows 补测详见 [逐项报告](validation/V22R_WINDOWS_SUPPLEMENT_20260922.md)。已完成真实 Live→严格离线 Replay、真实 SPY 进程树 crash/resume、实际网页审核 approve/reject、CSV/Parquet 两个模拟客户、研究包复算与 ModelBundle 新进程一致性。浏览器测试最小修复已在本机连续两次通过；Windows 等待时限修复保留所有语义断言。全仓首轮 **343 passed / 20 failed / 3 skipped**，失败逐项列明。测试修复提交 `6299ca4` 的 Windows 累计 **229 passed / 1 symlink 权限失败 / 2 skipped**，exit 1 保留；同 SHA Linux Python 3.11/3.13 各 **232 passed**，Chromium 和冻结 SPY CI 通过。不宣称全仓或所有平台通过。没有真实客户、合法未暴露确认数据或 macOS 环境。R6 总状态仍是 `code_committed_validation_pending`，不写 fully accepted。
+
+历史基线 Linux/Python 3.13.5：66 passed（45.96s）；原远端 3.11/3.13 CI 也成功。旧 Windows 65 passed/1 skipped 是历史记录，不替代上述本轮补测。真正未暴露确认、真实用户、前瞻和 macOS 仍缺证据。
 
 历史科学记录保留在 `HISTORICAL_PLATFORM_STATUS.md` 和原版本文档中；不作为本轮测试通过的证明。具体 R 验收映射见 `validation/v22r_acceptance.json`；批准方案见 `V2_MISSION_RESEARCH.md`。
 
@@ -98,7 +100,7 @@ predictions = predict_model_bundle(bundle, unlabeled_frame, state_path=state_db,
 
 ### R4 未测边界
 
-没有取得合法未暴露真实金融数据、没有真实独立确认结论；没有本轮 live LLM 调用；Windows/macOS 实机、安全隔离部署及实际客户端模型搬迁仍未验收。当前真实 SPY 仍为历史 development；删除训练尾部 label 后推理只证明接口，不是样本外表现。R5、R6 已继续补齐，见下方当前接口；这里的真实金融确认与跨平台限制并未因此关闭。
+没有取得合法未暴露真实金融数据、没有真实独立确认结论。本轮 Windows 模型包新进程加载/预测已通过；符号链接负例因主机权限阻塞，macOS、安全隔离部署及实际客户端跨机信任迁移仍未验收。当前真实 SPY 仍为历史 development；删除训练尾部 label 后推理只证明接口，不是样本外表现。R5、R6 工程补测不关闭真实金融确认限制。
 
 
 ## R5 真实策略对照及使用边界
@@ -136,17 +138,17 @@ predictions = predict_model_bundle(bundle, unlabeled_frame, state_path=state_db,
 
 ### 验收和下一步
 
-R0–R6 的本轮定向/累计工程证据、精确源码树和运行层级见 `docs/validation/v22r_acceptance.json`、CI 与 `V2_MISSION_RESEARCH.md`。本地浏览器被管理员策略阻止，未绕过；真实 Chromium 页面测试放在独立 GitHub CI，不能把 AppTest 当该门禁的替代。
+R0–R6 的定向/累计工程证据、精确源码树和运行层级见 `docs/validation/v22r_acceptance.json`、CI、`V2_MISSION_RESEARCH.md` 与补充报告。此前环境的浏览器管理策略阻塞是历史边界；本轮 Windows 正常安装 Chromium 的实际 E2E 已运行两次并通过，没有绕过主机策略，也没有用 AppTest 替代浏览器。
 
-未闭合的外部证据集中在 `CODEX_V22R_REMAINING_VALIDATION.md`：新 prompt/合同的 live→严格离线 replay、真实 LLM 多窗口对照与人工时间、真实客户、合法封存金融确认、Windows/macOS 进程和浏览器、完整历史资产/native/GPU。V3 尚未开始；标签成熟时刻合同不等于已实现前瞻记录生命周期。
+剩余外部证据集中在 `CODEX_V22R_REMAINING_VALIDATION.md`：真实 LLM 对照的完整性及研究质量、实际人工时间、真实客户、合法封存金融确认、macOS、Windows 原生 symlink 权限、历史资产/native/GPU。本轮 Live→严格离线 Replay、Windows 完整 crash/resume 和浏览器已补测，不能继续当作“从未测试”。V3 尚未开始；标签成熟时刻合同不等于已实现前瞻记录生命周期。
 
 
-### R6 当前提交边界
+### R6 原始提交边界（历史检查点）
 
 R6 正式分支可供本地拉取和继续修复，但浏览器真实 E2E 尚未关闭。已知 CI run `35686627733` 中 Python 3.11/3.13 核心累计回归、Ruff/compile 通过，browser job 失败；失败证据必须保留并由本地 Codex 从当前正式分支继续复现/修复。不能据此宣称 R6 用户工作流已经验收。
 
 
-## R6 正式提交的同 SHA 证据
+## R6 原始正式提交的同 SHA 证据（历史，失败保留）
 
 正式 R6 commit：`3fdd2d6403bc425d172d15eba749bcdc925f33e2`，tree：`4f740f79335a0a25edc78668f0aecdd9d4a5db62`。
 

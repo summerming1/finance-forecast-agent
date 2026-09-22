@@ -10,7 +10,7 @@
 ### 当前实现检查点：2026-09-22
 
 - R0～R5：已交付，具体提交和门禁见 `CURRENT_IMPLEMENTATION.md` 与 `docs/validation/v22r_acceptance.json`。
-- R6：产品代码已提交到正式分支，正式提交为 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`；核心双 Python 回归和冻结真实 SPY final acceptance 通过，但真实 Chromium E2E 尚未通过，因此状态是 **code committed / validation pending**。
+- R6：产品代码已提交到正式分支，正式实现提交为 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`；本轮 Windows 真实 Chromium 补测已两次通过，但完整验收仍为 **code committed / validation pending**。精确回归、同 SHA CI 与未闭合外部门禁以 `CURRENT_IMPLEMENTATION.md` 和补充验收报告为准；不改变路线或门禁。
 - V3 Shadow Forecasting：未开始。
 - 后续优先级仍是关闭 R0～R6 剩余真实环境/用户/科学证据门禁，不以新增版本号替代验收。
 

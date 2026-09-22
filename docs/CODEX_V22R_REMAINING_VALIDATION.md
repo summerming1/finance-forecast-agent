@@ -1,5 +1,11 @@
 # Codex：R0–R6 加固完成后的剩余独立验收
 
+## 2026-09-22 补测更新
+
+本轮从 `625283636cef4faa080f8521683f81491611b5ff` 继续，没有重新应用 R6。Windows 正常 Chromium 完整 E2E 已两次通过；真实百炼两轮录制→清凭证并禁止网络的新进程 Replay、真实 SPY Campaign 进程树终止/恢复、实际网页 approve/reject、模拟 CSV/Parquet 交付及可信模型新进程一致性均已补测。真实 3窗口×3种子对照经用户授权继续，失败不替换为规则结果。详细最终数量/提交/CI 和未闭合项见 `validation/V22R_WINDOWS_SUPPLEMENT_20260922.md` 与 `CURRENT_IMPLEMENTATION.md`。
+
+下方“正式提交结果”和原始阻塞是历史基线；验收流程仍保留供复验，不表示上述项目尚未测试。真实用户、合法未暴露确认、macOS、历史资产/native/GPU、实际人工时间和可移植信任迁移仍不能宣称已通过。Windows symlink 创建权限阻塞没有通过改 skip 消除。
+
 ## 任务与边界
 
 仓库 `summerming1/finance-forecast-agent`；正式分支 `feat/mission-research-v2`。R6 已提交 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`（tree `4f740f79335a0a25edc78668f0aecdd9d4a5db62`）。不要重新应用 R6 patch，也不要 merge `validation/r6-20260922`；先从正式分支拉取并确认 HEAD。
@@ -10,7 +16,7 @@
 
 阅读顺序：AGENTS.md → docs/PROJECT_ROADMAP.md → docs/CURRENT_IMPLEMENTATION.md → 接受的 ADR 001/002/003 → FOCUSED_ARCHITECTURE.md → FOCUSED_ACCEPTANCE_TEST_PLAN.md → V2_MISSION_RESEARCH.md → docs/validation/v22r_acceptance.json → FRONTEND_USER_GUIDE.md → 本文。CURRENT 是当前状态；V2 中旧阶段的结果是历史记录，不是新 SHA 的测试证据。
 
-### 已知 R6 正式提交结果
+### 已知 R6 原始正式提交结果（历史）
 
 - Focused Mission validation `35691460180`：Python 3.11 / 3.13 各 203 passed，Ruff 通过。
 - Focused final acceptance `35691460205`：成功。

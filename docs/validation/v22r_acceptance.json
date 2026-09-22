@@ -2,6 +2,7 @@
   "schema_version": "v22r_acceptance_v1",
   "base_sha": "6e4f194453f77037929052a0a978cc76bc2017b7",
   "scope": "SPY_daily_next_session_return_forecast_only",
+  "record_semantics": "stages and authoritative_checkpoint preserve original delivery evidence; supplemental_validation_20260922 and external_gates record the newer supplemental audit; CURRENT_IMPLEMENTATION.md is the current capability authority",
   "stages": {
     "R0": {
       "scope": "status truth and prototype claim guard",
@@ -427,15 +428,53 @@
       }
     }
   },
+  "supplemental_validation_20260922": {
+    "validation_base_sha": "625283636cef4faa080f8521683f81491611b5ff",
+    "validated_test_code_sha": "6299ca4de9e9a1453339d68be26f1ba47e07cabe",
+    "production_code_changed": false,
+    "report": "docs/validation/V22R_WINDOWS_SUPPLEMENT_20260922.md",
+    "status": "in_progress_not_full_acceptance",
+    "same_sha_linux_ci": {
+      "core_run": 35699872200,
+      "python_311": {"passed": 232, "failed": 0, "seconds": 322.932},
+      "python_313": {"passed": 232, "failed": 0, "seconds": 246.742},
+      "browser_run": 35699872277,
+      "browser": {"passed": 1, "failed": 0, "seconds": 50.444},
+      "final_real_spy_run": 35699872203,
+      "final_real_spy_status": "PASS"
+    },
+    "windows_full_run_before_test_repairs": {
+      "passed": 343, "failed": 20, "skipped": 3,
+      "seconds": 2973.24, "exit_code": 1,
+      "classification": "9 test deadlines; 1 symlink privilege; 10 historical missing assets"
+    },
+    "windows_corrected_cumulative": {
+      "passed": 229, "failed": 1, "skipped": 2,
+      "seconds": 2263.22, "exit_code": 1,
+      "temporary_root": "validation/cv",
+      "remaining_failure": "BLOCKED_ENV: WinError 1314 creating native symlink; test unmodified",
+      "prior_permission_error": "not reproduced by isolated rerun, five repetitions, or final cumulative; cause unresolved"
+    },
+    "real_live_offline_replay": {
+      "status": "PASS", "provider": "bailian", "model": "qwen3.8-27b",
+      "live_requests": 2, "offline_requests": 0,
+      "hidden_sentinel_absent": true, "equal_predictions": true
+    },
+    "windows_real_campaign_crash_resume": {"status": "PASS", "seconds": 59.45, "charged_fits": 24},
+    "real_browser_review": {"approve": "PASS", "reject": "PASS", "advice_provenance": "assistant_authored_fixture"},
+    "simulated_byo_csv_parquet": "PASS_simulation_only_not_real_users",
+    "model_bundle_fresh_process": "PASS_serialization_consistency_not_out_of_sample_performance",
+    "portable_trust_migration": "NOT_IMPLEMENTED"
+  },
   "external_gates": {
-    "live_provider": "R1/R3/R5/R6 final contracts require new real record/replay",
+    "live_provider": "PASS: new real two-round Bailian record and strict offline replay; value matrix is separate",
     "real_customer": "blocked_no_user",
     "real_confirmation": "blocked_no_eligible_data",
-    "macos": "not_run",
-    "windows": "physical native tests pending",
-    "historical_native": "see bounded full-suite report; asset/env failures not waived",
-    "browser": "OPEN: official R6 run 35691460214 failed candidate-selection value assertion; reproduce/fix locally and rerun full browser flow",
-    "value_quality": "real LLM comparison and measured human minutes pending"
+    "macos": "BLOCKED_ENV",
+    "windows": "real browser/queue/crash/resume/Parquet/fresh-process delivery tested; corrected cumulative 229 passed / 1 WinError 1314 BLOCKED_ENV / 2 skipped; exit 1 retained",
+    "historical_native": "343 passed / 20 failed / 3 skipped full-run evidence retained; 10 missing historical assets BLOCKED_ASSET; long native/GPU NOT_RUN_COST",
+    "browser": "PASS: Windows E2E twice; same test-code SHA 6299ca4 Linux Chromium run 35699872277 passed; historical failed runs unchanged",
+    "value_quality": "full real 3x3 matrix authorized and running; failed provider arms retained; measured human minutes null"
   },
   "authoritative_checkpoint": {
     "branch": "feat/mission-research-v2",
