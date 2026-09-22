@@ -1,0 +1,125 @@
+diff --git a/docs/V2_MISSION_RESEARCH.md b/docs/V2_MISSION_RESEARCH.md
+index ed04790..a63393a 100644
+--- a/docs/V2_MISSION_RESEARCH.md
++++ b/docs/V2_MISSION_RESEARCH.md
+@@ -137,8 +137,8 @@ ModelBundle v2 requires a package-external registered source. Hash, environment,
+ Validation:
+ - restored exact R3 tree baseline: 122 passed (focused + legacy queue), 132.24s;
+ - initial red suite: 16 failing tests before implementation (including selection-hash flaw and absent grant/trust interfaces);
+-- final R4 source: 31 added adversarial cases;
+-- final cumulative focused + shared queue + Memory: **159 passed in 146.75s**, exit 0;
++- final R4 source: 32 added adversarial cases;
++- final cumulative focused + shared queue + Memory: **160 passed in 153.35s**, exit 0;
+ - targeted/full scoped Ruff, compileall, diff whitespace checks passed;
+ - real frozen SPY final smoke: **4002 rows, 2010-02-03 to 2025-12-30, 20 fits, completed/no_improvement**;
+ - ResearchPackage: 27 included files verified by SHA256;
+@@ -148,3 +148,5 @@ Validation:
+ The baseline 122 count intentionally excludes the six additional shared Memory tests used by the final cumulative command. It does not mean prior cases were deleted. Final code is frozen before cumulative execution; no red run is rewritten into green evidence. Small test implementation/lint errors were fixed and rerun without weakening control assertions.
+ 
+ Remaining: real eligible heldout financial input, live provider after changed contracts, Windows/macOS real execution, multi-host/OS security, portable trusted-registry migration, R5 benchmark, R6 web/BYO integration, and V3 prospective recording. This delivery stops after R4 per the user's latest request.
++
++R4 final boundary follow-up: legacy ISO-midnight exposure endpoints are compared as session dates, not lexicographic text; the added endpoint regression passes without loosening the seal guard.
+diff --git a/docs/validation/v22r_acceptance.json b/docs/validation/v22r_acceptance.json
+index bc5c3ea..1f305d0 100644
+--- a/docs/validation/v22r_acceptance.json
++++ b/docs/validation/v22r_acceptance.json
+@@ -166,11 +166,11 @@
+       "test_evidence": [
+         {
+           "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
+-          "passed": 159,
++          "passed": 160,
+           "failed": 0,
+-          "seconds": 146.75,
++          "seconds": 153.35,
+           "exit_code": 0,
+-          "new_R4_cases": 31
++          "new_R4_cases": 32
+         },
+         {
+           "command": "scoped Ruff + compileall + git diff --check",
+@@ -232,7 +232,8 @@
+         "test_refit_cannot_overwrite_existing_trusted_bundle",
+         "test_equivalent_session_serializations_cannot_reset_target_exposure",
+         "test_worker_crash_after_fit_cannot_reuse_confirmation_grant",
+-        "test_training_registration_preserves_first_exposure"
++        "test_training_registration_preserves_first_exposure",
++        "test_legacy_exposure_endpoint_uses_session_not_text_comparison"
+       ],
+       "limitations": [
+         "single trusted host/operator; no OS authorization isolation",
+diff --git a/src/finance_forecast_agent/focused_delivery.py b/src/finance_forecast_agent/focused_delivery.py
+index 758a557..990c284 100644
+--- a/src/finance_forecast_agent/focused_delivery.py
++++ b/src/finance_forecast_agent/focused_delivery.py
+@@ -490,15 +490,20 @@ def record_development_exposure(store: RuntimeDB, frame: pd.DataFrame, task: Foc
+ 
+ def _legacy_exposure_overlap(store, db, frame, task) -> bool:
+     # R0-R3 did not have per-target rows. Conservatively retain their known range.
+-    first, last = str(frame.iloc[0]["timestamp"]), str(frame.iloc[-1]["timestamp"])
++    first, last = pd.Timestamp(frame.iloc[0]["timestamp"]), pd.Timestamp(frame.iloc[-1]["timestamp"])
+     rows = db.execute("SELECT payload FROM objects WHERE ns LIKE 'campaign:%' AND key='exposure'").fetchall()
+     for row in rows:
+         exposure = json.loads(row[0])
+-        if (
+-            exposure.get("task_id") == task.task_id
+-            and exposure.get("start_date", "9999") <= last
+-            and exposure.get("end_date", "") >= first
+-        ):
++        if exposure.get("task_id") != task.task_id:
++            continue
++        try:
++            start = pd.Timestamp(exposure.get("start_date"))
++            end = pd.Timestamp(exposure.get("end_date"))
++            if pd.isna(start) or pd.isna(end) or start.tzinfo is not None or end.tzinfo is not None:
++                raise ValueError("unresolved legacy exposure time")
++        except (TypeError, ValueError) as exc:
++            raise PermissionError("legacy exposure time requires operator review before sealing") from exc
++        if start.normalize() <= last.normalize() and end.normalize() >= first.normalize():
+             return True
+     return False
+ 
+diff --git a/tests/test_focused_r4_trust.py b/tests/test_focused_r4_trust.py
+index 68cf8ad..9032ae3 100644
+--- a/tests/test_focused_r4_trust.py
++++ b/tests/test_focused_r4_trust.py
+@@ -514,3 +514,39 @@ def test_training_registration_preserves_first_exposure(tmp_path, inputs):
+         simulation_only=True,
+     )
+     assert store.get("delivery-targets", keys[0]) == before
++
++
++def test_legacy_exposure_endpoint_uses_session_not_text_comparison(tmp_path, inputs):
++    task, _, _, confirm, snapshot = inputs
++    single = confirm.iloc[:1].copy()
++    ids = data_identity(single, task.to_dict())
++    snap = replace(
++        snapshot,
++        **ids,
++        semantic_fingerprint=identity(ids, domain="focused-dataset-v2"),
++        row_count=1,
++        start_date=single.iloc[0]["timestamp"],
++        end_date=single.iloc[-1]["timestamp"],
++    )
++    db = tmp_path / "runtime.sqlite3"
++    RuntimeDB(db).put(
++        "campaign:old",
++        "exposure",
++        {
++            "task_id": task.task_id,
++            "start_date": snap.start_date + "T00:00:00",
++            "end_date": snapshot.end_date + "T00:00:00",
++        },
++    )
++    with pytest.raises(PermissionError, match="exposed"):
++        delivery.register_delivery_dataset(
++            single,
++            task=task,
++            dataset=snap,
++            role="confirmation",
++            state_path=db,
++            tenant_id="alice",
++            reviewer="operator",
++            provenance={"reference": "legacy ISO"},
++            simulation_only=True,
++        )

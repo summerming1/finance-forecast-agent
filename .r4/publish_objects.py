@@ -1,13 +1,15 @@
-"""Publish tested Git objects only. No branch/ref mutation is performed here."""
+"""Create content blobs only; authenticated connector will assemble/publish refs."""
+import base64
+import hashlib
 import json
 import os
 import subprocess
+import urllib.error
 import urllib.request
 from pathlib import Path
 
 BASE = 'e8a74b536ec747ab47d1cf6d1ded6b457e8d6d7f'
-BASE_TREE = '3431c3a0781f5babf12b51bf4afaf3786dcc7539'
-EXPECTED = '47baaad7bf6c905018e76bb5187c8c85e23f00df'
+EXPECTED = '6da8f0e1dd9fb1707c11d480078d891a52ecaca0'
 REPO = 'summerming1/finance-forecast-agent'
 ALLOWED = {
  '.github/workflows/focused-final-acceptance.yml',
@@ -24,24 +26,26 @@ assert os.environ['GITHUB_REPOSITORY'] == REPO
 assert subprocess.check_output(['git', 'write-tree'], text=True).strip() == EXPECTED
 paths = subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines()
 assert set(paths) == ALLOWED
-
-def post(resource, payload):
-    req = urllib.request.Request('https://api.github.com/repos/' + REPO + resource,
-        data=json.dumps(payload).encode(), method='POST', headers={
-          'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
-          'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json',
-          'X-GitHub-Api-Version': '2022-11-28'})
-    with urllib.request.urlopen(req, timeout=60) as result:
-        return json.load(result)
-
-tree = post('/git/trees', {'base_tree': BASE_TREE, 'tree': [
-    {'path': path, 'mode':'100644', 'type':'blob', 'content':Path(path).read_text(encoding='utf-8')}
-    for path in sorted(paths)]})
-assert tree['sha'] == EXPECTED, 'server tree must match tested tree'
-commit = post('/git/commits', {'message':'fix(R4): bind confirmation grants and trusted model bundles',
-    'tree':EXPECTED, 'parents':[BASE]})
-report = {'commit':commit['sha'], 'tree':EXPECTED, 'parent':BASE,
-          'validation_run':os.environ['GITHUB_RUN_ID'], 'refs_updated':False}
-Path('../r4-publish').mkdir(exist_ok=True)
-Path('../r4-publish/verified_candidate.json').write_text(json.dumps(report, indent=2))
-print(json.dumps(report))
+report = {'tree': EXPECTED, 'parent': BASE, 'blobs': {}, 'refs_updated': False,
+          'validation_run': os.environ['GITHUB_RUN_ID']}
+root = Path('../r4-publish')
+root.mkdir(exist_ok=True)
+try:
+    for path in sorted(paths):
+        data = Path(path).read_bytes()
+        expected = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+        req = urllib.request.Request('https://api.github.com/repos/' + REPO + '/git/blobs',
+            data=json.dumps({'encoding': 'base64', 'content': base64.b64encode(data).decode()}).encode(),
+            method='POST', headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+             'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json',
+             'X-GitHub-Api-Version': '2022-11-28'})
+        with urllib.request.urlopen(req, timeout=60) as result:
+            body = json.load(result)
+        assert body['sha'] == expected
+        report['blobs'][path] = expected
+except urllib.error.HTTPError as exc:
+    report['publication_error'] = {'status': exc.code, 'body': exc.read().decode()}
+    raise
+finally:
+    (root / 'verified_candidate.json').write_text(json.dumps(report, indent=2))
+    print(json.dumps(report))
