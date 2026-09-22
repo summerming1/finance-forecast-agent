@@ -13,3 +13,8 @@
 ## R4 已交付后继续点
 
 R0～R4 有实现和定向/累计证据；下一批是 R5，未经请求不继续。R4 在既有 RuntimeDB 上实现封存注册、冻结固定留出协议、单次授权和包外模型信任。CLI 仅接收 grant ID；模型加载必须显式 state_path 或可信 FFA_DELIVERY_STATE_DB，不从包内字段自动信任。旧包需要重发，旧原型确认仅保留 simulation 兼容。具体接口、环境和未测项见 CURRENT_IMPLEMENTATION 与 V2_MISSION_RESEARCH。
+
+
+## R5 后续点
+
+R5 已用原 Controller 接通 random/真实 Optuna TPE/one-shot Advisor/adaptive Advisor；执行、评价与预算没有复制。先完成同SHA CI，再进入R6。缺省deterministic与人工回放均非live科研质量。R6只打通受支持模板、持久任务/历史/导出与受审核数值特征BYO，不扩大资产/任务/任意代码权限。R0–R5未测的真实provider、真客户、合法确认、Windows/macOS及native资产验收仍需单列。

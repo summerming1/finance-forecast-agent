@@ -1,89 +1,159 @@
+"""Frozen paired comparisons through the actual focused Controller.
+
+Default deterministic mode is engineering-only. For actual LLM comparisons use
+--llm-mode live, then replay the immutable calls with --replay-call-map.
+Overlapping window/seed groups are kept separate, never pooled as independent.
+"""
+
 from __future__ import annotations
 
 import argparse
 import json
+import shutil
+from dataclasses import replace
 from pathlib import Path
 
-from finance_forecast_agent.focused_adaptive import one_shot_fixture_plan, random_plan, search_candidate, tpe_like_next
+from finance_forecast_agent.focused_adaptive import SEARCH_SPACE
+from finance_forecast_agent.focused_benchmark import BenchmarkSpec, benchmark_summary, run_benchmark_arm
 from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_daily_research_frame
-from finance_forecast_agent.focused_protocol import EvaluationPolicy, FocusedSplitSpec
-from finance_forecast_agent.focused_research import ResearchBudget, evaluate_candidate, run_baselines
-
-
-def run_arm(frame, *, arm: str, count: int, seed: int, best_baseline_mae: float, split_spec: FocusedSplitSpec):
-    observations = []
-    rows = []
-    used: set[str] = set()
-    if arm == "random":
-        planned = random_plan(count, seed)
-    elif arm == "one_shot_llm":
-        planned = one_shot_fixture_plan(count)
-    else:
-        planned = []
-    for index in range(count):
-        if arm == "tpe_like":
-            config = tpe_like_next(observations, used)
-        elif arm == "adaptive_agent":
-            # Feedback-sensitive but bounded: exploit the best family after the
-            # first observation while retaining a distinct second diagnostic.
-            config = tpe_like_next(observations, used) if observations else one_shot_fixture_plan(count)[0]
-        else:
-            config = planned[index]
-        candidate = search_candidate(config, strategy=arm, index=index + 1)
-        used.add(candidate.fingerprint)
-        result = evaluate_candidate(
-            frame,
-            candidate,
-            best_baseline_mae=best_baseline_mae,
-            min_relative_improvement=EvaluationPolicy().min_relative_mae_improvement,
-            split_spec=split_spec,
-        )
-        observations.append((config, result.metrics["mae"]))
-        rows.append({"candidate": candidate.to_dict(), "metrics": result.metrics, "verdict": result.research_verdict})
-    best = min(rows, key=lambda row: row["metrics"]["mae"])
-    return {"arm": arm, "candidate_count": count, "fit_calls": count * split_spec.max_folds, "best": best, "results": rows}
+from finance_forecast_agent.focused_identity import data_identity, file_sha256, identity
+from finance_forecast_agent.focused_state import atomic_json
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--raw-spy-json", type=Path, required=True)
-    parser.add_argument("--source-metadata", type=Path)
-    parser.add_argument("--candidate-count", type=int, default=2)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--out", type=Path, required=True)
-    args = parser.parse_args()
-    if args.candidate_count < 1 or args.candidate_count > 6:
-        raise ValueError("candidate-count must be within [1, 6]")
-    frame, snapshot = build_spy_daily_research_frame(args.raw_spy_json, source_metadata_path=args.source_metadata)
-    split_spec = FocusedSplitSpec()
-    baselines = run_baselines(frame, ResearchBudget(max_rounds=1, max_fit_calls=100), split_spec=split_spec)
-    best_baseline = min(baselines, key=lambda row: row.metrics["mae"])
-    arms = [
-        run_arm(frame, arm=arm, count=args.candidate_count, seed=args.seed, best_baseline_mae=best_baseline.metrics["mae"], split_spec=split_spec)
-        for arm in ("random", "tpe_like", "one_shot_llm", "adaptive_agent")
-    ]
-    payload = {
-        "schema_version": "focused_agent_value_benchmark_v1",
-        "task": FocusedTaskSpec().to_dict(),
-        "dataset_fingerprint": snapshot.semantic_fingerprint,
-        "evidence_tier": "legacy_proxy_comparison",
-        "comparison_valid_for_agent_value": False,
-        "limitations": ["legacy selector identity and algorithm substitution are under repair; not Agent evidence"],
-        "live_llm_validation": "pending",
-        "one_shot_source": "assistant_authored_fixture",
-        "shared_contract": {
-            "split_spec": split_spec.to_dict(),
-            "evaluation_policy": EvaluationPolicy().to_dict(),
-            "candidate_count_per_arm": args.candidate_count,
-            "search_space_size": 6,
-        },
-        "best_baseline": best_baseline.to_dict(),
-        "arms": arms,
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--raw-spy-json", type=Path, required=True)
+    p.add_argument("--source-metadata", type=Path)
+    p.add_argument("--candidate-count", type=int, default=12)
+    p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--seeds", type=int, nargs="+")
+    p.add_argument("--estimator-seed", type=int, default=42)
+    p.add_argument("--windows", nargs="+", default=["all"], help="Inclusive start dates; windows may overlap.")
+    p.add_argument("--startup-trials", type=int, default=4)
+    p.add_argument("--small-catalog", action="store_true")
+    p.add_argument(
+        "--arms",
+        nargs="+",
+        choices=["random", "tpe", "one_shot", "adaptive", "enumerate"],
+        default=["random", "tpe", "one_shot", "adaptive"],
+    )
+    p.add_argument("--llm-mode", choices=["deterministic", "live", "replay"], default="deterministic")
+    p.add_argument("--fixture-dir", type=Path)
+    p.add_argument("--replay-call-map", type=Path)
+    p.add_argument(
+        "--evidence-json",
+        type=Path,
+        help="Reviewed, explicitly visible EvidenceNode list; no text instructions executed.",
+    )
+    p.add_argument("--memory-mode", choices=["cold", "warm", "ablation"], default="cold")
+    p.add_argument(
+        "--memory-store",
+        type=Path,
+        help="Required reviewed frozen prior for warm; copied per arm, no cross-arm writes.",
+    )
+    p.add_argument("--resume-existing", action="store_true")
+    p.add_argument("--out", type=Path, required=True)
+    a = p.parse_args()
+    if a.out.exists() and not a.resume_existing:
+        raise ValueError("report already exists; use a new path or explicit resume")
+    if a.memory_mode != "cold" and not a.memory_store:
+        raise ValueError("warm/ablation requires an explicit frozen Memory store")
+    if a.llm_mode != "deterministic" and not a.fixture_dir:
+        raise ValueError("live/replay requires fixture-dir")
+    frame, snapshot = build_spy_daily_research_frame(a.raw_spy_json, source_metadata_path=a.source_metadata)
+    spec_base = {
+        "candidate_budget": a.candidate_count,
+        "estimator_seed": a.estimator_seed,
+        "startup_trials": a.startup_trials,
     }
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(json.dumps({"out": str(args.out), "arms": [{"arm": x["arm"], "best_mae": x["best"]["metrics"]["mae"]} for x in arms]}, indent=2))
-    return 0
+    evidence = json.loads(a.evidence_json.read_text()) if a.evidence_json else []
+    calls = json.loads(a.replay_call_map.read_text()) if a.replay_call_map else {}
+    memory_hash = file_sha256(a.memory_store) if a.memory_store else None
+    groups = []
+    for window in a.windows:
+        selected = frame if window == "all" else frame.loc[frame["timestamp"] >= window].reset_index(drop=True)
+        ids = data_identity(selected, FocusedTaskSpec().to_dict())
+        snap = replace(
+            snapshot,
+            **ids,
+            semantic_fingerprint=identity(ids, domain="focused-dataset-v2"),
+            row_count=len(selected),
+            start_date=str(selected.iloc[0]["timestamp"]),
+            end_date=str(selected.iloc[-1]["timestamp"]),
+        )
+        for seed in a.seeds or [a.seed]:
+            for memory_mode in ["cold", "warm"] if a.memory_mode == "ablation" else [a.memory_mode]:
+                runs = []
+                for arm in a.arms:
+                    root = (
+                        a.out.parent
+                        / (a.out.stem + "_runs")
+                        / (
+                            identity({"window": window, "seed": seed, "memory": memory_mode}, domain="benchmark-group")[
+                                :16
+                            ]
+                        )
+                        / arm
+                    )
+                    prior = None
+                    if memory_mode == "warm":
+                        root.mkdir(parents=True, exist_ok=True)
+                        prior = root / "frozen_prior.json"
+                        if not a.resume_existing:
+                            shutil.copyfile(a.memory_store, prior)
+                        if not prior.exists():
+                            raise FileNotFoundError("resuming warm arm requires its existing Memory file")
+                    runs.append(
+                        run_benchmark_arm(
+                            selected,
+                            snap,
+                            project_dir=root,
+                            arm=arm,
+                            spec=BenchmarkSpec(search_seed=seed, **spec_base),
+                            catalog=list(SEARCH_SPACE) if a.small_catalog else None,
+                            llm_mode=a.llm_mode,
+                            fixture_dir=a.fixture_dir,
+                            replay_call_ids=calls,
+                            reviewed_evidence=evidence,
+                            resume_existing=a.resume_existing,
+                            use_memory_prior=memory_mode == "warm",
+                            memory_store_path=prior,
+                            state_path=a.out.parent / (a.out.stem + "_runs") / "runtime.sqlite3",
+                        )
+                    )
+                group = benchmark_summary(runs)
+                groups.append(
+                    {
+                        "window_start": window,
+                        "search_seed": seed,
+                        "estimator_seed": a.estimator_seed,
+                        "memory_mode": memory_mode,
+                        "memory_input_sha256": memory_hash,
+                        **group,
+                    }
+                )
+                atomic_json(
+                    a.out,
+                    {
+                        "schema_version": "focused_benchmark_matrix_v2",
+                        "groups": groups,
+                        "input_sha256": file_sha256(a.raw_spy_json),
+                        "agent_superiority_claim": False,
+                        "limitations": [
+                            "One explicit estimator seed; search seeds are not provider random seeds.",
+                            "Overlapping windows are dependent; no pooled significance test.",
+                            "Deterministic one_shot/adaptive are actual control policies, not live LLM quality.",
+                            "Memory is frozen per campaign; warm/cold groups are separate ablations.",
+                        ],
+                    },
+                )
+    print(
+        json.dumps(
+            {"out": str(a.out), "groups": len(groups), "success": all(g["engineering_complete"] for g in groups)},
+            indent=2,
+        )
+    )
+    return 0 if all(g["engineering_complete"] for g in groups) else 1
 
 
 if __name__ == "__main__":

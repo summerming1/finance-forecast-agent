@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import random
 from dataclasses import asdict, dataclass
 from typing import Any, Literal
 
@@ -191,41 +190,3 @@ SEARCH_SPACE: tuple[dict[str, Any], ...] = (
     {"model_family": "gradient_boosting_regressor", "model_params": {"n_estimators": 80, "learning_rate": 0.03, "max_depth": 2}, "feature_groups": ["base_lags", "momentum"]},
     {"model_family": "gradient_boosting_regressor", "model_params": {"n_estimators": 120, "learning_rate": 0.02, "max_depth": 2}, "feature_groups": ["base_lags", "volatility"]},
 )
-
-
-def search_candidate(config: dict[str, Any], *, strategy: str, index: int, parent_candidate_id: str = "baseline_ridge"):
-    from .focused_research import CandidateConfig
-
-    return CandidateConfig(
-        candidate_id=f"bench_{strategy}_{index}_{_hash(config, 6)}",
-        model_family=str(config["model_family"]),
-        model_params=dict(config["model_params"]),
-        feature_groups=list(config["feature_groups"]),
-        parent_candidate_id=parent_candidate_id,
-        hypothesis_id=f"bench_{strategy}_h{index}",
-    )
-
-
-def random_plan(candidate_count: int, seed: int) -> list[dict[str, Any]]:
-    rng = random.Random(seed)
-    order = list(SEARCH_SPACE)
-    rng.shuffle(order)
-    return order[:candidate_count]
-
-
-def one_shot_fixture_plan(candidate_count: int) -> list[dict[str, Any]]:
-    # Explicitly a deterministic assistant-authored fixture for protocol tests,
-    # never a claim of a live provider call.
-    preferred = [SEARCH_SPACE[4], SEARCH_SPACE[1], SEARCH_SPACE[3], SEARCH_SPACE[2], SEARCH_SPACE[5], SEARCH_SPACE[0]]
-    return list(preferred[:candidate_count])
-
-
-def tpe_like_next(observations: list[tuple[dict[str, Any], float]], used: set[str]) -> dict[str, Any]:
-    remaining = [row for row in SEARCH_SPACE if _hash(row) not in used]
-    if not remaining:
-        raise ValueError("benchmark search space exhausted")
-    if not observations:
-        return remaining[0]
-    best_config, _ = min(observations, key=lambda row: row[1])
-    same_family = [row for row in remaining if row["model_family"] == best_config["model_family"]]
-    return same_family[0] if same_family else remaining[0]

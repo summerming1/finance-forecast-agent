@@ -15,7 +15,7 @@
 | Queue/恢复 | R2 事务路径 | 原子提交/代次/预算/缓存通过 | Linux 完整 Campaign kill/resume 已测 | 单机工程验收 | UI 集成与其他平台 R6 |
 | Confirmation | R4 封存登记/一次性授权/固定留出 | 错配、篡改、并发及崩溃测试通过 | 只有模拟封存证据 | 真实未见金融数据待测 | 不允许 Advisor 调用；可信单机操作 |
 | ModelBundle | R4 包外可信登记与完整性检查 | 篡改/路径/租户/环境/新进程通过 | 历史 SPY 无标签推理 | 不是样本外效果 | 旧包须重发；跨平台待测 |
-| Benchmark | 旧代理策略脚本 | 流程测试通过 | 旧结果保留 | 不具备 Agent 比较资格 | R5 |
+| Benchmark | R5 实际 Controller 策略接入 | 去重/seed/真实TPE/Advisor回放/账本通过 | 冻结 SPY 九组内部对照 | 本轮无真实 LLM 质量或人工时间证据 | 真实 provider 对照需本地补测 |
 | BYO | 内置模型配置/受控表格 | 两模拟客户 | 无真实客户 | 未完成 | 完整特征/时间与用户路径 R6 |
 
 ## R 批次执行状态
@@ -25,7 +25,8 @@
 - R2：既有 Queue/Controller 使用事务状态，冻结计划、缓存和预算可恢复；本地 focused 104 项加共享队列 4 项通过，真实 SPY smoke 通过。
 - R3：实际控制动作、父模型约束、剩余资源上下文和有界 Memory 已实现；本地 128 项累计及共享回归通过。
 - R4：封存数据与冻结确认授权、单次执行、包外可信 ModelBundle 已实现；验收记录见版本日志和条款映射。
-- R5～R6：待实施。本次按用户要求在 R4 提交后停止，不开始 Benchmark 或网页/BYO 扩展。
+- R5：实际策略对照已接入同一 Controller，使用真正 Optuna TPE；默认规则/回放仅为工程证据，验收见版本日志。
+- R6：待实施；R5 测试和远端提交完成后再打通网页/BYO。
 
 ## 当前边界
 
@@ -98,3 +99,16 @@ predictions = predict_model_bundle(bundle, unlabeled_frame, state_path=state_db,
 ### R4 未测边界
 
 没有取得合法未暴露真实金融数据、没有真实独立确认结论；没有本轮 live LLM 调用；Windows/macOS 实机、安全隔离部署及实际客户端模型搬迁仍未验收。当前真实 SPY 仍为历史 development；删除训练尾部 label 后推理只证明接口，不是样本外表现。R5 真实策略对照和 R6 持久网页/BYO 集成仍待实施。
+
+
+## R5 真实策略对照及使用边界
+
+`focused_benchmark.BenchmarkAdvisor` 只选择候选/动作，实际编译、预算、attempt、fit、逐行预测和评价仍由原 Controller 执行。Random、Optuna TPESampler（冻结有限配置ID的分类搜索）、一次性原 Advisor 和逐轮原 Advisor 共用合同。不是额外的候选评测循环。TPE 的启动数、实际进入模型采样的决策数、拒绝重复采样次数明确记录；无静默回退。
+
+`python scripts/run_research_value_benchmark.py --raw-spy-json inputs/spy_chart_2010_2025.json --candidate-count 12 --startup-trials 4 --seeds 17 42 91 --windows 2010-01-01 2013-01-01 2016-01-01 --out validation/benchmark.json`
+
+缺省 `--llm-mode deterministic` 明确是实际规则 Advisor 的工程对照，不是真实LLM。真实对照用 `--llm-mode live --fixture-dir <目录>`；录制后用 `--llm-mode replay --replay-call-map <prompt到call_id映射>`。prompt改变后旧录制不自动适配。
+
+`--memory-mode ablation --memory-store <审核过的固定先验>` 为每组复制独立先验并冻结；cold/warm不得混合成为同一公平四臂结果。输出分别记录唯一配置、已计费fit、成功/失败/重复/无改善实验、逐fold稳定性、真实调用与回放、usage/cost及未知值。wall_seconds 是本次命令耗时；恢复运行不伪造历史停机耗时。人工分钟数未测时为null。search_seed、estimator_seed分开；deterministic重跑和重叠窗口不能增加独立样本量。
+
+六配置空间仅作枚举正确性参照，较大目录仍是受控离散空间；不将TPE离散ID采样包装成任意连续参数优化。旧R5前的greedy/fixture报告保留但不用于真实Agent强弱判断。新版工程验收要求比较对象正确，不要求Agent获胜。

@@ -161,7 +161,7 @@
     },
     "R4": {
       "scope": "confirmation grants and model trust",
-      "status": "local_gate_passed",
+      "status": "delivered",
       "base_sha": "e8a74b536ec747ab47d1cf6d1ded6b457e8d6d7f",
       "test_evidence": [
         {
@@ -244,12 +244,90 @@
         "Windows/macOS, live provider, and actual external customers not rerun",
         "no rolling confirmation refit; only fixed training/static holdout",
         "R5/R6 and V3 not started"
+      ],
+      "commit": "81d0040767fc6b318f705bd2cf34797fc51d7a8f",
+      "ci_runs": [
+        35675661567,
+        35675661548
       ]
     },
     "R5": {
       "scope": "actual-policy value benchmark",
-      "status": "not_started",
-      "test_evidence": []
+      "status": "local_gate_passed",
+      "test_evidence": [
+        {
+          "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
+          "passed": 179,
+          "failed": 0,
+          "seconds": 188.07,
+          "exit_code": 0,
+          "new_R5_cases": 19
+        },
+        {
+          "command": "scoped Ruff / compileall",
+          "exit_code": 0
+        },
+        {
+          "command": "frozen SPY smoke",
+          "rows": 4002,
+          "fits": 20,
+          "outcome": "no_improvement",
+          "exit_code": 0
+        },
+        {
+          "command": "real SPY three start windows x three search seeds x four arms",
+          "groups": 9,
+          "candidate_fits": {
+            "random": 216,
+            "tpe": 216,
+            "one_shot_deterministic": 72,
+            "adaptive_deterministic": 60
+          },
+          "tpe_model_based_decisions": 36,
+          "live_provider_calls": 0,
+          "exit_code": 0
+        }
+      ],
+      "base_sha": "81d0040767fc6b318f705bd2cf34797fc51d7a8f",
+      "clauses": [
+        "one_controller_all_arms",
+        "effective_config_seed_identity",
+        "real_optuna_tpe_startup",
+        "actual_advisor_one_shot_and_feedback",
+        "same_targets_budgets_and_environment",
+        "durable_failures_cost_unknown",
+        "immutable_warm_prior_isolated",
+        "old_proxy_reports_not_quality"
+      ],
+      "limitations": [
+        "No real provider call this round",
+        "Discrete frozen catalog, not continuous TPE optimizer",
+        "No measured human operation time",
+        "Cold/warm tests use identical development history",
+        "Overlapping windows are dependent",
+        "R6 not yet implemented"
+      ],
+      "test_nodeids": [
+        "tests.test_focused_r5_benchmark::test_catalog_identity_uses_effective_params_and_separates_seed",
+        "tests.test_focused_r5_benchmark::test_real_policies_share_controller_unique_rows_and_durable_fit_accounting[random]",
+        "tests.test_focused_r5_benchmark::test_real_policies_share_controller_unique_rows_and_durable_fit_accounting[tpe]",
+        "tests.test_focused_r5_benchmark::test_real_policies_share_controller_unique_rows_and_durable_fit_accounting[enumerate]",
+        "tests.test_focused_r5_benchmark::test_repeated_search_seed_is_reproducible",
+        "tests.test_focused_r5_benchmark::test_adaptive_uses_actual_advisor_feedback_and_one_shot_calls_once",
+        "tests.test_focused_r5_benchmark::test_out_of_catalog_proposal_rejected_before_candidate_fit",
+        "tests.test_focused_r5_benchmark::test_missing_replay_is_not_substituted_and_has_a_failed_report",
+        "tests.test_focused_r5_benchmark::test_summary_pairs_contracts_and_refuses_mixed_data",
+        "tests.test_focused_r5_benchmark::test_duplicate_search_catalog_is_rejected",
+        "tests.test_focused_r5_benchmark::test_resume_does_not_invoke_policy_or_refit",
+        "tests.test_focused_r5_benchmark::test_failed_fit_is_charged_and_not_erased_from_report",
+        "tests.test_focused_r5_benchmark::test_recorded_live_metadata_is_counted_without_claiming_test_provider",
+        "tests.test_focused_r5_benchmark::test_tpe_startup_is_explicit_not_falsely_called_model_based",
+        "tests.test_focused_r5_benchmark::test_catalog_change_cannot_resume_accepted_campaign",
+        "tests.test_focused_r5_benchmark::test_no_network_allowed_for_real_replay_reader",
+        "tests.test_focused_r5_benchmark::test_default_deterministic_arms_are_honestly_labeled",
+        "tests.test_focused_r5_benchmark::test_failed_provider_attempt_has_unknown_cost_not_zero",
+        "tests.test_focused_r5_benchmark::test_cold_warm_isolation_uses_frozen_exact_task_prior"
+      ]
     },
     "R6": {
       "scope": "workspace BYO integration",

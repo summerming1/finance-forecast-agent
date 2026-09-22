@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import platform
+import time
 import uuid
 from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
@@ -643,6 +644,7 @@ class FocusedResearchAdvisor:
         self.last_fixture_path: Path | None = None
 
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
+        self.last_record, self.last_fixture_path = None, None
         if self.mode == "deterministic":
             if prompt.get("structured_feedback"):
                 from .focused_adaptive import adaptive_deterministic_advice
@@ -703,6 +705,7 @@ def compile_hypotheses(
     max_count: int,
     visible_evidence: list[dict[str, Any]] | None = None,
     candidate_lookup: dict[str, CandidateConfig] | None = None,
+    default_seed: int = 42,
 ) -> list[tuple[HypothesisSpec, CandidateConfig | None]]:
     """Compile a bounded decision, including controls which do not train models.
 
@@ -788,7 +791,7 @@ def compile_hypotheses(
             resolve_feature_columns(groups)
             params = validate_model_params(row["model_family"], row.get("model_params", {}))
             candidate = CandidateConfig(cid, row["model_family"], params, sorted(set(groups)),
-                seed=row.get("seed", 42), parent_candidate_id=parent_id, hypothesis_id=hid)
+                seed=row.get("seed", default_seed), parent_candidate_id=parent_id, hypothesis_id=hid)
             _ = candidate.fingerprint  # Validate the exact estimator seed before a fit is possible.
             if action == "simplify":
                 parent = candidates.get(control_id)
@@ -843,6 +846,7 @@ class FocusedResearchController:
         state_path: str | Path | None = None,
         checkpoint_hook=None,
         replay_call_ids: dict[str, str] | None = None,
+        benchmark_strategy: dict[str, Any] | None = None,
     ):
         self.project_dir = Path(project_dir).resolve()
         self.state_path = Path(state_path or os.getenv("FFA_STATE_DB") or self.project_dir / "runtime.sqlite3")
@@ -870,6 +874,11 @@ class FocusedResearchController:
         if campaign_id is not None:
             safe_id(campaign_id)
         self.advisor = FocusedResearchAdvisor(advisor_mode, fixture_dir, replay_call_ids=replay_call_ids)
+        self.benchmark_strategy = benchmark_strategy
+        if benchmark_strategy is not None:
+            from .focused_benchmark import BenchmarkAdvisor
+            self.advisor = BenchmarkAdvisor(self.advisor, benchmark_strategy)
+        self.estimator_seed = self.advisor.spec.estimator_seed if benchmark_strategy else 42
         self.spec = CampaignSpec(
             campaign_id=campaign_id or f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
             task=task,
@@ -1036,6 +1045,7 @@ class FocusedResearchController:
             "source": identity(source, domain="research-execution-source-v1"),
             "environment": {"python": platform.python_version(), **{name: version(name) for name in ("numpy", "pandas", "scikit-learn", "exchange-calendars")}},
             "advisor_mode": self.advisor.mode, "provider": provider,
+            "strategy": self.advisor.contract if self.benchmark_strategy else None,
             "replay_call_ids": self.advisor.replay_call_ids,
             "fixture_dir": str(self.advisor.fixture_dir.resolve()) if self.advisor.fixture_dir else None,
             "reviewed_evidence": EvidenceIndex(self.reviewed_evidence).rows,
@@ -1160,7 +1170,7 @@ class FocusedResearchController:
             runtime.put("memory_snapshot", memory_evidence, immutable=True)
         baseline_results, baseline_payloads = [], []
         for candidate_id, family, params, groups in [*NAIVE_BASELINES, *DEFAULT_BASELINES]:
-            candidate = CandidateConfig(candidate_id, family, params, groups)
+            candidate = CandidateConfig(candidate_id, family, params, groups, seed=self.estimator_seed)
             role = "naive_baseline" if family.startswith("naive_") else "model_baseline"
             result, saved = self._execute(candidate, role=role, splits=splits)
             if result is None:
@@ -1181,13 +1191,23 @@ class FocusedResearchController:
                         prior_results=research_results, budget=self.budget, structured_feedback=feedback_history,
                         reviewed_evidence=self.reviewed_evidence, compatible_memory=memory_evidence,
                         resource_usage=runtime.resource_usage(), advisor_calls_used=runtime.get("advisor_call_reservations", 0), diagnostics=diagnostic_history)
+                    if self.benchmark_strategy:
+                        prompt = self.advisor.prepare_prompt(prompt, runtime)
                     calls = runtime.get("advisor_call_reservations", 0)
                     if calls >= self.budget.max_advisor_calls:
                         stop_reason = "advisor_budget_exhausted"
                         break
                     runtime.put("advisor_call_reservations", calls + 1)
                     self._append_event("advisor.call_reserved", round_index=round_index, call_number=calls + 1)
-                    advice, source = self.advisor.propose(prompt)
+                    started_at = time.monotonic()
+                    try:
+                        advice, source = self.advisor.propose(prompt)
+                    finally:
+                        runtime.put(f"advisor_attempt:{calls+1}", {
+                            "round_index": round_index, "call_record": self.advisor.last_record,
+                            "telemetry": getattr(self.advisor, "last_telemetry", {}),
+                            "elapsed_seconds": time.monotonic()-started_at,
+                        }, immutable=True)
                     recorded = {"prompt": prompt, "advice": advice, "source": source,
                                 "call_record": self.advisor.last_record}
                     runtime.put(f"advice:{round_index}", recorded, immutable=True)
@@ -1198,7 +1218,10 @@ class FocusedResearchController:
                 try:
                     compiled = compile_hypotheses(advice, round_index=round_index, source=source,
                         max_count=self.budget.max_new_candidates_per_round, visible_evidence=prompt["evidence_projection"],
-                        candidate_lookup={key: value.candidate for key, value in result_lookup.items()})
+                        candidate_lookup={key: value.candidate for key, value in result_lookup.items()},
+                        default_seed=self.estimator_seed)
+                    if self.benchmark_strategy:
+                        self.advisor.validate_compiled(compiled)
                 except (ValueError, TypeError) as exc:
                     self._append_event("proposal.rejected", round_index=round_index, error_type=type(exc).__name__)
                     raise

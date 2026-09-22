@@ -17,6 +17,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff"]
+benchmark = ["optuna>=4.8,<5"]
 ui = ["streamlit"]
 tracking = ["mlflow", "dvc"]
 data = ["yfinance", "pandas-datareader"]

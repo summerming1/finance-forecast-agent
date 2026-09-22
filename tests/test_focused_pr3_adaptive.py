@@ -14,6 +14,7 @@ from finance_forecast_agent.focused_adaptive import (
     choose_adaptive_action,
     validate_evidence_refs,
 )
+from finance_forecast_agent.focused_benchmark import BenchmarkSpec, run_benchmark_arm
 from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_daily_research_frame
 from finance_forecast_agent.focused_protocol import FocusedSplitSpec
 from finance_forecast_agent.focused_research import (
@@ -21,9 +22,7 @@ from finance_forecast_agent.focused_research import (
     ResearchBudget,
     advisor_prompt,
     compile_hypotheses,
-    run_baselines,
 )
-from scripts.run_research_value_benchmark import run_arm
 
 
 def _write_chart(path: Path, n: int = 1200) -> None:
@@ -176,18 +175,17 @@ def test_controller_round_two_is_feedback_driven(tmp_path: Path) -> None:
 
 
 def test_value_benchmark_arms_share_same_budget_and_evaluator_contract(tmp_path: Path) -> None:
+    # R5 migration: legacy selectors are replaced, not compared under false LLM/TPE labels.
     raw = tmp_path / "spy.json"
     _write_chart(raw)
-    frame, _ = build_spy_daily_research_frame(raw)
+    frame, snapshot = build_spy_daily_research_frame(raw)
     split_spec = FocusedSplitSpec()
-    baselines = run_baselines(frame, ResearchBudget(max_rounds=1, max_fit_calls=50), split_spec=split_spec)
-    best = min(baselines, key=lambda row: row.metrics["mae"])
-    arms = [
-        run_arm(frame, arm=arm, count=2, seed=17, best_baseline_mae=best.metrics["mae"], split_spec=split_spec)
-        for arm in ("random", "tpe_like", "one_shot_llm", "adaptive_agent")
-    ]
-    assert {row["arm"] for row in arms} == {"random", "tpe_like", "one_shot_llm", "adaptive_agent"}
-    assert {row["candidate_count"] for row in arms} == {2}
-    assert {row["fit_calls"] for row in arms} == {2 * split_spec.max_folds}
-    assert all(len(row["results"]) == 2 for row in arms)
-    assert all("mae" in result["metrics"] for arm in arms for result in arm["results"])
+    arms = [run_benchmark_arm(frame, snapshot, project_dir=tmp_path / arm, arm=arm,
+            spec=BenchmarkSpec(candidate_budget=2, search_seed=17), split_spec=split_spec)
+            for arm in ("random", "tpe", "one_shot", "adaptive")]
+    assert len({row["comparison_contract_hash"] for row in arms}) == 1
+    assert len({row["comparison_target_hash"] for row in arms}) == 1
+    assert all(row["telemetry"]["charged_fit_calls"] <= 20 for row in arms)
+    assert all(row["execution_status"] == "completed" for row in arms)
+    assert all(row["best"] and "mae" in row["best"]["metrics"] for row in arms)
+    assert not any(row["live_quality_evidence"] for row in arms)

@@ -191,3 +191,8 @@ SQLite records, not mutable JSON exports, are authoritative. Old asset paths in 
 New tests in `tests/test_focused_r4_trust.py` bind the frozen selection, actual sealed input, target identities, one-shot authorization, shared evaluator, accepted results and externally registered ModelBundle. Required negatives include wrong tenant/data/hash/protocol/source/environment, duplicate/concurrent grants, failure or real child-process crash after a baseline fit, resealing development targets including equivalent date serialization, spoofed trust flags, path/symlink escape and corrupt model bytes before deserialization.
 
 Success means a trusted local operator can run the declared fixed-training/static-holdout protocol and load its registered internal bundle. It does not demonstrate real financial independent evidence, OS-level isolation, cross-host trust, live LLM quality or the future rolling-refit/Shadow protocol. Model and frame hashes detect changes; the separately controlled registry supplies local authority. Legacy compatibility never upgrades unknown evidence.
+
+
+## R5 同链路策略对照门禁
+
+同一Controller/编译器/RuntimeDB/evaluator；配置身份与执行seed分离；实际Optuna TPE ask/tell并记录启动阶段；One-shot仅一次规划，Adaptive逐轮消费真实Feedback；所有arm目标行、基线、预算、环境和来源合同一致；非法/失败/重复实验不消失。cold/warm独立先验不跨臂写入；费用和人工时间未知不得填零。真实数据的deterministic运行、人工record/replay、真实live质量是不同证据层。强行要求Agent获胜不是验收条件。
