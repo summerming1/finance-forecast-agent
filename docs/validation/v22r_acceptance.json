@@ -243,7 +243,7 @@
         "legacy unregistered ModelBundles must be reissued; explicit state_path/FFA_DELIVERY_STATE_DB required",
         "Windows/macOS, live provider, and actual external customers not rerun",
         "no rolling confirmation refit; only fixed training/static holdout",
-        "R5/R6 and V3 not started"
+        "At R4 delivery time R5/R6/V3 were not started; current authoritative checkpoint supersedes this historical stage note."
       ],
       "commit": "81d0040767fc6b318f705bd2cf34797fc51d7a8f",
       "ci_runs": [
@@ -305,7 +305,7 @@
         "No measured human operation time",
         "Cold/warm tests use identical development history",
         "Overlapping windows are dependent",
-        "R6 not yet implemented"
+        "At R5 delivery time R6 was not yet implemented; current authoritative checkpoint records R6 as code-committed/validation-pending."
       ],
       "test_nodeids": [
         "tests.test_focused_r5_benchmark::test_catalog_identity_uses_effective_params_and_separates_seed",
@@ -407,12 +407,23 @@
         "Feature causality/provenance remains operator responsibility",
         "No portable trust migration/OS multiuser security/V3"
       ],
-      "submitted_tree": "29bdf788caf73287d6a845a98eacc2b0cfbd83a4",
-      "core_ci_run": 35686627733,
+      "submitted_tree": "4f740f79335a0a25edc78668f0aecdd9d4a5db62",
+      "core_ci_run": 35691460180,
       "browser_ci": {
-        "run": 35686627733,
+        "run": 35691460214,
         "status": "failed",
-        "note": "dual-Python core jobs passed; Chromium E2E remains to be reproduced/fixed locally"
+        "note": "Official R6 commit: Python 3.11/3.13 core jobs passed with 203 tests each; Chromium E2E failed at candidate combobox value assertion and remains open."
+      },
+      "commit": "3fdd2d6403bc425d172d15eba749bcdc925f33e2",
+      "final_acceptance_run": 35691460205,
+      "formal_commit_evidence": {
+        "python_311_passed": 203,
+        "python_313_passed": 203,
+        "ruff": "passed",
+        "frozen_spy_rows": 4002,
+        "fit_calls": 20,
+        "research_outcome": "no_improvement",
+        "confirmation_status": "not_run_historical_data_exposed"
       }
     }
   },
@@ -423,7 +434,14 @@
     "macos": "not_run",
     "windows": "physical native tests pending",
     "historical_native": "see bounded full-suite report; asset/env failures not waived",
-    "browser": "pending_local_codex; CI run 35686627733 browser failed while Python 3.11/3.13 core jobs passed",
+    "browser": "OPEN: official R6 run 35691460214 failed candidate-selection value assertion; reproduce/fix locally and rerun full browser flow",
     "value_quality": "real LLM comparison and measured human minutes pending"
+  },
+  "authoritative_checkpoint": {
+    "branch": "feat/mission-research-v2",
+    "head": "3fdd2d6403bc425d172d15eba749bcdc925f33e2",
+    "tree": "4f740f79335a0a25edc78668f0aecdd9d4a5db62",
+    "status": "R0-R5 delivered; R6 code_committed_validation_pending; V3 not_started",
+    "updated_at": "2026-09-22"
   }
 }

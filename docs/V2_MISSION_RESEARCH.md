@@ -198,3 +198,15 @@ The second Chromium attempt demonstrated that selection changed and detail rende
 ## R6 code-committed / validation-pending handoff
 
 候选产品树 `29bdf788caf73287d6a845a98eacc2b0cfbd83a4` 的 Python 3.11/3.13 核心累计回归及 lint/compile 已在 CI 通过；真实 Chromium job 在 run `35686627733` 仍失败。按用户要求先将这棵功能代码提交到正式分支，后续由本地 Codex 在该提交上完成浏览器 E2E、真实 provider、Windows/native 等剩余验收。失败记录不可删除或改写为通过。
+
+
+## R6 formal branch checkpoint — 2026-09-22
+
+R6 product code was committed to the official branch at `3fdd2d6403bc425d172d15eba749bcdc925f33e2` (tree `4f740f79335a0a25edc78668f0aecdd9d4a5db62`) under the explicit state **code committed / validation pending**.
+
+Evidence on that exact commit:
+- Focused Mission validation `35691460180`: 203 passed on Python 3.11 and 203 passed on Python 3.13; Ruff passed.
+- Focused final acceptance `35691460205`: frozen SPY 4002 rows, 20 fits, no_improvement, historical-exposed confirmation not run; package/model delivery smoke passed.
+- Focused browser acceptance `35691460214`: failed at the candidate combobox value assertion. This failure remains evidence and is not converted into a pass by AppTest or non-browser tests.
+
+This checkpoint supersedes earlier wording that R6 could only be published after a green Chromium gate. The user explicitly chose to commit the product code first so local Codex can complete independent validation. It does **not** supersede the acceptance requirement itself: R6 is not accepted until the browser/user-workflow gate is closed and remaining external gates are reported honestly.

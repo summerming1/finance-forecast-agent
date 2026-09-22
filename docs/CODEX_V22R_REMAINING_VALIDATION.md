@@ -2,13 +2,20 @@
 
 ## 任务与边界
 
-仓库 `summerming1/finance-forecast-agent`；正式分支 `feat/mission-research-v2`。R5 已提交 `1bfe5ef78dd475d12f386c528ace44638e27434c`，R6 的最终 SHA 必须从远端及当前工作区重新确认，不能按聊天记忆或旧测试数判断。
+仓库 `summerming1/finance-forecast-agent`；正式分支 `feat/mission-research-v2`。R6 已提交 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`（tree `4f740f79335a0a25edc78668f0aecdd9d4a5db62`）。不要重新应用 R6 patch，也不要 merge `validation/r6-20260922`；先从正式分支拉取并确认 HEAD。
 
 本轮只做剩余验收、对抗审查和最小 bug 修复。不要重写已存在的 R0–R6，不开始 V3，不扩展资产/频率/任务，不增加第二套 Controller/Queue/Evaluator/Memory，不解除任意代码、反序列化模型或确认权限边界。模拟样例不等于真实用户/供应商/金融能力。
 
 先执行 `git status --short`、`git fetch origin`、`git branch --show-current`、`git rev-parse HEAD`、`git log -12 --oneline`。有用户未提交修改时保留，不 reset/stash/强推。记录 branch/base SHA/tree、工作区 diff、Python/OS/依赖以及 input hashes。保持原来的受控状态库；不要新建空库来重置暴露记录。更新代码前完成或取消旧运行，跨执行合同的新研究创建新 Campaign。
 
 阅读顺序：AGENTS.md → docs/PROJECT_ROADMAP.md → docs/CURRENT_IMPLEMENTATION.md → 接受的 ADR 001/002/003 → FOCUSED_ARCHITECTURE.md → FOCUSED_ACCEPTANCE_TEST_PLAN.md → V2_MISSION_RESEARCH.md → docs/validation/v22r_acceptance.json → FRONTEND_USER_GUIDE.md → 本文。CURRENT 是当前状态；V2 中旧阶段的结果是历史记录，不是新 SHA 的测试证据。
+
+### 已知 R6 正式提交结果
+
+- Focused Mission validation `35691460180`：Python 3.11 / 3.13 各 203 passed，Ruff 通过。
+- Focused final acceptance `35691460205`：成功。
+- Focused browser acceptance `35691460214`：失败；当前失败位于候选切换后的 combobox value 断言。应先复现这个失败并做最小修复，再继续完整浏览器路径。
+- 以上不代表真实 provider、真实客户、合法未暴露 confirmation 或 V3 已通过。
 
 ## 0. 证据格式与已测范围
 

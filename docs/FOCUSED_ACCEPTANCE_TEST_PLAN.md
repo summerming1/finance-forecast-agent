@@ -209,3 +209,15 @@ Success means a trusted local operator can run the declared fixed-training/stati
 - Browser scenario: actual queued worker → candidates A/B → new context / reload / history → ResearchPackage SHA audit and ModelBundle download → second simulated Parquet client with reviewed numeric feature.
 - Preserve old failure logs. Prior R1 identity test now uses allowed development metadata and separately asserts that fake sealed input is rejected; no permission check was relaxed.
 - Detailed R0–R6 pending environment/scientific/customer gates: CODEX_V22R_REMAINING_VALIDATION.md.
+
+
+### R6 current formal status
+
+Official R6 commit: `3fdd2d6403bc425d172d15eba749bcdc925f33e2`.
+
+Current evidence on that exact commit:
+- core focused/shared gate: **203 passed** on Python 3.11 and **203 passed** on Python 3.13, plus Ruff/compile success (`35691460180`);
+- frozen real-SPY final acceptance: passed (`35691460205`);
+- real Chromium E2E: **failed** (`35691460214`) at candidate-selection value verification.
+
+Therefore R6 acceptance is **OPEN**. The code may be used as the base for local Codex validation, but a browser/AppTest substitution, test deletion, or weakened candidate-switch assertion does not close this gate. After a minimal fix, rerun the browser flow, cumulative core tests, frozen-SPY final acceptance and document the new exact SHA.

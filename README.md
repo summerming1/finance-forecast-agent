@@ -17,6 +17,11 @@ feat/mission-research-v2
 
 Current status is defined only by [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md). V2.2-R closes reopened contracts; module presence is not complete product acceptance.
 
+## R0–R6 authoritative checkpoint
+
+As of 2026-09-22, R0–R5 are delivered. R6 product code is committed on the official branch at `3fdd2d6403bc425d172d15eba749bcdc925f33e2`, but R6 remains **validation pending** rather than accepted. On that exact commit, Focused Mission validation passed with **203 tests on Python 3.11 and 203 tests on Python 3.13**, Ruff passed, and the frozen real-SPY final acceptance passed. The dedicated Chromium workflow run `35691460214` failed at the candidate-selection value assertion and remains an explicit open engineering gate. V3 has not started.
+
+
 Start with these documents:
 
 - `AGENTS.md` — mandatory contract for Codex/coding agents.

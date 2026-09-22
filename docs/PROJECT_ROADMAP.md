@@ -7,6 +7,14 @@
 内部前瞻记录准备、客户工作流、研究价值、真实科学证据分别验收，不以版本号代替。
 下列内容是历史决策快照；其中“下一步”等词只表达当时状态。
 
+### 当前实现检查点：2026-09-22
+
+- R0～R5：已交付，具体提交和门禁见 `CURRENT_IMPLEMENTATION.md` 与 `docs/validation/v22r_acceptance.json`。
+- R6：产品代码已提交到正式分支，正式提交为 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`；核心双 Python 回归和冻结真实 SPY final acceptance 通过，但真实 Chromium E2E 尚未通过，因此状态是 **code committed / validation pending**。
+- V3 Shadow Forecasting：未开始。
+- 后续优先级仍是关闭 R0～R6 剩余真实环境/用户/科学证据门禁，不以新增版本号替代验收。
+
+
 ## 历史决策快照：2026-09-20（非当前状态）
 
 在 ADR-MISSION-002 的 Mission-driven research 方向上继续收敛，不改变 SPY / 日频 / next-session return / forecast-only 主任务。最新产品顺序为：

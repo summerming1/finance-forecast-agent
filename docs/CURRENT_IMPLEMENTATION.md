@@ -2,7 +2,7 @@
 
 ## 唯一当前状态来源：V2.2-R 能力与验收加固
 
-正式分支：`feat/mission-research-v2`。实施起点：`6e4f194453f77037929052a0a978cc76bc2017b7`。
+正式分支：`feat/mission-research-v2`。V2.2-R 实施起点：`6e4f194453f77037929052a0a978cc76bc2017b7`。当前正式实现 HEAD：`3fdd2d6403bc425d172d15eba749bcdc925f33e2`。
 
 原 PR-1～PR-6 已有模块实现；此前“全部验收完成”的表述过度。验收缺口现在按 R0→R6 修复，不重写项目，也不自动开始 V3。
 
@@ -26,7 +26,7 @@
 - R3：实际控制动作、父模型约束、剩余资源上下文和有界 Memory 已实现；本地 128 项累计及共享回归通过。
 - R4：封存数据与冻结确认授权、单次执行、包外可信 ModelBundle 已实现；验收记录见版本日志和条款映射。
 - R5：实际策略对照已接入同一 Controller，使用真正 Optuna TPE；默认规则/回放仅为工程证据，验收见版本日志。
-- R6：持久网页、受控特征 BYO、导出/审核/恢复接口代码已实现并按用户要求先提交，供本地 Codex 完整验收。Python 3.11/3.13 累计核心回归与 lint/compile 已通过；Chromium E2E 在 CI 仍失败，因此 R6 当前是 `code_committed_validation_pending`，不是已验收完成。
+- R6：持久网页、受控特征 BYO、导出/审核/恢复接口代码已实现并提交为 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`，供本地 Codex 完整验收。该正式提交的 Python 3.11/3.13 累计核心回归各 **203 passed**，Ruff/compile 通过，冻结真实 SPY final acceptance 通过；Chromium E2E run `35691460214` 仍失败，因此 R6 当前是 `code_committed_validation_pending`，不是已验收完成。
 
 ## 当前边界
 
@@ -144,3 +144,14 @@ R0–R6 的本轮定向/累计工程证据、精确源码树和运行层级见 `
 ### R6 当前提交边界
 
 R6 正式分支可供本地拉取和继续修复，但浏览器真实 E2E 尚未关闭。已知 CI run `35686627733` 中 Python 3.11/3.13 核心累计回归、Ruff/compile 通过，browser job 失败；失败证据必须保留并由本地 Codex 从当前正式分支继续复现/修复。不能据此宣称 R6 用户工作流已经验收。
+
+
+## R6 正式提交的同 SHA 证据
+
+正式 R6 commit：`3fdd2d6403bc425d172d15eba749bcdc925f33e2`，tree：`4f740f79335a0a25edc78668f0aecdd9d4a5db62`。
+
+- Focused Mission validation run `35691460180`：Python 3.11 **203 passed**（278.22s），Python 3.13 **203 passed**（227.19s），Ruff passed。
+- Focused final acceptance run `35691460205`：冻结真实 SPY **4002 rows**、**20 fit calls**、`research_outcome=no_improvement`、`confirmation_status=not_run_historical_data_exposed`，ResearchPackage / ModelBundle smoke 成功。
+- Focused browser acceptance run `35691460214`：**FAILED**。当前失败点是候选切换后，Playwright 期望 combobox value 为 `r1_c1_e78a28dd`，实际断言未满足。该失败保留为 R6 工程验收开放项，不能被 AppTest 或核心回归替代。
+
+因此当前产品口径是：**R0～R5 delivered；R6 code committed / validation pending；V3 not started。**
