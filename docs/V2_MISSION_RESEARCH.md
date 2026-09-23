@@ -7,6 +7,12 @@
 
 # V2 Mission Research — incremental delivery record
 
+## Conditional action prompt repair — 2026-09-23 (validation in progress)
+
+Base `887eff033053d3f2bb36e7b4b82dad431e0234a1`. Preserved live response `d80679162f984516a7470bc793b72cea` used simplify without its required dimension. The response illustration omitted simplification_dimension, ablation_component, diagnostic and seed even though surrounding prose mentioned some of them. New parity test reproduced that omission (1 failed / 1 passed, 2.87s). The illustration and conditional action contracts now document those fields and exact parent-relative constraints. Benchmark instructions explicitly prohibit mixing catalog rows and referring to not-yet-executed one-shot batch members. No parsing repair, extra planning call, evaluator change, fallback, or validation relaxation.
+
+New targeted prompt file: 4 passed / 3.13s with an explicit short temporary root; a prior default-temp invocation hit an unrelated Windows pytest cleanup PermissionError and is not counted as a clean run. Scoped Ruff/compile pass after import formatting. Related R3/R5 regression: 35 passed / 1263.72s; final four-test prompt file was also run separately. Windows cumulative: 235 passed / 1 failed / 2 skipped in 3882.16s, exit 1; sole failure is test_model_bundle_tamper_rejected_before_load[symlink], Windows fixture creation WinError 1314 (BLOCKED_ENV), not a bypassed trust assertion. Current-code Chromium: 1 passed / 177.62s; real campaign crash/resume: PASS / 92.878s. First real One-shot preflight: one logical planning call, 12 unique valid candidates, 60 charged fits; one HTTP timeout then a successful retry remains charged/unknown usage. Fresh real two-round Live and network-denied Replay each completed 20 fits with identical prompts/configs/predictions, 2 versus 0 requests. Full-repository test, complete matrix and final acceptance remain in progress and are recorded separately when complete.
+
 ## User-authorized live retry: response envelope clarification — 2026-09-22
 
 ### Completed user-authorized quota replacement matrix

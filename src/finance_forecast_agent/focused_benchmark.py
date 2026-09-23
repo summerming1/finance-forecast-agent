@@ -169,10 +169,14 @@ class BenchmarkAdvisor:
         body["rules"] += [
             "Training candidates must match exactly one search_catalog configuration and estimator_seed.",
             "Do not propose a new task, metric or new feature outside the frozen catalog.",
+            "Do not combine fields from different search_catalog rows: copy model_family, model_params and feature_groups together from one row. config_identity is lookup metadata, not a response field. Set seed to strategy_context.estimator_seed.",
+            "Avoid configurations already in baseline_results or executed_candidates and duplicates within your batch. Allowed feature groups alone do not authorize a combination missing from search_catalog.",
+            "Use improve for a general catalog choice. Use simplify/ablate only when their exact parent-relative contract holds AND the derived full child configuration is in search_catalog; never invent a catalog entry to express an attractive hypothesis.",
         ]
         if self.arm == "one_shot":
             body["max_hypotheses"] = self.spec.candidate_budget
             body["rules"].append("Propose the whole bounded plan now. No intermediate feedback will be provided.")
+            body["rules"].append("All parent/control/feedback references must already exist in this prompt; later planned candidates are not completed evidence and cannot be referenced by another item in this batch.")
         else:
             body["max_hypotheses"] = 1
         return body
