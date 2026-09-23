@@ -11,7 +11,11 @@ R0–R6 是原能力的验收加固，不是新产品主线。保留同一个 Co
 live 与 replay 分开；模型/人工成本未知时保持 null。确定性或手写 fixture 只作工程证据。真实客户、未见金融数据、前瞻和研究优越性需要独立证据；一组通过的单元测试或模型包加载不关闭这些门禁。
 
 
-## 当前第一优先级
+## 当前交接：2026-09-23 续测结束
+
+以 `CURRENT_IMPLEMENTATION.md` 与 `validation/V22R_SUPPLEMENT_20260923.md` 为准。提示词最小修复 `84d3221` 已推送，同 SHA 三项 CI 通过。Windows 全仓 398/1/3、累计 235/1/2，唯一失败为 symlink 权限。真实 Live/离线 Replay、Windows 完整 crash/resume、网页审核、真实数据模拟 BYO、选定外部特征候选包 fresh-process 均补测。主矩阵完成 Random 8/9、TPE 9/9、One-shot 4/9、Adaptive 0/9；额外成功保留为独立补测，不篡改原失败。R5 FAIL、R4 BLOCKED_NO_ELIGIBLE_DATA、R6 BLOCKED_NO_REAL_USER，工程 PARTIAL。用户不能确认 2026 数据外部使用记录；禁止新下载后自称未暴露。macOS/GPU 按要求不测。本轮停止，不自动重跑矩阵、不启动 V3。
+
+## 历史第一优先级（2026-09-22，已由上述更新取代）
 
 最新用户授权的额度切换续测已经结束，当前详细结果以 `validation/V22R_LLM_RETRY_20260922.md`、对应 JSON 和 `CURRENT_IMPLEMENTATION.md` 为准。新矩阵 Random/TPE 各 9/9、One-shot 3/9、Adaptive 0/9 完成；真实 API 可用与完整研究价值是两回事。新 Windows 累计 231 passed / 1 symlink 权限失败 / 2 skipped，实际 Chromium 1 passed；历史资产恢复和匹配解析器复验已补上。生产最小修复 `02acafe`、测试隔离 `92a8189`；新生产改动发布确认尚待回复，不将旧 Linux CI 算作新 SHA。下方是此前审计的历史交接，不要求重新实现 R0～R6。结束本轮后停止，不自动追加研究或 V3。
 

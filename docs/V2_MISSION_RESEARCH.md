@@ -7,7 +7,9 @@
 
 # V2 Mission Research — incremental delivery record
 
-## Conditional action prompt repair — 2026-09-23 (validation in progress)
+## Conditional action prompt repair — 2026-09-23 (results recorded; engineering PARTIAL)
+
+Completion update: source fix `84d3221` is pushed. Windows full repository: 398 passed / 1 symlink privilege failure / 3 skipped (2412.77s, isolated matching PDF parser); same-source Linux 3.11/3.13: 238 passed each, Chromium and frozen SPY CI PASS. Primary 3×3×4 completion: Random 8/9, TPE 9/9, One-shot 4/9, Adaptive 0/9. Separate retries completed one Random, two One-shot and one Adaptive with genuine advisor_stop/no_improvement; they do not replace failed primary arms. All 49 attempts retain 2200 charged fits and 140 logical calls. Detailed results and limitations: `validation/V22R_SUPPLEMENT_20260923.md`. Independent confirmation remains blocked by unknown exposure, and simulated users are not real customer validation. Earlier progress wording below records the intermediate checkpoint, not ongoing work. No further matrix or V3 starts automatically.
 
 Base `887eff033053d3f2bb36e7b4b82dad431e0234a1`. Preserved live response `d80679162f984516a7470bc793b72cea` used simplify without its required dimension. The response illustration omitted simplification_dimension, ablation_component, diagnostic and seed even though surrounding prose mentioned some of them. New parity test reproduced that omission (1 failed / 1 passed, 2.87s). The illustration and conditional action contracts now document those fields and exact parent-relative constraints. Benchmark instructions explicitly prohibit mixing catalog rows and referring to not-yet-executed one-shot batch members. No parsing repair, extra planning call, evaluator change, fallback, or validation relaxation.
 

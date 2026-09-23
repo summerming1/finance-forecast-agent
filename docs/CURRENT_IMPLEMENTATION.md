@@ -1,10 +1,12 @@
 # 当前版本功能与技术实现说明
 
-## 2026-09-23 用户授权续测（进行中，不是最终验收）
+## 2026-09-23 用户授权续测（已结束，工程 PARTIAL）
 
 续测起点 `887eff033053d3f2bb36e7b4b82dad431e0234a1` 已正常推送；该 SHA 的 Linux Python 3.11/3.13 各 234 项、Chromium 1 项及冻结 SPY 交付 CI 均通过（35803915631 / 35803915635 / 35803915637）。下文 2026-09-22 的失败矩阵和 Windows 限制保留为历史证据。
 
-本次最小修复只补全 Advisor 提示词中缺失的条件字段及父配置约束，强调 Benchmark 必须逐行复制完整目录配置，不能拼接特征组合；编译器、目录、预算和评价均未放宽。四项新合同测试通过；关联 R3/R5 共 35 passed / 1263.72s，Windows 累计 235 passed / 1 failed / 2 skipped / 3882.16s（exit 1；唯一失败为符号链接构造 WinError 1314，BLOCKED_ENV）。Ruff/compile 通过；全仓测试和新真实矩阵仍在运行，尚不升级 R5/R6 状态。新两轮 qwen3.8-flash Live→严格离线 Replay 完成：各 20 fits、Live 2 请求、Replay 0 请求，逐行预测一致。
+最小提示词修复 `84d3221b2f6643a34f0b10769b44a0aa96850f4c` 已推送：补全条件字段、父配置约束与目录原子引用，没有放宽编译器、预算或评价。4 项新合同测试、35 项相关回归通过。Windows 累计 235 passed / 1 failed / 2 skipped / 3882.16s；匹配隔离 PDF 环境全仓 398 passed / 1 failed / 3 skipped / 2412.77s，两者 exit 1，唯一失败为 symlink fixture WinError 1314（BLOCKED_ENV）。当前代码 Chromium 1 passed / 177.62s，Ruff/compile 通过；同修复 SHA Linux Python 3.11/3.13 各 238 passed，Chromium、冻结 SPY CI 均通过。
+
+完整结果见 [2026-09-23 报告](validation/V22R_SUPPLEMENT_20260923.md) 与派生 JSON。主矩阵 Random 8/9、TPE 9/9、One-shot 4/9、Adaptive 0/9 完成；独立补测完成失败 Random、两个 One-shot 和一个真实 Adaptive（advisor_stop，no_improvement），不改写原失败。含补测 49 attempts / 2200 charged fits / 140 logical calls / 182 HTTP；696 预测、1794 哈希、117 提示词独立核对。混合模型/时限不是统一设置的完整价值对照，R5 FAIL。新 Live→断网 Replay 各 20 fits、2/0 请求一致；真实 Windows crash/resume、网页审核、真实数据模拟 BYO 与显式外部特征候选包新进程通过。R6 仍 code_committed_validation_pending；不启动另一轮矩阵或 V3。
 
 用户明确无法确认 2026 年 SPY 是否曾用于调参/研究。因此新下载不构成独立未暴露确认：原权威库拒绝 unknown provenance，0 confirmation fits。R6 本次参与者由助手模拟、行情为真实数据，不能计为真实客户。macOS/GPU 按用户要求不执行；不开发 V3。
 
@@ -18,13 +20,13 @@
 |---|---|---|---|---|---|
 | 预测/Manifest/确定性反馈 | 是 | focused 通过 | 冻结历史 SPY | 非独立金融证据 | 身份已加固；恢复绑定 R2 |
 | Mission/Workspace | R6 持久工作区代码已提交 | AppTest/队列/导出/刷新及双版本核心 CI；补测见下 | 本轮 Windows Chromium 完整 E2E 两次通过；候选切换/新上下文/下载不增研究 fit | 非技术用户试用待测 | 单机可信操作者；同 SHA 新 CI 和平台缺口见验收报告 |
-| Live/Replay | 是 | 录制与对抗测试通过 | 原 qwen3.8-27b 额度 403 已确认；新增 qwen3.7-flash-2026-07-15 两轮真实录制→清凭证断网 Replay 一致 | 不是科研质量证明 | 真实请求无隐藏哨兵；Replay 零请求；费用未知；测试未改用户 .env |
-| 动作与 Memory | R3 分发 + R6 审核/继续入口 | 停止/审核/诊断/消融/租户隔离 | 新增实际 Live cold/warm 冻结 Memory 对照：各 20 fits / 2 calls，重复配置 1→0；之前网页审核证据保留 | 历史小样本，不证明泛化或 LLM 优势 | 全动作专项 live 未全部验证；已跑的 live 质量边界见 R5 |
+| Live/Replay | 已实现 | 可见性/篡改/引用负例通过 | 新qwen3.8-flash两轮Live→清凭证断网Replay，各20fits、2/0请求，逐行预测一致 | 不是科研质量证明 | 实际请求无隐藏哨兵；成本未知 |
+| 动作与 Memory | 已实现 | 动作/隔离/父配置回归通过 | 强模型cold/warm各20fits/2calls，0→0重复；网页approve/reject通过 | 历史小样本不证明泛化 | flash warm缺statement失败保留；未证明减少重复 |
 | Queue/恢复 | R2 事务 + R6 提交关联 | 原子提交/代次/预算/缓存/held-link修复 | 本轮 Windows 真实 SPY 完整 Campaign 进程树终止→新进程恢复，基线/A不重训、预算不退回 | 单机工程验收 | macOS 未测；Windows 原生符号链接权限受限 |
-| Confirmation | R4 封存登记/一次性授权/固定留出 | 错配、篡改、并发及崩溃测试通过 | 只有模拟封存证据 | 真实未见金融数据待测 | 不允许 Advisor 调用；可信单机操作 |
-| ModelBundle | R4 包外可信登记与完整性检查 | 篡改/路径/租户/环境/新进程通过 | 历史 SPY 无标签推理 | 不是样本外效果 | 旧包须重发；跨平台待测 |
-| Benchmark | R5 实际 Controller 策略接入 | 去重/seed/真实TPE/Advisor回放/账本通过 | 替换模型 3×3×4 全部尝试，exit 1；Random/TPE 各 9/9、One-shot 3/9、Adaptive 0/9 完成；额外 1 次额度失败保留 | 完整 live 研究价值 FAIL；人工时间/费用未知 | 73逻辑调用/78 HTTP，71返回；14建议合同错误，最后 Adaptive 超时；实际额度切换到 qwen3.8-flash，不是单模型因果对照 |
-| BYO | R6 表格 + 一个审核数值特征 + 内置模型配置 | CSV/Parquet/时间/声明分级/实际训练及交付 | 模拟客户端到端 | 无真实客户 | 特征因果与来源仍须人工审核；非任意模型上传 |
+| Confirmation | 已实现 | 数据错绑/一次性/篡改门禁通过 | 179个2026真实目标unknown provenance被拒绝，0 confirmation fits | BLOCKED_NO_ELIGIBLE_DATA | 用户无法确认外部使用，新下载不等于未暴露 |
+| ModelBundle | 包外可信登记 | 篡改/路径/租户/环境负例 | 两个选定ext候选包原可信库新进程一致 | 非样本外效果 | Windows symlink权限受阻；portable trust migration NOT_IMPLEMENTED |
+| Benchmark | 同一Controller/evaluator | 真实TPE/身份/账本通过 | 主矩阵Random8/9、TPE9/9、One-shot4/9、Adaptive0/9 | 完整价值矩阵FAIL | 含补测49attempts/2200fits/140逻辑调用/182HTTP；额外成功不覆盖原失败 |
+| BYO | 受控表格/审核数值特征/内置配置 | CSV/Parquet负例与交付通过 | 两个真实数据simulation_only参与者 | BLOCKED_NO_REAL_USER | 本地路径导入不是远程上传，特征因果仍须人工审核 |
 
 ## R 批次执行状态
 
@@ -40,7 +42,7 @@
 
 仅 SPY、日频、下一 XNYS 交易日调整收盘收益回归、MAE、forecast_only。单机可信操作者；租户过滤不等于 OS 级隔离。不执行任意用户代码、模型反序列化上传、自动交易或新资产任务。
 
-## 已有证据与未测
+## 历史证据：2026-09-22（当前结论以上方 2026-09-23 为准）
 
 用户另行批准的额度替换续测已结束，详见 [本轮完整报告](validation/V22R_LLM_RETRY_20260922.md) 与 [逐臂数值](validation/V22R_LLM_RETRY_20260922.json)。从 `5040c61` 开始，最小 prompt 修复 `02acafe`、测试隔离修复 `92a8189`；新 Windows 累计 **231 passed / 1 symlink 权限失败 / 2 skipped**（2290.47s），当前代码真实 Chromium **1 passed / 137.25s**，交付物复算/原可信库新进程一致性通过。全仓 **391 passed / 3 failed / 3 skipped**（3245.62s），三项逐一保留：符号链接权限、历史 PDF 解析版本、旧已采集的界面测试；后两项在隔离匹配环境/测试修复后合并 **27 passed**。缺失原始历史资产已从固定来源恢复，但没有重跑 GPU/native training。主环境 PDF 严格回放仍有版本边界。新报告取代旧记录的“当前未测”描述，不改写旧失败。
 

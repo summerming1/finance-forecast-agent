@@ -1,5 +1,9 @@
 # Codex：R0–R6 加固完成后的剩余独立验收
 
+## 最新结论：2026-09-23
+
+本轮安排的补测已结束，完整命令/结果见 `validation/V22R_SUPPLEMENT_20260923.md`。工程 PARTIAL；R0–R3 PASS，R4 BLOCKED_NO_ELIGIBLE_DATA，R5 FAIL，R6 BLOCKED_NO_REAL_USER。Windows 全仓 398/1/3，唯一失败为 symlink 权限；Linux 同源码核心两版本各 238 passed、Chromium/冻结 SPY CI 通过。主矩阵 Random 8/9、TPE 9/9、One-shot 4/9、Adaptive 0/9，独立长时限补测成功不冒充统一设置矩阵通过。真实数据模拟用户不是独立客户；2026 行情外部使用无法确认，不能宣称未暴露。macOS/GPU 按用户要求不测；不自动再跑矩阵或开发 V3。下文 2026-09-22 数量与当时发布状态均为历史记录。
+
 ## 2026-09-22 补测更新
 
 **最新续测**：用户另行批准了额度耗尽时依次换模型。本轮从 `5040c61` 开始的真实 3×3 补跑已结束：Random/TPE 各 9/9、One-shot 3/9、Adaptive 0/9；原始及新模型额度 403 均实际记录，最后切到 qwen3.8-flash 后仍有最终超时。14 项建议合同失败没有用换模型抹去。当前代码 Windows 累计 231/1/2、Chromium 1/1；真实 Live→离线 Replay、Live Memory cold/warm、下载包复算/新进程均补测。原始缺失资产恢复，匹配 PDF 环境的 27 项相关复验通过。精确命令、失败与当前发布边界见 `validation/V22R_LLM_RETRY_20260922.md`。下段 18 个 LLM 臂失败是**此前历史矩阵**，不是本次新结果。工程仍 PARTIAL，R6 仍 validation pending；不继续自动重跑或开发 V3。

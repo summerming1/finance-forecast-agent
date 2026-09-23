@@ -52,6 +52,8 @@ Overview显示实际执行状态和研究结论；Research history区分训练�
 
 **Refit selected model and register bundle → Download ModelBundle** 显式训练并登记一个已接受候选。这个操作不是最后一个fold estimator的复制，不自动推广/部署。模型包在原环境加载需要同一个包外可信状态库；复制到另一台机器不自动授予信任。新环境迁移尚需审核，不要改trusted字段绕过。
 
+注意：上方 **Research candidate** 只控制详情展示，不会同步改变 **Model to explicitly refit**。重训前必须在后一个选择框明确选择候选并核对 ID；下载后可核对 `bundle.json` 的 `candidate` 和 `feature_columns`。新页面默认的 refit 选择可能仍是基线，不应把查看了某个候选误认为已经导出了它。
+
 ## 4. 一个受控BYO例子
 
 用自己的同任务表格增加一个已经审核的数值因子`ext_signal`。选 **Controlled CSV / Parquet**，填写文件路径和数据合同；不接受任意Python、notebook或已有陌生pickle模型。基线仍是内置Ridge/RF/GBDT。

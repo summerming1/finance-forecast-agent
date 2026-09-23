@@ -2,7 +2,7 @@
   "schema_version": "v22r_acceptance_v1",
   "base_sha": "6e4f194453f77037929052a0a978cc76bc2017b7",
   "scope": "SPY_daily_next_session_return_forecast_only",
-  "record_semantics": "stages and authoritative_checkpoint preserve original delivery evidence; supplemental_validation_20260922 is the first audit; quota_retry_20260922 and external_gates reflect the user-authorized model replacement continuation; CURRENT_IMPLEMENTATION.md is the current capability authority",
+  "record_semantics": "stages, authoritative_checkpoint and 20260922 records preserve historical evidence; supplement_20260923 and external_gates are latest; CURRENT_IMPLEMENTATION.md is current capability authority",
   "stages": {
     "R0": {
       "scope": "status truth and prototype claim guard",
@@ -526,15 +526,71 @@
     },
     "verdicts": {"R0": "PASS", "R1": "PASS", "R2": "PASS", "R3": "PASS", "R4": "BLOCKED_NO_ELIGIBLE_DATA", "R5": "FAIL", "R6": "BLOCKED_NO_REAL_USER", "engineering": "PARTIAL", "real_users": "BLOCKED", "independent_financial_evidence": "BLOCKED", "prospective": "NOT_READY", "V3": "NOT_READY"}
   },
+  "supplement_20260923": {
+    "report": "docs/validation/V22R_SUPPLEMENT_20260923.md",
+    "matrix": "docs/validation/V22R_SUPPLEMENT_20260923.json",
+    "initial_sha": "887eff033053d3f2bb36e7b4b82dad431e0234a1",
+    "production_fix_sha": "84d3221b2f6643a34f0b10769b44a0aa96850f4c",
+    "windows_cumulative": {
+      "passed": 235,
+      "failed": 1,
+      "skipped": 2,
+      "seconds": 3882.16,
+      "exit_code": 1
+    },
+    "windows_full": {
+      "passed": 398,
+      "failed": 1,
+      "skipped": 3,
+      "seconds": 2412.77,
+      "exit_code": 1,
+      "environment": "isolated pypdf 6.14.2; symlink WinError 1314"
+    },
+    "primary_completed": {
+      "random": 8,
+      "tpe": 9,
+      "one_shot": 4,
+      "adaptive": 0,
+      "per_arm_total": 9
+    },
+    "all_attempts": 49,
+    "charged_fits": 2200,
+    "logical_llm_calls": 140,
+    "http_attempts": 182,
+    "http_200": 117,
+    "transport_exceptions": 52,
+    "quota_http_errors": 13,
+    "known_tokens": 2029333,
+    "provider_cost": null,
+    "human_minutes": null,
+    "audit": {
+      "prediction_artifacts": 696,
+      "file_hashes": 1794,
+      "actual_prompts": 117
+    },
+    "supplemental_success": "one Random, two One-shot, one Adaptive with genuine advisor_stop/no_improvement; does not overwrite primary failures",
+    "verdicts": {
+      "R0": "PASS",
+      "R1": "PASS",
+      "R2": "PASS",
+      "R3": "PASS",
+      "R4": "BLOCKED_NO_ELIGIBLE_DATA",
+      "R5": "FAIL",
+      "R6": "BLOCKED_NO_REAL_USER",
+      "engineering": "PARTIAL",
+      "prospective": "NOT_READY",
+      "V3": "NOT_READY"
+    }
+  },
   "external_gates": {
     "live_provider": "PASS: new real two-round Bailian record and strict offline replay; value matrix is separate",
     "real_customer": "BLOCKED_NO_REAL_USER",
     "real_confirmation": "BLOCKED_NO_ELIGIBLE_DATA",
     "macos": "BLOCKED_ENV",
-    "windows": "new corrected cumulative 231 passed / 1 WinError 1314 BLOCKED_ENV / 2 skipped; actual Chromium 1 passed; original crash/resume evidence retained",
-    "historical_native": "new full 391 passed / 3 failed / 3 skipped retained; original missing assets recovered, isolated parser + corrected workbench combined 27 passed; main parser mismatch BLOCKED_ENV; native/GPU NOT_RUN_COST",
-    "browser": "PASS: new current-source Windows Chromium 1 passed / 137.25s with fresh context and delivery; old Linux CI not represented as new-SHA CI",
-    "value_quality": "FAIL: replacement-model 3x3x4 attempted, Random/TPE 9/9 each, One-shot 3/9, Adaptive 0/9; additional quota attempt retained; cost/human minutes null"
+    "windows": "235 passed / 1 symlink WinError1314 BLOCKED_ENV / 2 skipped; real complete Windows crash/resume PASS",
+    "historical_native": "matching isolated PDF environment:398 passed/1 symlink failure/3 skipped; 15/15 static audits; native training NOT_RUN_COST; GPU excluded by user",
+    "browser": "PASS: current-source Chromium 1 passed/177.62s; fresh context/downloads; real-data simulated BYO A/B and selected ext candidate bundles fresh-process audited",
+    "value_quality": "FAIL: primary Random8/9 TPE9/9 One-shot4/9 Adaptive0/9; supplemental successes separate; mixed models/timeouts not uniform causal comparison"
   },
   "authoritative_checkpoint": {
     "branch": "feat/mission-research-v2",
