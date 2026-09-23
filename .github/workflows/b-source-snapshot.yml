@@ -1,0 +1,28 @@
+name: B exact source snapshot
+on:
+  push:
+    branches: [validation/b0-b5-20260923]
+    paths: [.github/workflows/b-source-snapshot.yml]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: a3c6ec69c9bd14d18b1cdb493795669a9452c800
+          persist-credentials: false
+      - name: Archive exact approved baseline
+        run: |
+          mkdir -p /tmp/b-source
+          git archive --format=tar.gz -o /tmp/b-source/source.tar.gz HEAD
+          git rev-parse HEAD > /tmp/b-source/HEAD.txt
+          git rev-parse HEAD^{tree} > /tmp/b-source/TREE.txt
+          git cat-file commit HEAD > /tmp/b-source/COMMIT.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: b-source-a3c6ec6
+          path: /tmp/b-source
+          retention-days: 14
