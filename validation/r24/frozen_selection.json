@@ -1,0 +1,50 @@
+{
+  "schema_version": "r4_real_confirmation_selection_v1",
+  "selection_source": "validation\\sm23\\focused_campaigns\\spy-20260923T015720Z-15d473\\campaign.json",
+  "selection_source_sha256": "877b8a3a926e602b21e2fdb0f5f4788fa212132881b8ccd47775d20e76154146",
+  "selection_reason": "Best frozen development baseline by MAE on 2010-2025 SPY; compare Ridge against the frozen train-median control once on post-2026-07-14 labels. Development campaign ended no_improvement.",
+  "candidate": {
+    "candidate_id": "baseline_ridge",
+    "model_family": "ridge_regression",
+    "model_params": {
+      "alpha": 1.0
+    },
+    "feature_groups": [
+      "base_lags"
+    ],
+    "seed": 42,
+    "parent_candidate_id": null,
+    "hypothesis_id": null,
+    "candidate_fingerprint": "25138944524472801421d79d3386748271c899249e52e2f9bbfe87c7f923de06",
+    "config_identity": "4be0706b3148ecc802a39ab78ee26d5a8f6131d163ce1ab77d2cd00cb5320aed"
+  },
+  "baseline": {
+    "candidate_id": "baseline_median",
+    "model_family": "naive_train_median",
+    "model_params": {
+      "strategy": "train_median"
+    },
+    "feature_groups": [],
+    "seed": 42,
+    "parent_candidate_id": null,
+    "hypothesis_id": null,
+    "candidate_fingerprint": "a7051a56364a9a4b6537e01f8819ad3e18852e455ef18c81f72704bf64f395d1",
+    "config_identity": "76f40418981c9d50d6fda740afe9e26ed0489c0447fe5e227571d50efc075997"
+  },
+  "development_mae": {
+    "candidate": 0.005033769956237467,
+    "baseline": 0.005036548213407134
+  },
+  "evaluation_policy": {
+    "primary_metric": "mae",
+    "min_relative_mae_improvement": 0.0025,
+    "evidence_tier": "development_only"
+  },
+  "train_raw_sha256": "0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b",
+  "confirmation_raw_sha256": "e8dd3f456eab48e7b7e94f41264b30065baf856bfffe7fefeca298835fb14137",
+  "first_confirmation_session": "2026-07-15",
+  "prior_download_acquired_at": "2026-07-14T14:24:26.443951+00:00",
+  "user_attestation": "The user states no other person has researched these data; prior local benchmark records end before this confirmation window.",
+  "source_license_status": "provider_terms_review_required_no_redistribution",
+  "forecast_only": true
+}

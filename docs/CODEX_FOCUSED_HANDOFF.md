@@ -1,5 +1,7 @@
 # Codex handoff — V2.2-R
 
+最新 R4 更新：用户现已确认项目外无人用候选数据研究。选 2026-07-14 旧下载截止日之后的47个真实SPY目标，原RuntimeDB一次授权2fits，独立负确认及逐行复算通过；具体哈希/修订和限制见 `validation/V22R_R0_R6_REPORT_20260923.md`。下文2026-09-23“无法确认外部使用”是澄清前的历史状态。R5完整价值对照FAIL、R6真实客户BLOCKED、Windows symlink权限BLOCKED_ENV，工程仍PARTIAL。不因这次负结果重挑留出窗口。
+
 当前状态唯一来源：`CURRENT_IMPLEMENTATION.md`；实际门禁：`validation/v22r_acceptance.json` 和同 SHA 的 CI。正式分支 `feat/mission-research-v2`。先检查工作区、远端 HEAD，再按 AGENTS 阅读 Roadmap、当前状态、ADRs、Architecture、Acceptance 和 V2 版本日志。不要按旧 PR/R 编号或包版本推断完成。
 
 R0–R6 是原能力的验收加固，不是新产品主线。保留同一个 Controller/Queue/Evaluator/Memory；RuntimeDB 是唯一运行状态权威，JSON 是导出。R5 已提交为 `1bfe5ef78dd475d12f386c528ace44638e27434c`。R6 已提交为 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`，接通持久工作区、审核/继续/导出和一个已审核数值特征的同任务 BYO；R6 当前是 code committed / validation pending。没有启动 V3。

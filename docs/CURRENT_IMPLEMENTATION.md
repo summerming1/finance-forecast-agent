@@ -1,5 +1,9 @@
 # 当前版本功能与技术实现说明
 
+## 2026-09-23 最新 R4 真实数据确认
+
+用户现已确认项目外没有其他人对候选 2026 数据进行研究。重新审计发现旧项目在 2026-07-14 下载过 SPY，旧基准预测记录至少到 2026-06-15；因此本轮只用 **2026-07-15 至 2026-09-18** 的 47 个决策目标（最后标签 2026-09-21）。从冻结 2010–2025 development 结果选定 Ridge alpha=1，与已训练 GBDT 基线做一次同一权威 RuntimeDB 的固定留出确认：真实 Yahoo 数据、2 fits、`independent_confirmation`、47×2 逐行预测和指标独立复算、一致性/一次性读取通过。Ridge MAE 0.005981404386597401，GBDT MAE 0.005907520947490759；相对改善 -1.2506674%，**未达到改进门槛**。结果是一次用户声明未外用条件下的独立**负确认**，不是收益或模型优越性证明。完整方案修订、失败留痕、哈希与 R0–R6 总结见 [最新总报告](validation/V22R_R0_R6_REPORT_20260923.md)。下节“无法确认 2026 年外部使用”是用户澄清前的历史检查点，已由本节取代。Windows symlink 权限、R5完整价值对照、真实用户与 V3 状态未因此关闭。
+
 ## 2026-09-23 用户授权续测（已结束，工程 PARTIAL）
 
 续测起点 `887eff033053d3f2bb36e7b4b82dad431e0234a1` 已正常推送；该 SHA 的 Linux Python 3.11/3.13 各 234 项、Chromium 1 项及冻结 SPY 交付 CI 均通过（35803915631 / 35803915635 / 35803915637）。下文 2026-09-22 的失败矩阵和 Windows 限制保留为历史证据。
@@ -23,7 +27,7 @@
 | Live/Replay | 已实现 | 可见性/篡改/引用负例通过 | 新qwen3.8-flash两轮Live→清凭证断网Replay，各20fits、2/0请求，逐行预测一致 | 不是科研质量证明 | 实际请求无隐藏哨兵；成本未知 |
 | 动作与 Memory | 已实现 | 动作/隔离/父配置回归通过 | 强模型cold/warm各20fits/2calls，0→0重复；网页approve/reject通过 | 历史小样本不证明泛化 | flash warm缺statement失败保留；未证明减少重复 |
 | Queue/恢复 | R2 事务 + R6 提交关联 | 原子提交/代次/预算/缓存/held-link修复 | 本轮 Windows 真实 SPY 完整 Campaign 进程树终止→新进程恢复，基线/A不重训、预算不退回 | 单机工程验收 | macOS 未测；Windows 原生符号链接权限受限 |
-| Confirmation | 已实现 | 数据错绑/一次性/篡改门禁通过 | 179个2026真实目标unknown provenance被拒绝，0 confirmation fits | BLOCKED_NO_ELIGIBLE_DATA | 用户无法确认外部使用，新下载不等于未暴露 |
+| Confirmation | 已实现 | 数据错绑/一次性/篡改门禁通过 | 澄清后选旧下载截止日以后的47个真实目标，一次授权2fits，独立复算通过，结果为负 | 一次真实独立负确认 PASS | 外部未使用由用户声明；Windows symlink权限仍BLOCKED_ENV；非前瞻交易证明 |
 | ModelBundle | 包外可信登记 | 篡改/路径/租户/环境负例 | 两个选定ext候选包原可信库新进程一致 | 非样本外效果 | Windows symlink权限受阻；portable trust migration NOT_IMPLEMENTED |
 | Benchmark | 同一Controller/evaluator | 真实TPE/身份/账本通过 | 主矩阵Random8/9、TPE9/9、One-shot4/9、Adaptive0/9 | 完整价值矩阵FAIL | 含补测49attempts/2200fits/140逻辑调用/182HTTP；额外成功不覆盖原失败 |
 | BYO | 受控表格/审核数值特征/内置配置 | CSV/Parquet负例与交付通过 | 两个真实数据simulation_only参与者 | BLOCKED_NO_REAL_USER | 本地路径导入不是远程上传，特征因果仍须人工审核 |

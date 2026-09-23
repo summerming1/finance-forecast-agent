@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "source": "real_Yahoo_SPY",
+  "evidence_level": "independent_confirmation",
+  "grant_id": "confirmation-51d4cfe9f5e441a385b4045cb6aae3f7",
+  "rows": 47,
+  "decision_start": "2026-07-15",
+  "decision_end": "2026-09-18",
+  "last_label_end": "2026-09-21",
+  "metrics_recomputed": {
+    "baseline": {
+      "mae": 0.005907520947490759,
+      "rmse": 0.007393847432748246,
+      "directional_accuracy": 0.46808510638297873
+    },
+    "candidate": {
+      "mae": 0.005981404386597401,
+      "rmse": 0.007420285143468138,
+      "directional_accuracy": 0.46808510638297873
+    }
+  },
+  "relative_mae_improvement": -0.012506674079255566,
+  "meets_frozen_threshold": false,
+  "one_shot_fits": 2,
+  "repeat_read_fits_added": 0,
+  "authority_result_hash": "e7ee815b4e2c10873752554f6c4203ec32997a0114aa620b93dc18a704789784",
+  "export_sha256": "33fd5758217c60b106d603cf4947ef2c29d326ec8a38cc9419338a8db3461d41",
+  "selection_sha256": "85f693f140926fdf17e9f59f6400244bb8ee411b9759e17b364915b3a45f0a24",
+  "raw_source_sha256": "e8dd3f456eab48e7b7e94f41264b30065baf856bfffe7fefeca298835fb14137",
+  "caveat": "User-attested no prior external research; historical Yahoo adjusted data are not prospective point-in-time observations; source redistribution terms not reviewed."
+}

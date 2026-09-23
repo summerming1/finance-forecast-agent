@@ -1,5 +1,9 @@
 # Codex：R0–R6 加固完成后的剩余独立验收
 
+## 2026-09-23 用户澄清后的 R4 更新
+
+现已按用户外部未使用声明和本地旧下载/预测记录，选2026-07-14以后47个真实SPY目标，运行一次固定留出：`independent_confirmation`、2fits、逐行指标复算 PASS，但候选MAE较基线差1.2506674%，研究结果为负。见 `validation/V22R_R0_R6_REPORT_20260923.md`。下方 `BLOCKED_NO_ELIGIBLE_DATA` 属于此前无法确认外部使用时的历史检查点。Windows symlink权限、真实用户、完整R5价值矩阵、macOS/GPU排除及V3缺口均仍存在。
+
 ## 最新结论：2026-09-23
 
 本轮安排的补测已结束，完整命令/结果见 `validation/V22R_SUPPLEMENT_20260923.md`。工程 PARTIAL；R0–R3 PASS，R4 BLOCKED_NO_ELIGIBLE_DATA，R5 FAIL，R6 BLOCKED_NO_REAL_USER。Windows 全仓 398/1/3，唯一失败为 symlink 权限；Linux 同源码核心两版本各 238 passed、Chromium/冻结 SPY CI 通过。主矩阵 Random 8/9、TPE 9/9、One-shot 4/9、Adaptive 0/9，独立长时限补测成功不冒充统一设置矩阵通过。真实数据模拟用户不是独立客户；2026 行情外部使用无法确认，不能宣称未暴露。macOS/GPU 按用户要求不测；不自动再跑矩阵或开发 V3。下文 2026-09-22 数量与当时发布状态均为历史记录。

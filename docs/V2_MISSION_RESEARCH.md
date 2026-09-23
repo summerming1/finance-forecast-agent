@@ -7,6 +7,10 @@
 
 # V2 Mission Research — incremental delivery record
 
+## 2026-09-23 R4 real-data follow-up (one negative independent confirmation)
+
+After the user clarified that no other person had researched the candidate 2026 data, the local July 14 SPY acquisition and older benchmark predictions were audited. Forty-seven next-session targets with decision dates July 15–September 18 were sealed in the existing authority. A Ridge candidate frozen from the 2010–2025 campaign was evaluated once against a supported frozen GBDT baseline: 2 fits, independent_confirmation, prediction and metric audit PASS, relative MAE improvement -1.2506674% (failed frozen improvement threshold). The initially frozen train-median control was unsupported by the R4 allow-list; no grant/fit occurred, and the supported-control amendment was frozen before any confirmation result. Details: `validation/V22R_R0_R6_REPORT_20260923.md`. The earlier unknown-provenance rejection remains a historical negative test. Engineering remains PARTIAL because R5, real customers and Windows symlink permission are open. No product code changed.
+
 ## Conditional action prompt repair — 2026-09-23 (results recorded; engineering PARTIAL)
 
 Completion update: source fix `84d3221` is pushed. Windows full repository: 398 passed / 1 symlink privilege failure / 3 skipped (2412.77s, isolated matching PDF parser); same-source Linux 3.11/3.13: 238 passed each, Chromium and frozen SPY CI PASS. Primary 3×3×4 completion: Random 8/9, TPE 9/9, One-shot 4/9, Adaptive 0/9. Separate retries completed one Random, two One-shot and one Adaptive with genuine advisor_stop/no_improvement; they do not replace failed primary arms. All 49 attempts retain 2200 charged fits and 140 logical calls. Detailed results and limitations: `validation/V22R_SUPPLEMENT_20260923.md`. Independent confirmation remains blocked by unknown exposure, and simulated users are not real customer validation. Earlier progress wording below records the intermediate checkpoint, not ongoing work. No further matrix or V3 starts automatically.

@@ -2,7 +2,7 @@
   "schema_version": "v22r_acceptance_v1",
   "base_sha": "6e4f194453f77037929052a0a978cc76bc2017b7",
   "scope": "SPY_daily_next_session_return_forecast_only",
-  "record_semantics": "stages, authoritative_checkpoint and 20260922 records preserve historical evidence; supplement_20260923 and external_gates are latest; CURRENT_IMPLEMENTATION.md is current capability authority",
+  "record_semantics": "stages, authoritative_checkpoint, 20260922 records and supplement_20260923 preserve their historical checkpoints; real_confirmation_20260923 and external_gates are latest; CURRENT_IMPLEMENTATION.md is current capability authority",
   "stages": {
     "R0": {
       "scope": "status truth and prototype claim guard",
@@ -582,10 +582,34 @@
       "V3": "NOT_READY"
     }
   },
+  "real_confirmation_20260923": {
+    "report": "docs/validation/V22R_R0_R6_REPORT_20260923.md",
+    "initial_sha": "f1a964128343ffc51a8f6a65cd6d3c6c7b5d1294",
+    "raw_spy_sha256": "e8dd3f456eab48e7b7e94f41264b30065baf856bfffe7fefeca298835fb14137",
+    "training_raw_sha256": "0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b",
+    "selection_sha256": "85f693f140926fdf17e9f59f6400244bb8ee411b9759e17b364915b3a45f0a24",
+    "grant_id": "confirmation-51d4cfe9f5e441a385b4045cb6aae3f7",
+    "target_fingerprint": "9e9482866cafdce1921e2c6418785c3801d203a64371818caf375d119337544c",
+    "decision_start": "2026-07-15",
+    "decision_end": "2026-09-18",
+    "last_label_end": "2026-09-21",
+    "target_rows": 47,
+    "fit_calls": 2,
+    "evidence_level": "independent_confirmation",
+    "candidate_mae": 0.005981404386597401,
+    "baseline_mae": 0.005907520947490759,
+    "relative_mae_improvement": -0.012506674079255566,
+    "meets_frozen_threshold": false,
+    "recomputed_metrics": true,
+    "repeat_read_added_fits": 0,
+    "related_r4_tests": {"passed": 31, "deselected_symlink": 1, "seconds": 56.23, "exit_code": 0},
+    "provenance_limit": "user attestation of no external research plus local audit; not prospective point-in-time provider evidence",
+    "verdict": "PASS_NEGATIVE_CONFIRMATION"
+  },
   "external_gates": {
     "live_provider": "PASS: new real two-round Bailian record and strict offline replay; value matrix is separate",
     "real_customer": "BLOCKED_NO_REAL_USER",
-    "real_confirmation": "BLOCKED_NO_ELIGIBLE_DATA",
+    "real_confirmation": "PASS: 47 user-attested post-2026-07-14 real SPY targets; one-shot 2-fit negative Ridge-vs-GBDT confirmation independently recomputed; not prospective point-in-time evidence",
     "macos": "BLOCKED_ENV",
     "windows": "235 passed / 1 symlink WinError1314 BLOCKED_ENV / 2 skipped; real complete Windows crash/resume PASS",
     "historical_native": "matching isolated PDF environment:398 passed/1 symlink failure/3 skipped; 15/15 static audits; native training NOT_RUN_COST; GPU excluded by user",
