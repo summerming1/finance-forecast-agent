@@ -10,7 +10,7 @@ Read, in this order:
 2. `docs/PROJECT_ROADMAP.md`
 3. `docs/CURRENT_IMPLEMENTATION.md`
 4. the latest one or two version notes, currently `docs/P1_FOCUS_F0_F1.md`
-5. accepted ADRs relevant to the work, especially `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, and the latest supplement `docs/ADR_MISSION_PRODUCT_003.md`
+5. accepted ADRs relevant to the work, especially `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, and `docs/ADR_MISSION_PRODUCT_003.md`, `docs/ADR_MISSION_PRODUCT_004.md`
 6. `docs/FOCUSED_ARCHITECTURE.md`
 7. `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`
 8. `docs/CODEX_FOCUSED_HANDOFF.md`
@@ -140,3 +140,9 @@ Controlled BYO now precedes the complete Shadow product. It must not become arbi
 ## 11. Approved V2.2-R hardening (2026-09-21)
 
 User approved sequential R0→R6 inside the existing scope. `CURRENT_IMPLEMENTATION.md` is the only current status table; ADR/version entries are historical decisions. Read the R log in `V2_MISSION_RESEARCH.md` and clause map in `docs/validation/v22r_acceptance.json`. Test before each delivery and never rewrite historical evidence. Temporary verification refs may validate an exact locally tested source commit before a non-force fast-forward; no new long-term product branch.
+
+## 12. Approved B0–B5 increment (2026-09-23)
+
+The user approved the complete literature-grounded revision. Follow B0→B5 in the handoff: test, persist evidence and commit each batch before the next. Do not reopen already documented Live/Windows recovery/browser successes as unimplemented. Provider fees and user validation remain explicit, not fabricated. Model aliases/timeouts/unknown charges must be recorded; never silently enable paid usage or change models.
+
+Literature default recipes and research evidence are different. Bind MethodCard/source versions and review purpose; preserve author fact, local transfer and measured result separately. No extra Controller, Queue, method-card store, vector service or autonomous paper crawler. A citation is not evidence of incremental value. Related projects share the original exposure/trust database.

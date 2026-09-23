@@ -436,55 +436,107 @@
     "status": "completed_supplemental_audit_engineering_partial",
     "same_sha_linux_ci": {
       "core_run": 35699872200,
-      "python_311": {"passed": 232, "failed": 0, "seconds": 322.932},
-      "python_313": {"passed": 232, "failed": 0, "seconds": 246.742},
+      "python_311": {
+        "passed": 232,
+        "failed": 0,
+        "seconds": 322.932
+      },
+      "python_313": {
+        "passed": 232,
+        "failed": 0,
+        "seconds": 246.742
+      },
       "browser_run": 35699872277,
-      "browser": {"passed": 1, "failed": 0, "seconds": 50.444},
+      "browser": {
+        "passed": 1,
+        "failed": 0,
+        "seconds": 50.444
+      },
       "final_real_spy_run": 35699872203,
       "final_real_spy_status": "PASS"
     },
     "windows_full_run_before_test_repairs": {
-      "passed": 343, "failed": 20, "skipped": 3,
-      "seconds": 2973.24, "exit_code": 1,
+      "passed": 343,
+      "failed": 20,
+      "skipped": 3,
+      "seconds": 2973.24,
+      "exit_code": 1,
       "classification": "9 test deadlines; 1 symlink privilege; 10 historical missing assets"
     },
     "windows_corrected_cumulative": {
-      "passed": 229, "failed": 1, "skipped": 2,
-      "seconds": 2263.22, "exit_code": 1,
+      "passed": 229,
+      "failed": 1,
+      "skipped": 2,
+      "seconds": 2263.22,
+      "exit_code": 1,
       "temporary_root": "validation/cv",
       "remaining_failure": "BLOCKED_ENV: WinError 1314 creating native symlink; test unmodified",
       "prior_permission_error": "not reproduced by isolated rerun, five repetitions, or final cumulative; cause unresolved"
     },
     "real_live_offline_replay": {
-      "status": "PASS", "provider": "bailian", "model": "qwen3.8-27b",
-      "live_requests": 2, "offline_requests": 0,
-      "hidden_sentinel_absent": true, "equal_predictions": true
+      "status": "PASS",
+      "provider": "bailian",
+      "model": "qwen3.8-27b",
+      "live_requests": 2,
+      "offline_requests": 0,
+      "hidden_sentinel_absent": true,
+      "equal_predictions": true
     },
-    "windows_real_campaign_crash_resume": {"status": "PASS", "seconds": 59.45, "charged_fits": 24},
-    "real_browser_review": {"approve": "PASS", "reject": "PASS", "advice_provenance": "assistant_authored_fixture"},
-    "simulated_byo_csv_parquet": {"status": "PASS", "provenance": "simulation_only", "real_users": false},
-    "model_bundle_fresh_process": {"status": "PASS", "evidence": "serialization_consistency_not_out_of_sample_performance"},
+    "windows_real_campaign_crash_resume": {
+      "status": "PASS",
+      "seconds": 59.45,
+      "charged_fits": 24
+    },
+    "real_browser_review": {
+      "approve": "PASS",
+      "reject": "PASS",
+      "advice_provenance": "assistant_authored_fixture"
+    },
+    "simulated_byo_csv_parquet": {
+      "status": "PASS",
+      "provenance": "simulation_only",
+      "real_users": false
+    },
+    "model_bundle_fresh_process": {
+      "status": "PASS",
+      "evidence": "serialization_consistency_not_out_of_sample_performance"
+    },
     "portable_trust_migration": "NOT_IMPLEMENTED",
     "real_live_matrix": {
       "status": "FAIL",
       "report": "docs/validation/V22R_LIVE_BENCHMARK_20260922.json",
-      "groups_attempted": 9, "arms_attempted": 36, "exit_code": 1,
-      "random_completed": 9, "tpe_completed": 9,
-      "one_shot_failed": 9, "adaptive_failed": 9,
-      "provider_logical_calls": 47, "provider_http_attempts": 71,
-      "returned_records": 29, "failed_records": 18,
-      "known_tokens": 478754, "unknown_usage_calls": 18,
-      "provider_cost": null, "human_minutes": null,
-      "charged_fits": 1412, "failed_fit_attempts": 0,
-      "tpe_startup_decisions": 36, "tpe_model_based_decisions": 72,
+      "groups_attempted": 9,
+      "arms_attempted": 36,
+      "exit_code": 1,
+      "random_completed": 9,
+      "tpe_completed": 9,
+      "one_shot_failed": 9,
+      "adaptive_failed": 9,
+      "provider_logical_calls": 47,
+      "provider_http_attempts": 71,
+      "returned_records": 29,
+      "failed_records": 18,
+      "known_tokens": 478754,
+      "unknown_usage_calls": 18,
+      "provider_cost": null,
+      "human_minutes": null,
+      "charged_fits": 1412,
+      "failed_fit_attempts": 0,
+      "tpe_startup_decisions": 36,
+      "tpe_model_based_decisions": 72,
       "accepted_predictions_independently_recomputed": 461,
       "raw_artifact_hashes_checked": 1167,
       "matrix_sha256": "4d7ef46eac305724565165f7144a083a1db9ac2c3450e0920140efc13ff7c65e",
       "agent_superiority_claim": false
     },
     "final_verdicts": {
-      "R0": "PASS", "R1": "PASS", "R2": "PASS", "R3": "PASS",
-      "R4": "BLOCKED_NO_ELIGIBLE_DATA", "R5": "FAIL", "R6": "BLOCKED_NO_REAL_USER",
+      "R0": "PASS",
+      "R1": "PASS",
+      "R2": "PASS",
+      "R3": "PASS",
+      "R4": "BLOCKED_NO_ELIGIBLE_DATA",
+      "R5": "FAIL",
+      "R6": "BLOCKED_NO_REAL_USER",
       "V2.2-R ENGINEERING ACCEPTANCE": "PARTIAL",
       "REAL USER VALIDATION": "BLOCKED",
       "INDEPENDENT FINANCIAL EVIDENCE": "BLOCKED",
@@ -503,28 +555,113 @@
     "input_sha256": "0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b",
     "source_signature": "c738ad775168781299f7507eaa2a4d9adaa00ca86d367995bb60100cc36fab2e",
     "original_quota_error": "qwen3.8-27b: HTTP 403 AllocationQuota.FreeTierOnly",
-    "models_used": ["qwen3.7-flash-2026-07-15", "qwen3.8-flash"],
+    "models_used": [
+      "qwen3.7-flash-2026-07-15",
+      "qwen3.8-flash"
+    ],
     "rotation": "explicit quota only; failed attempt retained and new campaign/model contract used",
-    "windows_cumulative": {"passed": 231, "failed": 1, "skipped": 2, "seconds": 2290.47, "exit_code": 1, "failure": "BLOCKED_ENV: symlink WinError 1314"},
-    "windows_full": {"passed": 391, "failed": 3, "skipped": 3, "seconds": 3245.62, "exit_code": 1, "note": "old workbench test collected; PDF parser mismatch and native symlink also retained"},
-    "historical_corrected": {"passed": 27, "seconds": 11.71, "exit_code": 0, "environment": "isolated pypdf 6.14.2; main 6.19.0 unchanged; original missing assets restored"},
-    "browser": {"passed": 1, "seconds": 137.25, "exit_code": 0, "browser": "Chromium 153.0.8010.12", "input": "simulation_only", "fresh_context": true, "no_extra_research_fits": true},
-    "live_replay": {"status": "PASS", "model": "qwen3.7-flash-2026-07-15", "live_calls": 2, "offline_calls": 0, "live_fits": 20, "replay_fits": 20, "equal_predictions": true},
-    "live_memory": {"status": "PASS", "frozen_sha256": "00bf9021fa7b0919ff58087da8a6fcdb3580ca3c23a9f15dcf80c19eebc8831c", "cold_repeats": 1, "warm_repeats": 0, "fits_each": 20, "calls_each": 2, "claim": "historical_development_only"},
-    "new_browser_delivery": {"status": "PASS", "package_hashes": 24, "prediction_metrics": 8, "fresh_process_equal": true, "original_registry_used": true, "portable_trust_migration": "NOT_IMPLEMENTED"},
+    "windows_cumulative": {
+      "passed": 231,
+      "failed": 1,
+      "skipped": 2,
+      "seconds": 2290.47,
+      "exit_code": 1,
+      "failure": "BLOCKED_ENV: symlink WinError 1314"
+    },
+    "windows_full": {
+      "passed": 391,
+      "failed": 3,
+      "skipped": 3,
+      "seconds": 3245.62,
+      "exit_code": 1,
+      "note": "old workbench test collected; PDF parser mismatch and native symlink also retained"
+    },
+    "historical_corrected": {
+      "passed": 27,
+      "seconds": 11.71,
+      "exit_code": 0,
+      "environment": "isolated pypdf 6.14.2; main 6.19.0 unchanged; original missing assets restored"
+    },
+    "browser": {
+      "passed": 1,
+      "seconds": 137.25,
+      "exit_code": 0,
+      "browser": "Chromium 153.0.8010.12",
+      "input": "simulation_only",
+      "fresh_context": true,
+      "no_extra_research_fits": true
+    },
+    "live_replay": {
+      "status": "PASS",
+      "model": "qwen3.7-flash-2026-07-15",
+      "live_calls": 2,
+      "offline_calls": 0,
+      "live_fits": 20,
+      "replay_fits": 20,
+      "equal_predictions": true
+    },
+    "live_memory": {
+      "status": "PASS",
+      "frozen_sha256": "00bf9021fa7b0919ff58087da8a6fcdb3580ca3c23a9f15dcf80c19eebc8831c",
+      "cold_repeats": 1,
+      "warm_repeats": 0,
+      "fits_each": 20,
+      "calls_each": 2,
+      "claim": "historical_development_only"
+    },
+    "new_browser_delivery": {
+      "status": "PASS",
+      "package_hashes": 24,
+      "prediction_metrics": 8,
+      "fresh_process_equal": true,
+      "original_registry_used": true,
+      "portable_trust_migration": "NOT_IMPLEMENTED"
+    },
     "matrix_result": {
-      "status": "FAIL", "exit_code": 1, "logical_arms": 36, "execution_attempts": 37,
-      "random_completed": 9, "tpe_completed": 9, "one_shot_completed": 3, "one_shot_failed": 6,
-      "adaptive_completed": 0, "adaptive_terminal_failed": 9, "additional_quota_failed_attempts": 1,
-      "invalid_proposals": 14, "logical_llm_calls": 73, "http_attempts": 78, "http_200": 71,
-      "quota_http_errors": 2, "transport_exceptions": 5, "known_tokens": 1180254,
-      "charged_fits": 1660, "failed_fit_attempts": 0,
-      "tpe_startup_decisions": 36, "tpe_model_based_decisions": 72,
-      "predictions_recomputed": 526, "artifact_hashes_checked": 1356, "prompts_audited": 71,
-      "provider_cost": null, "human_minutes": null, "agent_superiority_claim": false,
+      "status": "FAIL",
+      "exit_code": 1,
+      "logical_arms": 36,
+      "execution_attempts": 37,
+      "random_completed": 9,
+      "tpe_completed": 9,
+      "one_shot_completed": 3,
+      "one_shot_failed": 6,
+      "adaptive_completed": 0,
+      "adaptive_terminal_failed": 9,
+      "additional_quota_failed_attempts": 1,
+      "invalid_proposals": 14,
+      "logical_llm_calls": 73,
+      "http_attempts": 78,
+      "http_200": 71,
+      "quota_http_errors": 2,
+      "transport_exceptions": 5,
+      "known_tokens": 1180254,
+      "charged_fits": 1660,
+      "failed_fit_attempts": 0,
+      "tpe_startup_decisions": 36,
+      "tpe_model_based_decisions": 72,
+      "predictions_recomputed": 526,
+      "artifact_hashes_checked": 1356,
+      "prompts_audited": 71,
+      "provider_cost": null,
+      "human_minutes": null,
+      "agent_superiority_claim": false,
       "single_model_causal_comparison": false
     },
-    "verdicts": {"R0": "PASS", "R1": "PASS", "R2": "PASS", "R3": "PASS", "R4": "BLOCKED_NO_ELIGIBLE_DATA", "R5": "FAIL", "R6": "BLOCKED_NO_REAL_USER", "engineering": "PARTIAL", "real_users": "BLOCKED", "independent_financial_evidence": "BLOCKED", "prospective": "NOT_READY", "V3": "NOT_READY"}
+    "verdicts": {
+      "R0": "PASS",
+      "R1": "PASS",
+      "R2": "PASS",
+      "R3": "PASS",
+      "R4": "BLOCKED_NO_ELIGIBLE_DATA",
+      "R5": "FAIL",
+      "R6": "BLOCKED_NO_REAL_USER",
+      "engineering": "PARTIAL",
+      "real_users": "BLOCKED",
+      "independent_financial_evidence": "BLOCKED",
+      "prospective": "NOT_READY",
+      "V3": "NOT_READY"
+    }
   },
   "supplement_20260923": {
     "report": "docs/validation/V22R_SUPPLEMENT_20260923.md",
@@ -602,7 +739,12 @@
     "meets_frozen_threshold": false,
     "recomputed_metrics": true,
     "repeat_read_added_fits": 0,
-    "related_r4_tests": {"passed": 31, "deselected_symlink": 1, "seconds": 56.23, "exit_code": 0},
+    "related_r4_tests": {
+      "passed": 31,
+      "deselected_symlink": 1,
+      "seconds": 56.23,
+      "exit_code": 0
+    },
     "provenance_limit": "user attestation of no external research plus local audit; not prospective point-in-time provider evidence",
     "verdict": "PASS_NEGATIVE_CONFIRMATION"
   },
@@ -622,5 +764,383 @@
     "tree": "4f740f79335a0a25edc78668f0aecdd9d4a5db62",
     "status": "R0-R5 delivered; R6 code_committed_validation_pending; V3 not_started",
     "updated_at": "2026-09-22"
+  },
+  "b_delivery": {
+    "approved_on": "2026-09-23",
+    "baseline": "a3c6ec69c9bd14d18b1cdb493795669a9452c800",
+    "stages": {
+      "B0": {
+        "status": "passed_local_pending_publish",
+        "tests": [
+          {
+            "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
+            "passed": 240,
+            "failed": 0,
+            "pytest_seconds": 355.6,
+            "exit_code": 0,
+            "environment": "Linux Python 3.13.5",
+            "source": "B0 docs/tests over a3c6ec6"
+          },
+          {
+            "command": "python -m pytest -q tests/test_focused_b0_plan.py tests/test_focused_r0_status.py",
+            "passed": 4,
+            "seconds": 2.73,
+            "exit_code": 0
+          }
+        ],
+        "note": "Initial uninstalled-environment probe had 236 passes/2 subprocess-launch failures; after editable install and without production edits the clean cumulative suite passed. Initial failures retained in external receipts."
+      },
+      "B1": "planned",
+      "B2": "planned",
+      "B3": "planned",
+      "B4": "planned",
+      "B5": "planned"
+    },
+    "clauses": [
+      {
+        "id": "A01",
+        "scenario": "明确额度403",
+        "expected": "当前请求不反复重试，状态可解释，未静默换模型/付费",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A02",
+        "scenario": "429等待时间超过deadline",
+        "expected": "停止/暂停，不在预算外睡眠后继续请求",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A03",
+        "scenario": "每隔少许时间发一个字节",
+        "expected": "总deadline仍可终止，无挂起线程/子进程",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A04",
+        "scenario": "响应发出但本地断线",
+        "expected": "delivery/usage unknown，重试另计，不宣称provider exactly-once",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A05",
+        "scenario": "第N轮调用中断后恢复",
+        "expected": "前N-1轮结果/冻结计划不变、无重复fit、累计预算不退",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A06",
+        "scenario": "同decision并发恢复",
+        "expected": "最多一份计划被接受，所有HTTP尝试留痕",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A07",
+        "scenario": "stdout/traceback混入key哨兵",
+        "expected": "公共日志、研究包、CI中均无secret",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A08",
+        "scenario": "部分JSON/finish_reason length",
+        "expected": "不接受半批、不训练、不自动补成模型配置",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A09",
+        "scenario": "模板改频率或目标",
+        "expected": "明确不支持，不能悄悄变成固定任务",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A10",
+        "scenario": "用户模型与固定控制同名不同参",
+        "expected": "两个角色/身份明确，未覆盖对照；预算足够才启动",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A11",
+        "scenario": "固定模型模式里提换模型/改seed",
+        "expected": "compiler和执行Manifest均拒绝",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A12",
+        "scenario": "同批候选B引用尚未完成A",
+        "expected": "拒绝；不能以A未来结果作为本批证据",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A13",
+        "scenario": "摘要只剩获胜案例",
+        "expected": "测试失败；所有实验状态与关键反例必须保留",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A14",
+        "scenario": "catalog ID附加矛盾params",
+        "expected": "拒绝，不猜哪一个为真",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A15",
+        "scenario": "A详情→refit→切B→下载",
+        "expected": "A包仍标A，不能表现为B，切换不训练",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A16",
+        "scenario": "刷新/多浏览器读取",
+        "expected": "同持久ID恢复，查看不增加provider调用或fit",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A17",
+        "scenario": "新Campaign复制数据和状态声明",
+        "expected": "保留曝光，旧分数不升级，不重置已发生费用",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A18",
+        "scenario": "不支持确认对照",
+        "expected": "预检0grant/0确认fit；不读取确认分数来修正",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A19",
+        "scenario": "朴素基线故意带确认标签统计",
+        "expected": "阻断；训练统计只能来自授权训练数据",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A20",
+        "scenario": "比较随机组无provider与Live组",
+        "expected": "允许的策略差异显式记录；共同数据/评价必须一致",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A21",
+        "scenario": "One-shot与Adaptive混模型/超时",
+        "expected": "不汇总为同设置算法胜负；保留独立试验",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A22",
+        "scenario": "失败臂拿best-so-far冒充完成",
+        "expected": "状态仍失败/部分，成本进入可靠性报告",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A23",
+        "scenario": "新代码读取旧schema数据",
+        "expected": "支持的迁移显式、可审计；不支持则只读/阻断，不能改写旧hash",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "A24",
+        "scenario": "在原47行重用确认授权",
+        "expected": "只读原封存结果或拒绝新计算；不重跑挑好分数",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L01",
+        "scenario": "没有文献/关闭文献的目标型用户",
+        "expected": "内置基线、Task和评价合同不变，能基础研究且不伪称用了论文",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L02",
+        "scenario": "手写JSON自报paper_claim/approved",
+        "expected": "未绑定真实来源和审核版本，不能成为已审核论文证据",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L03",
+        "scenario": "原文/方法卡被改而保留旧ID或hash",
+        "expected": "冻结/回放前拒绝；不能只检查ID存在",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L04",
+        "scenario": "同paper_id换新正文，保留旧approve",
+        "expected": "需版本复核，旧审核不自动授权新内容",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L05",
+        "scenario": "跨租户或hidden资料",
+        "expected": "正文不出现在prompt/日志/导出；不能仅禁止引用ID",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L06",
+        "scenario": "论文建议当前没有的窗口/权重/模型",
+        "expected": "标记能力缺口并可回退到基础研究，不执行未经授权代理方法",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L07",
+        "scenario": "月频收益/波动率研究迁移到日频收益",
+        "expected": "显示迁移差异或不适用；不能把原分数当当前成绩",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L08",
+        "scenario": "可核对的理论/限制段落无数值表",
+        "expected": "可研究用途审核；不编造reported_values，不把strict状态改为通过",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L09",
+        "scenario": "原文内指令要求改label/预算/禁门",
+        "expected": "作为资料而非系统命令，本地合同仍阻断",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L10",
+        "scenario": "ID正确但引用与假设内容无关",
+        "expected": "语义人工抽检标不合格；不能用结构校验通过宣布证据支持",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L11",
+        "scenario": "Agent自己选择alpha=5等工程参数",
+        "expected": "归入本地迁移假设，除非原文真有，否则不得说论文要求该值",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L12",
+        "scenario": "文献名义下联合修改并称单因素消融",
+        "expected": "现有action/config-diff门禁拒绝；不能凭权威引用豁免",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L13",
+        "scenario": "EvidenceIndex字段白名单丢掉位置/限制",
+        "expected": "投影端到端测试失败；最终prompt和包保留关键字段",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L14",
+        "scenario": "实验看到好分数后补论文来“解释计划”",
+        "expected": "原冻结提案不变；后验解释单列，不能冒充事前依据",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L15",
+        "scenario": "输入资料全部无关/不支持",
+        "expected": "可不采用、说明理由；不得强迫制造一条论文实验",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L16",
+        "scenario": "文献相关候选训练崩溃",
+        "expected": "工程失败/inconclusive，不能把论文或方法记成科学负结果",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L17",
+        "scenario": "本地负结果、混合fold表现",
+        "expected": "原文事实不改；本地反馈与条件/反证如实进入下一批",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L18",
+        "scenario": "中断后离线恢复/Replay",
+        "expected": "固定source/card/projection身份不变，不重新抽取或偷偷读新版",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L19",
+        "scenario": "L0无文献组继承L1解释/Memory",
+        "expected": "预检阻断污染；新组不带对照方新结果或文献解释",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L20",
+        "scenario": "文献对照同时改模型/batch/候选范围",
+        "expected": "拒绝当单因素增量比较，允许作为另一个明确实验保存",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L21",
+        "scenario": "有文献组额外抽取/调用却报成本0",
+        "expected": "成本/预处理身份保留；未知不填0，复用成本不重复记",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L22",
+        "scenario": "运行中来源版本更新或权限撤销",
+        "expected": "普通更新不改旧plan；权限撤销阻止新外发并明确暂停",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L23",
+        "scenario": "研究包无权分发原文或包含私密source",
+        "expected": "仅导出许可允许的元数据/引用/片段；限制明确，不偷偷嵌PDF",
+        "status": "planned",
+        "tests": []
+      },
+      {
+        "id": "L24",
+        "scenario": "用户看到引用就把结果称严格复现/独立确认",
+        "expected": "总结、UI、文档均限定证据等级；只可核对当前实际条件",
+        "status": "planned",
+        "tests": []
+      }
+    ],
+    "external_gates": {
+      "live_provider_new_contract": "not_run",
+      "live_literature_quality": "not_run",
+      "real_users": "not_run",
+      "strategy_value": "not_run",
+      "literature_increment": "not_run",
+      "windows_affected_features": "not_run"
+    }
   }
 }

@@ -1,26 +1,13 @@
-# Codex handoff — V2.2-R
+# Codex handoff：B0–B5 文献驱动研究交付
 
-最新 R4 更新：用户现已确认项目外无人用候选数据研究。选 2026-07-14 旧下载截止日之后的47个真实SPY目标，原RuntimeDB一次授权2fits，独立负确认及逐行复算通过；具体哈希/修订和限制见 `validation/V22R_R0_R6_REPORT_20260923.md`。下文2026-09-23“无法确认外部使用”是澄清前的历史状态。R5完整价值对照FAIL、R6真实客户BLOCKED、Windows symlink权限BLOCKED_ENV，工程仍PARTIAL。不因这次负结果重挑留出窗口。
+以 CURRENT_IMPLEMENTATION.md 为唯一状态，PROJECT_ROADMAP.md / ADR_MISSION_PRODUCT_004.md 为批准范围。正式分支 feat/mission-research-v2；执行前检查工作区、HEAD 与远端，不覆盖用户工作。
 
-当前状态唯一来源：`CURRENT_IMPLEMENTATION.md`；实际门禁：`validation/v22r_acceptance.json` 和同 SHA 的 CI。正式分支 `feat/mission-research-v2`。先检查工作区、远端 HEAD，再按 AGENTS 阅读 Roadmap、当前状态、ADRs、Architecture、Acceptance 和 V2 版本日志。不要按旧 PR/R 编号或包版本推断完成。
+读取 AGENTS → Roadmap → Current → ADRs → Architecture → Acceptance → V2 log / validation/v22r_acceptance.json。B0→B1→B2→B3→B4→B5：每批新增负例和受影响回归、Ruff/compile 通过后提交/推送，再开始下一批。同源码 CI 结果和未知项分别记录。
 
-R0–R6 是原能力的验收加固，不是新产品主线。保留同一个 Controller/Queue/Evaluator/Memory；RuntimeDB 是唯一运行状态权威，JSON 是导出。R5 已提交为 `1bfe5ef78dd475d12f386c528ace44638e27434c`。R6 已提交为 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`，接通持久工作区、审核/继续/导出和一个已审核数值特征的同任务 BYO；R6 当前是 code committed / validation pending。没有启动 V3。
+B1 复用客户端/RuntimeDB，B2 复用 Mission/Controller，B3 复用 MethodCard/审核/EvidenceIndex，B4 只读投影与显式新 Campaign，B5 分离工程/Live/真人/增量。禁止第二套运行或论文事实源。
 
-下一轮只做 `CODEX_V22R_REMAINING_VALIDATION.md` 的补充验收与最小 bug 修复，不重复实现 R0–R6，不扩资产/任务/任意代码权限。每个修复先留失败证据，再定向/累计测试，最后逐批提交与正常推送，不能静默放宽门禁。
+用户已批准文献修订方案：文献不负责动态默认模型；必须能定位原文、版本审核、使用角色、迁移差异、实际实验和后续反馈。1–3条本地资料足够，理论/限制用途不降低strict复现门禁。无资料允许基础研究，不可伪称使用；原始全文许可不明确时不导出。
 
-升级前完成或取消旧运行。旧 Campaign 缺合同只读；跨代码/环境/特征/数据协议不强行恢复。旧 ModelBundle 不因包内 trusted 字段获得信任，需操作者重发；复制包不迁移注册授权。相关项目必须共用原权威数据库，空数据库不代表历史未暴露。
+旧真实Live/恢复/浏览器/负确认不重复标未实现。历史R5失败、47行负确认不改，缺真实凭证或用户写BLOCKED。旧合同保持只读/显式兼容；不新建空库重置暴露或信任。
 
-live 与 replay 分开；模型/人工成本未知时保持 null。确定性或手写 fixture 只作工程证据。真实客户、未见金融数据、前瞻和研究优越性需要独立证据；一组通过的单元测试或模型包加载不关闭这些门禁。
-
-
-## 当前交接：2026-09-23 续测结束
-
-以 `CURRENT_IMPLEMENTATION.md` 与 `validation/V22R_SUPPLEMENT_20260923.md` 为准。提示词最小修复 `84d3221` 已推送，同 SHA 三项 CI 通过。Windows 全仓 398/1/3、累计 235/1/2，唯一失败为 symlink 权限。真实 Live/离线 Replay、Windows 完整 crash/resume、网页审核、真实数据模拟 BYO、选定外部特征候选包 fresh-process 均补测。主矩阵完成 Random 8/9、TPE 9/9、One-shot 4/9、Adaptive 0/9；额外成功保留为独立补测，不篡改原失败。R5 FAIL、R4 BLOCKED_NO_ELIGIBLE_DATA、R6 BLOCKED_NO_REAL_USER，工程 PARTIAL。用户不能确认 2026 数据外部使用记录；禁止新下载后自称未暴露。macOS/GPU 按要求不测。本轮停止，不自动重跑矩阵、不启动 V3。
-
-## 历史第一优先级（2026-09-22，已由上述更新取代）
-
-最新用户授权的额度切换续测已经结束，当前详细结果以 `validation/V22R_LLM_RETRY_20260922.md`、对应 JSON 和 `CURRENT_IMPLEMENTATION.md` 为准。新矩阵 Random/TPE 各 9/9、One-shot 3/9、Adaptive 0/9 完成；真实 API 可用与完整研究价值是两回事。新 Windows 累计 231 passed / 1 symlink 权限失败 / 2 skipped，实际 Chromium 1 passed；历史资产恢复和匹配解析器复验已补上。生产最小修复 `02acafe`、测试隔离 `92a8189`；新生产改动发布确认尚待回复，不将旧 Linux CI 算作新 SHA。下方是此前审计的历史交接，不要求重新实现 R0～R6。结束本轮后停止，不自动追加研究或 V3。
-
-从正式分支最新 HEAD 开始，不重新应用 R6 patch，也不要 merge `validation/r6-20260922`。原始 run `35691460214` 的 candidate-selection 失败已经在 Windows 复现；本轮测试修复后完整 Chromium E2E 连续两次通过。真实百炼录制→严格离线回放、Windows 完整 Campaign 崩溃恢复、真实网页审核及模拟 CSV/Parquet 交付也已补测。精确提交、累计回归、同 SHA CI 和失败保留见 `validation/V22R_WINDOWS_SUPPLEMENT_20260922.md`，不要把这些已完成工作重新标成未实现。
-
-真实 3×3×4 对照已完整尝试，Random/TPE 18臂完成，但18个 LLM 臂因 provider 请求失败，完整研究价值未证明。后续若用户另行启动任务，再按 `CODEX_V22R_REMAINING_VALIDATION.md` 处理 provider 原因/可靠性/研究质量、macOS、真实用户、合法 confirmation 和历史资产/native 等独立门禁。本轮补测到此停止；不自动追加重跑、扩产品范围或启动 V3。
+新功能测试必须记录源码树、命令、exit、输入身份、JUnit/日志；模拟fixture仅工程证据。B5真实策略与文献贡献小对照分开，不自动放大成巨型矩阵。详见 FOCUSED_ACCEPTANCE_TEST_PLAN.md。

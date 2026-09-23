@@ -34,3 +34,6 @@
 - RD-Agent：借鉴 hypothesis → implementation → execution → feedback 的研究责任划分；
 - DeepSeek Harness：借鉴稳定工具接口、权限/审批、事件与可恢复执行；
 - 本项目保留金融数据语义、时间因果、可比性和科学验收作为核心差异化能力。
+
+
+Historical decision retained. Supplemented on 2026-09-23 by [ADR_MISSION_PRODUCT_004.md](ADR_MISSION_PRODUCT_004.md); current status is CURRENT_IMPLEMENTATION.md.

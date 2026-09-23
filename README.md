@@ -17,12 +17,19 @@ feat/mission-research-v2
 
 Current status is defined only by [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md). V2.2-R closes reopened contracts; module presence is not complete product acceptance.
 
-## R0–R6 authoritative checkpoint
+## Approved next increment: reliable literature-grounded research
 
-R0–R5 are delivered; R6 product code was committed at `3fdd2d6403bc425d172d15eba749bcdc925f33e2` and remains **validation pending**, not fully accepted. Supplemental Windows validation starts from `625283636cef4faa080f8521683f81491611b5ff`: actual Chromium E2E passed twice after a test-only selection repair; real Bailian live→strict offline replay and complete Campaign crash/resume passed. Original failed CI records are preserved. Cumulative results, same-SHA CI, live benchmark failures and outstanding real-user/financial/platform gates are in [the supplemental report](docs/validation/V22R_WINDOWS_SUPPLEMENT_20260922.md) and the authoritative current-state document. V3 has not started.
+Default entry will accept a supported research goal without an existing model;
+a second entry accepts controlled data, a supported model configuration or one
+reviewed numeric feature. Both use the existing research engine. Literature
+informs falsifiable hypotheses, controls, limitations and subsequent decisions;
+it is neither a startup prerequisite nor a dynamically trusted model supplier.
 
-The latest full 3×3×4 matrix was attempted: Random completed 8/9, TPE 9/9, One-shot 4/9 and Adaptive 0/9 primary arms. Separate longer-timeout runs completed two One-shot arms and one Adaptive arm with genuine advisor_stop/no_improvement; these do not erase primary failures. See the [R0–R6 current report](docs/validation/V22R_R0_R6_REPORT_20260923.md). After the user clarified outside-use history, a one-shot 47-row real SPY confirmation on post-July-14 targets completed and independently recomputed: the frozen Ridge candidate did not beat the GBDT control. Overall engineering acceptance remains **PARTIAL**, the full value benchmark **FAIL**, and real-user validation **BLOCKED**. V3 is not started.
-
+Implementation is gated B0–B5 under [ADR 004](docs/ADR_MISSION_PRODUCT_004.md).
+See [current implementation](docs/CURRENT_IMPLEMENTATION.md) for actual status,
+and the [unchanged R0–R6 receipts](docs/validation/V22R_R0_R6_REPORT_20260923.md)
+for existing real runs and limitations. No new financial-performance claim,
+automatic trading, unrestricted code or V3 is authorized.
 
 Start with these documents:
 

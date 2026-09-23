@@ -255,3 +255,12 @@ An accepted artifact is immutable and hash-bound to its execution contract. A fi
 ReviewedNumericFeature extends the existing feature registry per execution, never the process-global registry. Controller → compiler → evaluator → Manifest → refit consume the same frozen registry; Memory compatibility includes feature-spec identity. BYO time checks use sessions plus separate timezone-aware actual instants and report declared versus verified provenance.
 
 ResearchPackage is an export, not runtime authority. ModelBundle uses R4 external registration; download alone does not authorize deserialization elsewhere. UI-triggered explicit refit is a single controlled delivery operation, not automatic promotion/ongoing model deployment. Shared worker semantics and research budget remain independent of browser redraws.
+
+
+## Approved B0–B5 supplement (not a completion claim)
+
+Two entry modes map to the same Campaign; incumbent, fixed controls and candidates have separate roles, with compatible execution reuse. RuntimeDB remains the only execution state; decision→logical call→HTTP attempts retain unknown costs and bounded provider waits.
+
+Literature: existing source / MethodCard revision → purpose-specific approval → permission-filtered EvidenceIndex → transfer hypothesis with use_role/transfer_gap → frozen action/actual config diff → deterministic local feedback → next decision. No separate literature database or controller. Review-for-research may accept theory/limitations without empirical metrics; strict reproduction gates remain unchanged. Source version changes require an explicit new Campaign; permission revocation prevents subsequent external sends.
+
+Batch planning is opt-in and frozen before fits. Compact context preserves all experiment statuses and key negatives. Common experiment contracts and strategy-specific settings are distinct; G2A strategies and G2B explicit-literature treatment are separate comparisons. Report traceability, semantic review and incremental value separately.

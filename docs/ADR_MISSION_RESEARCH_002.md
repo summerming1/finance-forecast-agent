@@ -69,3 +69,6 @@ focused 结果进入既有 ExperimentMemory；兼容历史作为弱 prior；Expo
 ## 核心产品承诺
 
 系统承诺在批准的任务、数据、能力和预算内系统性推进研究，保留证据并正确说明已知/未知；不承诺一定找到更优模型或盈利策略。
+
+
+Historical decision retained. Supplemented on 2026-09-23 by [ADR_MISSION_PRODUCT_004.md](ADR_MISSION_PRODUCT_004.md); current status is CURRENT_IMPLEMENTATION.md.

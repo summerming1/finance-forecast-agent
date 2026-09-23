@@ -268,3 +268,10 @@ The user-authorized 3 windows × 3 search seeds × 4 arms finished with **exit 1
 Independent audits matched all 29 successful prompts to actual feedback/budget and verified 461 PredictionArtifacts, their fold/aggregate metrics, same-window targets and 1167 raw artifact hashes. Total charged fits were 1412; zero failed fit attempts does not erase provider failures. Source signature stayed unchanged across all arms despite test/docs commits. The derived per-arm record is `docs/validation/V22R_LIVE_BENCHMARK_20260922.json`; no raw provider market data or API credentials are committed.
 
 Post-fix real SPY smoke passed again (4002 rows, expected period, 20 charged fits, historical-exposed confirmation not run, 35.36s); all eight new prediction artifacts independently recomputed. Documentation checkpoint `a4ea607` also passed exact-SHA Linux dual-Python 232-case regression, Chromium and final real-SPY CI. The full report retains every red run and environment/asset limitation. Final verdict: **V2.2-R engineering PARTIAL; real users BLOCKED; independent financial evidence BLOCKED; internal prospective recording and V3 NOT_READY**. This validation ends here; no Shadow/V3 implementation or automatic follow-on benchmark is started.
+
+
+## B0 — approved reliable, dual-entry and literature-grounded increment (2026-09-23)
+
+User approved the complete revised B0–B5 plan. B0 synchronizes ADR 004, roadmap, current status, architecture, handoff and A01–A24/L01–L24 acceptance requirements. No business code or historical validation receipts were changed. Pending B1–B5 are not claimed as implemented. Each following entry must report actual tests and unverified boundaries.
+
+B0 local evidence (2026-09-23): 240 related focused/queue/Memory tests passed in 355.60s, exit 0; documentation tests 4 passed, scoped Ruff and diff checks passed. An initial environment-initialization probe had two child-launch failures before editable installation; both are retained as setup failures, not erased. No production code changed. B1–B5 remain planned, historical R5 FAIL and 47-row negative confirmation unchanged.

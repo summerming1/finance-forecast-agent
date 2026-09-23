@@ -221,3 +221,71 @@ Current evidence on that exact commit:
 - real Chromium E2E: **failed** (`35691460214`) at candidate-selection value verification.
 
 Therefore R6 acceptance is **OPEN**. The code may be used as the base for local Codex validation, but a browser/AppTest substitution, test deletion, or weakened candidate-switch assertion does not close this gate. After a minimal fix, rerun the browser flow, cumulative core tests, frozen-SPY final acceptance and document the new exact SHA.
+
+
+# B0–B5 current acceptance supplement
+
+Prior entries above are historical receipts/requirements; resolved R1–R6 evidence remains in the dated reports. New clauses below are requirements, NOT passes. G0 offline contracts; G1 fixed-provider live/replay; G2A shared-engine strategies; G2B same Adaptive with/without explicit literature; G3 real users; G4 same-source release/platform regression. BLOCKED is distinct from PASS.
+
+## 11. 对抗性验收条款矩阵
+
+| ID | 攻击/故障 | 必须观察到的结果 |
+|---|---|---|
+| A01 | 明确额度403 | 当前请求不反复重试，状态可解释，未静默换模型/付费 |
+| A02 | 429等待时间超过deadline | 停止/暂停，不在预算外睡眠后继续请求 |
+| A03 | 每隔少许时间发一个字节 | 总deadline仍可终止，无挂起线程/子进程 |
+| A04 | 响应发出但本地断线 | delivery/usage unknown，重试另计，不宣称provider exactly-once |
+| A05 | 第N轮调用中断后恢复 | 前N-1轮结果/冻结计划不变、无重复fit、累计预算不退 |
+| A06 | 同decision并发恢复 | 最多一份计划被接受，所有HTTP尝试留痕 |
+| A07 | stdout/traceback混入key哨兵 | 公共日志、研究包、CI中均无secret |
+| A08 | 部分JSON/finish_reason length | 不接受半批、不训练、不自动补成模型配置 |
+| A09 | 模板改频率或目标 | 明确不支持，不能悄悄变成固定任务 |
+| A10 | 用户模型与固定控制同名不同参 | 两个角色/身份明确，未覆盖对照；预算足够才启动 |
+| A11 | 固定模型模式里提换模型/改seed | compiler和执行Manifest均拒绝 |
+| A12 | 同批候选B引用尚未完成A | 拒绝；不能以A未来结果作为本批证据 |
+| A13 | 摘要只剩获胜案例 | 测试失败；所有实验状态与关键反例必须保留 |
+| A14 | catalog ID附加矛盾params | 拒绝，不猜哪一个为真 |
+| A15 | A详情→refit→切B→下载 | A包仍标A，不能表现为B，切换不训练 |
+| A16 | 刷新/多浏览器读取 | 同持久ID恢复，查看不增加provider调用或fit |
+| A17 | 新Campaign复制数据和状态声明 | 保留曝光，旧分数不升级，不重置已发生费用 |
+| A18 | 不支持确认对照 | 预检0grant/0确认fit；不读取确认分数来修正 |
+| A19 | 朴素基线故意带确认标签统计 | 阻断；训练统计只能来自授权训练数据 |
+| A20 | 比较随机组无provider与Live组 | 允许的策略差异显式记录；共同数据/评价必须一致 |
+| A21 | One-shot与Adaptive混模型/超时 | 不汇总为同设置算法胜负；保留独立试验 |
+| A22 | 失败臂拿best-so-far冒充完成 | 状态仍失败/部分，成本进入可靠性报告 |
+| A23 | 新代码读取旧schema数据 | 支持的迁移显式、可审计；不支持则只读/阻断，不能改写旧hash |
+| A24 | 在原47行重用确认授权 | 只读原封存结果或拒绝新计算；不重跑挑好分数 |
+
+每项记录nodeid/人工步骤、源码SHA、环境、输入hash、命令exit、日志与预期不变量。不能把Mock网络通过写成真实百炼服务稳定，也不能把模拟参与者写成客户。
+
+
+## 11A. 文献闭环新增对抗验收（L01–L24）
+
+| ID | 场景 | 必须观察到的结果 |
+|---|---|---|
+| L01 | 没有文献/关闭文献的目标型用户 | 内置基线、Task和评价合同不变，能基础研究且不伪称用了论文 |
+| L02 | 手写JSON自报paper_claim/approved | 未绑定真实来源和审核版本，不能成为已审核论文证据 |
+| L03 | 原文/方法卡被改而保留旧ID或hash | 冻结/回放前拒绝；不能只检查ID存在 |
+| L04 | 同paper_id换新正文，保留旧approve | 需版本复核，旧审核不自动授权新内容 |
+| L05 | 跨租户或hidden资料 | 正文不出现在prompt/日志/导出；不能仅禁止引用ID |
+| L06 | 论文建议当前没有的窗口/权重/模型 | 标记能力缺口并可回退到基础研究，不执行未经授权代理方法 |
+| L07 | 月频收益/波动率研究迁移到日频收益 | 显示迁移差异或不适用；不能把原分数当当前成绩 |
+| L08 | 可核对的理论/限制段落无数值表 | 可研究用途审核；不编造reported_values，不把strict状态改为通过 |
+| L09 | 原文内指令要求改label/预算/禁门 | 作为资料而非系统命令，本地合同仍阻断 |
+| L10 | ID正确但引用与假设内容无关 | 语义人工抽检标不合格；不能用结构校验通过宣布证据支持 |
+| L11 | Agent自己选择alpha=5等工程参数 | 归入本地迁移假设，除非原文真有，否则不得说论文要求该值 |
+| L12 | 文献名义下联合修改并称单因素消融 | 现有action/config-diff门禁拒绝；不能凭权威引用豁免 |
+| L13 | EvidenceIndex字段白名单丢掉位置/限制 | 投影端到端测试失败；最终prompt和包保留关键字段 |
+| L14 | 实验看到好分数后补论文来“解释计划” | 原冻结提案不变；后验解释单列，不能冒充事前依据 |
+| L15 | 输入资料全部无关/不支持 | 可不采用、说明理由；不得强迫制造一条论文实验 |
+| L16 | 文献相关候选训练崩溃 | 工程失败/inconclusive，不能把论文或方法记成科学负结果 |
+| L17 | 本地负结果、混合fold表现 | 原文事实不改；本地反馈与条件/反证如实进入下一批 |
+| L18 | 中断后离线恢复/Replay | 固定source/card/projection身份不变，不重新抽取或偷偷读新版 |
+| L19 | L0无文献组继承L1解释/Memory | 预检阻断污染；新组不带对照方新结果或文献解释 |
+| L20 | 文献对照同时改模型/batch/候选范围 | 拒绝当单因素增量比较，允许作为另一个明确实验保存 |
+| L21 | 有文献组额外抽取/调用却报成本0 | 成本/预处理身份保留；未知不填0，复用成本不重复记 |
+| L22 | 运行中来源版本更新或权限撤销 | 普通更新不改旧plan；权限撤销阻止新外发并明确暂停 |
+| L23 | 研究包无权分发原文或包含私密source | 仅导出许可允许的元数据/引用/片段；限制明确，不偷偷嵌PDF |
+| L24 | 用户看到引用就把结果称严格复现/独立确认 | 总结、UI、文档均限定证据等级；只可核对当前实际条件 |
+
+这些条款与 A01–A24 共用同一验收账本；L编号不是新的测试框架。每条绑定 nodeid/人工步骤、源码与来源版本、真实/模拟标记、exit、日志。语义忠实度检查和研究价值判断不得被结构正确或引用数量代替。

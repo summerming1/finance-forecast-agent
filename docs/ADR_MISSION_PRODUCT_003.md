@@ -60,3 +60,6 @@ Memory 在 PR-5 接入 focused 主线，只作为兼容条件过滤后的弱 pri
 每一 PR 必须先通过本 PR 新测试及所有受影响的累计回归，再进入下一 PR。允许构造模拟数据、模拟客户和 assistant-authored fixture 做工程测试，但必须明确标记，不能写成真实客户、live provider、独立确认或金融绩效证据。
 
 本 ADR 不修改历史 strict reproduction 的验收记录，也不降低时间因果、真实/合成隔离、模型实施一致性和确定性评价权威。
+
+
+Historical decision retained. Supplemented on 2026-09-23 by [ADR_MISSION_PRODUCT_004.md](ADR_MISSION_PRODUCT_004.md); current status is CURRENT_IMPLEMENTATION.md.
