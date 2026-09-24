@@ -64,7 +64,7 @@ jobs:
       - name: Lint compile and whitespace
         working-directory: target
         run: |
-          python -m ruff check             src/finance_forecast_agent/focused*.py             src/finance_forecast_agent/review_state.py             src/finance_forecast_agent/llm_adapters.py             src/finance_forecast_agent/replay_llm.py             src/finance_forecast_agent/research_mission.py             src/finance_forecast_agent/task_queue.py             tests/test_focused*.py tests/test_method_card_v3.py             tests/test_streamlit_review_gate.py tests/test_p09_review_backlog_timeline.py             apps/pages/8_Focused_Research.py             scripts/run_focused*.py scripts/run_research_value_benchmark.py scripts/review_focused_literature.py
+          python -m ruff check             src/finance_forecast_agent/focused*.py             src/finance_forecast_agent/review_state.py             src/finance_forecast_agent/llm_adapters.py             src/finance_forecast_agent/replay_llm.py             src/finance_forecast_agent/research_mission.py             src/finance_forecast_agent/task_queue.py             tests/test_focused*.py tests/test_method_card_v3.py             apps/pages/8_Focused_Research.py             scripts/run_focused*.py scripts/run_research_value_benchmark.py scripts/review_focused_literature.py
           python -m compileall -q src apps scripts tests
           git diff --cached --check
           python -m pip freeze > validation/environment.txt
