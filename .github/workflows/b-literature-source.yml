@@ -1,0 +1,33 @@
+name: B primary literature inputs
+on:
+  push:
+    branches: [validation/b0-b5-20260923]
+    paths: [.github/workflows/b-literature-source.yml]
+permissions:
+  contents: read
+jobs:
+  sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fetch exact public author copies, no product mutation
+        run: |
+          mkdir -p /tmp/b-literature
+          python - <<'PY'
+          import hashlib,json,pathlib,urllib.request
+          out=pathlib.Path('/tmp/b-literature');records=[]
+          urls={'breiman_randomforest2001.pdf':'https://www.stat.berkeley.edu/~breiman/randomforest2001.pdf','bergmeir_cv_wp.pdf':'https://robjhyndman.com/papers/cv-wp.pdf'}
+          for name,url in urls.items():
+              request=urllib.request.Request(url,headers={'User-Agent':'Research-source-verification/1.0'})
+              with urllib.request.urlopen(request,timeout=60) as response:
+                  data=response.read(20_000_001)
+              assert len(data)<20_000_000 and data.startswith(b'%PDF')
+              (out/name).write_bytes(data)
+              records.append({'name':name,'url':url,'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data),'purpose':'local source verification; full PDFs not committed to product or redistribution packages'})
+          (out/'sources.json').write_text(json.dumps(records,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: b-primary-literature
+          path: /tmp/b-literature
+          retention-days: 7
