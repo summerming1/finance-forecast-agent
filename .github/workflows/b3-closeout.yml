@@ -1,0 +1,170 @@
+name: B3 closeout gate
+on:
+  push:
+    branches: [validation/b0-b5-20260923]
+    paths:
+      - .github/workflows/b3-closeout.yml
+      - .delivery/B3-followup.patch
+permissions:
+  contents: read
+concurrency:
+  group: b3-closeout
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11','3.13']
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 49a486aa563b617b7c5d6eecbd183d4f0ba532f3
+          path: target
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Restore exact B3 candidate and closeout corrections
+        working-directory: target
+        run: |
+          python ../transport/.delivery/apply_and_publish.py
+          sha256sum ../transport/.delivery/B3-followup.patch
+          test "$(sha256sum ../transport/.delivery/B3-followup.patch | cut -d' ' -f1)" = "f68f5591ef52cb4444d567aaeade6cc91e6a0d0518cb85d2bb5c8f07293574c9"
+          git apply --check --index ../transport/.delivery/B3-followup.patch
+          git apply --index ../transport/.delivery/B3-followup.patch
+          mkdir -p validation
+          git write-tree | tee validation/TREE.txt
+          git rev-parse HEAD > validation/BASE.txt
+          git diff --cached --binary > validation/B3-final.patch
+      - name: Install declared environment
+        working-directory: target
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf,byo,benchmark]'
+      - name: Cumulative B3 regressions
+        working-directory: target
+        run: |
+          python -m pytest -q             tests/test_focused*.py             tests/test_task_queue*.py             tests/test_*memory*.py             tests/test_method_card_v3.py             tests/test_streamlit_review_gate.py             tests/test_p09_review_backlog_timeline.py             --junitxml=validation/cumulative.xml
+      - name: Lint compile and whitespace
+        working-directory: target
+        run: |
+          python -m ruff check             src/finance_forecast_agent/focused*.py             src/finance_forecast_agent/review_state.py             src/finance_forecast_agent/llm_adapters.py             src/finance_forecast_agent/replay_llm.py             src/finance_forecast_agent/research_mission.py             src/finance_forecast_agent/task_queue.py             tests/test_focused*.py tests/test_method_card_v3.py             tests/test_streamlit_review_gate.py tests/test_p09_review_backlog_timeline.py             apps/pages/8_Focused_Research.py             scripts/run_focused*.py scripts/run_research_value_benchmark.py scripts/review_focused_literature.py
+          python -m compileall -q src apps scripts tests
+          git diff --cached --check
+          python -m pip freeze > validation/environment.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: B3-closeout-${{ matrix.python }}-${{ github.run_id }}
+          path: target/validation
+          retention-days: 14
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      FFA_BROWSER_E2E: '1'
+      FFA_BROWSER_ARTIFACTS: validation/browser
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 49a486aa563b617b7c5d6eecbd183d4f0ba532f3
+          path: target
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Restore exact B3 source
+        working-directory: target
+        run: |
+          python ../transport/.delivery/apply_and_publish.py
+          git apply --check --index ../transport/.delivery/B3-followup.patch
+          git apply --index ../transport/.delivery/B3-followup.patch
+          mkdir -p validation/browser
+          git write-tree > validation/browser/TREE.txt
+      - name: Install browser environment
+        working-directory: target
+        run: |
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -e '.[dev,ui,pdf,byo,benchmark,browser]'
+          python -m playwright install --with-deps chromium
+      - name: Chromium workspace
+        working-directory: target
+        run: python -m pytest -q tests/browser --junitxml=validation/browser/browser.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: B3-browser-${{ github.run_id }}
+          path: target/validation/browser
+          retention-days: 14
+
+  publish-blobs:
+    needs: [validate,browser]
+    if: needs.validate.result == 'success' && needs.browser.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: transport
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 49a486aa563b617b7c5d6eecbd183d4f0ba532f3
+          path: target
+          persist-credentials: false
+      - name: Restore tested source and publish immutable blobs only
+        working-directory: target
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python ../transport/.delivery/apply_and_publish.py
+          git apply --check --index ../transport/.delivery/B3-followup.patch
+          git apply --index ../transport/.delivery/B3-followup.patch
+          mkdir -p ../published
+          python - <<'PY'
+          import base64,hashlib,json,os,pathlib,subprocess,urllib.request
+          repo=os.environ['GITHUB_REPOSITORY']
+          paths=subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
+          report={'base':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+                  'tree':subprocess.check_output(['git','write-tree'],text=True).strip(),
+                  'blobs':{},'refs_updated':False,'validation_run':os.environ['GITHUB_RUN_ID']}
+          for path in paths:
+              data=pathlib.Path(path).read_bytes()
+              expected=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+              req=urllib.request.Request('https://api.github.com/repos/'+repo+'/git/blobs',
+                 data=json.dumps({'encoding':'base64','content':base64.b64encode(data).decode()}).encode(),
+                 method='POST',headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+                 'Accept':'application/vnd.github+json','Content-Type':'application/json'})
+              with urllib.request.urlopen(req,timeout=60) as r: actual=json.load(r)['sha']
+              assert actual==expected,(path,actual,expected)
+              report['blobs'][path]=actual
+          pathlib.Path('../published/tested_blobs.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: B3-tested-blobs-${{ github.run_id }}
+          path: published
+          retention-days: 14
