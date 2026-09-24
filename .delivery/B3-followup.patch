@@ -1,0 +1,42 @@
+diff --git a/tests/test_focused_b1_provider.py b/tests/test_focused_b1_provider.py
+index c6de335..ce87e08 100644
+--- a/tests/test_focused_b1_provider.py
++++ b/tests/test_focused_b1_provider.py
+@@ -50,9 +50,11 @@ def good():
+ 
+ 
+ def client(url, **kw):
++    policy={'connect_timeout':1, 'read_timeout':2, 'deadline_seconds':3,
++            'max_http_attempts':3, 'backoff_seconds':.01}
++    policy.update(kw)
+     return mod.OpenAIJsonClient(model='local-test', api_key='SECRET_SENTINEL', base_url=url,
+-           policy=mod.ProviderPolicy(connect_timeout=1, read_timeout=2, deadline_seconds=3,
+-                                     max_http_attempts=3, backoff_seconds=.01, **kw))
++           policy=mod.ProviderPolicy(**policy))
+ 
+ 
+ def test_quota_error_is_not_retried_and_has_safe_facts():
+@@ -71,7 +73,9 @@ def test_quota_error_is_not_retried_and_has_safe_facts():
+ @pytest.mark.parametrize('status',[429,503])
+ def test_retry_transient_then_success(status):
+     with server([{'status':status,'headers':{'Retry-After':'0'}}, {'body':good()}]) as (url,calls):
+-        c=client(url)
++        # Retry classification is independent from the strict deadline tests below.
++        # Two isolated transport processes can take >3s to cold-start on constrained CI.
++        c=client(url,deadline_seconds=10)
+         assert c.complete_json(prompt_payload={},schema_name='test')=={'status':'ok'}
+         assert len(calls)==2 and c.last_call_metadata['http_attempts']==2
+         assert c.last_call_metadata['usage']['total_tokens']==13
+diff --git a/tests/browser/test_research_workspace.py b/tests/browser/test_research_workspace.py
+index 44878e4..a682c7f 100644
+--- a/tests/browser/test_research_workspace.py
++++ b/tests/browser/test_research_workspace.py
+@@ -82,6 +82,8 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
+         page.goto(base+'/Focused_Research')
+         expect(page.get_by_role('heading',name='Research Mission',exact=True)).to_be_visible()
+         page.get_by_text('Advanced settings',exact=True).click()
++        # B3 explicit no-literature route remains a supported product path.
++        select_option('Literature use','none')
+         page.get_by_label('Project directory',exact=True).fill(str(project));page.get_by_label('Project directory',exact=True).press('Tab')
+         page.get_by_label('Frozen SPY Yahoo JSON',exact=True).fill(str(raw));page.get_by_label('Frozen SPY Yahoo JSON',exact=True).press('Tab')
+         page.get_by_label('Max research rounds',exact=True).fill('1');page.get_by_label('Max research rounds',exact=True).press('Tab')
