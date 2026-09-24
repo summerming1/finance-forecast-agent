@@ -82,7 +82,7 @@ def submit_focused_campaign(
                     "memory": use_memory_prior, "source": source, "max_advisor_calls": int(max_advisor_calls), "max_http_requests":int(max_http_requests), "max_provider_seconds":float(max_provider_seconds),
                     "fixture_dir": str(Path(fixture_dir).resolve()), "operation_id": operation_id}, domain="focused-submit-v2")
     options = json.loads(canonical_json(research_options or {}))
-    if set(options) - {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids"}:
+    if set(options) - {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids", "literature_review_ids", "literature_project", "context_mode"}:
         raise ValueError("unsupported frozen research options")
     if options:
         key = identity({"request": key, "options": options}, domain="focused-submit-options-v1")
@@ -174,12 +174,43 @@ def build_research_package(
         campaign = json.loads(content_bytes["campaign.json"])
     elif "campaign.partial.json" in content_bytes:
         campaign = json.loads(content_bytes["campaign.partial.json"])
+    snapshot = campaign.get("literature_snapshot")
+    if snapshot is None and "literature/snapshot.json" in content_bytes:
+        snapshot = json.loads(content_bytes["literature/snapshot.json"])
+    restricted = any(not row.get("literature_binding", {}).get("redistribute_excerpt", False)
+                     for row in (snapshot or []))
+    omitted_files = []
+    if restricted:
+        # No raw prompt, explanation, reviewed quote, contract or event is copied.
+        # Numeric prediction rows and allow-listed execution fields remain auditable.
+        permitted = {}
+        for rel, data in content_bytes.items():
+            if rel.startswith("predictions/") and rel.endswith(".json"):
+                permitted[rel] = data
+            elif rel.startswith("manifests/") and rel.endswith(".json"):
+                obj = json.loads(data)
+                fields = {"schema_version", "campaign_id", "candidate_id", "candidate_fingerprint", "role",
+                          "model_family", "requested_model_params", "effective_estimator_params", "actual_feature_columns",
+                          "expected_feature_columns", "split_spec", "evaluation_policy", "fit_calls", "folds",
+                          "dataset_fingerprint", "task_contract_hash", "execution_status", "conformance"}
+                permitted[rel] = json.dumps({k:v for k,v in obj.items() if k in fields}, sort_keys=True).encode()
+        omitted_files = sorted(set(content_bytes)-set(permitted))
+        summary = {k:campaign.get(k) for k in ("execution_status", "research_outcome", "fit_calls",
+            "best_candidate_id", "confirmation_status", "scientific_claim")}
+        summary["literature_references"] = [{"review_id":r["evidence_id"], "revision":r["revision"],
+            "source_hashes":r["literature_binding"]["source_hashes"]} for r in snapshot or []]
+        summary["scope"] = "reference_only_no_source_derived_narratives; full local audit retained"
+        permitted["reference_summary.json"] = json.dumps(summary,sort_keys=True).encode()
+        content_bytes = permitted
+        files = [{"path":rel,"sha256":hashlib.sha256(data).hexdigest(),"size":len(data)} for rel,data in sorted(permitted.items())]
     index = {
         "schema_version": "focused_research_package_v1",
         "campaign_id": (campaign.get("campaign") or {}).get("campaign_id", root.name),
         "execution_status": campaign.get("execution_status", "partial_or_interrupted"),
         "research_outcome": campaign.get("research_outcome", "inconclusive"),
         "complete_campaign": campaign_path.exists(),
+        "export_scope": "reference_only" if restricted else "complete_local_artifacts",
+        "omitted_files": omitted_files,
         "files": files,
         "limitations": [
             "package preserves development evidence and does not upgrade exposed data to independent confirmation",
@@ -205,7 +236,7 @@ def load_research_request(path: str | Path | None, expected_hash: str | None) ->
     payload = json.loads(target.read_bytes())
     if identity(payload, domain="focused-options-v1") != expected_hash:
         raise ValueError("frozen research request hash mismatch")
-    allowed = {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids"}
+    allowed = {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids", "literature_review_ids", "literature_project", "context_mode"}
     if not isinstance(payload, dict) or set(payload) - allowed:
         raise ValueError("unsupported research request fields")
     return payload

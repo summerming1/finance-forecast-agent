@@ -14,7 +14,12 @@ from dataclasses import replace
 from pathlib import Path
 
 from finance_forecast_agent.focused_adaptive import SEARCH_SPACE
-from finance_forecast_agent.focused_benchmark import BenchmarkSpec, benchmark_summary, run_benchmark_arm
+from finance_forecast_agent.focused_benchmark import (
+    BenchmarkSpec,
+    benchmark_summary,
+    literature_comparison,
+    run_benchmark_arm,
+)
 from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_daily_research_frame
 from finance_forecast_agent.focused_identity import data_identity, file_sha256, identity
 from finance_forecast_agent.focused_state import atomic_json
@@ -29,12 +34,17 @@ def main() -> int:
     p.add_argument("--seeds", type=int, nargs="+")
     p.add_argument("--estimator-seed", type=int, default=42)
     p.add_argument("--windows", nargs="+", default=["all"], help="Inclusive start dates; windows may overlap.")
+    p.add_argument("--literature-project", type=Path)
+    p.add_argument("--literature-review-ids", nargs="+", default=[])
+    p.add_argument("--literature-ablation", action="store_true", help="Separate G2B with one fixed Adaptive arm; same state DB.")
+    p.add_argument("--context-mode", choices=["full_v1", "compact_v1"], default="full_v1")
+    p.add_argument("--batch-size", type=int, default=4)
     p.add_argument("--startup-trials", type=int, default=4)
     p.add_argument("--small-catalog", action="store_true")
     p.add_argument(
         "--arms",
         nargs="+",
-        choices=["random", "tpe", "one_shot", "adaptive", "enumerate"],
+        choices=["random", "tpe", "one_shot", "adaptive", "adaptive_batch", "enumerate"],
         default=["random", "tpe", "one_shot", "adaptive"],
     )
     p.add_argument("--llm-mode", choices=["deterministic", "live", "replay"], default="deterministic")
@@ -60,11 +70,15 @@ def main() -> int:
         raise ValueError("warm/ablation requires an explicit frozen Memory store")
     if a.llm_mode != "deterministic" and not a.fixture_dir:
         raise ValueError("live/replay requires fixture-dir")
+    if a.literature_ablation and (len(a.arms) != 1 or a.arms[0] not in {"adaptive", "adaptive_batch"}
+            or not a.literature_review_ids or a.memory_mode != "cold"):
+        raise ValueError("G2B requires one Adaptive arm, selected literature and cold Memory")
     frame, snapshot = build_spy_daily_research_frame(a.raw_spy_json, source_metadata_path=a.source_metadata)
     spec_base = {
         "candidate_budget": a.candidate_count,
         "estimator_seed": a.estimator_seed,
         "startup_trials": a.startup_trials,
+        "batch_size": a.batch_size,
     }
     evidence = json.loads(a.evidence_json.read_text()) if a.evidence_json else []
     calls = json.loads(a.replay_call_map.read_text()) if a.replay_call_map else {}
@@ -84,7 +98,7 @@ def main() -> int:
         for seed in a.seeds or [a.seed]:
             for memory_mode in ["cold", "warm"] if a.memory_mode == "ablation" else [a.memory_mode]:
                 runs = []
-                for arm in a.arms:
+                for arm, treatment in ([(a.arms[0], False), (a.arms[0], True)] if a.literature_ablation else [(arm, True) for arm in a.arms]):
                     root = (
                         a.out.parent
                         / (a.out.stem + "_runs")
@@ -93,7 +107,7 @@ def main() -> int:
                                 :16
                             ]
                         )
-                        / arm
+                        / (arm + ("-L1" if treatment else "-L0") if a.literature_ablation else arm)
                     )
                     prior = None
                     if memory_mode == "warm":
@@ -115,13 +129,16 @@ def main() -> int:
                             fixture_dir=a.fixture_dir,
                             replay_call_ids=calls,
                             reviewed_evidence=evidence,
+                            literature_project=a.literature_project,
+                            literature_review_ids=a.literature_review_ids if treatment else [],
+                            context_mode=a.context_mode,
                             resume_existing=a.resume_existing,
                             use_memory_prior=memory_mode == "warm",
                             memory_store_path=prior,
                             state_path=a.out.parent / (a.out.stem + "_runs") / "runtime.sqlite3",
                         )
                     )
-                group = benchmark_summary(runs)
+                group = literature_comparison(*runs) if a.literature_ablation else benchmark_summary(runs)
                 groups.append(
                     {
                         "window_start": window,

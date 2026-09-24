@@ -33,6 +33,9 @@ def main() -> None:
     parser.add_argument("--no-memory", action="store_true")
     parser.add_argument("--request-json", type=Path)
     parser.add_argument("--request-hash")
+    parser.add_argument("--literature-project", type=Path)
+    parser.add_argument("--literature-review-ids", nargs="+")
+    parser.add_argument("--context-mode", choices=["full_v1", "compact_v1"], default=None)
     args = parser.parse_args()
 
     project = Path(args.project_dir)
@@ -65,6 +68,9 @@ def main() -> None:
         feature_specs=feature_specs, input_provenance=provenance,
         starting_baseline=options.get("starting_baseline"), entry_mode=options.get("entry_mode"), change_scope=options.get("change_scope", "explore"), allowed_feature_groups=options.get("allowed_feature_groups"),
         research_notes=options.get("research_notes", ""), reviewed_evidence=options.get("reviewed_evidence"),
+        literature_project=args.literature_project or options.get("literature_project"),
+        literature_review_ids=args.literature_review_ids or options.get("literature_review_ids"),
+        context_mode=args.context_mode or options.get("context_mode", "full_v1"),
     )
     result = controller.run()
     print(json.dumps({

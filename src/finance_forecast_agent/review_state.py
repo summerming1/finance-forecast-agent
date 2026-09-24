@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 VALID_REVIEW_STATUSES = {"pending", "approved", "rejected", "needs_revision"}
 
@@ -65,10 +66,16 @@ def load_review_state(project_dir_or_path: str | Path) -> dict[str, dict[str, An
 def save_review_state(project_dir_or_path: str | Path, reviews: dict[str, dict[str, Any]]) -> Path:
     path = _resolve_path(project_dir_or_path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    payload = {"schema_version": "v1", "updated_at": utc_now_iso(), "reviews": reviews}
-    tmp_path = path.with_suffix(path.suffix + ".tmp")
-    tmp_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-    tmp_path.replace(path)
+    from filelock import FileLock
+
+    with FileLock(str(path) + ".lock"):
+        existing = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+        payload = {"schema_version": "v1", "updated_at": utc_now_iso(), "reviews": reviews}
+        if "research_reviews" in existing:
+            payload["research_reviews"] = existing["research_reviews"]
+        tmp_path = path.with_suffix(path.suffix + ".tmp")
+        tmp_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        tmp_path.replace(path)
     return path
 
 

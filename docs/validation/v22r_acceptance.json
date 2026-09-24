@@ -819,7 +819,7 @@
         "commit": "85da84da68f858b9584f2ef99e17172f58e222bf"
       },
       "B2": {
-        "status": "local_passed_pending_exact_tree_browser_and_dual_python",
+        "status": "published",
         "new_test_file": "tests/test_focused_b2_product.py",
         "targeted_ui_regression_passed": 42,
         "live_provider": "not_run",
@@ -840,15 +840,56 @@
             "exit_code": 0
           }
         ],
-        "browser": "pending_exact_tree_ci",
+        "browser": "passed",
         "targeted_tests": 13,
         "related_tests": 267,
         "seconds": 336.51,
         "browser_first_failure_run": 35951196336,
         "local_browser": "BLOCKED_ENV_ADMINISTRATOR_POLICY",
-        "regression_test": "tests/test_focused_b2_product.py::test_external_contract_draft_survives_source_path_change"
+        "regression_test": "tests/test_focused_b2_product.py::test_external_contract_draft_survives_source_path_change",
+        "commit": "49a486aa563b617b7c5d6eecbd183d4f0ba532f3",
+        "validation_run": 35959210054
       },
-      "B3": "planned",
+      "B3": {
+        "status": "candidate_blocked_tests_and_publication",
+        "new_cases": 24,
+        "new_test_file": "tests/test_focused_b3_literature.py",
+        "targeted_passed": 24,
+        "targeted_seconds": 23.68,
+        "real_provider": "not_run",
+        "source_semantics": "operator_attested_not_proven_by_hash",
+        "real_user": "blocked",
+        "tested_source_tree": "e633d8e884b588987196f81ef84475bf00a4c62d",
+        "cumulative": {
+          "tests": 294,
+          "passed": 292,
+          "failed": 2,
+          "skipped": 0,
+          "seconds": 552.86,
+          "exit_code": 1
+        },
+        "shared_review_tests": {
+          "passed": 13,
+          "seconds": 4.81
+        },
+        "publication": "not_committed_current_tools_read_only",
+        "primary_source_probe": {
+          "source_count": 2,
+          "rows": 4002,
+          "fits": 16,
+          "outcome": "no_improvement",
+          "response_origin": "offline_assistant",
+          "new_process_network_denied_replay": "passed",
+          "actual_provider_calls": 0
+        },
+        "remaining": [
+          "original transient-deadline cases in declared environment",
+          "exact-tree Chromium and Python 3.11",
+          "new live provider",
+          "real user",
+          "literature value evidence"
+        ]
+      },
       "B4": "planned",
       "B5": "planned"
     },
@@ -1046,57 +1087,73 @@
         "id": "L01",
         "scenario": "没有文献/关闭文献的目标型用户",
         "expected": "内置基线、Task和评价合同不变，能基础研究且不伪称用了论文",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_no_paper_run_remains_valid_and_rule_policy_claims_no_paper_use"
+        ]
       },
       {
         "id": "L02",
         "scenario": "手写JSON自报paper_claim/approved",
         "expected": "未绑定真实来源和审核版本，不能成为已审核论文证据",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_raw_json_cannot_self_approve_paper_for_controller"
+        ]
       },
       {
         "id": "L03",
         "scenario": "原文/方法卡被改而保留旧ID或hash",
         "expected": "冻结/回放前拒绝；不能只检查ID存在",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_modified_source_card_or_approval_is_rejected"
+        ]
       },
       {
         "id": "L04",
         "scenario": "同paper_id换新正文，保留旧approve",
         "expected": "需版本复核，旧审核不自动授权新内容",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_modified_source_card_or_approval_is_rejected"
+        ]
       },
       {
         "id": "L05",
         "scenario": "跨租户或hidden资料",
         "expected": "正文不出现在prompt/日志/导出；不能仅禁止引用ID",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_tenant_and_provider_permissions_fail_closed"
+        ]
       },
       {
         "id": "L06",
         "scenario": "论文建议当前没有的窗口/权重/模型",
         "expected": "标记能力缺口并可回退到基础研究，不执行未经授权代理方法",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_unsupported_method_stays_visible_as_limitation_not_implemented"
+        ]
       },
       {
         "id": "L07",
         "scenario": "月频收益/波动率研究迁移到日频收益",
         "expected": "显示迁移差异或不适用；不能把原分数当当前成绩",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_research_review_does_not_authorize_other_task"
+        ]
       },
       {
         "id": "L08",
         "scenario": "可核对的理论/限制段落无数值表",
         "expected": "可研究用途审核；不编造reported_values，不把strict状态改为通过",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_theory_can_be_reviewed_without_weakening_strict_gate"
+        ]
       },
       {
         "id": "L09",
@@ -1130,8 +1187,10 @@
         "id": "L13",
         "scenario": "EvidenceIndex字段白名单丢掉位置/限制",
         "expected": "投影端到端测试失败；最终prompt和包保留关键字段",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_compact_context_preserves_all_statuses_and_source_limitations"
+        ]
       },
       {
         "id": "L14",
@@ -1158,15 +1217,19 @@
         "id": "L17",
         "scenario": "本地负结果、混合fold表现",
         "expected": "原文事实不改；本地反馈与条件/反证如实进入下一批",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_actual_replay_literature_experiment_feedback_chain"
+        ]
       },
       {
         "id": "L18",
         "scenario": "中断后离线恢复/Replay",
         "expected": "固定source/card/projection身份不变，不重新抽取或偷偷读新版",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_actual_replay_literature_experiment_feedback_chain"
+        ]
       },
       {
         "id": "L19",
@@ -1193,15 +1256,19 @@
         "id": "L22",
         "scenario": "运行中来源版本更新或权限撤销",
         "expected": "普通更新不改旧plan；权限撤销阻止新外发并明确暂停",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_current_revocation_is_checked_by_live_presend_guard"
+        ]
       },
       {
         "id": "L23",
         "scenario": "研究包无权分发原文或包含私密source",
         "expected": "仅导出许可允许的元数据/引用/片段；限制明确，不偷偷嵌PDF",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_restricted_source_is_not_redistributed_via_campaign_prompts"
+        ]
       },
       {
         "id": "L24",

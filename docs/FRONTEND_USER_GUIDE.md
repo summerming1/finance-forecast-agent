@@ -313,3 +313,9 @@ projects/finance_agent/llm_fixtures/               Replay 响应
 - 结果页显示 `not_transferable`：运行任务与论文原始任务不同，不是程序错误。
 - “探索候选”很多但“探索完成”为零：说明只有适配路径，尚未逐篇抽取、审核和执行。
 - 后台任务长时间不结束：在第 5 步查看日志与 `.partial`；不要重复提交相同 claim。
+
+## 方法依据（B3）
+
+两入口都可以使用最多3条已审核资料，也可明确选择不使用。资料库由操作者配置 `FFA_LITERATURE_PROJECT`（默认当前项目），不是远程上传/自动爬虫。先用现有方法卡存储登记来源，再显式审核。方法依据区域仅选择版本，不能靠自由JSON自称已批准。库为空时基础研究仍可运行；原选择被撤销时不能静默丢掉它。
+
+审核请求JSON包括 paper_id/version_sha256/claim_id、相对库内的source_files映射、reviewer/tenant_id、applicability（task_ids/conditions/limitations/transfer_gap）、required_capabilities、provider_audiences、redistribute_excerpt、simulation_only。具体源文档审核是操作者责任；数值为空不构造论文分数。被选文献不等于被采用，查看结果需分别阅读作者观点、本地迁移、实际diff及反馈。受限资料只导出引用和数值产物，原文与完整叙述保留本地。

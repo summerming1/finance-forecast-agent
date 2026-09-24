@@ -31,7 +31,8 @@ from .focused_research import (
 )
 from .focused_state import atomic_json
 
-ARMS = ("random", "tpe", "one_shot", "adaptive", "enumerate")
+ARMS = ("random", "tpe", "one_shot", "adaptive", "adaptive_batch", "enumerate")
+LLM_ARMS = {"one_shot", "adaptive", "adaptive_batch"}
 
 
 @dataclass(frozen=True)
@@ -41,10 +42,11 @@ class BenchmarkSpec:
     estimator_seed: int = 42
     startup_trials: int = 4
     max_sampler_draws: int = 512
-    schema_version: str = "focused_benchmark_contract_v2"
+    batch_size: int = 4
+    schema_version: str = "focused_benchmark_contract_v3"
 
     def __post_init__(self):
-        for key in ("candidate_budget", "startup_trials", "max_sampler_draws"):
+        for key in ("candidate_budget", "startup_trials", "max_sampler_draws", "batch_size"):
             value = getattr(self, key)
             if isinstance(value, bool) or not isinstance(value, int) or value < 1:
                 raise ValueError(f"{key} must be a positive integer")
@@ -52,6 +54,8 @@ class BenchmarkSpec:
             value = getattr(self, key)
             if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= 2**32 - 1:
                 raise ValueError(f"{key} must be a non-negative 32-bit integer")
+        if self.batch_size > 6:
+            raise ValueError("adaptive batch_size must be at most 6")
         if self.candidate_budget > 100:
             raise ValueError("bounded benchmark permits at most 100 candidates")
 
@@ -142,7 +146,7 @@ class BenchmarkAdvisor:
             "implementation": "optuna.samplers.TPESampler"
             if self.arm == "tpe"
             else "FocusedResearchAdvisor"
-            if self.arm in {"one_shot", "adaptive"}
+            if self.arm in LLM_ARMS
             else self.arm,
             "optuna_version": version("optuna") if self.arm == "tpe" else None,
             "tpe_search_representation": "categorical_config_identity",
@@ -177,9 +181,33 @@ class BenchmarkAdvisor:
             body["max_hypotheses"] = self.spec.candidate_budget
             body["rules"].append("Propose the whole bounded plan now. No intermediate feedback will be provided.")
             body["rules"].append("All parent/control/feedback references must already exist in this prompt; later planned candidates are not completed evidence and cannot be referenced by another item in this batch.")
+        elif self.arm == "adaptive_batch":
+            body["max_hypotheses"] = min(self.spec.batch_size,
+                max(1, self.spec.candidate_budget - len(body["executed_candidates"])))
+            body["rules"].append("Freeze all candidates in this batch before fits. Never reference an uncompleted same-batch candidate.")
         else:
             body["max_hypotheses"] = 1
+        body["rules"].append("For improve you may use catalog_entry_id=config_identity instead of model fields. Never mix ID with conflicting fields. Seed remains frozen.")
         return body
+
+    def normalize_advice(self, advice: dict) -> dict:
+        """Resolve exact catalog references before the shared compiler; preserve raw record."""
+        out = copy.deepcopy(advice)
+        catalog = {row["config_identity"]: row for row in self.catalog}
+        for row in out.get("hypotheses", []):
+            if "catalog_entry_id" not in row:
+                continue
+            key = row.pop("catalog_entry_id")
+            if row.get("action_type", "improve") != "improve" or key not in catalog:
+                raise ValueError("catalog_entry_id must identify one allowed improve configuration")
+            for field in ("model_family", "model_params", "feature_groups"):
+                if field in row and row[field] != catalog[key][field]:
+                    raise ValueError("catalog ID conflicts with supplied configuration")
+                row[field] = copy.deepcopy(catalog[key][field])
+            if "seed" in row and row["seed"] != self.spec.estimator_seed:
+                raise ValueError("catalog proposal changed frozen estimator seed")
+            row["seed"] = self.spec.estimator_seed
+        return out
 
     def validate_compiled(self, compiled):
         ids = {row["config_identity"] for row in self.catalog}
@@ -206,7 +234,7 @@ class BenchmarkAdvisor:
                     {"action_type": "stop", "statement": "One-shot frozen plan completed; no feedback replanning."}
                 ]
             }, "one_shot_plan_complete"
-        if self.arm in {"one_shot", "adaptive"}:
+        if self.arm in LLM_ARMS:
             started = time.monotonic()
             self.last_telemetry["provider_attempted"] = self.mode == "live"
             try:
@@ -309,8 +337,6 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
         **comparison_contract,
         "source": runtime.contract["source"],
         "environment": runtime.contract["environment"],
-        "provider": runtime.contract["provider"],
-        "advisor_mode": controller.advisor.mode,
     }
     results = [(obj["row"].get("result") or obj["row"]) for key, obj in objects.items() if key.startswith("result:")]
     baseline_ids = {row[0] for row in DEFAULT_BASELINES} | {"baseline_zero", "baseline_mean", "baseline_median"}
@@ -360,6 +386,9 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
         "schema_version": "focused_benchmark_arm_v2",
         "arm": algorithm["arm"],
         "algorithm": algorithm,
+        "strategy_execution_contract": {"provider": runtime.contract["provider"], "advisor_mode": controller.advisor.mode},
+        "literature_treatment": {"review_ids": controller.literature_review_ids,
+            "snapshot_hash": identity(controller.literature_snapshot, domain="literature-snapshot-v1")},
         "comparison_contract": comparison_contract,
         "comparison_contract_hash": identity(comparison_contract, domain="benchmark-comparison-v2"),
         "comparison_target_hash": next(iter(target_contracts), None),
@@ -446,6 +475,9 @@ def run_benchmark_arm(
     use_memory_prior: bool = False,
     memory_store_path: str | Path | None = None,
     state_path: str | Path | None = None,
+    literature_project: str | Path | None = None,
+    literature_review_ids: list[str] | None = None,
+    context_mode: str = "full_v1",
 ) -> dict:
     split = split_spec or FocusedSplitSpec()
     catalog = validate_catalog(catalog or default_catalog())
@@ -470,7 +502,8 @@ def run_benchmark_arm(
         "split": split.to_dict(),
         "evaluation": EvaluationPolicy().to_dict(),
         "budget": budget.to_dict(),
-        "reviewed_evidence": EvidenceIndex(reviewed_evidence or []).rows,
+        "domain_evidence": EvidenceIndex(reviewed_evidence or []).rows,
+        "context_mode": context_mode,
         "memory_mode": "warm" if use_memory_prior else "cold",
     }
     campaign_id = (
@@ -508,10 +541,12 @@ def run_benchmark_arm(
         dataset=dataset,
         budget=budget,
         split_spec=split,
-        advisor_mode=llm_mode,
+        advisor_mode=llm_mode if arm in LLM_ARMS else "deterministic",
         fixture_dir=fixture_dir,
         replay_call_ids=replay_call_ids,
         reviewed_evidence=reviewed_evidence,
+        literature_project=literature_project, literature_review_ids=literature_review_ids,
+        context_mode=context_mode,
         use_memory_prior=use_memory_prior,
         memory_store_path=memory_store_path,
         campaign_id=campaign_id,
@@ -540,10 +575,16 @@ def benchmark_summary(arms: list[dict]) -> dict:
         raise ValueError("benchmark arms have different comparison contracts")
     if len({x["comparison_target_hash"] for x in arms if x["comparison_target_hash"]}) > 1:
         raise ValueError("benchmark arms have different comparison target identities")
+    if len({x.get("literature_treatment", {}).get("snapshot_hash") for x in arms}) > 1:
+        raise ValueError("G2A requires the same literature treatment; use a separate G2B comparison")
+    llm_contracts = [x.get("strategy_execution_contract", {}) for x in arms if x["arm"] in LLM_ARMS]
+    if len({identity(c, domain="llm-strategy-contract") for c in llm_contracts}) > 1:
+        raise ValueError("LLM arms changed model or provider policy")
     paired = []
     for left in arms:
         for right in arms:
-            if left["arm"] < right["arm"] and left["best"] and right["best"]:
+            if (left["arm"] < right["arm"] and left["best"] and right["best"]
+                    and left["execution_status"] == right["execution_status"] == "completed"):
                 paired.append(
                     {
                         "left": left["arm"],
@@ -558,9 +599,34 @@ def benchmark_summary(arms: list[dict]) -> dict:
         "agent_superiority_claim": False,
         "comparison_contract_hash": arms[0]["comparison_contract_hash"],
         "engineering_complete": all(a["execution_status"] == "completed" for a in arms),
+        "reliability": {"completed": sum(a["execution_status"] == "completed" for a in arms),
+            "attempted_arms": len(arms), "failures_and_partial_runs_retained": True},
         "live_llm_quality_complete": all(
-            a["live_quality_evidence"] for a in arms if a["arm"] in {"one_shot", "adaptive"}
+            a["live_quality_evidence"] for a in arms if a["arm"] in LLM_ARMS
         )
         and {"one_shot", "adaptive"} <= {a["arm"] for a in arms},
         "warning": "No pooling across overlapping windows or counting deterministic repeats as independent trials.",
     }
+
+
+def literature_comparison(without: dict, with_literature: dict) -> dict:
+    """G2B: identical strategy/contracts, explicit literature is the sole treatment.
+
+    This does not remove a model's pretrained knowledge. It never replaces G2A
+    and never upgrades fixtures, dependent windows or negative results.
+    """
+    if without["arm"] != with_literature["arm"] or without["arm"] not in LLM_ARMS:
+        raise ValueError("G2B requires the same Advisor strategy")
+    for field in ("algorithm", "comparison_contract_hash", "comparison_target_hash", "strategy_execution_contract"):
+        if without.get(field) != with_literature.get(field):
+            raise ValueError("G2B changed a common or strategy contract: " + field)
+    if without["literature_treatment"]["review_ids"] or not with_literature["literature_treatment"]["review_ids"]:
+        raise ValueError("G2B must compare no explicit literature against a fixed selected set")
+    complete = without["execution_status"] == with_literature["execution_status"] == "completed"
+    return {"schema_version": "explicit_literature_comparison_v1", "without": without,
+        "with_literature": with_literature, "engineering_complete": complete,
+        "paired_mae_delta": (with_literature["best"]["metrics"]["mae"] - without["best"]["metrics"]["mae"])
+            if complete and without["best"] and with_literature["best"] else None,
+        "literature_value_established": False,
+        "limitations": ["No explicit literature is not a model without pretrained knowledge.",
+                        "Costs, fidelity, valid experiments and human time require separate interpretation."]}

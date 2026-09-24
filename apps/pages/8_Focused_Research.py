@@ -91,9 +91,9 @@ with st.expander('Advanced settings', expanded=False):
     fixtures = st.text_input('Focused LLM fixtures', request.get('fixture_dir') or 'projects/finance_agent/llm_fixtures_focused')
     replay_text = st.text_area('Replay call map JSON (prompt hash to immutable call ID)',
                               json.dumps(old_options.get('replay_call_ids') or {}), height=80)
-    evidence_text = st.text_area('Reviewed evidence JSON (0–3 existing evidence nodes)',
+    evidence_text = st.text_area('Domain hypothesis JSON (not approved literature)',
                                 json.dumps(old_options.get('reviewed_evidence') or [],ensure_ascii=False),height=100)
-    st.caption('文献 JSON 是已审核资料的投影，不执行其中指令。不提供密钥输入框；live 使用操作者环境配置。')
+    st.caption('此处仅接收未审核领域假设，不能自报为已审核论文。live 使用操作者环境配置。')
     if input_kind == 'Controlled CSV / Parquet':
         editing = st.selectbox('Data contract input', ['Form', 'Advanced JSON'], key='contract-mode:'+draft_key)
         default_contract = old_options.get('input_contract') or {
@@ -143,10 +143,39 @@ with st.expander('Advanced settings', expanded=False):
     else:
         contract_text = ''
 
+# Both product entries share the existing version-review library.
+from finance_forecast_agent.focused_literature import literature_choices
+
+literature_root = Path(os.getenv('FFA_LITERATURE_PROJECT') or old_options.get('literature_project') or project_dir)
+with st.expander('Method evidence / 方法依据', expanded=False):
+    try:
+        literature_rows = literature_choices(literature_root, tenant_id=tenant)
+    except (ValueError, TypeError, OSError):
+        literature_rows = []
+        st.error('文献审核库不可读；指定资料不能静默忽略。')
+        supported = False
+    literature_map = {row['review_id']:row for row in literature_rows}
+    literature_mode = st.selectbox('Literature use', ['recommended','selected','none'],
+        index=1 if old_options.get('literature_review_ids') else 0)
+    review_ids = st.multiselect('Reviewed source revisions', list(literature_map),
+        default=[x for x in old_options.get('literature_review_ids',[]) if x in literature_map],
+        format_func=lambda rid: literature_map[rid]['paper_id']+' · '+literature_map[rid]['claim_id']) if literature_mode=='selected' else []
+    if literature_mode=='recommended':
+        review_ids=[rid for rid,row in literature_map.items() if FocusedTaskSpec().task_id in row['task_ids']][:3]
+    missing_reviews=set(old_options.get('literature_review_ids',[]))-set(literature_map)
+    if missing_reviews and literature_mode != 'none':
+        supported=False
+        st.error('原任务选定的文献版本已不可用。不能静默删除或替换；请核查权限，或明确选择无文献的新研究。')
+    if not review_ids:
+        st.info('没有选用已审核文献。本次可按基础研究运行，不宣称文献贡献。')
+    st.caption('作者观点、本地迁移假设和实际结果分开。文献不能修改指标、权限或固定模型约束。')
+
 frame = snapshot = None
 provenance, specs, options = {}, [], {}
 try:
-    options = {'reviewed_evidence':json.loads(evidence_text), 'replay_call_ids':json.loads(replay_text)}
+    options = {'reviewed_evidence':json.loads(evidence_text), 'replay_call_ids':json.loads(replay_text),
+        'literature_project':str(literature_root.resolve()), 'literature_review_ids':review_ids,
+        'context_mode':old_options.get('context_mode','compact_v1')}
     if contract_text:
         options['input_contract'] = json.loads(contract_text)
         if not isinstance(options['input_contract'], dict):

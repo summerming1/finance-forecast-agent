@@ -37,7 +37,8 @@ class EvidenceIndex:
         self._rows: dict[str, dict[str, Any]] = {}
         self._hidden: set[str] = set()
         allowed = {"evidence_id", "evidence_type", "summary", "visible", "source_ref", "applicability",
-                   "role", "revision", "candidate_id", "config", "config_diff", "conditions", "limitations"}
+                   "role", "revision", "candidate_id", "config", "config_diff", "conditions", "limitations",
+                   "paper_fact", "literature_binding"}
         seen: dict[str, str] = {}
         for original in rows:
             key = original.get("evidence_id")
@@ -148,13 +149,12 @@ def adaptive_deterministic_advice(prompt: dict[str, Any]) -> dict[str, Any]:
                   min(results, key=lambda row: float(row["metrics"]["mae"])))
     parent_id = parent["candidate_id"]
     feedback_refs = [row["feedback_id"] for row in feedback[-2:]]
-    paper_refs = [r["evidence_id"] for r in prompt.get("reviewed_evidence", [])
-                  if r.get("visible") is True and r.get("evidence_type") == "paper_claim"][:1]
+    # This rule policy does not interpret literature. Never append a decorative citation.
     memory_refs = [r["evidence_id"] for r in prompt.get("compatible_memory", [])
                    if r.get("visible") is True and r.get("evidence_type") == "compatible_memory"][:1]
     row = {"action_type": action, "based_on_feedback_ids": feedback_refs,
            "parent_candidate_id": parent_id, "control_candidate_id": parent_id,
-           "evidence_refs": [*feedback_refs, *paper_refs, *memory_refs],
+           "evidence_refs": [*feedback_refs, *memory_refs],
            "expected_effect": "Explain the observed development behavior, without a confirmation claim.",
            "counter_evidence_test": "Retain negative and mixed fold outcomes under the frozen protocol."}
     groups = sorted(set(parent.get("feature_groups") or []))

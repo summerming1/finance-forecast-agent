@@ -268,3 +268,9 @@ Batch planning is opt-in and frozen before fits. Compact context preserves all e
 ## B2 implementation detail
 
 `entry_mode` changes initialization only. Fixed controls retain their versioned recipes. A user incumbent is separately evaluated or aliases a control with identical execution fingerprint; `candidate_roles` is a projection, not a second evaluator. `features_only` is compiled and revalidated at execution. A persistent refit record binds project/campaign/candidate/refit IDs to the externally trusted ModelBundle. Downloads use the same byte verifier as deserialization without loading pickle.
+
+## B3 literature-grounded projection
+
+Existing source bytes → immutable MethodCardV3 revision → purpose-specific review in existing approval document → tenant/provider-filtered EvidenceIndex → local transfer hypothesis → actual candidate + diff + feedback. One truth source, no crawler/vector service. Integrity hashes do not certify scientific correctness or semantic entailment. The operator reviews source fidelity; required capabilities are not substituted. Revocation blocks new sends; a frozen source update is not silently adopted.
+
+The native Advisor stays shared. `adaptive_batch` freezes at most the configured batch size before fit; old adaptive and one-shot remain separate. Catalog IDs deterministically resolve before existing action compiler. Compact context uses a versioned deterministic projection retaining experiment states and limitations. G2A keeps data/evaluation/budgets/common context separate from strategy provider policy; G2B varies only explicit literature with one fixed strategy and cold/frozen Memory. All external-quality claims remain pending actual provider/user evidence.

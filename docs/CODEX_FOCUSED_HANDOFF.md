@@ -17,3 +17,6 @@ B1 复用客户端/RuntimeDB，B2 复用 Mission/Controller，B3 复用 MethodCa
 
 ### B2增量
 目标/已有起点共用Controller。用户起点不覆盖固定基线；额外训练预检、features_only编译与执行校验、唯一候选交付与持久refit记录已实现。原B1已发布85da84d。下一步B3必须复用MethodCard/审核/EvidenceIndex，当前Reviewed evidence JSON不算已完成文献闭环。源码变化不强行恢复旧合同。
+
+### B3增量
+复用MethodCardVersionStore和原review_state。新增显式research-use审核（并非strict复现），Controller按版本和权限加载而不是接收自报paper JSON。CLI `review_focused_literature.py --project LIB approve --review-json REQUEST --confirm-source-reviewed`；撤销同脚本revoke。代码与任务变更不能恢复旧合同。文献角色/迁移/反证记录到实际实验；规则组不装饰引用。G2A与G2B分别跑；adaptive_batch不覆盖旧single-step。受限资料研究包为reference_only。B4继续只读总结/显式新研究/确认预检，不再建事实库。

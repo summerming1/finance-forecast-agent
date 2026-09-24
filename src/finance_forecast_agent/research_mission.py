@@ -274,7 +274,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     from .focused_research import DEFAULT_BASELINES, FocusedResearchController, ResearchBudget
     store, project = _workspace_project(state_path, project_id, tenant_id)
     options = json.loads(json.dumps(options or {}))
-    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids'}
+    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode'}
     if not isinstance(options,dict) or set(options)-allowed_options:
         raise ValueError('unsupported workspace options')
     evidence_input = options.get('reviewed_evidence') or []
@@ -300,7 +300,9 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     preflight = FocusedResearchController(project_dir=project['root'], frame=frame, dataset=snapshot, task=FocusedTaskSpec(),
         budget=budget, advisor_mode=advisor_mode, feature_specs=specs, input_provenance=provenance,
         starting_baseline=options.get('starting_baseline'), entry_mode=options.get('entry_mode'), change_scope=options.get('change_scope','explore'), allowed_feature_groups=options.get('allowed_feature_groups'),
-        research_notes=options.get('research_notes',''), reviewed_evidence=evidence, state_path=store.path)
+        research_notes=options.get('research_notes',''), reviewed_evidence=evidence, state_path=store.path,
+        tenant_id=tenant_id, literature_project=options.get('literature_project'),
+        literature_review_ids=options.get('literature_review_ids'), context_mode=options.get('context_mode','full_v1'))
     if budget.max_fit_calls < preflight.required_initial_fit_calls():
         raise ValueError('fit budget is too small for frozen controls and provided starting model')
     operation_id = safe_id(operation_id or uuid.uuid4().hex)

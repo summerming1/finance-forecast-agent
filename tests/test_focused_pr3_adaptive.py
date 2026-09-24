@@ -101,7 +101,7 @@ def test_different_feedback_produces_different_adaptive_actions() -> None:
     assert choose_adaptive_action([_feedback(-0.01, [-0.1, 0.1, -0.1, 0.1])]) == "diagnose"
 
 
-def test_adaptive_advice_cites_real_feedback_and_reviewed_evidence() -> None:
+def test_rule_advice_cites_feedback_without_decorative_paper_attribution() -> None:
     prompt = {
         "baseline_results": [{"candidate_id": "baseline_ridge", "model_family": "ridge_regression", "model_params": {"alpha": 1.0}, "feature_groups": ["base_lags", "volatility"], "metrics": {"mae": 0.01}}],
         "prior_research_results": [],
@@ -111,7 +111,7 @@ def test_adaptive_advice_cites_real_feedback_and_reviewed_evidence() -> None:
     row = adaptive_deterministic_advice(prompt)["hypotheses"][0]
     assert row["action_type"] == "simplify"
     assert row["based_on_feedback_ids"] == ["fb-1"]
-    assert set(row["evidence_refs"]) == {"fb-1", "paper-1"}
+    assert set(row["evidence_refs"]) == {"fb-1"}  # Rule control does not interpret paper text.
 
 
 def test_live_advisor_prompt_exposes_exact_evidence_ids() -> None:
@@ -164,14 +164,14 @@ def test_controller_round_two_is_feedback_driven(tmp_path: Path) -> None:
         dataset=snapshot,
         frame=frame,
         budget=ResearchBudget(max_rounds=2, max_new_candidates_per_round=1, max_fit_calls=24),
-        reviewed_evidence=[EvidenceNode("paper-1", "paper_claim", "reviewed").to_dict()],
+        reviewed_evidence=[EvidenceNode("domain-1", "domain_hypothesis", "synthetic unreviewed idea").to_dict()],
     ).run()
     assert len(result["rounds"]) == 2
     assert result["rounds"][0]["advisor_source"] == "deterministic_policy"
     assert result["rounds"][1]["advisor_source"] == "adaptive_deterministic_policy"
     hypothesis = result["rounds"][1]["items"][0]["hypothesis"]
     assert hypothesis["based_on_feedback_ids"]
-    assert "paper-1" in hypothesis["evidence_refs"]
+    assert "paper-1" not in hypothesis["evidence_refs"]  # No fake literature approval/contribution.
 
 
 def test_value_benchmark_arms_share_same_budget_and_evaluator_contract(tmp_path: Path) -> None:

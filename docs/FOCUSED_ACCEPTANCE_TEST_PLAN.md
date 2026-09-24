@@ -293,3 +293,9 @@ Prior entries above are historical receipts/requirements; resolved R1–R6 evide
 ### B2 当前新增门禁
 
 `test_focused_b2_product.py`覆盖goal/provided_start、独立incumbent计费、固定模型隐藏改动和候选/refit/download身份。相关累计266 passed；Chromium同源码验收需实际切换两个研究候选、下载所选候选、切换不重训、刷新后不误标旧包，再验证受控Parquet入口。新真实provider/Windows/真人使用单列补测。
+
+## B3 source/use/batch gate
+
+`tests/test_focused_b3_literature.py`: 24 local cases cover source/card/review mutation, missing/revoked/tenant/provider authorization, research-only theory versus unchanged strict readiness, applicability/missing capability, counterfeit paper JSON rejection, quote/path checks, native immutable replay through a real local experiment and next feedback, no decorative rule citation, compact context completeness, exact catalog normalization, batched feedback visibility, matched G2A/G2B, restricted export, and explicit operator CLI. Synthetic texts/LLM responses are engineering evidence only.
+
+Run cumulative focused/shared queue/Memory plus affected MethodCard/review tests on frozen source. Preserve any environment failures: this container's two HTTP subprocess startups exceeded the historical 3-second transient-success test deadline; the .8-second hard deadline contract itself is not relaxed. Run the original tests in exact-tree CI before publication. Real source interpretation, new provider, Windows and real user checks are separate.
