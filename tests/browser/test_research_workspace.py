@@ -82,6 +82,9 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
         page.goto(base+'/Focused_Research')
         expect(page.get_by_role('heading',name='Research Mission',exact=True)).to_be_visible()
         page.get_by_text('Advanced settings',exact=True).click()
+        # B3 explicit no-literature route remains a supported product path.
+        page.get_by_text('Method evidence / 方法依据',exact=True).click()
+        select_option('Literature use','none')
         page.get_by_label('Project directory',exact=True).fill(str(project));page.get_by_label('Project directory',exact=True).press('Tab')
         page.get_by_label('Frozen SPY Yahoo JSON',exact=True).fill(str(raw));page.get_by_label('Frozen SPY Yahoo JSON',exact=True).press('Tab')
         page.get_by_label('Max research rounds',exact=True).fill('1');page.get_by_label('Max research rounds',exact=True).press('Tab')

@@ -50,9 +50,11 @@ def good():
 
 
 def client(url, **kw):
+    policy={'connect_timeout':1, 'read_timeout':2, 'deadline_seconds':3,
+            'max_http_attempts':3, 'backoff_seconds':.01}
+    policy.update(kw)
     return mod.OpenAIJsonClient(model='local-test', api_key='SECRET_SENTINEL', base_url=url,
-           policy=mod.ProviderPolicy(connect_timeout=1, read_timeout=2, deadline_seconds=3,
-                                     max_http_attempts=3, backoff_seconds=.01, **kw))
+           policy=mod.ProviderPolicy(**policy))
 
 
 def test_quota_error_is_not_retried_and_has_safe_facts():
@@ -71,7 +73,9 @@ def test_quota_error_is_not_retried_and_has_safe_facts():
 @pytest.mark.parametrize('status',[429,503])
 def test_retry_transient_then_success(status):
     with server([{'status':status,'headers':{'Retry-After':'0'}}, {'body':good()}]) as (url,calls):
-        c=client(url)
+        # Retry classification is independent from the strict deadline tests below.
+        # Two isolated transport processes can take >3s to cold-start on constrained CI.
+        c=client(url,deadline_seconds=10)
         assert c.complete_json(prompt_payload={},schema_name='test')=={'status':'ok'}
         assert len(calls)==2 and c.last_call_metadata['http_attempts']==2
         assert c.last_call_metadata['usage']['total_tokens']==13
