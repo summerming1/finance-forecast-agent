@@ -1,0 +1,12 @@
+diff --git a/tests/browser/test_research_workspace.py b/tests/browser/test_research_workspace.py
+index a682c7f..dc2b013 100644
+--- a/tests/browser/test_research_workspace.py
++++ b/tests/browser/test_research_workspace.py
+@@ -83,6 +83,7 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
+         expect(page.get_by_role('heading',name='Research Mission',exact=True)).to_be_visible()
+         page.get_by_text('Advanced settings',exact=True).click()
+         # B3 explicit no-literature route remains a supported product path.
++        page.get_by_text('Method evidence / 方法依据',exact=True).click()
+         select_option('Literature use','none')
+         page.get_by_label('Project directory',exact=True).fill(str(project));page.get_by_label('Project directory',exact=True).press('Tab')
+         page.get_by_label('Frozen SPY Yahoo JSON',exact=True).fill(str(raw));page.get_by_label('Frozen SPY Yahoo JSON',exact=True).press('Tab')
