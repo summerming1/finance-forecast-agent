@@ -161,6 +161,60 @@ class CampaignRuntime:
             'inflight_or_unknown_fits': sum(max(0, row['started_fits'] - row['completed_fits']) for row in rows),
         }
 
+    def provider_usage(self, db=None) -> dict:
+        if db is None:
+            with self.db.transaction() as conn:
+                return self.provider_usage(conn)
+        rows=[json.loads(r[0]) for r in db.execute(
+            "SELECT payload FROM objects WHERE ns=? AND key LIKE 'provider-time:%'",(self.ns,)).fetchall()]
+        return {'http_requests':self.db.read(db,self.ns,'http_request_reservations',0),
+                'charged_provider_seconds':sum(r['charged_seconds'] for r in rows),
+                'unknown_provider_intervals':sum(r['status']=='reserved' for r in rows),
+                'currency_cost':None,'currency_budget_guaranteed':False}
+
+    def reserve_provider_call(self, call_number: int, deadline: float) -> None:
+        from .llm_adapters import ProviderFailure
+        with self.db.transaction() as db:
+            self.guard(db)
+            used=self.provider_usage(db)['charged_provider_seconds']
+            if used+deadline>self.contract['budget'].get('max_provider_seconds',3600):
+                raise ProviderFailure('provider_time_budget',retryable=False,usage_known=False)
+            self.db.write(db,self.ns,f'provider-time:{call_number}',
+                          {'status':'reserved','charged_seconds':deadline,'reserved_seconds':deadline},immutable=True)
+
+    def finish_provider_call(self, call_number: int, elapsed: float) -> None:
+        with self.db.transaction() as db:
+            self.guard(db)
+            old=self.db.read(db,self.ns,f'provider-time:{call_number}')
+            if old:
+                self.db.write(db,self.ns,f'provider-time:{call_number}',
+                    {**old,'status':'observed','charged_seconds':elapsed,'observed_seconds':elapsed})
+
+    def observe_http(self, call_number: int, event: dict) -> None:
+        from .llm_adapters import ProviderFailure
+        with self.db.transaction() as db:
+            self.guard(db)
+            attempt_id=safe_id(event['http_attempt_id'])
+            key='http:'+attempt_id
+            old=self.db.read(db,self.ns,key)
+            if event['state']=='started':
+                used=self.db.read(db,self.ns,'http_request_reservations',0)
+                if used>=self.contract['budget'].get('max_http_requests',48):
+                    raise ProviderFailure('http_budget_exhausted',usage_known=False)
+                if old:
+                    raise ValueError('HTTP attempt already reserved')
+                self.db.write(db,self.ns,'http_request_reservations',used+1)
+                self.db.write(db,self.ns,key,{'call_number':call_number,'generation':self.generation,**event},immutable=True)
+            else:
+                if not old or old['generation']!=self.generation:
+                    raise CampaignCancelled('late HTTP response from old generation')
+                self.db.write(db,self.ns,key+':outcome',{'call_number':call_number,**event},immutable=True)
+            self.db.event(db,self.ns,'provider.http_'+event['state'],call_number=call_number,**event)
+
+    def check_provider_owner(self) -> None:
+        with self.db.transaction() as db:
+            self.guard(db)
+
     def reserve(self, candidate: dict, *, role: str, fits: int) -> str:
         candidate_id = safe_id(candidate['candidate_id'])
         attempt_id = uuid.uuid4().hex

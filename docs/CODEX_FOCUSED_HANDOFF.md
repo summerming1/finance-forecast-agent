@@ -11,3 +11,6 @@ B1 复用客户端/RuntimeDB，B2 复用 Mission/Controller，B3 复用 MethodCa
 旧真实Live/恢复/浏览器/负确认不重复标未实现。历史R5失败、47行负确认不改，缺真实凭证或用户写BLOCKED。旧合同保持只读/显式兼容；不新建空库重置暴露或信任。
 
 新功能测试必须记录源码树、命令、exit、输入身份、JUnit/日志；模拟fixture仅工程证据。B5真实策略与文献贡献小对照分开，不自动放大成巨型矩阵。详见 FOCUSED_ACCEPTANCE_TEST_PLAN.md。
+
+### B1增量
+客户端记录独立连接/read/deadline与重试策略。`waiting_provider` 使用已有队列，恢复保留HTTP与fit账本；响应已落盘则复用，未落盘可能服务端已计算，费用仍未知。CLI增加 `--max-http-requests`、`--max-provider-seconds`。同合同只读旧证据，不能换policy后冒充同一次运行。B2仍按原双入口/成果身份任务继续。

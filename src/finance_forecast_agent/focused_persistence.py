@@ -59,6 +59,8 @@ def submit_focused_campaign(
     research_options: dict[str, Any] | None = None,
     hold: bool = False,
     max_advisor_calls: int = 12,
+    max_http_requests: int = 48,
+    max_provider_seconds: float = 3600.0,
 ) -> TaskRecord:
     key = focused_campaign_key(
         raw_spy_json=raw_spy_json,
@@ -74,13 +76,10 @@ def submit_focused_campaign(
     provider = {}
     if advisor_mode == "live":
         from .llm_adapters import OpenAIJsonClient
-        from .replay_llm import sanitized_endpoint
         client = OpenAIJsonClient()
-        provider = {"provider": client.provider, "model": client.model,
-                    "base_url": sanitized_endpoint(client.base_url), "max_tokens": client.max_tokens,
-                    "temperature": 0, "http_retries": client.retries}
+        provider = client.contract()
     key = identity({"data_request": key, "provider": provider, "project": str(project), "tenant": tenant_id,
-                    "memory": use_memory_prior, "source": source, "max_advisor_calls": int(max_advisor_calls),
+                    "memory": use_memory_prior, "source": source, "max_advisor_calls": int(max_advisor_calls), "max_http_requests":int(max_http_requests), "max_provider_seconds":float(max_provider_seconds),
                     "fixture_dir": str(Path(fixture_dir).resolve()), "operation_id": operation_id}, domain="focused-submit-v2")
     options = json.loads(canonical_json(research_options or {}))
     if set(options) - {"input_contract", "starting_baseline", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids"}:
@@ -106,6 +105,8 @@ def submit_focused_campaign(
         "--max-fit-calls",
         str(int(max_fit_calls)),
         "--max-advisor-calls", str(int(max_advisor_calls)),
+        "--max-http-requests", str(int(max_http_requests)),
+        "--max-provider-seconds", str(float(max_provider_seconds)),
         "--campaign-id",
         campaign_id,
         "--resume-existing",

@@ -770,7 +770,7 @@
     "baseline": "a3c6ec69c9bd14d18b1cdb493795669a9452c800",
     "stages": {
       "B0": {
-        "status": "passed_local_pending_publish",
+        "status": "published",
         "tests": [
           {
             "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
@@ -788,9 +788,35 @@
             "exit_code": 0
           }
         ],
-        "note": "Initial uninstalled-environment probe had 236 passes/2 subprocess-launch failures; after editable install and without production edits the clean cumulative suite passed. Initial failures retained in external receipts."
+        "note": "Initial uninstalled-environment probe had 236 passes/2 subprocess-launch failures; after editable install and without production edits the clean cumulative suite passed. Initial failures retained in external receipts.",
+        "commit": "81012ee631d98a4814e4828b4225518498f56ac4"
       },
-      "B1": "planned",
+      "B1": {
+        "status": "local_gate_passed_pending_exact_tree_ci",
+        "targeted_tests": 14,
+        "test_file": "tests/test_focused_b1_provider.py",
+        "live_provider": "not_run",
+        "limitations": [
+          "non-stream JSON only",
+          "unknown monetary costs",
+          "training is fit-bounded, not whole-campaign hard wallclock bounded"
+        ],
+        "tests": [
+          {
+            "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
+            "passed": 254,
+            "seconds": 249.23,
+            "exit_code": 0
+          },
+          {
+            "command": "python scripts/run_focused_spy_campaign.py --advisor-mode deterministic --rounds 3 --candidates-per-round 2 --max-fit-calls 40",
+            "rows": 4002,
+            "fits": 20,
+            "research_outcome": "no_improvement",
+            "exit_code": 0
+          }
+        ]
+      },
       "B2": "planned",
       "B3": "planned",
       "B4": "planned",
@@ -801,22 +827,28 @@
         "id": "A01",
         "scenario": "明确额度403",
         "expected": "当前请求不反复重试，状态可解释，未静默换模型/付费",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b1_provider.py::test_quota_error_is_not_retried_and_has_safe_facts"
+        ]
       },
       {
         "id": "A02",
         "scenario": "429等待时间超过deadline",
         "expected": "停止/暂停，不在预算外睡眠后继续请求",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b1_provider.py::test_retry_after_never_sleeps_past_deadline"
+        ]
       },
       {
         "id": "A03",
         "scenario": "每隔少许时间发一个字节",
         "expected": "总deadline仍可终止，无挂起线程/子进程",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b1_provider.py::test_true_deadline_stops_continuous_slow_bytes_and_reaps_process"
+        ]
       },
       {
         "id": "A04",
@@ -829,8 +861,10 @@
         "id": "A05",
         "scenario": "第N轮调用中断后恢复",
         "expected": "前N-1轮结果/冻结计划不变、无重复fit、累计预算不退",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b1_provider.py::test_campaign_provider_pause_resume_preserves_plan_and_accepted_fits"
+        ]
       },
       {
         "id": "A06",
@@ -843,15 +877,19 @@
         "id": "A07",
         "scenario": "stdout/traceback混入key哨兵",
         "expected": "公共日志、研究包、CI中均无secret",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b1_provider.py::test_recorded_failure_keeps_category_but_never_response_text"
+        ]
       },
       {
         "id": "A08",
         "scenario": "部分JSON/finish_reason length",
         "expected": "不接受半批、不训练、不自动补成模型配置",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b1_provider.py::test_truncated_response_is_not_executed_or_retried"
+        ]
       },
       {
         "id": "A09",

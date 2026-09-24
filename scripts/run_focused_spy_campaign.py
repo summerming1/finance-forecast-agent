@@ -24,6 +24,8 @@ def main() -> None:
     parser.add_argument("--candidates-per-round", type=int, default=2)
     parser.add_argument("--max-fit-calls", type=int, default=40)
     parser.add_argument("--max-advisor-calls", type=int, default=12)
+    parser.add_argument("--max-http-requests", type=int, default=48)
+    parser.add_argument("--max-provider-seconds", type=float, default=3600)
     parser.add_argument("--campaign-id", default=None)
     parser.add_argument("--resume-existing", action="store_true")
     parser.add_argument("--state-db", type=Path)
@@ -47,7 +49,7 @@ def main() -> None:
         frame, snapshot = build_spy_daily_research_frame(args.raw_spy_json, task=task, source_metadata_path=args.source_metadata)
         dataset_dir = project / "focused_data"
         write_focused_dataset_artifacts(args.raw_spy_json, dataset_dir, source_metadata_path=args.source_metadata, task=task)
-    budget = ResearchBudget(max_rounds=args.rounds, max_new_candidates_per_round=args.candidates_per_round, max_fit_calls=args.max_fit_calls, max_advisor_calls=args.max_advisor_calls)
+    budget = ResearchBudget(max_rounds=args.rounds, max_new_candidates_per_round=args.candidates_per_round, max_fit_calls=args.max_fit_calls, max_advisor_calls=args.max_advisor_calls,max_http_requests=args.max_http_requests,max_provider_seconds=args.max_provider_seconds)
     controller = FocusedResearchController(
         project_dir=project,
         task=task,

@@ -313,7 +313,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
         source_metadata=source_metadata, advisor_mode=advisor_mode, fixture_dir=request['fixture_dir'],
         rounds=budget.max_rounds,candidates_per_round=budget.max_new_candidates_per_round,max_fit_calls=budget.max_fit_calls,
         tenant_id=tenant_id, operation_id=operation_key, research_options=options, hold=True, start_immediately=False,
-        max_advisor_calls=budget.max_advisor_calls)
+        max_advisor_calls=budget.max_advisor_calls,max_http_requests=budget.max_http_requests,max_provider_seconds=budget.max_provider_seconds)
     campaign_id = task.research_context['campaign_id']
     mission = missions.attach_campaign(mission_id, campaign_id)
     store.put('workspace-campaigns', campaign_id, {'project_id':project_id,'mission_id':mission_id,
@@ -344,7 +344,7 @@ def workspace_campaign(state_path, project_id, campaign_id, *, tenant_id='defaul
                 if target.is_symlink() or root.resolve() not in target.resolve().parents or file_sha256(target) != ref['sha256']:
                     raise ValueError('accepted artifact hash/path mismatch')
         pause_review = store.read(db, ns, 'review:'+safe_id(pause['review_id'])) if pause and pause.get('review_id') else None
-        show_pause = pause and (task.status == 'waiting_review' or (pause_review or {}).get('status') == 'pending')
+        show_pause = pause and (task.status in {'waiting_review','waiting_provider'} or (pause_review or {}).get('status') == 'pending')
         payload = final or (pause if show_pause else None)
         if payload is None:
             items = [r['row'] for r in accepted if r['row'].get('hypothesis')]

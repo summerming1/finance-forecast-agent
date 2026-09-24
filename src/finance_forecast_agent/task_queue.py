@@ -21,7 +21,7 @@ from .focused_state import (
     terminate_owned_tree,
 )
 
-TaskStatus = Literal["held", "waiting_review", "queued", "starting", "running", "resumable", "completed", "blocked", "cancelled"]
+TaskStatus = Literal["held", "waiting_provider", "waiting_review", "queued", "starting", "running", "resumable", "completed", "blocked", "cancelled"]
 
 
 @dataclass(frozen=True)
@@ -284,7 +284,7 @@ class LocalTaskQueue:
     def resume(self, task_id: str) -> TaskRecord:
         with self.db.transaction() as db:
             r = self._record(db, task_id)
-            if r.status not in {"resumable", "waiting_review"}:
+            if r.status not in {"resumable", "waiting_review", "waiting_provider"}:
                 return r
             if r.status == "waiting_review":
                 ns = "campaign:" + safe_id(r.research_context["campaign_id"])
@@ -310,8 +310,9 @@ class LocalTaskQueue:
             campaign = r.research_context.get("campaign_id")
             if return_code == 0 and campaign:
                 ns = "campaign:" + safe_id(campaign)
-                if self.db.read(db, ns, "pause") and not self.db.read(db, ns, "final"):
-                    status = "waiting_review"
+                pause=self.db.read(db,ns,"pause")
+                if pause and not self.db.read(db, ns, "final"):
+                    status = "waiting_provider" if pause.get("execution_status")=="waiting_provider" else "waiting_review"
             r = TaskRecord(**{**r.to_dict(), "status": status,
                 "return_code": return_code, "finished_at": now(), "updated_at": now(),
                 "blocker": "" if return_code == 0 else f"command exited with code {return_code}"})

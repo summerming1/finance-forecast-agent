@@ -41,7 +41,7 @@ from .focused_protocol import (
 )
 from .focused_runtime import BudgetExhausted, CampaignCancelled, CampaignRuntime
 from .focused_state import atomic_json, safe_id
-from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient
+from .llm_adapters import FixtureRecordingLLM, OpenAIJsonClient, safe_error_facts
 from .replay_llm import ReplayLLM
 
 AdvisorMode = Literal["deterministic", "replay", "live"]
@@ -73,9 +73,19 @@ class ResearchBudget:
     max_new_candidates_per_round: int = 2
     max_fit_calls: int = 40
     max_advisor_calls: int = 12
+    max_http_requests: int = 48
+    max_provider_seconds: float = 3600.0
     # Compatibility shim for focused-v1 callers. New code should pass
     # EvaluationPolicy explicitly; this field will be removed in a future schema version.
     min_relative_mae_improvement: float | None = None
+
+    def __post_init__(self):
+        for name in ("max_rounds", "max_new_candidates_per_round", "max_fit_calls", "max_advisor_calls", "max_http_requests"):
+            value=getattr(self,name)
+            if isinstance(value,bool) or not isinstance(value,int) or value<1:
+                raise ValueError(f"{name} must be a positive integer")
+        if not np.isfinite(self.max_provider_seconds) or self.max_provider_seconds<=0:
+            raise ValueError("max_provider_seconds must be positive and finite")
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -655,6 +665,7 @@ class FocusedResearchAdvisor:
         self.replay_call_ids = dict(replay_call_ids or {})
         self.last_record: dict[str, Any] | None = None
         self.last_fixture_path: Path | None = None
+        self.provider_context = None
 
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         self.last_record, self.last_fixture_path = None, None
@@ -702,7 +713,12 @@ class FocusedResearchAdvisor:
             response = reader.complete_json(prompt_payload=prompt, schema_name="focused_research_advice")
             self.last_record, self.last_fixture_path = reader.last_record, reader.last_fixture_path
             return response, "replay_fixture"
-        client = FixtureRecordingLLM(OpenAIJsonClient(), self.fixture_dir)
+        live = OpenAIJsonClient()
+        if self.provider_context:
+            runtime, call_number = self.provider_context
+            live.observer = lambda event: runtime.observe_http(call_number,event)
+            live.cancel_check = runtime.check_provider_owner
+        client = FixtureRecordingLLM(live, self.fixture_dir)
         try:
             response = client.complete_json(prompt_payload=prompt, schema_name="focused_research_advice")
         finally:
@@ -1096,10 +1112,7 @@ class FocusedResearchController:
         provider = {}
         if self.advisor.mode == "live":
             client = OpenAIJsonClient()
-            from .replay_llm import sanitized_endpoint
-            provider = {"provider": client.provider, "model": client.model,
-                        "base_url": sanitized_endpoint(client.base_url), "max_tokens": client.max_tokens,
-                        "temperature": 0, "http_retries": client.retries}
+            provider = client.contract()
         return {
             "schema_version": "focused_execution_contract_v1", "project_root": str(self.project_dir), "task": self.task.to_dict(),
             "dataset": actual, "dataset_semantic_identity": self.dataset.semantic_fingerprint,
@@ -1170,11 +1183,12 @@ class FocusedResearchController:
                     split_spec=self.split_spec, fit_observer=observe, feature_registry=self.feature_registry)
         except CampaignCancelled:
             raise
-        except (ValueError, RuntimeError, FloatingPointError) as exc:
+        except (ValueError, RuntimeError, FloatingPointError, OSError) as exc:
             runtime.fail(attempt_id, type(exc).__name__)
             failed = {"hypothesis": hypothesis.to_dict() if hypothesis else None, "candidate": candidate.to_dict(),
                 "config_diff": diff, "status": "failed", "error_type": type(exc).__name__,
-                "error": str(exc), "reserved_fit_calls": fits, "attempt_id": attempt_id}
+                "error": type(exc).__name__, "error_facts": safe_error_facts(exc,phase="candidate_execution"),
+                "reserved_fit_calls": fits, "attempt_id": attempt_id}
             runtime.put("failure:" + candidate.candidate_id, failed, immutable=True)
             return None, failed
         refs, feedback = self._persist_result_evidence(result=result, role=role, splits=splits,
@@ -1218,10 +1232,10 @@ class FocusedResearchController:
                 if not runtime.get("cancelled", False):
                     partial = {"schema_version": "focused_campaign_v3", "campaign": runtime.get("spec"),
                         "execution_status": "partial", "research_outcome": "inconclusive", "terminal_status": "partial_inconclusive",
-                        "stop_reason": type(exc).__name__, "resource_usage": runtime.resource_usage(),
+                        "stop_reason": type(exc).__name__, "error_facts": safe_error_facts(exc,phase="campaign"), "resource_usage": runtime.resource_usage(),
                         "fit_calls": runtime.resource_usage()["charged_fit_calls"], "confirmation_status": "not_run_historical_data_exposed"}
                     atomic_json(self._campaign_root / "campaign.partial.json", partial)
-                    self._append_event("campaign.interrupted", error_type=type(exc).__name__)
+                    self._append_event("campaign.interrupted", error_type=type(exc).__name__, error_facts=safe_error_facts(exc,phase="campaign"))
                 raise
 
     def _run_resumable(self) -> dict[str, Any]:
@@ -1258,6 +1272,15 @@ class FocusedResearchController:
             frozen = runtime.get(f"plan:{round_index}")
             if frozen is None:
                 recorded = runtime.get(f"advice:{round_index}")
+                returned=runtime.get(f"returned_advice:{round_index}")
+                if recorded is None and returned is not None:
+                    reader=ReplayLLM(self.advisor.fixture_dir,allow_legacy=False,
+                        call_ids={ReplayLLM.prompt_hash(returned["prompt"]):returned["call_record"]["call_id"]})
+                    response=reader.complete_json(prompt_payload=returned["prompt"],schema_name="focused_research_advice")
+                    if response!=returned["advice"] or reader.last_record["record_hash"]!=returned["call_record"]["record_hash"]:
+                        raise ValueError("persisted provider response integrity mismatch")
+                    recorded=returned
+                    runtime.put(f"advice:{round_index}",recorded,immutable=True)
                 if recorded is None:
                     prompt = advisor_prompt(round_index=round_index, task=self.task, baseline_results=baseline_results,
                         prior_results=research_results, budget=self.budget, structured_feedback=feedback_history,
@@ -1269,6 +1292,11 @@ class FocusedResearchController:
                         prompt["user_notes"] = {"text": self.research_notes, "authority": "untrusted_non_executable_notes"}
                     if self.benchmark_strategy:
                         prompt = self.advisor.prepare_prompt(prompt, runtime)
+                    frozen_prompt = runtime.get(f"prompt:{round_index}")
+                    if frozen_prompt is not None:
+                        prompt=frozen_prompt
+                    else:
+                        runtime.put(f"prompt:{round_index}",prompt,immutable=True)
                     calls = runtime.get("advisor_call_reservations", 0)
                     if calls >= self.budget.max_advisor_calls:
                         stop_reason = "advisor_budget_exhausted"
@@ -1276,9 +1304,31 @@ class FocusedResearchController:
                     runtime.put("advisor_call_reservations", calls + 1)
                     self._append_event("advisor.call_reserved", round_index=round_index, call_number=calls + 1)
                     started_at = time.monotonic()
+                    from .llm_adapters import ProviderFailure
+                    native = getattr(self.advisor,"native",self.advisor)
+                    native.provider_context = (runtime,calls+1)
                     try:
+                        if self.advisor.mode=="live":
+                            runtime.reserve_provider_call(calls+1,OpenAIJsonClient().policy.deadline_seconds)
                         advice, source = self.advisor.propose(prompt)
+                        if self.advisor.mode=="live" and self.advisor.last_record:
+                            returned={"prompt":prompt,"advice":advice,"source":source,"call_record":self.advisor.last_record}
+                            runtime.put(f"returned_advice:{round_index}",returned,immutable=True)
+                            self._append_event("advisor.response_persisted",round_index=round_index)
+                    except ProviderFailure as exc:
+                        runtime.finish_provider_call(calls+1,time.monotonic()-started_at)
+                        waiting=self._campaign_summary(baseline_results,baseline_payloads,research_results,rounds,
+                            failed_attempts,exc.details["error_category"])
+                        waiting.update(execution_status="waiting_provider",research_outcome="inconclusive",
+                            terminal_status="waiting_provider",provider_error=exc.details,round_index=round_index,
+                            provider_usage=runtime.provider_usage())
+                        runtime.put("pause",waiting)
+                        atomic_json(self._campaign_root / "campaign.partial.json",waiting)
+                        self._append_event("campaign.waiting_provider",round_index=round_index,error=exc.details)
+                        return waiting
                     finally:
+                        if self.advisor.mode=="live":
+                            runtime.finish_provider_call(calls+1,time.monotonic()-started_at)
                         runtime.put(f"advisor_attempt:{calls+1}", {
                             "round_index": round_index, "call_record": self.advisor.last_record,
                             "telemetry": getattr(self.advisor, "last_telemetry", {}),
@@ -1452,7 +1502,7 @@ class FocusedResearchController:
             "stop_reason": stop_reason, "fit_calls": usage["charged_fit_calls"],
             "baseline_fit_calls": self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES)),
             "campaign_root": str(self._campaign_root),
-            "resource_usage": {**usage, "advisor_call_reservations": runtime.get("advisor_call_reservations", 0)},
+            "resource_usage": {**usage, "advisor_call_reservations": runtime.get("advisor_call_reservations", 0), "provider":runtime.provider_usage()},
             "evaluation_policy": self.evaluation_policy.to_dict(), "split_spec": self.split_spec.to_dict(),
             "evidence_status": {"development": "available", "robustness": "not_run", "confirmation": "not_run_historical_data_exposed", "forward": "not_started"},
             "confirmation_status": "not_run_historical_data_exposed", "scientific_claim": "development_only_no_profitability_claim", "limitations": ["No-improvement is limited to the executed candidates, frozen development rows and budget; not a claim of no market signal."], "created_at": _now()}

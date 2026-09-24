@@ -192,7 +192,7 @@ def render_workspace():
             st.rerun()
         if control[1].button('Cancel campaign',disabled=task['status'] in {'completed','blocked','cancelled'}):
             workspace_queue(state_path).cancel(task['task_id']);st.rerun()
-        if control[2].button('Resume interrupted / reviewed campaign',disabled=task['status'] not in {'resumable','waiting_review','held'}):
+        if control[2].button('Resume interrupted / reviewed campaign',disabled=task['status'] not in {'resumable','waiting_review','waiting_provider','held'}):
             resume_workspace_campaign(state_path,query_project,query_campaign,tenant_id=tenant);st.rerun()
         if selected['review']:
             st.subheader('Review decision / 人工审核')

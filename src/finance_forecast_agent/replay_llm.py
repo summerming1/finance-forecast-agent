@@ -12,7 +12,8 @@ from urllib.parse import urlsplit, urlunsplit
 from .focused_identity import canonical_json, identity
 
 _METADATA_FIELDS = {'provider', 'model', 'base_url', 'generation_parameters', 'usage', 'request_id',
-                    'raw_response_hash', 'elapsed_seconds', 'http_attempts', 'error_type', 'cost'}
+                    'raw_response_hash', 'elapsed_seconds', 'http_attempts', 'error_type', 'cost',
+                    'provider_policy', 'wire_payload_hash', 'http_records', 'finish_reason', 'error'}
 
 
 def sanitized_endpoint(value: str) -> str:

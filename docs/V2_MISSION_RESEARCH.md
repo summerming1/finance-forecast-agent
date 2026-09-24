@@ -275,3 +275,11 @@ Post-fix real SPY smoke passed again (4002 rows, expected period, 20 charged fit
 User approved the complete revised B0–B5 plan. B0 synchronizes ADR 004, roadmap, current status, architecture, handoff and A01–A24/L01–L24 acceptance requirements. No business code or historical validation receipts were changed. Pending B1–B5 are not claimed as implemented. Each following entry must report actual tests and unverified boundaries.
 
 B0 local evidence (2026-09-23): 240 related focused/queue/Memory tests passed in 355.60s, exit 0; documentation tests 4 passed, scoped Ruff and diff checks passed. An initial environment-initialization probe had two child-launch failures before editable installation; both are retained as setup failures, not erased. No production code changed. B1–B5 remain planned, historical R5 FAIL and 47-row negative confirmation unchanged.
+
+## B1：提供者故障与有界调用（2026-09-24）
+
+在 B0 `81012ee` 上修改既有客户端、Advisor、RuntimeDB、Queue、CLI/Workspace桥接。新增 `llm_transport.py` 仅为一次受控HTTP的可终止进程边界，不是网关或第二个运行系统；stdin传敏感输入，stderr不回显。父进程退出看门狗防独立调用残留。
+
+先写9项失败测试（缺接口/非有限JSON），实现后扩到14项：真实本地HTTP的永久403、429/503、Retry-After、持续慢速字节deadline、截断、调用取消、严格无网络Replay、真实Campaign第2轮额度中断恢复、完整响应落盘后崩溃恢复、持久HTTP预算、调用政策冻结。测试捕获同prompt重读后JSON字段顺序导致wire不同，改为规范序列化，不放宽相等断言。
+
+既有基线累计240 passed；初次测试环境缺pytest的设置失败留在外部收据，补齐解释器路径而未修改业务逻辑。B1定向14 passed。冻结真实SPY4002行/20fit/completed/no_improvement。无新真实百炼调用，模拟HTTP/模型输出不算provider质量；旧47目标确认保持不变。最终本地相关累计 **254 passed / 249.23s / exit 0**；Ruff/compile/diff通过。精确源码树发布前双Python CI结果单独随提交收据保存。
