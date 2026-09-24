@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: a3c6ec69c9bd14d18b1cdb493795669a9452c800
+          ref: 81012ee631d98a4814e4828b4225518498f56ac4
           persist-credentials: false
       - name: Archive exact approved baseline
         run: |
@@ -23,6 +23,6 @@ jobs:
           git cat-file commit HEAD > /tmp/b-source/COMMIT.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: b-source-a3c6ec6
+          name: b-source-81012ee
           path: /tmp/b-source
           retention-days: 14
