@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/b3-closeout.yml
       - .delivery/B3-followup.patch
+      - .delivery/B3-browser-followup2.patch
 permissions:
   contents: read
 concurrency:
@@ -44,6 +45,9 @@ jobs:
           test "$(sha256sum ../transport/.delivery/B3-followup.patch | cut -d' ' -f1)" = "f68f5591ef52cb4444d567aaeade6cc91e6a0d0518cb85d2bb5c8f07293574c9"
           git apply --check --index ../transport/.delivery/B3-followup.patch
           git apply --index ../transport/.delivery/B3-followup.patch
+          test "$(sha256sum ../transport/.delivery/B3-browser-followup2.patch | cut -d' ' -f1)" = "d7672d7b0e87f734135427b8c5af887c694005d2e4c7381e0b0a85a90036e5d6"
+          git apply --check --index ../transport/.delivery/B3-browser-followup2.patch
+          git apply --index ../transport/.delivery/B3-browser-followup2.patch
           mkdir -p validation
           git write-tree | tee validation/TREE.txt
           git rev-parse HEAD > validation/BASE.txt
@@ -98,6 +102,9 @@ jobs:
           python ../transport/.delivery/apply_and_publish.py
           git apply --check --index ../transport/.delivery/B3-followup.patch
           git apply --index ../transport/.delivery/B3-followup.patch
+          test "$(sha256sum ../transport/.delivery/B3-browser-followup2.patch | cut -d' ' -f1)" = "d7672d7b0e87f734135427b8c5af887c694005d2e4c7381e0b0a85a90036e5d6"
+          git apply --check --index ../transport/.delivery/B3-browser-followup2.patch
+          git apply --index ../transport/.delivery/B3-browser-followup2.patch
           mkdir -p validation/browser
           git write-tree > validation/browser/TREE.txt
       - name: Install browser environment
@@ -142,6 +149,9 @@ jobs:
           python ../transport/.delivery/apply_and_publish.py
           git apply --check --index ../transport/.delivery/B3-followup.patch
           git apply --index ../transport/.delivery/B3-followup.patch
+          test "$(sha256sum ../transport/.delivery/B3-browser-followup2.patch | cut -d' ' -f1)" = "d7672d7b0e87f734135427b8c5af887c694005d2e4c7381e0b0a85a90036e5d6"
+          git apply --check --index ../transport/.delivery/B3-browser-followup2.patch
+          git apply --index ../transport/.delivery/B3-browser-followup2.patch
           mkdir -p ../published
           python - <<'PY'
           import base64,hashlib,json,os,pathlib,subprocess,urllib.request
