@@ -1,4 +1,4 @@
-"""Apply an exact audited patch; optionally publish blobs, never branch refs."""
+"""Apply exact audited patches; optionally publish blobs, never branch refs."""
 import base64
 import hashlib
 import json
@@ -13,11 +13,21 @@ parts = Path(__file__).resolve().parent
 request = json.loads((parts / 'request.json').read_text())
 assert request['stage'] in ['B0', 'B1', 'B2', 'B3', 'B4', 'B5']
 assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip() == request['base']
-encoded = ''.join((parts / name).read_text().strip() for name in request['parts'])
-patch = lzma.decompress(base64.b64decode(encoded, validate=True))
+if 'patch_file' in request:
+    patch = (parts / request['patch_file']).read_bytes()
+else:
+    encoded = ''.join((parts / name).read_text().strip() for name in request['parts'])
+    patch = lzma.decompress(base64.b64decode(encoded, validate=True))
 assert hashlib.sha256(patch).hexdigest() == request['patch_sha256']
 subprocess.run(['git', 'apply', '--check', '--index', '-'], input=patch, check=True)
 subprocess.run(['git', 'apply', '--index', '-'], input=patch, check=True)
+assert subprocess.check_output(['git', 'write-tree'], text=True).strip() == request.get('initial_tree', request['tree'])
+for amendment in request.get('amendments', []):
+    patch = lzma.decompress(base64.b64decode((parts / amendment['file']).read_text().strip(), validate=True))
+    assert hashlib.sha256(patch).hexdigest() == amendment['sha256']
+    subprocess.run(['git', 'apply', '--check', '--index', '-'], input=patch, check=True)
+    subprocess.run(['git', 'apply', '--index', '-'], input=patch, check=True)
+    assert subprocess.check_output(['git', 'write-tree'], text=True).strip() == amendment['tree']
 assert subprocess.check_output(['git', 'write-tree'], text=True).strip() == request['tree']
 paths = subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines()
 assert sorted(paths) == sorted(request['paths'])
