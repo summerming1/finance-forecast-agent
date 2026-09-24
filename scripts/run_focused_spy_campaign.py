@@ -63,7 +63,7 @@ def main() -> None:
         state_path=args.state_db, tenant_id=args.tenant_id, use_memory_prior=not args.no_memory,
         replay_call_ids=json.loads(args.replay_call_map.read_text()) if args.replay_call_map else options.get("replay_call_ids"),
         feature_specs=feature_specs, input_provenance=provenance,
-        starting_baseline=options.get("starting_baseline"), allowed_feature_groups=options.get("allowed_feature_groups"),
+        starting_baseline=options.get("starting_baseline"), entry_mode=options.get("entry_mode"), change_scope=options.get("change_scope", "explore"), allowed_feature_groups=options.get("allowed_feature_groups"),
         research_notes=options.get("research_notes", ""), reviewed_evidence=options.get("reviewed_evidence"),
     )
     result = controller.run()

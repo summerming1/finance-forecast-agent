@@ -264,3 +264,7 @@ Two entry modes map to the same Campaign; incumbent, fixed controls and candidat
 Literature: existing source / MethodCard revision → purpose-specific approval → permission-filtered EvidenceIndex → transfer hypothesis with use_role/transfer_gap → frozen action/actual config diff → deterministic local feedback → next decision. No separate literature database or controller. Review-for-research may accept theory/limitations without empirical metrics; strict reproduction gates remain unchanged. Source version changes require an explicit new Campaign; permission revocation prevents subsequent external sends.
 
 Batch planning is opt-in and frozen before fits. Compact context preserves all experiment statuses and key negatives. Common experiment contracts and strategy-specific settings are distinct; G2A strategies and G2B explicit-literature treatment are separate comparisons. Report traceability, semantic review and incremental value separately.
+
+## B2 implementation detail
+
+`entry_mode` changes initialization only. Fixed controls retain their versioned recipes. A user incumbent is separately evaluated or aliases a control with identical execution fingerprint; `candidate_roles` is a projection, not a second evaluator. `features_only` is compiled and revalidated at execution. A persistent refit record binds project/campaign/candidate/refit IDs to the externally trusted ModelBundle. Downloads use the same byte verifier as deserialization without loading pickle.

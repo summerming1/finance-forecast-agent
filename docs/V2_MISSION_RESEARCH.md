@@ -283,3 +283,20 @@ B0 local evidence (2026-09-23): 240 related focused/queue/Memory tests passed in
 先写9项失败测试（缺接口/非有限JSON），实现后扩到14项：真实本地HTTP的永久403、429/503、Retry-After、持续慢速字节deadline、截断、调用取消、严格无网络Replay、真实Campaign第2轮额度中断恢复、完整响应落盘后崩溃恢复、持久HTTP预算、调用政策冻结。测试捕获同prompt重读后JSON字段顺序导致wire不同，改为规范序列化，不放宽相等断言。
 
 既有基线累计240 passed；初次测试环境缺pytest的设置失败留在外部收据，补齐解释器路径而未修改业务逻辑。B1定向14 passed。冻结真实SPY4002行/20fit/completed/no_improvement。无新真实百炼调用，模拟HTTP/模型输出不算provider质量；旧47目标确认保持不变。最终本地相关累计 **254 passed / 249.23s / exit 0**；Ruff/compile/diff通过。精确源码树发布前双Python CI结果单独随提交收据保存。
+
+## B2：双入口、起点角色与显式成果身份（2026-09-24）
+
+基线为B1 `85da84d`、源码树3859596c；从CI补丁与B0档案逐文件恢复，索引纳入已跟踪但gitignore忽略的旧资产后核对树一致。原相关基线254 passed / 247.93s。新增负例初始9 failed（接口与行为未实现），没有改写失败收据。
+
+新增goal/provided_start、features_only；固定对照不可被起点参数覆盖，独特起点额外计费，相同执行复用。唯一候选驱动refit/下载，包外可信字节校验复用R4，不增加加载信任来源。升级外部参数表单，保留高级JSON；老自由文本UI改为准确模板，非法任务服务端负例保留。既有外部起点测试16→20 fits因新增独立起点所需4fits，同时新增固定Ridge alpha=1断言，不是放宽预算门禁。
+
+定向UI/后端回归42 passed；新增提示词字段导致手工prompt helper与实际Controller不一致的Replay失败，已把默认字段移入共用prompt helper并保持精确hash断言，后续回放+新增测试15 passed。本批仅工程数据/固定历史SPY，无真实用户或新provider调用。最终累计和浏览器精确源码门禁收据另行绑定本批提交。
+
+最终冻结业务源码累计 **266 passed / 258.58s / exit 0**，无skip；前一中间回归1个Replay helper不匹配/265 passed保留。最终真实SPY再次4002行/20fit/completed_no_improvement，未使用47行确认。范围Ruff/compile/diff通过。本地没有Chromium可执行文件，浏览器必须在精确源码CI通过后才能推进分支。
+
+
+### B2 browser provenance regression follow-up (2026-09-24)
+
+The first exact-tree browser gate `35951196336` reached both candidate downloads but failed on the second external client: changing the input path changed an unkeyed JSON widget's default and discarded the edited contract, including `simulation_only` and the reviewed feature. The full red browser record is retained. A new AppTest reproduces this exact draft/path transition before the fix. Explicit draft-scoped widget keys preserve the contract; both form and JSON paths require explicit provenance and invalid JSON objects fail visibly. Browser assertions now compare the submitted contract to the edited contract in addition to the scientific evidence label and actual feature. No evidence assertion was relaxed.
+
+Local recovery restored B0, B1 and the B2 candidate by matching each archived Git tree (B2 starting tree `a29875cf2646780c62306df9c02faa66c7643a5f`). Added regression first failed, then B2 targeted suite passed 13 tests; cumulative related suite passed **267 tests / 336.51s / exit 0**. A final JSON-type rejection and draft check passed 2 targeted tests; scoped Ruff/compile/diff pass. Real frozen SPY smoke passed (4002 rows, 20 fits, completed/no_improvement). The local installed Chromium was blocked by administrator URL policy before navigation (not bypassed); the final source must pass GitHub Chromium and dual-Python gates before publication. No real provider or user was simulated into a PASS.

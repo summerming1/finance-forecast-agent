@@ -940,9 +940,9 @@ def refit_model_bundle(
     return root
 
 
-def load_model_bundle(
+def verified_model_bundle_bytes(
     bundle_dir: str | Path, *, state_path: str | Path | None = None, tenant_id: str = "default"
-) -> tuple[dict[str, Any], Any]:
+) -> tuple[dict[str, Any], bytes, bytes]:
     root = _physical_path(bundle_dir)
     store = _authority(state_path)
     if root in store.path.parents:
@@ -956,13 +956,21 @@ def load_model_bundle(
     _check_record(record, "trusted-model-record-v1")
     if record["environment"] != _environment():
         raise ValueError("model environment version mismatch; rebuild in the registered environment")
-    metadata = json.loads(_read_bytes(root / "bundle.json", record["metadata"]))
+    metadata_bytes = _read_bytes(root / "bundle.json", record["metadata"])
+    metadata = json.loads(metadata_bytes)
     if metadata.get("schema_version") != "focused_model_bundle_v2" or metadata.get("model_file") != "model.joblib":
         raise ValueError("invalid registered model schema/path")
     if metadata["bundle_id"] != record["bundle_id"] or metadata["model_sha256"] != record["model"]["sha256"]:
         raise ValueError("model registration binding mismatch")
     model_bytes = _read_bytes(root / "model.joblib", record["model"])
     # Deserialize the SAME verified bytes, never reopen a caller-controlled path.
+    return metadata, model_bytes, metadata_bytes
+
+
+def load_model_bundle(
+    bundle_dir: str | Path, *, state_path: str | Path | None = None, tenant_id: str = "default"
+) -> tuple[dict[str, Any], Any]:
+    metadata, model_bytes, _ = verified_model_bundle_bytes(bundle_dir, state_path=state_path, tenant_id=tenant_id)
     return metadata, joblib.load(io.BytesIO(model_bytes))
 
 

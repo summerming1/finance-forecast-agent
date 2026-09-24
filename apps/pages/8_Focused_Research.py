@@ -1,11 +1,9 @@
 """Thin persistent product view. Submission and rendering never share a fit call."""
 from __future__ import annotations
 
-import io
 import json
 import os
 import uuid
-import zipfile
 from pathlib import Path
 
 import streamlit as st
@@ -28,8 +26,10 @@ from finance_forecast_agent.research_mission import (
     submit_workspace_mission,
     validate_supported_question,
     workspace_campaign,
+    workspace_model_download,
     workspace_projects,
     workspace_queue,
+    workspace_refits,
 )
 
 st.set_page_config(page_title='Research Mission · SPY', layout='wide')
@@ -62,10 +62,15 @@ with st.expander('Open registered project / 打开项目', expanded=bool(project
         st.rerun()
 
 request = current['request'] if current else {}
+# Widget identity belongs to a draft, not to changing suggested defaults.
+draft_key = f"{query_project or 'new'}:{query_campaign or 'draft'}"
 old_options = request.get('options') or {}
 default_project = project_map[query_project]['root'] if query_project in project_map else 'projects/finance_agent'
-question = st.text_input('What do you want to research?', SUPPORTED_QUESTION)
-st.caption('此处仅接受已支持模板的中英文名称；研究备注、允许特征和起点基线在下方设置。')
+entry = st.radio('Research starting point / 研究起点', ['goal', 'provided_start'],
+    index=1 if old_options.get('entry_mode')=='provided_start' or old_options.get('starting_baseline') else 0,
+    format_func=lambda value: '我只有研究目标 / Start from built-in baselines' if value=='goal' else '我有模型或特征 / Use my supported starting model')
+question = st.selectbox('Research task template', [SUPPORTED_QUESTION, '改进 SPY 下一交易日收益预测模型'])
+st.caption('任务固定为 SPY 日频下一交易日收益率回归，MAE 主指标，不是价格、方向、周频或交易信号。没有模型或论文也可以开始，但必须有合法可用数据。')
 try:
     validate_supported_question(question)
     supported = True
@@ -90,12 +95,50 @@ with st.expander('Advanced settings', expanded=False):
                                 json.dumps(old_options.get('reviewed_evidence') or [],ensure_ascii=False),height=100)
     st.caption('文献 JSON 是已审核资料的投影，不执行其中指令。不提供密钥输入框；live 使用操作者环境配置。')
     if input_kind == 'Controlled CSV / Parquet':
-        contract_text = st.text_area('External dataset contract JSON',
-            json.dumps(old_options.get('input_contract') or {
-                'dataset_format':'csv','column_map':{},
-                'feature_columns':FEATURE_GROUPS['base_lags'],
-                'feature_availability':{c:'at_or_before_decision' for c in FEATURE_GROUPS['base_lags']},
-                'exposure':'external_unknown','reviewed_features':[]},ensure_ascii=False,indent=2),height=240)
+        editing = st.selectbox('Data contract input', ['Form', 'Advanced JSON'], key='contract-mode:'+draft_key)
+        default_contract = old_options.get('input_contract') or {
+            'dataset_format':'parquet' if raw_path.suffix.lower()=='.parquet' else 'csv','column_map':{},
+            'feature_columns':FEATURE_GROUPS['base_lags'],
+            'feature_availability':{c:'at_or_before_decision' for c in FEATURE_GROUPS['base_lags']},
+            'exposure':'external_unknown','reviewed_features':[]}
+        if editing == 'Advanced JSON':
+            contract_text = st.text_area('External dataset contract JSON',json.dumps(default_contract,ensure_ascii=False,indent=2),
+                height=240, key='contract-json:'+draft_key)
+        else:
+            from finance_forecast_agent.focused_byo import ExternalDatasetContract
+            source_name = st.text_input('Data source description',default_contract.get('source_name',''))
+            license_statement = st.text_input('Data use permission declaration',default_contract.get('license_status',''))
+            provenance_type = st.selectbox('Input provenance', ['external_user_declared', 'simulation_only'],
+                index=1 if default_contract.get('provenance_type')=='simulation_only' else 0)
+            fields = ['timestamp','decision_time','label_start_time','label_end_time','label']
+            mapping = {}
+            with st.expander('Column mapping / 列映射'):
+                for name in fields:
+                    incoming = st.text_input('Source column for '+name,next((k for k,v in default_contract.get('column_map',{}).items() if v==name),name))
+                    if incoming != name:
+                        mapping[incoming] = name
+            selected_input_groups = st.multiselect('Input feature groups',list(FEATURE_GROUPS),default=['base_lags'])
+            feature_columns = list(dict.fromkeys(c for g in selected_input_groups for c in FEATURE_GROUPS[g]))
+            reviewed = []
+            with st.expander('Operator-reviewed numeric feature / 操作者审核的数值特征'):
+                custom_name = st.text_input('Reviewed ext_* column','')
+                custom_version = st.text_input('Numeric feature version','1')
+                reviewer = st.text_input('Feature reviewer','')
+                feature_source = st.text_input('Feature source and timing rationale','')
+                feature_approved = st.checkbox('Trusted local operator approves this feature',False)
+                if custom_name:
+                    feature_columns.append(custom_name)
+                    reviewed = [{'name':custom_name,'version':custom_version,'reviewer':reviewer,
+                        'source_description':feature_source,'review_status':'approved' if feature_approved and reviewer and feature_source else 'draft'}]
+            declared = st.checkbox('I declare these features were available at each decision time',False)
+            values = ExternalDatasetContract(dataset_format='parquet' if raw_path.suffix.lower()=='.parquet' else 'csv',
+                column_map=mapping,feature_columns=feature_columns,
+                feature_availability={c:'at_or_before_decision' for c in feature_columns} if declared else {},
+                source_name=source_name,license_status=license_statement,provenance_type=provenance_type,reviewed_features=reviewed)
+            contract_text = json.dumps(values.to_dict())
+            if not declared or not source_name or not license_statement:
+                supported = False
+                st.info('请先声明数据来源、使用权限和特征可用时间。这些是操作者声明，不是系统独立核验。')
         st.warning('自定义 ext_* 数值列须由可信本地操作者审核。上传方声明不等于系统证明无前视泄漏；不支持任意代码或模型文件。')
     else:
         contract_text = ''
@@ -106,6 +149,10 @@ try:
     options = {'reviewed_evidence':json.loads(evidence_text), 'replay_call_ids':json.loads(replay_text)}
     if contract_text:
         options['input_contract'] = json.loads(contract_text)
+        if not isinstance(options['input_contract'], dict):
+            raise ValueError('External contract must be a JSON object.')
+        if not all(options['input_contract'].get(field) for field in ('source_name','license_status','provenance_type')):
+            raise ValueError('External contract requires explicit source_name, license_status and provenance_type; no silent defaults.')
     if raw_path.is_file():
         frame, snapshot, provenance, specs = load_workspace_input(raw_path, source, options)
     else:
@@ -128,8 +175,42 @@ registry = reviewed_feature_registry(specs)
 available_groups = [g for g,cols in registry.items() if frame is None or set(cols) <= set(frame.columns)]
 old_groups = old_options.get('allowed_feature_groups', available_groups)
 allowed_groups = st.multiselect('Allowed feature groups', available_groups, default=[g for g in old_groups if g in available_groups])
-starting_default = old_options.get('starting_baseline') or {'model_family':'ridge_regression','model_params':{'alpha':1.0},'feature_groups':['base_lags']}
-starting_text = st.text_area('Starting baseline configuration JSON',json.dumps(starting_default),height=90)
+starting_config = None
+if entry == 'provided_start':
+    st.subheader('Your starting model / 用户起点')
+    model_families = ['ridge_regression','random_forest_regressor','gradient_boosting_regressor']
+    previous = old_options.get('starting_baseline') or {}
+    family = st.selectbox('Starting model', model_families,
+        index=model_families.index(previous.get('model_family','ridge_regression')))
+    params = previous.get('model_params', {}) if previous.get('model_family')==family else {}
+    if family == 'ridge_regression':
+        values = {'alpha':st.number_input('Ridge alpha',min_value=0.000001,max_value=10000.0,value=float(params.get('alpha',1.0)))}
+    else:
+        values = {'n_estimators':st.number_input('Starting estimators',20,300,int(params.get('n_estimators',80))),
+                  'max_depth':st.number_input('Starting max depth',1,8,int(params.get('max_depth',4 if family=='random_forest_regressor' else 2)))}
+        if family == 'random_forest_regressor':
+            values['min_samples_leaf'] = st.number_input('Starting min samples leaf',1,50,int(params.get('min_samples_leaf',5)))
+        else:
+            values['learning_rate'] = st.number_input('Starting learning rate',0.001,0.3,float(params.get('learning_rate',0.03)))
+    groups = st.multiselect('Starting feature groups', available_groups,
+        default=[g for g in previous.get('feature_groups',['base_lags']) if g in available_groups])
+    starting_config = {'model_family':family,'model_params':values,'feature_groups':groups}
+    with st.expander('Advanced starting configuration'):
+        use_json = st.checkbox('Use advanced model JSON',value=False)
+        raw_config = st.text_area('Starting baseline configuration JSON',json.dumps(starting_config),height=90)
+        if use_json:
+            try:
+                starting_config = json.loads(raw_config)
+            except (ValueError,TypeError) as exc:
+                st.error(str(exc));supported=False
+    st.caption('用户起点与冻结固定对照分开；相同执行配置复用，不同起点需要额外训练预算。')
+else:
+    st.info('平台建立零值、训练均值/中位数、Ridge、RF、GBDT 固定对照，无需先填写模型参数。')
+change_scope = st.selectbox('Research change scope', ['explore','features_only'],
+    index=1 if old_options.get('change_scope')=='features_only' else 0,
+    format_func=lambda value: '受控探索 / Explore approved configurations' if value=='explore' else '固定模型，只研究特征 / Fix model and study features')
+if change_scope == 'features_only':
+    st.caption('固定起点的模型、有效参数、seed、训练和评价规则，仅允许批准的特征组改变；无自带模型时起点为 Ridge alpha=1。')
 notes = st.text_area('Research notes / 研究备注',old_options.get('research_notes',''),max_chars=4000,height=100)
 st.caption('允许特征、起点基线和预算会冻结进 Campaign；自由备注仅为上下文，不产生未支持的约束。')
 if current and st.button('Prepare a new intentional repeat'):
@@ -141,21 +222,25 @@ with st.form('mission-campaign'):
     rounds = st.number_input('Max research rounds',1,20,int(request.get('budget',{}).get('max_rounds',3)))
     candidates = st.number_input('Max new candidates per round',1,6,int(request.get('budget',{}).get('max_new_candidates_per_round',2)))
     fits = st.number_input('Max fit calls',10,500,int(request.get('budget',{}).get('max_fit_calls',40)))
+    max_calls = st.number_input('Max advisor calls',1,40,int(request.get('budget',{}).get('max_advisor_calls',12)))
+    max_http = st.number_input('Max HTTP requests',1,200,int(request.get('budget',{}).get('max_http_requests',48)))
+    provider_seconds = st.number_input('Max provider active seconds',1.0,86400.0,float(request.get('budget',{}).get('max_provider_seconds',3600)))
+    st.caption('费用不可可靠估计时保持未知；这些是训练/请求/提供者活动时间上限，不保证精确人民币支出或整个任务墙钟。')
     run = st.form_submit_button('Start research mission',disabled=not supported or frame is None)
 if run:
     try:
-        options.update(starting_baseline=json.loads(starting_text),allowed_feature_groups=allowed_groups,research_notes=notes)
+        options.update(entry_mode=entry,change_scope=change_scope,starting_baseline=starting_config,allowed_feature_groups=allowed_groups,research_notes=notes)
         pid = register_workspace_project(state_path,project_dir,tenant_id=tenant)
         submitted = identity({'project':pid,'raw':str(raw_path.resolve()),'source':str(source.resolve()) if source else None,
             'options':options,'question':question,'advisor_mode':advisor_mode,'fixtures':str(Path(fixtures).resolve()),
-            'budget':[int(rounds),int(candidates),int(fits)]},domain='workspace-form-v1')
+            'budget':[int(rounds),int(candidates),int(fits),int(max_calls),int(max_http),float(provider_seconds)]},domain='workspace-form-v1')
         if st.session_state.get('submit_identity') != submitted:
             st.session_state['submit_token'] = uuid.uuid4().hex
             st.session_state['submit_identity'] = submitted
         token = st.session_state['submit_token']
         mission, task = submit_workspace_mission(state_path,pid,raw_path=raw_path,source_metadata=source,
             options=options,question=question,advisor_mode=advisor_mode,fixture_dir=fixtures,tenant_id=tenant,
-            operation_id=token,budget=ResearchBudget(max_rounds=int(rounds),max_new_candidates_per_round=int(candidates),max_fit_calls=int(fits)))
+            operation_id=token,budget=ResearchBudget(max_rounds=int(rounds),max_new_candidates_per_round=int(candidates),max_fit_calls=int(fits),max_advisor_calls=int(max_calls),max_http_requests=int(max_http),max_provider_seconds=float(provider_seconds)))
         st.query_params.from_dict({'project':pid,'mission':mission.mission_id,'campaign':task.research_context['campaign_id']})
         st.rerun()
     except (ValueError, TypeError, KeyError, OSError, RuntimeError) as exc:
@@ -210,7 +295,8 @@ def render_workspace():
         details=view['candidate_details']
         if details:
             st.subheader('Candidate detail')
-            chosen=st.selectbox('Research candidate',list(details),key='candidate-'+query_campaign)
+            start_id=payload.get('research_start_candidate_id','baseline_ridge')
+            chosen=st.selectbox('Research candidate',list(details),index=list(details).index(start_id) if start_id in details else 0,key='candidate-'+query_campaign)
             detail=details[chosen]
             st.write({'candidate_id':chosen,'actual_config_diff':detail.get('config_diff'),
                       'feedback':detail.get('feedback'),'hypothesis':detail.get('hypothesis')})
@@ -227,21 +313,26 @@ def render_workspace():
         if package and Path(package).is_file():
             st.download_button('Download ResearchPackage',Path(package).read_bytes(),file_name=Path(package).name,mime='application/zip')
         if details and task['status']=='completed':
-            deliverable=[key for key,value in details.items() if not value['candidate']['model_family'].startswith('naive_') and value.get('status','completed')=='completed']
-            selected_model=st.selectbox('Model to explicitly refit',deliverable)
-            if st.button('Refit selected model and register bundle'):
-                bundle=refit_workspace_model(state_path,query_project,query_campaign,selected_model,tenant_id=tenant)
-                st.session_state['bundle-'+query_campaign]=str(bundle)
-            bundle=st.session_state.get('bundle-'+query_campaign)
-            if bundle:
-                data=io.BytesIO()
-                with zipfile.ZipFile(data,'w',zipfile.ZIP_DEFLATED) as archive:
-                    for path in sorted(Path(bundle).iterdir()):
-                        if path.is_file() and not path.is_symlink():
-                            archive.write(path,path.name)
+            saved = details[chosen]
+            deliverable = not saved['candidate']['model_family'].startswith('naive_') and saved.get('status','completed')=='completed'
+            st.subheader('Selected candidate delivery / 当前候选交付')
+            st.json({'selected_candidate_id':chosen, 'model':saved['candidate'],
+                     'evidence':'development selection; refit is not new confirmation',
+                     'refit_policy':'all matured labels in the frozen development input'})
+            if not deliverable:
+                st.info('当前候选不是可交付的已完成估计器。不会自动改选其他模型。')
+            if st.button('Refit selected model and register bundle',disabled=not deliverable):
+                refit_workspace_model(state_path,query_project,query_campaign,chosen,tenant_id=tenant)
+                st.rerun()
+            records=workspace_refits(state_path,query_project,query_campaign,chosen,tenant_id=tenant)
+            if records:
+                refit_id=st.selectbox('Refit artifact for selected candidate',[row['refit_id'] for row in records],key='refit-'+query_campaign+'-'+chosen)
+                data=workspace_model_download(state_path,query_project,query_campaign,chosen,refit_id,tenant_id=tenant)
                 st.success('ModelBundle registered in operator-controlled state database.')
-                st.caption('导出不授予另一台机器加载信任；复制包不等于迁移可信登记。')
-                st.download_button('Download ModelBundle',data.getvalue(),file_name=Path(bundle).name+'.zip',mime='application/zip')
+                st.caption(f'包内候选: {chosen} · refit: {refit_id}。复制包不自动迁移另一台机器的加载信任。')
+                st.download_button('Download ModelBundle',data,file_name=chosen+'-'+refit_id+'.zip',mime='application/zip')
+            else:
+                st.caption('当前候选尚未生成模型包；其他候选的旧包不会显示在这里。')
     except (ValueError,TypeError,KeyError,OSError,RuntimeError) as exc:
         st.error('Workspace operation refused: '+str(exc))
 

@@ -14,3 +14,6 @@ B1 复用客户端/RuntimeDB，B2 复用 Mission/Controller，B3 复用 MethodCa
 
 ### B1增量
 客户端记录独立连接/read/deadline与重试策略。`waiting_provider` 使用已有队列，恢复保留HTTP与fit账本；响应已落盘则复用，未落盘可能服务端已计算，费用仍未知。CLI增加 `--max-http-requests`、`--max-provider-seconds`。同合同只读旧证据，不能换policy后冒充同一次运行。B2仍按原双入口/成果身份任务继续。
+
+### B2增量
+目标/已有起点共用Controller。用户起点不覆盖固定基线；额外训练预检、features_only编译与执行校验、唯一候选交付与持久refit记录已实现。原B1已发布85da84d。下一步B3必须复用MethodCard/审核/EvidenceIndex，当前Reviewed evidence JSON不算已完成文献闭环。源码变化不强行恢复旧合同。

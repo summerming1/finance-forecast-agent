@@ -513,6 +513,9 @@ def advisor_prompt(
     memory_ids = {row["evidence_id"] for row in (compatible_memory or [])}
     return {
         "task": "focused_spy_research_hypotheses_v1",
+        "research_start_candidate_id": "baseline_ridge",
+        "candidate_roles": {x.candidate.candidate_id:["fixed_control"] for x in baseline_results},
+        "change_scope": "explore",
         "round_index": round_index,
         "task_contract": task.to_dict(),
         "allowed_models": sorted(ALLOWED_MODELS),
@@ -670,6 +673,21 @@ class FocusedResearchAdvisor:
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         self.last_record, self.last_fixture_path = None, None
         if self.mode == "deterministic":
+            if prompt.get("change_scope") == "features_only":
+                anchor = prompt["fixed_model"]
+                prior = [*prompt["baseline_results"], *prompt["prior_research_results"]]
+                seen = {row["config_identity"] for row in prior}
+                hypotheses = []
+                for group in prompt["allowed_feature_groups"]:
+                    groups = sorted(set(anchor["feature_groups"]) | {group})
+                    cfg = CandidateConfig("planned", anchor["model_family"], anchor["model_params"], groups, seed=anchor["seed"])
+                    if cfg.config_identity in seen:
+                        continue
+                    hypotheses.append({"action_type":"improve", "statement":"Test one approved feature group with the starting model fixed.",
+                        "parent_candidate_id":anchor["candidate_id"], "model_family":anchor["model_family"],
+                        "model_params":anchor["model_params"], "feature_groups":groups, "seed":anchor["seed"],
+                        "evidence_refs":[anchor["candidate_id"]], "counter_evidence_test":"No improvement on the same development targets."})
+                return {"hypotheses":hypotheses[:int(prompt["max_hypotheses"])] or [{"action_type":"stop", "statement":"No untested single feature additions remain under the fixed-model constraint."}]}, "deterministic_feature_policy"
             if prompt.get("structured_feedback"):
                 from .focused_adaptive import adaptive_deterministic_advice
 
@@ -681,7 +699,7 @@ class FocusedResearchAdvisor:
             # The fixed policy is a regression control, not a natural-language interpreter.
             # Respect frozen capabilities by construction, never execute a disallowed proxy.
             if "external_numeric" in allowed:
-                parent = next(row for row in prompt["baseline_results"] if row["candidate_id"] == "baseline_ridge")
+                parent = next(row for row in prompt["baseline_results"] if row["candidate_id"] == prompt.get("research_start_candidate_id", "baseline_ridge"))
                 advice["hypotheses"].insert(0, {
                     "action_type": "improve", "statement": "Test the reviewed numeric feature with the actual Ridge control unchanged.",
                     "mechanism": "Paired feature addition; provenance and timing remain user-supplied evidence.",
@@ -755,6 +773,7 @@ def compile_hypotheses(
     candidate_lookup: dict[str, CandidateConfig] | None = None,
     default_seed: int = 42,
     feature_registry: dict[str, list[str]] | None = None,
+    fixed_model: CandidateConfig | None = None,
 ) -> list[tuple[HypothesisSpec, CandidateConfig | None]]:
     """Compile a bounded decision, including controls which do not train models.
 
@@ -800,7 +819,7 @@ def compile_hypotheses(
         # Validate unsupported models before resolving parent IDs for useful errors.
         if training and action != "ablate" and row.get("model_family") not in ALLOWED_MODELS:
             raise ValueError(f"advisor proposed unsupported model: {row.get('model_family')}")
-        parent_id = row.get("parent_candidate_id") or ("baseline_ridge" if training else None)
+        parent_id = row.get("parent_candidate_id") or (fixed_model.candidate_id if fixed_model is not None and training else "baseline_ridge" if training else None)
         control_id = row.get("control_candidate_id") or (parent_id if action in {"ablate", "simplify", "diagnose"} else None)
         for ref in (parent_id, control_id):
             if ref is not None:
@@ -859,6 +878,8 @@ def compile_hypotheses(
                              and isinstance(new.get(dimension), (int, float)) and new[dimension] < old[dimension])
                 if not valid:
                     raise ValueError("simplification does not reduce its declared complexity dimension")
+        if candidate is not None and fixed_model is not None:
+            validate_fixed_model(candidate, fixed_model, candidates.get(parent_id))
         hypothesis = HypothesisSpec(hypothesis_id=hid, statement=row["statement"].strip(),
             mechanism=str(row.get("mechanism", "")), parent_candidate_id=parent_id,
             proposed_changes=(candidate_config_diff(candidates.get(parent_id), candidate).get("changes", []) if candidate else []),
@@ -871,6 +892,15 @@ def compile_hypotheses(
             diagnostic=row.get("diagnostic", "residual_summary") if action == "diagnose" else None)
         compiled.append((hypothesis, candidate))
     return compiled
+
+
+def validate_fixed_model(candidate: CandidateConfig, anchor: CandidateConfig,
+                         parent: CandidateConfig | None = None) -> None:
+    """Feature experiments cannot silently change the model or their control."""
+    expected = (anchor.model_family, effective_model_params(anchor.model_family, anchor.model_params), anchor.seed)
+    for value in (candidate, parent):
+        if value is None or (value.model_family, effective_model_params(value.model_family, value.model_params), value.seed) != expected:
+            raise ValueError("features_only requires the fixed model, parameters, seed and compatible parent")
 
 
 class FocusedResearchController:
@@ -899,6 +929,8 @@ class FocusedResearchController:
         feature_specs: list[dict[str, Any]] | None = None,
         allowed_feature_groups: list[str] | None = None,
         starting_baseline: dict[str, Any] | None = None,
+        entry_mode: str | None = None,
+        change_scope: str = "explore",
         research_notes: str = "",
         input_provenance: dict[str, Any] | None = None,
     ):
@@ -930,6 +962,17 @@ class FocusedResearchController:
             if not set(self.starting_baseline["feature_groups"]) <= set(allowed_groups):
                 raise ValueError("starting baseline outside allowed feature scope")
             resolve_feature_columns(self.starting_baseline["feature_groups"], self.feature_registry)
+        self.entry_mode = entry_mode or ("provided_start" if self.starting_baseline else "goal")
+        if self.entry_mode not in {"goal", "provided_start"}:
+            raise ValueError("unsupported entry_mode")
+        if self.entry_mode == "goal" and self.starting_baseline:
+            raise ValueError("goal entry cannot silently carry a provided starting model")
+        if self.entry_mode == "provided_start" and not self.starting_baseline:
+            raise ValueError("provided_start entry requires an explicit supported model")
+        if change_scope not in {"explore", "features_only"}:
+            raise ValueError("unsupported change_scope")
+        self.change_scope = change_scope
+        self._incumbent_result = self._incumbent_payload = None
         required = resolve_feature_columns(allowed_groups, self.feature_registry)
         if set(required) - set(frame.columns):
             raise ValueError("data lacks columns required by selected research feature groups")
@@ -958,6 +1001,7 @@ class FocusedResearchController:
             from .focused_benchmark import BenchmarkAdvisor
             self.advisor = BenchmarkAdvisor(self.advisor, benchmark_strategy)
         self.estimator_seed = self.advisor.spec.estimator_seed if benchmark_strategy else 42
+        self.research_start = self._starting_candidate()
         self.spec = CampaignSpec(
             campaign_id=campaign_id or f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
             task=task,
@@ -970,9 +1014,23 @@ class FocusedResearchController:
             split_spec=self.split_spec,
             created_at=_now(),
             research_options={"feature_specs": self.feature_specs, "starting_baseline": self.starting_baseline,
+                              "entry_mode": self.entry_mode, "change_scope": self.change_scope,
                               "notes": self.research_notes, "notes_are_non_executable": True,
                               "input_provenance": self.input_provenance},
         )
+
+    def _starting_candidate(self) -> CandidateConfig:
+        values = self.starting_baseline or {"model_family":"ridge_regression", "model_params":{"alpha":1.0}, "feature_groups":["base_lags"]}
+        proposed = CandidateConfig("user_start", **values, seed=self.estimator_seed)
+        for cid, family, params, groups in DEFAULT_BASELINES:
+            control = CandidateConfig(cid, family, params, groups, seed=self.estimator_seed)
+            if proposed.fingerprint == control.fingerprint:
+                return control
+        return proposed
+
+    def required_initial_fit_calls(self) -> int:
+        count = len(DEFAULT_BASELINES) + int(self.research_start.candidate_id == "user_start")
+        return self.split_spec.baseline_fit_calls(count)
 
     @property
     def _campaign_root(self) -> Path:
@@ -1153,6 +1211,8 @@ class FocusedResearchController:
                  parent_result=None, hypothesis=None):
         runtime = self._runtime
         assert runtime is not None
+        if role == "research_candidate" and self.change_scope == "features_only":
+            validate_fixed_model(candidate, self.research_start, parent_result.candidate if parent_result else None)
         cached = runtime.accepted(candidate.candidate_id)
         if cached:
             if cached["row"]["candidate"]["candidate_fingerprint"] != candidate.fingerprint:
@@ -1205,9 +1265,9 @@ class FocusedResearchController:
 
     def run(self) -> dict[str, Any]:
         self.split_spec.build_splits(len(self.frame))
-        minimum = self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES))
+        minimum = self.required_initial_fit_calls()
         if self.budget.max_fit_calls < minimum:
-            raise ValueError(f"focused fit budget is too small for frozen baselines: need {minimum}, got {self.budget.max_fit_calls}; no model fit started")
+            raise ValueError(f"focused fit budget is too small for frozen baselines and starting model: need {minimum}, got {self.budget.max_fit_calls}; no model fit started")
         runtime = CampaignRuntime(self._campaign_root, state_path=self.state_path,
                                   contract=self._execution_contract(), spec=self.spec.to_dict(), resume=self.resume_existing)
         self._runtime = runtime
@@ -1254,8 +1314,6 @@ class FocusedResearchController:
             runtime.put("memory_snapshot", memory_evidence, immutable=True)
         baseline_results, baseline_payloads = [], []
         for candidate_id, family, params, groups in [*NAIVE_BASELINES, *DEFAULT_BASELINES]:
-            if family == self.starting_baseline.get("model_family"):
-                params, groups = self.starting_baseline["model_params"], self.starting_baseline["feature_groups"]
             candidate = CandidateConfig(candidate_id, family, params, groups, seed=self.estimator_seed)
             role = "naive_baseline" if family.startswith("naive_") else "model_baseline"
             result, saved = self._execute(candidate, role=role, splits=splits)
@@ -1265,7 +1323,18 @@ class FocusedResearchController:
             baseline_payloads.append(saved)
         best_baseline = min(baseline_results, key=lambda r: r.metrics["mae"])
         result_lookup = {r.candidate.candidate_id: r for r in baseline_results}
-        seen = {r.candidate.fingerprint for r in baseline_results}
+        if self.entry_mode == "provided_start":
+            if self.research_start.candidate_id in result_lookup:
+                self._incumbent_result = result_lookup[self.research_start.candidate_id]
+                self._incumbent_payload = next(row for row in baseline_payloads if row["candidate"]["candidate_id"] == self.research_start.candidate_id)
+            else:
+                self._incumbent_result, self._incumbent_payload = self._execute(
+                    self.research_start, role="user_incumbent", splits=splits, best_baseline=best_baseline)
+                if self._incumbent_result is None:
+                    raise RuntimeError("provided starting model failed; no scientific comparison can be claimed")
+                result_lookup[self.research_start.candidate_id] = self._incumbent_result
+        seen = {r.candidate.fingerprint for r in result_lookup.values()}
+        initial_results = list(result_lookup.values())
         research_results, feedback_history, rounds, diagnostic_history = [], [], [], []
         stop_reason, failed_attempts = "max_rounds_reached", 0
         for round_index in range(1, self.budget.max_rounds + 1):
@@ -1282,10 +1351,18 @@ class FocusedResearchController:
                     recorded=returned
                     runtime.put(f"advice:{round_index}",recorded,immutable=True)
                 if recorded is None:
-                    prompt = advisor_prompt(round_index=round_index, task=self.task, baseline_results=baseline_results,
+                    prompt = advisor_prompt(round_index=round_index, task=self.task, baseline_results=initial_results,
                         prior_results=research_results, budget=self.budget, structured_feedback=feedback_history,
                         reviewed_evidence=self.reviewed_evidence, compatible_memory=memory_evidence,
                         resource_usage=runtime.resource_usage(), advisor_calls_used=runtime.get("advisor_call_reservations", 0), diagnostics=diagnostic_history)
+                    prompt["research_start_candidate_id"] = self.research_start.candidate_id
+                    prompt["candidate_roles"] = {r.candidate.candidate_id: ["fixed_control"] for r in baseline_results}
+                    if self.entry_mode == "provided_start":
+                        prompt["candidate_roles"].setdefault(self.research_start.candidate_id, []).append("user_start")
+                    prompt["change_scope"] = self.change_scope
+                    if self.change_scope == "features_only":
+                        prompt["fixed_model"] = self.research_start.to_dict()
+                        prompt["rules"].append("features_only: preserve this actual starting model, effective parameters and seed. Only approved feature groups may change; use a matching parent/control.")
                     prompt["allowed_feature_groups"] = self.allowed_feature_groups
                     prompt["feature_registry"] = {g: self.feature_registry[g] for g in self.allowed_feature_groups}
                     if self.research_notes:
@@ -1345,7 +1422,8 @@ class FocusedResearchController:
                     compiled = compile_hypotheses(advice, round_index=round_index, source=source,
                         max_count=self.budget.max_new_candidates_per_round, visible_evidence=prompt["evidence_projection"],
                         candidate_lookup={key: value.candidate for key, value in result_lookup.items()},
-                        default_seed=self.estimator_seed, feature_registry={g: self.feature_registry[g] for g in self.allowed_feature_groups})
+                        default_seed=self.estimator_seed, feature_registry={g: self.feature_registry[g] for g in self.allowed_feature_groups},
+                        fixed_model=self.research_start if self.change_scope == "features_only" else None)
                     if self.benchmark_strategy:
                         self.advisor.validate_compiled(compiled)
                 except (ValueError, TypeError) as exc:
@@ -1477,10 +1555,13 @@ class FocusedResearchController:
         best_baseline = min(baseline_results, key=lambda row: row.metrics["mae"])
         runtime = self._runtime
         assert runtime is not None
-        valid_results = [*baseline_results, *research_results]
+        incumbent = [self._incumbent_result] if self._incumbent_result is not None else []
+        valid_results = [*baseline_results, *incumbent, *research_results]
         best_overall = min(valid_results, key=lambda x: x.metrics["mae"])
-        improved = (best_overall.candidate.candidate_id not in {x.candidate.candidate_id for x in baseline_results}
-                    and best_overall.relative_mae_vs_best_baseline >= self.evaluation_policy.min_relative_mae_improvement)
+        reference_mae = min(x.metrics["mae"] for x in [*baseline_results, *incumbent])
+        improvement = (reference_mae - best_overall.metrics["mae"]) / reference_mae if reference_mae > 0 else 0.0
+        improved = (best_overall.candidate.candidate_id in {x.candidate.candidate_id for x in research_results}
+                    and improvement >= self.evaluation_policy.min_relative_mae_improvement)
         if stop_reason == "round_failed_no_completed_candidate":
             execution_status = "failed" if not research_results else "partial"
             research_outcome = "inconclusive"
@@ -1496,6 +1577,12 @@ class FocusedResearchController:
         usage = runtime.resource_usage()
         payload = {"schema_version": "focused_campaign_v3", "campaign": runtime.get("spec"),
             "execution_contract_hash": runtime.contract_hash, "baseline_results": baseline_payloads,
+            "incumbent_result": self._incumbent_payload,
+            "research_start_candidate_id": self.research_start.candidate_id,
+            "selection_reference_mae": reference_mae,
+            "candidate_roles": {r.candidate.candidate_id: (["fixed_control"] if r.candidate.candidate_id in {b.candidate.candidate_id for b in baseline_results} else []) +
+                (["user_start"] if self.entry_mode == "provided_start" and r.candidate.candidate_id == self.research_start.candidate_id else [])
+                for r in [*baseline_results, *incumbent]},
             "rounds": rounds, "best_baseline_candidate_id": best_baseline.candidate.candidate_id,
             "best_candidate_id": best_overall.candidate.candidate_id, "best_candidate_is_research_candidate": improved,
             "execution_status": execution_status, "research_outcome": research_outcome, "terminal_status": terminal_status,

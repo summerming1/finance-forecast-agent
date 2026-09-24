@@ -792,7 +792,7 @@
         "commit": "81012ee631d98a4814e4828b4225518498f56ac4"
       },
       "B1": {
-        "status": "local_gate_passed_pending_exact_tree_ci",
+        "status": "published",
         "targeted_tests": 14,
         "test_file": "tests/test_focused_b1_provider.py",
         "live_provider": "not_run",
@@ -815,9 +815,39 @@
             "research_outcome": "no_improvement",
             "exit_code": 0
           }
-        ]
+        ],
+        "commit": "85da84da68f858b9584f2ef99e17172f58e222bf"
       },
-      "B2": "planned",
+      "B2": {
+        "status": "local_passed_pending_exact_tree_browser_and_dual_python",
+        "new_test_file": "tests/test_focused_b2_product.py",
+        "targeted_ui_regression_passed": 42,
+        "live_provider": "not_run",
+        "real_user": "blocked",
+        "targeted_new_cases": 12,
+        "tests": [
+          {
+            "command": "python -m pytest -q tests/test_focused*.py tests/test_task_queue*.py tests/test_*memory*.py",
+            "passed": 266,
+            "seconds": 258.58,
+            "exit_code": 0
+          },
+          {
+            "command": "frozen real SPY deterministic smoke",
+            "rows": 4002,
+            "fits": 20,
+            "outcome": "no_improvement",
+            "exit_code": 0
+          }
+        ],
+        "browser": "pending_exact_tree_ci",
+        "targeted_tests": 13,
+        "related_tests": 267,
+        "seconds": 336.51,
+        "browser_first_failure_run": 35951196336,
+        "local_browser": "BLOCKED_ENV_ADMINISTRATOR_POLICY",
+        "regression_test": "tests/test_focused_b2_product.py::test_external_contract_draft_survives_source_path_change"
+      },
       "B3": "planned",
       "B4": "planned",
       "B5": "planned"
@@ -895,22 +925,29 @@
         "id": "A09",
         "scenario": "模板改频率或目标",
         "expected": "明确不支持，不能悄悄变成固定任务",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b2_product.py::test_workspace_rejects_unsupported_task_before_queue"
+        ]
       },
       {
         "id": "A10",
         "scenario": "用户模型与固定控制同名不同参",
         "expected": "两个角色/身份明确，未覆盖对照；预算足够才启动",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b2_product.py::test_provided_start_does_not_replace_frozen_control_and_is_charged",
+          "tests/test_focused_b2_product.py::test_identical_start_reuses_control_without_extra_fit"
+        ]
       },
       {
         "id": "A11",
         "scenario": "固定模型模式里提换模型/改seed",
         "expected": "compiler和执行Manifest均拒绝",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b2_product.py::test_features_only_contract_rejects_hidden_model_changes"
+        ]
       },
       {
         "id": "A12",
@@ -937,8 +974,10 @@
         "id": "A15",
         "scenario": "A详情→refit→切B→下载",
         "expected": "A包仍标A，不能表现为B，切换不训练",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b2_product.py::test_selected_refit_identity_is_durable_and_mismatch_cannot_download"
+        ]
       },
       {
         "id": "A16",

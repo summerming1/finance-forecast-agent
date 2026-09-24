@@ -90,7 +90,9 @@ def test_reviewed_numeric_feature_executes_and_delivers_same_controller(tmp_path
         feature_specs=contract.reviewed_features, allowed_feature_groups=['base_lags', 'external_numeric'],
         starting_baseline={'model_family':'ridge_regression','model_params':{'alpha':3.0},'feature_groups':['base_lags']},
         research_notes='模拟客户自己的研究备注，不改变任务', input_provenance=provenance, state_path=state,
-        budget=ResearchBudget(max_rounds=1, max_new_candidates_per_round=1, max_fit_calls=16)).run()
+        budget=ResearchBudget(max_rounds=1, max_new_candidates_per_round=1, max_fit_calls=20)).run()
+    assert result["fit_calls"] == 20  # The distinct user start no longer overwrites a frozen control.
+    assert next(x for x in result["baseline_results"] if x["candidate"]["candidate_id"] == "baseline_ridge")["candidate"]["model_params"]["alpha"] == 1.0
     assert 'external_numeric' not in FEATURE_GROUPS
     item = result['rounds'][0]['items'][0]
     assert item['status'] == 'completed'

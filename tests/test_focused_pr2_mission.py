@@ -103,14 +103,11 @@ def test_mission_page_rejects_unsupported_goal_and_runs_supported_mission(tmp_pa
     app.run()
     assert not app.exception
     assert any(title.value == "Research Mission" for title in app.title)
-    question = next(x for x in app.text_input if x.label == "What do you want to research?")
-    question.set_value("Optimize a QQQ intraday trading portfolio")
-    app.run()
-    assert any("Unsupported mission" in item.value for item in app.error)
-    assert next(button for button in app.button if button.label == "Start research mission").disabled
-
-    question = next(x for x in app.text_input if x.label == "What do you want to research?")
-    question.set_value("Improve SPY next-session return prediction")
+    # B2 replaces misleading free text with two explicit aliases of one task.
+    question = next(x for x in app.selectbox if x.label == "Research task template")
+    assert len(question.options) == 2
+    assert not any("weekly" in value.lower() or "QQQ" in value for value in question.options)
+    question.set_value("改进 SPY 下一交易日收益预测模型")
     next(x for x in app.text_input if x.label == "Project directory").set_value(str(project))
     next(x for x in app.text_input if x.label == "Frozen SPY Yahoo JSON").set_value(str(raw))
     next(x for x in app.text_input if x.label == "Source metadata JSON (optional)").set_value("")

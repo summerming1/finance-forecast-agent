@@ -289,3 +289,7 @@ Prior entries above are historical receipts/requirements; resolved R1–R6 evide
 | L24 | 用户看到引用就把结果称严格复现/独立确认 | 总结、UI、文档均限定证据等级；只可核对当前实际条件 |
 
 这些条款与 A01–A24 共用同一验收账本；L编号不是新的测试框架。每条绑定 nodeid/人工步骤、源码与来源版本、真实/模拟标记、exit、日志。语义忠实度检查和研究价值判断不得被结构正确或引用数量代替。
+
+### B2 当前新增门禁
+
+`test_focused_b2_product.py`覆盖goal/provided_start、独立incumbent计费、固定模型隐藏改动和候选/refit/download身份。相关累计266 passed；Chromium同源码验收需实际切换两个研究候选、下载所选候选、切换不重训、刷新后不误标旧包，再验证受控Parquet入口。新真实provider/Windows/真人使用单列补测。

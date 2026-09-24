@@ -136,6 +136,9 @@ class MissionStore:
 def build_workspace_projection(payload: dict[str, Any]) -> dict[str, Any]:
     campaign = dict(payload.get("campaign") or {})
     baseline_results = list(payload.get("baseline_results") or [])
+    incumbent = payload.get("incumbent_result")
+    if incumbent and incumbent["candidate"]["candidate_id"] not in {x["candidate"]["candidate_id"] for x in baseline_results}:
+        baseline_results.append(incumbent)
     rounds = list(payload.get("rounds") or [])
     baseline_ids = {row["candidate"]["candidate_id"] for row in baseline_results if row.get("candidate")}
     nodes: list[dict[str, Any]] = []
@@ -148,7 +151,8 @@ def build_workspace_projection(payload: dict[str, Any]) -> dict[str, Any]:
             continue
         nodes.append(
             {
-                "node_type": "baseline",
+                "node_type": "incumbent" if candidate_id == "user_start" else "baseline",
+                "roles": (payload.get("candidate_roles") or {}).get(candidate_id, ["user_start"] if candidate_id == "user_start" else ["fixed_control"]),
                 "candidate_id": candidate_id,
                 "parent_candidate_id": None,
                 "hypothesis_id": None,
@@ -270,7 +274,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     from .focused_research import DEFAULT_BASELINES, FocusedResearchController, ResearchBudget
     store, project = _workspace_project(state_path, project_id, tenant_id)
     options = json.loads(json.dumps(options or {}))
-    allowed_options = {'input_contract','starting_baseline','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids'}
+    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids'}
     if not isinstance(options,dict) or set(options)-allowed_options:
         raise ValueError('unsupported workspace options')
     evidence_input = options.get('reviewed_evidence') or []
@@ -293,10 +297,12 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
         raise ValueError('fit budget is too small for frozen baselines')
     evidence = EvidenceIndex(options.get('reviewed_evidence') or []).rows
     # Preflight the same model/feature/budget contract; no execution happens here.
-    FocusedResearchController(project_dir=project['root'], frame=frame, dataset=snapshot, task=FocusedTaskSpec(),
+    preflight = FocusedResearchController(project_dir=project['root'], frame=frame, dataset=snapshot, task=FocusedTaskSpec(),
         budget=budget, advisor_mode=advisor_mode, feature_specs=specs, input_provenance=provenance,
-        starting_baseline=options.get('starting_baseline'), allowed_feature_groups=options.get('allowed_feature_groups'),
+        starting_baseline=options.get('starting_baseline'), entry_mode=options.get('entry_mode'), change_scope=options.get('change_scope','explore'), allowed_feature_groups=options.get('allowed_feature_groups'),
         research_notes=options.get('research_notes',''), reviewed_evidence=evidence, state_path=store.path)
+    if budget.max_fit_calls < preflight.required_initial_fit_calls():
+        raise ValueError('fit budget is too small for frozen controls and provided starting model')
     operation_id = safe_id(operation_id or uuid.uuid4().hex)
     mission_id = safe_id(mission_id or 'mission-'+identity({'project':project_id,'operation':operation_id}, domain='mission-operation-v1')[:20])
     request = {'project_id':project_id,'mission_id':mission_id,'raw_path':str(Path(raw_path).resolve()),
@@ -420,9 +426,46 @@ def refit_workspace_model(state_path, project_id, campaign_id, candidate_id, *, 
     frame, snapshot, _, specs = load_workspace_input(req['raw_path'],req['source_metadata'],req['options'])
     if snapshot.semantic_fingerprint != current['payload']['campaign']['dataset']['semantic_fingerprint']:
         raise ValueError('refit semantic dataset differs from campaign')
-    return refit_model_bundle(frame, candidate, task=FocusedTaskSpec(),dataset=snapshot,
+    bundle = refit_model_bundle(frame, candidate, task=FocusedTaskSpec(),dataset=snapshot,
         out_dir=Path(current['project']['root'])/'models'/('bundle-'+uuid.uuid4().hex),
         state_path=state_path,tenant_id=tenant_id,feature_specs=specs)
+    metadata = json.loads((bundle/'bundle.json').read_text())
+    RuntimeDB(state_path).put('workspace-refits', metadata['bundle_id'], {
+        'refit_id':metadata['bundle_id'], 'project_id':project_id, 'campaign_id':campaign_id,
+        'candidate_id':candidate_id, 'candidate_fingerprint':candidate.fingerprint,
+        'tenant_id':tenant_id, 'bundle_dir':str(bundle), 'created_at':metadata['created_at'],
+        'fit_calls':1, 'status':'completed', 'budget_scope':'explicit_refit_separate_from_research'}, immutable=True)
+    return bundle
+
+
+def workspace_refits(state_path, project_id, campaign_id, candidate_id, *, tenant_id='default') -> list[dict]:
+    current = workspace_campaign(state_path, project_id, campaign_id, tenant_id=tenant_id)
+    if candidate_id not in current['projection']['candidate_details']:
+        raise ValueError('unknown selected candidate')
+    with RuntimeDB(state_path).transaction() as db:
+        rows = db.execute("SELECT payload FROM objects WHERE ns='workspace-refits' ORDER BY key").fetchall()
+    return [row for row in (json.loads(x[0]) for x in rows) if
+            row['tenant_id']==tenant_id and row['project_id']==project_id and
+            row['campaign_id']==campaign_id and row['candidate_id']==candidate_id]
+
+
+def workspace_model_download(state_path, project_id, campaign_id, candidate_id, refit_id, *, tenant_id='default') -> bytes:
+    import io
+    import zipfile
+
+    from .focused_delivery import verified_model_bundle_bytes
+    records = workspace_refits(state_path, project_id, campaign_id, candidate_id, tenant_id=tenant_id)
+    record = next((row for row in records if row['refit_id']==refit_id), None)
+    if record is None:
+        raise PermissionError('refit does not belong to the selected candidate/campaign')
+    metadata, model_bytes, metadata_bytes = verified_model_bundle_bytes(record['bundle_dir'], state_path=state_path, tenant_id=tenant_id)
+    if metadata['candidate']['candidate_id'] != candidate_id or metadata['candidate']['candidate_fingerprint'] != record['candidate_fingerprint']:
+        raise ValueError('refit candidate identity mismatch')
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr('bundle.json', metadata_bytes)
+        archive.writestr('model.joblib', model_bytes)
+    return buffer.getvalue()
 
 
 def recover_workspace_links(state_path, project_id, *, tenant_id='default') -> list[str]:

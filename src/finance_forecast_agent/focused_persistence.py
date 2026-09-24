@@ -82,7 +82,7 @@ def submit_focused_campaign(
                     "memory": use_memory_prior, "source": source, "max_advisor_calls": int(max_advisor_calls), "max_http_requests":int(max_http_requests), "max_provider_seconds":float(max_provider_seconds),
                     "fixture_dir": str(Path(fixture_dir).resolve()), "operation_id": operation_id}, domain="focused-submit-v2")
     options = json.loads(canonical_json(research_options or {}))
-    if set(options) - {"input_contract", "starting_baseline", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids"}:
+    if set(options) - {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids"}:
         raise ValueError("unsupported frozen research options")
     if options:
         key = identity({"request": key, "options": options}, domain="focused-submit-options-v1")
@@ -205,7 +205,7 @@ def load_research_request(path: str | Path | None, expected_hash: str | None) ->
     payload = json.loads(target.read_bytes())
     if identity(payload, domain="focused-options-v1") != expected_hash:
         raise ValueError("frozen research request hash mismatch")
-    allowed = {"input_contract", "starting_baseline", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids"}
+    allowed = {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids"}
     if not isinstance(payload, dict) or set(payload) - allowed:
         raise ValueError("unsupported research request fields")
     return payload
