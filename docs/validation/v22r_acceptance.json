@@ -937,7 +937,7 @@
         "count_note": "Use JUnit 324 for this exact scope, not earlier oral 347/348 counts."
       },
       "B5": {
-        "status": "implemented_pending_exact_source_final_gate",
+        "status": "published_engineering_external_pending",
         "new_test_file": "tests/test_focused_b5_acceptance.py",
         "validation_kind": "engineering_only; deterministic policies, synthetic strategy/source fixtures, no provider quality claim",
         "remaining_clause_ids": [
@@ -964,7 +964,22 @@
         ],
         "handoff": "docs/CODEX_V22R_REMAINING_VALIDATION.md",
         "frozen_input_identity": "5fb282f6278d14000592e0e432fe69a5c00fdb6f7b48cbb56368fc0e3185bbcd",
-        "scientific_status": "PARTIAL; historical R5 FAIL and 47-target negative confirmation preserved"
+        "scientific_status": "PARTIAL; historical R5 FAIL and 47-target negative confirmation preserved",
+        "commit": "4c5aba9596cb75be049af3ae4368cd05cd41d10d",
+        "tested_source_tree": "43a61dd69a779f999a16f37a20151942fb26c70e",
+        "validation_run": 36292594104,
+        "cumulative": {
+          "tests": 335,
+          "passed": 335,
+          "failed": 0,
+          "skipped": 0,
+          "python": [
+            "3.11",
+            "3.13"
+          ]
+        },
+        "browser": "passed_prepublish_exact_tree",
+        "publication_note": "Engineering delivered; latest same-SHA CI is the release receipt. Subsequent documentation-only regression does not upgrade the 20 open/partial clauses or resolve frozen-input CI storage."
       }
     },
     "clauses": [

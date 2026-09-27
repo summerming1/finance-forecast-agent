@@ -179,3 +179,13 @@ def test_remaining_clause_inventory_matches_actual_partial_states():
     handoff=(ROOT/'docs/CODEX_V22R_REMAINING_VALIDATION.md').read_text()
     assert 'B0–B5' in handoff and 'G2A' in handoff and 'G2B' in handoff
     assert 'BLOCKED_ASSET' in handoff and '47' in handoff
+
+
+def test_current_guide_and_stage_do_not_instruct_obsolete_delivery():
+    guide = (ROOT/'docs/FRONTEND_USER_GUIDE.md').read_text()
+    assert '不会同步改变 **Model to explicitly refit**' not in guide
+    assert '当前选中候选是详情、显式refit和下载的唯一来源' in guide
+    stage = json.loads((ROOT/'docs/validation/v22r_acceptance.json').read_text())['b_delivery']['stages']['B5']
+    assert stage['status'] == 'published_engineering_external_pending'
+    assert stage['scientific_status'].startswith('PARTIAL')
+    assert stage['remaining_clause_ids'], 'publishing engineering must not close untested science'

@@ -1,4 +1,4 @@
-# Research Mission 使用入口（B2增量）
+# Research Mission 当前使用入口（B0–B5）
 
 当前状态见 CURRENT_IMPLEMENTATION.md。首次选择“我只有研究目标”，再选择中英文SPY日频下一交易日收益模板。选择本地合法数据、允许特征与预算，无需先填模型JSON或找论文。已有起点用户选择内置模型及参数；它不会替换固定对照，独特起点会增加训练成本。
 
@@ -62,7 +62,7 @@ Overview显示实际执行状态和研究结论；Research history区分训练�
 
 **Refit selected model and register bundle → Download ModelBundle** 显式训练并登记一个已接受候选。这个操作不是最后一个fold estimator的复制，不自动推广/部署。模型包在原环境加载需要同一个包外可信状态库；复制到另一台机器不自动授予信任。新环境迁移尚需审核，不要改trusted字段绕过。
 
-注意：上方 **Research candidate** 只控制详情展示，不会同步改变 **Model to explicitly refit**。重训前必须在后一个选择框明确选择候选并核对 ID；下载后可核对 `bundle.json` 的 `candidate` 和 `feature_columns`。新页面默认的 refit 选择可能仍是基线，不应把查看了某个候选误认为已经导出了它。
+当前选中候选是详情、显式refit和下载的唯一来源。核对 **Research candidate** 的候选 ID、模型和特征后，再点击 **Refit selected model and register bundle**；查看或切换候选本身不触发训练。下载仅对应当前候选已登记的 refit 记录，旧包仍保留原 candidate/refit ID，不会重新标成新候选。可以核对 `bundle.json` 的 `candidate` 和 `feature_columns`，但包内字段不能替代包外可信登记。
 
 ## 4. 一个受控BYO例子
 
