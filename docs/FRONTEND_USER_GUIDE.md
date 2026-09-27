@@ -326,3 +326,7 @@ projects/finance_agent/llm_fixtures/               Replay 响应
 选择已完成候选，展开“Continue selected candidate / 从当前候选继续研究”，确认新预算并点击Start new research。创建新Campaign，同Mission可在历史打开；不会复制原预测或免除新训练费用。暂停中的任务请用Resume，不要用新研究替代恢复。Replay父任务需要新的显式映射，当前续接按钮禁用。
 
 “Confirmation capability / 确认能力预检”不读取确认数据、不消耗授权，默认展示训练中位数对照的能力。supported不是eligible；真实确认仍需可信操作者登记合格数据。特征扩展或不支持的模型会明确拒绝。Refit与下载仍绑定当前候选，切换不会自动训练。
+
+## 验收状态怎么读
+
+核心/网页测试通过表示受支持工程路径可操作，不表示真实LLM长期稳定、文献增量或用户价值已通过。文献依据、迁移假设、本地数值分别看；规则演示不代表模型理解原文。原47目标负确认不是前瞻成绩。完整剩余测试在CODEX_V22R_REMAINING_VALIDATION.md。

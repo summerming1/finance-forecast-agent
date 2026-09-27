@@ -303,3 +303,11 @@ Run cumulative focused/shared queue/Memory plus affected MethodCard/review tests
 ## B4 final gates
 Run tests/test_focused_b4_delivery.py: source/final/config/seed parent tampering, double submit, unchanged parent, distinct child charges, pure summary and preflight, unsupported models before data access, zero/mean/median train-only predictions and repeated grant reads. Run the existing browser suite with FFA_BROWSER_E2E=1: both entries, selected model identity, read-only summary/preflight with zero grants, explicit child, same Mission, unchanged parent, reload and summary export. Do not replace browser checks with AppTest.
 Cumulative: focused, task queue, Memory, MethodCard v3 and shared review tests; scoped Ruff/compile. Exact tree and JUnit must match publication. Outside this gate: fresh Live literature semantics/value, real users, affected Windows checks, explicitly pinned legacy PDF/native environment. These remain a final Codex handoff, not fabricated passes.
+
+## B5 final engineering gate and external handoff
+
+Run all focused/queue/Memory tests plus test_method_card_v3, test_streamlit_review_gate and test_p09_review_backlog_timeline on the same source tree (Python3.11/3.13); run actual tests/browser with FFA_BROWSER_E2E=1. New test_focused_b5_acceptance exercises five real execution arms and separate explicit-literature engineering treatment, exact input/hash/metric/package negatives and nonzero immutable failure receipts. These tests do not establish live research or literature superiority.
+
+Use scripts/verify_frozen_spy_acceptance.py for original-hash input verification and independent arithmetic/package/new-process interface audit. Input-only PASS_INPUT_ONLY is not campaign PASS. Original input missing means BLOCKED_ASSET/nonzero, never silent Yahoo refresh. Workflow saves only this run's identity/environment/receipts, not a mixture of tracked historical validation outputs.
+
+The complete remaining A/L clause inventory is b_delivery.stages.B5.remaining_clause_ids. All external steps, safe commands, budgets, historical47-row exclusion and true user participation are in CODEX_V22R_REMAINING_VALIDATION.md. Valid implementation/engineering delivery can coexist with overall scientific acceptance PARTIAL and unavailable remote frozen-input CI.

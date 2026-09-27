@@ -72,3 +72,9 @@ python -m streamlit run apps/streamlit_app.py
 
 ## Reproducing legacy PDF fixture environment
 For the historically recorded strict parser fixture environment, explicitly install `python -m pip install -c constraints/pdf-legacy-validation.txt -e ".[dev,pdf]"` in a separate environment and record `pip freeze` plus input hashes. This does not globally pin normal runtime dependencies or authorize rewriting fixture expectations. A different installed pypdf version is not evidence of strict fixture equivalence. Long native/GPU training is separately scoped.
+
+## Frozen acceptance input recovery
+
+The old `focused-real-inputs` artifact from run35204186327 is unavailable. The final-acceptance workflow now accepts `frozen_input_run_id` on dispatch or explicit repository variable `FFA_FROZEN_INPUT_RUN_ID` for an authorized replacement **with identical original bytes**. The verifier pins raw SHA2565fb282f6278d14000592e0e432fe69a5c00fdb6f7b48cbb56368fc0e3185bbcd. A missing artifact remains nonzero/BLOCKED_ASSET and publishes a failure receipt. Do not publish the raw market data to Git or change the expected hash to accept a fresh vendor download.
+
+Local audit: first `python scripts/verify_frozen_spy_acceptance.py --help`; use a new receipt and output directory, the original input and the existing controlled state DB. No whole-campaign hard wallclock or guaranteed currency bill is implied by request/fit caps.

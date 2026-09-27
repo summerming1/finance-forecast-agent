@@ -319,3 +319,13 @@ B3 frozen-source receipt: tree `e633d8e884b588987196f81ef84475bf00a4c62d`; cumul
 本次先留13项红测，修复接线中的feature检查与project_root字段，并修正测试自身TaskSpec字段；新增20项定向测试最终通过。原长程Live、G2A/G2B科学增量、真人与受影响Windows测试不由本批离线通过替代。浏览器门禁在原链路上新增总结、零授权预检、显式续接、刷新、费用与下载核对。所有历史失败保留；发布提交与精确源码CI收据是最终依据。
 
 B4首个Chromium门禁Run36287928692保留FAIL：新Campaign已创建，但通用完成提示仍是父页面旧DOM，断言读取了未完成子记录。完成提示现在携带Campaign ID，浏览器必须等待该子ID且核对持久completed状态；未删除谱系、无额外fit或导出检查。
+
+## B5 工程验收与外部补测交接（2026-09-27）
+
+B4已按测试→提交e983c4d→同SHA核心/浏览器CI顺序完成；精确树d114929的324项双Python+Chromium均通过。旧SPY下载产物缺失造成run36291075239真实FAIL，模型未运行；本地原字节副本的smoke和复算另列，不冒充远端通过。
+
+本批先记录8项红测：6项auditor未实现、1项workflow缺显式恢复机制、1项新测试使用了不存在的telemetry字段；按现有`tpe_model_based_decisions`更正测试字段，无修改优化器。首轮独立审计发现auditor将零预测按sign而非既有>=0口径复算方向，修正auditor并增加零值测试，原评价器与原结果不变，失败收据保留。
+
+新增可单独核验原始冻结input的auditor、完整预测/包/新进程接口收据，正常CI覆盖共享审核/MethodCard测试并仅上传本次core目录。显式frozen_input_run_id用于恢复相同hash资产，不下载新行情、不降低缺资产门禁。五臂和独立L0/L1以真实训练+确定性策略+合成资料运行，只证明工程比较路径，agent_superiority/literature_value保持false。
+
+统一补测文档接管新合同Live/长程、真实文献语义、G2A/G2B、Memory增量、真人/BYO、Windows、旧schema、全仓/native和过期输入CI。所有未完整闭合A/L条款如实保留。最终源码/JUnit/浏览器以本次发布前门禁及同SHA CI为准，不合并不同环境的计数。

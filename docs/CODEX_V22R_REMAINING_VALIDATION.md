@@ -1,133 +1,100 @@
-# Codex：R0–R6 加固完成后的剩余独立验收
+# Codex：B0–B5 交付后的统一补测任务
 
-## 2026-09-23 用户澄清后的 R4 更新
+本文件是当前补测入口，替代旧“R0–R6尚未跑通”的清单，不改写历史验收收据。
+正式分支 `feat/mission-research-v2`；B4已发布 `e983c4dfb90bb96d314fb0d2a8474e31537d1223`。
+B5最终HEAD以拉取后实际Git与同SHA CI为准；不得把文档中的父提交当最终提交。
+当前状态只见 CURRENT_IMPLEMENTATION.md，批准范围见 ADR_MISSION_PRODUCT_004.md。
 
-现已按用户外部未使用声明和本地旧下载/预测记录，选2026-07-14以后47个真实SPY目标，运行一次固定留出：`independent_confirmation`、2fits、逐行指标复算 PASS，但候选MAE较基线差1.2506674%，研究结果为负。见 `validation/V22R_R0_R6_REPORT_20260923.md`。下方 `BLOCKED_NO_ELIGIBLE_DATA` 属于此前无法确认外部使用时的历史检查点。Windows symlink权限、真实用户、完整R5价值矩阵、macOS/GPU排除及V3缺口均仍存在。
+## 交给 Codex 的完整指令
 
-## 最新结论：2026-09-23
+你要做的是独立补充验收与必要最小修复，不启动V3，不重写Controller/Queue/Evaluator/Memory/MethodCard，不扩任务、资产、任意代码和交易功能。
 
-本轮安排的补测已结束，完整命令/结果见 `validation/V22R_SUPPLEMENT_20260923.md`。工程 PARTIAL；R0–R3 PASS，R4 BLOCKED_NO_ELIGIBLE_DATA，R5 FAIL，R6 BLOCKED_NO_REAL_USER。Windows 全仓 398/1/3，唯一失败为 symlink 权限；Linux 同源码核心两版本各 238 passed、Chromium/冻结 SPY CI 通过。主矩阵 Random 8/9、TPE 9/9、One-shot 4/9、Adaptive 0/9，独立长时限补测成功不冒充统一设置矩阵通过。真实数据模拟用户不是独立客户；2026 行情外部使用无法确认，不能宣称未暴露。macOS/GPU 按用户要求不测；不自动再跑矩阵或开发 V3。下文 2026-09-22 数量与当时发布状态均为历史记录。
+### 0. 安全读取与证据基线
 
-## 2026-09-22 补测更新
+先 `git fetch origin`、检查 `git status --short`、分支及HEAD。工作区不干净时保留用户修改，在单独worktree验收；不得reset、clean或force push。只允许 `pull --ff-only`，分歧时先检查而非覆盖。
+读取 AGENTS.md → PROJECT_ROADMAP.md → CURRENT_IMPLEMENTATION.md → ADR_MISSION_PRODUCT_004.md → FOCUSED_ARCHITECTURE.md → FOCUSED_ACCEPTANCE_TEST_PLAN.md → V2_MISSION_RESEARCH.md → 本文件 → validation/v22r_acceptance.json。
+记录base/head、源码树、Python/OS/关键依赖、输入hash、命令、exit和JUnit。每项用PASS/FAIL/BLOCKED/NOT_RUN；跳过、缺凭证、未调用provider都不能写PASS。
+原R1真实Live/Replay、R2 Windows恢复、R3审核动作、原浏览器与47行负确认已经有历史证据，不能再说从未实现；本轮补的是新合同/新代码/新环境。
 
-**最新续测**：用户另行批准了额度耗尽时依次换模型。本轮从 `5040c61` 开始的真实 3×3 补跑已结束：Random/TPE 各 9/9、One-shot 3/9、Adaptive 0/9；原始及新模型额度 403 均实际记录，最后切到 qwen3.8-flash 后仍有最终超时。14 项建议合同失败没有用换模型抹去。当前代码 Windows 累计 231/1/2、Chromium 1/1；真实 Live→离线 Replay、Live Memory cold/warm、下载包复算/新进程均补测。原始缺失资产恢复，匹配 PDF 环境的 27 项相关复验通过。精确命令、失败与当前发布边界见 `validation/V22R_LLM_RETRY_20260922.md`。下段 18 个 LLM 臂失败是**此前历史矩阵**，不是本次新结果。工程仍 PARTIAL，R6 仍 validation pending；不继续自动重跑或开发 V3。
+### 1. 本机核心回归与真实浏览器
 
-本轮从 `625283636cef4faa080f8521683f81491611b5ff` 继续，没有重新应用 R6。Windows 正常 Chromium 完整 E2E 已两次通过；真实百炼两轮录制→清凭证并禁止网络的新进程 Replay、真实 SPY Campaign 进程树终止/恢复、实际网页 approve/reject、模拟 CSV/Parquet 交付及可信模型新进程一致性均已补测。真实 3窗口×3种子×4臂已全部尝试（exit 1）：Random/TPE 18臂完成，18个 LLM 臂失败；47逻辑请求中29返回/18失败，费用和人工分钟数未知。不能以规则结果替换失败或声明 Agent 优势。详细最终数量/提交/CI 和未闭合项见 `validation/V22R_WINDOWS_SUPPLEMENT_20260922.md`、派生矩阵 JSON 与 `CURRENT_IMPLEMENTATION.md`。本轮结束后停止，后续诊断/重跑须另行启动，不自动开发 V3。
+建议Python3.13与3.11；本地没有某版本就记录BLOCKED_ENV，不用3.9替代。
+安装原声明extras：`python -m pip install -e ".[dev,ui,pdf,byo,benchmark,browser]"`。
+在Windows下用Python glob构造路径，避免shell通配差异：
 
-下方“正式提交结果”和原始阻塞是历史基线；验收流程仍保留供复验，不表示上述项目尚未测试。真实用户、合法未暴露确认、macOS、历史资产/native/GPU、实际人工时间和可移植信任迁移仍不能宣称已通过。Windows symlink 创建权限阻塞没有通过改 skip 消除。
-
-## 任务与边界
-
-仓库 `summerming1/finance-forecast-agent`；正式分支 `feat/mission-research-v2`。R6 已提交 `3fdd2d6403bc425d172d15eba749bcdc925f33e2`（tree `4f740f79335a0a25edc78668f0aecdd9d4a5db62`）。不要重新应用 R6 patch，也不要 merge `validation/r6-20260922`；先从正式分支拉取并确认 HEAD。
-
-本轮只做剩余验收、对抗审查和最小 bug 修复。不要重写已存在的 R0–R6，不开始 V3，不扩展资产/频率/任务，不增加第二套 Controller/Queue/Evaluator/Memory，不解除任意代码、反序列化模型或确认权限边界。模拟样例不等于真实用户/供应商/金融能力。
-
-先执行 `git status --short`、`git fetch origin`、`git branch --show-current`、`git rev-parse HEAD`、`git log -12 --oneline`。有用户未提交修改时保留，不 reset/stash/强推。记录 branch/base SHA/tree、工作区 diff、Python/OS/依赖以及 input hashes。保持原来的受控状态库；不要新建空库来重置暴露记录。更新代码前完成或取消旧运行，跨执行合同的新研究创建新 Campaign。
-
-阅读顺序：AGENTS.md → docs/PROJECT_ROADMAP.md → docs/CURRENT_IMPLEMENTATION.md → 接受的 ADR 001/002/003 → FOCUSED_ARCHITECTURE.md → FOCUSED_ACCEPTANCE_TEST_PLAN.md → V2_MISSION_RESEARCH.md → docs/validation/v22r_acceptance.json → FRONTEND_USER_GUIDE.md → 本文。CURRENT 是当前状态；V2 中旧阶段的结果是历史记录，不是新 SHA 的测试证据。
-
-### 已知 R6 原始正式提交结果（历史）
-
-- Focused Mission validation `35691460180`：Python 3.11 / 3.13 各 203 passed，Ruff 通过。
-- Focused final acceptance `35691460205`：成功。
-- Focused browser acceptance `35691460214`：失败；当前失败位于候选切换后的 combobox value 断言。应先复现这个失败并做最小修复，再继续完整浏览器路径。
-- 以上不代表真实 provider、真实客户、合法未暴露 confirmation 或 V3 已通过。
-
-## 0. 证据格式与已测范围
-
-每阶段报告 PASS / FAIL / BLOCKED_ENV / BLOCKED_ASSET / BLOCKED_CREDENTIAL / NOT_RUN_COST。给出实际命令、exit code、JUnit或日志路径、源码身份、输入身份、模拟/真实等级。不能仅说“测试通过”。无法运行要记录原因，不将其写成自动 skip 后的全绿。
-
-已经覆盖的工程路径请先复验，不重新实现：R0状态一致性；R1身份、隐藏正文过滤、不可变录制和严格回放；R2事务预算/generation/真实进程中断；R3停止/审核/消融/诊断和Memory；R4封存授权、篡改/并发/崩溃和包外模型信任；R5真正Optuna TPE、实际Advisor/共享Controller与账本遥测；R6持久网页/审核继续/研究包/受控数值特征。专用 Chromium CI 使用模拟输入和真实后台子进程，不是客户验收。此前环境的本地浏览器策略阻塞是历史记录；本轮 Windows 使用正常安装的 Chromium 通过实际 E2E，没有绕过主机策略。
-
-## 1. 当前源代码累计回归与平台矩阵
-
-按 `.github/workflows/focused-v1-validation.yml` 当前命令运行 focused + shared queue + Memory、Ruff、compileall。Linux shell会展开 glob，PowerShell 不要把未展开的字符串直接交给 pytest：
-
-```powershell
-$tests = Get-ChildItem -Path tests/test_focused*.py,tests/test_task_queue*.py,tests/test_*memory*.py | Select-Object -ExpandProperty FullName -Unique
-python -m pytest -q $tests --junitxml=validation/local-cumulative.xml
+```python
+import glob, subprocess, sys
+paths = sorted({p for pattern in ('tests/test_focused*.py','tests/test_task_queue*.py','tests/test_*memory*.py') for p in glob.glob(pattern)})
+paths += ['tests/test_method_card_v3.py','tests/test_streamlit_review_gate.py','tests/test_p09_review_backlog_timeline.py']
+raise SystemExit(subprocess.call([sys.executable,'-m','pytest','-q',*paths,'--junitxml=validation/local-core.xml']))
 ```
 
-Python3.11/3.13分别建立环境。没有相应解释器时记录BLOCKED_ENV，不能把其他提交的CI算成本机验证。Windows重点复验无副作用存活检查、PID创建时间、进程树取消、generation fencing、Parquet、路径空格/Unicode、模型包新进程推理。macOS同样单列。Linux POSIX kill测试跳过不等于Windows恢复正确。
+设置 `FFA_BROWSER_E2E=1`、`FFA_BROWSER_ARTIFACTS=validation/local-browser`，安装正常Playwright Chromium，执行 `python -m pytest -q tests/browser --junitxml=validation/local-browser.xml`。不绕过管理员浏览器/网络策略。
+重点：两个入口、数据草稿不丢、当前候选A导出A、切B不误标A、刷新/新会话不训练、总结不触发LLM、确认预检不读标签/不创建授权、新Campaign与resume区别、同Mission与正确父ID、子任务自己的完成提示、父记录不变与新增费用可核对。
+Windows符号链接权限缺失标BLOCKED_ENV，不改系统策略；macOS/GPU按用户本轮范围不执行。
 
-## 2. R1/R3/R5/R6：真实百炼 live → 不可变录制 → 严格离线 replay
+### 2. 冻结真实SPY及过期CI产物恢复（优先）
 
-使用用户现有合法provider凭证；不要打印/提交API key，不修改实际模型名称来假装可用。当前上下文/feature contract比旧fixture增加了字段，必须在最终SHA上重新录制。
-
-先运行2轮、每轮1候选、小预算的真实live。保存每轮prompt/call_id/provider/model/response及record hash、usage、HTTP重试、编译结果、真实候选/Feedback。格式错误明确拒绝；允许的重试要有成本和失败记录，不silent fallback。
-
-随后选择同一组call_id，以同Task/Data/Protocol/能力/Memory快照运行replay。**清除环境key不等于严格断网**；使用隔离进程和可验证的网络请求禁用/网络命名空间/测试HTTP入口断言，确认provider请求次数为0。不要修改生产网络安全策略。`.env`可能重新加载凭证，必须考虑这个路径；禁止网络而不是猜测无凭证。
-
-核对prompt、计划、CandidateConfig、逐行预测、指标一致；source/时间/运行ID允许按设计不同。负例：缺录制、重复prompt多个call_id未指定、修改response/record/metadata、跨provider误选、隐藏证据哨兵正文、错误parent/control/feedback角色、超范围参数，均失败且不开始训练。
-
-没有凭证：BLOCKED_CREDENTIAL。手写fixture和deterministic绝不能填成live结果。
-
-## 3. R2/R3/R6：完整网页和实际中断验收
-
-固定 `FFA_WORKSPACE_STATE_DB` 为操作者原来的权威库；URL只使用已登记的project/mission/campaign ID。按照 `.github/workflows/focused-browser-acceptance.yml` 或本地已授权浏览器运行：
+已发现旧CI `focused-real-inputs` 的run `35204186327` 产物不可用，B4发布run `36291075239` 实际FAIL于下载，模型步骤未执行。不能把它写成算法失败，也不能把本地通过写成远端通过。
+使用原始合法本地副本，原raw SHA256必须为：
+`5fb282f6278d14000592e0e432fe69a5c00fdb6f7b48cbb56368fc0e3185bbcd`。
+源元数据还需与raw一致。不要重新向Yahoo下载一份再假装同一冻结输入；用户后来0BB0…等其它副本也不是本收据的同一字节版本。
 
 ```text
-创建固定中/英文模板 → 配置真正生效的起点基线/允许特征/预算
-→ 提交到队列 → 候选A/B切换 → 页面刷新
-→ 关闭浏览器 → 新上下文打开历史URL/历史选择器
-→ 下载ResearchPackage → 独立哈希核对与指标复算
-→ 显式refit并下载ModelBundle
+python scripts/verify_frozen_spy_acceptance.py --inputs INPUT_DIR --check-input-only --receipt validation/input-check.json
+python scripts/run_focused_spy_campaign.py --project-dir RUN_DIR --raw-spy-json INPUT_DIR/spy_chart_2010_2025.json --source-metadata INPUT_DIR/spy_source.json --advisor-mode deterministic --rounds 3 --candidates-per-round 2 --max-fit-calls 40 --state-db STATE_DB
+python scripts/verify_frozen_spy_acceptance.py --inputs INPUT_DIR --campaign-root RUN_DIR/focused_campaigns/ACTUAL_CAMPAIGN_ID --state-db STATE_DB --output-dir NEW_AUDIT_DIR --receipt validation/real-spy-audit.json
 ```
 
-操作期间研究attempt数不能因查看/下载增长。相同表单重复提交保持同operation；有意新一轮先显式准备新任务。错误task（weekly volatility/QQQ/trading）不能静默映射SPY。Arrow混合类型警告不能通过丢弃原始diff解决。
+每次换新输出目录/收据名；不得覆盖原失败。该auditor复算8份预测、检查完整包索引和哈希、显式refit一个已接受Ridge、在新进程执行8行无label推理；推理输入是训练尾部接口样本，不能称样本外预测。
+如已合法将相同字节存于可访问Actions artifact，可在workflow_dispatch指定 `frozen_input_run_id`，或显式配置repo变量 `FFA_FROZEN_INPUT_RUN_ID` 后运行**同一HEAD**。workflow仍按固定hash核验、缺资产仍失败，保存BLOCKED_ASSET收据。
+不上传原行情到公开Git、不降低许可限制。没有合法存储/副本就保留BLOCKED_ASSET，不能把CI改成skip/continue-on-error制造绿灯。
 
-再使用可追踪Replay计划触发request_review，真实网页批准/拒绝/恢复；等待阶段不额外调用LLM或fit。仅AppTest/API通过时不能写真实浏览器审核已通过。
+### 3. 新合同真实Live→记录→严格离线Replay及长程稳定性
 
-真实queued Campaign完成基线及候选A，在B的可控同步点终止进程树；Windows用正常原生终止接口，Linux用POSIX。恢复后检查A/基线零重训、冻结计划及Memory快照不变、失败预留不退回、重试新attempt计费、旧worker迟到不能覆盖。保留中断时点、PID+创建时间、DB/事件及文件hash。测试进程已训练但未提交、已保存预测但未提交状态、取消与完成竞争、活着的孤儿子进程、同时提交同key、held任务关联中断等边界。
+仅使用用户已授权的provider/model和费用范围。无凭证或费用授权写BLOCKED_NO_PROVIDER/BLOCKED_NEEDS_AUTH，不自动关闭免费限额或换模型，不公开key。
+先检查实际policy：connect/read/deadline、HTTP请求上限、累计provider活动秒、max tokens、temperature、模型别名。预检不是余额查询；别名不是可保证固定的模型版本。记录提供者实际返回标识及别名风险。
+从2轮小任务开始，不直接重跑36/45臂。CLI先 `--help` 核实：`--max-advisor-calls`、`--max-http-requests`、`--max-provider-seconds`、`--fixture-dir`、`--state-db`、`--no-memory`。总训练仍fit受限，不宣称整个Campaign墙钟或人民币硬上限。
+验证第N轮超时/额度故障后waiting_provider，恢复同合同不重训前N-1轮、原计划不变；迟到响应/并发恢复同决策最多接受一份计划，新HTTP尝试仍计费、未知费用为null。
+在新进程禁止网络且移除keys后Replay，使用显式prompt-hash→call-ID映射；核对proposal、实际diff、反馈引用、逐行预测、数值和源版本。仅清key不等于系统级断网。至少完成一条代表性长程轨迹，几次成功只能作初步可靠性证据。
 
-使用测试创建的任务/PID，不能误终止用户其他任务。
+### 4. 文献真实语义与权限（G1）
 
-## 4. R4：真实确认资格与可信模型包
+准备2–3篇合法原始资料，审阅实际段落/页码而非只看模型摘要。通过既有MethodCardVersionStore与review_focused_literature.py按具体版本审核；哈希只证明一致性。
+至少一条当前可执行思想和一条限制/反证：原文事实→迁移差异→真实LLM假设→实际单因素或明确联合修改→反馈→下一批决策→Replay。无关/不支持观点应合理拒绝；不要求输入不同就强行输出不同模型。
+provider必须在audience许可中。对抗测试：原文注入指令不能改label/预算/权限；正确ID但误引不能被视为语义通过；运行中撤销权限后含重试不能再发送；版本替换不能无审计继承；受限ResearchPackage不含原文、prompt或派生私有叙述。
+文献准备和人工审核成本未知时保留未知，不填零。现有确定性规则不解释论文，fixture证明工程，不证明真实理解。
 
-工程负例必须复验，但真实金融确认没有合格输入就保持 BLOCKED_NO_ELIGIBLE_DATA。旧SPY、模型开发中见过的时段、改名/改标签/改变特征/换seed均不成为未见目标；用户自报sealed不能直接授权。确认数据来自可信操作者审核的封存来源，不是系统自动证明人类没见过。
+### 5. G2A：实际五臂小规模匹配对照
 
-首版只支持冻结训练集各fit一次的固定留出；模型/基线/目标行/评价/代码/环境必须先冻结。Worker只按grant ID加载实际登记数据；模拟输入或模拟来源的结果必须保持simulation_only_confirmation。确认结果不能作为当前研究Memory或Advisor调参反馈。并发、失败和训练后崩溃消费资格；没有“自动重置资格”补测。
+`python scripts/run_research_value_benchmark.py --help`。
+用一个固定开发窗口、一个search seed先跑Random/TPE/One-shot/Adaptive-step/Adaptive-batch，实际名称为 `random tpe one_shot adaptive adaptive_batch`。
+建议首个有效小比较候选预算8、startup-trials4、batch-size2，固定estimator seed、raw/目标行/切分/目录/模型/调用合同，memory冷。若实际服务预算不足，提前冻结更小方案并说明TPE是否进入model-based阶段，不拿纯startup冒充优化效果。
+参考入口：`--raw-spy-json RAW --source-metadata META --arms random tpe one_shot adaptive adaptive_batch --llm-mode live --fixture-dir FIXTURES --candidate-count 8 --startup-trials 4 --batch-size 2 --seed 42 --estimator-seed 42 --windows all --memory-mode cold --out NEW_REPORT.json`。
+检查所有尝试/唯一候选/失败/重复、实际fit、LLM逻辑/HTTP次数、时间、token/unknown成本。合法stop可完成，不强迫找赢家；失败best-so-far不进完成排名；不得选择性保留最佳重试。混模型/timeout必须分版本，search seed不是provider seed。
+有限目录和重叠历史窗口限制明确；旧R5主矩阵FAIL保留，新结果另写有版本收据，不改历史。
 
-ModelBundle加载前检查包外DB、租户、元数据/模型hash、路径/符号链接、环境。改包内trusted字段无效；不得为便于搬迁而自动信任包旁数据库。未经审核的旧包重发；真正跨机器可信登记迁移尚未实现，记录BLOCKED_UNSUPPORTED而不是解除校验。自定义ext特征模型交付可测，但当前确认协议不支持该特征，不能假装已有custom-feature confirmation。
+### 6. G2B：文献增量单独比较
 
-验证训练截止包括已成熟标签。训练尾部删label后预测只证明接口；必须另外使用真实未来/样本外输入才能讨论预测效果。
+相同Adaptive策略、模型/服务、预算、目录、目标行、context模式和memory冷，对照 L0不提供显式文献 / L1固定1–3条审核观点。
+入口：相同冻结参数加 `--arms adaptive_batch --literature-ablation --literature-project LIB --literature-review-ids REVIEW_ID --memory-mode cold --llm-mode live`。用新的out，不与G2A巨型全交叉。
+两组的运行状态分开，只有完成且合同一致才配对；不给L0读取L1解释/Memory，但保持真实曝光历史。L0不是模型无预训练知识；L1需单列额外准备/人工费用。评价忠实性、实验设计、反例使用、劳动和误差/成本，不要求文献必胜。
+另需Memory cold/warm有效增量对照时，在固定历史快照与预算下单独执行；结构上可读记忆、重复本就为零不能当成越用越聪明。
 
-## 5. R5：有意义的真实LLM策略对照和Memory消融
+### 7. 1–3位真实研究者与受控BYO（G3）
 
-使用新版 `scripts/run_research_value_benchmark.py`，而不是旧proxy结果。四组Random/真实OptunaTPE/实际one-shot Advisor/实际adaptive Advisor，所有fit仍经同Controller/evaluator/账本。模式明确live/replay/deterministic，不把规则策略标LLM。
+至少覆盖无模型目标入口和已有模型/一个审核ext_*数值特征入口。用户本人操作；助手模拟不得计为真人。记录接入分钟、代操作步骤、结果理解、是否正确下载当前候选、是否把结果用于下一次研究、真实再次使用。
+无真实用户写BLOCKED_NO_REAL_USER。数据时点仅声明和系统核验分开；无raw价格无法复算标签需如实降级。不能为使用便利开放任意pickle/Python/Docker。
 
-先六配置枚举验证去重，再冻结足以越过TPE startup的有界搜索空间和预算。参考命令（实际成本先核查现有许可与预算，不能无限扩大）：
+### 8. 确认与历史/native/迁移边界
 
-```text
-python scripts/run_research_value_benchmark.py --raw-spy-json inputs/spy_chart_2010_2025.json --source-metadata inputs/spy_source.json --candidate-count 12 --startup-trials 4 --seeds 17 42 91 --windows 2010-01-01 2013-01-01 2016-01-01 --llm-mode live --fixture-dir validation/live-benchmark --out validation/value-live.json
-```
+新zero/mean/median确认对照用模拟授权测试：只读训练标签，统计次数与fit分开，重复授权不执行；preflight不等于eligible。不重复使用已披露47行，不重新挑窗口/阈值/基线争取通过。真实新确认仅在合法新数据、预冻结且用户单独授权条件下执行。
+复核包外可信登记、被改模型/权限路径、跨进程加载。跨机器迁移信任尚未实现，不能靠复制包/注册库自动声称支持。
+旧运行schema按兼容合同只读或显式拒绝，不能改hash强行恢复、不能空库洗曝光。
+执行一次全仓pytest并逐项分类当前失败，缺资产不是成功；传统PDF/native环境按 constraints/pdf-legacy-validation.txt 单独安装，记录解析器版本，禁止批量改fixture掩盖差异。无需为这次客户端/交付改动强行跑GPU/小时级论文训练。
 
-samewindow内成对比较；目标重叠的窗口不是独立样本；确定性重跑不增加统计样本量。检查独特配置、重复提案、真实有效seed、实际fit预留/开始/完成/不确定消耗、失败候选、无改善但有效的实验、fold稳定性、LLM/HTTP调用、usage和成本。provider未返回usage或定价未知则保留null，不报0；人工时间必须有实际测量，不能由token或walltime虚构。
+### 9. 结果和最小修复交付
 
-主对照Memory cold。单独固定一个审核过的先验文件，使用`--memory-mode ablation --memory-store ...`，各arm独立副本、同一初始快照、不互看结果。确认减少的是重复实验或操作时间，不把历史最好分数当本轮结果。Agent不必胜过TPE；不删失败/负结果、不换threshold找赢家。报告有限结论与不确定性。
-
-## 6. R6：真实用户受控BYO及验证等级
-
-需要真实设计合作用户的非核心CSV/Parquet、一个审核数值因子和内置基线配置。仅支持SPY日频next-session任务，ext_*一个数值列；不上传LightGBM/joblib/脚本来伪称兼容，不增加自动代码执行。
-
-记录来源、许可、标签定义、逐行时点、reviewer、feature版本、data raw/semantic/target IDs、接入人工分钟数、研究结果可读性、是否愿意第二次使用。没有用户就BLOCKED_NO_REAL_USER；两个模拟客户只证明复用，不证明需求/付费或低接入成本。
-
-对照复算有价格/无价格/最后标签无下一价格三种情况；无价格保留user_declared_unverified，提供的时间戳一致不证明特征来源无泄漏。测试duplicate header/column mapping collision、NaN/Inf、非交易日、缺session、周级horizon、最后目标、错timezone、feature available_at>decision_at、自报sealed、未审核feature、变metadata清洗exposure。两个客户端必须走导入→队列→Controller→Manifest→反馈→研究包→模型包，而不只测loader。
-
-## 7. R0及整个仓库：历史资产、文档与长期可复验
-
-核对README/Roadmap/Handoff只引用当前能力，不让历史“PR已完成”代替R验收。保存每条新失败的nodeid、首个异常、缺失文件、期望hash、是否R5基线同样失败、修复归属。不能删除历史native测试，不能把缺资产标科学成功。
-
-全仓测试可先collect-only，再在明确时间/GPU预算内执行。缺PDF、method card、官方checkout/patch、DVC数据、长训练环境分别标记BLOCKED_ASSET/BLOCKED_ENV/NOT_RUN_COST。CI中老的冻结SPY artifact有保留期；使用用户保存的冻结副本和hash，不换最新下载制造同名“冻结数据”。如果artifact过期，修复可复验的资产供应方式，不降低断言。
-
-R0–R6当前使用单机可信操作者。多主机SQLite共享、恶意同OS用户、真正SaaS认证/权限、巨大文件DoS、长时间生产运维不在已验收范围；不要在本轮暗中创建企业平台。
-
-## 8. V3准备而非开发
-
-分别报告：INTERNAL_FORWARD_RECORDING_READY、EXTERNAL_PILOT_READY、RESEARCH_VALUE_EVIDENCE。内部前瞻准备检查模型/输入版本、decision_time、prediction_created_at、input_asof、target_session、label_end_time、label_available_at、修订规则、不可覆盖记录。没有真实客户或尚未击败TPE不是内部记录的绝对阻塞，但时间/完整性不可靠时不能开始。当前没有实现正式prediction生命周期或定时Shadow平台，本轮不新增。
-
-## 修复与最终交付
-
-发现bug先保存失败测试/步骤，最小修复，定向回归→累计相关回归→lint/compile→有影响的真实数据/浏览器→单独commit及非强推→核对同SHA CI。不要修改评价来让模型赢，不隐藏前一批失败日志，不把未推送本地源码说成已交付。
-
-最终给出每阶段状态、各OS/Python矩阵、实际live次数、严格断网回放证据、真实/模拟BYO、合法确认与缺口、Benchmark分布与限制、全仓失败清单、截图/日志/包的位置、base/finalSHA和用户实际操作流程。明确哪些新能力未实现而非仅未测试。停止在补测与修复，不自动进入V3。
+JSON中的48条A/L验收逐项核对；`remaining_clause_ids`列出未完整关闭的条款。尤其并发恢复、真实断线成本、文献提示注入/误引、批内未来证据、L0/L1污染和人为成本需要对抗检查。没有证据保持PARTIAL/NOT_RUN，不用测试总数替代条款覆盖。
+发现缺陷先保留失败样例→最小修复→定向测试→受影响核心/浏览器→更新现有V2日志和CURRENT→单独提交。不得放宽证据规则、静默fallback、改历史科学结果、无限重试求赢家。
+最终报告必须包含：base/head/tree、每组命令/exit/JUnit、真实/模拟输入、哪些由本次重跑哪些只引用历史、provider实际请求与费用未知、PASS/FAIL/BLOCKED清单、下一步。不承诺自主研究稳定优胜；V3仍未启动，前瞻生命周期不是本轮补测可以凭空通过的功能。

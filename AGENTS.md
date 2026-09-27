@@ -9,7 +9,7 @@ Read, in this order:
 1. `AGENTS.md`
 2. `docs/PROJECT_ROADMAP.md`
 3. `docs/CURRENT_IMPLEMENTATION.md`
-4. the latest one or two version notes, currently `docs/P1_FOCUS_F0_F1.md`
+4. the latest one or two version notes, currently the B0–B5 log in `docs/V2_MISSION_RESEARCH.md` (older `docs/P1_FOCUS_F0_F1.md` is historical)
 5. accepted ADRs relevant to the work, especially `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, and `docs/ADR_MISSION_PRODUCT_003.md`, `docs/ADR_MISSION_PRODUCT_004.md`
 6. `docs/FOCUSED_ARCHITECTURE.md`
 7. `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`
@@ -146,3 +146,6 @@ User approved sequential R0→R6 inside the existing scope. `CURRENT_IMPLEMENTAT
 The user approved the complete literature-grounded revision. Follow B0→B5 in the handoff: test, persist evidence and commit each batch before the next. Do not reopen already documented Live/Windows recovery/browser successes as unimplemented. Provider fees and user validation remain explicit, not fabricated. Model aliases/timeouts/unknown charges must be recorded; never silently enable paid usage or change models.
 
 Literature default recipes and research evidence are different. Bind MethodCard/source versions and review purpose; preserve author fact, local transfer and measured result separately. No extra Controller, Queue, method-card store, vector service or autonomous paper crawler. A citation is not evidence of incremental value. Related projects share the original exposure/trust database.
+
+## 13. B5 remaining acceptance
+Use docs/CODEX_V22R_REMAINING_VALIDATION.md for the consolidated remaining tests. Read actual same-SHA CI; expired data-artifact failures are not passes and must not be hidden by skips or replacement data. Verify original input bytes with scripts/verify_frozen_spy_acceptance.py. Do not mistake deterministic five-arm/L0–L1 integration for provider quality or user acceptance; preserve every partial A/L clause in the JSON inventory.

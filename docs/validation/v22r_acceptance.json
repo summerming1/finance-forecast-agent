@@ -908,14 +908,64 @@
         "validation_run": 35975040348
       },
       "B4": {
-        "status": "implemented_pending_final_delivery_gate",
+        "status": "published",
         "baseline": "257ed0fef9024a25692f04215dda5a35e2c601ef",
         "new_test_file": "tests/test_focused_b4_delivery.py",
         "targeted_passed": 20,
         "response_origin": "offline/deterministic/localHTTP only",
-        "external_tests": "defer explicitly to final Codex handoff"
+        "external_tests": "defer explicitly to final Codex handoff",
+        "commit": "e983c4dfb90bb96d314fb0d2a8474e31537d1223",
+        "tested_source_tree": "d11492991fd7cd33c3786d97241e736437a9b2d1",
+        "validation_run": 36288307732,
+        "cumulative": {
+          "tests": 324,
+          "passed": 324,
+          "failed": 0,
+          "skipped": 0,
+          "python": [
+            "3.11",
+            "3.13"
+          ]
+        },
+        "same_sha_core_run": 36291075244,
+        "same_sha_browser_run": 36291075268,
+        "frozen_input_ci": {
+          "run": 36291075239,
+          "actual_conclusion": "failure",
+          "reason": "BLOCKED_ASSET: expired original input artifact; model steps not run"
+        },
+        "count_note": "Use JUnit 324 for this exact scope, not earlier oral 347/348 counts."
       },
-      "B5": "planned"
+      "B5": {
+        "status": "implemented_pending_exact_source_final_gate",
+        "new_test_file": "tests/test_focused_b5_acceptance.py",
+        "validation_kind": "engineering_only; deterministic policies, synthetic strategy/source fixtures, no provider quality claim",
+        "remaining_clause_ids": [
+          "A04",
+          "A06",
+          "A12",
+          "A20",
+          "A23",
+          "A24",
+          "L04",
+          "L09",
+          "L10",
+          "L11",
+          "L12",
+          "L14",
+          "L15",
+          "L16",
+          "L17",
+          "L18",
+          "L19",
+          "L21",
+          "L22",
+          "L24"
+        ],
+        "handoff": "docs/CODEX_V22R_REMAINING_VALIDATION.md",
+        "frozen_input_identity": "5fb282f6278d14000592e0e432fe69a5c00fdb6f7b48cbb56368fc0e3185bbcd",
+        "scientific_status": "PARTIAL; historical R5 FAIL and 47-target negative confirmation preserved"
+      }
     },
     "clauses": [
       {
@@ -949,7 +999,7 @@
         "id": "A04",
         "scenario": "响应发出但本地断线",
         "expected": "delivery/usage unknown，重试另计，不宣称provider exactly-once",
-        "status": "planned",
+        "status": "not_run",
         "tests": []
       },
       {
@@ -965,8 +1015,10 @@
         "id": "A06",
         "scenario": "同decision并发恢复",
         "expected": "最多一份计划被接受，所有HTTP尝试留痕",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_r2_runtime.py::test_atomic_cross_process_idempotency"
+        ]
       },
       {
         "id": "A07",
@@ -1018,22 +1070,28 @@
         "id": "A12",
         "scenario": "同批候选B引用尚未完成A",
         "expected": "拒绝；不能以A未来结果作为本批证据",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_adaptive_batch_uses_prior_batch_not_same_batch_future"
+        ]
       },
       {
         "id": "A13",
         "scenario": "摘要只剩获胜案例",
         "expected": "测试失败；所有实验状态与关键反例必须保留",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_compact_context_preserves_all_statuses_and_source_limitations"
+        ]
       },
       {
         "id": "A14",
         "scenario": "catalog ID附加矛盾params",
         "expected": "拒绝，不猜哪一个为真",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_catalog_reference_rejects_conflict_and_unknown_id"
+        ]
       },
       {
         "id": "A15",
@@ -1048,8 +1106,10 @@
         "id": "A16",
         "scenario": "刷新/多浏览器读取",
         "expected": "同持久ID恢复，查看不增加provider调用或fit",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/browser/test_research_workspace.py::test_real_browser_queue_history_refresh_download_and_byo"
+        ]
       },
       {
         "id": "A17",
@@ -1082,35 +1142,45 @@
         "id": "A20",
         "scenario": "比较随机组无provider与Live组",
         "expected": "允许的策略差异显式记录；共同数据/评价必须一致",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_b5_acceptance.py::test_actual_five_arm_engineering_matrix_uses_shared_executor"
+        ]
       },
       {
         "id": "A21",
         "scenario": "One-shot与Adaptive混模型/超时",
         "expected": "不汇总为同设置算法胜负；保留独立试验",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_g2a_and_g2b_keep_strategy_treatment_and_completion_distinct"
+        ]
       },
       {
         "id": "A22",
         "scenario": "失败臂拿best-so-far冒充完成",
         "expected": "状态仍失败/部分，成本进入可靠性报告",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_g2a_and_g2b_keep_strategy_treatment_and_completion_distinct",
+          "tests/test_focused_r5_benchmark.py::test_failed_fit_is_charged_and_not_erased_from_report"
+        ]
       },
       {
         "id": "A23",
         "scenario": "新代码读取旧schema数据",
         "expected": "支持的迁移显式、可审计；不支持则只读/阻断，不能改写旧hash",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_r1_contracts.py::test_legacy_response_hash_checked_and_no_silent_upgrade",
+          "tests/test_focused_r2_runtime.py::test_resume_rejects_contract_or_artifact_tampering"
+        ]
       },
       {
         "id": "A24",
         "scenario": "在原47行重用确认授权",
         "expected": "只读原封存结果或拒绝新计算；不重跑挑好分数",
-        "status": "planned",
+        "status": "not_run",
         "tests": []
       },
       {
@@ -1189,29 +1259,31 @@
         "id": "L09",
         "scenario": "原文内指令要求改label/预算/禁门",
         "expected": "作为资料而非系统命令，本地合同仍阻断",
-        "status": "planned",
+        "status": "not_run",
         "tests": []
       },
       {
         "id": "L10",
         "scenario": "ID正确但引用与假设内容无关",
         "expected": "语义人工抽检标不合格；不能用结构校验通过宣布证据支持",
-        "status": "planned",
+        "status": "not_run",
         "tests": []
       },
       {
         "id": "L11",
         "scenario": "Agent自己选择alpha=5等工程参数",
         "expected": "归入本地迁移假设，除非原文真有，否则不得说论文要求该值",
-        "status": "planned",
+        "status": "not_run",
         "tests": []
       },
       {
         "id": "L12",
         "scenario": "文献名义下联合修改并称单因素消融",
         "expected": "现有action/config-diff门禁拒绝；不能凭权威引用豁免",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_r3_actions.py::test_ablation_is_derived_from_actual_parent_and_rejects_joint_change"
+        ]
       },
       {
         "id": "L13",
@@ -1226,21 +1298,21 @@
         "id": "L14",
         "scenario": "实验看到好分数后补论文来“解释计划”",
         "expected": "原冻结提案不变；后验解释单列，不能冒充事前依据",
-        "status": "planned",
+        "status": "not_run",
         "tests": []
       },
       {
         "id": "L15",
         "scenario": "输入资料全部无关/不支持",
         "expected": "可不采用、说明理由；不得强迫制造一条论文实验",
-        "status": "planned",
+        "status": "not_run",
         "tests": []
       },
       {
         "id": "L16",
         "scenario": "文献相关候选训练崩溃",
         "expected": "工程失败/inconclusive，不能把论文或方法记成科学负结果",
-        "status": "planned",
+        "status": "not_run",
         "tests": []
       },
       {
@@ -1265,22 +1337,30 @@
         "id": "L19",
         "scenario": "L0无文献组继承L1解释/Memory",
         "expected": "预检阻断污染；新组不带对照方新结果或文献解释",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_b5_acceptance.py::test_actual_g2b_treatment_keeps_engineering_and_literature_value_separate",
+          "tests/test_focused_r5_benchmark.py::test_cold_warm_isolation_uses_frozen_exact_task_prior"
+        ]
       },
       {
         "id": "L20",
         "scenario": "文献对照同时改模型/batch/候选范围",
         "expected": "拒绝当单因素增量比较，允许作为另一个明确实验保存",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b3_literature.py::test_g2a_and_g2b_keep_strategy_treatment_and_completion_distinct"
+        ]
       },
       {
         "id": "L21",
         "scenario": "有文献组额外抽取/调用却报成本0",
         "expected": "成本/预处理身份保留；未知不填0，复用成本不重复记",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_b4_delivery.py::test_summary_distinguishes_provider_failure_and_no_research",
+          "tests/test_focused_r5_benchmark.py::test_failed_provider_attempt_has_unknown_cost_not_zero"
+        ]
       },
       {
         "id": "L22",
@@ -1304,8 +1384,10 @@
         "id": "L24",
         "scenario": "用户看到引用就把结果称严格复现/独立确认",
         "expected": "总结、UI、文档均限定证据等级；只可核对当前实际条件",
-        "status": "planned",
-        "tests": []
+        "status": "partial",
+        "tests": [
+          "tests/test_focused_b4_delivery.py::test_summary_keeps_paper_facts_transfer_and_measurements_separate"
+        ]
       }
     ],
     "external_gates": {
@@ -1314,7 +1396,10 @@
       "real_users": "not_run",
       "strategy_value": "not_run",
       "literature_increment": "not_run",
-      "windows_affected_features": "not_run"
+      "windows_affected_features": "not_run",
+      "frozen_input_remote_ci": "BLOCKED_ASSET_until_original_artifact_restored",
+      "same_version_full_repo_native": "not_run",
+      "strict_pdf_parser_matrix": "not_run"
     }
   }
 }

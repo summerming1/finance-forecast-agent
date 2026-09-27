@@ -1,6 +1,6 @@
 # 当前版本功能与技术实现说明
 
-## 唯一当前状态（V2.2-R / B4 总结、续接与确认预检，2026-09-27）
+## 唯一当前状态（V2.2-R / B5 工程收口与统一补测，2026-09-27）
 
 验收缺口分轴保留；后续批次的计划不得冒充实际完成。
 
@@ -26,8 +26,8 @@
 | B1 | 已实现分类错误、硬调用时限、HTTP/时间账本、等待提供者与同决策恢复；定向14项、相关累计254项通过；真实服务/Windows补测单列 |
 | B2 | 已发布49a486a；267项双Python与Chromium通过，源码树与发布一致；外部用户未验证 |
 | B3 | 已发布257ed0f；精确树b825b6f的304项双Python累计回归和Chromium通过，正式同SHA三套CI通过；初始失败收据不覆盖 |
-| B4 | 已实现确定性总结、已接受候选绑定的新Campaign、确认能力预检和朴素对照；最终发布以本批精确源码CI为准，外部测试单列 |
-| B5 | planned |
+| B4 | 已发布e983c4d；精确源码双Python324项与Chromium通过，正式同SHA核心/浏览器通过；真实SPY远端因旧输入产物缺失FAIL，不能报全CI绿 |
+| B5 | 工程验收脚本、五臂/显式文献成对集成与统一Codex补测已实现；最终交付以精确源码CI收据为准，真实提供者/语义/真人增量不冒充通过 |
 
 ## 原能力、证据与兼容
 
@@ -35,7 +35,7 @@
 
 单机可信操作者，沿用 RuntimeDB/LocalTaskQueue/Controller/Evaluator/Memory/MethodCard。JSON 是投影而非第二套状态。相关项目必须复用原受控数据库；空库不代表数据未曝光。升级前完成或取消旧运行，跨代码/数据/环境/调用政策的合同不强行恢复。
 
-现有 CLI：`scripts/run_focused_spy_campaign.py`；现有网页：`apps/streamlit_app.py` 下 Research Mission。双入口已发布；文献代码须通过本批精确源码树验收，真实服务与文献贡献单列。
+现有 CLI：`scripts/run_focused_spy_campaign.py`；现有网页：`apps/streamlit_app.py` 下 Research Mission。双入口已发布；文献工程代码已通过B3精确源码树验收，真实服务与文献贡献单列。
 
 ModelBundle 通过平台显式 refit、包外可信登记后加载；复制包不自动迁移信任。独立确认只从固定授权加载登记数据，消费后不可重试挑分数。新研究不能继承确认指标作开发反馈。
 
@@ -86,3 +86,13 @@ B3 初始检查点的292/2失败保存在历史日志；关闭收据见257ed0f�
 `preflight_confirmation` 只检查模型/特征/协议/环境能力，不读数据或确认标签，不建库/授权。它不是eligible结论。创建授权先做此预检，再核验注册数据、时间和独立资格。未来固定留出支持zero/train_mean/train_median作对照，仍复用原train-only数值实现；mean/median仅用授权训练标签，统计计算独立记账，不冒充estimator.fit。朴素对照不因此变成可导出模型；审核自定义特征确认仍不支持。原47行负确认/一次性消费边界保持不变。
 
 主页给出任务入口，高级论文工作台保留在`?lab=1`与原模块；ResearchPackage包括可分发总结。受限文献仍采用reference_only，不自动导出派生叙述、原文或私有路径。旧合同不改hash强行恢复。PDF旧fixture环境在constraints/pdf-legacy-validation.txt显式选择，本机未安装该版本不能报strict解析验收成功。
+
+## B5 验收与交接
+
+`tests/test_focused_b5_acceptance.py`在原Controller/Optuna上执行五臂和独立L0/L1工程集成，不建立另一套runner/数值评价。两组规则策略未调用真实LLM，Synthetic来源不代表文献理解；增量标志保持false。
+
+`verify_frozen_spy_acceptance.py`核验原始输入hash、逐行复算MAE/RMSE/方向准确率、包索引与每个文件hash、显式refit及新进程无标签接口；零预测按既有指标的>=0定义，不改原评价器。费用与外部科学证据不由该脚本升级。输出目录/收据不可覆盖；失败仍非零退出。
+
+冻结SPY同SHA远端验收的旧7天产物已不可用：B4 run36291075239在下载处FAIL，未训练。B5支持显式指定冻结输入run或repo变量并固定核验原hash；不自动拉新行情，缺资产继续fail closed并保存BLOCKED_ASSET。当前容器已恢复原始合法副本并在B4运行4002行/20 fits/8预测复算/27文件hash/1次refit/8行新进程接口通过，但这不替代远端资产恢复。
+
+补测唯一入口：`CODEX_V22R_REMAINING_VALIDATION.md`。48条A/L按实际自动化覆盖、语义/平台/真人边界分别标记，未闭合ID保存在JSON；不是全部PASS。没有运行新付费provider、完整45臂、真人或新金融确认；整体证据仍PARTIAL，V3仍未启动。

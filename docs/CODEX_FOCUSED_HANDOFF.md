@@ -23,3 +23,6 @@ B1 复用客户端/RuntimeDB，B2 复用 Mission/Controller，B3 复用 MethodCa
 
 ### B4增量
 B3发布并关闭到257ed0f；不要重做B3。B4使用focused_summary只读投影；continue_workspace_campaign新建同Mission子Campaign并在worker核验冻结父结果；同一数据、非Replay、受支持估计器，其他路径明确阻断。preflight_confirmation不等于授权，不读取标签；零/均值/中位数仅作受控确认对照。tests/test_focused_b4_delivery.py和增强的tests/browser必须通过，再核验同SHA CI后执行B5。旧47行、旧Live收据不覆盖。
+
+### B5交接
+B4已发布e983c4d，核心双Python/Chromium同SHA通过；过期冻结输入造成的真实SPY Action失败独立保留。B5只增加工程验收与收据，不扩框架/任务。完成精确源码门禁后，全部外部补测统一执行 `CODEX_V22R_REMAINING_VALIDATION.md`，不要重开B0–B4重做。主矩阵与文献G2A/G2B分开；原历史失败不覆盖。验收JSON中的remaining_clause_ids必须完整列入报告，不能以用例总数替代覆盖。

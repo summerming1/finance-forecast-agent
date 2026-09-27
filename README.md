@@ -139,3 +139,9 @@ The packaged Plotly panel is real market data, but not the original dataset of t
 
 ### Current research workspace
 The default home links to the shared goal/provided-start Research Mission. Completed studies expose an evidence-limited summary and explicit candidate-bound continuation; interruption uses Resume instead. The advanced legacy paper workbench remains at `?lab=1`. See docs/CURRENT_IMPLEMENTATION.md for current evidence and docs/FRONTEND_USER_GUIDE.md for bounds.
+
+### B0–B5 engineering delivery and next validation
+
+Default goal-only or controlled supplied-start research shares one engine, with version-reviewed literature, explicit continuation and candidate-bound exports. Actual status: [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md). Remaining Live, literature-value and real-user gates: [Codex unified handoff](docs/CODEX_V22R_REMAINING_VALIDATION.md). Engineering test success does not replace these gates; the historical negative confirmation and failed value matrix remain visible.
+
+Original frozen-SPY CI inputs can expire. A replacement artifact must contain the identical authorized bytes, checked by `scripts/verify_frozen_spy_acceptance.py`; never auto-download newer adjusted prices just to make a test pass.
