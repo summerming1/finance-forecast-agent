@@ -1,0 +1,41 @@
+diff --git a/apps/pages/8_Focused_Research.py b/apps/pages/8_Focused_Research.py
+index 2c2ab0c..ff31493 100644
+--- a/apps/pages/8_Focused_Research.py
++++ b/apps/pages/8_Focused_Research.py
+@@ -289,7 +289,7 @@ def render_workspace():
+         if task['status'] != current['task']['status']:
+             st.rerun()
+         if task['status']=='completed':
+-            st.success('Mission completed: '+str(payload.get('terminal_status')))
++            st.success('Mission completed: '+query_campaign+' · '+str(payload.get('terminal_status')))
+         elif task['status']=='blocked':
+             st.error('Task blocked: '+task.get('blocker',''))
+         else:
+diff --git a/docs/V2_MISSION_RESEARCH.md b/docs/V2_MISSION_RESEARCH.md
+index a45ae80..ce3a2b9 100644
+--- a/docs/V2_MISSION_RESEARCH.md
++++ b/docs/V2_MISSION_RESEARCH.md
+@@ -317,3 +317,5 @@ B3 frozen-source receipt: tree `e633d8e884b588987196f81ef84475bf00a4c62d`; cumul
+ 确定性总结区分外部故障、无研究候选和有范围的负结果；文献原观点、迁移假设、实际反馈分开。新研究显式引用已接受父模型/final/合同，原Mission和状态库不变，新费用独立记录，原预测不复制。确认能力预检在任何数据加载前；朴素对照只计算授权训练统计，fit与统计计算分离。原47目标结果不得重选窗口或复算争取通过。
+ 
+ 本次先留13项红测，修复接线中的feature检查与project_root字段，并修正测试自身TaskSpec字段；新增20项定向测试最终通过。原长程Live、G2A/G2B科学增量、真人与受影响Windows测试不由本批离线通过替代。浏览器门禁在原链路上新增总结、零授权预检、显式续接、刷新、费用与下载核对。所有历史失败保留；发布提交与精确源码CI收据是最终依据。
++
++B4首个Chromium门禁Run36287928692保留FAIL：新Campaign已创建，但通用完成提示仍是父页面旧DOM，断言读取了未完成子记录。完成提示现在携带Campaign ID，浏览器必须等待该子ID且核对持久completed状态；未删除谱系、无额外fit或导出检查。
+diff --git a/tests/browser/test_research_workspace.py b/tests/browser/test_research_workspace.py
+index 8c79160..18eb5e2 100644
+--- a/tests/browser/test_research_workspace.py
++++ b/tests/browser/test_research_workspace.py
+@@ -209,9 +209,12 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
+         page.get_by_text('Continue selected candidate / 从当前候选继续研究',exact=True).click()
+         page.get_by_role('button',name='Start new research from selected candidate',exact=True).click()
+         expect(page).not_to_have_url(url)
+-        expect(page.get_by_text('Mission completed:',exact=False)).to_be_visible(timeout=120000)
+         child_cid=parse_qs(urlparse(page.url).query)['campaign'][0]
++        # A parent success toast can survive while Streamlit replaces the page.
++        # Wait for the new Campaign's own completion, not any generic old toast.
++        expect(page.get_by_text('Mission completed: '+child_cid,exact=False)).to_be_visible(timeout=120000)
+         child=workspace_campaign(state,pid,child_cid)
++        assert child['task']['status']=='completed'
+         assert child_cid != first_cid
+         assert child['link']['mission_id']==workspace_campaign(state,pid,first_cid)['link']['mission_id']
+         assert child['payload']['campaign']['research_options']['continuation_from']['candidate_id']==research_ids[0]
