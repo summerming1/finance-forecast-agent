@@ -4,18 +4,20 @@
 
 验收缺口分轴保留；后续批次的计划不得冒充实际完成。
 
-正式分支：`feat/mission-research-v2`。本轮基线：`a3c6ec69c9bd14d18b1cdb493795669a9452c800`。
+独立 Windows 自动补测已结束，源基线 `5ec8042`，新证据见 [B05_SUPPLEMENT_20260927.md](validation/B05_SUPPLEMENT_20260927.md)。最终核心340 passed/1 symlink权限失败/2 skipped；全仓481 passed/10环境或资产失败/3 skipped。9项资产边界另用原资产复验通过；旧工作台12项测试入口已修正。用户已审核两条短文献观点及一条引用用途，但不代表实验或真人产品试用通过。整体仍为PARTIAL，不能宣称全部验收。
+
+正式分支：`feat/mission-research-v2`。B 批次演进基线：`a3c6ec69c9bd14d18b1cdb493795669a9452c800`；本轮独立补测源基线：`5ec8042f7623470646c92953404b65f21abc4f7c`。
 批准方向见 ADR_MISSION_PRODUCT_004.md，B0→B5 范围见 PROJECT_ROADMAP.md。计划不是已实现能力。
 
 | 能力轴 | 当前证据 | 开放边界 |
 |---|---|---|
 | 基础执行与逐行评价 | 既有真实 SPY、Manifest、复算和受控模型训练 | forecast_only，不是交易性能 |
-| Live/Replay | 既有真实两轮百炼与严格断网一致 | B1 本地HTTP故障/离线链通过；新真实百炼/长期稳定性未验证 |
+| Live/Replay | 本轮 kimi-k3 两轮和八候选 Adaptive 真实轨迹、严格断网 Replay 一致 | 单独六轮请求与两个 batch 组因缺 statement 失败；有限成功不证明长期稳定性 |
 | 恢复/审核/动作 | 既有 Windows 全 Campaign 恢复、approve/reject/stop | 受影响修改必须回归，不重称从未测试 |
 | 交付/受控 BYO | 既有 CSV/Parquet 审核数值特征、网页和模型交付 | 本地路径不是上传服务；B2 双入口/交付绑定已实现，真实用户未验证 |
 | 金融确认 | 一次47目标真实固定留出负确认，原收据保留 | 用户声明+本地审计，非前瞻；不得重挑该窗口 |
-| 研究价值 | 实际策略已接共用引擎，原矩阵完整尝试 | 旧 R5 FAIL 保留，可靠性/公平比较仍待完成 |
-| 文献 | B3 已接既有 MethodCardVersionStore 与版本审核；来源、迁移、使用角色、实际修改、反馈分开 | 结构/完整性可验；真实语义审核与增量不由哈希或引用次数证明 |
+| 研究价值 | 本轮固定合同 Random/TPE/One-shot/Adaptive 完成，Memory cold/warm 小对照完成 | G2A adaptive_batch FAIL，G2B L1 FAIL；旧 R5 FAIL 保留，不证明一般优越性 |
+| 文献 | 既有版本审核链；本轮用户实际查看两个原始摘要并批准短观点、一条真实引用用途 | L1 缺 statement 被拒绝；尚无本轮完整真实文献实验链路，不能证明文献增量 |
 | 真人使用 | 工程模拟参与者 | BLOCKED_NO_REAL_USER |
 
 ## B 批次状态
@@ -51,7 +53,7 @@ Windows symlink 权限仍 BLOCKED_ENV；macOS/GPU 按用户范围不测；原论
 
 `waiting_provider` 不代表科学无改善；同合同显式恢复使用冻结提示词和已接受实验。完整已录制响应在冻结计划前中断，可直接读取原始不可变记录，无新请求。新代码/时限合同不得强行恢复旧运行。
 
-已实现 Campaign HTTP 请求数和累计提供者活动秒数上限；模型训练仍以 fit 上限限制，不宣称硬保证整个 Campaign 的墙钟时限或精确人民币费用。预检不查询账户余额、不产生网络请求；显式 probe 仍属于一次可收费调用。SSE/供应商结构化输出和新真实Live验收未在本批宣称完成。
+已实现 Campaign HTTP 请求数和累计提供者活动秒数上限；模型训练仍以 fit 上限限制，不宣称硬保证整个 Campaign 的墙钟时限或精确人民币费用。预检不查询账户余额、不产生网络请求；显式 probe 仍属于一次可收费调用。SSE/供应商结构化输出未实现；本轮有限真实Live补测见上表，不等于全面可靠性验收。
 
 ## B2 使用与兼容
 

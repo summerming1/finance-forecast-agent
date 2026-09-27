@@ -1,0 +1,1290 @@
+{
+  "source": "5ec8042 plus supplemental tests and legacy test entry repair",
+  "core_complete": true,
+  "historical_record_unchanged": true,
+  "clauses": [
+    {
+      "id": "A01",
+      "scenario": "明确额度403",
+      "expected": "当前请求不反复重试，状态可解释，未静默换模型/付费",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b1_provider.py::test_quota_error_is_not_retried_and_has_safe_facts"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b1_provider",
+          "test_quota_error_is_not_retried_and_has_safe_facts",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A02",
+      "scenario": "429等待时间超过deadline",
+      "expected": "停止/暂停，不在预算外睡眠后继续请求",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b1_provider.py::test_retry_after_never_sleeps_past_deadline"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b1_provider",
+          "test_retry_after_never_sleeps_past_deadline",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A03",
+      "scenario": "每隔少许时间发一个字节",
+      "expected": "总deadline仍可终止，无挂起线程/子进程",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b1_provider.py::test_true_deadline_stops_continuous_slow_bytes_and_reaps_process"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b1_provider",
+          "test_true_deadline_stops_continuous_slow_bytes_and_reaps_process",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A04",
+      "scenario": "响应发出但本地断线",
+      "expected": "delivery/usage unknown，重试另计，不宣称provider exactly-once",
+      "historical_status": "not_run",
+      "status": "PASS",
+      "scope_note": "adversarial_extended_r2; local disconnect only, not an actual Bailian service outage",
+      "declared_tests": [],
+      "current_test_matches": []
+    },
+    {
+      "id": "A05",
+      "scenario": "第N轮调用中断后恢复",
+      "expected": "前N-1轮结果/冻结计划不变、无重复fit、累计预算不退",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b1_provider.py::test_campaign_provider_pause_resume_preserves_plan_and_accepted_fits"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b1_provider",
+          "test_campaign_provider_pause_resume_preserves_plan_and_accepted_fits",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A06",
+      "scenario": "同decision并发恢复",
+      "expected": "最多一份计划被接受，所有HTTP尝试留痕",
+      "historical_status": "partial",
+      "status": "PASS",
+      "scope_note": "concurrent_resume; two Windows processes, local HTTP, same decision; no accepted refit",
+      "declared_tests": [
+        "tests/test_focused_r2_runtime.py::test_atomic_cross_process_idempotency"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_r2_runtime",
+          "test_atomic_cross_process_idempotency",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A07",
+      "scenario": "stdout/traceback混入key哨兵",
+      "expected": "公共日志、研究包、CI中均无secret",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b1_provider.py::test_recorded_failure_keeps_category_but_never_response_text"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b1_provider",
+          "test_recorded_failure_keeps_category_but_never_response_text",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A08",
+      "scenario": "部分JSON/finish_reason length",
+      "expected": "不接受半批、不训练、不自动补成模型配置",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b1_provider.py::test_truncated_response_is_not_executed_or_retried"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b1_provider",
+          "test_truncated_response_is_not_executed_or_retried",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A09",
+      "scenario": "模板改频率或目标",
+      "expected": "明确不支持，不能悄悄变成固定任务",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b2_product.py::test_workspace_rejects_unsupported_task_before_queue"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b2_product",
+          "test_workspace_rejects_unsupported_task_before_queue",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A10",
+      "scenario": "用户模型与固定控制同名不同参",
+      "expected": "两个角色/身份明确，未覆盖对照；预算足够才启动",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b2_product.py::test_provided_start_does_not_replace_frozen_control_and_is_charged",
+        "tests/test_focused_b2_product.py::test_identical_start_reuses_control_without_extra_fit"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b2_product",
+          "test_provided_start_does_not_replace_frozen_control_and_is_charged",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b2_product",
+          "test_identical_start_reuses_control_without_extra_fit",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A11",
+      "scenario": "固定模型模式里提换模型/改seed",
+      "expected": "compiler和执行Manifest均拒绝",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b2_product.py::test_features_only_contract_rejects_hidden_model_changes"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b2_product",
+          "test_features_only_contract_rejects_hidden_model_changes[family]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b2_product",
+          "test_features_only_contract_rejects_hidden_model_changes[params]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b2_product",
+          "test_features_only_contract_rejects_hidden_model_changes[seed]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b2_product",
+          "test_features_only_contract_rejects_hidden_model_changes[parent]",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A12",
+      "scenario": "同批候选B引用尚未完成A",
+      "expected": "拒绝；不能以A未来结果作为本批证据",
+      "historical_status": "partial",
+      "status": "PASS",
+      "scope_note": "adversarial_extended_r2; explicit same-batch future reference rejected; simulation",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_adaptive_batch_uses_prior_batch_not_same_batch_future"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_adaptive_batch_uses_prior_batch_not_same_batch_future",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A13",
+      "scenario": "摘要只剩获胜案例",
+      "expected": "测试失败；所有实验状态与关键反例必须保留",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_compact_context_preserves_all_statuses_and_source_limitations"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_compact_context_preserves_all_statuses_and_source_limitations",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A14",
+      "scenario": "catalog ID附加矛盾params",
+      "expected": "拒绝，不猜哪一个为真",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_catalog_reference_rejects_conflict_and_unknown_id"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_catalog_reference_rejects_conflict_and_unknown_id",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A15",
+      "scenario": "A详情→refit→切B→下载",
+      "expected": "A包仍标A，不能表现为B，切换不训练",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b2_product.py::test_selected_refit_identity_is_durable_and_mismatch_cannot_download"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b2_product",
+          "test_selected_refit_identity_is_durable_and_mismatch_cannot_download",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A16",
+      "scenario": "刷新/多浏览器读取",
+      "expected": "同持久ID恢复，查看不增加provider调用或fit",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/browser/test_research_workspace.py::test_real_browser_queue_history_refresh_download_and_byo"
+      ],
+      "current_test_matches": [
+        [
+          "test_research_workspace",
+          "test_real_browser_queue_history_refresh_download_and_byo",
+          "PASS",
+          "browser_postfix"
+        ]
+      ]
+    },
+    {
+      "id": "A17",
+      "scenario": "新Campaign复制数据和状态声明",
+      "expected": "保留曝光，旧分数不升级，不重置已发生费用",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b4_delivery.py"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b4_delivery",
+          "test_summary_distinguishes_provider_failure_and_no_research",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_summary_keeps_paper_facts_transfer_and_measurements_separate",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_confirmation_naive_control_is_training_only_and_charged_honestly[zero-0]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_confirmation_naive_control_is_training_only_and_charged_honestly[train_mean-1]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_confirmation_naive_control_is_training_only_and_charged_honestly[train_median-1]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[unknown]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[naive_spoof]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[leaky_stat]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[naive_candidate]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_preflight_is_not_confirmation_eligibility",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_workspace_continuation_is_bound_idempotent_and_not_resume",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_cannot_be_forged_or_upgrade_old_evidence",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_summary_reader_has_no_compute_or_provider_side_effects",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[candidate_fingerprint]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[execution_contract_hash]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[final_hash]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[accepted_result_hash]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[seed]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[prediction_reuse]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_preflight_does_not_create_files_or_read_inputs",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A18",
+      "scenario": "不支持确认对照",
+      "expected": "预检0grant/0确认fit；不读取确认分数来修正",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b4_delivery.py"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b4_delivery",
+          "test_summary_distinguishes_provider_failure_and_no_research",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_summary_keeps_paper_facts_transfer_and_measurements_separate",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_confirmation_naive_control_is_training_only_and_charged_honestly[zero-0]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_confirmation_naive_control_is_training_only_and_charged_honestly[train_mean-1]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_confirmation_naive_control_is_training_only_and_charged_honestly[train_median-1]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[unknown]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[naive_spoof]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[leaky_stat]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[naive_candidate]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_preflight_is_not_confirmation_eligibility",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_workspace_continuation_is_bound_idempotent_and_not_resume",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_cannot_be_forged_or_upgrade_old_evidence",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_summary_reader_has_no_compute_or_provider_side_effects",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[candidate_fingerprint]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[execution_contract_hash]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[final_hash]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[accepted_result_hash]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[seed]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[prediction_reuse]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_preflight_does_not_create_files_or_read_inputs",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A19",
+      "scenario": "朴素基线故意带确认标签统计",
+      "expected": "阻断；训练统计只能来自授权训练数据",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b4_delivery.py"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b4_delivery",
+          "test_summary_distinguishes_provider_failure_and_no_research",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_summary_keeps_paper_facts_transfer_and_measurements_separate",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_confirmation_naive_control_is_training_only_and_charged_honestly[zero-0]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_confirmation_naive_control_is_training_only_and_charged_honestly[train_mean-1]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_confirmation_naive_control_is_training_only_and_charged_honestly[train_median-1]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[unknown]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[naive_spoof]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[leaky_stat]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_capability_preflight_rejects_before_dataset_access[naive_candidate]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_preflight_is_not_confirmation_eligibility",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_workspace_continuation_is_bound_idempotent_and_not_resume",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_cannot_be_forged_or_upgrade_old_evidence",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_summary_reader_has_no_compute_or_provider_side_effects",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[candidate_fingerprint]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[execution_contract_hash]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[final_hash]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[accepted_result_hash]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[seed]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_continuation_revalidates_actual_accepted_parent[prediction_reuse]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b4_delivery",
+          "test_preflight_does_not_create_files_or_read_inputs",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A20",
+      "scenario": "比较随机组无provider与Live组",
+      "expected": "允许的策略差异显式记录；共同数据/评价必须一致",
+      "historical_status": "partial",
+      "status": "PASS",
+      "scope_note": "g2a_kimi; all five common-contract/target hashes match; Random/TPE have no provider, three LLM arms use kimi-k3. Overall cohort still FAIL because adaptive_batch was rejected",
+      "declared_tests": [
+        "tests/test_focused_b5_acceptance.py::test_actual_five_arm_engineering_matrix_uses_shared_executor"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b5_acceptance",
+          "test_actual_five_arm_engineering_matrix_uses_shared_executor",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A21",
+      "scenario": "One-shot与Adaptive混模型/超时",
+      "expected": "不汇总为同设置算法胜负；保留独立试验",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_g2a_and_g2b_keep_strategy_treatment_and_completion_distinct"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_g2a_and_g2b_keep_strategy_treatment_and_completion_distinct",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A22",
+      "scenario": "失败臂拿best-so-far冒充完成",
+      "expected": "状态仍失败/部分，成本进入可靠性报告",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_g2a_and_g2b_keep_strategy_treatment_and_completion_distinct",
+        "tests/test_focused_r5_benchmark.py::test_failed_fit_is_charged_and_not_erased_from_report"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_g2a_and_g2b_keep_strategy_treatment_and_completion_distinct",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_r5_benchmark",
+          "test_failed_fit_is_charged_and_not_erased_from_report",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A23",
+      "scenario": "新代码读取旧schema数据",
+      "expected": "支持的迁移显式、可审计；不支持则只读/阻断，不能改写旧hash",
+      "historical_status": "partial",
+      "status": "BLOCKED",
+      "scope_note": "Existing legacy fixture/contract guards only; no general old-schema migration certification",
+      "declared_tests": [
+        "tests/test_focused_r1_contracts.py::test_legacy_response_hash_checked_and_no_silent_upgrade",
+        "tests/test_focused_r2_runtime.py::test_resume_rejects_contract_or_artifact_tampering"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_r1_contracts",
+          "test_legacy_response_hash_checked_and_no_silent_upgrade",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_r2_runtime",
+          "test_resume_rejects_contract_or_artifact_tampering[data]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_r2_runtime",
+          "test_resume_rejects_contract_or_artifact_tampering[split]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_r2_runtime",
+          "test_resume_rejects_contract_or_artifact_tampering[budget]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_r2_runtime",
+          "test_resume_rejects_contract_or_artifact_tampering[cache]",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "A24",
+      "scenario": "在原47行重用确认授权",
+      "expected": "只读原封存结果或拒绝新计算；不重跑挑好分数",
+      "historical_status": "not_run",
+      "status": "PASS",
+      "scope_note": "original_confirmation_read_r2; actual original grant read-only, zero fits/loads, 47 targets unchanged",
+      "declared_tests": [],
+      "current_test_matches": []
+    },
+    {
+      "id": "L01",
+      "scenario": "没有文献/关闭文献的目标型用户",
+      "expected": "内置基线、Task和评价合同不变，能基础研究且不伪称用了论文",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_no_paper_run_remains_valid_and_rule_policy_claims_no_paper_use"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_no_paper_run_remains_valid_and_rule_policy_claims_no_paper_use",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L02",
+      "scenario": "手写JSON自报paper_claim/approved",
+      "expected": "未绑定真实来源和审核版本，不能成为已审核论文证据",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_raw_json_cannot_self_approve_paper_for_controller"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_raw_json_cannot_self_approve_paper_for_controller",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L03",
+      "scenario": "原文/方法卡被改而保留旧ID或hash",
+      "expected": "冻结/回放前拒绝；不能只检查ID存在",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_modified_source_card_or_approval_is_rejected"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_modified_source_card_or_approval_is_rejected[source]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b3_literature",
+          "test_modified_source_card_or_approval_is_rejected[card]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b3_literature",
+          "test_modified_source_card_or_approval_is_rejected[review]",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L04",
+      "scenario": "同paper_id换新正文，保留旧approve",
+      "expected": "需版本复核，旧审核不自动授权新内容",
+      "historical_status": "partial",
+      "status": "PASS",
+      "scope_note": "adversarial_extended_r2; new version does not inherit previous approval",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_modified_source_card_or_approval_is_rejected"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_modified_source_card_or_approval_is_rejected[source]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b3_literature",
+          "test_modified_source_card_or_approval_is_rejected[card]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b3_literature",
+          "test_modified_source_card_or_approval_is_rejected[review]",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L05",
+      "scenario": "跨租户或hidden资料",
+      "expected": "正文不出现在prompt/日志/导出；不能仅禁止引用ID",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_tenant_and_provider_permissions_fail_closed"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_tenant_and_provider_permissions_fail_closed[options0]",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_b3_literature",
+          "test_tenant_and_provider_permissions_fail_closed[options1]",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L06",
+      "scenario": "论文建议当前没有的窗口/权重/模型",
+      "expected": "标记能力缺口并可回退到基础研究，不执行未经授权代理方法",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_unsupported_method_stays_visible_as_limitation_not_implemented"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_unsupported_method_stays_visible_as_limitation_not_implemented",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L07",
+      "scenario": "月频收益/波动率研究迁移到日频收益",
+      "expected": "显示迁移差异或不适用；不能把原分数当当前成绩",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_research_review_does_not_authorize_other_task"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_research_review_does_not_authorize_other_task",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L08",
+      "scenario": "可核对的理论/限制段落无数值表",
+      "expected": "可研究用途审核；不编造reported_values，不把strict状态改为通过",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_theory_can_be_reviewed_without_weakening_strict_gate"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_theory_can_be_reviewed_without_weakening_strict_gate",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L09",
+      "scenario": "原文内指令要求改label/预算/禁门",
+      "expected": "作为资料而非系统命令，本地合同仍阻断",
+      "historical_status": "not_run",
+      "status": "BLOCKED",
+      "scope_note": "Compiler override rejection tested, but no complete malicious-source-to-live-provider injection trial",
+      "declared_tests": [],
+      "current_test_matches": []
+    },
+    {
+      "id": "L10",
+      "scenario": "ID正确但引用与假设内容无关",
+      "expected": "语义人工抽检标不合格；不能用结构校验通过宣布证据支持",
+      "historical_status": "not_run",
+      "status": "BLOCKED",
+      "scope_note": "One real relevant citation approved by user; deliberately irrelevant correct-ID citation not human-tested",
+      "declared_tests": [],
+      "current_test_matches": []
+    },
+    {
+      "id": "L11",
+      "scenario": "Agent自己选择alpha=5等工程参数",
+      "expected": "归入本地迁移假设，除非原文真有，否则不得说论文要求该值",
+      "historical_status": "not_run",
+      "status": "PASS",
+      "scope_note": "User explicitly approved actual alpha=5 local-transfer attribution, not experiment success; one spot-check",
+      "declared_tests": [],
+      "current_test_matches": []
+    },
+    {
+      "id": "L12",
+      "scenario": "文献名义下联合修改并称单因素消融",
+      "expected": "现有action/config-diff门禁拒绝；不能凭权威引用豁免",
+      "historical_status": "partial",
+      "status": "BLOCKED",
+      "scope_note": "Existing joint-change ablation guard; no new end-to-end literature-authority ablation attack",
+      "declared_tests": [
+        "tests/test_focused_r3_actions.py::test_ablation_is_derived_from_actual_parent_and_rejects_joint_change"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_r3_actions",
+          "test_ablation_is_derived_from_actual_parent_and_rejects_joint_change",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L13",
+      "scenario": "EvidenceIndex字段白名单丢掉位置/限制",
+      "expected": "投影端到端测试失败；最终prompt和包保留关键字段",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_compact_context_preserves_all_statuses_and_source_limitations"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_compact_context_preserves_all_statuses_and_source_limitations",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L14",
+      "scenario": "实验看到好分数后补论文来“解释计划”",
+      "expected": "原冻结提案不变；后验解释单列，不能冒充事前依据",
+      "historical_status": "not_run",
+      "status": "NOT_RUN",
+      "scope_note": "No explicit new post-hoc-paper rewriting adversarial test",
+      "declared_tests": [],
+      "current_test_matches": []
+    },
+    {
+      "id": "L15",
+      "scenario": "输入资料全部无关/不支持",
+      "expected": "可不采用、说明理由；不得强迫制造一条论文实验",
+      "historical_status": "not_run",
+      "status": "BLOCKED",
+      "scope_note": "Unsupported capability projection tested; all-irrelevant real-provider source scenario not run",
+      "declared_tests": [],
+      "current_test_matches": []
+    },
+    {
+      "id": "L16",
+      "scenario": "文献相关候选训练崩溃",
+      "expected": "工程失败/inconclusive，不能把论文或方法记成科学负结果",
+      "historical_status": "not_run",
+      "status": "NOT_RUN",
+      "scope_note": "No new literature-candidate training-crash trial",
+      "declared_tests": [],
+      "current_test_matches": []
+    },
+    {
+      "id": "L17",
+      "scenario": "本地负结果、混合fold表现",
+      "expected": "原文事实不改；本地反馈与条件/反证如实进入下一批",
+      "historical_status": "partial",
+      "status": "BLOCKED",
+      "scope_note": "Synthetic recorded chain covered; real L1 failed before candidate training",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_actual_replay_literature_experiment_feedback_chain"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_actual_replay_literature_experiment_feedback_chain",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L18",
+      "scenario": "中断后离线恢复/Replay",
+      "expected": "固定source/card/projection身份不变，不重新抽取或偷偷读新版",
+      "historical_status": "partial",
+      "status": "BLOCKED",
+      "scope_note": "Real rejection replay preserves versions; complete accepted real literature trajectory unavailable",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_actual_replay_literature_experiment_feedback_chain"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_actual_replay_literature_experiment_feedback_chain",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L19",
+      "scenario": "L0无文献组继承L1解释/Memory",
+      "expected": "预检阻断污染；新组不带对照方新结果或文献解释",
+      "historical_status": "partial",
+      "status": "BLOCKED",
+      "scope_note": "Actual L0/L1 cold separation recorded; paired L1 failed and adversarial contamination not fully exercised",
+      "declared_tests": [
+        "tests/test_focused_b5_acceptance.py::test_actual_g2b_treatment_keeps_engineering_and_literature_value_separate",
+        "tests/test_focused_r5_benchmark.py::test_cold_warm_isolation_uses_frozen_exact_task_prior"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b5_acceptance",
+          "test_actual_g2b_treatment_keeps_engineering_and_literature_value_separate",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_r5_benchmark",
+          "test_cold_warm_isolation_uses_frozen_exact_task_prior",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L20",
+      "scenario": "文献对照同时改模型/batch/候选范围",
+      "expected": "拒绝当单因素增量比较，允许作为另一个明确实验保存",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_g2a_and_g2b_keep_strategy_treatment_and_completion_distinct"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_g2a_and_g2b_keep_strategy_treatment_and_completion_distinct",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L21",
+      "scenario": "有文献组额外抽取/调用却报成本0",
+      "expected": "成本/预处理身份保留；未知不填0，复用成本不重复记",
+      "historical_status": "partial",
+      "status": "PASS",
+      "scope_note": "Real L1 usage 16691 tokens/cost null; preparation/review time unknown, not zero",
+      "declared_tests": [
+        "tests/test_focused_b4_delivery.py::test_summary_distinguishes_provider_failure_and_no_research",
+        "tests/test_focused_r5_benchmark.py::test_failed_provider_attempt_has_unknown_cost_not_zero"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b4_delivery",
+          "test_summary_distinguishes_provider_failure_and_no_research",
+          "PASS",
+          "core_nvme"
+        ],
+        [
+          "test_focused_r5_benchmark",
+          "test_failed_provider_attempt_has_unknown_cost_not_zero",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L22",
+      "scenario": "运行中来源版本更新或权限撤销",
+      "expected": "普通更新不改旧plan；权限撤销阻止新外发并明确暂停",
+      "historical_status": "partial",
+      "status": "BLOCKED",
+      "scope_note": "adversarial_extended_r2 passes retry-time revocation/no second send and version isolation; full campaign/UI pause after mid-run revocation not newly exercised",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_current_revocation_is_checked_by_live_presend_guard"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_current_revocation_is_checked_by_live_presend_guard",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L23",
+      "scenario": "研究包无权分发原文或包含私密source",
+      "expected": "仅导出许可允许的元数据/引用/片段；限制明确，不偷偷嵌PDF",
+      "historical_status": "passed",
+      "status": "PASS",
+      "scope_note": "Current-run automated structural/engineering evidence; not broad provider or human semantic certification.",
+      "declared_tests": [
+        "tests/test_focused_b3_literature.py::test_restricted_source_is_not_redistributed_via_campaign_prompts"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b3_literature",
+          "test_restricted_source_is_not_redistributed_via_campaign_prompts",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    },
+    {
+      "id": "L24",
+      "scenario": "用户看到引用就把结果称严格复现/独立确认",
+      "expected": "总结、UI、文档均限定证据等级；只可核对当前实际条件",
+      "historical_status": "partial",
+      "status": "BLOCKED",
+      "scope_note": "UI boundary tests and source-review acknowledgement are not completed real product-user acceptance",
+      "declared_tests": [
+        "tests/test_focused_b4_delivery.py::test_summary_keeps_paper_facts_transfer_and_measurements_separate"
+      ],
+      "current_test_matches": [
+        [
+          "test_focused_b4_delivery",
+          "test_summary_keeps_paper_facts_transfer_and_measurements_separate",
+          "PASS",
+          "core_nvme"
+        ]
+      ]
+    }
+  ]
+}
