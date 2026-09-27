@@ -26,7 +26,9 @@ STAGES = [
 
 @pytest.fixture()
 def app() -> AppTest:
-    instance = AppTest.from_file(str(APP_PATH), default_timeout=30).run()
+    instance = AppTest.from_file(str(APP_PATH), default_timeout=30)
+    instance.query_params['lab'] = '1'
+    instance.run()
     assert not instance.exception
     return instance
 
@@ -104,7 +106,9 @@ def test_existing_methodcard_moves_through_review_and_setup(tmp_path: Path, monk
     assert plan.execution_ready is approved
     plan_path = save_reproduction_plan(project, plan)
     before = plan_path.read_bytes()
-    app = AppTest.from_file(str(APP_PATH), default_timeout=30).run()
+    app = AppTest.from_file(str(APP_PATH), default_timeout=30)
+    app.query_params['lab'] = '1'
+    app.run()
     assert not app.exception
     next(button for button in app.button if button.label == "使用已有方法卡").click().run()
     assert not app.exception
