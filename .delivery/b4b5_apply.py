@@ -19,6 +19,14 @@ assert hashlib.sha256(patch).hexdigest() == r['patch_sha256']
 subprocess.run(['git','apply','--check','--index','-'],input=patch,check=True)
 subprocess.run(['git','apply','--index','-'],input=patch,check=True)
 actual = subprocess.check_output(['git','write-tree'],text=True).strip()
+assert actual == r.get('initial_tree',r['tree'])
+for amendment in r.get('amendments',[]):
+    patch=(parts/amendment['file']).read_bytes()
+    assert hashlib.sha256(patch).hexdigest()==amendment['sha256']
+    subprocess.run(['git','apply','--check','--index','-'],input=patch,check=True)
+    subprocess.run(['git','apply','--index','-'],input=patch,check=True)
+    actual=subprocess.check_output(['git','write-tree'],text=True).strip()
+    assert actual==amendment['tree']
 assert actual == r['tree'], (actual,r['tree'])
 paths = subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines()
 assert sorted(paths) == sorted(r['paths'])
