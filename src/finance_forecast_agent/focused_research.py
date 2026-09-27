@@ -948,6 +948,7 @@ class FocusedResearchController:
         literature_project: str | Path | None = None,
         literature_review_ids: list[str] | None = None,
         context_mode: str = "full_v1",
+        continuation_from: dict[str, Any] | None = None,
     ):
         self.project_dir = Path(project_dir).resolve()
         self.state_path = Path(state_path or os.getenv("FFA_STATE_DB") or self.project_dir / "runtime.sqlite3")
@@ -1025,6 +1026,13 @@ class FocusedResearchController:
             from .focused_benchmark import BenchmarkAdvisor
             self.advisor = BenchmarkAdvisor(self.advisor, benchmark_strategy)
         self.estimator_seed = self.advisor.spec.estimator_seed if benchmark_strategy else 42
+        self.continuation_from = json.loads(json.dumps(continuation_from)) if continuation_from is not None else None
+        if self.continuation_from is not None:
+            if benchmark_strategy is not None or campaign_id == self.continuation_from.get("campaign_id"):
+                raise ValueError("continuation is a new non-benchmark research campaign")
+            from .research_mission import validate_continuation
+            self.estimator_seed = validate_continuation(self.state_path, self.project_dir, self.continuation_from,
+                tenant_id=tenant_id, dataset=self.dataset, starting_baseline=self.starting_baseline)
         self.research_start = self._starting_candidate()
         self.spec = CampaignSpec(
             campaign_id=campaign_id or f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
@@ -1044,7 +1052,7 @@ class FocusedResearchController:
                               "literature_project": str(self.literature_project) if self.literature_review_ids else None,
                               "literature_review_ids": self.literature_review_ids,
                               "literature_snapshot_hash": identity(self.literature_snapshot, domain="literature-snapshot-v1"),
-                              "context_mode": self.context_mode},
+                              "continuation_from": self.continuation_from, "context_mode": self.context_mode},
         )
 
     def _project_literature(self, *, tenant_id=None, audience="local") -> list[dict]:

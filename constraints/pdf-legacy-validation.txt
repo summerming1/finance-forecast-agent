@@ -1,0 +1,3 @@
+# Historical fixture environment from the recorded Windows validation.
+# Install explicitly for strict legacy PDF fixture validation, not globally.
+pypdf==6.14.2

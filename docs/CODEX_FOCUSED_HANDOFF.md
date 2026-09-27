@@ -20,3 +20,6 @@ B1 复用客户端/RuntimeDB，B2 复用 Mission/Controller，B3 复用 MethodCa
 
 ### B3增量
 复用MethodCardVersionStore和原review_state。新增显式research-use审核（并非strict复现），Controller按版本和权限加载而不是接收自报paper JSON。CLI `review_focused_literature.py --project LIB approve --review-json REQUEST --confirm-source-reviewed`；撤销同脚本revoke。代码与任务变更不能恢复旧合同。文献角色/迁移/反证记录到实际实验；规则组不装饰引用。G2A与G2B分别跑；adaptive_batch不覆盖旧single-step。受限资料研究包为reference_only。B4继续只读总结/显式新研究/确认预检，不再建事实库。
+
+### B4增量
+B3发布并关闭到257ed0f；不要重做B3。B4使用focused_summary只读投影；continue_workspace_campaign新建同Mission子Campaign并在worker核验冻结父结果；同一数据、非Replay、受支持估计器，其他路径明确阻断。preflight_confirmation不等于授权，不读取标签；零/均值/中位数仅作受控确认对照。tests/test_focused_b4_delivery.py和增强的tests/browser必须通过，再核验同SHA CI后执行B5。旧47行、旧Live收据不覆盖。

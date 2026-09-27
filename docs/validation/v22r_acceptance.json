@@ -851,7 +851,7 @@
         "validation_run": 35959210054
       },
       "B3": {
-        "status": "candidate_blocked_tests_and_publication",
+        "status": "published",
         "new_cases": 24,
         "new_test_file": "tests/test_focused_b3_literature.py",
         "targeted_passed": 24,
@@ -859,20 +859,18 @@
         "real_provider": "not_run",
         "source_semantics": "operator_attested_not_proven_by_hash",
         "real_user": "blocked",
-        "tested_source_tree": "e633d8e884b588987196f81ef84475bf00a4c62d",
+        "tested_source_tree": "b825b6f88a3871f59f54fcc312b7ceaad31ab7cb",
         "cumulative": {
-          "tests": 294,
-          "passed": 292,
-          "failed": 2,
-          "skipped": 0,
-          "seconds": 552.86,
-          "exit_code": 1
+          "tests": 304,
+          "passed": 304,
+          "failed": 0,
+          "skipped": 0
         },
         "shared_review_tests": {
           "passed": 13,
           "seconds": 4.81
         },
-        "publication": "not_committed_current_tools_read_only",
+        "publication": "published_same_sha_ci_passed",
         "primary_source_probe": {
           "source_count": 2,
           "rows": 4002,
@@ -883,14 +881,40 @@
           "actual_provider_calls": 0
         },
         "remaining": [
-          "original transient-deadline cases in declared environment",
-          "exact-tree Chromium and Python 3.11",
           "new live provider",
           "real user",
           "literature value evidence"
-        ]
+        ],
+        "initial_checkpoint": {
+          "status": "candidate_blocked_tests_and_publication",
+          "cumulative": {
+            "tests": 294,
+            "passed": 292,
+            "failed": 2,
+            "skipped": 0,
+            "seconds": 552.86,
+            "exit_code": 1
+          },
+          "publication": "not_committed_current_tools_read_only",
+          "remaining": [
+            "original transient-deadline cases in declared environment",
+            "exact-tree Chromium and Python 3.11",
+            "new live provider",
+            "real user",
+            "literature value evidence"
+          ]
+        },
+        "commit": "257ed0fef9024a25692f04215dda5a35e2c601ef",
+        "validation_run": 35975040348
       },
-      "B4": "planned",
+      "B4": {
+        "status": "implemented_pending_final_delivery_gate",
+        "baseline": "257ed0fef9024a25692f04215dda5a35e2c601ef",
+        "new_test_file": "tests/test_focused_b4_delivery.py",
+        "targeted_passed": 20,
+        "response_origin": "offline/deterministic/localHTTP only",
+        "external_tests": "defer explicitly to final Codex handoff"
+      },
       "B5": "planned"
     },
     "clauses": [
@@ -1031,22 +1055,28 @@
         "id": "A17",
         "scenario": "新Campaign复制数据和状态声明",
         "expected": "保留曝光，旧分数不升级，不重置已发生费用",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b4_delivery.py"
+        ]
       },
       {
         "id": "A18",
         "scenario": "不支持确认对照",
         "expected": "预检0grant/0确认fit；不读取确认分数来修正",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b4_delivery.py"
+        ]
       },
       {
         "id": "A19",
         "scenario": "朴素基线故意带确认标签统计",
         "expected": "阻断；训练统计只能来自授权训练数据",
-        "status": "planned",
-        "tests": []
+        "status": "passed",
+        "tests": [
+          "tests/test_focused_b4_delivery.py"
+        ]
       },
       {
         "id": "A20",

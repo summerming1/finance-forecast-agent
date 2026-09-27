@@ -274,7 +274,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     from .focused_research import DEFAULT_BASELINES, FocusedResearchController, ResearchBudget
     store, project = _workspace_project(state_path, project_id, tenant_id)
     options = json.loads(json.dumps(options or {}))
-    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode'}
+    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode','continuation_from'}
     if not isinstance(options,dict) or set(options)-allowed_options:
         raise ValueError('unsupported workspace options')
     evidence_input = options.get('reviewed_evidence') or []
@@ -302,7 +302,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
         starting_baseline=options.get('starting_baseline'), entry_mode=options.get('entry_mode'), change_scope=options.get('change_scope','explore'), allowed_feature_groups=options.get('allowed_feature_groups'),
         research_notes=options.get('research_notes',''), reviewed_evidence=evidence, state_path=store.path,
         tenant_id=tenant_id, literature_project=options.get('literature_project'),
-        literature_review_ids=options.get('literature_review_ids'), context_mode=options.get('context_mode','full_v1'))
+        literature_review_ids=options.get('literature_review_ids'), context_mode=options.get('context_mode','full_v1'), continuation_from=options.get('continuation_from'))
     if budget.max_fit_calls < preflight.required_initial_fit_calls():
         raise ValueError('fit budget is too small for frozen controls and provided starting model')
     operation_id = safe_id(operation_id or uuid.uuid4().hex)
@@ -402,6 +402,7 @@ def export_workspace_package(state_path, project_id, campaign_id, *, tenant_id='
     if name != 'campaign.json' and (root/'campaign.json').exists():
         raise ValueError('unexpected final export without accepted final state')
     atomic_json(root/name, current['payload'])
+    atomic_json(root/'research_summary.json', workspace_research_summary(state_path,project_id,campaign_id,tenant_id=tenant_id))
     mission = MissionStore(current['project']['root'], state_path=state_path, tenant_id=tenant_id).load(current['link']['mission_id'])
     atomic_json(root/'mission.json', mission.to_dict())
     RuntimeDB(state_path).export_events('campaign:'+campaign_id, root/'events.jsonl')
@@ -491,3 +492,102 @@ def recover_workspace_links(state_path, project_id, *, tenant_id='default') -> l
             'task_id':task.task_id,'tenant_id':tenant_id,'request_key':key},immutable=True)
         repaired.append(cid)
     return repaired
+
+
+def _continuation_snapshot(state_path, project_id, campaign_id, candidate_id, *, tenant_id='default'):
+    """Resolve an accepted parent; a caller cannot self-certify lineage or evidence."""
+    from .focused_research import CandidateConfig
+    current = workspace_campaign(state_path, project_id, campaign_id, tenant_id=tenant_id)
+    if current['task']['status'] != 'completed':
+        raise ValueError('new research requires a completed parent; use resume for interrupted work')
+    saved = current['projection']['candidate_details'].get(candidate_id)
+    if not saved or saved.get('status', 'completed') != 'completed':
+        raise ValueError('select an accepted completed parent candidate')
+    values = saved['candidate']
+    if values['model_family'].startswith('naive_'):
+        raise ValueError('new research currently requires a supported estimator starting point')
+    cfg = CandidateConfig(**{k:v for k,v in values.items() if k in CandidateConfig.__dataclass_fields__})
+    store = RuntimeDB(state_path)
+    contract = store.get('campaign:'+campaign_id, 'contract')
+    accepted = store.get('campaign:'+campaign_id, 'result:'+candidate_id)
+    if not contract or contract['hash'] != identity(contract['body'], domain='execution-contract-v1'):
+        raise ValueError('parent execution contract integrity mismatch')
+    body = contract['body']
+    if body.get('tenant_id') != tenant_id or body.get('project_root') != current['project']['root']:
+        raise PermissionError('parent contract authority mismatch')
+    if current['payload'].get('execution_contract_hash') != contract['hash'] or not accepted or accepted['row'] != saved:
+        raise ValueError('parent candidate/final does not match accepted execution')
+    binding = {'schema_version':'focused_continuation_v1', 'project_id':project_id,
+        'campaign_id':campaign_id, 'candidate_id':candidate_id, 'tenant_id':tenant_id,
+        'execution_contract_hash':contract['hash'], 'candidate_fingerprint':cfg.fingerprint,
+        'accepted_result_hash':identity(accepted, domain='continuation-parent-result-v1'),
+        'final_hash':identity(current['payload'], domain='continuation-parent-final-v1'),
+        'dataset_fingerprint':current['payload']['campaign']['dataset']['semantic_fingerprint'],
+        'seed':cfg.seed, 'prediction_reuse':False}
+    return current, cfg, binding
+
+
+def validate_continuation(state_path, project_dir, binding, *, tenant_id, dataset, starting_baseline):
+    """Validate the same parent from both preflight and the actual worker."""
+    if not isinstance(binding, dict) or not {'project_id','campaign_id','candidate_id'} <= set(binding):
+        raise ValueError('continuation requires a registered parent binding')
+    current, cfg, expected = _continuation_snapshot(state_path, binding['project_id'],
+        binding['campaign_id'], binding['candidate_id'], tenant_id=tenant_id)
+    if binding != expected or str(Path(project_dir).resolve()) != current['project']['root']:
+        raise ValueError('continuation parent or project binding changed')
+    if dataset.semantic_fingerprint != binding['dataset_fingerprint']:
+        raise ValueError('continuation currently requires the same frozen input; start a separate study for changed data')
+    config = {k:getattr(cfg,k) for k in ('model_family','model_params','feature_groups')}
+    if starting_baseline != config:
+        raise ValueError('continuation starting configuration differs from accepted parent')
+    return cfg.seed
+
+
+def continue_workspace_campaign(state_path, project_id, campaign_id, candidate_id, *, tenant_id='default',
+                                budget=None, operation_id=None, start_immediately=True):
+    """An explicit new Campaign, not a resume, and never a copy of old predictions."""
+    current, cfg, binding = _continuation_snapshot(state_path, project_id, campaign_id, candidate_id, tenant_id=tenant_id)
+    request = current['request']
+    if file_sha256(Path(request['raw_path'])) != request['raw_sha256']:
+        raise ValueError('frozen input changed since parent research')
+    if request['advisor_mode'] == 'replay':
+        raise ValueError('new replay research needs a new explicit prompt/call map; it cannot reuse the parent replay plan')
+    from .focused_research import ResearchBudget
+    options = json.loads(json.dumps(request['options']))
+    options.update(entry_mode='provided_start', starting_baseline={k:getattr(cfg,k)
+                   for k in ('model_family','model_params','feature_groups')}, continuation_from=binding)
+    options.pop('replay_call_ids', None)
+    return submit_workspace_mission(state_path, project_id, raw_path=request['raw_path'],
+        source_metadata=request['source_metadata'], options=options,
+        budget=budget or ResearchBudget(**request['budget']), advisor_mode=request['advisor_mode'],
+        question=request['question'], tenant_id=tenant_id, fixture_dir=request['fixture_dir'],
+        operation_id=operation_id, mission_id=current['link']['mission_id'], start_immediately=start_immediately)
+
+
+def workspace_research_summary(state_path, project_id, campaign_id, *, tenant_id='default'):
+    """Derived, read-only view; all historical charges remain in their original ledger."""
+    from .focused_summary import build_research_summary
+    current = workspace_campaign(state_path, project_id, campaign_id, tenant_id=tenant_id)
+    summary = build_research_summary(current['payload'])
+    binding = summary['continuation_from']
+    visited = {campaign_id}
+    ancestors = []
+    while binding:
+        if binding.get('campaign_id') in visited:
+            raise ValueError('cyclic research continuation')
+        parent, _, expected = _continuation_snapshot(state_path, project_id, binding['campaign_id'],
+            binding['candidate_id'], tenant_id=tenant_id)
+        if binding != expected:
+            raise ValueError('historical research binding changed')
+        visited.add(binding['campaign_id'])
+        ancestors.append({'campaign_id':binding['campaign_id'], 'fit_calls':parent['payload'].get('fit_calls'),
+                          'provider':(parent['payload'].get('resource_usage') or {}).get('provider')})
+        binding = (parent['payload']['campaign'].get('research_options') or {}).get('continuation_from')
+    summary['cost']['prior_research'] = ancestors
+    summary['cost']['prior_research_fit_calls'] = (sum(a['fit_calls'] for a in ancestors)
+        if all(isinstance(a['fit_calls'], int) and not isinstance(a['fit_calls'], bool) for a in ancestors) else None)
+    with RuntimeDB(state_path).transaction() as db:
+        refits = [json.loads(r[0]) for r in db.execute("SELECT payload FROM objects WHERE ns='workspace-refits'").fetchall()]
+    summary['cost']['current_explicit_refit_calls'] = sum(r['fit_calls'] for r in refits
+        if r['tenant_id']==tenant_id and r['project_id']==project_id and r['campaign_id']==campaign_id)
+    return summary

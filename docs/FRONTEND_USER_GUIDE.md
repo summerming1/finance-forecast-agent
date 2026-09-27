@@ -319,3 +319,10 @@ projects/finance_agent/llm_fixtures/               Replay 响应
 两入口都可以使用最多3条已审核资料，也可明确选择不使用。资料库由操作者配置 `FFA_LITERATURE_PROJECT`（默认当前项目），不是远程上传/自动爬虫。先用现有方法卡存储登记来源，再显式审核。方法依据区域仅选择版本，不能靠自由JSON自称已批准。库为空时基础研究仍可运行；原选择被撤销时不能静默丢掉它。
 
 审核请求JSON包括 paper_id/version_sha256/claim_id、相对库内的source_files映射、reviewer/tenant_id、applicability（task_ids/conditions/limitations/transfer_gap）、required_capabilities、provider_audiences、redistribute_excerpt、simulation_only。具体源文档审核是操作者责任；数值为空不构造论文分数。被选文献不等于被采用，查看结果需分别阅读作者观点、本地迁移、实际diff及反馈。受限资料只导出引用和数值产物，原文与完整叙述保留本地。
+
+## B4：读懂结果并继续
+首页进入研究项目/工作区；严格论文复现保留在高级实验室。完成后先看“Research summary / 研究总结”，等待提供者不等于研究失败，只有基线不等于搜索无改善。文献区域分别展示作者观点和本地实验。
+
+选择已完成候选，展开“Continue selected candidate / 从当前候选继续研究”，确认新预算并点击Start new research。创建新Campaign，同Mission可在历史打开；不会复制原预测或免除新训练费用。暂停中的任务请用Resume，不要用新研究替代恢复。Replay父任务需要新的显式映射，当前续接按钮禁用。
+
+“Confirmation capability / 确认能力预检”不读取确认数据、不消耗授权，默认展示训练中位数对照的能力。supported不是eligible；真实确认仍需可信操作者登记合格数据。特征扩展或不支持的模型会明确拒绝。Refit与下载仍绑定当前候选，切换不会自动训练。

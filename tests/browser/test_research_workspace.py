@@ -193,6 +193,46 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
         assert workspace_campaign(state,pid,new_cid)['request']['options']['input_contract']==contract.to_dict()
         assert final['scientific_claim']=='simulation_only_no_financial_evidence'
         assert 'ext_signal' in final['rounds'][0]['items'][0]['result']['actual_features']
+        # B4: return to a real completed estimator, inspect without hidden labels,
+        # then create a distinct, explicitly requested child in the same Mission.
+        page.goto(url)
+        expect(page.get_by_role('heading',name='Research summary / 研究总结',exact=True)).to_be_visible()
+        select_option('Research candidate',research_ids[0])
+        parent_before=workspace_campaign(state,pid,first_cid)['payload']
+        before_continuation=counts()
+        page.get_by_text('Confirmation capability / 确认能力预检',exact=True).click()
+        page.get_by_role('button',name='Check selected confirmation capability',exact=True).click()
+        expect(page.get_by_test_id('stJson').filter(has_text='confirmation_capability_v1')).to_contain_text('not_checked')
+        with RuntimeDB(state).transaction() as db:
+            assert db.execute("SELECT COUNT(*) FROM objects WHERE ns='confirmation-grants'").fetchone()[0]==0
+        assert before_continuation==counts()
+        page.get_by_text('Continue selected candidate / 从当前候选继续研究',exact=True).click()
+        page.get_by_role('button',name='Start new research from selected candidate',exact=True).click()
+        expect(page).not_to_have_url(url)
+        child_cid=parse_qs(urlparse(page.url).query)['campaign'][0]
+        # A parent success toast can survive while Streamlit replaces the page.
+        # Wait for the new Campaign's own completion, not any generic old toast.
+        expect(page.get_by_text('Mission completed: '+child_cid,exact=False)).to_be_visible(timeout=120000)
+        child=workspace_campaign(state,pid,child_cid)
+        assert child['task']['status']=='completed'
+        assert child_cid != first_cid
+        assert child['link']['mission_id']==workspace_campaign(state,pid,first_cid)['link']['mission_id']
+        assert child['payload']['campaign']['research_options']['continuation_from']['candidate_id']==research_ids[0]
+        assert workspace_campaign(state,pid,first_cid)['payload']==parent_before
+        after_continuation=counts()
+        page.reload();expect(page.get_by_text('Mission completed:',exact=False)).to_be_visible()
+        assert counts()==after_continuation
+        page.get_by_role('button',name='Prepare ResearchPackage',exact=True).click()
+        with page.expect_download() as child_export:
+            page.get_by_role('button',name='Download ResearchPackage',exact=True).click()
+        child_export.value.save_as(str(out/'continued_research.zip'))
+        with zipfile.ZipFile(out/'continued_research.zip') as z:
+            summary=json.loads(z.read('research_summary.json'))
+            assert summary['continuation_from']['campaign_id']==first_cid
+            assert summary['cost']['prior_research_fit_calls']==parent_before['fit_calls']
+            assert summary['cost']['prediction_reuse_from_parent'] is False
+        report['checks'].extend(['readonly_summary','capability_without_authorization','explicit_new_campaign',
+                                'parent_immutable','continuation_costs','continuation_export'])
         report['checks'].append('second_byo_client_with_reviewed_feature')
         page.screenshot(path=str(out/'byo_completed.png'),full_page=True)
         report['byo_campaign']=final

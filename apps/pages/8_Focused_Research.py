@@ -16,6 +16,7 @@ from finance_forecast_agent.focused_state import RuntimeDB
 from finance_forecast_agent.research_mission import (
     SUPPORTED_QUESTION,
     MissionStore,
+    continue_workspace_campaign,
     decide_workspace_review,
     export_workspace_package,
     load_workspace_input,
@@ -30,6 +31,7 @@ from finance_forecast_agent.research_mission import (
     workspace_projects,
     workspace_queue,
     workspace_refits,
+    workspace_research_summary,
 )
 
 st.set_page_config(page_title='Research Mission · SPY', layout='wide')
@@ -287,12 +289,24 @@ def render_workspace():
         if task['status'] != current['task']['status']:
             st.rerun()
         if task['status']=='completed':
-            st.success('Mission completed: '+str(payload.get('terminal_status')))
+            st.success('Mission completed: '+query_campaign+' · '+str(payload.get('terminal_status')))
         elif task['status']=='blocked':
             st.error('Task blocked: '+task.get('blocker',''))
         else:
             st.info('Persistent task status: '+task['status'])
         st.caption(f"Mission ID: {selected['link']['mission_id']} · Campaign: {query_campaign}")
+        summary = workspace_research_summary(state_path,query_project,query_campaign,tenant_id=tenant)
+        st.subheader('Research summary / 研究总结')
+        st.write(summary['explanation'])
+        st.caption('Next: '+summary['next_action'])
+        st.write({'completed_research_candidates':summary['research_candidates_completed'],
+                  'new_research_fits':summary['cost']['current_research_fit_calls'],
+                  'prior_research_fits':summary['cost']['prior_research_fit_calls'],
+                  'explicit_refits':summary['cost']['current_explicit_refit_calls'],
+                  'known_fee':summary['cost']['known_fee']})
+        with st.expander('Literature use: source / transfer / observation'):
+            st.caption('原文观点、本地迁移假设与实际结果分开；引用不代表增量已证实。')
+            st.json(summary['literature'])
         st.subheader('Overview')
         a,b,c,d=st.columns(4)
         a.metric('Execution',str(payload.get('execution_status')))
@@ -350,6 +364,27 @@ def render_workspace():
                      'refit_policy':'all matured labels in the frozen development input'})
             if not deliverable:
                 st.info('当前候选不是可交付的已完成估计器。不会自动改选其他模型。')
+            with st.expander('Continue selected candidate / 从当前候选继续研究'):
+                st.caption('显式创建新的研究批次，不是恢复。保留父研究和累计成本；不复制旧预测或重置数据曝光。')
+                st.write({'candidate_id':chosen, 'new_budget':selected['request']['budget'], 'advisor_mode':selected['request']['advisor_mode']})
+                if st.button('Start new research from selected candidate',key='continue-'+query_campaign+'-'+chosen,
+                             disabled=not deliverable or selected['request']['advisor_mode']=='replay'):
+                    token=st.session_state.setdefault('continue-token-'+query_campaign+'-'+chosen,uuid.uuid4().hex)
+                    mission,new_task=continue_workspace_campaign(state_path,query_project,query_campaign,chosen,
+                        tenant_id=tenant,operation_id=token)
+                    st.query_params.from_dict({'project':query_project,'mission':mission.mission_id,'campaign':new_task.research_context['campaign_id']})
+                    st.rerun()
+            with st.expander('Confirmation capability / 确认能力预检'):
+                st.caption('仅检查模型和协议能力，不读取确认标签、不封存、不创建授权；不代表具备确认资格。')
+                if st.button('Check selected confirmation capability',disabled=not deliverable):
+                    from finance_forecast_agent.focused_delivery import preflight_confirmation
+                    from finance_forecast_agent.focused_research import CandidateConfig
+                    cfg=CandidateConfig(**{k:v for k,v in saved['candidate'].items() if k in CandidateConfig.__dataclass_fields__})
+                    try:
+                        st.json(preflight_confirmation(cfg,baseline=CandidateConfig('control','naive_train_median',{'strategy':'train_median'},[]),
+                            task=FocusedTaskSpec(),feature_specs=(payload.get('campaign',{}).get('research_options') or {}).get('feature_specs')))
+                    except ValueError as exc:
+                        st.warning(str(exc))
             if st.button('Refit selected model and register bundle',disabled=not deliverable):
                 refit_workspace_model(state_path,query_project,query_campaign,chosen,tenant_id=tenant)
                 st.rerun()

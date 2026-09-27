@@ -136,3 +136,6 @@ The system distinguishes:
 - `simulation_only`: synthetic or offline flow validation.
 
 The packaged Plotly panel is real market data, but not the original dataset of the papers, so the system should classify those runs as exploratory real-data reproduction rather than strict paper reproduction.
+
+### Current research workspace
+The default home links to the shared goal/provided-start Research Mission. Completed studies expose an evidence-limited summary and explicit candidate-bound continuation; interruption uses Resume instead. The advanced legacy paper workbench remains at `?lab=1`. See docs/CURRENT_IMPLEMENTATION.md for current evidence and docs/FRONTEND_USER_GUIDE.md for bounds.

@@ -6,6 +6,7 @@ import json
 import os
 import platform
 import stat
+import time
 import uuid
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -22,7 +23,13 @@ from .experiment_memory import ExperimentMemoryRecord, ExperimentMemoryStore
 from .focused_data import FocusedDatasetSnapshot, FocusedTaskSpec
 from .focused_identity import canonical_json, data_identity, file_sha256, identity, target_row_ids
 from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, reviewed_feature_registry, validate_model_params
-from .focused_research import CandidateConfig, _make_model, evaluate_candidate, resolve_feature_columns
+from .focused_research import (
+    CandidateConfig,
+    _evaluate_naive_baseline,
+    _make_model,
+    evaluate_candidate,
+    resolve_feature_columns,
+)
 from .focused_state import RuntimeDB, atomic_json, now, safe_id
 
 
@@ -639,6 +646,46 @@ def _candidate(payload: dict, feature_specs: list[dict] | None = None) -> Candid
     return cfg
 
 
+
+def _confirmation_control(payload: dict) -> CandidateConfig:
+    """Only the existing train-only sanity controls, never caller-supplied statistics."""
+    if not str(payload.get("model_family", "")).startswith("naive_"):
+        return _candidate(payload)
+    strategy = str(payload.get("model_family", ""))[6:]
+    if (strategy not in {"zero", "train_mean", "train_median"}
+            or payload.get("model_params") != {"strategy": strategy}
+            or payload.get("feature_groups") != []):
+        raise ValueError("unsupported or externally supplied naive confirmation statistic")
+    cfg = CandidateConfig(**{k:v for k,v in payload.items() if k in CandidateConfig.__dataclass_fields__})
+    if cfg.fingerprint != payload.get("candidate_fingerprint", cfg.fingerprint):
+        raise ValueError("confirmation control identity mismatch")
+    return cfg
+
+
+def preflight_confirmation(candidate: CandidateConfig, *, baseline: CandidateConfig,
+                           task: FocusedTaskSpec, evaluation_policy: EvaluationPolicy | None = None,
+                           feature_specs: list[dict] | None = None) -> dict:
+    """Capability-only check before sealing. No data/score access or grants.
+
+    Eligibility, actual input integrity and label timing are checked separately
+    when binding registered datasets. This receipt is never authorization.
+    """
+    if task.to_dict() != FocusedTaskSpec().to_dict() or feature_specs:
+        raise ValueError("confirmation supports only the fixed task and built-in features")
+    selected = _candidate(candidate.to_dict())
+    control = _confirmation_control(baseline.to_dict())
+    policy = evaluation_policy or EvaluationPolicy()
+    if policy.evidence_tier != "development_only":
+        raise ValueError("preflight cannot promote evidence by caller declaration")
+    naive = control.model_family.startswith("naive_")
+    return {"schema_version": "confirmation_capability_v1", "status": "supported",
+        "candidate": selected.to_dict(), "baseline": control.to_dict(),
+        "task": task.to_dict(), "evaluation_policy": policy.to_dict(),
+        "protocol": "fit_training_once_fixed_holdout_v1", "estimator_fit_calls": 1 if naive else 2,
+        "training_statistic_computations": int(naive and control.model_params["strategy"] != "zero"),
+        "grants_created": 0, "reads_confirmation_labels": False, "dataset_eligibility": "not_checked",
+        "environment": _environment(), "source": _source()}
+
 def create_confirmation_grant(
     candidate: CandidateConfig,
     *,
@@ -656,6 +703,7 @@ def create_confirmation_grant(
     rolling refit is implied by this first supported confirmation protocol."""
     if not approved_by.strip() or not selection_reason.strip():
         raise PermissionError("explicit operator approval and selection reason required")
+    capability = preflight_confirmation(candidate, baseline=baseline, task=task, evaluation_policy=evaluation_policy)
     store = _authority(state_path)
     train, tr = _load_dataset(store, training_dataset_id, tenant_id)
     confirm, cr = _load_dataset(store, confirmation_dataset_id, tenant_id)
@@ -671,8 +719,8 @@ def create_confirmation_grant(
     if last_label >= first_decision or set(tr["target_rows"]) & set(cr["target_rows"]):
         raise ValueError("training includes overlapping or not-yet-matured labels")
     for cfg in (candidate, baseline):
-        _candidate(cfg.to_dict())
-        columns = resolve_feature_columns(cfg.feature_groups)
+        (_confirmation_control if cfg is baseline else _candidate)(cfg.to_dict())
+        columns = [] if cfg.model_family.startswith("naive_") else resolve_feature_columns(cfg.feature_groups)
         if (
             not np.isfinite(train[columns].to_numpy(dtype=float)).all()
             or not np.isfinite(confirm[columns].to_numpy(dtype=float)).all()
@@ -698,7 +746,8 @@ def create_confirmation_grant(
         "simulation_only": tr["simulation_only"] or cr["simulation_only"],
         "last_training_label_available_at": last_label.isoformat(),
         "first_decision_at": first_decision.isoformat(),
-        "reserved_fit_calls": 2,
+        "reserved_fit_calls": capability["estimator_fit_calls"],
+        "capability_preflight": capability,
     }
     gid = "confirmation-" + uuid.uuid4().hex
     with store.transaction() as db:
@@ -718,6 +767,7 @@ def create_confirmation_grant(
                 "status": "authorized",
                 "observed_started_fits": 0,
                 "observed_completed_fits": 0,
+                "observed_training_statistic_computations": 0,
             },
             immutable=True,
         )
@@ -728,7 +778,7 @@ def create_confirmation_grant(
             grant_id=gid,
             tenant_id=tenant_id,
             approved_by=approved_by,
-            reserved_fit_calls=2,
+            reserved_fit_calls=capability["estimator_fit_calls"],
         )
     return gid
 
@@ -789,12 +839,25 @@ def execute_confirmation_grant(grant_id: str, *, state_path: str | Path, tenant_
                 store.write(db, "confirmation-grants", grant_id, current)
 
         for role in ("baseline", "candidate"):
-            cfg = _candidate(body[role])
-            result = evaluate_candidate(
-                frame, cfg, best_baseline_mae=1.0, min_relative_improvement=1.0, split_spec=split, fit_observer=observe
-            )
+            cfg = (_confirmation_control if role == "baseline" else _candidate)(body[role])
+            started = time.monotonic()
+            if cfg.model_family.startswith("naive_"):
+                is_statistic = cfg.model_params["strategy"] != "zero"
+                if is_statistic:
+                    with store.transaction() as db:
+                        current = store.read(db, "confirmation-grants", grant_id)
+                        current["observed_training_statistic_computations"] = current.get("observed_training_statistic_computations", 0) + 1
+                        store.write(db, "confirmation-grants", grant_id, current)
+                result = _evaluate_naive_baseline(frame, cfg, split_spec=split)
+            else:
+                result = evaluate_candidate(
+                    frame, cfg, best_baseline_mae=1.0, min_relative_improvement=1.0, split_spec=split, fit_observer=observe
+                )
             results[role] = {
                 "config": cfg.to_dict(),
+                "compute_seconds": time.monotonic() - started,
+                "computation_kind": "training_statistic" if cfg.model_family in {"naive_train_mean", "naive_train_median"}
+                    else "constant_prediction" if cfg.model_family == "naive_zero" else "estimator_fit",
                 "metrics": result.metrics,
                 "prediction_rows": result.prediction_rows,
                 "prediction_count": result.prediction_count,
@@ -816,7 +879,8 @@ def execute_confirmation_grant(grant_id: str, *, state_path: str | Path, tenant_
             "meets_frozen_threshold": relative is not None
             and relative >= body["evaluation_policy"]["min_relative_mae_improvement"],
             "not_a_promotion_or_profitability_claim": True,
-            "fit_calls": 2,
+            "fit_calls": body["reserved_fit_calls"],
+            "training_statistic_computations": int(body["baseline"]["model_family"] in {"naive_train_mean", "naive_train_median"}),
             "timing_basis": "explicit_available_at_or_declared_XNYS_close_not_observed_provider_receipt",
             **results,
             "completed_at": now(),

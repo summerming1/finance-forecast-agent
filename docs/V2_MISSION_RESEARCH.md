@@ -308,3 +308,14 @@ Based on published B2 49a486a. Added thin existing-MethodCard/review projection 
 New source/test red collection failed before the module existed; 24 targeted cases subsequently passed (23.68s). Local transient HTTP success tests hit the pre-existing 3s wall deadline due to measured ~1.6s subprocess startup; no historical timing assertions are weakened. Initial diagnostic run overlapped editing and its source-mismatch failures are not frozen-source evidence. Interrupted slow aggregate attempts remain diagnostic logs, not passing gates. Exact frozen-source cumulative and CI must pass or be explicitly reported before publish. No live provider call, real customer, changed 47-row confirmation, or superiority claim.
 
 B3 frozen-source receipt: tree `e633d8e884b588987196f81ef84475bf00a4c62d`; cumulative 292 passed / 2 failed / 0 skipped, 552.86s. Both failures are the original B1 transient success cases under a 3s logical deadline; separate 10s-policy probes completed two HTTP attempts in 3.406s/3.125s and do not replace failed receipts. MethodCard/review regressions: 13 passed. Two actual author PDF copies plus 4002-row frozen SPY executed with offline-assistant fixtures: 16 fits/no_improvement; new-process hard-network-denied replay had identical prediction rows. No PDFs/raw market inputs are committed or redistributed in the checkpoint. Current session exposes read-only GitHub tools; no gh/network publication available. B3 remains uncommitted, B4/B5 untouched.
+
+
+## B4：总结、续接与确认预检（2026-09-27）
+
+基线257ed0f（树b825b6f），本次从可核验基线实现；此前口述B4工作区和347通过数不能替代本次收据。功能复用原RuntimeDB、Controller、数值评估、Memory和文献源，没有第二套运行状态。
+
+确定性总结区分外部故障、无研究候选和有范围的负结果；文献原观点、迁移假设、实际反馈分开。新研究显式引用已接受父模型/final/合同，原Mission和状态库不变，新费用独立记录，原预测不复制。确认能力预检在任何数据加载前；朴素对照只计算授权训练统计，fit与统计计算分离。原47目标结果不得重选窗口或复算争取通过。
+
+本次先留13项红测，修复接线中的feature检查与project_root字段，并修正测试自身TaskSpec字段；新增20项定向测试最终通过。原长程Live、G2A/G2B科学增量、真人与受影响Windows测试不由本批离线通过替代。浏览器门禁在原链路上新增总结、零授权预检、显式续接、刷新、费用与下载核对。所有历史失败保留；发布提交与精确源码CI收据是最终依据。
+
+B4首个Chromium门禁Run36287928692保留FAIL：新Campaign已创建，但通用完成提示仍是父页面旧DOM，断言读取了未完成子记录。完成提示现在携带Campaign ID，浏览器必须等待该子ID且核对持久completed状态；未删除谱系、无额外fit或导出检查。

@@ -71,6 +71,7 @@ def main() -> None:
         literature_project=args.literature_project or options.get("literature_project"),
         literature_review_ids=args.literature_review_ids or options.get("literature_review_ids"),
         context_mode=args.context_mode or options.get("context_mode", "full_v1"),
+        continuation_from=options.get("continuation_from"),
     )
     result = controller.run()
     print(json.dumps({

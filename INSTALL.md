@@ -69,3 +69,6 @@ pip install -e ".[ui]"
 $env:PYTHONPATH="src"
 python -m streamlit run apps/streamlit_app.py
 ```
+
+## Reproducing legacy PDF fixture environment
+For the historically recorded strict parser fixture environment, explicitly install `python -m pip install -c constraints/pdf-legacy-validation.txt -e ".[dev,pdf]"` in a separate environment and record `pip freeze` plus input hashes. This does not globally pin normal runtime dependencies or authorize rewriting fixture expectations. A different installed pypdf version is not evidence of strict fixture equivalence. Long native/GPU training is separately scoped.
