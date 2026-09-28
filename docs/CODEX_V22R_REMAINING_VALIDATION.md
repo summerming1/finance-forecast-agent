@@ -2,6 +2,7 @@
 
 本文件是当前补测入口，替代旧“R0–R6尚未跑通”的清单，不改写历史验收收据。
 2026-09-28 增量证据见 [B5_INCREMENT_20260928.md](validation/B5_INCREMENT_20260928.md)；旧失败及48条原条款保留，不因新小样本完成而全部关闭。
+随后限定的录制硬中断收口见 [B5_RECORDING_RECOVERY_20260928.md](validation/B5_RECORDING_RECOVERY_20260928.md)；新证据已追加关联原A04/A05/A06/A08/A23/L18。不要重复付费G2A/G2B；下一步可做受控真人试用，原冻结资产、Windows权限及真实语义负例仍分别保留。旧源码合同不能在新版强改hash恢复。
 正式分支 `feat/mission-research-v2`；B4已发布 `e983c4dfb90bb96d314fb0d2a8474e31537d1223`。
 B5最终HEAD以拉取后实际Git与同SHA CI为准；不得把文档中的父提交当最终提交。
 当前状态只见 CURRENT_IMPLEMENTATION.md，批准范围见 ADR_MISSION_PRODUCT_004.md。

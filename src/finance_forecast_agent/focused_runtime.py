@@ -215,6 +215,38 @@ class CampaignRuntime:
         with self.db.transaction() as db:
             self.guard(db)
 
+    def check_provider_recovery(self, round_index: int, fixture_dir: Path) -> None:
+        """Fence cross-owner missing responses using the existing durable HTTP ledger.
+
+        This is not the transport retry loop. An explicitly resumed, fully recorded
+        provider failure may make a new charged attempt; an interrupted delivery
+        without reliable response evidence must not silently be sent again.
+        """
+        from .replay_llm import ReplayLLM
+
+        with self.db.transaction() as db:
+            self.guard(db)
+            events = [json.loads(row[0]) for row in db.execute(
+                'SELECT payload FROM events WHERE ns=?', (self.ns,))]
+            calls = {event['call_number'] for event in events
+                     if event['type'] == 'advisor.call_reserved' and event['round_index'] == round_index}
+            http = [json.loads(row[0]) for row in db.execute(
+                "SELECT payload FROM objects WHERE ns=? AND key LIKE 'http:%'", (self.ns,))]
+            sent = {row['call_number'] for row in http if row['call_number'] in calls}
+            for number in sent:
+                attempt = self.db.read(db, self.ns, f'advisor_attempt:{number}', {})
+                record = attempt.get('call_record') or {}
+                if (attempt.get('round_index') != round_index or record.get('call_status') != 'failed'
+                        or attempt.get('call_metadata', {}).get('recording_status') != 'persisted'):
+                    raise ValueError('Provider response evidence incomplete after interruption: this decision '
+                                     'cannot issue another provider request; delivery/cost may be unknown')
+                # DB retains the exact original record. Do not delete/ignore corrupt
+                # failed-call files and retry as though their request never happened.
+                folder = ReplayLLM(fixture_dir)._schema_dir('focused_research_advice') / 'records'
+                path = folder / f"{record['prompt_sha256']}-{record['call_id']}.json"
+                if path.is_symlink() or json.loads(path.read_text(encoding='utf-8')) != record:
+                    raise ValueError('Persisted provider failure record integrity mismatch')
+
     def reserve(self, candidate: dict, *, role: str, fits: int) -> str:
         candidate_id = safe_id(candidate['candidate_id'])
         attempt_id = uuid.uuid4().hex

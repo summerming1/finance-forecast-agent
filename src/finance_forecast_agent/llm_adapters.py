@@ -338,8 +338,10 @@ class FixtureRecordingLLM:
 
     def complete_json(self, *, prompt_payload: dict[str, Any], schema_name: str) -> dict[str, Any]:
         self.last_fixture_path = None
-        self.last_call_metadata = {}
+        self.last_call_metadata = {'recording_status': 'preflight_failed',
+                                   'http_attempts': 0, 'delivery_status': 'not_sent', 'cost': None}
         self.replay.preflight_write(schema_name=schema_name)
+        self.last_call_metadata = {}
         started = time.monotonic()
         metadata = {key: str(getattr(self.live_client, key, 'unknown')) for key in ('provider', 'model', 'base_url')}
         try:

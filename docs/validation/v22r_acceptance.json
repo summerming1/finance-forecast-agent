@@ -1,5 +1,52 @@
 {
   "schema_version": "v22r_acceptance_v1",
+  "b5_recording_recovery_20260928": {
+    "base_sha": "6056c3e3ef4b7693dede5337cf7f2b75fc6b1373",
+    "report": "docs/validation/B5_RECORDING_RECOVERY_20260928.md",
+    "receipts": "docs/validation/B5_RECORDING_RECOVERY_20260928.json",
+    "scope": "simulation_only local HTTP, real spawned process termination, isolated test RuntimeDB; no paid provider",
+    "history_policy": "Original clauses and historical statuses below are unchanged; this is additive scoped evidence, not blanket B5 acceptance.",
+    "clause_evidence": {
+      "A04": {
+        "status": "PASS", "kind": "current_rerun_simulation_only",
+        "tests": ["tests/test_focused_b5_crash_recording.py::test_hard_kill_resume_never_resends_or_refits[unknown]", "tests/test_focused_b5_crash_recording.py::test_unwritable_database_retains_evidence_gap[db_after-1]", "tests/test_focused_b05_supplement.py::test_response_disconnect_preserves_unknown_usage_and_counts_retry"],
+        "limit": "Not a real provider outage or exactly-once billing guarantee. DB loss/corruption may leave an irrecoverable evidence gap."
+      },
+      "A05": {
+        "status": "PASS", "kind": "current_rerun_simulation_only",
+        "tests": ["tests/test_focused_b5_crash_recording.py::test_hard_kill_resume_never_resends_or_refits", "tests/test_focused_b5_crash_recording.py::test_preflight_permission_repair_resumes_same_contract", "tests/test_focused_b1_provider.py::test_campaign_provider_pause_resume_preserves_plan_and_accepted_fits"],
+        "counts": "hard interruption HTTP 2->2, fits 16->16; preflight HTTP0 then same-contract repaired execution totals HTTP2/fits16"
+      },
+      "A06": {
+        "status": "PASS", "kind": "historical_local_HTTP_concurrency_reuse_plus_current_queue_regression",
+        "historical_receipt": "docs/validation/B05_SUPPLEMENT_20260927.md",
+        "tests": ["tests/test_focused_r2_runtime.py::test_atomic_cross_process_idempotency", "tests/test_focused_r2_runtime.py::test_queue_cancel_fences_late_result_and_json_is_not_authority"],
+        "limit": "This turn does not newly certify a concurrent live-provider recovery experiment."
+      },
+      "A08": {
+        "status": "PASS", "kind": "current_rerun_simulation_only",
+        "tests": ["tests/test_focused_b5_crash_recording.py::test_accepted_response_corruption_fails_closed", "tests/test_focused_b5_crash_recording.py::test_corrupt_recorded_provider_failure_cannot_authorize_retry", "tests/test_focused_b1_provider.py::test_truncated_response_is_not_executed_or_retried"]
+      },
+      "A23": {
+        "status": "PASS", "kind": "current_rerun_existing_contract_guards_only",
+        "tests": ["tests/test_focused_r1_contracts.py::test_legacy_response_hash_checked_and_no_silent_upgrade", "tests/test_focused_r2_runtime.py::test_resume_rejects_contract_or_artifact_tampering", "tests/test_focused_b5_crash_recording.py::test_preflight_permission_repair_resumes_same_contract"],
+        "remaining": "General schema migration NOT_RUN; changed source/fixture root requires a new Campaign or original-version path, not a rewritten contract hash."
+      },
+      "L18": {
+        "status": "PASS", "kind": "historical_real_L1_replay_reuse_and_current_simulation_regression",
+        "historical_receipt": "docs/validation/B5_INCREMENT_20260928.json#commands/replay_increment_l1",
+        "tests": ["tests/test_focused_b3_literature.py::test_actual_replay_literature_experiment_feedback_chain"],
+        "remaining": "New paid live/replay NOT_RUN by scope; broad real semantic adversarial validation not completed."
+      }
+    },
+    "remaining_boundaries": {
+      "original_frozen_input": "BLOCKED_ASSET",
+      "real_user_trial": "BLOCKED_NO_REAL_USER",
+      "new_live_semantic_adversaries": "NOT_RUN",
+      "new_G2A_G2B": "NOT_RUN; existing valid historical evidence retained",
+      "macOS_GPU_native_training": "NOT_RUN; explicitly outside scope"
+    }
+  },
   "base_sha": "6e4f194453f77037929052a0a978cc76bc2017b7",
   "scope": "SPY_daily_next_session_return_forecast_only",
   "record_semantics": "stages, authoritative_checkpoint, 20260922 records and supplement_20260923 preserve their historical checkpoints; real_confirmation_20260923 and external_gates are latest; CURRENT_IMPLEMENTATION.md is current capability authority",

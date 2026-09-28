@@ -7,6 +7,12 @@
 
 # V2 Mission Research — incremental delivery record
 
+## B5 recording hard-interruption closure — 2026-09-28
+
+Base6056c3e: new spawned-process/local-HTTP red suite reproduced6 failures/4 passes (90.31s). Four interrupted-response boundaries silently sent HTTP3 after the original2 requests; preflight HTTP0 incorrectly became a permanent recording failure; response-time DB failure also allowed a resend. Already accepted response recovery and accepted-record corruption rejection passed before changes.
+Minimal changes use the original RuntimeDB HTTP/Advisor events to fence incomplete cross-process response evidence, keep reservations/unknown costs, distinguish preflight failures, and verify recorded provider failures before existing explicit resume. No new authority, altered numeric policy, schema repair, model rotation or paid call. Existing bounded transport retries remain. Targeted67 passed; expanded provider/replay/runtime/queue66 passed. Final cumulative/static/browser and same-SHA publication evidence are recorded in validation/B5_RECORDING_RECOVERY_20260928.md/JSON. Original47-target negative confirmation, valid G2A/G2B, user work and original state remain untouched.
+Final local source:405 passed/1 symlink privilege failure/2 skipped (512.03s), actual Chromium1 passed (78.54s), scoped Ruff/compile pass. New12 cases retain exact HTTP/fit invariants; accepted response/plan reuse remains16 fits and2 requests, incomplete hard-cut response blocks without an extra request. Post-publication exact-SHA CI remains separately identified; no whole-repository/native or paid rerun claimed.
+
 ## B5 reviewed incremental hardening — 2026-09-28
 
 Base is published `2883b15` (including `1031d25`); production source before this increment matches the prior `5ec8042` validation. The primary checkout and its untracked evidence are preserved; work reuses the clean managed validation worktree. No R0–R6 reimplementation, V3, new evaluator or state authority.

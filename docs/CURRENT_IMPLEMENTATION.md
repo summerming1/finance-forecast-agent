@@ -4,6 +4,12 @@
 
 验收缺口分轴保留；后续批次的计划不得冒充实际完成。
 
+### B5 录制硬中断收口
+
+基线6056c3e上真实子进程/本地模拟HTTP复现：缺少可靠响应登记的硬中断恢复会重复请求；HTTP=0的预检权限失败又被错误永久阻断。最小修复复用原HTTP/Advisor账本，在跨进程恢复前拒绝未知响应的自动重发；前置故障独立记录，同路径修复后允许原合同恢复。完整已接受响应/计划继续复用；正常429/503有界重试未改。损坏失败收据不能作为新请求授权。DB不可写可能缺账，绝不承诺任意故障下恰好一次计费。
+新证据与原A04/A05/A06/A08/A23/L18关联见 [B5_RECORDING_RECOVERY_20260928.md](validation/B5_RECORDING_RECOVERY_20260928.md) 及原验收JSON新增节。测试均simulation_only，无新付费LLM、资料外发、真实DB写入或确认。旧冻结资产/真人/真实语义缺口保留，整体仍PARTIAL。
+收口最终本地累计405 passed/1 Windows symlink权限失败/2 skipped；Chromium1 passed；相关Ruff/compile通过。同发布SHA CI单列，旧6056c3e证据不冒充新源码结果。可以进入受控真人试用，不等于完整B5或V3验收通过。
+
 9月27日独立 Windows 补测保留在 [B05_SUPPLEMENT_20260927.md](validation/B05_SUPPLEMENT_20260927.md)。9月28日增量见 [B5_INCREMENT_20260928.md](validation/B5_INCREMENT_20260928.md)：最终相关累计393 passed/1 symlink权限失败/2 skipped；全仓532 passed/10环境或资产失败/3 skipped（全仓在最后文献提示修复前，之后受影响累计已重跑）。真实 Chromium 通过。用户已审核两条短文献观点及一条引用用途，但不代表真人产品试用通过。整体仍PARTIAL。
 
 正式分支：`feat/mission-research-v2`。B 批次演进基线：`a3c6ec69c9bd14d18b1cdb493795669a9452c800`；本轮独立补测源基线：`5ec8042f7623470646c92953404b65f21abc4f7c`。

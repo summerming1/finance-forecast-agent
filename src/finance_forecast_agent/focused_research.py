@@ -1413,6 +1413,8 @@ class FocusedResearchController:
                     recorded=returned
                     runtime.put(f"advice:{round_index}",recorded,immutable=True)
                 if recorded is None:
+                    if self.advisor.mode == "live":
+                        runtime.check_provider_recovery(round_index, self.advisor.fixture_dir)
                     prompt = advisor_prompt(round_index=round_index, task=self.task, baseline_results=initial_results,
                         prior_results=research_results, budget=self.budget, structured_feedback=feedback_history,
                         reviewed_evidence=self.reviewed_evidence, compatible_memory=memory_evidence,
@@ -1489,8 +1491,10 @@ class FocusedResearchController:
                             self._append_event("advisor.response_persisted",round_index=round_index)
                     except OSError as exc:
                         from .llm_adapters import safe_error_facts
-                        runtime.put(f"recording_failure:{round_index}",
-                            safe_error_facts(exc, phase="response_recording"), immutable=True)
+                        preflight = getattr(native, "last_call_metadata", {}).get("recording_status") == "preflight_failed"
+                        key = f"preflight_failure:{round_index}:{calls+1}" if preflight else f"recording_failure:{round_index}"
+                        runtime.put(key, safe_error_facts(exc, phase="recording_preflight" if preflight else "response_recording"),
+                                    immutable=True)
                         raise
                     except ProviderFailure as exc:
                         runtime.finish_provider_call(calls+1,time.monotonic()-started_at)
