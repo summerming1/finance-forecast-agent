@@ -30,14 +30,14 @@ async function act(action,el){
  case 'load-literature':{const root=S.draft.literature_project||S.snapshot.projects.find(p=>p.project_id===S.draft.project_id)?.root||S.draft.project_dir;const r=await rpc('literature',{project_dir:root});S.literature=r.rows;render(true);return}
  case 'preflight':S.error='';S.preview=await rpc('preflight',{form:formPayload()});render(true);return;
  case 'submit':{if(!S.preview)throw new Error('请先预检当前配置。');const form=formPayload();const p=S.preview;confirmation('create','开始新的研究批次',`<p>此操作将提交到真实本地队列。模式：<strong>${esc(MODE_NAMES[form.mode])}</strong>。</p>${kv('数据',form.raw_path)}${kv('有效行数',p.dataset.row_count)}${kv('训练上限',p.budget.max_fit_calls)}${kv('HTTP 上限',p.budget.max_http_requests)}${kv('货币费用','未知；不是免费运行保证')}<div class="callout">开始后按冻结合同执行；页面浏览和切换不改变任务。</div>`);return}
- case 'confirm-create':{await rpc('create',{form:formPayload(),preflight_hash:S.preview.preflight_hash,confirmed:true});closeModal();S.preview=null;S.view='research';S.drawer=null;render();return}
+ case 'confirm-create':{await rpc('create',{form:formPayload(),preflight_hash:S.preview.preflight_hash,confirmed:true});closeModal();S.preview=null;S.view='research';S.drawer=null;render();schedulePoll();return}
  case 'refit':if(!curr().deliverable)throw new Error('当前对象不具备模型包生成资格。');confirmation('refit','为当前候选生成模型包',`<p>按当前配置额外训练一次，不是下载最后一折模型；不授予独立确认或生产资格。</p>${kv('当前候选',curr().selected_candidate_id)}${kv('实际模型',name(selected()))}${kv('额外训练','1 次 refit')}${kv('费用','独立记录，金额未知')}`);return;
  case 'confirm-refit':await rpc('refit',{...confirmedContext,confirmed:true});closeModal();toast('已完成当前候选的 refit 与可信登记。');return;
  case 'download-model':{const r=await rpc('download_model',{...currentArgs(),refit_id:el.dataset.refit});download(r.download);return}
  case 'export':confirmation('export','导出本批研究包','<p>导出实际已记录的研究过程与证据。文献权限受限时，原后端会省略不允许再分发的内容；不会因为导出而调用模型或训练。</p>');return;
  case 'confirm-export':{const r=await rpc('export_research',{...confirmedContext,confirmed:true});closeModal();download(r.download);return}
  case 'continue':{const r=await rpc('preview_continue',currentArgs());confirmation('continue','从当前候选开始新批次',`<p>不是恢复旧任务。父研究与历史费用保留，新训练独立计入。</p>${kv('父候选',r.parent.candidate_id)}${kv('数据',r.dataset.semantic_fingerprint)}${kv('方式',MODE_NAMES[r.advisor_mode])}${kv('原批次训练',r.prior_fit_calls)}<details class="event-details"><summary>继承范围</summary>${jsonView(r.inherited_options)}</details>${jsonView(r.new_budget)}`,{live:r.advisor_mode==='live'});return}
- case 'confirm-continue':{const live=el.dataset.live==='true';if(live&&!document.getElementById('operation-live')?.checked)throw new Error('请明确确认新增真实调用费用与资料发送。');await rpc('continue',{...confirmedContext,confirmed:true,live_consent:live});closeModal();S.view='research';S.drawer=null;render();return}
+ case 'confirm-continue':{const live=el.dataset.live==='true';if(live&&!document.getElementById('operation-live')?.checked)throw new Error('请明确确认新增真实调用费用与资料发送。');await rpc('continue',{...confirmedContext,confirmed:true,live_consent:live});closeModal();S.view='research';S.drawer=null;render();schedulePoll();return}
  case 'resume':confirmation('resume','检查原合同并恢复',`<p>保留原计划、已接受实验和历史费用。源码或资料变化、记录缺失、未知响应等仍由原恢复保护拒绝，不自动当成免费重试。</p>${kv('当前状态',curr().task.status)}`,{live:curr().request.advisor_mode==='live'});return;
  case 'confirm-resume':{const live=el.dataset.live==='true';if(live&&!document.getElementById('operation-live')?.checked)throw new Error('请明确确认可能新增的真实调用。');await rpc('resume',{...confirmedContext,confirmed:true,live_consent:live});closeModal();return}
  case 'cancel':confirmation('cancel','取消当前研究','<p>将调用原队列的取消操作，阻止后续接受结果并结束受管理进程。已发生训练和请求不会清零。</p>');return;
@@ -52,14 +52,15 @@ document.addEventListener('click',event=>{const el=event.target.closest('[data-a
 document.addEventListener('input',event=>{
  const el=event.target;
  if(el.id==='candidate-search'||el.id==='project-search'){S.query=el.value;render(true);return}
- if(el.dataset.draft){if(el.tagName==='SELECT')return;const key=el.dataset.draft;S.draft[key]=el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;S.preview=null;S.error='';saveDraft();if(['input_kind','project_id','advanced_contract','provenance_type','change_scope'].includes(key)||el.type==='checkbox')render(true)}
+ if(el.dataset.draft){if(el.tagName==='SELECT')return;const key=el.dataset.draft;S.draft[key]=el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;S.preview=null;S.error='';if(key==='ext_name'){S.draft.groups=S.draft.groups.filter(g=>g!=='external_numeric');if(el.value)S.draft.groups.push('external_numeric')}saveDraft();if(['ext_name','input_kind','project_id','advanced_contract','provenance_type','change_scope'].includes(key)||el.type==='checkbox')render(true)}
 });
 document.addEventListener('change',event=>{
  const el=event.target;
- if(el.dataset.draft){const key=el.dataset.draft;S.draft[key]=el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;S.preview=null;
- if(key==='family')S.draft.params=key&&S.draft.family==='ridge_regression'?' {"alpha":1}':S.draft.family==='random_forest_regressor'?' {"n_estimators":80,"max_depth":4,"min_samples_leaf":5}':' {"n_estimators":80,"learning_rate":0.03,"max_depth":2}';
+ // Text/number values are already saved on input. Repainting on blur would
+ // remove the next button between mousedown and click and swallow that action.
+ if(el.dataset.draft){if(el.tagName!=='SELECT')return;const key=el.dataset.draft;S.draft[key]=el.value;S.preview=null;
+ if(key==='family')S.draft.params=S.draft.family==='ridge_regression'?' {"alpha":1}':S.draft.family==='random_forest_regressor'?' {"n_estimators":80,"max_depth":4,"min_samples_leaf":5}':' {"n_estimators":80,"learning_rate":0.03,"max_depth":2}';
  if(key==='project_id'){rpc('select',{project_id:el.value}).catch(showError)}
- if(key==='ext_name'){if(el.value&&!S.draft.groups.includes('external_numeric'))S.draft.groups.push('external_numeric');else if(!el.value)S.draft.groups=S.draft.groups.filter(g=>g!=='external_numeric');}
  render(true);saveDraft();return}
  if(el.dataset.feature){const key=el.dataset.feature;S.draft[key]=el.checked?[...new Set([...S.draft[key],el.value])]:S.draft[key].filter(v=>v!==el.value);S.preview=null;saveDraft();return}
  if(el.dataset.literature){const id=el.dataset.literature;if(el.checked&&S.draft.literature_ids.length>=3){el.checked=false;toast('最多选择 3 条审核资料');return}S.draft.literature_ids=el.checked?[...new Set([...S.draft.literature_ids,id])]:S.draft.literature_ids.filter(v=>v!==id);S.preview=null;saveDraft();return}
@@ -68,7 +69,7 @@ document.addEventListener('change',event=>{
 document.addEventListener('keydown',event=>{
  if(event.key==='Escape'){if(S.modal&&!S.busy)closeModal();else{S.drawer=null;S.sidebar=false;render(true)}}
  if(event.key==='Tab'&&S.modal){const list=[...document.querySelectorAll('.modal button:not(:disabled),.modal input,.modal a,.modal select,.modal textarea')];const first=list[0],last=list.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}}
- if(['INPUT','TEXTAREA','SELECT'].includes(event.target.tagName))return;
+ if(['INPUT','TEXTAREA','SELECT'].includes(event.target.tagName)||S.modal)return;
  if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();S.query='';changeView('projects');document.getElementById('project-search')?.focus()}
  else if(!event.ctrlKey&&!event.metaKey&&event.key.toLowerCase()==='n'){event.preventDefault();changeView('new')}
  if(event.key==='Enter'&&event.target.matches('[data-action][role="button"],tr[data-action]'))event.target.click();
