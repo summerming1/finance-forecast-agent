@@ -228,7 +228,112 @@
         "failures": "0",
         "seconds": "185.093"
       },
-      "selected_cases": []
+      "selected_cases": [
+        {
+          "seconds": "9.219",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[unknown]"
+        },
+        {
+          "seconds": "9.129",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[response]"
+        },
+        {
+          "seconds": "8.389",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[partial]"
+        },
+        {
+          "seconds": "8.230",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[orphan_fixture]"
+        },
+        {
+          "seconds": "8.145",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[accepted]"
+        },
+        {
+          "seconds": "8.676",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[accepted_plan]"
+        },
+        {
+          "seconds": "12.331",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "http_before_after": "0/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_preflight_permission_repair_resumes_same_contract"
+        },
+        {
+          "seconds": "8.195",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_accepted_response_corruption_fails_closed[json]"
+        },
+        {
+          "seconds": "8.309",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_accepted_response_corruption_fails_closed[hash]"
+        },
+        {
+          "seconds": "9.065",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_unwritable_database_retains_evidence_gap[db_before-0]"
+        },
+        {
+          "seconds": "8.363",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_unwritable_database_retains_evidence_gap[db_after-1]"
+        },
+        {
+          "seconds": "2.195",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_corrupt_recorded_provider_failure_cannot_authorize_retry"
+        }
+      ]
     },
     "browser_hardcut_final": {
       "command": [
@@ -475,11 +580,115 @@
       },
       "selected_cases": [
         {
+          "seconds": "9.138",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[unknown]"
+        },
+        {
+          "seconds": "9.644",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[response]"
+        },
+        {
+          "seconds": "9.251",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[partial]"
+        },
+        {
+          "seconds": "9.125",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[orphan_fixture]"
+        },
+        {
+          "seconds": "9.168",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[accepted]"
+        },
+        {
+          "seconds": "9.118",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[accepted_plan]"
+        },
+        {
+          "seconds": "13.981",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "http_before_after": "0/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_preflight_permission_repair_resumes_same_contract"
+        },
+        {
+          "seconds": "9.144",
+          "first_exception": null,
+          "status": "PASS",
           "properties": {},
-          "nodeid": "tests.test_focused_r4_trust::test_model_bundle_tamper_rejected_before_load[symlink]",
+          "nodeid": "tests.test_focused_b5_crash_recording::test_accepted_response_corruption_fails_closed[json]"
+        },
+        {
+          "seconds": "10.204",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_accepted_response_corruption_fails_closed[hash]"
+        },
+        {
+          "seconds": "11.271",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_unwritable_database_retains_evidence_gap[db_before-0]"
+        },
+        {
+          "seconds": "10.058",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_unwritable_database_retains_evidence_gap[db_after-1]"
+        },
+        {
+          "seconds": "2.832",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_corrupt_recorded_provider_failure_cannot_authorize_retry"
+        },
+        {
+          "seconds": "0.402",
           "first_exception": "OSError: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\b5tmp\\\\core_hardcut_final\\\\test_model_bundle_tamper_rejec2\\\\other.joblib' -> 'C:\\\\b5tmp\\\\core_hardcut_final\\\\test_model_bundle_tamper_rejec2\\\\bundle\\\\model.joblib'",
           "status": "FAIL",
-          "seconds": "0.402"
+          "properties": {},
+          "nodeid": "tests.test_focused_r4_trust::test_model_bundle_tamper_rejected_before_load[symlink]"
         }
       ]
     },
@@ -513,60 +722,91 @@
       },
       "selected_cases": [
         {
+          "seconds": "9.727",
+          "first_exception": "AssertionError: {'status': 'completed', 'fits': 16}",
+          "status": "FAIL",
           "properties": {
             "fits_before_after": "16/16",
             "http_before_after": "2/3"
           },
-          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[unknown]",
-          "first_exception": "AssertionError: {'status': 'completed', 'fits': 16}",
-          "status": "FAIL",
-          "seconds": "9.727"
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[unknown]"
         },
         {
+          "seconds": "9.675",
+          "first_exception": "AssertionError: {'status': 'completed', 'fits': 16}",
+          "status": "FAIL",
           "properties": {
             "fits_before_after": "16/16",
             "http_before_after": "2/3"
           },
-          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[response]",
-          "first_exception": "AssertionError: {'status': 'completed', 'fits': 16}",
-          "status": "FAIL",
-          "seconds": "9.675"
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[response]"
         },
         {
+          "seconds": "9.318",
+          "first_exception": "AssertionError: {'status': 'completed', 'fits': 16}",
+          "status": "FAIL",
           "properties": {
             "fits_before_after": "16/16",
             "http_before_after": "2/3"
           },
-          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[partial]",
-          "first_exception": "AssertionError: {'status': 'completed', 'fits': 16}",
-          "status": "FAIL",
-          "seconds": "9.318"
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[partial]"
         },
         {
+          "seconds": "9.226",
+          "first_exception": "AssertionError: {'status': 'completed', 'fits': 16}",
+          "status": "FAIL",
           "properties": {
             "fits_before_after": "16/16",
             "http_before_after": "2/3"
           },
-          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[orphan_fixture]",
-          "first_exception": "AssertionError: {'status': 'completed', 'fits': 16}",
-          "status": "FAIL",
-          "seconds": "9.226"
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[orphan_fixture]"
         },
         {
+          "seconds": "8.952",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[accepted]"
+        },
+        {
+          "seconds": "8.707",
+          "first_exception": "AssertionError: {'error': 'ValueError', 'message': 'Recorded response unavailable: this decision cannot issue another provider request'}",
+          "status": "FAIL",
           "properties": {
             "http_before_after": "0/0"
           },
-          "nodeid": "tests.test_focused_b5_crash_recording::test_preflight_permission_repair_resumes_same_contract",
-          "first_exception": "AssertionError: {'error': 'ValueError', 'message': 'Recorded response unavailable: this decision cannot issue another provider request'}",
-          "status": "FAIL",
-          "seconds": "8.707"
+          "nodeid": "tests.test_focused_b5_crash_recording::test_preflight_permission_repair_resumes_same_contract"
         },
         {
+          "seconds": "8.938",
+          "first_exception": null,
+          "status": "PASS",
           "properties": {},
-          "nodeid": "tests.test_focused_b5_crash_recording::test_unwritable_database_retains_evidence_gap[db_after-1]",
+          "nodeid": "tests.test_focused_b5_crash_recording::test_accepted_response_corruption_fails_closed[json]"
+        },
+        {
+          "seconds": "8.975",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_accepted_response_corruption_fails_closed[hash]"
+        },
+        {
+          "seconds": "5.137",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_unwritable_database_retains_evidence_gap[db_before-0]"
+        },
+        {
+          "seconds": "9.108",
           "first_exception": "AssertionError: {'status': 'completed', 'fits': 12}",
           "status": "FAIL",
-          "seconds": "9.108"
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_unwritable_database_retains_evidence_gap[db_after-1]"
         }
       ]
     },
@@ -600,7 +840,95 @@
         "failures": "0",
         "seconds": "111.473"
       },
-      "selected_cases": []
+      "selected_cases": [
+        {
+          "seconds": "9.006",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[unknown]"
+        },
+        {
+          "seconds": "9.068",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[response]"
+        },
+        {
+          "seconds": "9.020",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[partial]"
+        },
+        {
+          "seconds": "8.943",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[orphan_fixture]"
+        },
+        {
+          "seconds": "8.808",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "fits_before_after": "16/16",
+            "http_before_after": "2/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_hard_kill_resume_never_resends_or_refits[accepted]"
+        },
+        {
+          "seconds": "9.329",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {
+            "http_before_after": "0/2"
+          },
+          "nodeid": "tests.test_focused_b5_crash_recording::test_preflight_permission_repair_resumes_same_contract"
+        },
+        {
+          "seconds": "8.886",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_accepted_response_corruption_fails_closed[json]"
+        },
+        {
+          "seconds": "8.883",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_accepted_response_corruption_fails_closed[hash]"
+        },
+        {
+          "seconds": "5.151",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_unwritable_database_retains_evidence_gap[db_before-0]"
+        },
+        {
+          "seconds": "8.494",
+          "first_exception": null,
+          "status": "PASS",
+          "properties": {},
+          "nodeid": "tests.test_focused_b5_crash_recording::test_unwritable_database_retains_evidence_gap[db_after-1]"
+        }
+      ]
     }
   }
 }
