@@ -118,7 +118,12 @@ def _receive(process, pipe):
 def _kill(process):
     from finance_forecast_agent.focused_state import process_birth, terminate_owned_tree
     if process.is_alive():
-        terminate_owned_tree(process.pid, process_birth(process.pid))
+        if os.name == 'nt':
+            terminate_owned_tree(process.pid, process_birth(process.pid))
+        else:
+            # This child is owned by multiprocessing. On POSIX psutil.wait_procs
+            # can reap it before Process.join, leaving its cached state alive.
+            process.kill()
     process.join(10)
     assert not process.is_alive()
 

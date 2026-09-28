@@ -7,6 +7,8 @@
 B5最终HEAD以拉取后实际Git与同SHA CI为准；不得把文档中的父提交当最终提交。
 当前状态只见 CURRENT_IMPLEMENTATION.md，批准范围见 ADR_MISSION_PRODUCT_004.md。
 
+8817d68的Linux新增硬中断测试因POSIX回收冲突失败，已修正测试所有权回收路径，必须核对后续最终SHA核心CI；保留该8项失败历史，不以Windows通过代替Linux。
+
 ## 交给 Codex 的完整指令
 
 你要做的是独立补充验收与必要最小修复，不启动V3，不重写Controller/Queue/Evaluator/Memory/MethodCard，不扩任务、资产、任意代码和交易功能。

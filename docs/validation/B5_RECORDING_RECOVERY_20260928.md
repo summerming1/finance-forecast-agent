@@ -81,6 +81,12 @@ JUnit保存在实施worktree的 `validation/b05_20260927/{hardcut_red,hardcut_ta
 
 ## 剩余边界与停止
 
+### 发布 CI 发现的测试进程回收问题
+
+修正后Windows定向12项通过（`python -m pytest -q tests/test_focused_b5_crash_recording.py --basetemp=C:/b5tmp/hardcut_posix_harness_short --junitxml=validation/b05_20260927/hardcut_posix_harness_short.xml`，exit0，wrapper101.98秒），Ruff/compileall/diff检查exit0。此前未指定短basetemp的重跑12项执行完后，pytest退出清理旧Temp/pytest-current遇到WinError5、exit1，收据hardcut_posix_harness保留，未删除旧Temp或改权限。生产源码与累计405项及Chromium本地收据一致，测试仅POSIX终止适配；完整Linux适用核心由最终SHA CI重跑。
+
+8817d6894a7032037b66ab193789f7af6dc9ce0a 的 Linux CI（run 36387508167）两版本均8 failed/400 passed：Python3.11为425.95秒，3.13为433.39秒。8项均在新测试 `_kill` 的 `Process.is_alive()` 断言失败，尚未运行恢复断言，不是8次重复HTTP。POSIX下 `psutil.wait_procs` 与 `multiprocessing.Process.join` 争用waitpid；测试改由创建者 `Process.kill/join` 回收自身子进程。Windows继续使用现有原生tree终止。生产终止/Queue代码未改，不删除测试或放宽HTTP/fit断言。该失败保留；修正后的最终SHA CI另行交付。该SHA Chromium1 passed/82.13s；冻结SPY因focused-real-inputs不存在失败。
+
 旧冻结 `focused-real-inputs` 缺失继续BLOCKED_ASSET。Windows symlink权限仍单列；Linux同SHA结果不能冒充Windows本机通过。
 真人实际操作/自然复访仍BLOCKED_NO_REAL_USER；真实语义负例未全部完成。旧47目标负确认、付费G2A/G2B保持历史，不重跑。
 本轮不做macOS/GPU/大型native；不补不相关UI功能或扩大提示词示例工作。源码变化不支持直接恢复旧合同，旧结果只读/使用原版本；没有修改旧hash或历史文件。

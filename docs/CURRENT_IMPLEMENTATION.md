@@ -6,6 +6,8 @@
 
 ### B5 录制硬中断收口
 
+发布8817d68的Linux CI发现新增测试的POSIX子进程回收冲突（8 failed/400 passed），已仅修正测试为由multiprocessing创建者kill/join，Windows原生tree验证保持。最终SHA重验结果见交付收据；该父提交失败不隐藏，也不把Chromium通过等同全部CI通过。
+
 基线6056c3e上真实子进程/本地模拟HTTP复现：缺少可靠响应登记的硬中断恢复会重复请求；HTTP=0的预检权限失败又被错误永久阻断。最小修复复用原HTTP/Advisor账本，在跨进程恢复前拒绝未知响应的自动重发；前置故障独立记录，同路径修复后允许原合同恢复。完整已接受响应/计划继续复用；正常429/503有界重试未改。损坏失败收据不能作为新请求授权。DB不可写可能缺账，绝不承诺任意故障下恰好一次计费。
 新证据与原A04/A05/A06/A08/A23/L18关联见 [B5_RECORDING_RECOVERY_20260928.md](validation/B5_RECORDING_RECOVERY_20260928.md) 及原验收JSON新增节。测试均simulation_only，无新付费LLM、资料外发、真实DB写入或确认。旧冻结资产/真人/真实语义缺口保留，整体仍PARTIAL。
 收口最终本地累计405 passed/1 Windows symlink权限失败/2 skipped；Chromium1 passed；相关Ruff/compile通过。同发布SHA CI单列，旧6056c3e证据不冒充新源码结果。可以进入受控真人试用，不等于完整B5或V3验收通过。
