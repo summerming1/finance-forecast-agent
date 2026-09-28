@@ -28,6 +28,10 @@ jobs:
           git rev-parse HEAD > validation/workspace-ui/HEAD.txt
           git rev-parse HEAD^{tree} > validation/workspace-ui/TREE.txt
           git archive --format=zip -o validation/workspace-ui/source.zip HEAD
+      - name: Prepare offline UI verification dependencies
+        if: hashFiles('tests/test_workspace_ui*.py') == ''
+        run: |
+          python -m pip download --only-binary=:all: 'streamlit>=1.64,<2' ruff -d validation/workspace-ui/wheelhouse
       - name: Install existing declared environment
         if: hashFiles('tests/test_workspace_ui*.py') != ''
         run: |
