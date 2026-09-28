@@ -36,6 +36,13 @@ def test_agent_workspace_real_backend(tmp_path):
     state, project, raw = tmp_path / "runtime.sqlite3", tmp_path / "project", tmp_path / "simulation_only.csv"
     _research_frame(tmp_path).to_csv(raw, index=False)
     contract = _contract("csv").to_dict()
+    # The first deterministic batch proposes momentum and volatility candidates.
+    # A two-candidate identity test must declare both feature groups. With only
+    # momentum approved, one candidate / 16 fits is valid: 20 is an upper bound.
+    contract["feature_columns"] += ["volatility_5", "volatility_20"]
+    contract["feature_availability"].update(
+        volatility_5="at_or_before_decision", volatility_20="at_or_before_decision"
+    )
     report = {
         "input_provenance": "simulation_only",
         "raw_sha256": hashlib.sha256(raw.read_bytes()).hexdigest(),
@@ -134,7 +141,7 @@ def test_agent_workspace_real_backend(tmp_path):
             frame.locator("#draft-raw_path").fill(str(raw))
             frame.locator("#draft-advanced_contract").check()
             frame.locator("#draft-contract_json").fill(json.dumps(contract))
-            for group in ["volatility", "liquidity"]:
+            for group in ["liquidity"]:
                 control = frame.locator(f'input[data-feature="groups"][value="{group}"]')
                 if control.count() and control.is_checked():
                     control.uncheck()
@@ -154,6 +161,9 @@ def test_agent_workspace_real_backend(tmp_path):
             pid, cid, first = wait_completed()
             assert first["payload"]["scientific_claim"] == "simulation_only_no_financial_evidence"
             assert first["payload"]["fit_calls"] == 20
+            assert set(first["request"]["options"]["allowed_feature_groups"]) == {
+                "base_lags", "momentum", "volatility"
+            }
             original = copy.deepcopy(first["payload"])
             research_ids = [
                 item["candidate"]["candidate_id"]

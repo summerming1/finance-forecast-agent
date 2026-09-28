@@ -1,7 +1,7 @@
 name: Research workspace UI
 on:
   push:
-    branches: [feat/agent-workspace-ui]
+    branches: [feat/agent-workspace-ui, feat/mission-research-v2]
   pull_request:
     branches: [feat/mission-research-v2]
     paths: ['apps/**', 'tests/test_workspace_ui*.py', 'tests/browser/test_agent_workspace.py', '.github/workflows/workspace-ui.yml']
