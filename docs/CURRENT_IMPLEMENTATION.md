@@ -1,10 +1,10 @@
 # 当前版本功能与技术实现说明
 
-## 唯一当前状态（V2.2-R / B5 工程收口与统一补测，2026-09-27）
+## 唯一当前状态（V2.2-R / B5 增量验证，2026-09-28）
 
 验收缺口分轴保留；后续批次的计划不得冒充实际完成。
 
-独立 Windows 自动补测已结束，源基线 `5ec8042`，新证据见 [B05_SUPPLEMENT_20260927.md](validation/B05_SUPPLEMENT_20260927.md)。最终核心340 passed/1 symlink权限失败/2 skipped；全仓481 passed/10环境或资产失败/3 skipped。9项资产边界另用原资产复验通过；旧工作台12项测试入口已修正。用户已审核两条短文献观点及一条引用用途，但不代表实验或真人产品试用通过。整体仍为PARTIAL，不能宣称全部验收。
+9月27日独立 Windows 补测保留在 [B05_SUPPLEMENT_20260927.md](validation/B05_SUPPLEMENT_20260927.md)。9月28日增量见 [B5_INCREMENT_20260928.md](validation/B5_INCREMENT_20260928.md)：最终相关累计393 passed/1 symlink权限失败/2 skipped；全仓532 passed/10环境或资产失败/3 skipped（全仓在最后文献提示修复前，之后受影响累计已重跑）。真实 Chromium 通过。用户已审核两条短文献观点及一条引用用途，但不代表真人产品试用通过。整体仍PARTIAL。
 
 正式分支：`feat/mission-research-v2`。B 批次演进基线：`a3c6ec69c9bd14d18b1cdb493795669a9452c800`；本轮独立补测源基线：`5ec8042f7623470646c92953404b65f21abc4f7c`。
 批准方向见 ADR_MISSION_PRODUCT_004.md，B0→B5 范围见 PROJECT_ROADMAP.md。计划不是已实现能力。
@@ -12,12 +12,12 @@
 | 能力轴 | 当前证据 | 开放边界 |
 |---|---|---|
 | 基础执行与逐行评价 | 既有真实 SPY、Manifest、复算和受控模型训练 | forecast_only，不是交易性能 |
-| Live/Replay | 本轮 kimi-k3 两轮和八候选 Adaptive 真实轨迹、严格断网 Replay 一致 | 单独六轮请求与两个 batch 组因缺 statement 失败；有限成功不证明长期稳定性 |
+| Live/Replay | 新 kimi-k3 两轮与五组对照完成；普通与 Batch 严格断网 Replay 一致 | 旧缺 statement 失败保留；有限成功不证明长期稳定性 |
 | 恢复/审核/动作 | 既有 Windows 全 Campaign 恢复、approve/reject/stop | 受影响修改必须回归，不重称从未测试 |
 | 交付/受控 BYO | 既有 CSV/Parquet 审核数值特征、网页和模型交付 | 本地路径不是上传服务；B2 双入口/交付绑定已实现，真实用户未验证 |
 | 金融确认 | 一次47目标真实固定留出负确认，原收据保留 | 用户声明+本地审计，非前瞻；不得重挑该窗口 |
-| 研究价值 | 本轮固定合同 Random/TPE/One-shot/Adaptive 完成，Memory cold/warm 小对照完成 | G2A adaptive_batch FAIL，G2B L1 FAIL；旧 R5 FAIL 保留，不证明一般优越性 |
-| 文献 | 既有版本审核链；本轮用户实际查看两个原始摘要并批准短观点、一条真实引用用途 | L1 缺 statement 被拒绝；尚无本轮完整真实文献实验链路，不能证明文献增量 |
+| 研究价值 | 新 G2A Random/TPE/One-shot/Adaptive/Batch 五臂均完成，各44 fits；历史 Memory cold/warm 小对照保留 | 单窗口单种子不足证明一般优越性；原失败和完整矩阵缺口保留 |
+| 文献 | 新独立 L0/L1 均完成4候选/28 fits/2真实调用；L1严格断网Replay一致 | 两组最佳MAE相同，无额外精度收益证据；旧失败及模型解释矛盾保留 |
 | 真人使用 | 工程模拟参与者 | BLOCKED_NO_REAL_USER |
 
 ## B 批次状态
@@ -99,8 +99,10 @@ B3 初始检查点的292/2失败保存在历史日志；关闭收据见257ed0f�
 
 补测唯一入口：`CODEX_V22R_REMAINING_VALIDATION.md`。48条A/L按实际自动化覆盖、语义/平台/真人边界分别标记，未闭合ID保存在JSON；不是全部PASS。B5最初发布时没有新增付费provider；后续9月27日真实Live补测见顶部及独立报告，不能与发布前状态混淆。完整45臂、真人产品试用和新金融确认未由该补测完成；整体证据仍PARTIAL，V3仍未启动。
 
-### 2026-09-28 增量（验证进行中）
+### 2026-09-28 增量
 
 共用提案提示明确每个动作必填非空statement；编译器准入不放宽。候选来源与开发门槛独立，部分失败不再显示completed终态。真实调用前预检记录路径；响应后写入失败拒绝计划，并在原RuntimeDB保留可观察用量和禁止同决策重发标记。DB本身不可写仍可能缺账，不承诺恰好一次计费。旧结果只读；旧Replay需匹配源码/环境/提示，包内任一Python源码变化都可能改变执行身份，不强行恢复旧合同。定向工程负例已通过，累计及真实外部边界另列，非全部验收。
 
-只读比较从已接受Manifest核对任务、数据、切分、实际目标行和评价政策，再展示各参照的MAE与分折差值；不重新评价训练。续接预览展示继承范围及新增预算，明确新ID在提交时生成。现有项目请求可作为输入选择，快速试跑按原fold与配置身份计费；不会自动启用Live。任务匹配资料只按task_id过滤取最多3条。新源码累计390 passed/1 Windows symlink权限失败/2 skipped，真实Chromium1 passed；后续独特用户起点角色显示修正、最终全仓与同SHA CI另列。真实用户尚未完成操作反馈，整体仍PARTIAL。
+只读比较从已接受Manifest核对任务、数据、切分、实际目标行和评价政策，再展示各参照的MAE与分折差值；不重新评价训练。续接预览展示继承范围及新增预算，明确新ID在提交时生成。现有项目请求可作为输入选择，快速试跑按原fold与配置身份计费；不会自动启用Live。任务匹配资料只按task_id过滤取最多3条。新源码累计393 passed/1 Windows symlink权限失败/2 skipped，真实Chromium1 passed；用户起点角色和可比性均有负例。同SHA CI另列。真实用户尚未完成操作反馈，整体仍PARTIAL。
+
+文献提示明确既有 literature_uses 与 evidence_refs 绑定及条件必填字段；validator 未改变，缺引用仍拒绝。普通无文献提示保持原合同。真实响应模型名记录为 response_model，供应商别名未解析不能宣称固定权重。

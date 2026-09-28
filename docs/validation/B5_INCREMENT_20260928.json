@@ -1,0 +1,2395 @@
+{
+  "commands": {
+    "browser_increment": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/browser",
+        "--basetemp=C:\\b5tmp\\browser_increment",
+        "--junitxml=C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\validation\\b05_20260927\\browser_increment.xml"
+      ],
+      "head": "6f3d8ed7a061beccdd4e4e70e6cc9fae5843503c",
+      "tree": "e516cf14ac2d8ab29189e01828a9a55928c81ffb",
+      "exit_code": 0,
+      "seconds": 78.02223491668701,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "1",
+          "time": "76.949",
+          "timestamp": "2026-09-28T11:15:24.145331+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "browser_increment_final": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/browser",
+        "--basetemp=C:\\b5tmp\\browser_increment_final",
+        "--junitxml=C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\validation\\b05_20260927\\browser_increment_final.xml"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 1,
+      "seconds": 27.619128227233887,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "0",
+          "tests": "1",
+          "time": "26.603",
+          "timestamp": "2026-09-28T11:24:05.848993+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "browser_increment_final_r2": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/browser",
+        "--basetemp=C:\\b5tmp\\browser_increment_final_r2",
+        "--junitxml=C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\validation\\b05_20260927\\browser_increment_final_r2.xml"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 0,
+      "seconds": 80.15845251083374,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "1",
+          "time": "79.057",
+          "timestamp": "2026-09-28T11:25:27.584737+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "comparison_red": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_comparison.py",
+        "--basetemp=C:/b5tmp/compred",
+        "--junitxml=validation/b05_20260927/comparison_red.xml"
+      ],
+      "head": "2883b15f4ae389ac8dba14678e1c3d3aa9a84c9b",
+      "tree": "611d9607d1d23b048e87766fd20e17bf00a92521",
+      "exit_code": 1,
+      "seconds": 3.401326894760132,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "7",
+          "skipped": "0",
+          "tests": "7",
+          "time": "2.429",
+          "timestamp": "2026-09-28T11:04:14.323279+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "comparison_role_red": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_comparison.py",
+        "-k",
+        "unique_user",
+        "--basetemp=C:/b5tmp/rolered"
+      ],
+      "head": "6f3d8ed7a061beccdd4e4e70e6cc9fae5843503c",
+      "tree": "e516cf14ac2d8ab29189e01828a9a55928c81ffb",
+      "exit_code": 1,
+      "seconds": 3.1765224933624268,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "comparison_target": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_comparison.py",
+        "tests/test_focused_b4_delivery.py",
+        "--basetemp=C:/b5tmp/comptarget",
+        "--junitxml=validation/b05_20260927/comparison_target.xml"
+      ],
+      "head": "6f3d8ed7a061beccdd4e4e70e6cc9fae5843503c",
+      "tree": "e516cf14ac2d8ab29189e01828a9a55928c81ffb",
+      "exit_code": 0,
+      "seconds": 32.266379833221436,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "27",
+          "time": "31.250",
+          "timestamp": "2026-09-28T11:09:07.987659+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "comparison_ui": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_comparison.py",
+        "tests/test_focused_b4_delivery.py",
+        "tests/test_focused_streamlit_page.py",
+        "tests/test_focused_b2_product.py",
+        "--basetemp=C:/b5tmp/compui",
+        "--junitxml=validation/b05_20260927/comparison_ui.xml"
+      ],
+      "head": "6f3d8ed7a061beccdd4e4e70e6cc9fae5843503c",
+      "tree": "e516cf14ac2d8ab29189e01828a9a55928c81ffb",
+      "exit_code": 0,
+      "seconds": 61.02473974227905,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "42",
+          "time": "59.871",
+          "timestamp": "2026-09-28T11:13:08.794199+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "compile_increment_final": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "src",
+        "apps",
+        "tests"
+      ],
+      "head": "3829647f81f91a2979353d1123cb23baece0f365",
+      "tree": "45d1e0759f92b9465ad318ea06ade791231261da",
+      "exit_code": 0,
+      "seconds": 0.11064362525939941,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "core_increment_d1": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b05_supplement.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b0_plan.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b1_provider.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b2_product.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b3_literature.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b4_delivery.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b5_acceptance.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b5_increment.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_data_research.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_final_acceptance.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr1_evidence.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr2_mission.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr3_adaptive.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr4_persistence.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr5_delivery.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr6_byo.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_prompt_contract.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r0_status.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r1_contracts.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r2_runtime.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r3_actions.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r4_trust.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r5_benchmark.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r6_workspace.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_streamlit_page.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_supplemental_validation.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_memory_scheduler.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_p1_benchmark_memory.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_task_queue_lineage.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_method_card_v3.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_streamlit_review_gate.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_p09_review_backlog_timeline.py",
+        "--basetemp=C:\\b5tmp\\core_increment_d1",
+        "--junitxml=C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\validation\\b05_20260927\\core_increment_d1.xml"
+      ],
+      "head": "2883b15f4ae389ac8dba14678e1c3d3aa9a84c9b",
+      "tree": "611d9607d1d23b048e87766fd20e17bf00a92521",
+      "exit_code": 1,
+      "seconds": 357.0021479129791,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "2",
+          "skipped": "2",
+          "tests": "385",
+          "time": "355.577",
+          "timestamp": "2026-09-28T11:01:28.286300+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "core_increment_final": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b05_supplement.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b0_plan.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b1_provider.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b2_product.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b3_literature.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b4_delivery.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b5_acceptance.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b5_comparison.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b5_increment.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_data_research.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_final_acceptance.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr1_evidence.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr2_mission.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr3_adaptive.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr4_persistence.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr5_delivery.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr6_byo.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_prompt_contract.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r0_status.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r1_contracts.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r2_runtime.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r3_actions.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r4_trust.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r5_benchmark.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r6_workspace.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_streamlit_page.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_supplemental_validation.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_memory_scheduler.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_p1_benchmark_memory.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_task_queue_lineage.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_method_card_v3.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_streamlit_review_gate.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_p09_review_backlog_timeline.py",
+        "--basetemp=C:\\b5tmp\\core_increment_final",
+        "--junitxml=C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\validation\\b05_20260927\\core_increment_final.xml"
+      ],
+      "head": "6f3d8ed7a061beccdd4e4e70e6cc9fae5843503c",
+      "tree": "e516cf14ac2d8ab29189e01828a9a55928c81ffb",
+      "exit_code": 1,
+      "seconds": 373.44738483428955,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "2",
+          "tests": "393",
+          "time": "371.989",
+          "timestamp": "2026-09-28T11:15:13.958521+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "core_increment_literature_final": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b05_supplement.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b0_plan.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b1_provider.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b2_product.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b3_literature.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b4_delivery.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b5_acceptance.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b5_comparison.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_b5_increment.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_data_research.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_final_acceptance.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr1_evidence.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr2_mission.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr3_adaptive.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr4_persistence.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr5_delivery.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_pr6_byo.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_prompt_contract.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r0_status.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r1_contracts.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r2_runtime.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r3_actions.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r4_trust.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r5_benchmark.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_r6_workspace.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_streamlit_page.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_focused_supplemental_validation.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_memory_scheduler.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_p1_benchmark_memory.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_task_queue_lineage.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_method_card_v3.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_streamlit_review_gate.py",
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\tests\\test_p09_review_backlog_timeline.py",
+        "--basetemp=C:\\b5tmp\\core_increment_literature_final",
+        "--junitxml=C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\validation\\b05_20260927\\core_increment_literature_final.xml"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 1,
+      "seconds": 375.93219685554504,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "2",
+          "tests": "396",
+          "time": "374.439",
+          "timestamp": "2026-09-28T11:46:24.434543+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "delivery_increment": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_delivery.py",
+        "D:/b05runs/inc_g2a_kimi/adaptive/benchmark_arm.json",
+        "D:/b05runs/inc_delivery"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 0,
+      "seconds": 7.971947908401489,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "full_increment": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "--basetemp=D:\\b05tmp\\full_increment",
+        "--junitxml=C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\validation\\b05_20260927\\full_increment.xml"
+      ],
+      "head": "6f3d8ed7a061beccdd4e4e70e6cc9fae5843503c",
+      "tree": "e516cf14ac2d8ab29189e01828a9a55928c81ffb",
+      "exit_code": 1,
+      "seconds": 172.4253420829773,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "full_increment_nvme": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "--basetemp=C:\\b5tmp\\full_increment_nvme",
+        "--junitxml=C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\validation\\b05_20260927\\full_increment_nvme.xml"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 1,
+      "seconds": 405.4575078487396,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "10",
+          "skipped": "3",
+          "tests": "545",
+          "time": "403.923",
+          "timestamp": "2026-09-28T11:23:09.523104+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "g2a_increment_kimi": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_cohort.py",
+        "kimi-k3",
+        "g2a",
+        "inc_g2a_kimi"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 0,
+      "seconds": 1252.20077252388,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "g2b_increment_binding_kimi": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_cohort.py",
+        "kimi-k3",
+        "g2b",
+        "inc_g2b_binding_kimi"
+      ],
+      "head": "3829647f81f91a2979353d1123cb23baece0f365",
+      "tree": "45d1e0759f92b9465ad318ea06ade791231261da",
+      "exit_code": 0,
+      "seconds": 563.517425775528,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "g2b_increment_kimi": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_cohort.py",
+        "kimi-k3",
+        "g2b",
+        "inc_g2b_kimi"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 1,
+      "seconds": 93.7585620880127,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "increment_audit_snapshot": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_audit.py"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 0,
+      "seconds": 0.12114572525024414,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "increment_extended": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_increment.py",
+        "tests/test_focused_prompt_contract.py",
+        "tests/test_focused_b1_provider.py",
+        "--basetemp=C:/b5tmp/extended",
+        "--junitxml=validation/b05_20260927/increment_extended.xml"
+      ],
+      "head": "2883b15f4ae389ac8dba14678e1c3d3aa9a84c9b",
+      "tree": "611d9607d1d23b048e87766fd20e17bf00a92521",
+      "exit_code": 1,
+      "seconds": 23.544339895248413,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "0",
+          "tests": "60",
+          "time": "22.538",
+          "timestamp": "2026-09-28T10:55:33.675190+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "increment_extended_r2": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_increment.py",
+        "--basetemp=C:/b5tmp/ext2",
+        "--junitxml=validation/b05_20260927/increment_extended_r2.xml"
+      ],
+      "head": "2883b15f4ae389ac8dba14678e1c3d3aa9a84c9b",
+      "tree": "611d9607d1d23b048e87766fd20e17bf00a92521",
+      "exit_code": 0,
+      "seconds": 10.96046757698059,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "42",
+          "time": "9.925",
+          "timestamp": "2026-09-28T11:02:39.454942+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "increment_precommit": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_comparison.py",
+        "tests/test_focused_b5_increment.py",
+        "--basetemp=C:/b5tmp/precommit",
+        "--junitxml=validation/b05_20260927/increment_precommit.xml"
+      ],
+      "head": "6f3d8ed7a061beccdd4e4e70e6cc9fae5843503c",
+      "tree": "e516cf14ac2d8ab29189e01828a9a55928c81ffb",
+      "exit_code": 0,
+      "seconds": 11.607621431350708,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "51",
+          "time": "10.568",
+          "timestamp": "2026-09-28T11:22:31.292208+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "increment_prompt_audit": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_prompt_audit.py",
+        "D:/b05runs/inc_g2a_kimi"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 0,
+      "seconds": 3.16397762298584,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "increment_prompt_literature_audit": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_prompt_audit.py",
+        "D:/b05runs/inc_g2b_binding_kimi"
+      ],
+      "head": "3829647f81f91a2979353d1123cb23baece0f365",
+      "tree": "45d1e0759f92b9465ad318ea06ade791231261da",
+      "exit_code": 0,
+      "seconds": 2.624652862548828,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "increment_red": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_increment.py",
+        "--basetemp=C:/b5tmp/red",
+        "--junitxml=validation/b05_20260927/increment_red.xml"
+      ],
+      "head": "2883b15f4ae389ac8dba14678e1c3d3aa9a84c9b",
+      "tree": "611d9607d1d23b048e87766fd20e17bf00a92521",
+      "exit_code": 1,
+      "seconds": 3.5961430072784424,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "2",
+          "failures": "7",
+          "skipped": "0",
+          "tests": "9",
+          "time": "2.573",
+          "timestamp": "2026-09-28T10:49:46.627298+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "increment_target": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_increment.py",
+        "tests/test_focused_prompt_contract.py",
+        "tests/test_focused_b1_provider.py",
+        "--basetemp=C:/b5tmp/target",
+        "--junitxml=validation/b05_20260927/increment_target.xml"
+      ],
+      "head": "2883b15f4ae389ac8dba14678e1c3d3aa9a84c9b",
+      "tree": "611d9607d1d23b048e87766fd20e17bf00a92521",
+      "exit_code": 1,
+      "seconds": 8.90170931816101,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "9",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "27",
+          "time": "7.913",
+          "timestamp": "2026-09-28T10:52:53.392631+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "increment_target_r2": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_increment.py",
+        "tests/test_focused_prompt_contract.py",
+        "tests/test_focused_b1_provider.py",
+        "--basetemp=C:/b5tmp/target2",
+        "--junitxml=validation/b05_20260927/increment_target_r2.xml"
+      ],
+      "head": "2883b15f4ae389ac8dba14678e1c3d3aa9a84c9b",
+      "tree": "611d9607d1d23b048e87766fd20e17bf00a92521",
+      "exit_code": 0,
+      "seconds": 19.416083574295044,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "27",
+          "time": "18.439",
+          "timestamp": "2026-09-28T10:53:37.355563+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "lint_increment_final": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "src/finance_forecast_agent/focused_research.py",
+        "src/finance_forecast_agent/focused_summary.py",
+        "src/finance_forecast_agent/research_mission.py",
+        "src/finance_forecast_agent/replay_llm.py",
+        "src/finance_forecast_agent/llm_adapters.py",
+        "apps/pages/8_Focused_Research.py",
+        "tests/test_focused_b5_increment.py",
+        "tests/test_focused_b5_comparison.py",
+        "tests/test_focused_b3_literature.py",
+        "tests/test_focused_b4_delivery.py",
+        "tests/browser/test_research_workspace.py"
+      ],
+      "head": "3829647f81f91a2979353d1123cb23baece0f365",
+      "tree": "45d1e0759f92b9465ad318ea06ade791231261da",
+      "exit_code": 0,
+      "seconds": 0.11363482475280762,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "literature_binding_red": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b3_literature.py",
+        "-k",
+        "citation_contract or parallel_citation",
+        "--basetemp=C:/b5tmp/litred",
+        "--junitxml=validation/b05_20260927/literature_binding_red.xml"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 1,
+      "seconds": 4.695069789886475,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "1",
+          "skipped": "0",
+          "tests": "2",
+          "time": "3.626",
+          "timestamp": "2026-09-28T11:42:05.243593+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "literature_binding_target": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b3_literature.py",
+        "tests/test_focused_b5_increment.py",
+        "tests/test_focused_prompt_contract.py",
+        "--basetemp=C:/b5tmp/littarget",
+        "--junitxml=validation/b05_20260927/literature_binding_target.xml"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 0,
+      "seconds": 23.929528951644897,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0",
+      "testsuites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "73",
+          "time": "22.910",
+          "timestamp": "2026-09-28T11:45:31.739425+08:00",
+          "hostname": "Roy-Computer"
+        }
+      ]
+    },
+    "live_increment_small": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/live_smoke.py",
+        "kimi-k3",
+        "2",
+        "inc_live_small_kimi"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 0,
+      "seconds": 202.5912744998932,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "replay_increment_batch": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_replay.py",
+        "D:/b05runs/inc_g2a_kimi",
+        "adaptive_batch",
+        "D:/b05runs/inc_batch_replay"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 1,
+      "seconds": 3.2836766242980957,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "replay_increment_batch_audit": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_replay.py",
+        "D:/b05runs/inc_g2a_kimi",
+        "adaptive_batch",
+        "D:/b05runs/inc_batch_replay",
+        "--audit-only"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 0,
+      "seconds": 3.562030553817749,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "replay_increment_batch_r2": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_replay.py",
+        "D:/b05runs/inc_g2a_kimi",
+        "adaptive_batch",
+        "D:/b05runs/inc_batch_replay"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 1,
+      "seconds": 65.41139078140259,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "replay_increment_l1": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/increment_replay.py",
+        "D:/b05runs/inc_g2b_binding_kimi",
+        "adaptive_batchL1",
+        "D:/b05runs/inc_l1_replay"
+      ],
+      "head": "3829647f81f91a2979353d1123cb23baece0f365",
+      "tree": "45d1e0759f92b9465ad318ea06ade791231261da",
+      "exit_code": 0,
+      "seconds": 45.86392331123352,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "replay_increment_small": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "validation/b05_20260927/offline_replay.py",
+        "D:/b05runs/inc_live_small_kimi",
+        "D:/b05runs/inc_small_replay",
+        "2"
+      ],
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "tree": "99c8d3128858596edbe4a9a7ae566ae4c0e875bd",
+      "exit_code": 0,
+      "seconds": 38.997039556503296,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    },
+    "response_model_red": {
+      "command": [
+        "C:\\Users\\13716\\.codex\\worktrees\\b05-supplement-validation\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_focused_b5_increment.py",
+        "-k",
+        "actual_provider_model",
+        "--basetemp=C:/b5tmp/modelred"
+      ],
+      "head": "6f3d8ed7a061beccdd4e4e70e6cc9fae5843503c",
+      "tree": "e516cf14ac2d8ab29189e01828a9a55928c81ffb",
+      "exit_code": 1,
+      "seconds": 3.9997503757476807,
+      "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+      "os": "Windows-11-10.0.26200-SP0"
+    }
+  },
+  "failures": [
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_focused_r4_trust::test_model_bundle_tamper_rejected_before_load[symlink]",
+      "first_exception": "OSError: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\b5tmp\\\\full_increment_nvme\\\\test_model_bundle_tamper_rejec2\\\\other.joblib' -> 'C:\\\\b5tmp\\\\full_increment_nvme\\\\test_model_bundle_tamper_rejec2\\\\bundle\\\\model.joblib'",
+      "classification": "BLOCKED_ENV",
+      "introduced_by_increment": false,
+      "recovery": "Run on authorized symlink-capable host, do not disable guard"
+    },
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_multi_benchmark_suite::test_multi_benchmark_artifact_covers_four_tasks_and_five_methods",
+      "first_exception": "FileNotFoundError: [Errno 2] No such file or directory: 'projects\\\\finance_agent\\\\reports\\\\multi_benchmark_suite.json'",
+      "classification": "BLOCKED_ASSET",
+      "introduced_by_increment": false,
+      "recovery": "Restore original licensed assets and pinned native sources, not substitute fixtures"
+    },
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_multi_benchmark_suite::test_every_multi_benchmark_run_has_comparability_and_delta_audit",
+      "first_exception": "FileNotFoundError: [Errno 2] No such file or directory: 'projects\\\\finance_agent\\\\reports\\\\multi_benchmark_suite.json'",
+      "classification": "BLOCKED_ASSET",
+      "introduced_by_increment": false,
+      "recovery": "Restore original licensed assets and pinned native sources, not substitute fixtures"
+    },
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_multi_benchmark_suite::test_volatility_benchmark_uses_error_baseline_not_direction_accuracy_claim",
+      "first_exception": "FileNotFoundError: [Errno 2] No such file or directory: 'projects\\\\finance_agent\\\\reports\\\\multi_benchmark_suite.json'",
+      "classification": "BLOCKED_ASSET",
+      "introduced_by_increment": false,
+      "recovery": "Restore original licensed assets and pinned native sources, not substitute fixtures"
+    },
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_native_catalog_builder::test_etsformer_checkpoint_patch_preserves_cli_directory",
+      "first_exception": "StopIteration",
+      "classification": "BLOCKED_ASSET",
+      "introduced_by_increment": false,
+      "recovery": "Restore original licensed assets and pinned native sources, not substitute fixtures"
+    },
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_native_catalog_builder::test_film_claim_keeps_official_internal_repetitions_and_rng_resume_state",
+      "first_exception": "AssertionError: assert 'RNG state' in ''",
+      "classification": "BLOCKED_ASSET",
+      "introduced_by_increment": false,
+      "recovery": "Restore original licensed assets and pinned native sources, not substitute fixtures"
+    },
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_native_catalog_builder::test_fedformer_claim_uses_artifact_metrics_and_rng_resume_state",
+      "first_exception": "AssertionError: assert 'FEDformer repetition boundaries' in ''",
+      "classification": "BLOCKED_ASSET",
+      "introduced_by_increment": false,
+      "recovery": "Restore original licensed assets and pinned native sources, not substitute fixtures"
+    },
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_native_execution::test_mtgnn_curated_card_binds_protocol_fields_to_paper_evidence",
+      "first_exception": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\13716\\\\.codex\\\\worktrees\\\\b05-supplement-validation\\\\finance_forecast_agent_v1\\\\projects\\\\finance_agent\\\\method_cards\\\\arxiv_2005_11650.json'",
+      "classification": "BLOCKED_ASSET",
+      "introduced_by_increment": false,
+      "recovery": "Restore original licensed assets and pinned native sources, not substitute fixtures"
+    },
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_p1_real_validation_artifacts::test_dlinear_strict_prompt_contains_result_row_and_pinned_primary_sources",
+      "first_exception": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\13716\\\\.codex\\\\worktrees\\\\b05-supplement-validation\\\\finance_forecast_agent_v1\\\\projects\\\\finance_agent\\\\papers\\\\local\\\\arxiv_2205.13504.pdf'",
+      "classification": "BLOCKED_ASSET",
+      "introduced_by_increment": false,
+      "recovery": "Restore original licensed assets and pinned native sources, not substitute fixtures"
+    },
+    {
+      "run": "full_increment_nvme",
+      "nodeid": "tests.test_p1_real_validation_artifacts::test_dlinear_strict_live_card_replays_without_an_api_call",
+      "first_exception": "FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\13716\\\\.codex\\\\worktrees\\\\b05-supplement-validation\\\\finance_forecast_agent_v1\\\\projects\\\\finance_agent\\\\papers\\\\local\\\\arxiv_2205.13504.pdf'",
+      "classification": "BLOCKED_ASSET",
+      "introduced_by_increment": false,
+      "recovery": "Restore original licensed assets and pinned native sources, not substitute fixtures"
+    }
+  ],
+  "cohorts": {
+    "inc_g2a_kimi": [
+      {
+        "arm": "adaptive_batch",
+        "execution_status": "completed",
+        "error_type": null,
+        "comparison_contract_hash": "17ef0a1ae5ea43acc508dcf4f0c2802d39e2ff2924726eff055c8dd4d3119f16",
+        "comparison_target_hash": "ce17f88d2c3eb086d8ce6be46042f87a98f09be78e1e3fe5729838c3bf7eedfb",
+        "literature_treatment": {
+          "review_ids": [],
+          "snapshot_hash": "86ed5337c7de679cf9908782eecbbb2dd1eac7349ce728416c65871d61c107b4"
+        },
+        "relative_mae_improvement": 0.0038877711359063213,
+        "telemetry": {
+          "charged_fit_calls": 44,
+          "observed_started_fits": 44,
+          "observed_completed_fits": 44,
+          "interrupted_attempts": 0,
+          "failed_attempts": 0,
+          "attempt_count": 14,
+          "accounting_policy": "reserved fits remain charged on failure/interruption; actual consumption may be incomplete",
+          "inflight_or_unknown_fits": 0,
+          "unique_candidates": 8,
+          "candidate_charged_fits": 32,
+          "candidate_failed_attempts": 0,
+          "invalid_proposals": 0,
+          "duplicate_proposals": 0,
+          "negative_experiments": 7,
+          "llm_calls": 4,
+          "provider_attempts": 4,
+          "provider_attempts_without_record": 0,
+          "replay_calls": 0,
+          "advisor_reservations": 5,
+          "provider_usage": [
+            {
+              "completion_tokens": 2061,
+              "completion_tokens_details": {
+                "reasoning_tokens": 1568,
+                "text_tokens": 493
+              },
+              "prompt_tokens": 6368,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 6368
+              },
+              "total_tokens": 8429
+            },
+            {
+              "completion_tokens": 4122,
+              "completion_tokens_details": {
+                "reasoning_tokens": 3227,
+                "text_tokens": 895
+              },
+              "prompt_tokens": 8839,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 8839
+              },
+              "total_tokens": 12961
+            },
+            {
+              "completion_tokens": 2961,
+              "completion_tokens_details": {
+                "reasoning_tokens": 2018,
+                "text_tokens": 943
+              },
+              "prompt_tokens": 11281,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 11281
+              },
+              "total_tokens": 14242
+            },
+            {
+              "completion_tokens": 4117,
+              "completion_tokens_details": {
+                "reasoning_tokens": 2838,
+                "text_tokens": 1279
+              },
+              "prompt_tokens": 13775,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 13775
+              },
+              "total_tokens": 17892
+            }
+          ],
+          "llm_cost": null,
+          "sampler_draws": 0,
+          "sampler_duplicate_rejections": 0,
+          "tpe_model_based_decisions": 0,
+          "wall_seconds": 398.163781700001,
+          "wall_scope": "this invocation; resumed runs do not reconstruct past process downtime",
+          "advisor_seconds_total": 347.0866843999829,
+          "human_minutes": null
+        },
+        "best_mae": 0.005014199810696815
+      },
+      {
+        "arm": "random",
+        "execution_status": "completed",
+        "error_type": null,
+        "comparison_contract_hash": "17ef0a1ae5ea43acc508dcf4f0c2802d39e2ff2924726eff055c8dd4d3119f16",
+        "comparison_target_hash": "ce17f88d2c3eb086d8ce6be46042f87a98f09be78e1e3fe5729838c3bf7eedfb",
+        "literature_treatment": {
+          "review_ids": [],
+          "snapshot_hash": "86ed5337c7de679cf9908782eecbbb2dd1eac7349ce728416c65871d61c107b4"
+        },
+        "relative_mae_improvement": 0.0037008409362419507,
+        "telemetry": {
+          "charged_fit_calls": 44,
+          "observed_started_fits": 44,
+          "observed_completed_fits": 44,
+          "interrupted_attempts": 0,
+          "failed_attempts": 0,
+          "attempt_count": 14,
+          "accounting_policy": "reserved fits remain charged on failure/interruption; actual consumption may be incomplete",
+          "inflight_or_unknown_fits": 0,
+          "unique_candidates": 8,
+          "candidate_charged_fits": 32,
+          "candidate_failed_attempts": 0,
+          "invalid_proposals": 0,
+          "duplicate_proposals": 0,
+          "negative_experiments": 7,
+          "llm_calls": 0,
+          "provider_attempts": 0,
+          "provider_attempts_without_record": 0,
+          "replay_calls": 0,
+          "advisor_reservations": 9,
+          "provider_usage": [],
+          "llm_cost": 0,
+          "sampler_draws": 0,
+          "sampler_duplicate_rejections": 0,
+          "tpe_model_based_decisions": 0,
+          "wall_seconds": 60.13104779999412,
+          "wall_scope": "this invocation; resumed runs do not reconstruct past process downtime",
+          "advisor_seconds_total": 0.0011384999816073105,
+          "human_minutes": null
+        },
+        "best_mae": 0.005015140774319799
+      },
+      {
+        "arm": "tpe",
+        "execution_status": "completed",
+        "error_type": null,
+        "comparison_contract_hash": "17ef0a1ae5ea43acc508dcf4f0c2802d39e2ff2924726eff055c8dd4d3119f16",
+        "comparison_target_hash": "ce17f88d2c3eb086d8ce6be46042f87a98f09be78e1e3fe5729838c3bf7eedfb",
+        "literature_treatment": {
+          "review_ids": [],
+          "snapshot_hash": "86ed5337c7de679cf9908782eecbbb2dd1eac7349ce728416c65871d61c107b4"
+        },
+        "relative_mae_improvement": 0.002164705162050864,
+        "telemetry": {
+          "charged_fit_calls": 44,
+          "observed_started_fits": 44,
+          "observed_completed_fits": 44,
+          "interrupted_attempts": 0,
+          "failed_attempts": 0,
+          "attempt_count": 14,
+          "accounting_policy": "reserved fits remain charged on failure/interruption; actual consumption may be incomplete",
+          "inflight_or_unknown_fits": 0,
+          "unique_candidates": 8,
+          "candidate_charged_fits": 32,
+          "candidate_failed_attempts": 0,
+          "invalid_proposals": 0,
+          "duplicate_proposals": 0,
+          "negative_experiments": 8,
+          "llm_calls": 0,
+          "provider_attempts": 0,
+          "provider_attempts_without_record": 0,
+          "replay_calls": 0,
+          "advisor_reservations": 9,
+          "provider_usage": [],
+          "llm_cost": 0,
+          "sampler_draws": 12,
+          "sampler_duplicate_rejections": 4,
+          "tpe_model_based_decisions": 4,
+          "wall_seconds": 68.27989340000204,
+          "wall_scope": "this invocation; resumed runs do not reconstruct past process downtime",
+          "advisor_seconds_total": 0.05965290001768153,
+          "human_minutes": null
+        },
+        "best_mae": 0.0050228733284286235
+      },
+      {
+        "arm": "one_shot",
+        "execution_status": "completed",
+        "error_type": null,
+        "comparison_contract_hash": "17ef0a1ae5ea43acc508dcf4f0c2802d39e2ff2924726eff055c8dd4d3119f16",
+        "comparison_target_hash": "ce17f88d2c3eb086d8ce6be46042f87a98f09be78e1e3fe5729838c3bf7eedfb",
+        "literature_treatment": {
+          "review_ids": [],
+          "snapshot_hash": "86ed5337c7de679cf9908782eecbbb2dd1eac7349ce728416c65871d61c107b4"
+        },
+        "relative_mae_improvement": 0.002164705162050864,
+        "telemetry": {
+          "charged_fit_calls": 44,
+          "observed_started_fits": 44,
+          "observed_completed_fits": 44,
+          "interrupted_attempts": 0,
+          "failed_attempts": 0,
+          "attempt_count": 14,
+          "accounting_policy": "reserved fits remain charged on failure/interruption; actual consumption may be incomplete",
+          "inflight_or_unknown_fits": 0,
+          "unique_candidates": 8,
+          "candidate_charged_fits": 32,
+          "candidate_failed_attempts": 0,
+          "invalid_proposals": 0,
+          "duplicate_proposals": 0,
+          "negative_experiments": 8,
+          "llm_calls": 1,
+          "provider_attempts": 1,
+          "provider_attempts_without_record": 0,
+          "replay_calls": 0,
+          "advisor_reservations": 2,
+          "provider_usage": [
+            {
+              "completion_tokens": 6775,
+              "completion_tokens_details": {
+                "reasoning_tokens": 4574,
+                "text_tokens": 2201
+              },
+              "prompt_tokens": 6400,
+              "prompt_tokens_details": {
+                "cached_tokens": 1024,
+                "text_tokens": 6400
+              },
+              "total_tokens": 13175
+            }
+          ],
+          "llm_cost": null,
+          "sampler_draws": 0,
+          "sampler_duplicate_rejections": 0,
+          "tpe_model_based_decisions": 0,
+          "wall_seconds": 220.12023130001035,
+          "wall_scope": "this invocation; resumed runs do not reconstruct past process downtime",
+          "advisor_seconds_total": 166.96140919999743,
+          "human_minutes": null
+        },
+        "best_mae": 0.0050228733284286235
+      },
+      {
+        "arm": "adaptive",
+        "execution_status": "completed",
+        "error_type": null,
+        "comparison_contract_hash": "17ef0a1ae5ea43acc508dcf4f0c2802d39e2ff2924726eff055c8dd4d3119f16",
+        "comparison_target_hash": "ce17f88d2c3eb086d8ce6be46042f87a98f09be78e1e3fe5729838c3bf7eedfb",
+        "literature_treatment": {
+          "review_ids": [],
+          "snapshot_hash": "86ed5337c7de679cf9908782eecbbb2dd1eac7349ce728416c65871d61c107b4"
+        },
+        "relative_mae_improvement": 0.0038877711359063213,
+        "telemetry": {
+          "charged_fit_calls": 44,
+          "observed_started_fits": 44,
+          "observed_completed_fits": 44,
+          "interrupted_attempts": 0,
+          "failed_attempts": 0,
+          "attempt_count": 14,
+          "accounting_policy": "reserved fits remain charged on failure/interruption; actual consumption may be incomplete",
+          "inflight_or_unknown_fits": 0,
+          "unique_candidates": 8,
+          "candidate_charged_fits": 32,
+          "candidate_failed_attempts": 0,
+          "invalid_proposals": 0,
+          "duplicate_proposals": 0,
+          "negative_experiments": 7,
+          "llm_calls": 8,
+          "provider_attempts": 8,
+          "provider_attempts_without_record": 0,
+          "replay_calls": 0,
+          "advisor_reservations": 9,
+          "provider_usage": [
+            {
+              "completion_tokens": 1283,
+              "completion_tokens_details": {
+                "reasoning_tokens": 872,
+                "text_tokens": 411
+              },
+              "prompt_tokens": 6348,
+              "prompt_tokens_details": {
+                "cached_tokens": 1024,
+                "text_tokens": 6348
+              },
+              "total_tokens": 7631
+            },
+            {
+              "completion_tokens": 2580,
+              "completion_tokens_details": {
+                "reasoning_tokens": 2131,
+                "text_tokens": 449
+              },
+              "prompt_tokens": 7536,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 7536
+              },
+              "total_tokens": 10116
+            },
+            {
+              "completion_tokens": 1605,
+              "completion_tokens_details": {
+                "reasoning_tokens": 1053,
+                "text_tokens": 552
+              },
+              "prompt_tokens": 8737,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 8737
+              },
+              "total_tokens": 10342
+            },
+            {
+              "completion_tokens": 1674,
+              "completion_tokens_details": {
+                "reasoning_tokens": 1204,
+                "text_tokens": 470
+              },
+              "prompt_tokens": 9925,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 9925
+              },
+              "total_tokens": 11599
+            },
+            {
+              "completion_tokens": 1733,
+              "completion_tokens_details": {
+                "reasoning_tokens": 1142,
+                "text_tokens": 591
+              },
+              "prompt_tokens": 11146,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 11146
+              },
+              "total_tokens": 12879
+            },
+            {
+              "completion_tokens": 1716,
+              "completion_tokens_details": {
+                "reasoning_tokens": 1138,
+                "text_tokens": 578
+              },
+              "prompt_tokens": 12384,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 12384
+              },
+              "total_tokens": 14100
+            },
+            {
+              "completion_tokens": 3532,
+              "completion_tokens_details": {
+                "reasoning_tokens": 2949,
+                "text_tokens": 583
+              },
+              "prompt_tokens": 13631,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 13631
+              },
+              "total_tokens": 17163
+            },
+            {
+              "completion_tokens": 1886,
+              "completion_tokens_details": {
+                "reasoning_tokens": 1230,
+                "text_tokens": 656
+              },
+              "prompt_tokens": 14857,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 14857
+              },
+              "total_tokens": 16743
+            }
+          ],
+          "llm_cost": null,
+          "sampler_draws": 0,
+          "sampler_duplicate_rejections": 0,
+          "tpe_model_based_decisions": 0,
+          "wall_seconds": 500.9305716999952,
+          "wall_scope": "this invocation; resumed runs do not reconstruct past process downtime",
+          "advisor_seconds_total": 433.88842649999424,
+          "human_minutes": null
+        },
+        "best_mae": 0.005014199810696815
+      }
+    ],
+    "inc_g2b_binding_kimi": [
+      {
+        "arm": "adaptive_batch",
+        "execution_status": "completed",
+        "error_type": null,
+        "comparison_contract_hash": "c3ec10791e4710b4d1a2bf2dcc10ddbe02135ef97c1e42f4e78da08c8d67a0f1",
+        "comparison_target_hash": "ce17f88d2c3eb086d8ce6be46042f87a98f09be78e1e3fe5729838c3bf7eedfb",
+        "literature_treatment": {
+          "review_ids": [
+            "literature-67be555da7e4d46c71b05919ec539602e2554651a630157eda0dcaeda97b1000",
+            "literature-6c060cfc558a1aa80739bd06f7e4b45bf0770c12447870b9aa7fe247e522cbfe"
+          ],
+          "snapshot_hash": "dc557dadbb165d98b2bf60d78eec09183cee2e61dff3b508f9b672e8529444e4"
+        },
+        "relative_mae_improvement": 0.000014487322248098886,
+        "telemetry": {
+          "charged_fit_calls": 28,
+          "observed_started_fits": 28,
+          "observed_completed_fits": 28,
+          "interrupted_attempts": 0,
+          "failed_attempts": 0,
+          "attempt_count": 10,
+          "accounting_policy": "reserved fits remain charged on failure/interruption; actual consumption may be incomplete",
+          "inflight_or_unknown_fits": 0,
+          "unique_candidates": 4,
+          "candidate_charged_fits": 16,
+          "candidate_failed_attempts": 0,
+          "invalid_proposals": 0,
+          "duplicate_proposals": 0,
+          "negative_experiments": 4,
+          "llm_calls": 2,
+          "provider_attempts": 2,
+          "provider_attempts_without_record": 0,
+          "replay_calls": 0,
+          "advisor_reservations": 3,
+          "provider_usage": [
+            {
+              "completion_tokens": 4724,
+              "completion_tokens_details": {
+                "reasoning_tokens": 3884,
+                "text_tokens": 840
+              },
+              "prompt_tokens": 9452,
+              "prompt_tokens_details": {
+                "cached_tokens": 3072,
+                "text_tokens": 9452
+              },
+              "total_tokens": 14176
+            },
+            {
+              "completion_tokens": 6428,
+              "completion_tokens_details": {
+                "reasoning_tokens": 5318,
+                "text_tokens": 1110
+              },
+              "prompt_tokens": 11916,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 11916
+              },
+              "total_tokens": 18344
+            }
+          ],
+          "llm_cost": null,
+          "sampler_draws": 0,
+          "sampler_duplicate_rejections": 0,
+          "tpe_model_based_decisions": 0,
+          "wall_seconds": 313.4968175999966,
+          "wall_scope": "this invocation; resumed runs do not reconstruct past process downtime",
+          "advisor_seconds_total": 280.82677189998503,
+          "human_minutes": null
+        },
+        "best_mae": 0.0050336970303899884
+      },
+      {
+        "arm": "adaptive_batch",
+        "execution_status": "completed",
+        "error_type": null,
+        "comparison_contract_hash": "c3ec10791e4710b4d1a2bf2dcc10ddbe02135ef97c1e42f4e78da08c8d67a0f1",
+        "comparison_target_hash": "ce17f88d2c3eb086d8ce6be46042f87a98f09be78e1e3fe5729838c3bf7eedfb",
+        "literature_treatment": {
+          "review_ids": [],
+          "snapshot_hash": "86ed5337c7de679cf9908782eecbbb2dd1eac7349ce728416c65871d61c107b4"
+        },
+        "relative_mae_improvement": 0.000014487322248098886,
+        "telemetry": {
+          "charged_fit_calls": 28,
+          "observed_started_fits": 28,
+          "observed_completed_fits": 28,
+          "interrupted_attempts": 0,
+          "failed_attempts": 0,
+          "attempt_count": 10,
+          "accounting_policy": "reserved fits remain charged on failure/interruption; actual consumption may be incomplete",
+          "inflight_or_unknown_fits": 0,
+          "unique_candidates": 4,
+          "candidate_charged_fits": 16,
+          "candidate_failed_attempts": 0,
+          "invalid_proposals": 0,
+          "duplicate_proposals": 0,
+          "negative_experiments": 4,
+          "llm_calls": 2,
+          "provider_attempts": 2,
+          "provider_attempts_without_record": 0,
+          "replay_calls": 0,
+          "advisor_reservations": 3,
+          "provider_usage": [
+            {
+              "completion_tokens": 1331,
+              "completion_tokens_details": {
+                "reasoning_tokens": 717,
+                "text_tokens": 614
+              },
+              "prompt_tokens": 6368,
+              "prompt_tokens_details": {
+                "cached_tokens": 1024,
+                "text_tokens": 6368
+              },
+              "total_tokens": 7699
+            },
+            {
+              "completion_tokens": 6166,
+              "completion_tokens_details": {
+                "reasoning_tokens": 5406,
+                "text_tokens": 760
+              },
+              "prompt_tokens": 8867,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 8867
+              },
+              "total_tokens": 15033
+            }
+          ],
+          "llm_cost": null,
+          "sampler_draws": 0,
+          "sampler_duplicate_rejections": 0,
+          "tpe_model_based_decisions": 0,
+          "wall_seconds": 246.14429300000484,
+          "wall_scope": "this invocation; resumed runs do not reconstruct past process downtime",
+          "advisor_seconds_total": 196.91159209999023,
+          "human_minutes": null
+        },
+        "best_mae": 0.0050336970303899884
+      }
+    ],
+    "inc_g2b_kimi": [
+      {
+        "arm": "adaptive_batch",
+        "execution_status": "failed",
+        "error_type": "ValueError",
+        "comparison_contract_hash": "742c8007026010abffb11752fddcd522fb1e396225afff697cd4e8e0c8039404",
+        "comparison_target_hash": "ce17f88d2c3eb086d8ce6be46042f87a98f09be78e1e3fe5729838c3bf7eedfb",
+        "literature_treatment": {
+          "review_ids": [
+            "literature-67be555da7e4d46c71b05919ec539602e2554651a630157eda0dcaeda97b1000",
+            "literature-6c060cfc558a1aa80739bd06f7e4b45bf0770c12447870b9aa7fe247e522cbfe"
+          ],
+          "snapshot_hash": "dc557dadbb165d98b2bf60d78eec09183cee2e61dff3b508f9b672e8529444e4"
+        },
+        "relative_mae_improvement": 0,
+        "telemetry": {
+          "charged_fit_calls": 12,
+          "observed_started_fits": 12,
+          "observed_completed_fits": 12,
+          "interrupted_attempts": 0,
+          "failed_attempts": 0,
+          "attempt_count": 6,
+          "accounting_policy": "reserved fits remain charged on failure/interruption; actual consumption may be incomplete",
+          "inflight_or_unknown_fits": 0,
+          "unique_candidates": 0,
+          "candidate_charged_fits": 0,
+          "candidate_failed_attempts": 0,
+          "invalid_proposals": 1,
+          "duplicate_proposals": 0,
+          "negative_experiments": 0,
+          "llm_calls": 1,
+          "provider_attempts": 1,
+          "provider_attempts_without_record": 0,
+          "replay_calls": 0,
+          "advisor_reservations": 1,
+          "provider_usage": [
+            {
+              "completion_tokens": 2663,
+              "completion_tokens_details": {
+                "reasoning_tokens": 1921,
+                "text_tokens": 742
+              },
+              "prompt_tokens": 9333,
+              "prompt_tokens_details": {
+                "cached_tokens": 0,
+                "text_tokens": 9333
+              },
+              "total_tokens": 11996
+            }
+          ],
+          "llm_cost": null,
+          "sampler_draws": 0,
+          "sampler_duplicate_rejections": 0,
+          "tpe_model_based_decisions": 0,
+          "wall_seconds": 89.91282209999918,
+          "wall_scope": "this invocation; resumed runs do not reconstruct past process downtime",
+          "advisor_seconds_total": 73.0517705999955,
+          "human_minutes": null
+        },
+        "best_mae": 0.005033769956237467
+      }
+    ]
+  },
+  "provider_calls": [
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "7eabf5e21b3540a380a317426c3b31cb",
+      "status": "returned",
+      "prompt_sha256": "089e69fa10597ce769e47f0ec2661f44cdb14c1cbd78ecfeccfc4503e56196be",
+      "response_hash": "7eca6f5b944fb7e91949860b3fbc7e9869f3202f5a5142aebed3fc1fb28e1141",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 2061,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1568,
+          "text_tokens": 493
+        },
+        "prompt_tokens": 6368,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 6368
+        },
+        "total_tokens": 8429
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "7d1b96d35a524ee689b62352b095699c",
+      "status": "returned",
+      "prompt_sha256": "12d8938757ebf3a1488b1179c006140205a7db3fb8288e2e9671f7048cad2005",
+      "response_hash": "b1852682bb8ad33ecb3c85b7634dbf3eeba7e0211824140b5131ebf894897fc3",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 6775,
+        "completion_tokens_details": {
+          "reasoning_tokens": 4574,
+          "text_tokens": 2201
+        },
+        "prompt_tokens": 6400,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "text_tokens": 6400
+        },
+        "total_tokens": 13175
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "0e62fd6562474973b56517222bf14fa6",
+      "status": "returned",
+      "prompt_sha256": "1bbf0b35de644d3a0fc6a0539e16a61b8febf0ba16eebf8ff24b0876e24ff16d",
+      "response_hash": "c15b93c99387f7c5dca4deb12aacc4f95879ad8c3ac4058680ecd55fd87fff6a",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 1283,
+        "completion_tokens_details": {
+          "reasoning_tokens": 872,
+          "text_tokens": 411
+        },
+        "prompt_tokens": 6348,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "text_tokens": 6348
+        },
+        "total_tokens": 7631
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "beedb7bdb59a4c3f98d90cd5347802b5",
+      "status": "returned",
+      "prompt_sha256": "25ee56494c922d157515b664e2dd01a70f83401a7477ee73fb769413abec605a",
+      "response_hash": "62868a2ba2190c509cc398a2a928a04997e9389d94d9e0d438677d56b97a2ed8",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 4122,
+        "completion_tokens_details": {
+          "reasoning_tokens": 3227,
+          "text_tokens": 895
+        },
+        "prompt_tokens": 8839,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 8839
+        },
+        "total_tokens": 12961
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "88611ecb123347a9b91c9d428334010d",
+      "status": "returned",
+      "prompt_sha256": "4815aa0416b82bfe022768d6376302963c2723956d65851a8741b3e17a3ad885",
+      "response_hash": "816b38f4637b332599fd153bd2b7f773d215ed41fd4afc2d166eab47d589c76a",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 2961,
+        "completion_tokens_details": {
+          "reasoning_tokens": 2018,
+          "text_tokens": 943
+        },
+        "prompt_tokens": 11281,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 11281
+        },
+        "total_tokens": 14242
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "a319d1a417f646dab0f4f65739658fd8",
+      "status": "returned",
+      "prompt_sha256": "6bfb35af5b5e7950d29fbe44744e5d0729c6e80572f8bf85edec066aa8849a31",
+      "response_hash": "73c0a8026efc9da0ad7aff7151623cccaf0264fb803c445f3dac5f27535f3218",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 1605,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1053,
+          "text_tokens": 552
+        },
+        "prompt_tokens": 8737,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 8737
+        },
+        "total_tokens": 10342
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "a38244e9dfc2491c8df02d49d652a390",
+      "status": "returned",
+      "prompt_sha256": "9fbe888fb67116be2dabfe2f5488b30f4684c671101ace7b8969bbb75aac08f5",
+      "response_hash": "1ef9d63fe6c259d17ba364a5038ba47bc36e282435873d3c855d856ad52311a2",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 2580,
+        "completion_tokens_details": {
+          "reasoning_tokens": 2131,
+          "text_tokens": 449
+        },
+        "prompt_tokens": 7536,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 7536
+        },
+        "total_tokens": 10116
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "3c079d63f2d141c8b7ecd583ba6e3ac8",
+      "status": "returned",
+      "prompt_sha256": "bb3df0f68dc2410b1e100e04e73b1a4eb0a80e0723431a84dbe69d66f820fc3d",
+      "response_hash": "46903d7055b4296ccd5b2bebee0f2cc1e7677a9cae3465cb1fd52a8cdcc00175",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 4117,
+        "completion_tokens_details": {
+          "reasoning_tokens": 2838,
+          "text_tokens": 1279
+        },
+        "prompt_tokens": 13775,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 13775
+        },
+        "total_tokens": 17892
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "f7317d7ad5cf43b4898e54e588ea850e",
+      "status": "returned",
+      "prompt_sha256": "c49f10894f41d31f7a092b1204f910b568d82965aebb10bcce6fa0766bbe5930",
+      "response_hash": "fa7c72e64ae12cf1515375d52c8c0f9dd57db20c6fb965b26b4553696bff3b2a",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 1716,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1138,
+          "text_tokens": 578
+        },
+        "prompt_tokens": 12384,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 12384
+        },
+        "total_tokens": 14100
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "5c53feeacfe54a11bf5835ec3fc91310",
+      "status": "returned",
+      "prompt_sha256": "c53fbc3ccf00e37c377ed7ba7c7d3f0245acf348f2175075866f3e173aa6748f",
+      "response_hash": "7a2fe5a44cfebf39907c8df25e6cb5b8f16e3eb4e020658ae3af81ebcabdadde",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 1674,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1204,
+          "text_tokens": 470
+        },
+        "prompt_tokens": 9925,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 9925
+        },
+        "total_tokens": 11599
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "a1771759dfc14f3ba769607c1f5dee41",
+      "status": "returned",
+      "prompt_sha256": "e1964e9eca70af28ccc7774792c962b5e320167abb945e9262575da263df3018",
+      "response_hash": "20ce7dbc6f229dbf59f8a9b252af003c8e3daf64b1a0259ff7db8bb1debe7e74",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 3532,
+        "completion_tokens_details": {
+          "reasoning_tokens": 2949,
+          "text_tokens": 583
+        },
+        "prompt_tokens": 13631,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 13631
+        },
+        "total_tokens": 17163
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "30d0c5c3ac184109a80e4bb4f341e688",
+      "status": "returned",
+      "prompt_sha256": "f9688af53ef9e9d72f9e8d6dda967710835cc06ba091c08cd2d066cfd1345fe6",
+      "response_hash": "a7530408e67eb51fc0f89c70d059984117c35507e33574badab14e61543d63f3",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 1886,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1230,
+          "text_tokens": 656
+        },
+        "prompt_tokens": 14857,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 14857
+        },
+        "total_tokens": 16743
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2a_kimi",
+      "call_id": "a5db5c295fec4dccb0f95f142a7289c6",
+      "status": "returned",
+      "prompt_sha256": "fa9240105f083817aa745f9d158ca67f23b4978fc9bcb39eaaeef8c3ba12c28d",
+      "response_hash": "d157ddff362eaa096a31ece693ef031e260183fd027b8945b4eaff8302a17cc3",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 1733,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1142,
+          "text_tokens": 591
+        },
+        "prompt_tokens": 11146,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 11146
+        },
+        "total_tokens": 12879
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2b_binding_kimi",
+      "call_id": "e9c1c3ce21074655957fafc3cd7c9d3e",
+      "status": "returned",
+      "prompt_sha256": "2f25aaa68b8c8b2816339d5dafbd00cf80a8f6d91a022234933938a878e97c5b",
+      "response_hash": "96c8ac4c119b6400a7ffd4594d05a283325b32ae14ad59fcc17644c52c24e696",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 1331,
+        "completion_tokens_details": {
+          "reasoning_tokens": 717,
+          "text_tokens": 614
+        },
+        "prompt_tokens": 6368,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "text_tokens": 6368
+        },
+        "total_tokens": 7699
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2b_binding_kimi",
+      "call_id": "d108c74e7308402eb5737767ba5b2e69",
+      "status": "returned",
+      "prompt_sha256": "42a4690d11161e46b3549113e813e668c50f5873d7ebe2ffffd542e4ad1d4b05",
+      "response_hash": "839fc576514ab08b591095b728d33523464efe26f9d2c7d524a78f372649c59c",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 6166,
+        "completion_tokens_details": {
+          "reasoning_tokens": 5406,
+          "text_tokens": 760
+        },
+        "prompt_tokens": 8867,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 8867
+        },
+        "total_tokens": 15033
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2b_binding_kimi",
+      "call_id": "6355cbe125db4ab387dee65e8e5de59a",
+      "status": "returned",
+      "prompt_sha256": "58cc98ee14346c2b8761a824914cdea1e66ccc766b154beef2df6dced69e309a",
+      "response_hash": "b80145d8e3561aa3499f475373dd28a5e74a8c7b1b6e7eb3e85559cee0d3cf53",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 6428,
+        "completion_tokens_details": {
+          "reasoning_tokens": 5318,
+          "text_tokens": 1110
+        },
+        "prompt_tokens": 11916,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 11916
+        },
+        "total_tokens": 18344
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2b_binding_kimi",
+      "call_id": "c69eaf2802c14cb4b1d9423e7831db3c",
+      "status": "returned",
+      "prompt_sha256": "9bcb037c408e78652092fadb5f58ddf19684480d942ec55d1eda8cb9444d3d25",
+      "response_hash": "7e0aed1bb7730b8935692819a1fad69a6b5c5b7f5b98caa03548db0664d01699",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 4724,
+        "completion_tokens_details": {
+          "reasoning_tokens": 3884,
+          "text_tokens": 840
+        },
+        "prompt_tokens": 9452,
+        "prompt_tokens_details": {
+          "cached_tokens": 3072,
+          "text_tokens": 9452
+        },
+        "total_tokens": 14176
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_g2b_kimi",
+      "call_id": "cf32f3c0a21c4c77bb8c28d61b74e069",
+      "status": "returned",
+      "prompt_sha256": "9d85456edf5204ad2973fbd466c6219c4037737d18a01d908e5f311848927733",
+      "response_hash": "324b0817a71f4c6c7d27a6d8a62072e142e6333a796c6835fccae546131d3b4b",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 2663,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1921,
+          "text_tokens": 742
+        },
+        "prompt_tokens": 9333,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 9333
+        },
+        "total_tokens": 11996
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_live_small_kimi",
+      "call_id": "8684f940a5744a65b021c5c509d7a284",
+      "status": "returned",
+      "prompt_sha256": "0832eaa2fd2af22499068c208c93548d63d3017343fbcec0191fd7c8e8b013e0",
+      "response_hash": "b523a5bf7fd09df5d9f3dd41e546f881e3179b10712db970a6eaa1b3763f4535",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 2327,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1917,
+          "text_tokens": 410
+        },
+        "prompt_tokens": 2623,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "text_tokens": 2623
+        },
+        "total_tokens": 4950
+      },
+      "http_attempts": 1,
+      "cost": null
+    },
+    {
+      "run": "inc_live_small_kimi",
+      "call_id": "445bfad3c3dd4dcbba04b4fdf5fc4f91",
+      "status": "returned",
+      "prompt_sha256": "4849e42c936cd7c0d80e5d1514bf6989f965436b8bcef853286f199ebe46ec76",
+      "response_hash": "a1056d10a4ae83c29e944ef21bb6aae88b10056e3a98cf11dec31d88a2c0286e",
+      "requested_model": "kimi-k3",
+      "response_model": "kimi-k3",
+      "usage": {
+        "completion_tokens": 3719,
+        "completion_tokens_details": {
+          "reasoning_tokens": 3224,
+          "text_tokens": 495
+        },
+        "prompt_tokens": 3694,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "text_tokens": 3694
+        },
+        "total_tokens": 7413
+      },
+      "http_attempts": 1,
+      "cost": null
+    }
+  ],
+  "frozen_contracts": {
+    "inc_g2a_kimi": {
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "source_hashes": {
+        "adapter_backlog.py": "4698a34bc5c721b78bbaafe2a5e1a511084afe8280771c82aafc300ee2a1bd46",
+        "benchmark.py": "7256c3885beaf94cd73e73092ff46f192c061a0f87260f7f94d2bef6da461cf5",
+        "benchmark_registry.py": "e156642e89c9da1f9bfcf2b655e25268cddcf67bcffaf3cb4b29dfb570179917",
+        "candidate_execution.py": "4f8be5fda4d756f0b0ece087f927891205bed7fa7c00d9ddd98499ff6e734406",
+        "candidate_triage.py": "7176fbb448b18edf1d689c0de6c23a09db490ae281d370cae541598b8a81936b",
+        "comparability.py": "ca4dca72fc8568fcc91972ec444d4c5be7bb6b90e2342d0d8a4ef1008b13540e",
+        "config.py": "6f0ee94ee87de19c6f604081b7d2967ff88425091d8d97dccdb850ebe6933d33",
+        "contracts.py": "04d1f418243445e93ad0b26d66cde60ddd54476ab171c707866bf41390a8f779",
+        "data.py": "a8d26d06093e068e171f10a297dcd2c55e8bed508d066a4f7e6b832470ec5c28",
+        "data_acquisition.py": "a938e1ec3dce87200c76619e28a4cfe6c9400c5afa117e8180f1988b7b22f98b",
+        "evaluation.py": "3bf434c99b7b9cfe0c7ea3713a95323e07476ea00e1275814bfb169b270754c8",
+        "experiment_memory.py": "6b98f536fc0ef5b35e691cdcf01bd261a430e588b5c91827f049b31bef466d70",
+        "experiment_protocols.py": "3491a8de7d2573718791a43c46c409b6c74c03849d91fa79017ab9d60ebd0975",
+        "focused_adaptive.py": "d5463e73bddb799d26e19bc8745b332f57f9d2b71673406156869239b3629fba",
+        "focused_benchmark.py": "bb55aad7765c1b5f0e6d112ba20c5448aa01a86199f717a16f657ff95a7dfa6d",
+        "focused_byo.py": "405c0a1524412865c2e5702b056980037f5c3bcc675d407becac7308efa32886",
+        "focused_data.py": "4faf793c71f9356bc74bcb2cdcd02f32277ae8dc041fc12cad89bfa8026f7f1e",
+        "focused_delivery.py": "c116e15269c84374deb7f81bf1b0ae826fdf6a9963dc552cede619fd695f13bd",
+        "focused_evidence.py": "9ed12c19299069c29dfdb1e5096f8e6dd4bac22a00a150c91554a32b9d0b855c",
+        "focused_identity.py": "7fcdda125d86eca440f7fe7588b9be715e93ca6e313f733c26697325eb44c7d2",
+        "focused_literature.py": "ba7b3ee2af47edbeebc3d3b20e787eb8c184d0aebca4f8ccee6858f456bf9c7c",
+        "focused_persistence.py": "fc7a35618b8cf027bb0245d8e3e582b848698b2ecadb07e5697fa3b680bc3924",
+        "focused_protocol.py": "8aa4be5a285e5ce114ac99152f09b52b993cee1679b071bba6ab9e31a687ac1f",
+        "focused_research.py": "6f6bc9cb2b04baefeae1b4275fb57e08f9e75a29166fe6bdd3652a3b3a17318a",
+        "focused_runtime.py": "ee8d2f3582117f39ae1ea17c9a0c72696a23196f541a4181703efc018e844d3a",
+        "focused_state.py": "5c6fb96c76fd5d7b2f5caee112351f11350ce8ea5ebdbc603c164b301bdd7e90",
+        "focused_summary.py": "9220c067fe36fd7d88ce07cab059b419e68fc1d31cc65ade18819050ee67f30b",
+        "frontend_flow_trace.py": "f4d06a09ca7e9f2fed4b83a46bc3447c953e454f904e540eee61934f9bb4314c",
+        "frontend_view_model.py": "456fc7bd78512dbe752e427072f220a353ae3926285da1f824a121d84a682f09",
+        "frontend_workbench.py": "22240336cd48457286c6125fc68888b4e375828f60ff42636cd4563360963e61",
+        "generality.py": "d059a076c12ab6bd33eecc8ac6d9ce8434a0550c22fb80c0ff5d64f8ec6fee7a",
+        "golden_sets.py": "6682cf6de0a624690e44f94e44c2315a867fed651970cf0a87005dac129c83ec",
+        "harness.py": "8c29df0f143e6e27421dded2b518a65bf46e8657cb105c99ca63be7ce8f46af7",
+        "heldout_validation.py": "7b1b394ba986dbe2493906b98d7976b700f32982c0bfb34f11e309bec40cf5f3",
+        "lineage.py": "af2f39361b649a67ca080f18c624c42308b699be1398cb3d8a8d2cd6a37149f6",
+        "literature_corpus.py": "4e3d2326af6a50098453618b248132732c7424a169cd198254d2a9c7a934bc1a",
+        "llm_adapters.py": "1c3f72ab57bfc65555e533c673bfac5b1a2e62e15b744a1a7054bd280d05fa20",
+        "llm_transport.py": "d122473d650abe92ae733a57633bfcf898459ef6cf7f75f9fdaa1ebc6a216169",
+        "memory_scheduler.py": "f804ef2d6e4aa989bc81fb9f88952e74b6c11553388eb3adb3f965d25c4fe599",
+        "method_adapters.py": "9155c2cec43f2b8d1fb293f4f97ff9d08dc8fc2edc801b8713ac1886c2dad5a4",
+        "method_cards.py": "4f86e270f3f8d2d4c13dd37c77baaaaba2a73f5372ca7e833473ad248b278e5c",
+        "method_card_quality.py": "a82870502fc0b16ad088a982791974b0d85ef903f02f177ce3faf15faf59a122",
+        "method_card_v3.py": "2a3e530da5ff7e18eec5c4a1c24ea83d61513de9ca8c57fe953b85f64b5cb737",
+        "models.py": "a24489579bf3783711e624d590929d2f63f1443fb02c45245f7cfce6a3ef9b64",
+        "model_registry.py": "9b21d61f0e195af2c7b7e11487f34dac5ec740b4c8fdbe87be5b32d20a588bba",
+        "multi_benchmark.py": "414af94cfde9e6a589ca7dbbb236b9ce347bcedffb7d51054dc4b607ac9a044a",
+        "native_claim_compiler.py": "b5e60d91320d59b4950459e11bb9f0afaf23fdb4b57b1f8e1cefd5139c659d6c",
+        "native_execution.py": "39628e3a2b7a27d5ca31ffa57df7cd2a368b0b50137b2dcc607453bde345e24d",
+        "native_plugins.py": "e1eb645c3ccdaa272ca2b689b786c85ec93d4322bab6c6e8829ffcd5bbf618bd",
+        "native_reproductions.py": "ac2c737d00e4ff5a8d39b448712697690e3ef3abc686c87d7272de55184f49f8",
+        "oa_blocker_resolution.py": "7af1e2e7b2f7f8b04431bf7ff50c2f555ceae9c5df5476694f2034010b83bcad",
+        "p1_protocol.py": "d91bfd05de7c78447b775ddfc87fe53560e1c8bb1f1f073f8ba2bb5dbe8b26ff",
+        "p2_readiness.py": "a17be62b88bb63ccbfbdebf957ca9c4f13ad1209c21242ec2c2f7935891929eb",
+        "papers.py": "40949a4393ec0659f9d89cdb71612b706618e999292e11093a6c3f1b9831f9c0",
+        "paper_run_delta.py": "78505bbe477e695ef6a9748e7fb46b0db67bc85dc7ffa83ae881413221c0ad3c",
+        "protocol_normalizer.py": "39bdd2fd63196af931e6c52107066f0c5c82a26603455325f61559caa54cc8b8",
+        "registry.py": "ce27e560e7e0e5aec680b1dc66ffb5a2b5bc5ccef45b5f574344df9b2905dccb",
+        "replay_llm.py": "cea485a9118a831098036be7c109886940325e650a185a11986cda3f117c023f",
+        "reproduction_portfolio.py": "e03c077aa444eaa725050bdfea53615baef1afa1a673261f5b49ea8d9ea53769",
+        "research_accounting.py": "87c3907836770f8f5b7b1f3e9407e8f5a40734ad6345d0a83beb8b9dd3c27c2f",
+        "research_journal.py": "91170910791b914ce1291b773c46e2eaec8814aac366de9400036fbea9e3db80",
+        "research_mission.py": "8190e3b6cd5b511a87bc31e0efb615dbe68955645ccdacf336b49d1e6ddc6ee6",
+        "review_state.py": "20bd594e11f13dde57e0221946a236e019ab2cc03f94e7cb1f4bfe39a63f3353",
+        "run_timeline.py": "34641ecd16bd9fff78a0d81874cf10cf82be3cf06d3017146791c00c66abc735",
+        "schemas.py": "c659932b1603e211caa8792ba25f27805cbd4bde2db54233fed71b485f6cb814",
+        "scientific_acceptance.py": "5133c45c3c4e3d7d5e6398684c00273a62660fc74ac06bf9ddd6afd2a212750e",
+        "source_bundles.py": "5f405b45ed9baa9873e29ed292db811634dc420aa297c2545a36602fbd232c39",
+        "source_data_contracts.py": "0975d2fa6e941bb5fb7695cf7c913e7dddcccd5391993aad599d1e006dd986a8",
+        "splitters.py": "d59ce2270fcb9f6558abc37ea8647139ac76619d843ed1bb52cec62eac8f211f",
+        "streamlit_p09.py": "0031253c1e475dea55100f5ba59275fb3d8f954fa3ef10baab969849b1de9fd0",
+        "task_queue.py": "d2e34b50c4532f340fc1b047ef40298bd8872bfaf9109343d31a61e5d88a94c3",
+        "tracking.py": "384e328502d4eb25c3cea9427be34608cd3a168af2e75eb7851c8306e114c3dc",
+        "tracking_reconciliation.py": "efbbd83c2fe8fea720af5a6e9c65117641e1b36cce5489df461cf5a2fb86e781",
+        "vertical_validation.py": "20bd6d7249a9664cdb8edbbd0ac69256cc3875fc3b8f827be9fe3ca522a80b8f",
+        "__init__.py": "b31714a2755a34a99385052051e8682b0f01e8ba54dcc0762f91075445971216"
+      },
+      "input_hash": "0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b",
+      "spec": {
+        "candidate_budget": 8,
+        "search_seed": 42,
+        "estimator_seed": 42,
+        "startup_trials": 4,
+        "max_sampler_draws": 512,
+        "batch_size": 2,
+        "schema_version": "focused_benchmark_contract_v3"
+      },
+      "order": [
+        [
+          "adaptive_batch",
+          ""
+        ],
+        [
+          "random",
+          ""
+        ],
+        [
+          "tpe",
+          ""
+        ],
+        [
+          "one_shot",
+          ""
+        ],
+        [
+          "adaptive",
+          ""
+        ]
+      ]
+    },
+    "inc_g2b_binding_kimi": {
+      "head": "3829647f81f91a2979353d1123cb23baece0f365",
+      "source_hashes": {
+        "adapter_backlog.py": "4698a34bc5c721b78bbaafe2a5e1a511084afe8280771c82aafc300ee2a1bd46",
+        "benchmark.py": "7256c3885beaf94cd73e73092ff46f192c061a0f87260f7f94d2bef6da461cf5",
+        "benchmark_registry.py": "e156642e89c9da1f9bfcf2b655e25268cddcf67bcffaf3cb4b29dfb570179917",
+        "candidate_execution.py": "4f8be5fda4d756f0b0ece087f927891205bed7fa7c00d9ddd98499ff6e734406",
+        "candidate_triage.py": "7176fbb448b18edf1d689c0de6c23a09db490ae281d370cae541598b8a81936b",
+        "comparability.py": "ca4dca72fc8568fcc91972ec444d4c5be7bb6b90e2342d0d8a4ef1008b13540e",
+        "config.py": "6f0ee94ee87de19c6f604081b7d2967ff88425091d8d97dccdb850ebe6933d33",
+        "contracts.py": "04d1f418243445e93ad0b26d66cde60ddd54476ab171c707866bf41390a8f779",
+        "data.py": "a8d26d06093e068e171f10a297dcd2c55e8bed508d066a4f7e6b832470ec5c28",
+        "data_acquisition.py": "a938e1ec3dce87200c76619e28a4cfe6c9400c5afa117e8180f1988b7b22f98b",
+        "evaluation.py": "3bf434c99b7b9cfe0c7ea3713a95323e07476ea00e1275814bfb169b270754c8",
+        "experiment_memory.py": "6b98f536fc0ef5b35e691cdcf01bd261a430e588b5c91827f049b31bef466d70",
+        "experiment_protocols.py": "3491a8de7d2573718791a43c46c409b6c74c03849d91fa79017ab9d60ebd0975",
+        "focused_adaptive.py": "d5463e73bddb799d26e19bc8745b332f57f9d2b71673406156869239b3629fba",
+        "focused_benchmark.py": "bb55aad7765c1b5f0e6d112ba20c5448aa01a86199f717a16f657ff95a7dfa6d",
+        "focused_byo.py": "405c0a1524412865c2e5702b056980037f5c3bcc675d407becac7308efa32886",
+        "focused_data.py": "4faf793c71f9356bc74bcb2cdcd02f32277ae8dc041fc12cad89bfa8026f7f1e",
+        "focused_delivery.py": "c116e15269c84374deb7f81bf1b0ae826fdf6a9963dc552cede619fd695f13bd",
+        "focused_evidence.py": "9ed12c19299069c29dfdb1e5096f8e6dd4bac22a00a150c91554a32b9d0b855c",
+        "focused_identity.py": "7fcdda125d86eca440f7fe7588b9be715e93ca6e313f733c26697325eb44c7d2",
+        "focused_literature.py": "ba7b3ee2af47edbeebc3d3b20e787eb8c184d0aebca4f8ccee6858f456bf9c7c",
+        "focused_persistence.py": "fc7a35618b8cf027bb0245d8e3e582b848698b2ecadb07e5697fa3b680bc3924",
+        "focused_protocol.py": "8aa4be5a285e5ce114ac99152f09b52b993cee1679b071bba6ab9e31a687ac1f",
+        "focused_research.py": "d8fb0df3923fdfd55a87da891063b034d60299ef21a0faf565a055a1519d028d",
+        "focused_runtime.py": "ee8d2f3582117f39ae1ea17c9a0c72696a23196f541a4181703efc018e844d3a",
+        "focused_state.py": "5c6fb96c76fd5d7b2f5caee112351f11350ce8ea5ebdbc603c164b301bdd7e90",
+        "focused_summary.py": "9220c067fe36fd7d88ce07cab059b419e68fc1d31cc65ade18819050ee67f30b",
+        "frontend_flow_trace.py": "f4d06a09ca7e9f2fed4b83a46bc3447c953e454f904e540eee61934f9bb4314c",
+        "frontend_view_model.py": "456fc7bd78512dbe752e427072f220a353ae3926285da1f824a121d84a682f09",
+        "frontend_workbench.py": "22240336cd48457286c6125fc68888b4e375828f60ff42636cd4563360963e61",
+        "generality.py": "d059a076c12ab6bd33eecc8ac6d9ce8434a0550c22fb80c0ff5d64f8ec6fee7a",
+        "golden_sets.py": "6682cf6de0a624690e44f94e44c2315a867fed651970cf0a87005dac129c83ec",
+        "harness.py": "8c29df0f143e6e27421dded2b518a65bf46e8657cb105c99ca63be7ce8f46af7",
+        "heldout_validation.py": "7b1b394ba986dbe2493906b98d7976b700f32982c0bfb34f11e309bec40cf5f3",
+        "lineage.py": "af2f39361b649a67ca080f18c624c42308b699be1398cb3d8a8d2cd6a37149f6",
+        "literature_corpus.py": "4e3d2326af6a50098453618b248132732c7424a169cd198254d2a9c7a934bc1a",
+        "llm_adapters.py": "1c3f72ab57bfc65555e533c673bfac5b1a2e62e15b744a1a7054bd280d05fa20",
+        "llm_transport.py": "d122473d650abe92ae733a57633bfcf898459ef6cf7f75f9fdaa1ebc6a216169",
+        "memory_scheduler.py": "f804ef2d6e4aa989bc81fb9f88952e74b6c11553388eb3adb3f965d25c4fe599",
+        "method_adapters.py": "9155c2cec43f2b8d1fb293f4f97ff9d08dc8fc2edc801b8713ac1886c2dad5a4",
+        "method_cards.py": "4f86e270f3f8d2d4c13dd37c77baaaaba2a73f5372ca7e833473ad248b278e5c",
+        "method_card_quality.py": "a82870502fc0b16ad088a982791974b0d85ef903f02f177ce3faf15faf59a122",
+        "method_card_v3.py": "2a3e530da5ff7e18eec5c4a1c24ea83d61513de9ca8c57fe953b85f64b5cb737",
+        "models.py": "a24489579bf3783711e624d590929d2f63f1443fb02c45245f7cfce6a3ef9b64",
+        "model_registry.py": "9b21d61f0e195af2c7b7e11487f34dac5ec740b4c8fdbe87be5b32d20a588bba",
+        "multi_benchmark.py": "414af94cfde9e6a589ca7dbbb236b9ce347bcedffb7d51054dc4b607ac9a044a",
+        "native_claim_compiler.py": "b5e60d91320d59b4950459e11bb9f0afaf23fdb4b57b1f8e1cefd5139c659d6c",
+        "native_execution.py": "39628e3a2b7a27d5ca31ffa57df7cd2a368b0b50137b2dcc607453bde345e24d",
+        "native_plugins.py": "e1eb645c3ccdaa272ca2b689b786c85ec93d4322bab6c6e8829ffcd5bbf618bd",
+        "native_reproductions.py": "ac2c737d00e4ff5a8d39b448712697690e3ef3abc686c87d7272de55184f49f8",
+        "oa_blocker_resolution.py": "7af1e2e7b2f7f8b04431bf7ff50c2f555ceae9c5df5476694f2034010b83bcad",
+        "p1_protocol.py": "d91bfd05de7c78447b775ddfc87fe53560e1c8bb1f1f073f8ba2bb5dbe8b26ff",
+        "p2_readiness.py": "a17be62b88bb63ccbfbdebf957ca9c4f13ad1209c21242ec2c2f7935891929eb",
+        "papers.py": "40949a4393ec0659f9d89cdb71612b706618e999292e11093a6c3f1b9831f9c0",
+        "paper_run_delta.py": "78505bbe477e695ef6a9748e7fb46b0db67bc85dc7ffa83ae881413221c0ad3c",
+        "protocol_normalizer.py": "39bdd2fd63196af931e6c52107066f0c5c82a26603455325f61559caa54cc8b8",
+        "registry.py": "ce27e560e7e0e5aec680b1dc66ffb5a2b5bc5ccef45b5f574344df9b2905dccb",
+        "replay_llm.py": "cea485a9118a831098036be7c109886940325e650a185a11986cda3f117c023f",
+        "reproduction_portfolio.py": "e03c077aa444eaa725050bdfea53615baef1afa1a673261f5b49ea8d9ea53769",
+        "research_accounting.py": "87c3907836770f8f5b7b1f3e9407e8f5a40734ad6345d0a83beb8b9dd3c27c2f",
+        "research_journal.py": "91170910791b914ce1291b773c46e2eaec8814aac366de9400036fbea9e3db80",
+        "research_mission.py": "8190e3b6cd5b511a87bc31e0efb615dbe68955645ccdacf336b49d1e6ddc6ee6",
+        "review_state.py": "20bd594e11f13dde57e0221946a236e019ab2cc03f94e7cb1f4bfe39a63f3353",
+        "run_timeline.py": "34641ecd16bd9fff78a0d81874cf10cf82be3cf06d3017146791c00c66abc735",
+        "schemas.py": "c659932b1603e211caa8792ba25f27805cbd4bde2db54233fed71b485f6cb814",
+        "scientific_acceptance.py": "5133c45c3c4e3d7d5e6398684c00273a62660fc74ac06bf9ddd6afd2a212750e",
+        "source_bundles.py": "5f405b45ed9baa9873e29ed292db811634dc420aa297c2545a36602fbd232c39",
+        "source_data_contracts.py": "0975d2fa6e941bb5fb7695cf7c913e7dddcccd5391993aad599d1e006dd986a8",
+        "splitters.py": "d59ce2270fcb9f6558abc37ea8647139ac76619d843ed1bb52cec62eac8f211f",
+        "streamlit_p09.py": "0031253c1e475dea55100f5ba59275fb3d8f954fa3ef10baab969849b1de9fd0",
+        "task_queue.py": "d2e34b50c4532f340fc1b047ef40298bd8872bfaf9109343d31a61e5d88a94c3",
+        "tracking.py": "384e328502d4eb25c3cea9427be34608cd3a168af2e75eb7851c8306e114c3dc",
+        "tracking_reconciliation.py": "efbbd83c2fe8fea720af5a6e9c65117641e1b36cce5489df461cf5a2fb86e781",
+        "vertical_validation.py": "20bd6d7249a9664cdb8edbbd0ac69256cc3875fc3b8f827be9fe3ca522a80b8f",
+        "__init__.py": "b31714a2755a34a99385052051e8682b0f01e8ba54dcc0762f91075445971216"
+      },
+      "input_hash": "0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b",
+      "spec": {
+        "candidate_budget": 4,
+        "search_seed": 42,
+        "estimator_seed": 42,
+        "startup_trials": 2,
+        "max_sampler_draws": 512,
+        "batch_size": 2,
+        "schema_version": "focused_benchmark_contract_v3"
+      },
+      "order": [
+        [
+          "adaptive_batch",
+          "L1"
+        ],
+        [
+          "adaptive_batch",
+          "L0"
+        ]
+      ]
+    },
+    "inc_g2b_kimi": {
+      "head": "1d26760f27a3c578f027acd6d0c17cbe240e92c7",
+      "source_hashes": {
+        "adapter_backlog.py": "4698a34bc5c721b78bbaafe2a5e1a511084afe8280771c82aafc300ee2a1bd46",
+        "benchmark.py": "7256c3885beaf94cd73e73092ff46f192c061a0f87260f7f94d2bef6da461cf5",
+        "benchmark_registry.py": "e156642e89c9da1f9bfcf2b655e25268cddcf67bcffaf3cb4b29dfb570179917",
+        "candidate_execution.py": "4f8be5fda4d756f0b0ece087f927891205bed7fa7c00d9ddd98499ff6e734406",
+        "candidate_triage.py": "7176fbb448b18edf1d689c0de6c23a09db490ae281d370cae541598b8a81936b",
+        "comparability.py": "ca4dca72fc8568fcc91972ec444d4c5be7bb6b90e2342d0d8a4ef1008b13540e",
+        "config.py": "6f0ee94ee87de19c6f604081b7d2967ff88425091d8d97dccdb850ebe6933d33",
+        "contracts.py": "04d1f418243445e93ad0b26d66cde60ddd54476ab171c707866bf41390a8f779",
+        "data.py": "a8d26d06093e068e171f10a297dcd2c55e8bed508d066a4f7e6b832470ec5c28",
+        "data_acquisition.py": "a938e1ec3dce87200c76619e28a4cfe6c9400c5afa117e8180f1988b7b22f98b",
+        "evaluation.py": "3bf434c99b7b9cfe0c7ea3713a95323e07476ea00e1275814bfb169b270754c8",
+        "experiment_memory.py": "6b98f536fc0ef5b35e691cdcf01bd261a430e588b5c91827f049b31bef466d70",
+        "experiment_protocols.py": "3491a8de7d2573718791a43c46c409b6c74c03849d91fa79017ab9d60ebd0975",
+        "focused_adaptive.py": "d5463e73bddb799d26e19bc8745b332f57f9d2b71673406156869239b3629fba",
+        "focused_benchmark.py": "bb55aad7765c1b5f0e6d112ba20c5448aa01a86199f717a16f657ff95a7dfa6d",
+        "focused_byo.py": "405c0a1524412865c2e5702b056980037f5c3bcc675d407becac7308efa32886",
+        "focused_data.py": "4faf793c71f9356bc74bcb2cdcd02f32277ae8dc041fc12cad89bfa8026f7f1e",
+        "focused_delivery.py": "c116e15269c84374deb7f81bf1b0ae826fdf6a9963dc552cede619fd695f13bd",
+        "focused_evidence.py": "9ed12c19299069c29dfdb1e5096f8e6dd4bac22a00a150c91554a32b9d0b855c",
+        "focused_identity.py": "7fcdda125d86eca440f7fe7588b9be715e93ca6e313f733c26697325eb44c7d2",
+        "focused_literature.py": "ba7b3ee2af47edbeebc3d3b20e787eb8c184d0aebca4f8ccee6858f456bf9c7c",
+        "focused_persistence.py": "fc7a35618b8cf027bb0245d8e3e582b848698b2ecadb07e5697fa3b680bc3924",
+        "focused_protocol.py": "8aa4be5a285e5ce114ac99152f09b52b993cee1679b071bba6ab9e31a687ac1f",
+        "focused_research.py": "6f6bc9cb2b04baefeae1b4275fb57e08f9e75a29166fe6bdd3652a3b3a17318a",
+        "focused_runtime.py": "ee8d2f3582117f39ae1ea17c9a0c72696a23196f541a4181703efc018e844d3a",
+        "focused_state.py": "5c6fb96c76fd5d7b2f5caee112351f11350ce8ea5ebdbc603c164b301bdd7e90",
+        "focused_summary.py": "9220c067fe36fd7d88ce07cab059b419e68fc1d31cc65ade18819050ee67f30b",
+        "frontend_flow_trace.py": "f4d06a09ca7e9f2fed4b83a46bc3447c953e454f904e540eee61934f9bb4314c",
+        "frontend_view_model.py": "456fc7bd78512dbe752e427072f220a353ae3926285da1f824a121d84a682f09",
+        "frontend_workbench.py": "22240336cd48457286c6125fc68888b4e375828f60ff42636cd4563360963e61",
+        "generality.py": "d059a076c12ab6bd33eecc8ac6d9ce8434a0550c22fb80c0ff5d64f8ec6fee7a",
+        "golden_sets.py": "6682cf6de0a624690e44f94e44c2315a867fed651970cf0a87005dac129c83ec",
+        "harness.py": "8c29df0f143e6e27421dded2b518a65bf46e8657cb105c99ca63be7ce8f46af7",
+        "heldout_validation.py": "7b1b394ba986dbe2493906b98d7976b700f32982c0bfb34f11e309bec40cf5f3",
+        "lineage.py": "af2f39361b649a67ca080f18c624c42308b699be1398cb3d8a8d2cd6a37149f6",
+        "literature_corpus.py": "4e3d2326af6a50098453618b248132732c7424a169cd198254d2a9c7a934bc1a",
+        "llm_adapters.py": "1c3f72ab57bfc65555e533c673bfac5b1a2e62e15b744a1a7054bd280d05fa20",
+        "llm_transport.py": "d122473d650abe92ae733a57633bfcf898459ef6cf7f75f9fdaa1ebc6a216169",
+        "memory_scheduler.py": "f804ef2d6e4aa989bc81fb9f88952e74b6c11553388eb3adb3f965d25c4fe599",
+        "method_adapters.py": "9155c2cec43f2b8d1fb293f4f97ff9d08dc8fc2edc801b8713ac1886c2dad5a4",
+        "method_cards.py": "4f86e270f3f8d2d4c13dd37c77baaaaba2a73f5372ca7e833473ad248b278e5c",
+        "method_card_quality.py": "a82870502fc0b16ad088a982791974b0d85ef903f02f177ce3faf15faf59a122",
+        "method_card_v3.py": "2a3e530da5ff7e18eec5c4a1c24ea83d61513de9ca8c57fe953b85f64b5cb737",
+        "models.py": "a24489579bf3783711e624d590929d2f63f1443fb02c45245f7cfce6a3ef9b64",
+        "model_registry.py": "9b21d61f0e195af2c7b7e11487f34dac5ec740b4c8fdbe87be5b32d20a588bba",
+        "multi_benchmark.py": "414af94cfde9e6a589ca7dbbb236b9ce347bcedffb7d51054dc4b607ac9a044a",
+        "native_claim_compiler.py": "b5e60d91320d59b4950459e11bb9f0afaf23fdb4b57b1f8e1cefd5139c659d6c",
+        "native_execution.py": "39628e3a2b7a27d5ca31ffa57df7cd2a368b0b50137b2dcc607453bde345e24d",
+        "native_plugins.py": "e1eb645c3ccdaa272ca2b689b786c85ec93d4322bab6c6e8829ffcd5bbf618bd",
+        "native_reproductions.py": "ac2c737d00e4ff5a8d39b448712697690e3ef3abc686c87d7272de55184f49f8",
+        "oa_blocker_resolution.py": "7af1e2e7b2f7f8b04431bf7ff50c2f555ceae9c5df5476694f2034010b83bcad",
+        "p1_protocol.py": "d91bfd05de7c78447b775ddfc87fe53560e1c8bb1f1f073f8ba2bb5dbe8b26ff",
+        "p2_readiness.py": "a17be62b88bb63ccbfbdebf957ca9c4f13ad1209c21242ec2c2f7935891929eb",
+        "papers.py": "40949a4393ec0659f9d89cdb71612b706618e999292e11093a6c3f1b9831f9c0",
+        "paper_run_delta.py": "78505bbe477e695ef6a9748e7fb46b0db67bc85dc7ffa83ae881413221c0ad3c",
+        "protocol_normalizer.py": "39bdd2fd63196af931e6c52107066f0c5c82a26603455325f61559caa54cc8b8",
+        "registry.py": "ce27e560e7e0e5aec680b1dc66ffb5a2b5bc5ccef45b5f574344df9b2905dccb",
+        "replay_llm.py": "cea485a9118a831098036be7c109886940325e650a185a11986cda3f117c023f",
+        "reproduction_portfolio.py": "e03c077aa444eaa725050bdfea53615baef1afa1a673261f5b49ea8d9ea53769",
+        "research_accounting.py": "87c3907836770f8f5b7b1f3e9407e8f5a40734ad6345d0a83beb8b9dd3c27c2f",
+        "research_journal.py": "91170910791b914ce1291b773c46e2eaec8814aac366de9400036fbea9e3db80",
+        "research_mission.py": "8190e3b6cd5b511a87bc31e0efb615dbe68955645ccdacf336b49d1e6ddc6ee6",
+        "review_state.py": "20bd594e11f13dde57e0221946a236e019ab2cc03f94e7cb1f4bfe39a63f3353",
+        "run_timeline.py": "34641ecd16bd9fff78a0d81874cf10cf82be3cf06d3017146791c00c66abc735",
+        "schemas.py": "c659932b1603e211caa8792ba25f27805cbd4bde2db54233fed71b485f6cb814",
+        "scientific_acceptance.py": "5133c45c3c4e3d7d5e6398684c00273a62660fc74ac06bf9ddd6afd2a212750e",
+        "source_bundles.py": "5f405b45ed9baa9873e29ed292db811634dc420aa297c2545a36602fbd232c39",
+        "source_data_contracts.py": "0975d2fa6e941bb5fb7695cf7c913e7dddcccd5391993aad599d1e006dd986a8",
+        "splitters.py": "d59ce2270fcb9f6558abc37ea8647139ac76619d843ed1bb52cec62eac8f211f",
+        "streamlit_p09.py": "0031253c1e475dea55100f5ba59275fb3d8f954fa3ef10baab969849b1de9fd0",
+        "task_queue.py": "d2e34b50c4532f340fc1b047ef40298bd8872bfaf9109343d31a61e5d88a94c3",
+        "tracking.py": "384e328502d4eb25c3cea9427be34608cd3a168af2e75eb7851c8306e114c3dc",
+        "tracking_reconciliation.py": "efbbd83c2fe8fea720af5a6e9c65117641e1b36cce5489df461cf5a2fb86e781",
+        "vertical_validation.py": "20bd6d7249a9664cdb8edbbd0ac69256cc3875fc3b8f827be9fe3ca522a80b8f",
+        "__init__.py": "b31714a2755a34a99385052051e8682b0f01e8ba54dcc0762f91075445971216"
+      },
+      "input_hash": "0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b",
+      "spec": {
+        "candidate_budget": 4,
+        "search_seed": 42,
+        "estimator_seed": 42,
+        "startup_trials": 2,
+        "max_sampler_draws": 512,
+        "batch_size": 2,
+        "schema_version": "focused_benchmark_contract_v3"
+      },
+      "order": [
+        [
+          "adaptive_batch",
+          "L1"
+        ],
+        [
+          "adaptive_batch",
+          "L0"
+        ]
+      ]
+    }
+  },
+  "known_tokens": 246883,
+  "unknown_usage_records": 0
+}

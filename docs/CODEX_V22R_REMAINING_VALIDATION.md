@@ -1,6 +1,7 @@
 # Codex：B0–B5 交付后的统一补测任务
 
 本文件是当前补测入口，替代旧“R0–R6尚未跑通”的清单，不改写历史验收收据。
+2026-09-28 增量证据见 [B5_INCREMENT_20260928.md](validation/B5_INCREMENT_20260928.md)；旧失败及48条原条款保留，不因新小样本完成而全部关闭。
 正式分支 `feat/mission-research-v2`；B4已发布 `e983c4dfb90bb96d314fb0d2a8474e31537d1223`。
 B5最终HEAD以拉取后实际Git与同SHA CI为准；不得把文档中的父提交当最终提交。
 当前状态只见 CURRENT_IMPLEMENTATION.md，批准范围见 ADR_MISSION_PRODUCT_004.md。
