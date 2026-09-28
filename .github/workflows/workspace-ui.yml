@@ -22,28 +22,30 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - name: Preserve reviewable source identity
+      - name: Preserve source identity
         run: |
           mkdir -p validation/workspace-ui
           git rev-parse HEAD > validation/workspace-ui/HEAD.txt
           git rev-parse HEAD^{tree} > validation/workspace-ui/TREE.txt
           git archive --format=zip -o validation/workspace-ui/source.zip HEAD
-      - name: Prepare offline UI verification dependencies
-        if: hashFiles('tests/test_workspace_ui*.py') == ''
-        run: |
-          python -m pip download --only-binary=:all: 'streamlit>=1.64,<2' ruff -d validation/workspace-ui/wheelhouse
-      - name: Install existing declared environment
-        if: hashFiles('tests/test_workspace_ui*.py') != ''
+      - name: Install declared browser environment
         run: |
           python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -e '.[dev,ui,pdf,byo,benchmark,browser]'
           python -m playwright install --with-deps chromium
-      - name: Verify workspace adapter and real browser
-        if: hashFiles('tests/test_workspace_ui*.py') != ''
+      - name: Workspace adapter and real browser
         run: |
           python -m pytest -q tests/test_workspace_ui*.py tests/browser/test_agent_workspace.py --junitxml=validation/workspace-ui/ui.xml
+      - name: Affected existing regression
+        if: success() || failure()
+        run: |
+          python -m pytest -q tests/test_focused_b4_delivery.py tests/test_focused_b5_comparison.py tests/test_focused_r6_workspace.py tests/test_focused_streamlit_page.py --junitxml=validation/workspace-ui/affected.xml
+      - name: Static checks
+        if: success() || failure()
+        run: |
           python -m ruff check apps/workspace_ui*.py tests/test_workspace_ui*.py tests/browser/test_agent_workspace.py
           python -m compileall -q apps
+          for file in apps/workspace_frontend/*.js; do node --check "$file"; done
           python -m pip freeze > validation/workspace-ui/environment.txt
       - name: Preserve results including failures
         if: always()
