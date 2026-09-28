@@ -126,10 +126,20 @@ def test_agent_workspace_real_backend(tmp_path):
                 q = parse_qs(urlparse(page.url).query)
                 return q["project"][0], q["campaign"][0]
 
-            def wait_completed():
-                expect(frame.locator(".workspace-header")).to_contain_text("完成", timeout=120000)
+            def wait_completed(previous_campaign=None):
+                # A submit acknowledgement must replace the parent's completed
+                # header before waiting for the new campaign's completed state.
+                idle()
+                if previous_campaign is not None:
+                    page.wait_for_url(
+                        lambda url: parse_qs(urlparse(str(url)).query).get("campaign", [""])[0]
+                        not in {"", previous_campaign}, timeout=30000
+                    )
+                expect(frame.locator(".workspace-header .badge").filter(has_text="已完成")).to_be_visible(timeout=120000)
                 idle()
                 pid, cid = current_ids()
+                if previous_campaign is not None:
+                    assert cid != previous_campaign
                 actual = workspace_campaign(state, pid, cid)
                 assert actual["task"]["status"] == "completed"
                 return pid, cid, actual
@@ -237,7 +247,7 @@ def test_agent_workspace_real_backend(tmp_path):
             expect(frame.locator('[role="dialog"]')).to_contain_text("不是恢复")
             assert counts() == before
             click("confirm-continue")
-            _, child_cid, child = wait_completed()
+            _, child_cid, child = wait_completed(previous_campaign=cid)
             assert child_cid != cid
             assert child["link"]["mission_id"] == first["link"]["mission_id"]
             assert workspace_campaign(state, pid, cid)["payload"] == original
