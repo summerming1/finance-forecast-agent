@@ -346,11 +346,18 @@ def workspace_campaign(state_path, project_id, campaign_id, *, tenant_id='defaul
         pause = store.read(db, ns, 'pause')
         rows = db.execute("SELECT key,payload FROM objects WHERE ns=? AND key LIKE 'result:%' ORDER BY key", (ns,)).fetchall()
         accepted = [json.loads(row['payload']) for row in rows]
+        manifests = {}
         for entry in accepted:
             for ref in entry.get('artifacts',[]):
                 target = root/ref['path']
                 if target.is_symlink() or root.resolve() not in target.resolve().parents or file_sha256(target) != ref['sha256']:
                     raise ValueError('accepted artifact hash/path mismatch')
+                row = entry['row'].get('result', entry['row'])
+                if ref['path'] == row.get('execution_manifest_ref'):
+                    data = target.read_bytes()
+                    if hashlib.sha256(data).hexdigest() != ref['sha256']:
+                        raise ValueError('accepted manifest changed while reading')
+                    manifests[row['candidate']['candidate_id']] = json.loads(data)
         pause_review = store.read(db, ns, 'review:'+safe_id(pause['review_id'])) if pause and pause.get('review_id') else None
         show_pause = pause and (task.status in {'waiting_review','waiting_provider'} or (pause_review or {}).get('status') == 'pending')
         payload = final or (pause if show_pause else None)
@@ -370,7 +377,38 @@ def workspace_campaign(state_path, project_id, campaign_id, *, tenant_id='defaul
         review = store.read(db, ns, 'review:'+safe_id(payload['review_id'])) if payload.get('review_id') else pause_review
     return {'payload':payload,'task':task.to_dict(),'link':link,'project':project,'request':request,
             'projection':build_workspace_projection(payload),'review':review,'root':str(root),
-            'events':store.events(ns)}
+            'events':store.events(ns), 'accepted_manifests': manifests}
+
+
+def quick_trial_budget(*, starting_config=None, split_spec=None):
+    """One candidate after the existing controls; resource cap, not price guarantee."""
+    from .focused_protocol import FocusedSplitSpec
+    from .focused_research import DEFAULT_BASELINES, CandidateConfig, ResearchBudget
+    split = split_spec or FocusedSplitSpec()
+    controls = {CandidateConfig(cid, family, params, groups).fingerprint for cid, family, params, groups in DEFAULT_BASELINES}
+    extra = bool(starting_config and CandidateConfig('user_start', **starting_config).fingerprint not in controls)
+    return ResearchBudget(max_rounds=1, max_new_candidates_per_round=1,
+        max_fit_calls=split.baseline_fit_calls(len(DEFAULT_BASELINES)+int(extra)+1),
+        max_advisor_calls=1, max_http_requests=2, max_provider_seconds=720)
+
+
+def workspace_input_choices(state_path, project_id, *, tenant_id='default'):
+    """Existing project request references only; no catalog or new exposure authority."""
+    store, _ = _workspace_project(state_path, project_id, tenant_id)
+    with store.transaction() as db:
+        requests = [json.loads(r[0]) for r in db.execute("SELECT payload FROM objects WHERE ns='workspace-requests'")]
+    return [r for r in requests if r.get('project_id') == project_id and r.get('tenant_id') == tenant_id]
+
+
+def preview_workspace_continuation(state_path, project_id, campaign_id, candidate_id, *, tenant_id='default'):
+    current, cfg, binding = _continuation_snapshot(state_path, project_id, campaign_id, candidate_id, tenant_id=tenant_id)
+    request = current['request']
+    return {'schema_version': 'continuation_preview_v1', 'parent': binding,
+            'starting_config': cfg.to_dict(), 'dataset': current['payload']['campaign']['dataset'],
+            'inherited_options': request['options'], 'new_budget': request['budget'],
+            'advisor_mode': request['advisor_mode'], 'prior_fit_calls': current['payload'].get('fit_calls'),
+            'new_campaign_id': 'assigned only after explicit submission',
+            'new_cost': 'separately charged; currency unknown', 'preview_fit_calls': 0}
 
 
 def resume_workspace_campaign(state_path, project_id, campaign_id, *, tenant_id='default'):

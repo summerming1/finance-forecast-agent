@@ -134,6 +134,18 @@ def test_record_preflight_failure_sends_nothing(tmp_path, monkeypatch):
     assert calls == []
 
 
+def test_actual_provider_model_is_preserved_without_claiming_fixed_weights(tmp_path):
+    from test_focused_b1_provider import client, good, server
+    body = good()
+    body['model'] = 'local-response-alias'
+    with server([{'body': body}]) as (url, _):
+        recorder = FixtureRecordingLLM(client(url, deadline_seconds=10), tmp_path)
+        recorder.complete_json(prompt_payload={}, schema_name='test')
+    metadata = recorder.replay.last_record['provider_metadata']
+    assert metadata['response_model'] == 'local-response-alias'
+    assert metadata['model_identity_status'] == 'alias_unresolved'
+
+
 def test_post_response_write_failure_does_not_return_plan_or_retry(tmp_path, monkeypatch):
     calls = []
     live = SimpleNamespace(complete_json=lambda **kw: calls.append(kw) or {'hypotheses': []},

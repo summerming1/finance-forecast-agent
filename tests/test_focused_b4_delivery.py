@@ -129,6 +129,19 @@ def test_workspace_continuation_is_bound_idempotent_and_not_resume(tmp_path):
     cid=task.research_context['campaign_id']; original=workspace_campaign(state,pid,cid)
     candidate=original['payload']['rounds'][0]['items'][0]['candidate']['candidate_id']
     parent_final=copy.deepcopy(RuntimeDB(state).get('campaign:'+cid,'final'))
+    from finance_forecast_agent.focused_summary import build_candidate_comparison
+    from finance_forecast_agent.research_mission import preview_workspace_continuation, workspace_input_choices
+    with RuntimeDB(state).transaction() as db:
+        before_preview = db.execute('SELECT COUNT(*), SUM(reserved) FROM attempts').fetchone()[:]
+    preview = preview_workspace_continuation(state,pid,cid,candidate)
+    assert preview['parent']['candidate_id'] == candidate and preview['preview_fit_calls'] == 0
+    comparison = build_candidate_comparison(original['payload'], original['accepted_manifests'], candidate)
+    assert all(p['comparable'] for p in comparison['comparisons'])
+    assert workspace_input_choices(state,pid)[0]['raw_path'] == str(raw.resolve())
+    with pytest.raises(PermissionError):
+        workspace_input_choices(state,pid,tenant_id='other')
+    with RuntimeDB(state).transaction() as db:
+        assert db.execute('SELECT COUNT(*), SUM(reserved) FROM attempts').fetchone()[:] == before_preview
     _, child=continue_workspace_campaign(state,pid,cid,candidate,operation_id='continue-once',start_immediately=False)
     _, duplicate=continue_workspace_campaign(state,pid,cid,candidate,operation_id='continue-once',start_immediately=False)
     assert duplicate.task_id==child.task_id and child.task_id!=task.task_id

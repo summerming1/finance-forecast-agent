@@ -192,6 +192,7 @@ class OpenAIJsonClient:
                 content=choice['message']['content']
                 finish=choice.get('finish_reason')
                 self.last_call_metadata.update({'usage':response.get('usage'),'request_id':_code(response.get('id'),self.api_key),
+                    'response_model':_code(response.get('model'),self.api_key), 'model_identity_status':'alias_unresolved',
                     'raw_response_hash':hashlib.sha256(str(content).encode()).hexdigest(),'finish_reason':finish})
                 if finish not in {None,'stop'}:
                     raise ValueError('response not complete')

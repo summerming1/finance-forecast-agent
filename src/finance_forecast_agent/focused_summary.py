@@ -15,6 +15,55 @@ def _number(value):
     return value
 
 
+def build_candidate_comparison(payload: dict, manifests: dict, candidate_id: str) -> dict:
+    """Pure view of already accepted numbers, gated by actual manifest row IDs."""
+    results = {r['candidate']['candidate_id']: r for r in payload.get('baseline_results', [])}
+    controls = set(results)
+    incumbent = payload.get('incumbent_result') or {}
+    user_id = incumbent.get('candidate', {}).get('candidate_id')
+    if user_id:
+        results[user_id] = incumbent
+    items = {i['candidate']['candidate_id']: i for r in payload.get('rounds', []) for i in r.get('items', [])
+             if i.get('status') == 'completed' and i.get('result') and i.get('candidate')}
+    results.update({cid: i['result'] for cid, i in items.items()})
+    keys = ('task_id', 'task_version', 'dataset_fingerprint', 'split_spec', 'evaluation_policy', 'fold_row_contracts')
+    current = results.get(candidate_id, {})
+    cm = manifests.get(candidate_id, {})
+    comparisons, rows = [], []
+    for cid, result in results.items():
+        roles = (['fixed_control'] if cid in controls else ['research_candidate'] if cid in items else [])
+        roles += ['user_start'] if cid == user_id else []
+        roles += ['current'] if cid == candidate_id else []
+        roles += ['best_observed'] if cid == payload.get('best_candidate_id') else []
+        rows.append({'candidate_id': cid, 'roles': ', '.join(roles), **copy.deepcopy(result.get('metrics', {}))})
+        if cid == candidate_id:
+            continue
+        ref = manifests.get(cid, {})
+        comparable = (cm.get('execution_conformant') is True and ref.get('execution_conformant') is True
+                      and all(cm.get(k) is not None and cm.get(k) == ref.get(k) for k in keys))
+        score, baseline = _number(current.get('metrics', {}).get('mae')), _number(result.get('metrics', {}).get('mae'))
+        comparable = bool(comparable and score is not None and baseline is not None)
+        folds = []
+        if comparable:
+            reference_folds = {f['fold_id']: f for f in result.get('fold_metrics', [])}
+            for f in current.get('fold_metrics', []):
+                other = reference_folds.get(f['fold_id'], {})
+                a, b = _number(f.get('mae')), _number(other.get('mae'))
+                if a is not None and b is not None:
+                    folds.append({'fold_id': f['fold_id'], 'mae_delta_current_minus_reference': a-b})
+        comparisons.append({'candidate_id': candidate_id, 'reference_candidate_id': cid,
+            'comparable': comparable, 'reason': 'same accepted task/data/split/target rows/policy' if comparable else 'missing or different accepted comparison identity',
+            'relative_mae_improvement': (baseline-score)/baseline if comparable and baseline > 0 else None,
+            'fold_deltas': folds})
+    item = items.get(candidate_id, {})
+    return {'schema_version': 'focused_candidate_comparison_v1', 'candidate_id': candidate_id,
+            'user_start_candidate_id': user_id, 'rows': rows, 'comparisons': comparisons,
+            'actual_config_diff': copy.deepcopy(item.get('config_diff')),
+            'config_diff_reference': current.get('candidate', {}).get('parent_candidate_id'),
+            'feedback': copy.deepcopy(item.get('feedback')),
+            'evidence': 'development observations, not independent confirmation or causal attribution'}
+
+
 def build_research_summary(payload: dict) -> dict:
     """Summarize only the supplied campaign. Missing evidence stays missing."""
     campaign = payload.get('campaign') or {}

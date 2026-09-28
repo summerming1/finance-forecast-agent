@@ -84,9 +84,13 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
         page.get_by_text('Advanced settings',exact=True).click()
         # B3 explicit no-literature route remains a supported product path.
         page.get_by_text('Method evidence / 方法依据',exact=True).click()
-        select_option('Literature use','none')
+        select_option('Literature use','None / 不使用')
         page.get_by_label('Project directory',exact=True).fill(str(project));page.get_by_label('Project directory',exact=True).press('Tab')
         page.get_by_label('Frozen SPY Yahoo JSON',exact=True).fill(str(raw));page.get_by_label('Frozen SPY Yahoo JSON',exact=True).press('Tab')
+        page.get_by_text('Quick trial / 快速试跑',exact=True).click()
+        expect(page.get_by_label('Max fit calls',exact=True)).to_have_value('16')
+        expect(page.get_by_label('Max fit calls',exact=True)).to_be_disabled()
+        page.get_by_text('Custom / 自定义',exact=True).click()
         page.get_by_label('Max research rounds',exact=True).fill('1');page.get_by_label('Max research rounds',exact=True).press('Tab')
         page.get_by_label('Max new candidates per round',exact=True).fill('2');page.get_by_label('Max new candidates per round',exact=True).press('Tab')
         page.get_by_label('Max fit calls',exact=True).fill('20');page.get_by_label('Max fit calls',exact=True).press('Tab')
@@ -207,6 +211,8 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
             assert db.execute("SELECT COUNT(*) FROM objects WHERE ns='confirmation-grants'").fetchone()[0]==0
         assert before_continuation==counts()
         page.get_by_text('Continue selected candidate / 从当前候选继续研究',exact=True).click()
+        expect(page.get_by_test_id('stJson').filter(has_text='continuation_preview_v1')).to_contain_text(research_ids[0])
+        assert before_continuation==counts()
         page.get_by_role('button',name='Start new research from selected candidate',exact=True).click()
         expect(page).not_to_have_url(url)
         child_cid=parse_qs(urlparse(page.url).query)['campaign'][0]

@@ -14,7 +14,8 @@ from .focused_identity import canonical_json, identity
 
 _METADATA_FIELDS = {'provider', 'model', 'base_url', 'generation_parameters', 'usage', 'request_id',
                     'raw_response_hash', 'elapsed_seconds', 'http_attempts', 'error_type', 'cost',
-                    'provider_policy', 'wire_payload_hash', 'http_records', 'finish_reason', 'error'}
+                    'provider_policy', 'wire_payload_hash', 'http_records', 'finish_reason', 'error',
+                    'response_model', 'model_identity_status'}
 
 
 def sanitized_endpoint(value: str) -> str:

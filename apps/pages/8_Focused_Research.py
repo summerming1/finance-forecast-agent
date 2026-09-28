@@ -20,6 +20,8 @@ from finance_forecast_agent.research_mission import (
     decide_workspace_review,
     export_workspace_package,
     load_workspace_input,
+    preview_workspace_continuation,
+    quick_trial_budget,
     recover_workspace_links,
     refit_workspace_model,
     register_workspace_project,
@@ -27,6 +29,7 @@ from finance_forecast_agent.research_mission import (
     submit_workspace_mission,
     validate_supported_question,
     workspace_campaign,
+    workspace_input_choices,
     workspace_model_download,
     workspace_projects,
     workspace_queue,
@@ -64,6 +67,15 @@ with st.expander('Open registered project / 打开项目', expanded=bool(project
         st.rerun()
 
 request = current['request'] if current else {}
+if current is None and query_project in project_map:
+    known_inputs = workspace_input_choices(state_path, query_project, tenant_id=tenant)
+    selected_input = st.selectbox('Previously registered input / 已登记输入', range(len(known_inputs)+1),
+        format_func=lambda i: 'Manual input / 手动指定' if i == 0 else known_inputs[i-1]['raw_path'])
+    if selected_input:
+        original_request = known_inputs[selected_input-1]
+        request = {'raw_path': original_request['raw_path'], 'source_metadata': original_request.get('source_metadata'),
+                   'options': {k: v for k, v in original_request.get('options', {}).items() if k == 'input_contract'}}
+        st.caption('仅复用输入及声明，重新校验当前字节；不继承Live模式、不改变已有曝光记录。')
 # Widget identity belongs to a draft, not to changing suggested defaults.
 draft_key = f"{query_project or 'new'}:{query_campaign or 'draft'}"
 old_options = request.get('options') or {}
@@ -158,7 +170,9 @@ with st.expander('Method evidence / 方法依据', expanded=False):
         supported = False
     literature_map = {row['review_id']:row for row in literature_rows}
     literature_mode = st.selectbox('Literature use', ['recommended','selected','none'],
-        index=1 if old_options.get('literature_review_ids') else 0)
+        index=1 if old_options.get('literature_review_ids') else 0,
+        format_func=lambda v: {'recommended':'Task-matched materials / 任务匹配资料', 'selected':'Selected / 手动选择', 'none':'None / 不使用'}[v])
+    st.caption('任务匹配仅按已审核资料的task_id与当前任务精确匹配，沿审核库顺序取最多3条；不是语义检索或效果推荐。')
     review_ids = st.multiselect('Reviewed source revisions', list(literature_map),
         default=[x for x in old_options.get('literature_review_ids',[]) if x in literature_map],
         format_func=lambda rid: literature_map[rid]['paper_id']+' · '+literature_map[rid]['claim_id']) if literature_mode=='selected' else []
@@ -249,13 +263,22 @@ if current and st.button('Prepare a new intentional repeat'):
     st.session_state.pop('submit_token', None)
     st.query_params.from_dict({'project':query_project})
     st.rerun()
+preset = st.radio('Budget preset', ['Custom / 自定义', 'Quick trial / 快速试跑'], horizontal=True)
+quick = preset == 'Quick trial / 快速试跑'
+budget_defaults = request.get('budget', {})
+if quick:
+    try:
+        budget_defaults = quick_trial_budget(starting_config=starting_config).to_dict()
+        st.caption('一次候选试验；按实际固定fold预算计入模型基线、独特用户起点和候选。统计基线不冒充fit。预算不保证提出有效候选，也不自动开启Live。')
+    except (ValueError, TypeError, KeyError) as exc:
+        st.error(str(exc)); supported = False
 with st.form('mission-campaign'):
-    rounds = st.number_input('Max research rounds',1,20,int(request.get('budget',{}).get('max_rounds',3)))
-    candidates = st.number_input('Max new candidates per round',1,6,int(request.get('budget',{}).get('max_new_candidates_per_round',2)))
-    fits = st.number_input('Max fit calls',10,500,int(request.get('budget',{}).get('max_fit_calls',40)))
-    max_calls = st.number_input('Max advisor calls',1,40,int(request.get('budget',{}).get('max_advisor_calls',12)))
-    max_http = st.number_input('Max HTTP requests',1,200,int(request.get('budget',{}).get('max_http_requests',48)))
-    provider_seconds = st.number_input('Max provider active seconds',1.0,86400.0,float(request.get('budget',{}).get('max_provider_seconds',3600)))
+    rounds = st.number_input('Max research rounds',1,20,int(budget_defaults.get('max_rounds',3)),disabled=quick)
+    candidates = st.number_input('Max new candidates per round',1,6,int(budget_defaults.get('max_new_candidates_per_round',2)),disabled=quick)
+    fits = st.number_input('Max fit calls',10,500,int(budget_defaults.get('max_fit_calls',40)),disabled=quick)
+    max_calls = st.number_input('Max advisor calls',1,40,int(budget_defaults.get('max_advisor_calls',12)),disabled=quick)
+    max_http = st.number_input('Max HTTP requests',1,200,int(budget_defaults.get('max_http_requests',48)),disabled=quick)
+    provider_seconds = st.number_input('Max provider active seconds',1.0,86400.0,float(budget_defaults.get('max_provider_seconds',3600)),disabled=quick)
     st.caption('费用不可可靠估计时保持未知；这些是训练/请求/提供者活动时间上限，不保证精确人民币支出或整个任务墙钟。')
     run = st.form_submit_button('Start research mission',disabled=not supported or frame is None)
 if run:
@@ -289,7 +312,10 @@ def render_workspace():
         if task['status'] != current['task']['status']:
             st.rerun()
         if task['status']=='completed':
-            st.success('Mission completed: '+query_campaign+' · '+str(payload.get('terminal_status')))
+            if payload.get('execution_status') == 'completed':
+                st.success('Mission completed: '+query_campaign+' · '+str(payload.get('terminal_status')))
+            else:
+                st.warning('Worker finished, research incomplete: '+query_campaign+' · '+str(payload.get('execution_status')))
         elif task['status']=='blocked':
             st.error('Task blocked: '+task.get('blocker',''))
         else:
@@ -298,7 +324,7 @@ def render_workspace():
         summary = workspace_research_summary(state_path,query_project,query_campaign,tenant_id=tenant)
         st.subheader('Research summary / 研究总结')
         st.write(summary['explanation'])
-        st.caption('Next: '+summary['next_action'])
+        st.caption('Workflow guidance (deterministic, not a new model suggestion): '+summary['next_action'])
         st.write({'completed_research_candidates':summary['research_candidates_completed'],
                   'new_research_fits':summary['cost']['current_research_fit_calls'],
                   'prior_research_fits':summary['cost']['prior_research_fit_calls'],
@@ -341,6 +367,14 @@ def render_workspace():
             start_id=payload.get('research_start_candidate_id','baseline_ridge')
             chosen=st.selectbox('Research candidate',list(details),index=list(details).index(start_id) if start_id in details else 0,key='candidate-'+query_campaign)
             detail=details[chosen]
+            from finance_forecast_agent.focused_summary import build_candidate_comparison
+            comparison = build_candidate_comparison(payload, selected['accepted_manifests'], chosen)
+            with st.expander('Compare selected candidate / 当前候选对照'):
+                st.caption('正的relative_mae_improvement表示MAE下降；仅在相同数据、目标行和评价合同下比较。配置diff参照parent，指标参照每行明确的reference。不是因果或独立确认。')
+                st.dataframe(comparison['rows'], width='stretch', hide_index=True)
+                st.json(comparison['comparisons'])
+                if comparison['user_start_candidate_id'] is None:
+                    st.caption('本次没有独立用户起点，不虚构用户模型对照。')
             st.write({'candidate_id':chosen,'actual_config_diff':detail.get('config_diff'),
                       'feedback':detail.get('feedback'),'hypothesis':detail.get('hypothesis')})
             st.json(detail)
@@ -366,7 +400,9 @@ def render_workspace():
                 st.info('当前候选不是可交付的已完成估计器。不会自动改选其他模型。')
             with st.expander('Continue selected candidate / 从当前候选继续研究'):
                 st.caption('显式创建新的研究批次，不是恢复。保留父研究和累计成本；不复制旧预测或重置数据曝光。')
-                st.write({'candidate_id':chosen, 'new_budget':selected['request']['budget'], 'advisor_mode':selected['request']['advisor_mode']})
+                if deliverable:
+                    st.json(preview_workspace_continuation(state_path,query_project,query_campaign,chosen,tenant_id=tenant))
+                st.caption('下方按钮即明确提交新的Campaign；预览不训练。新任务ID在提交后显示，Replay不能直接复制父映射。')
                 if st.button('Start new research from selected candidate',key='continue-'+query_campaign+'-'+chosen,
                              disabled=not deliverable or selected['request']['advisor_mode']=='replay'):
                     token=st.session_state.setdefault('continue-token-'+query_campaign+'-'+chosen,uuid.uuid4().hex)
