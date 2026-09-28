@@ -230,7 +230,8 @@ class OpenAIJsonClient:
                 if 200<=status<300:
                     if not isinstance(body,dict):
                         raise ProviderFailure('invalid_output',reason='non_object',retryable=False,usage_known=False)
-                    attempt.update(state='returned',delivery_status='response_received',usage_known=body.get('usage') is not None)
+                    attempt.update(state='returned',delivery_status='response_received',usage_known=body.get('usage') is not None,
+                                   usage=body.get('usage'))
                     return body
                 error=body.get('error',{}) if isinstance(body,dict) else {}
                 code=_code(error.get('code') if isinstance(error,dict) else None,self.api_key)
@@ -332,8 +333,12 @@ class FixtureRecordingLLM:
         self.live_client = live_client
         self.replay = ReplayLLM(fixture_dir)
         self.last_fixture_path: Path | None = None
+        self.last_call_metadata: dict[str, Any] = {}
 
     def complete_json(self, *, prompt_payload: dict[str, Any], schema_name: str) -> dict[str, Any]:
+        self.last_fixture_path = None
+        self.last_call_metadata = {}
+        self.replay.preflight_write(schema_name=schema_name)
         started = time.monotonic()
         metadata = {key: str(getattr(self.live_client, key, 'unknown')) for key in ('provider', 'model', 'base_url')}
         try:
@@ -342,13 +347,17 @@ class FixtureRecordingLLM:
             # No exception text: HTTP errors may contain private content or URLs.
             metadata.update(getattr(self.live_client, 'last_call_metadata', {}))
             metadata.update(error_type=type(exc).__name__, error=safe_error_facts(exc, phase="provider_call"), elapsed_seconds=time.monotonic() - started)
+            self.last_call_metadata = {**metadata, 'recording_status': 'failed'}
             self.last_fixture_path = self.replay.write_fixture(
                 prompt_payload=prompt_payload, schema_name=schema_name, response=None,
                 created_by='live_provider_record', metadata=metadata, call_status='failed')
+            self.last_call_metadata['recording_status'] = 'persisted'
             raise
         metadata.update(getattr(self.live_client, 'last_call_metadata', {}))
         metadata['elapsed_seconds'] = time.monotonic() - started
+        self.last_call_metadata = {**metadata, 'recording_status': 'failed'}
         self.last_fixture_path = self.replay.write_fixture(
             prompt_payload=prompt_payload, schema_name=schema_name, response=response,
             created_by='live_provider_record', metadata=metadata)
+        self.last_call_metadata['recording_status'] = 'persisted'
         return response

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import uuid
 from datetime import datetime, timezone
@@ -93,6 +94,27 @@ client is constructed by this reader.
         self.last_fixture_path = path
         self.last_record = payload
         return path
+
+    def preflight_write(self, *, schema_name: str) -> None:
+        """Probe the actual directory and final-name length; never a replay record.
+
+        This cannot guarantee future space/permissions or exactly-once billing.
+        """
+        folder = self._schema_dir(schema_name) / 'records'
+        folder.mkdir(parents=True, exist_ok=True)
+        probe = folder / f"{'0' * 64}-{uuid.uuid4().hex}.probe"
+        created = False
+        try:
+            with probe.open('x', encoding='utf-8') as handle:
+                created = True
+                handle.write('recording preflight\n')
+                handle.flush()
+                os.fsync(handle.fileno())
+            if probe.read_text(encoding='utf-8') != 'recording preflight\n':
+                raise OSError('Recording preflight readback failed')
+        finally:
+            if created:
+                probe.unlink()
 
     def complete_json(self, *, prompt_payload: dict[str, Any], schema_name: str) -> dict[str, Any]:
         folder = self._schema_dir(schema_name)

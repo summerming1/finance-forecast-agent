@@ -7,6 +7,14 @@
 
 # V2 Mission Research — incremental delivery record
 
+## B5 reviewed incremental hardening — 2026-09-28
+
+Base is published `2883b15` (including `1031d25`); production source before this increment matches the prior `5ec8042` validation. The primary checkout and its untracked evidence are preserved; work reuses the clean managed validation worktree. No R0–R6 reimplementation, V3, new evaluator or state authority.
+
+New negative tests reproduce universal-statement prompt omission, candidate-origin/screen conflation and partial execution advertised as completed. Shared prompt now declares its version and non-empty statement for every action without requiring previously optional explanations. Origin and frozen screening are separate; terminal text respects partial/inconclusive execution. Recording probes the actual directory/name length before HTTP, preserves known response usage in the existing ledger, refuses unpersisted plans and fences a recording-failed decision against another HTTP request. An unavailable database can still prevent durable accounting; no exactly-once guarantee is made.
+
+Initial test receipt also contains missing test-temp-parent errors; this was an invocation setup error, not a product fix. Initial fsync injection accidentally targeted a prior non-record write; the corrected test identifies the actual response-file descriptor. Corrected D1 targeted: 42 passed / 9.93s; shared prompt/provider set previously 27 passed / 18.43s. Cumulative, final-source browser and live receipts are reported separately when complete. Historical failures/confirmation remain unchanged.
+
 ## 2026-09-23 R4 real-data follow-up (one negative independent confirmation)
 
 After the user clarified that no other person had researched the candidate 2026 data, the local July 14 SPY acquisition and older benchmark predictions were audited. Forty-seven next-session targets with decision dates July 15–September 18 were sealed in the existing authority. A Ridge candidate frozen from the 2010–2025 campaign was evaluated once against a supported frozen GBDT baseline: 2 fits, independent_confirmation, prediction and metric audit PASS, relative MAE improvement -1.2506674% (failed frozen improvement threshold). The initially frozen train-median control was unsupported by the R4 allow-list; no grant/fit occurred, and the supported-control amendment was frozen before any confirmation result. Details: `validation/V22R_R0_R6_REPORT_20260923.md`. The earlier unknown-provenance rejection remains a historical negative test. Engineering remains PARTIAL because R5, real customers and Windows symlink permission are open. No product code changed.

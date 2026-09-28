@@ -514,6 +514,8 @@ def advisor_prompt(
     memory_ids = {row["evidence_id"] for row in (compatible_memory or [])}
     return {
         "task": "focused_spy_research_hypotheses_v1",
+        "proposal_contract_version": "required_statement_v2",
+        "required_for_every_action": {"statement": "non-empty string"},
         "research_start_candidate_id": "baseline_ridge",
         "candidate_roles": {x.candidate.candidate_id:["fixed_control"] for x in baseline_results},
         "change_scope": "explore",
@@ -550,6 +552,7 @@ def advisor_prompt(
         "max_hypotheses": budget.max_new_candidates_per_round,
         "rules": [
             "Return exactly one top-level JSON object with only the key hypotheses; do not wrap it in focused_research_advice or response_schema.",
+            "Every hypothesis, for every action and mode, MUST include statement as a non-empty string explaining the local proposal. This also applies to catalog-ID proposals. Other explanatory fields remain optional unless an action contract requires them.",
             "Propose only structured changes inside the allowed model/feature space.",
             "Use actual previous-round metrics when round_index > 1.",
             "Do not claim profitability or strict reproduction.",
@@ -750,6 +753,7 @@ class FocusedResearchAdvisor:
             response = client.complete_json(prompt_payload=prompt, schema_name="focused_research_advice")
         finally:
             self.last_record, self.last_fixture_path = client.replay.last_record, client.last_fixture_path
+            self.last_call_metadata = client.last_call_metadata
         return response, "live_llm_recorded"
 
 
@@ -1397,6 +1401,8 @@ class FocusedResearchController:
             frozen = runtime.get(f"plan:{round_index}")
             if frozen is None:
                 recorded = runtime.get(f"advice:{round_index}")
+                if runtime.get(f"recording_failure:{round_index}"):
+                    raise ValueError("Recorded response unavailable: this decision cannot issue another provider request")
                 returned=runtime.get(f"returned_advice:{round_index}")
                 if recorded is None and returned is not None:
                     reader=ReplayLLM(self.advisor.fixture_dir,allow_legacy=False,
@@ -1478,6 +1484,11 @@ class FocusedResearchController:
                             returned={"prompt":prompt,"advice":advice,"source":source,"call_record":self.advisor.last_record}
                             runtime.put(f"returned_advice:{round_index}",returned,immutable=True)
                             self._append_event("advisor.response_persisted",round_index=round_index)
+                    except OSError as exc:
+                        from .llm_adapters import safe_error_facts
+                        runtime.put(f"recording_failure:{round_index}",
+                            safe_error_facts(exc, phase="response_recording"), immutable=True)
+                        raise
                     except ProviderFailure as exc:
                         runtime.finish_provider_call(calls+1,time.monotonic()-started_at)
                         waiting=self._campaign_summary(baseline_results,baseline_payloads,research_results,rounds,
@@ -1495,6 +1506,7 @@ class FocusedResearchController:
                         runtime.put(f"advisor_attempt:{calls+1}", {
                             "round_index": round_index, "call_record": self.advisor.last_record,
                             "telemetry": getattr(self.advisor, "last_telemetry", {}),
+                            "call_metadata": getattr(native, "last_call_metadata", {}),
                             "elapsed_seconds": time.monotonic()-started_at,
                         }, immutable=True)
                     recorded = {"prompt": prompt, "advice": advice, "source": source,
@@ -1648,8 +1660,8 @@ class FocusedResearchController:
         best_overall = min(valid_results, key=lambda x: x.metrics["mae"])
         reference_mae = min(x.metrics["mae"] for x in [*baseline_results, *incumbent])
         improvement = (reference_mae - best_overall.metrics["mae"]) / reference_mae if reference_mae > 0 else 0.0
-        improved = (best_overall.candidate.candidate_id in {x.candidate.candidate_id for x in research_results}
-                    and improvement >= self.evaluation_policy.min_relative_mae_improvement)
+        research_best = best_overall.candidate.candidate_id in {x.candidate.candidate_id for x in research_results}
+        improved = research_best and improvement >= self.evaluation_policy.min_relative_mae_improvement
         if stop_reason == "round_failed_no_completed_candidate":
             execution_status = "failed" if not research_results else "partial"
             research_outcome = "inconclusive"
@@ -1659,9 +1671,10 @@ class FocusedResearchController:
         else:
             execution_status = "partial" if failed_attempts else "completed"
             research_outcome = "improved" if improved else "no_improvement"
-        terminal_status = ("completed_with_development_improvement" if improved else
-            "completed_no_improvement" if research_outcome == "no_improvement" else
-            f"{execution_status}_inconclusive" if research_outcome == "inconclusive" else "completed_not_evaluated")
+        terminal_status = (f"{execution_status}_inconclusive" if research_outcome == "inconclusive" else
+            f"{execution_status}_with_development_improvement" if improved else
+            f"{execution_status}_no_improvement" if research_outcome == "no_improvement" else
+            f"{execution_status}_not_evaluated")
         usage = runtime.resource_usage()
         payload = {"schema_version": "focused_campaign_v3", "campaign": runtime.get("spec"),
             "execution_contract_hash": runtime.contract_hash, "baseline_results": baseline_payloads,
@@ -1682,7 +1695,9 @@ class FocusedResearchController:
                 "not_used_reason": "No accepted decision cited this source; not proof of irrelevance or contribution."}
                 for paper in self.literature_snapshot],
             "rounds": rounds, "best_baseline_candidate_id": best_baseline.candidate.candidate_id,
-            "best_candidate_id": best_overall.candidate.candidate_id, "best_candidate_is_research_candidate": improved,
+            "best_candidate_id": best_overall.candidate.candidate_id, "best_candidate_is_research_candidate": research_best,
+            "development_screen_passed": improved,
+            "result_semantics_version": "origin_screen_terminal_v2",
             "execution_status": execution_status, "research_outcome": research_outcome, "terminal_status": terminal_status,
             "stop_reason": stop_reason, "fit_calls": usage["charged_fit_calls"],
             "baseline_fit_calls": self.split_spec.baseline_fit_calls(len(DEFAULT_BASELINES)),
