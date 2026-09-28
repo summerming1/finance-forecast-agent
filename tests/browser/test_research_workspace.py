@@ -110,11 +110,16 @@ def test_real_browser_queue_history_refresh_download_and_byo(tmp_path):
         research_ids=[item['candidate']['candidate_id'] for row in completed_payload['rounds']
                       for item in row['items'] if item.get('status')=='completed' and item.get('candidate')]
         assert len(research_ids)>=2, "the browser test must switch two actually trained research candidates"
+        page.get_by_text('Compare selected candidate / 当前候选对照',exact=True).click()
         for cid in research_ids[:2]:
             # Select an actual option. Typing then ArrowDown can race React's
             # filter update and choose the next baseline instead of this ID.
             select_option('Research candidate',cid)
             expect(page.get_by_test_id('stJson').filter(has_text='actual_config_diff')).to_contain_text(cid)
+            comparison_panel = page.get_by_test_id('stExpander').filter(
+                has=page.get_by_text('Compare selected candidate / 当前候选对照',exact=True))
+            expect(comparison_panel.get_by_test_id('stJson')).to_contain_text(cid)
+            assert counts()==before
         report['switched_research_candidates']=research_ids[:2]
         # B2: inspecting the second research candidate must deliver that candidate,
         # not a hidden baseline from an independent export selector.

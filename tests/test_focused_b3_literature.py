@@ -252,6 +252,30 @@ def test_no_paper_run_remains_valid_and_rule_policy_claims_no_paper_use(tmp_path
     assert with_paper['literature_usage'][0]['decisions']==[]
 
 
+def test_literature_prompt_matches_existing_citation_contract(tmp_path, sample, literature, monkeypatch):
+    from finance_forecast_agent.focused_research import FocusedResearchAdvisor
+    def capture(self, prompt):
+        assert prompt['literature_proposal_contract_version'] == 'citation_binding_v2'
+        assert 'also appear in evidence_refs' in ' '.join(prompt['rules'])
+        assert 'mechanism, expected_effect, counter_evidence_test' in ' '.join(prompt['rules'])
+        return {'hypotheses': [{'action_type': 'stop', 'statement': 'Simulation-only contract inspection'}]}, 'assistant_authored_fixture'
+    monkeypatch.setattr(FocusedResearchAdvisor, 'propose', capture)
+    assert controller(tmp_path, sample, literature).run()['stop_reason'] == 'advisor_stop'
+
+
+def test_live_l1_missing_parallel_citation_is_still_rejected(literature):
+    from finance_forecast_agent.focused_literature import validate_literature_uses
+    projected = project(literature)
+    eid = projected[0]['evidence_id']
+    proposal = {'action_type': 'stop', 'statement': 'Local caution', 'evidence_refs': [],
+                'literature_uses': [{'evidence_id': eid, 'use_role': 'limitation',
+                    'transfer_gap': 'Not a SPY validation', 'rationale': 'Retain selection-bias limitation'}]}
+    with pytest.raises(ValueError, match='uniquely match selected cited evidence'):
+        validate_literature_uses(proposal, projected)
+    proposal['evidence_refs'] = [eid]
+    assert validate_literature_uses(proposal, projected) == proposal['literature_uses']
+
+
 def test_current_revocation_is_checked_by_live_presend_guard(tmp_path,sample,literature,monkeypatch):
     from finance_forecast_agent import focused_research as research
     from finance_forecast_agent.focused_literature import revoke_research_literature
