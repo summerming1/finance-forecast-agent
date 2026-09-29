@@ -473,12 +473,15 @@ def refit_workspace_model(state_path, project_id, campaign_id, candidate_id, *, 
     req = current['request']
     if file_sha256(req['raw_path']) != req['raw_sha256']:
         raise ValueError('refit input differs from the frozen campaign')
-    frame, snapshot, _, specs = load_workspace_input(req['raw_path'],req['source_metadata'],req['options'])
+    frame, snapshot, _, specs, raw_history = load_workspace_input(req['raw_path'],req['source_metadata'],req['options'], include_raw_history=True)
     if snapshot.semantic_fingerprint != current['payload']['campaign']['dataset']['semantic_fingerprint']:
         raise ValueError('refit semantic dataset differs from campaign')
     bundle = refit_model_bundle(frame, candidate, task=FocusedTaskSpec(),dataset=snapshot,
         out_dir=Path(current['project']['root'])/'models'/('bundle-'+uuid.uuid4().hex),
-        state_path=state_path,tenant_id=tenant_id,feature_specs=specs)
+        state_path=state_path,tenant_id=tenant_id,feature_specs=specs,raw_history=raw_history,
+        literature_project=req['options'].get('literature_project'),
+        literature_review_ids=req['options'].get('literature_review_ids'),
+        workspace_context={'project_id':project_id, 'campaign_id':campaign_id})
     metadata = json.loads((bundle/'bundle.json').read_text())
     RuntimeDB(state_path).put('workspace-refits', metadata['bundle_id'], {
         'refit_id':metadata['bundle_id'], 'project_id':project_id, 'campaign_id':campaign_id,
@@ -639,6 +642,14 @@ def workspace_research_summary(state_path, project_id, campaign_id, *, tenant_id
         if all(isinstance(a['fit_calls'], int) and not isinstance(a['fit_calls'], bool) for a in ancestors) else None)
     with RuntimeDB(state_path).transaction() as db:
         refits = [json.loads(r[0]) for r in db.execute("SELECT payload FROM objects WHERE ns='workspace-refits'").fetchall()]
-    summary['cost']['current_explicit_refit_calls'] = sum(r['fit_calls'] for r in refits
-        if r['tenant_id']==tenant_id and r['project_id']==project_id and r['campaign_id']==campaign_id)
+        attempts = [json.loads(r[0]) for r in db.execute("SELECT payload FROM objects WHERE ns='model-refit-attempts'").fetchall()]
+    current_attempts = [r for r in attempts if r['tenant_id']==tenant_id
+        and r.get('workspace_context') == {'project_id':project_id, 'campaign_id':campaign_id}]
+    registered_ids = {r.get('bundle_id') for r in current_attempts}
+    # Old completed refits have no attempt receipt. Preserve them, but do not
+    # double count new successes; failed/unknown new fits remain charged.
+    summary['cost']['current_explicit_refit_calls'] = sum(r['reserved_fit_calls'] for r in current_attempts) + sum(
+        r['fit_calls'] for r in refits if r['tenant_id']==tenant_id and r['project_id']==project_id
+        and r['campaign_id']==campaign_id and r['refit_id'] not in registered_ids)
+    summary['cost']['current_explicit_refit_attempts'] = current_attempts
     return summary

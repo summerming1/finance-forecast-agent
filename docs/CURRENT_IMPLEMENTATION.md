@@ -1,6 +1,6 @@
 # 当前版本功能与技术实现说明
 
-## 2026-09-29 V2.3：C1–C3实现与本地验证，模型包/UI待接入
+## 2026-09-29 V2.3：C1–C4实现与本地验证，新模式UI待接入
 
 合并方案及实施批准已提交c60d173、0eda9d3；批准范围见 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 和accepted [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。
 
@@ -12,7 +12,9 @@ C3已在原Controller/RuntimeDB中接入price_features模式、原始历史/目�
 
 2a21890同SHA Linux3.11/3.13核心与旧Chromium已通过。新工作区CI复现测试同步竞态：结果落库先于Queue退出；仅补测试等待Queue及组件状态，本地真实Chromium1通过/90.55s，生产执行代码未改。修订测试同SHA CI另核对，不能把原失败覆盖成通过。冻结输入仍BLOCKED_ASSET。
 
-当前网页仍是下述B5及Agent工作区；V2.3新模式已有隔离工程API/worker验证，完整用户闭环未交付。整体验收未完成，原A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
+C4现已支持显式refit后原始价格ModelBundle v3、新进程一致推理、末行保留和程序/环境/可信登记核验，旧v2保持。受限程序导出降级、完整包fit前权限拒绝、撤销后拒绝加载/下载。失败refit亦计入同RuntimeDB账本，注册与完成同事务。相关94项通过；来源/用时/命令见V23日志。同SHA累计CI另核对，不能代替新模式浏览器或真实文献审核。
+
+当前网页仍是下述B5及Agent工作区；V2.3新模式已有隔离工程API/worker/模型包验证，完整用户闭环未交付。整体验收未完成，原A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
 
 ## Agent 风格前端接入（2026-09-28）
 

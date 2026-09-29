@@ -403,6 +403,17 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 - 仅修改浏览器测试同步：已有`_wait_task`等Queue完成，再等组件消费Queue最终状态；不放宽完成状态、候选数、20 fits、包hash或续接断言。生产源码未变。
 - 本地命令`python -m pytest -q tests/browser/test_agent_workspace.py --basetemp D:/b05runs/v23-base-caa545c9/c3-browser-fix-temp --junitxml D:/b05runs/v23-base-caa545c9/c3-browser-fix.xml --tb=short`，FFA_BROWSER_E2E=1、线程1：**1 passed/90.55s/exit0**。真实Windows Chromium/Queue/worker、simulation_only数据、HTTP=0；Ruff及diff检查exit0。修订测试的同SHA远端结果仍另核对。
 
+### C4：原始价格可信ModelBundle与受限程序导出
+
+- 基于b80bdb4；其同SHA新工作区36561525100与旧Chromium36561525068已成功，核心结果另核对。C3生产源码未因浏览器同步修正改变。
+- 新包显式focused_model_bundle_v3，保存代码拥有的raw输入合同、实际内置配方/AST/列序/L、数据revision、训练cutoff/label可用时间、环境与编译器源文件hash；原v2加载不变。研究W64和推理L分开，推理保留最后一行、不要求未来label。编译器相关源文件变化后新包要求重建，不承诺跨版本隐式兼容或跨机trust迁移。
+- 复用原RuntimeDB：显式refit在fit前预留1次，失败/未知不抹除；完全训练及包完整后，可信注册与完成记录同一事务。新工作台费用汇总读取该账本并兼容无新receipt的旧已完成refit，不双计。DB不可写时可能留下证据缺口，不声称任何故障都完整留账。
+- reviewed_recipe的程序再分发权限独立于摘录权限。受限程序包降级reference_only并明确不可独立执行；完整ModelBundle在fit前拒绝。允许程序但不允许摘录时只保留最小来源绑定，不输出摘录；加载/下载再次核验原审核记录及撤销状态。权限测试均simulation_only，不是人工语义审核。
+- 先行`c4-red.xml`7 errors/3.55s/exit1（新接口不存在）；`c4-rights-red.xml`2 failed/3.12s/exit1，明确复现允许摘录但禁止程序时未降级。实现后`c4-first.xml`11 passed/18.92s/exit0。
+- 最终相关命令：`python -m pytest -q tests/test_focused_feature_bundle.py tests/test_focused_feature_export.py tests/test_focused_feature_contract.py tests/test_focused_feature_recipe.py tests/test_focused_pr5_delivery.py tests/test_focused_b4_delivery.py tests/test_workspace_ui.py --basetemp D:/b05runs/v23-base-caa545c9/c4-regression-temp --junitxml D:/b05runs/v23-base-caa545c9/c4-regression.xml --tb=short`，线程1：**94 passed/276.73s/exit0**。fresh Python子进程与同一refit独立参考逐值一致；60日均值61点输出1行、60点拒绝，最后行保留。metadata/AST/compiler/model/错tenant/未登记路径均在joblib前拒绝；撤销权限拒绝；失败refit计1且无可信包。
+- Ruff受影响3个生产文件和2个新测试文件、全src/apps/scripts/tests compileall、diff检查exit0。源包身份`delivery-source-v1=c8eb2709123e5d94824c6f179530ff1b833c585c18e534403f1d4b213a3c3be0`。真实Provider HTTP=0，工程数据/文献模拟，用户原DB不修改。C5新增模式页面与C6分轴验收尚未完成。
+- 原可信确认回归另跑`tests/test_focused_r4_trust.py --basetemp D:/b05runs/v23-base-caa545c9/c4-trust-temp --junitxml D:/b05runs/v23-base-caa545c9/c4-trust.xml --tb=short`：31 passed/1 failed/59.54s/exit1。唯一失败仍创建symlink的Windows1314权限，BLOCKED_ENV，断言未删改；Linux门禁继续保留。
+
 ### 历史：仅文档整理时的收据
 
 - 2026-09-29：合并原方案与两轮审核；选择价格-only、无自动生成式修正、DSL确认禁用，明确旧格式兼容、前置/响应后失败、规划与实际调用计数、部分完成及分轴交付。

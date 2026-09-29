@@ -1,12 +1,12 @@
 # Codex：B0–B5 交付后的统一补测任务
 
-## V2.3实施关联（2026-09-29，C3执行链本地验证后）
+## V2.3实施关联（2026-09-29，C4模型包本地验证后）
 
 本文件继续是旧A/L剩余项的唯一交接入口。[V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md)为用户已批准的V23实施方案；[ADR005](ADR_MISSION_PRODUCT_005.md)已accepted，不改变旧48条状态，也不自动执行下面的付费/真实确认/真人步骤。V23-T/X以实际收据更新；C0必须映射相关旧门禁，不能一句“旧B5不阻塞”一笔豁免。
 
 只整理文档时不重复旧已有效完成的收费G2A/G2B；原冻结输入缺失、真实语义负例和真人参与缺口继续如实保留。新特征协议的工程预览、Live小试验与真人试用分别验收。当前Agent工作区验收须显式包含`tests/test_workspace_ui*.py`及`tests/browser/test_agent_workspace.py`，不能仅靠focused文件通配符覆盖。
 
-C0–C3收据见V23日志§12；新特征已在原Controller/worker训练，C4–C6继续按门禁实施，尚未交付完整用户闭环。旧A/L状态不由新工程测试关闭；C1/C2同SHA累计核心/浏览器已通过，C3同SHA待核对。原SPY资产仍缺，真人/真实语义尚未补齐。新Live预算仍需明确批准，不重复旧付费G2A/G2B。
+C0–C4收据见V23日志§12；新特征已在原Controller/worker训练，raw ModelBundle及权限导出相关94项通过，原trust回归31通过/1项Windows symlink权限失败。C5–C6继续按门禁实施，尚未交付完整用户闭环。旧A/L状态不由新工程测试关闭；2a21890核心/旧浏览器通过，新工作区同步竞态已在b80bdb4修测试，其新旧浏览器CI通过；C4同SHA另核对。原SPY资产仍缺，真人/真实语义尚未补齐。新Live预算仍需明确批准，不重复旧付费G2A/G2B。
 
 ## 既有B0–B5补测范围
 

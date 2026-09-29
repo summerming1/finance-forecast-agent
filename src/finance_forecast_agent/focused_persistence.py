@@ -178,6 +178,7 @@ def build_research_package(
     if snapshot is None and "literature/snapshot.json" in content_bytes:
         snapshot = json.loads(content_bytes["literature/snapshot.json"])
     restricted = any(not row.get("literature_binding", {}).get("redistribute_excerpt", False)
+                     or (row.get("reviewed_recipe") is not None and not row["reviewed_recipe"].get("redistribute_program", False))
                      for row in (snapshot or []))
     omitted_files = []
     if restricted:
@@ -215,6 +216,7 @@ def build_research_package(
         "limitations": [
             "package preserves development evidence and does not upgrade exposed data to independent confirmation",
             "missing artifacts remain missing rather than being fabricated",
+            *( ["restricted source/program content omitted; this package is not independently executable"] if restricted else []),
         ],
     }
     index_path = destination / "research_package.json"

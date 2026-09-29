@@ -25,6 +25,7 @@ from .focused_identity import canonical_json, data_identity, file_sha256, identi
 from .focused_protocol import EvaluationPolicy, FocusedSplitSpec, reviewed_feature_registry, validate_model_params
 from .focused_research import (
     CandidateConfig,
+    _candidate_matrix,
     _evaluate_naive_baseline,
     _make_model,
     evaluate_candidate,
@@ -960,6 +961,48 @@ def execute_confirmation_grant(grant_id: str, *, state_path: str | Path, tenant_
         raise
 
 
+def _bundle_review_bindings(project_dir, review_ids, *, task, candidate, tenant_id):
+    if not review_ids:
+        return None
+    if project_dir is None:
+        raise ValueError("bundle source reviews require the existing literature authority")
+    from .focused_literature import project_literature
+    capabilities = ["model:" + candidate.model_family, *("feature:" + g for g in candidate.feature_groups)]
+    if candidate.feature_program is not None:
+        capabilities.append("feature_program:spy_price_features_v1")
+    rows = project_literature(project_dir, list(review_ids), task=task.to_dict(),
+        capabilities=capabilities, tenant_id=tenant_id)
+    if any(row.get("reviewed_recipe") is not None
+           and not row.get("recipe_capabilities", {}).get("full_model_bundle_exportable", False) for row in rows):
+        raise PermissionError("reviewed program does not permit a complete redistributable model export")
+    return {"project_dir": str(Path(project_dir).resolve()), "review_ids": list(review_ids),
+        "bindings": [{"review_id": r["evidence_id"], "revision": r["revision"],
+                      "source_hashes": r["literature_binding"]["source_hashes"]} for r in rows]}
+
+
+def _price_bundle_pipeline(candidate: CandidateConfig, data_revision: str) -> dict:
+    from .focused_feature_program import feature_capability
+    from .focused_protocol import FEATURE_GROUPS
+    cap = feature_capability()
+    program = candidate.feature_program
+    if program is None:
+        raise ValueError("price bundle requires a feature program")
+    columns = [column for group in candidate.feature_groups for column in FEATURE_GROUPS[group]]
+    columns += [row["name"] for row in program.to_dict()["features"]]
+    root = Path(__file__).parent
+    compiler_source = {name: file_sha256(root / name) for name in (
+        "focused_feature_program.py", "focused_data.py", "focused_protocol.py", "focused_identity.py", "focused_delivery.py")}
+    return {"schema_version": "price_bundle_pipeline_v1", "program": program.to_dict(),
+        "capability_hash": cap["capability_hash"], "compiler_version": cap["compiler_version"],
+        "builtin_recipe_version": cap["builtin_recipe_version"], "compiler_source": compiler_source,
+        "feature_groups": candidate.feature_groups, "actual_columns": columns,
+        "lookback": max(program.complexity["lookback"], *(6 if g == "base_lags" else 20 for g in candidate.feature_groups)),
+        "input_contract": "spy_adjusted_close_daily_v1", "raw_columns": ["timestamp", "spy_adj_close"],
+        "input_bound_rows": cap["max_raw_rows"], "data_revision": data_revision,
+        "output_rule": "one_prediction_per_raw_row_from_lookback_through_last_row_inclusive",
+        "point_in_time": False, "availability_basis": "declared_after_close_not_observed_provider_receipt"}
+
+
 def refit_model_bundle(
     frame: pd.DataFrame,
     candidate: CandidateConfig,
@@ -972,16 +1015,36 @@ def refit_model_bundle(
     tenant_id: str = "default",
     feature_specs: list[dict] | None = None,
     training_asof: str | None = None,
+    raw_history: pd.DataFrame | None = None,
+    literature_project: str | Path | None = None,
+    literature_review_ids: list[str] | None = None,
+    workspace_context: dict | None = None,
 ) -> Path:
     active_policy = policy or RefitPolicy()
-    if candidate.feature_program is not None:
-        raise ValueError("feature program refit requires the raw-price bundle protocol")
+    if workspace_context is not None:
+        if set(workspace_context) != {"project_id", "campaign_id"}:
+            raise ValueError("refit workspace context requires project/campaign identity only")
+        workspace_context = {key: safe_id(value) for key, value in workspace_context.items()}
+    review_bindings = _bundle_review_bindings(literature_project, literature_review_ids,
+        task=task, candidate=candidate, tenant_id=tenant_id)
     if not active_policy.fit_all_available_labels:
         raise ValueError("only the explicit all-matured-development-label refit policy is supported")
-    _validated_frame(frame, task, dataset)
-    _candidate(candidate.to_dict(), feature_specs)
-    features = resolve_feature_columns(candidate.feature_groups, reviewed_feature_registry(feature_specs))
-    if not np.isfinite(frame[features].to_numpy(dtype=float)).all():
+    pipeline = None
+    if candidate.feature_program is not None:
+        if feature_specs:
+            raise ValueError("price bundle cannot carry external feature adapters")
+        x, features, execution = _candidate_matrix(frame, candidate, task=task, dataset=dataset, raw_history=raw_history)
+        pipeline = _price_bundle_pipeline(candidate, dataset.raw_sha256)
+        if features != pipeline["actual_columns"] or execution["lookback"] != pipeline["lookback"]:
+            raise ValueError("price bundle transform does not conform to its pipeline")
+    else:
+        if raw_history is not None or dataset.feature_protocol is not None:
+            raise ValueError("raw-price protocol cannot silently refit a legacy model")
+        _validated_frame(frame, task, dataset)
+        _candidate(candidate.to_dict(), feature_specs)
+        features = resolve_feature_columns(candidate.feature_groups, reviewed_feature_registry(feature_specs))
+        x = frame[features].to_numpy(dtype=float)
+    if not np.isfinite(x).all():
         raise ValueError("refit features must be finite")
     available = _session_times(frame, "label_end_time", "label_available_at")
     cutoff = pd.Timestamp(training_asof) if training_asof else pd.Timestamp.now(tz="UTC")
@@ -997,16 +1060,33 @@ def refit_model_bundle(
     # Creating a new bundle must not clobber previously accepted model files.
     root.mkdir(parents=True, exist_ok=False)
     model = _make_model(candidate)
-    model.fit(frame[features].to_numpy(dtype=float), frame["label"].to_numpy(dtype=float))
+    attempt_id = "refit-" + uuid.uuid4().hex
+    attempt = {"refit_attempt_id": attempt_id, "tenant_id": tenant_id, "bundle_root": str(root),
+        "candidate_fingerprint": candidate.fingerprint, "dataset_fingerprint": dataset.semantic_fingerprint,
+        "status": "running", "reserved_fit_calls": 1, "observed_started_fits": 1,
+        "observed_completed_fits": 0, "created_at": now(),
+        "budget_scope": "explicit_refit_separate_from_research", "currency_cost": None}
+    if workspace_context is not None:
+        attempt["workspace_context"] = workspace_context
+    store.put("model-refit-attempts", attempt_id, attempt, immutable=True)
+    try:
+        model.fit(x, frame["label"].to_numpy(dtype=float))
+    except BaseException as exc:
+        store.put("model-refit-attempts", attempt_id, {**attempt, "status": "failed", "error_type": type(exc).__name__})
+        raise
+    attempt.update(status="fit_completed_unregistered", observed_completed_fits=1)
+    store.put("model-refit-attempts", attempt_id, attempt)
     model_path = root / "model.joblib"
     joblib.dump(model, model_path)
     metadata = {
-        "schema_version": "focused_model_bundle_v2",
+        "schema_version": "focused_model_bundle_v3" if pipeline else "focused_model_bundle_v2",
         "bundle_id": "bundle-" + uuid.uuid4().hex,
         "candidate": candidate.to_dict(),
         "feature_columns": features,
         "reviewed_features": feature_specs or [],
-        "preprocessing": "identity_float64_in_declared_column_order",
+        "preprocessing": "raw_price_ast_then_fitted_estimator_pipeline" if pipeline else "identity_float64_in_declared_column_order",
+        **({"feature_pipeline": pipeline, "feature_execution": execution} if pipeline else {}),
+        **({"literature_authority": review_bindings} if review_bindings else {}),
         "task": task.to_dict(),
         "dataset_fingerprint": dataset.semantic_fingerprint,
         "training_rows": len(frame),
@@ -1018,6 +1098,7 @@ def refit_model_bundle(
         if "label_available_at" in frame
         else "declared_XNYS_close_not_observed_provider_receipt",
         "refit_policy": active_policy.to_dict(),
+        "refit_receipt": {"refit_attempt_id": attempt_id, "reserved_fit_calls": 1},
         "environment": _environment(),
         "source": _source(),
         "evidence_relationship": "selected_on_development_then_refit_without_confirmation_tuning",
@@ -1037,7 +1118,9 @@ def refit_model_bundle(
     }
     record["record_hash"] = identity(record, domain="trusted-model-record-v1")
     key = identity(str(root), domain="trusted-bundle-path-v1")
-    store.put("trusted-model-bundles", key, record, immutable=True)
+    with store.transaction() as db:
+        store.write(db, "trusted-model-bundles", key, record, immutable=True)
+        store.write(db, "model-refit-attempts", attempt_id, {**attempt, "status": "completed", "bundle_id": metadata["bundle_id"]})
     return root
 
 
@@ -1059,11 +1142,24 @@ def verified_model_bundle_bytes(
         raise ValueError("model environment version mismatch; rebuild in the registered environment")
     metadata_bytes = _read_bytes(root / "bundle.json", record["metadata"])
     metadata = json.loads(metadata_bytes)
-    if metadata.get("schema_version") != "focused_model_bundle_v2" or metadata.get("model_file") != "model.joblib":
+    if metadata.get("schema_version") not in {"focused_model_bundle_v2", "focused_model_bundle_v3"} or metadata.get("model_file") != "model.joblib":
         raise ValueError("invalid registered model schema/path")
     parsed_candidate = CandidateConfig.from_dict(metadata["candidate"])
-    if parsed_candidate.feature_program is not None:
-        raise ValueError("legacy model bundle cannot carry feature program semantics")
+    bindings = metadata.get("literature_authority")
+    if bindings is not None and _bundle_review_bindings(bindings["project_dir"], bindings["review_ids"],
+            task=FocusedTaskSpec(**metadata["task"]), candidate=parsed_candidate, tenant_id=tenant_id) != bindings:
+        raise PermissionError("bundle literature permission or source binding changed")
+    if metadata["schema_version"] == "focused_model_bundle_v2":
+        if parsed_candidate.feature_program is not None or "feature_pipeline" in metadata:
+            raise ValueError("legacy model bundle cannot carry feature program semantics")
+    else:
+        pipeline = metadata.get("feature_pipeline") or {}
+        if (parsed_candidate.feature_program is None
+                or pipeline != _price_bundle_pipeline(parsed_candidate, pipeline.get("data_revision"))
+                or metadata["feature_columns"] != pipeline["actual_columns"]
+                or metadata.get("reviewed_features")
+                or metadata["preprocessing"] != "raw_price_ast_then_fitted_estimator_pipeline"):
+            raise ValueError("registered raw-price pipeline or compiler implementation mismatch")
     if metadata["bundle_id"] != record["bundle_id"] or metadata["model_sha256"] != record["model"]["sha256"]:
         raise ValueError("model registration binding mismatch")
     model_bytes = _read_bytes(root / "model.joblib", record["model"])
@@ -1082,6 +1178,18 @@ def predict_model_bundle(
     bundle_dir: str | Path, frame: pd.DataFrame, *, state_path: str | Path | None = None, tenant_id: str = "default"
 ) -> np.ndarray:
     metadata, model = load_model_bundle(bundle_dir, state_path=state_path, tenant_id=tenant_id)
+    if metadata["schema_version"] == "focused_model_bundle_v3":
+        from .focused_data import validate_price_history
+        from .focused_feature_program import compute_price_features
+        raw = validate_price_history(frame)
+        candidate = CandidateConfig.from_dict(metadata["candidate"])
+        matrix = compute_price_features(raw["spy_adj_close"].to_numpy(), candidate.feature_program, candidate.feature_groups)
+        if list(matrix.columns) != metadata["feature_columns"] or matrix.lookback != metadata["feature_pipeline"]["lookback"]:
+            raise ValueError("raw prediction transform differs from the trusted bundle")
+        prediction = np.asarray(model.predict(matrix.values[matrix.lookback:]), dtype=float)
+        if prediction.shape != (len(raw) - matrix.lookback,) or not np.isfinite(prediction).all():
+            raise ValueError("invalid raw model prediction output")
+        return prediction
     features = list(metadata["feature_columns"])
     missing = [column for column in features if column not in frame.columns]
     if missing or frame.columns.duplicated().any():
