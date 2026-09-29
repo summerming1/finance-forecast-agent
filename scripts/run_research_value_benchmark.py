@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import random
 import shutil
 from dataclasses import replace
 from pathlib import Path
@@ -20,7 +21,11 @@ from finance_forecast_agent.focused_benchmark import (
     literature_comparison,
     run_benchmark_arm,
 )
-from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_daily_research_frame
+from finance_forecast_agent.focused_data import (
+    FocusedTaskSpec,
+    build_spy_daily_research_frame,
+    build_spy_feature_research_frame,
+)
 from finance_forecast_agent.focused_identity import data_identity, file_sha256, identity
 from finance_forecast_agent.focused_state import atomic_json
 
@@ -29,6 +34,8 @@ def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--raw-spy-json", type=Path, required=True)
     p.add_argument("--source-metadata", type=Path)
+    p.add_argument("--price-features", action="store_true", help="V2.3 cold four-slot bounded price-grammar pilot, not catalog TPE")
+    p.add_argument("--allow-live-pilot", action="store_true", help="Explicitly approve the configured price pilot provider/data cost; no automatic model rotation")
     p.add_argument("--candidate-count", type=int, default=12)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--seeds", type=int, nargs="+")
@@ -73,7 +80,17 @@ def main() -> int:
     if a.literature_ablation and (len(a.arms) != 1 or a.arms[0] not in {"adaptive", "adaptive_batch"}
             or not a.literature_review_ids or a.memory_mode != "cold"):
         raise ValueError("G2B requires one Adaptive arm, selected literature and cold Memory")
-    frame, snapshot = build_spy_daily_research_frame(a.raw_spy_json, source_metadata_path=a.source_metadata)
+    raw_history = None
+    if a.price_features:
+        if (a.windows != ["all"] or a.memory_mode != "cold" or a.small_catalog or a.literature_ablation
+                or a.candidate_count != 4 or a.batch_size != 2 or a.estimator_seed != 42
+                or set(a.arms) - {"random", "one_shot", "adaptive_batch"}):
+            raise ValueError("price pilot requires all window, cold Memory, candidate-count4, batch-size2, seed42 and approved three arms")
+        if a.llm_mode == "live" and not a.allow_live_pilot:
+            raise PermissionError("price pilot live calls require explicit --allow-live-pilot after reviewing provider and per-arm budgets")
+        frame, snapshot, raw_history = build_spy_feature_research_frame(a.raw_spy_json, source_metadata_path=a.source_metadata)
+    else:
+        frame, snapshot = build_spy_daily_research_frame(a.raw_spy_json, source_metadata_path=a.source_metadata)
     spec_base = {
         "candidate_budget": a.candidate_count,
         "estimator_seed": a.estimator_seed,
@@ -83,11 +100,30 @@ def main() -> int:
     evidence = json.loads(a.evidence_json.read_text()) if a.evidence_json else []
     calls = json.loads(a.replay_call_map.read_text()) if a.replay_call_map else {}
     memory_hash = file_sha256(a.memory_store) if a.memory_store else None
+    price_orders = {}
+    if a.price_features:
+        for seed in a.seeds or [a.seed]:
+            order = list(a.arms)
+            random.Random(seed).shuffle(order)
+            price_orders[seed] = order
+        registration = {"schema_version": "price_pilot_preregistration_v1", "input_sha256": file_sha256(a.raw_spy_json),
+            "source_metadata_sha256": file_sha256(a.source_metadata) if a.source_metadata else None,
+            "script_sha256": file_sha256(Path(__file__)), "spec": spec_base, "llm_mode": a.llm_mode,
+            "arm_order": {str(k): v for k, v in price_orders.items()}, "order_rule": "Random(search_seed).shuffle before any fits",
+            "memory": "cold", "context_mode": a.context_mode, "currency_cost": None, "human_minutes": None,
+            "limits_per_arm": {"proposal_slots": 4, "research_fit_calls": 28, "advisor_attempts": 5,
+                "http_requests": 8, "provider_active_seconds": 1200}}
+        registered = a.out.with_suffix(".registration.json")
+        if registered.exists():
+            if not a.resume_existing or json.loads(registered.read_text()) != registration:
+                raise ValueError("existing pilot registration must be preserved; select a new study or exact resume")
+        else:
+            atomic_json(registered, registration)
     groups = []
     for window in a.windows:
         selected = frame if window == "all" else frame.loc[frame["timestamp"] >= window].reset_index(drop=True)
         ids = data_identity(selected, FocusedTaskSpec().to_dict())
-        snap = replace(
+        snap = snapshot if a.price_features else replace(
             snapshot,
             **ids,
             semantic_fingerprint=identity(ids, domain="focused-dataset-v2"),
@@ -98,7 +134,7 @@ def main() -> int:
         for seed in a.seeds or [a.seed]:
             for memory_mode in ["cold", "warm"] if a.memory_mode == "ablation" else [a.memory_mode]:
                 runs = []
-                for arm, treatment in ([(a.arms[0], False), (a.arms[0], True)] if a.literature_ablation else [(arm, True) for arm in a.arms]):
+                for arm, treatment in ([(a.arms[0], False), (a.arms[0], True)] if a.literature_ablation else [(arm, True) for arm in price_orders.get(seed, a.arms)]):
                     root = (
                         a.out.parent
                         / (a.out.stem + "_runs")
@@ -136,6 +172,7 @@ def main() -> int:
                             use_memory_prior=memory_mode == "warm",
                             memory_store_path=prior,
                             state_path=a.out.parent / (a.out.stem + "_runs") / "runtime.sqlite3",
+                            raw_history=raw_history,
                         )
                     )
                 group = literature_comparison(*runs) if a.literature_ablation else benchmark_summary(runs)

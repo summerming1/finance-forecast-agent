@@ -1,5 +1,29 @@
 {
   "schema_version": "v22r_acceptance_v1",
+  "v23_scoped_engineering_20260929": {
+    "base_sha": "fad63bc8effc6bd3a8e98f7ad94b9896a599c321",
+    "report": "docs/V2_3_FEATURE_RESEARCH.md",
+    "current_status_authority": "docs/CURRENT_IMPLEMENTATION.md",
+    "history_policy": "Additive V2.3 evidence only; no historical A/L status or 47-target negative confirmation is rewritten.",
+    "verified_through": "C1-C5 scoped engineering; C6 historical deterministic pilot and artifact audit passed; final regression and same-SHA results remain separate",
+    "clause_links": {
+      "A04_A05_A08_A23": ["tests/test_focused_feature_recovery.py", "tests/test_focused_feature_contract.py"],
+      "A09_A10_A18": ["tests/test_focused_feature_contract.py", "tests/test_focused_feature_execution.py"],
+      "A11_A12_A14": ["tests/test_focused_feature_campaign.py", "tests/test_focused_feature_memory.py"],
+      "A13_A15_A16_A17": ["tests/test_focused_feature_bundle.py", "tests/test_workspace_ui_features.py", "tests/browser/test_agent_workspace.py"],
+      "L09_L18_L23": ["tests/test_focused_feature_recipe.py", "tests/test_focused_feature_export.py", "tests/test_focused_b3_literature.py"],
+      "A20_A21_A22_L19_L20_L21": ["tests/test_focused_feature_benchmark.py", "scripts/verify_price_feature_pilot.py"]
+    },
+    "scope": "Simulation-only controls, actual local fits/worker/browser, local HTTP record/recovery and separately identified historical-data deterministic development pilot; not new paid-provider, human or financial confirmation acceptance.",
+    "remaining": {
+      "original_frozen_asset": "BLOCKED_ASSET",
+      "new_live_provider_pilot": "NOT_RUN_PENDING_EXPLICIT_COST_APPROVAL",
+      "real_recipe_semantic_adversaries": "NOT_RUN",
+      "actual_user_trial_and_reuse": "BLOCKED_NO_REAL_USER",
+      "Windows_symlink_privilege": "BLOCKED_ENV; Linux same-SHA gate is distinct",
+      "macOS_GPU_large_native": "NOT_RUN_OUT_OF_SCOPE"
+    }
+  },
   "b5_recording_recovery_20260928": {
     "base_sha": "6056c3e3ef4b7693dede5337cf7f2b75fc6b1373",
     "report": "docs/validation/B5_RECORDING_RECOVERY_20260928.md",

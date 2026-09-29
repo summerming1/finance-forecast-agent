@@ -392,7 +392,7 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
         "comparison_contract": comparison_contract,
         "comparison_contract_hash": identity(comparison_contract, domain="benchmark-comparison-v2"),
         "comparison_target_hash": next(iter(target_contracts), None),
-        "comparison_target_count": best.get("prediction_count", 0) if best else 0,
+        "comparison_target_count": best.get("prediction_row_count", best.get("prediction_count", 0)) if best else 0,
         "campaign_id": controller.spec.campaign_id,
         "campaign_dir": str(runtime.root),
         "execution_contract_hash": runtime.contract_hash,
@@ -478,7 +478,16 @@ def run_benchmark_arm(
     literature_project: str | Path | None = None,
     literature_review_ids: list[str] | None = None,
     context_mode: str = "full_v1",
+    raw_history=None,
 ) -> dict:
+    if raw_history is not None or dataset.feature_protocol is not None:
+        if catalog is not None or use_memory_prior or memory_store_path is not None:
+            raise ValueError("first price-grammar pilot is cold Memory and not a finite model catalog")
+        return _run_price_benchmark_arm(frame, dataset, raw_history=raw_history, project_dir=project_dir,
+            arm=arm, spec=spec, split_spec=split_spec, llm_mode=llm_mode, fixture_dir=fixture_dir,
+            replay_call_ids=replay_call_ids, reviewed_evidence=reviewed_evidence,
+            resume_existing=resume_existing, state_path=state_path, literature_project=literature_project,
+            literature_review_ids=literature_review_ids, context_mode=context_mode)
     split = split_spec or FocusedSplitSpec()
     catalog = validate_catalog(catalog or default_catalog())
     budget = ResearchBudget(
@@ -568,6 +577,82 @@ def run_benchmark_arm(
     )
 
 
+def _run_price_benchmark_arm(frame, dataset, *, raw_history, project_dir, arm, spec, split_spec,
+        llm_mode, fixture_dir, replay_call_ids, reviewed_evidence, resume_existing, state_path,
+        literature_project, literature_review_ids, context_mode):
+    """Report adapter to native C3 planning; no second planner/compiler/evaluator.
+
+    The legacy BenchmarkAdvisor remains a finite model-catalog adapter. Price
+    grammar proposals already have a durable native policy; wrapping them in
+    catalog normalization would discard the program or create a second policy.
+    """
+    from .focused_data import FocusedTaskSpec
+    from .focused_feature_program import feature_capability
+    if (raw_history is None or arm not in {"random", "one_shot", "adaptive_batch"}
+            or spec.candidate_budget != 4 or spec.batch_size != 2 or spec.estimator_seed != 42
+            or (split_spec is not None and split_spec != FocusedSplitSpec())):
+        raise ValueError("price pilot requires raw history, three approved arms, 4 slots, batch2, seed42 and fixed split")
+    task = FocusedTaskSpec(exposure=dataset.exposure)
+    split = FocusedSplitSpec()
+    strategy = {"arm": arm, "search_seed": spec.search_seed}
+    budget = ResearchBudget(max_rounds=1 if arm == "one_shot" else 2, max_new_candidates_per_round=2,
+        max_fit_calls=28, max_advisor_calls=5, max_http_requests=8, max_provider_seconds=1200)
+    target_keys = target_row_ids(frame, task.to_dict())
+    comparison = {"schema_version": "price_benchmark_comparison_v1", "spec": asdict(spec),
+        "task": task.to_dict(), "dataset": dataset.semantic_fingerprint, "feature_protocol": dataset.feature_protocol,
+        "capability": feature_capability(), "split": split.to_dict(), "evaluation": EvaluationPolicy().to_dict(),
+        "target_rows": [target_keys[int(i)] for _, indices in split.build_splits(len(frame)) for i in indices],
+        "budget": {k: v for k, v in budget.to_dict().items() if k not in {"max_rounds", "max_new_candidates_per_round"}},
+        "planning_limits": {"one_shot": [1, 4], "adaptive_batch": [2, 2], "random": [2, 2]},
+        "fixed_model": {"model_family": "ridge_regression", "model_params": {"alpha": 1.0},
+            "feature_groups": ["base_lags"], "seed": 42},
+        "context_mode": context_mode, "memory_mode": "cold",
+        "domain_evidence": EvidenceIndex(reviewed_evidence or []).rows}
+    algorithm = {**strategy, "search_representation": "bounded_price_ast_v1",
+        "sampler_policy": "price_ast_uniform_depth_v1" if arm == "random" else "native_bounded_price_advisor",
+        "no_automatic_repair": True, "no_duplicate_redraw": True}
+    campaign_id = "price-benchmark-" + identity({"strategy": algorithm, "comparison": comparison,
+        "mode": llm_mode, "project": str(Path(project_dir).resolve())}, domain="price-benchmark-arm-v1")[:20]
+    controller = FocusedResearchController(project_dir=project_dir, frame=frame, dataset=dataset, task=task,
+        raw_history=raw_history, change_scope="price_features", feature_strategy=strategy, budget=budget,
+        advisor_mode=llm_mode if arm != "random" else "deterministic", fixture_dir=fixture_dir,
+        replay_call_ids=replay_call_ids, reviewed_evidence=reviewed_evidence, use_memory_prior=False,
+        literature_project=literature_project, literature_review_ids=literature_review_ids, context_mode=context_mode,
+        campaign_id=campaign_id, resume_existing=resume_existing, state_path=state_path,
+        input_provenance={"provenance_type": dataset.exposure})
+    # Persist the bounded comparison before any fit or model request.
+    from .focused_delivery import _environment, _source
+    registration = {"comparison": comparison, "algorithm": algorithm,
+        "input_sha256": dataset.raw_sha256, "source": _source(), "environment": _environment()}
+    path = Path(project_dir) / "price_benchmark_registration.json"
+    if path.exists():
+        if json.loads(path.read_text()) != registration:
+            raise ValueError("price benchmark preregistration changed")
+    else:
+        atomic_json(path, registration)
+    started, error = time.monotonic(), None
+    try:
+        controller.run()
+    except (ValueError, TypeError, RuntimeError, OSError) as exc:
+        error = exc
+    report = _report(controller, error=error, elapsed=time.monotonic() - started,
+        comparison_contract=comparison, algorithm=algorithm)
+    provider = controller._runtime.provider_usage()
+    with controller._runtime.db.transaction() as db:
+        http_rows = [json.loads(r[0]) for r in db.execute("SELECT payload FROM objects WHERE ns=? AND key LIKE 'http:%'",
+            (controller._runtime.ns,))]
+    sent_calls = len({r['call_number'] for r in http_rows})
+    report["telemetry"].update(provider_ledger=provider, provider_attempts=sent_calls,
+        provider_attempts_without_record=max(0, sent_calls-report["telemetry"]["llm_calls"]),
+        llm_cost=None if provider["http_requests"] else 0)
+    report["live_quality_evidence"] = (report["live_quality_evidence"] and report["execution_status"] == "completed"
+        and report["telemetry"]["feature_planning"]["invalid_decisions"] == 0
+        and dataset.exposure != "simulation_only")
+    report["limitations"][0] = "Bounded price AST grammar, not finite model-catalog TPE; dependent windows are not independent samples."
+    atomic_json(Path(project_dir) / "benchmark_arm.json", report)
+    return report
+
+
 def benchmark_summary(arms: list[dict]) -> dict:
     if not arms or len({x["arm"] for x in arms}) != len(arms):
         raise ValueError("benchmark arms must be nonempty and unique")
@@ -604,7 +689,8 @@ def benchmark_summary(arms: list[dict]) -> dict:
         "live_llm_quality_complete": all(
             a["live_quality_evidence"] for a in arms if a["arm"] in LLM_ARMS
         )
-        and {"one_shot", "adaptive"} <= {a["arm"] for a in arms},
+        and {"one_shot", "adaptive_batch" if arms[0].get("algorithm", {}).get("search_representation") == "bounded_price_ast_v1"
+             else "adaptive"} <= {a["arm"] for a in arms},
         "warning": "No pooling across overlapping windows or counting deterministic repeats as independent trials.",
     }
 

@@ -1,6 +1,6 @@
 # V2.3 受控价格特征研究：合并修改、测试与产品迭代方案
 
-日期：2026-09-29。状态：**用户已批准实施；C1/C2同SHA核心/浏览器通过，C3本地执行链验证完成、累计CI待核对；功能状态以CURRENT_IMPLEMENTATION为准**。
+日期：2026-09-29。状态：**C1–C5已提交并有同SHA工程门禁；C6历史数据工程例及独立审计完成，最终回归/CI与Live/真人分轴记录；功能状态以CURRENT_IMPLEMENTATION为准**。
 
 本文件合并原产品方案、R1–R10对抗审查、S1–S7复核及最终三项澄清，是本里程碑唯一详细规范和后续增量日志。验收矩阵保留完整计划；实际分批证据只见§12，不能把局部通过写成整个条款完成。
 
@@ -160,7 +160,7 @@ ResearchPackage可保存失败/取消的审计事实，受限projection明确省
 
 ## 6. 工作包与代码落点
 
-以下全部为计划，不是当前已实现功能。每批：复现/负例→最小修改→定向→相关累计→静态→涉及的worker/browser→记录→获准时提交；前一批相关安全/正确性红灯不越过。
+以下是批准的工作包与出口，不是全体已通过的声明；实际实现与收据见§12。每批：复现/负例→最小修改→定向→相关累计→静态→涉及的worker/browser→记录→获准时提交；前一批相关安全/正确性红灯不越过。
 
 | 批次 | 修改位置（相对仓库） | 出口 |
 |---|---|---|
@@ -176,7 +176,7 @@ ResearchPackage可保存失败/取消的审计事实，受限projection明确省
 
 C0文档准备已提交，实施授权已取得，当前进行环境/旧门禁基线核验。C1/C2资源数字和预算映射未冻结不能进入C3真实研究；无需先恢复无关native资产才能写纯函数，但适用门禁不能无证据豁免。
 
-C0基线现已核对；C1/C2冻结结构与数值合同，C3执行链本地证据见§12。下表仍保留完整验收目标；C4–C6待实施/待验收，不因局部工程测试提前完成。
+C0基线已核对；C1–C5实现及C6新增证据见§12。下表保留完整验收目标；Live、真实语义与真人不能因工程测试提前完成。
 
 ## 7. 研究价值、Live与真人计划
 
@@ -202,7 +202,7 @@ One-shot四项整体预检与Adaptive每次两项的失败暴露不同；报告�
 
 仅1–2人、尚未发生回访则PARTIAL/NOT_RUN；无参与者BLOCKED_NO_REAL_USER。所有者真人记录单列，助手模拟仅simulation_only。不得把未知人时记0或以“愿意用”代实际复用。若既无精度增量，也不减少劳动/改善判断/排除错误，产品价值假设不受支持，先改流程而不是扩平台。
 
-## 8. 验收矩阵（全部PLANNED）
+## 8. 验收目标矩阵（实际证据与剩余边界见§12）
 
 使用V23命名空间，避免与原A/L/R编号相撞；以下T01–T34对应原方案，X01–X21合并两轮补充。编号不是新测试框架。后续每条映射实际nodeid/步骤，旧48条JSON不因本表自动改变。
 
@@ -318,7 +318,7 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 
 每批列：修改文件、是否先复现、修复依据、测试nodeid/步骤、命令/exit/数量/耗时、数据与源码身份、模拟/真实、HTTP/规划/fit计数、JUnit/日志、旧证据复用和本轮重跑、剩余原因及下一步。未知费用/人时为null。
 
-最终分别给C6a工程、C6b真实Provider、C6c真人、研究价值、独立金融证据、前瞻能力；只允许由对应证据支持。工程通过可交受控预览，不显示“产品/金融全部验证”。所有V23-T/X目前PLANNED，无新增功能PASS。
+最终分别给C6a工程、C6b真实Provider、C6c真人、研究价值、独立金融证据、前瞻能力；只允许由对应证据支持。工程通过可交受控预览，不显示“产品/金融全部验证”。V23-T/X按§12的具体覆盖与边界读取，不将55个目标笼统写成全部PASS。
 
 ## 10. 后续产品迭代路线（建议，不是执行授权）
 
@@ -344,7 +344,7 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 6. `FOCUSED_ARCHITECTURE.md`、`FOCUSED_ACCEPTANCE_TEST_PLAN.md`、`CODEX_FOCUSED_HANDOFF.md`。
 7. 统一剩余入口、原验收JSON、受影响B5收据及`AGENT_WORKSPACE_UI.md`/`FRONTEND_USER_GUIDE.md`。
 
-本轮只给架构/验收/交接增加指向本文件的计划入口，不复制55条到多份文档。README、安装、环境示例、前端指南没有实际功能变化，暂不写新按钮/参数。旧ADR和历史验收正文不重写。开工后每批更新本文件日志和实际Current，再按实际UI改变更新用户指南。
+文档准备时只给架构/验收/交接增加本文件入口，不复制55条到多份文档。实施后前端指南已按实际按钮/参数更新；旧ADR和历史验收正文不重写。每批继续更新本文件日志和实际Current。
 
 ## 12. 本次文档整理记录
 
@@ -423,6 +423,28 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 - `FFA_BROWSER_E2E=1 python -m pytest -q tests/browser/test_agent_workspace.py --basetemp D:/b05runs/v23-base-caa545c9/c5-browser-temp --junitxml D:/b05runs/v23-base-caa545c9/c5-browser.xml --tb=short`：**2 passed/222.09s/exit0**，Windows Chromium153.0.8010.12、simulation_only，旧受控CSV及新价格公式流程都通过。新输入hash cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b；每批20 fits、两个已训练候选切换，刷新/新context不增fit/attempt，refit v3/选错候选下载拒绝、研究包SHA256、1280布局、父公式续接均验证。父+子研究账本16 attempts/40 reserved fits，另有1次显式refit；HTTP=0、page_errors=[]。
 - 内置浏览器额外在独立8512服务检查向导与零训练预检，显示1035行simulation_only、W64、快速试跑1次规划/1槽；截图`D:/b05runs/v23-base-caa545c9/manual-ui/v23-preflight.png`。这是助手工程验收，不是真人。Ruff受影响文件、compileall、所有前端JS语法通过。用户操作清单写入FRONTEND_USER_GUIDE，原AGENT_WORKSPACE_UI说明保留历史边界。
 - C6历史真实输入新合同smoke/指标复算、最终同SHA门禁仍待执行；Live待明确费用批准，真人须用户操作。旧A/L和47负确认不变。
+
+### C6：同空间三臂工程例与独立交付审计
+
+- 基于2e5e5ed6119bce9a9a9dd35b842d7c30d3156bbe；该C5提交同SHA核心36565831917的Python3.11/3.13、新旧Chromium36565831932/36565831924均成功。原冻结输入36565831995仍失败于下载，不替换资产。C6最终提交CI另核对。
+- 原benchmark入口增`--price-features`，三臂都调用原Controller的C3规划、compiler、evaluator和预算。旧目录TPE及五臂保持原接口；新AST不声称支持连续TPE。正式新pilot使用cold Memory、4槽、固定seed42估计器/样本/语法，每臂28研究fits、8 HTTP、1200 Provider活动秒；新CLI调用前登记按search seed随机化的执行顺序，Live须显式费用许可。不同hash域不可互换。
+- 先行`c6-red.xml`5 failed/2.51s/exit1：原API不接受raw_history；随后命令`python -m pytest -q tests/test_focused_feature_benchmark.py tests/test_focused_r5_benchmark.py --basetemp D:/b05runs/v23-base-caa545c9/c6-benchmark-temp --junitxml D:/b05runs/v23-base-caa545c9/c6-benchmark.xml --tb=short`：**24 passed/1002.99s/exit0**。此时收集前5个新测试，后来增加的Replay、CLI和审计hash测试单列；最终全仓再覆盖最终生产源码。
+- 本地模拟HTTP录制→严格离线Replay：`python -m pytest -q tests/test_focused_feature_benchmark.py::test_local_http_record_then_strict_offline_price_replay --basetemp D:/b05runs/v23-base-caa545c9/c6-replay-temp --junitxml D:/b05runs/v23-base-caa545c9/c6-replay.xml --tb=short`，**1 passed/126.08s/exit0**。录制2 HTTP/2个原生fixture/2决定/28 fits；关闭本地server、移除三种凭证并阻断请求函数后，Replay 0 HTTP/2回放/28独立fits，候选与数值完全一致。明确simulation_only，不是真实模型质量或新的付费Live。最终代码额外确保模拟数据不能标live_quality_evidence。
+- CLI预注册顺序的orchestration-only spy测试`test_price_cli_preregisters_seeded_order_before_dispatch`：`c6-cli.xml`1 passed/2.97s/exit0，不冒充训练。执行/交付源码域区分测试`test_pilot_auditor_uses_execution_not_delivery_hash_domain`：`c6-audit-unit.xml`1 passed/2.85s/exit0。各自新basetemp同名加`-temp`。文档/原条款5 passed/2.21s，`c6-doc.xml`。
+- 真实历史工程命令：`python scripts/run_research_value_benchmark.py --price-features --raw-spy-json inputs/spy_chart_2010_2025.json --candidate-count 4 --batch-size 2 --estimator-seed 42 --seed 42 --arms random one_shot adaptive_batch --llm-mode deterministic --memory-mode cold --out D:/b05runs/v23-base-caa545c9/c6-real-pilot.json`，**exit0，三臂completed，HTTP=0**。输入仍0bb089…，监督3959行/2010-04-07→2025-12-30，252个共同评价目标；不是原5fb282…门禁，不是新独立确认。三臂各自合同在fit前登记；本次工程运行启动时尚未加CLI全局随机顺序，实际按random→one_shot→adaptive_batch，不冒充后续正式Live随机顺序试验。
+
+| deterministic工程臂 | 逻辑决定/槽 | 唯一候选/重复 | 研究fits | 最佳MAE | 相对同窗固定Ridge改善 | outcome | 墙钟秒 |
+|---|---|---|---|---|---|---|---|
+| Random | 2/4 | 3/1 | 24 | 0.005297110962052618 | 0.20484985% | no_improvement | 68.5662534 |
+| One-shot规则演示 | 1/4 | 4/0 | 28 | 0.005290720923455558 | 0.32523526% | improved | 73.0527736 |
+| Adaptive Batch规则演示 | 2/4 | 4/0 | 28 | 0.005290720923455558 | 0.32523526% | improved | 79.1838621 |
+
+共同Ridge MAE=0.00530798436003082；outcome仍按原确定性评价政策，不凭小幅MAE变化改判。两规则演示使用相同程序得到相同数值，不证明自适应LLM增加研究价值；主动人时未知为null。
+
+- 新审计脚本仅复用原`verify_metrics/verify_package`与原交付接口。第一次`c6-real-audit` exit1：审计代码误把research-execution-source-v1与delivery-source-v1比较，0额外fits；修正域并加上面的负例。第二次`c6-real-audit-v2` exit1：Random已refit1次，fresh CSV默认float解析产生最大1.47015646e-14差异；改审计子进程为`float_precision='round_trip'`，不放宽逐值相等、不改研究或模型。复用已登记包的诊断逐值一致，0新fit；两个失败目录保留。
+- 修正后的完整命令：`python scripts/verify_price_feature_pilot.py --matrix D:/b05runs/v23-base-caa545c9/c6-real-pilot.json --raw inputs/spy_chart_2010_2025.json --expected-sha256 0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b --state-db D:/b05runs/v23-base-caa545c9/c6-real-pilot_runs/runtime.sqlite3 --out D:/b05runs/v23-base-caa545c9/c6-real-audit-v3`，**exit0 / receipt.json PASS**。29份PredictionArtifact聚合及116份fold指标独立复算；三个ResearchPackage分别28/30/31成员hash全部匹配；三次fresh Python raw推理分别3962/4018/4018行，末行保留、逐值一致、Campaign hash不变。历史无标签接口测试不叫样本外效果。
+- 研究80 fits保持，审计累计**4次额外refit**（v2失败1+v3成功3）全部留账，HTTP=0。matrix hash=`08b15b7bc8718112619263c0b0f966b3943b4831a92f129e8337f518f0c3320c`；执行源码=`21e1bf56b92d851752f20c6583a2b621bad81317cba75349603699a3fc03e12b`；交付源码=`d028fffc8b904c1b7843e2be072fb1c38cb3058cc453cd07bb6578bd1626a2ef`。新审计未更改旧冻结验证脚本/门禁，也不消费确认授权。
+- 本批Ruff全部实际变更Python、compileall src/apps/scripts/tests、diff检查exit0。最终全仓pytest仍运行，最终同SHA CI待提交核对；不能提前称全部通过。原资产、Windows symlink权限、真实语义误引/注入和真人缺口分别保留。新Live费用授权未收到，不从推送授权推断付费授权；C6b真实Provider为NOT_RUN，C6c真人为BLOCKED_NO_REAL_USER。
 
 ### 历史：仅文档整理时的收据
 

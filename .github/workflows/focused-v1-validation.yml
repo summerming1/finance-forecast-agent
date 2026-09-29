@@ -37,7 +37,7 @@ jobs:
             src/finance_forecast_agent/research_mission.py src/finance_forecast_agent/task_queue.py \
             src/finance_forecast_agent/experiment_memory.py src/finance_forecast_agent/replay_llm.py \
             src/finance_forecast_agent/llm_adapters.py src/finance_forecast_agent/review_state.py scripts/review_focused_literature.py scripts/verify_frozen_spy_acceptance.py scripts/run_focused_spy_campaign.py \
-            scripts/run_research_value_benchmark.py scripts/run_focused_confirmation.py scripts/probe_focused_failure_semantics.py \
+            scripts/run_research_value_benchmark.py scripts/verify_price_feature_pilot.py scripts/run_focused_confirmation.py scripts/probe_focused_failure_semantics.py \
             apps/pages/8_Focused_Research.py tests/test_focused*.py tests/browser/*.py
       - name: Compile
         run: python -m compileall -q src/finance_forecast_agent apps/pages/8_Focused_Research.py scripts
