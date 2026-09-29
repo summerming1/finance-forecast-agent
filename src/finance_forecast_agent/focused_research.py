@@ -257,7 +257,7 @@ class CampaignSpec:
         )
 
     def to_dict(self) -> dict[str, Any]:
-        return {**asdict(self), "contract_hash": self.contract_hash}
+        return {**asdict(self), "dataset": self.dataset.to_dict(), "contract_hash": self.contract_hash}
 
 
 def resolve_feature_columns(groups: list[str], registry: dict[str, list[str]] | None = None) -> list[str]:

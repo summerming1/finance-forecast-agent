@@ -10,6 +10,9 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
+import numpy as np
+import pandas as pd
+
 from .focused_identity import canonical_json, identity
 
 PRICE_GROUPS = ("base_lags", "momentum", "volatility")
@@ -116,11 +119,11 @@ def validate_feature_program(payload: dict) -> dict:
     return json.loads(encoded)
 
 
-def parse_feature_program(raw: bytes | str) -> dict:
+def _decode_bounded_json(raw: bytes | str, max_bytes: int) -> Any:
     if not isinstance(raw, (bytes, str)):
         raise ValueError("feature program input must be JSON bytes or text")  # noqa: TRY004 - bounded decoder contract
     encoded = raw.encode("utf-8") if isinstance(raw, str) else raw
-    if len(encoded) > feature_capability()["max_json_bytes"]:
+    if len(encoded) > max_bytes:
         raise ValueError("feature program exceeds byte capability")
     # Bound JSON nesting before the decoder; braces inside strings are data.
     depth, quoted, escaped = 0, False, False
@@ -156,7 +159,11 @@ def parse_feature_program(raw: bytes | str) -> dict:
         payload = json.loads(encoded, object_pairs_hook=pairs, parse_constant=constant)
     except (RecursionError, UnicodeError) as exc:
         raise ValueError("invalid bounded feature JSON") from exc
-    return validate_feature_program(payload)
+    return payload
+
+
+def parse_feature_program(raw: bytes | str) -> dict:
+    return validate_feature_program(_decode_bounded_json(raw, feature_capability()["max_json_bytes"]))
 
 
 @dataclass(frozen=True)
@@ -198,3 +205,153 @@ def validate_reviewed_price_recipe(payload: dict) -> dict:
     if not program["features"]:
         raise ValueError("a reviewed feature recipe must contain an actual feature")
     return {**payload, "feature_program": program}
+
+
+def empty_feature_program() -> FeatureProgram:
+    cap = feature_capability()
+    return FeatureProgram.from_dict({"schema_version": PROGRAM_SCHEMA,
+        "capability_id": cap["capability_id"], "capability_hash": cap["capability_hash"], "features": []})
+
+
+@dataclass(frozen=True)
+class PriceFeatureMatrix:
+    values: np.ndarray
+    columns: tuple[str, ...]
+    lookback: int
+    protected_divisions: dict[str, int]
+    estimated_compute_bytes: int
+
+
+def _protected_divide(numerator: np.ndarray, denominator: np.ndarray) -> tuple[np.ndarray, int]:
+    if (numerator.shape != denominator.shape or not np.isfinite(numerator).all()
+            or not np.isfinite(denominator).all()):
+        raise ValueError("safe_divide needs finite, aligned inputs")
+    protected = np.abs(denominator) < 1e-8
+    result = np.zeros(numerator.shape, dtype=np.float64)
+    with np.errstate(over="raise", invalid="raise", divide="raise"):
+        try:
+            np.divide(numerator, denominator, out=result, where=~protected)
+        except FloatingPointError as exc:
+            raise ValueError("non-finite/overflow safe_divide result") from exc
+    if not np.isfinite(result).all():
+        raise ValueError("non-finite safe_divide result")
+    return result, int(np.count_nonzero(protected))
+
+
+def _expression_values(node: dict, returns: np.ndarray) -> tuple[np.ndarray, int, int]:
+    """Internal math only; caller validates the complete AST before this walk."""
+    op = node["op"]
+    if op == "input":
+        return returns, 1, 0
+    count = 0
+    result = np.full(len(returns), np.nan, dtype=np.float64)
+    try:
+        with np.errstate(over="raise", invalid="raise", divide="raise"):
+            if op in {"abs", "lag", "rolling_mean", "rolling_std"}:
+                arg, lookback, count = _expression_values(node["arg"], returns)
+                if op == "abs":
+                    result[lookback:] = np.abs(arg[lookback:])
+                elif op == "lag":
+                    shift = node["periods"]
+                    result[shift:] = arg[:-shift]
+                    lookback += shift
+                else:
+                    window = node["window"]
+                    rolling = pd.Series(arg, copy=False).rolling(window, min_periods=window, center=False)
+                    result = (rolling.std(ddof=1) if op == "rolling_std" else rolling.mean()).to_numpy(dtype=np.float64)
+                    lookback += window - 1
+            else:
+                left, left_l, left_n = _expression_values(node["left"], returns)
+                right, right_l, right_n = _expression_values(node["right"], returns)
+                lookback, count = max(left_l, right_l), left_n + right_n
+                if op == "safe_divide":
+                    result[lookback:], used = _protected_divide(left[lookback:], right[lookback:])
+                    count += used
+                else:
+                    operation = {"add": np.add, "subtract": np.subtract, "multiply": np.multiply}[op]
+                    result[lookback:] = operation(left[lookback:], right[lookback:])
+    except FloatingPointError as exc:
+        raise ValueError("non-finite/overflow feature intermediate") from exc
+    if not np.isfinite(result[lookback:]).all() or not np.isnan(result[:lookback]).all():
+        raise ValueError("non-finite feature intermediate outside the declared warmup")
+    return result, lookback, count
+
+
+def compute_price_features(prices, program: FeatureProgram | dict,
+                           feature_groups: list[str] | tuple[str, ...]) -> PriceFeatureMatrix:
+    """The same past-only float64 transform for research and raw inference.
+
+    Full raw row order is retained. NaNs exist only in declared prefix warmup;
+    callers select the common research mask or the bundle's actual lookback.
+    The estimate bounds numeric work arrays, not the entire Python process/OS.
+    """
+    cap = feature_capability()
+    frozen = program if isinstance(program, FeatureProgram) else FeatureProgram.from_dict(program)
+    if (not isinstance(feature_groups, (list, tuple)) or not feature_groups
+            or any(not isinstance(g, str) or g not in PRICE_GROUPS for g in feature_groups)
+            or len(set(feature_groups)) != len(feature_groups)):
+        raise ValueError("price feature computation requires unique approved builtin groups")
+    if not isinstance(prices, (np.ndarray, list, tuple)):
+        raise ValueError("prices must be a bounded numeric vector")  # noqa: TRY004 - data contract
+    rows = len(prices)
+    if not 1 <= rows <= cap["max_raw_rows"]:
+        raise ValueError("raw price row count exceeds capability")
+    if isinstance(prices, np.ndarray):
+        if prices.ndim != 1 or prices.dtype.kind not in "fiu":
+            raise ValueError("prices must be a one-dimensional numeric vector")
+    elif any(isinstance(x, (bool, np.bool_)) or not isinstance(x, (int, float, np.number)) for x in prices):
+        raise ValueError("prices must contain only numeric scalars")
+    group_columns = {"base_lags": 5, "momentum": 2, "volatility": 2}
+    output_count = sum(group_columns[g] for g in feature_groups) + frozen.complexity["feature_count"]
+    estimate = rows * 8 * (64 + 2 * output_count)
+    if estimate > cap["max_compute_bytes"]:
+        raise ValueError("feature numeric work memory exceeds capability")
+    lookback = max(frozen.complexity["lookback"], *(6 if g == "base_lags" else 20 for g in feature_groups))
+    if rows <= lookback:
+        raise ValueError("raw history is insufficient for actual feature lookback")
+    raw = np.asarray(prices, dtype=np.float64)
+    if not np.isfinite(raw).all() or not (raw > 0).all():
+        raise ValueError("raw adjusted prices must be finite and positive; never drop rows")
+    returns = np.full(rows, np.nan, dtype=np.float64)
+    try:
+        with np.errstate(over="raise", invalid="raise", divide="raise"):
+            returns[1:] = raw[1:] / raw[:-1] - 1.0
+    except FloatingPointError as exc:
+        raise ValueError("non-finite/overflow return_1") from exc
+    if not np.isfinite(returns[1:]).all():
+        raise ValueError("non-finite return_1")
+    columns, arrays, protection = [], [], {}
+
+    def append(name, values, dependency, protected=0):
+        if not np.isfinite(values[dependency:]).all() or not np.isnan(values[:dependency]).all():
+            raise ValueError("non-finite builtin/generated feature outside declared warmup")
+        columns.append(name)
+        arrays.append(values)
+        protection[name] = protected
+
+    for group in feature_groups:
+        if group == "base_lags":
+            for lag in range(1, 6):
+                values = np.full(rows, np.nan, dtype=np.float64)
+                values[lag:] = returns[:-lag]
+                append(f"return_lag_{lag}", values, lag + 1)
+        elif group == "momentum":
+            for window in (5, 20):
+                values = np.full(rows, np.nan, dtype=np.float64)
+                try:
+                    with np.errstate(over="raise", invalid="raise", divide="raise"):
+                        values[window:] = raw[window:] / raw[:-window] - 1.0
+                except FloatingPointError as exc:
+                    raise ValueError("non-finite/overflow momentum") from exc
+                append(f"momentum_{window}", values, window)
+        else:
+            for window in (5, 20):
+                values, dependency, count = _expression_values({"op": "rolling_std", "window": window,
+                    "arg": {"op": "input", "name": "return_1"}}, returns)
+                append(f"volatility_{window}", values, dependency, count)
+    for feature in frozen.to_dict()["features"]:
+        values, dependency, count = _expression_values(feature["expression"], returns)
+        append(feature["name"], values, dependency, count)
+    matrix = np.column_stack(arrays)
+    matrix.flags.writeable = False
+    return PriceFeatureMatrix(matrix, tuple(columns), lookback, protection, estimate)

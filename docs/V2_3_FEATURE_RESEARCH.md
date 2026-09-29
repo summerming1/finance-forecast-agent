@@ -1,6 +1,6 @@
 # V2.3 受控价格特征研究：合并修改、测试与产品迭代方案
 
-日期：2026-09-29。状态：**用户已批准实施；C0基线已核对，C1结构合同本地验证完成、累计CI待核对；功能状态以CURRENT_IMPLEMENTATION为准**。
+日期：2026-09-29。状态：**用户已批准实施；C1同SHA核心/浏览器通过，C2纯计算本地验证完成、累计CI待核对；功能状态以CURRENT_IMPLEMENTATION为准**。
 
 本文件合并原产品方案、R1–R10对抗审查、S1–S7复核及最终三项澄清，是本里程碑唯一详细规范和后续增量日志。验收矩阵保留完整计划；实际分批证据只见§12，不能把局部通过写成整个条款完成。
 
@@ -372,6 +372,16 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 - 相关累计定向：上述2文件加`test_focused_r1_contracts.py test_focused_r4_trust.py test_focused_pr5_delivery.py test_focused_b3_literature.py test_focused_b4_delivery.py`，`--basetemp .../c1-target-temp --junitxml .../c1-target.xml --tb=short`，线程均1：**141 passed/1 failed/567.74s/exit1**；唯一失败仍WinError1314 symlink创建，BLOCKED_ENV。该批收集在追加最后2个边界测试之前，两者单独包含于41项结果中。
 - Ruff检查本批7个生产/入口Python文件及2个新测试文件exit0；`python -m compileall -q src/finance_forecast_agent apps scripts tests`与`git diff --check` exit0。新增模块亦包含在Ruff中。完整累计核心/浏览器以本批提交的同SHA CI另核对，不借c60d173结果冒充。
 - 关联原A18/A23/L09/L23及V23-T01/T02/T03/T05/T06/T20、X01/X02/X09/X10/X15/X19的**结构部分**；完整执行、资源数值、真实配方语义及页面仍未完成，相应整条保持PARTIAL/PLANNED。HTTP=0、新候选训练fit=0、新真实确认=0；旧回归只在隔离simulation数据库训练。
+
+### C2：纯计算与固定研究数据协议（尚未接入训练）
+
+- C1提交01c9812e3a71910d840d9036d1433795e1b3c3ef的同SHA核心[36549859024](https://github.com/summerming1/finance-forecast-agent/actions/runs/36549859024) Python3.11/3.13均成功；旧浏览器36549859101、新工作区36549858836成功。冻结输入36549859052仍失败于下载原artifact，BLOCKED_ASSET，不是PASS。
+- C2先行红测`c2-red.xml`18 failed/2.41s/exit1；实现后新边界`c2-boundary.xml`64 passed/3.88s/exit0。最终命令：`python -m pytest -q tests/test_focused_feature_program.py tests/test_focused_feature_contract.py tests/test_focused_feature_recipe.py tests/test_focused_data_research.py tests/test_focused_pr6_byo.py --basetemp D:/b05runs/v23-base-caa545c9/c2-regression-temp --junitxml D:/b05runs/v23-base-caa545c9/c2-regression.xml --tb=short`，OMP/MKL/OPENBLAS线程1，**96 passed/63.33s/exit0**（1项JUnit属性格式警告）。本批4个Python文件Ruff、全src/apps/scripts/tests compileall及diff检查exit0。
+- 数值层按原始价格计算有限AST，ddof=1、完整右对齐窗口、每层有限性检查；实际列顺序与只读输出冻结。研究严格W64并去掉末行未成熟label；1074原始行才有1009监督行。raw输入拒绝缺失/乱序/非交易日等，不排序或填补。Snapshot新增协议只在新模式输出，旧Campaign序列化保持。
+- 模拟最大规模观测：20000行、两棵共30节点AST、11输出列，tracemalloc峰值3695200 bytes，预先估算13760000 bytes，0.0067558s。收据`c2-boundary-temp/test_maximum_grammar_numeric_w0/resource-receipt.json`；这是数值工作区工程观测，不是整个Python进程RSS或OS级内存隔离承诺。
+- 真实历史本地转换命令：调用`build_spy_feature_research_frame('inputs/spy_chart_2010_2025.json')`，exit0，HTTP=0、fit=0。原始4024行，监督3959行，2010-04-07至2025-12-30；raw hash为上述0bb089…，不是旧冻结资产。dataset fingerprint=`0a46dc5be7165d932b64ea231311aa89eb74b766571e0bd7f8f81c607ea331f5`，raw history=`dd1aac3f5c4647cbb98723f79c5af6211cb29c4bd7b68ede4f5c4fe3b01010c6`，row mapping=`0ec1a931c7a9d07aea29c04d605fcb06e1d29a06b187a49d1ce0a84d57183466`。point_in_time=false；可用时间是收盘后声明，不是观测到的provider回执。
+- 源包身份`delivery-source-v1=8956b7d3e4f7092b251d92b026d45c30c98f03393931bdc2db5d8902205d58bf`。全部收据根为`D:/b05runs/v23-base-caa545c9`。新增数学/数据测试simulation_only；既有相关回归使用隔离测试库。没有用户运行DB修改、新付费LLM、新确认或真人证据。
+- 本批仅完成T07–T12相关纯计算/数据部分；Campaign规划/预算/恢复、ModelBundle和页面仍未完成，不能用96通过关闭整体验收。C2提交后同SHA核心/浏览器待核对，C3按累计门禁继续。
 
 ### 历史：仅文档整理时的收据
 

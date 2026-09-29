@@ -10,7 +10,15 @@ import exchange_calendars as xcals
 import numpy as np
 import pandas as pd
 
-from .focused_identity import data_identity, identity
+from .focused_feature_program import (
+    FEATURE_PROTOCOL,
+    PRICE_GROUPS,
+    _decode_bounded_json,
+    compute_price_features,
+    empty_feature_program,
+    feature_capability,
+)
+from .focused_identity import data_identity, frame_fingerprint, identity
 from .focused_protocol import FocusedSplitSpec
 
 FOCUSED_FEATURE_REGISTRY_VERSION = "spy_daily_features_v1"
@@ -55,29 +63,35 @@ class FocusedDatasetSnapshot:
     target_fingerprint: str = ""
     target_content_fingerprint: str = ""
     observation_fingerprint: str = ""
+    feature_protocol: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        payload = asdict(self)
+        if self.feature_protocol is None:
+            payload.pop("feature_protocol")
+        return payload
 
 
 def _sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def _extract_yahoo_chart(payload: dict[str, Any]) -> tuple[pd.DataFrame, dict[str, Any]]:
+def _extract_yahoo_chart(payload: dict[str, Any], *, strict_price: bool = False) -> tuple[pd.DataFrame, dict[str, Any]]:
     chart = payload.get("chart") or {}
     result_rows = chart.get("result") or []
     if not result_rows:
         raise ValueError("Yahoo chart payload has no result")
+    if strict_price and len(result_rows) != 1:
+        raise ValueError("price research requires one SPY result")
     result = result_rows[0]
     meta = dict(result.get("meta") or {})
     if str(meta.get("symbol") or "").upper() != "SPY":
         raise ValueError("Focused task requires a SPY Yahoo chart payload")
     timestamps = result.get("timestamp") or []
     quote_rows = (result.get("indicators") or {}).get("quote") or []
-    if not timestamps or not quote_rows:
+    if not timestamps or (not quote_rows and not strict_price):
         raise ValueError("Yahoo chart payload is missing timestamps or quotes")
-    quote = quote_rows[0]
+    quote = quote_rows[0] if quote_rows else {}
     adj_rows = (result.get("indicators") or {}).get("adjclose") or []
     adjusted = adj_rows[0].get("adjclose") if adj_rows else None
     if adjusted is None:
@@ -87,15 +101,115 @@ def _extract_yahoo_chart(payload: dict[str, Any]) -> tuple[pd.DataFrame, dict[st
         )
     if len(adjusted) != len(timestamps):
         raise ValueError("price and timestamp lengths differ")
+    if strict_price:
+        if len(timestamps) > feature_capability()["max_raw_rows"]:
+            raise ValueError("raw row count exceeds price capability")
+        for values in (timestamps, adjusted):
+            if not isinstance(values, list) or any(isinstance(x, bool) or not isinstance(x, (int, float))
+                    or not np.isfinite(x) for x in values):
+                raise ValueError("raw price/timestamp values must be finite numeric scalars")
     dates = pd.to_datetime(timestamps, unit="s", utc=True).tz_convert("America/New_York").tz_localize(None)
-    frame = pd.DataFrame(
-        {
-            "timestamp": dates,
-            "spy_adj_close": pd.to_numeric(adjusted, errors="coerce"),
-            "spy_volume": pd.to_numeric(quote.get("volume") or [np.nan] * len(timestamps), errors="coerce"),
-        }
-    ).dropna(subset=["timestamp", "spy_adj_close"])
+    columns = {"timestamp": dates, "spy_adj_close": pd.to_numeric(adjusted, errors="coerce")}
+    if not strict_price:
+        columns["spy_volume"] = pd.to_numeric(quote.get("volume") or [np.nan] * len(timestamps), errors="coerce")
+    frame = pd.DataFrame(columns)
+    if not strict_price:
+        frame = frame.dropna(subset=["timestamp", "spy_adj_close"])
     return frame, meta
+
+
+def validate_price_history(frame: pd.DataFrame) -> pd.DataFrame:
+    """Raw unlabeled input. Do not sort, fill missing prices, or drop its last row."""
+    if (not isinstance(frame, pd.DataFrame) or frame.columns.duplicated().any()
+            or len(frame.columns) != 2 or set(frame.columns) != {"timestamp", "spy_adj_close"}):
+        raise ValueError("raw price history requires exactly timestamp and spy_adj_close")
+    if not 1 <= len(frame) <= feature_capability()["max_raw_rows"]:
+        raise ValueError("raw history row count exceeds capability")
+    copy = frame.copy(deep=True).reset_index(drop=True)
+    dates = pd.to_datetime(copy["timestamp"], errors="raise")
+    if dates.isna().any() or dates.dt.tz is not None or not (dates == dates.dt.normalize()).all():
+        raise ValueError("raw input must identify unambiguous daily sessions")
+    copy["timestamp"] = dates
+    if copy["spy_adj_close"].dtype.kind not in "fiu":
+        raise ValueError("raw adjusted close must have numeric dtype")
+    prices = copy["spy_adj_close"].to_numpy(dtype=np.float64)
+    if not np.isfinite(prices).all() or not (prices > 0).all():
+        raise ValueError("raw adjusted close must be finite and positive")
+    _validate_daily_frame(copy)
+    _validate_xnys_session_completeness(copy)
+    copy["timestamp"] = dates.dt.strftime("%Y-%m-%d")
+    copy["spy_adj_close"] = prices
+    return copy
+
+
+def load_spy_price_history(raw_json_path: str | Path, *, source_metadata_path: str | Path | None = None
+                           ) -> tuple[pd.DataFrame, dict]:
+    """Strict price-only Yahoo adapter; raw bytes/revision remain explicit."""
+    cap = feature_capability()
+    # Raw provider JSON has a separate input read bound derived from the fixed
+    # work budget. This does not assert a bound on the Python decoder's heap.
+    with Path(raw_json_path).open("rb") as handle:
+        raw = handle.read(cap["max_compute_bytes"] + 1)
+    payload = _decode_bounded_json(raw, cap["max_compute_bytes"])
+    if not isinstance(payload, dict):
+        raise ValueError("invalid Yahoo chart object")  # noqa: TRY004 - data contract
+    history, meta = _extract_yahoo_chart(payload, strict_price=True)
+    history["timestamp"] = history["timestamp"].dt.normalize()
+    history = validate_price_history(history)
+    source = {}
+    if source_metadata_path is not None:
+        with Path(source_metadata_path).open("rb") as handle:
+            source = _decode_bounded_json(handle.read(cap["max_json_bytes"] + 1), cap["max_json_bytes"])
+        if not isinstance(source, dict):
+            raise ValueError("source metadata must be an object")
+    return history, {"raw_sha256": _sha256_bytes(raw), "data_revision": _sha256_bytes(raw),
+        "source_name": str(source.get("provider") or meta.get("exchangeName") or "Yahoo Finance chart"),
+        "source_url": str(source.get("source_url") or "unknown"),
+        "license_status": str(source.get("license_status") or "provider_terms_review_required"),
+        "point_in_time": False, "availability": "declared_after_close_not_observed_provider_receipt"}
+
+
+def build_spy_feature_research_frame(raw_json_path: str | Path, *, task: FocusedTaskSpec | None = None,
+                                    source_metadata_path: str | Path | None = None
+                                    ) -> tuple[pd.DataFrame, FocusedDatasetSnapshot, pd.DataFrame]:
+    task = task or FocusedTaskSpec()
+    if (task.exposure not in {"historical_development_only", "simulation_only"}
+            or {k: v for k, v in task.to_dict().items() if k != "exposure"}
+            != {k: v for k, v in FocusedTaskSpec().to_dict().items() if k != "exposure"}):
+        raise ValueError("price research supports only the fixed development task")
+    history, source = load_spy_price_history(raw_json_path, source_metadata_path=source_metadata_path)
+    cap = feature_capability()
+    required = FocusedSplitSpec().required_supervised_rows
+    if len(history) - cap["common_warmup"] - 1 < required:
+        raise ValueError(f"feature research requires {required} supervised / {required + cap['common_warmup'] + 1} raw rows")
+    matrix = compute_price_features(history["spy_adj_close"].to_numpy(), empty_feature_program(), PRICE_GROUPS)
+    frame = history.copy()
+    for ordinal, name in enumerate(matrix.columns):
+        frame[name] = matrix.values[:, ordinal]
+    prices = history["spy_adj_close"].to_numpy()
+    labels = np.full(len(history), np.nan)
+    with np.errstate(over="raise", invalid="raise", divide="raise"):
+        labels[:-1] = prices[1:] / prices[:-1] - 1.0
+    if not np.isfinite(labels[:-1]).all():
+        raise ValueError("non-finite next-session label")
+    frame["label"] = labels
+    frame["decision_time"] = history["timestamp"]
+    frame["label_start_time"] = history["timestamp"].shift(-1)
+    frame["label_end_time"] = history["timestamp"].shift(-1)
+    frame["raw_row_id"] = np.arange(len(history))
+    frame = frame.iloc[cap["common_warmup"]:-1].reset_index(drop=True)
+    protocol = {"protocol_id": FEATURE_PROTOCOL, "common_warmup": cap["common_warmup"],
+        "capability_hash": cap["capability_hash"], "raw_history_fingerprint": frame_fingerprint(history),
+        "row_mapping_hash": identity(frame["raw_row_id"].tolist(), domain="price-research-raw-row-map-v1"),
+        "data_revision": source["data_revision"], "point_in_time": False, "availability": source["availability"]}
+    ids = data_identity(frame, task.to_dict())
+    fingerprint = identity({"data": ids, "feature_protocol": protocol}, domain="focused-feature-dataset-v1")
+    snapshot = FocusedDatasetSnapshot(dataset_id="spy_price_" + fingerprint, raw_sha256=source["raw_sha256"],
+        semantic_fingerprint=fingerprint, row_count=len(frame), start_date=frame.iloc[0]["timestamp"],
+        end_date=frame.iloc[-1]["timestamp"], source_name=source["source_name"], source_url=source["source_url"],
+        license_status=source["license_status"], exposure=task.exposure,
+        feature_registry_version="spy_price_builtin_v1", feature_protocol=protocol, **ids)
+    return frame, snapshot, history
 
 
 def _validate_xnys_session_completeness(frame: pd.DataFrame) -> None:
