@@ -1,10 +1,12 @@
 # 当前版本功能与技术实现说明
 
-## 2026-09-29 V2.3已获实施批准：C0基线核对完成，C1待实施
+## 2026-09-29 V2.3：C1结构合同已实现，计算/执行/UI尚未上线
 
-合并方案已提交并推送c60d173；用户随后批准按 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 实施并配合前端修改，[ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)已accepted。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。尚未实现FeatureProgram DSL、新协议或原始价格模型包接口，未调用新Provider/真实确认。实施批准不代表验收通过。
+合并方案及实施批准已提交c60d173、0eda9d3；批准范围见 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 和accepted [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。
 
-当前运行功能仍是下述B5及Agent工作区。V2.3验收条款为PLANNED，原A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
+C1现已实现不可变FeatureProgram结构、代码拥有的能力边界、严格候选读取、旧golden hash兼容、DSL确认前置拒绝和原MethodCard可选审核配方字段。新结构测试41通过；相关旧回归141通过/1项既有Windows symlink权限失败；静态通过。同C1 SHA累计CI待核对。特征数值计算、新协议Campaign、raw推理包及新UI尚未实现，evaluate/refit对新程序明确拒绝，不能静默按旧列训练。未调用新付费Provider或真实确认。
+
+当前可运行研究仍是下述B5及Agent工作区。V2.3局部结构证据见版本日志；整体验收未完成，原A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
 
 ## Agent 风格前端接入（2026-09-28）
 

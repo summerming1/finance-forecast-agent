@@ -130,7 +130,7 @@ def audit_campaign(inputs: Path, campaign_root: Path, state_db: Path, output: Pa
     frame, snapshot = build_spy_daily_research_frame(unique_file(inputs, 'spy_chart_2010_2025.json'),
         task=FocusedTaskSpec(), source_metadata_path=unique_file(inputs, 'spy_source.json'))
     candidate_data = indexed['baseline_ridge']['candidate']
-    candidate = CandidateConfig(**{k:v for k,v in candidate_data.items() if k in CandidateConfig.__dataclass_fields__})
+    candidate = CandidateConfig.from_dict(candidate_data)
     bundle = refit_model_bundle(frame, candidate, task=FocusedTaskSpec(), dataset=snapshot,
         out_dir=output/'bundle', state_path=state_db)
     unlabeled = frame.drop(columns=['label']).tail(8).copy()

@@ -1,8 +1,8 @@
 # V2.3 受控价格特征研究：合并修改、测试与产品迭代方案
 
-日期：2026-09-29。状态：**用户已批准实施；C0基线验证进行中，功能状态以CURRENT_IMPLEMENTATION为准**。
+日期：2026-09-29。状态：**用户已批准实施；C0基线已核对，C1结构合同本地验证完成、累计CI待核对；功能状态以CURRENT_IMPLEMENTATION为准**。
 
-本文件合并原产品方案、R1–R10对抗审查、S1–S7复核及最终三项澄清，是本里程碑唯一详细规范和后续增量日志。不是已完成验收收据。所有V23-T/V23-X均为PLANNED；运行后才另记PASS/FAIL/BLOCKED/NOT_RUN及原因。
+本文件合并原产品方案、R1–R10对抗审查、S1–S7复核及最终三项澄清，是本里程碑唯一详细规范和后续增量日志。验收矩阵保留完整计划；实际分批证据只见§12，不能把局部通过写成整个条款完成。
 
 审阅基线：`feat/mission-research-v2`，HEAD `fad63bc8effc6bd3a8e98f7ad94b9896a599c321`，tree `8df2d8bde98d2c943b6b5d18cbb97bf73c5cf933`。实施时重新核对实际HEAD；不reset回此基线。
 
@@ -175,6 +175,8 @@ ResearchPackage可保存失败/取消的审计事实，受限projection明确省
 | C6c | 原真人清单/收据 | 真实参与者完成、理解、导出再使用；所有者与独立用户分层；不由助手代填 |
 
 C0文档准备已提交，实施授权已取得，当前进行环境/旧门禁基线核验。C1/C2资源数字和预算映射未冻结不能进入C3真实研究；无需先恢复无关native资产才能写纯函数，但适用门禁不能无证据豁免。
+
+C0基线现已核对；C1已冻结结构合同（§12），尚未上线特征计算或规划预算执行。下表中的C2–C6仍为待实施/待验收，不因文档或结构测试提前完成。
 
 ## 7. 研究价值、Live与真人计划
 
@@ -359,6 +361,17 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 - 冻结SPY CI[36544392953](https://github.com/summerming1/finance-forecast-agent/actions/runs/36544392953)失败于原run35204186327的`focused-real-inputs` artifact缺失，未训练，BLOCKED_ASSET。本地443821字节输入SHA256=`0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b`，不是原5fb282…；仅可作另列的新协议历史开发工程例，不能替换原验收。
 - C1先行负例收据`c1-full-red.xml`：39 failed/2.98s/exit1（新能力尚未实现）；独立旧入口复现`downgrade-red.xml`：1 failed/2.43s/exit1，`_candidate`确实静默丢弃未知feature_program。首次红测未指定basetemp导致默认pytest目录清理WinError5，后续隔离重跑，不删除旧目录。
 - 费用授权仍单列等待；本批无新付费Provider、无真实确认/新标签读取、无真人验收。C0适用基线已核对，可以进入C1；Windows权限、原资产和真实语义/真人边界不是PASS。
+
+### C1：候选版本、不可变程序、确认拒绝与审核配方结构
+
+- 基于0eda9d39badc2c84922fcd317e06aa3a6d961837实施；源包内容身份`delivery-source-v1=6b959524ee51b900d11e099a302fda12e556ddf8bb9520a649a7efee15bb5252`（不包含后续文档）。统一CandidateConfig.from_dict替换恢复、续接、页面和交付的丢字段读取；旧无schema对象保留原序列化/两个golden hash，新字段必须显式focused_candidate_v3，不得伪装旧格式。
+- 新FeatureProgram为不可变规范JSON，能力由代码提供，引用hash不授予能力。结构冻结16KiB程序JSON、20000 raw行、32MiB数值工作区估算上限；节点/深度/回看/参数域按§3。C2仍必须验证实际计算和资源估算；不声称整个Python进程或OS级内存隔离。
+- DSL候选在selection/prototype/preflight/grant创建/执行入口于标签读取前拒绝；执行grant也不能凭自报正确hash放行。旧bundle禁止携带新程序语义，并在反序列化前严格读取候选。此阶段evaluate/refit显式拒绝FeatureProgram；没有“只算旧列”的临时降级执行。
+- 配方是原MethodCard审核记录的可选版本绑定字段，保留机制/迁移差异/输入时点/程序再分发许可；旧review无新增字段、无hash重写。展示本地执行、审计包、完整模型包三种能力。仅simulation_only配方测试，未声称真实文献语义审核或可用性通过。
+- 先行红测39 failed/2.98s已保留；实现后`pytest -q tests/test_focused_feature_contract.py tests/test_focused_feature_recipe.py --basetemp D:/b05runs/v23-base-caa545c9/c1-boundary-temp --junitxml D:/b05runs/v23-base-caa545c9/c1-boundary.xml --tb=short`：**41 passed/4.41s/exit0**。
+- 相关累计定向：上述2文件加`test_focused_r1_contracts.py test_focused_r4_trust.py test_focused_pr5_delivery.py test_focused_b3_literature.py test_focused_b4_delivery.py`，`--basetemp .../c1-target-temp --junitxml .../c1-target.xml --tb=short`，线程均1：**141 passed/1 failed/567.74s/exit1**；唯一失败仍WinError1314 symlink创建，BLOCKED_ENV。该批收集在追加最后2个边界测试之前，两者单独包含于41项结果中。
+- Ruff检查本批7个生产/入口Python文件及2个新测试文件exit0；`python -m compileall -q src/finance_forecast_agent apps scripts tests`与`git diff --check` exit0。新增模块亦包含在Ruff中。完整累计核心/浏览器以本批提交的同SHA CI另核对，不借c60d173结果冒充。
+- 关联原A18/A23/L09/L23及V23-T01/T02/T03/T05/T06/T20、X01/X02/X09/X10/X15/X19的**结构部分**；完整执行、资源数值、真实配方语义及页面仍未完成，相应整条保持PARTIAL/PLANNED。HTTP=0、新候选训练fit=0、新真实确认=0；旧回归只在隔离simulation数据库训练。
 
 ### 历史：仅文档整理时的收据
 

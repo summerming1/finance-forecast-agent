@@ -65,6 +65,7 @@ def approve_research_literature(
     applicability: dict, required_capabilities: list[str] | None = None,
     provider_audiences: list[str] | None = None, redistribute_excerpt: bool = False,
     simulation_only: bool = False,
+    reviewed_recipe: dict | None = None,
 ) -> dict:
     """Explicit operator action. Never called automatically by LLM/UI submission.
 
@@ -107,6 +108,11 @@ def approve_research_literature(
             raise ValueError('quote not present in registered text source')
         sources[node.source_id] = {'path': relative, 'sha256': file_sha256(path)}
     capabilities = sorted(set(required_capabilities or []))
+    recipe = None
+    if reviewed_recipe is not None:
+        from .focused_feature_program import validate_reviewed_price_recipe
+        recipe = validate_reviewed_price_recipe(reviewed_recipe)
+        capabilities = sorted(set(capabilities) | {"feature_program:spy_price_features_v1"})
     audiences = sorted(set(provider_audiences or []))
     if any(not isinstance(x, str) or not x.strip() for x in [*capabilities, *audiences]):
         raise ValueError('capabilities and provider audiences must be exact nonempty strings')
@@ -119,6 +125,8 @@ def approve_research_literature(
         'simulation_only': bool(simulation_only),
         'semantic_review': 'operator_attested; hashes check integrity, not scientific truth',
     }
+    if recipe is not None:
+        record['reviewed_recipe'] = copy.deepcopy(recipe)
     digest = identity(record, domain='research-literature-review-v1')
     review_id = 'literature-' + digest
     path = review_state_path(root)
@@ -222,6 +230,15 @@ def project_literature(
                 'redistribute_excerpt': r['redistribute_excerpt'], 'simulation_only': r['simulation_only'],
                 'semantic_review': r['semantic_review']},
         })
+        if r.get('reviewed_recipe') is not None:
+            from .focused_feature_program import validate_reviewed_price_recipe
+            recipe = validate_reviewed_price_recipe(r['reviewed_recipe'])
+            executable = relevant and not missing and 'feature_program:spy_price_features_v1' in capabilities
+            output[-1]['reviewed_recipe'] = recipe
+            output[-1]['recipe_capabilities'] = {
+                'local_executable': executable, 'audit_package_exportable': True,
+                'full_model_bundle_exportable': executable and recipe['redistribute_program'],
+            }
     return output
 
 

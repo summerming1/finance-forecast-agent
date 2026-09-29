@@ -285,6 +285,7 @@ def freeze_candidate_selection(
     evaluation_policy: EvaluationPolicy,
     split_spec: FocusedSplitSpec | None = None,
 ) -> FrozenCandidateSelection:
+    _require_confirmation_candidate(candidate.to_dict())
     body = {
         "candidate": candidate.to_dict(),
         "task_id": task.task_id,
@@ -313,6 +314,7 @@ def run_confirmation(
     split_spec: FocusedSplitSpec | None = None,
     simulation_only: bool = False,
 ) -> dict[str, Any]:
+    candidate = _require_confirmation_candidate(selection.candidate)
     if eligibility.status != "eligible":
         raise PermissionError(f"confirmation is not eligible: {eligibility.status}")
     if not simulation_only:
@@ -333,16 +335,6 @@ def run_confirmation(
     actual = identity(data_identity(frame, FocusedTaskSpec().to_dict()), domain="focused-dataset-v2")
     if actual != selection.dataset_fingerprint:
         raise ValueError("simulation frame does not match frozen dataset identity")
-    payload = dict(selection.candidate)
-    candidate = CandidateConfig(
-        candidate_id=str(payload["candidate_id"]),
-        model_family=str(payload["model_family"]),
-        model_params=dict(payload.get("model_params") or {}),
-        feature_groups=list(payload.get("feature_groups") or []),
-        seed=int(payload.get("seed", 42)),
-        parent_candidate_id=payload.get("parent_candidate_id"),
-        hypothesis_id=payload.get("hypothesis_id"),
-    )
     if candidate.fingerprint != selection.candidate_fingerprint:
         raise ValueError("frozen candidate fingerprint mismatch")
     result = evaluate_candidate(
@@ -636,7 +628,7 @@ def _load_dataset(store: RuntimeDB, dataset_id: str, tenant_id: str) -> tuple[pd
 
 
 def _candidate(payload: dict, feature_specs: list[dict] | None = None) -> CandidateConfig:
-    cfg = CandidateConfig(**{k: v for k, v in payload.items() if k in CandidateConfig.__dataclass_fields__})
+    cfg = CandidateConfig.from_dict(payload)
     validate_model_params(cfg.model_family, cfg.model_params)
     resolve_feature_columns(cfg.feature_groups, reviewed_feature_registry(feature_specs))
     if isinstance(cfg.seed, bool) or not isinstance(cfg.seed, int) or not 0 <= cfg.seed < 2**32:
@@ -646,9 +638,17 @@ def _candidate(payload: dict, feature_specs: list[dict] | None = None) -> Candid
     return cfg
 
 
+def _require_confirmation_candidate(payload: dict) -> CandidateConfig:
+    cfg = CandidateConfig.from_dict(payload)
+    if cfg.feature_program is not None:
+        raise ValueError("feature program candidates are not supported for confirmation")
+    return cfg
+
+
 
 def _confirmation_control(payload: dict) -> CandidateConfig:
     """Only the existing train-only sanity controls, never caller-supplied statistics."""
+    cfg = _require_confirmation_candidate(payload)
     if not str(payload.get("model_family", "")).startswith("naive_"):
         return _candidate(payload)
     strategy = str(payload.get("model_family", ""))[6:]
@@ -656,7 +656,6 @@ def _confirmation_control(payload: dict) -> CandidateConfig:
             or payload.get("model_params") != {"strategy": strategy}
             or payload.get("feature_groups") != []):
         raise ValueError("unsupported or externally supplied naive confirmation statistic")
-    cfg = CandidateConfig(**{k:v for k,v in payload.items() if k in CandidateConfig.__dataclass_fields__})
     if cfg.fingerprint != payload.get("candidate_fingerprint", cfg.fingerprint):
         raise ValueError("confirmation control identity mismatch")
     return cfg
@@ -672,6 +671,8 @@ def preflight_confirmation(candidate: CandidateConfig, *, baseline: CandidateCon
     """
     if task.to_dict() != FocusedTaskSpec().to_dict() or feature_specs:
         raise ValueError("confirmation supports only the fixed task and built-in features")
+    _require_confirmation_candidate(candidate.to_dict())
+    _require_confirmation_candidate(baseline.to_dict())
     selected = _candidate(candidate.to_dict())
     control = _confirmation_control(baseline.to_dict())
     policy = evaluation_policy or EvaluationPolicy()
@@ -807,6 +808,10 @@ def execute_confirmation_grant(grant_id: str, *, state_path: str | Path, tenant_
         body = record["body"]
         if record["grant_hash"] != identity(body, domain="confirmation-grant-v1"):
             raise ValueError("grant hash/integrity mismatch")
+        # Even a correctly hashed record cannot authorize an unsupported
+        # capability. Check before consuming a grant or loading sealed labels.
+        _require_confirmation_candidate(body["candidate"])
+        _confirmation_control(body["baseline"])
         if record["status"] == "completed":
             if record["result_hash"] != identity(record["result"], domain="confirmation-result-v1"):
                 raise ValueError("sealed result hash/integrity mismatch")
@@ -939,6 +944,8 @@ def refit_model_bundle(
     training_asof: str | None = None,
 ) -> Path:
     active_policy = policy or RefitPolicy()
+    if candidate.feature_program is not None:
+        raise ValueError("feature program refit requires the raw-price bundle protocol")
     if not active_policy.fit_all_available_labels:
         raise ValueError("only the explicit all-matured-development-label refit policy is supported")
     _validated_frame(frame, task, dataset)
@@ -1024,6 +1031,9 @@ def verified_model_bundle_bytes(
     metadata = json.loads(metadata_bytes)
     if metadata.get("schema_version") != "focused_model_bundle_v2" or metadata.get("model_file") != "model.joblib":
         raise ValueError("invalid registered model schema/path")
+    parsed_candidate = CandidateConfig.from_dict(metadata["candidate"])
+    if parsed_candidate.feature_program is not None:
+        raise ValueError("legacy model bundle cannot carry feature program semantics")
     if metadata["bundle_id"] != record["bundle_id"] or metadata["model_sha256"] != record["model"]["sha256"]:
         raise ValueError("model registration binding mismatch")
     model_bytes = _read_bytes(root / "model.joblib", record["model"])

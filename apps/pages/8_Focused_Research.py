@@ -415,7 +415,7 @@ def render_workspace():
                 if st.button('Check selected confirmation capability',disabled=not deliverable):
                     from finance_forecast_agent.focused_delivery import preflight_confirmation
                     from finance_forecast_agent.focused_research import CandidateConfig
-                    cfg=CandidateConfig(**{k:v for k,v in saved['candidate'].items() if k in CandidateConfig.__dataclass_fields__})
+                    cfg=CandidateConfig.from_dict(saved['candidate'])
                     try:
                         st.json(preflight_confirmation(cfg,baseline=CandidateConfig('control','naive_train_median',{'strategy':'train_median'},[]),
                             task=FocusedTaskSpec(),feature_specs=(payload.get('campaign',{}).get('research_options') or {}).get('feature_specs')))

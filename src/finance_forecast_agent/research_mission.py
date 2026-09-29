@@ -460,7 +460,7 @@ def refit_workspace_model(state_path, project_id, campaign_id, candidate_id, *, 
     values = saved['candidate']
     if values['model_family'].startswith('naive_'):
         raise ValueError('naive sanity baseline is not a ModelBundle')
-    candidate = CandidateConfig(**{k:v for k,v in values.items() if k in CandidateConfig.__dataclass_fields__})
+    candidate = CandidateConfig.from_dict(values)
     req = current['request']
     if file_sha256(req['raw_path']) != req['raw_sha256']:
         raise ValueError('refit input differs from the frozen campaign')
@@ -544,7 +544,7 @@ def _continuation_snapshot(state_path, project_id, campaign_id, candidate_id, *,
     values = saved['candidate']
     if values['model_family'].startswith('naive_'):
         raise ValueError('new research currently requires a supported estimator starting point')
-    cfg = CandidateConfig(**{k:v for k,v in values.items() if k in CandidateConfig.__dataclass_fields__})
+    cfg = CandidateConfig.from_dict(values)
     store = RuntimeDB(state_path)
     contract = store.get('campaign:'+campaign_id, 'contract')
     accepted = store.get('campaign:'+campaign_id, 'result:'+candidate_id)

@@ -30,6 +30,7 @@ from .focused_evidence import (
     prediction_metrics,
     prediction_row,
 )
+from .focused_feature_program import CANDIDATE_SCHEMA, PRICE_GROUPS, FeatureProgram, feature_capability
 from .focused_identity import data_identity, file_sha256, identity
 from .focused_protocol import (
     FEATURE_GROUPS,
@@ -100,11 +101,58 @@ class CandidateConfig:
     seed: int = 42
     parent_candidate_id: str | None = None
     hypothesis_id: str | None = None
+    schema_version: str | None = None
+    feature_program: FeatureProgram | dict | None = None
+
+    def __post_init__(self):
+        if self.schema_version is None and self.feature_program is None:
+            return  # Legacy objects retain exactly their existing bytes/identity.
+        if self.schema_version != CANDIDATE_SCHEMA or self.feature_program is None:
+            raise ValueError("feature program requires the explicit focused_candidate_v3 schema")
+        if (not isinstance(self.feature_groups, list) or not self.feature_groups
+                or any(not isinstance(g, str) or g not in PRICE_GROUPS for g in self.feature_groups)
+                or len(set(self.feature_groups)) != len(self.feature_groups)):
+            raise ValueError("feature program supports unique price-only builtin groups")
+        validate_model_params(self.model_family, self.model_params)
+        program = self.feature_program
+        if not isinstance(program, FeatureProgram):
+            program = FeatureProgram.from_dict(program)
+        object.__setattr__(self, "feature_program", program)
+
+    @classmethod
+    def from_dict(cls, payload: dict) -> CandidateConfig:
+        """Read without discarding new semantics, including on old delivery paths."""
+        allowed = set(cls.__dataclass_fields__) | {"candidate_fingerprint", "config_identity"}
+        required = {"candidate_id", "model_family", "model_params", "feature_groups"}
+        if not isinstance(payload, dict) or set(payload) - allowed or not required <= set(payload):
+            raise ValueError("unknown or missing candidate fields")
+        if ({"schema_version", "feature_program"} & set(payload)
+                and (payload.get("schema_version") != CANDIDATE_SCHEMA or payload.get("feature_program") is None)):
+            raise ValueError("new candidate semantics cannot downgrade to legacy schema")
+        if (not isinstance(payload["candidate_id"], str) or not payload["candidate_id"]
+                or not isinstance(payload["model_family"], str)
+                or not isinstance(payload["model_params"], dict)
+                or not isinstance(payload["feature_groups"], list)
+                or any(not isinstance(g, str) for g in payload["feature_groups"])):
+            raise ValueError("invalid candidate configuration types")
+        for field_name in ("parent_candidate_id", "hypothesis_id"):
+            if payload.get(field_name) is not None and not isinstance(payload[field_name], str):
+                raise ValueError("invalid candidate reference type")
+        candidate = cls(**{k: v for k, v in payload.items() if k not in {"candidate_fingerprint", "config_identity"}})
+        for key, expected in (("candidate_fingerprint", candidate.fingerprint), ("config_identity", candidate.config_identity)):
+            if key in payload and payload[key] != expected:
+                raise ValueError("candidate identity mismatch")
+        return candidate
 
     @property
     def config_identity(self) -> str:
         params = (self.model_params if self.model_family.startswith("naive_")
                   else effective_model_params(self.model_family, self.model_params))
+        if self.feature_program is not None:
+            return identity({"schema_version": self.schema_version, "model_family": self.model_family,
+                "effective_params": params, "feature_groups": self.feature_groups,
+                "feature_program": self.feature_program.to_dict(), "capability": feature_capability()},
+                domain="focused-config-v3")
         return identity({"model_family": self.model_family, "effective_params": params,
                          "feature_groups": sorted(set(self.feature_groups))}, domain="focused-config-v2")
 
@@ -112,10 +160,17 @@ class CandidateConfig:
     def fingerprint(self) -> str:
         if isinstance(self.seed, bool) or not isinstance(self.seed, int) or not 0 <= self.seed <= 2**32 - 1:
             raise ValueError("Estimator seed must be a non-negative 32-bit integer")
-        return identity({"config_identity": self.config_identity, "seed": self.seed}, domain="focused-execution-config-v2")
+        return identity({"config_identity": self.config_identity, "seed": self.seed},
+                        domain="focused-execution-config-v3" if self.feature_program is not None else "focused-execution-config-v2")
 
     def to_dict(self) -> dict[str, Any]:
-        return {**asdict(self), "candidate_fingerprint": self.fingerprint, "config_identity": self.config_identity}
+        payload = asdict(self)
+        if self.feature_program is None:
+            payload.pop("schema_version")
+            payload.pop("feature_program")
+        else:
+            payload["feature_program"] = self.feature_program.to_dict()
+        return {**payload, "candidate_fingerprint": self.fingerprint, "config_identity": self.config_identity}
 
 
 @dataclass(frozen=True)
@@ -280,6 +335,8 @@ def evaluate_candidate(
     fit_observer=None,
     feature_registry: dict[str, list[str]] | None = None,
 ) -> CandidateResult:
+    if candidate.feature_program is not None:
+        raise ValueError("feature program execution requires the feature research data protocol")
     features = resolve_feature_columns(candidate.feature_groups, feature_registry)
     missing = [column for column in [*features, "label"] if column not in frame.columns]
     if missing:
@@ -1251,7 +1308,7 @@ class FocusedResearchController:
         row = accepted["row"]
         saved = row.get("result") or row
         candidate_payload = saved["candidate"]
-        candidate = CandidateConfig(**{k: v for k, v in candidate_payload.items() if k in CandidateConfig.__dataclass_fields__})
+        candidate = CandidateConfig.from_dict(candidate_payload)
         artifact = json.loads((self._campaign_root / saved["prediction_artifact_ref"]).read_text(encoding="utf-8"))
         if artifact["candidate_fingerprint"] != candidate.fingerprint or artifact["dataset_fingerprint"] != self.dataset.semantic_fingerprint:
             raise ValueError("artifact identity does not match frozen campaign")
@@ -1546,7 +1603,7 @@ class FocusedResearchController:
                 plan = frozen["plan"]
                 source, prompt_hash, plan_hash = plan["advisor_source"], plan["prompt_hash"], plan["plan_hash"]
                 plan_ref = frozen["plan_ref"]
-                compiled = [(HypothesisSpec(**item["hypothesis"]), (CandidateConfig(**{k: v for k, v in item["candidate"].items() if k in CandidateConfig.__dataclass_fields__}) if item.get("candidate") else None)) for item in plan["items"]]
+                compiled = [(HypothesisSpec(**item["hypothesis"]), (CandidateConfig.from_dict(item["candidate"]) if item.get("candidate") else None)) for item in plan["items"]]
             round_rows, new_executable, successful = [], 0, 0
             for hypothesis, candidate in compiled:
                 if candidate is None:
