@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -162,7 +162,10 @@ def load_spy_price_history(raw_json_path: str | Path, *, source_metadata_path: s
             source = _decode_bounded_json(handle.read(cap["max_json_bytes"] + 1), cap["max_json_bytes"])
         if not isinstance(source, dict):
             raise ValueError("source metadata must be an object")
-    return history, {"raw_sha256": _sha256_bytes(raw), "data_revision": _sha256_bytes(raw),
+    provenance = source.get("provenance_type", "historical_development_only")
+    if provenance not in {"historical_development_only", "simulation_only"}:
+        raise ValueError("price source cannot declare sealed or unsupported provenance")
+    return history, {"raw_sha256": _sha256_bytes(raw), "data_revision": _sha256_bytes(raw), "provenance_type": provenance,
         "source_name": str(source.get("provider") or meta.get("exchangeName") or "Yahoo Finance chart"),
         "source_url": str(source.get("source_url") or "unknown"),
         "license_status": str(source.get("license_status") or "provider_terms_review_required"),
@@ -178,6 +181,8 @@ def build_spy_feature_research_frame(raw_json_path: str | Path, *, task: Focused
             != {k: v for k, v in FocusedTaskSpec().to_dict().items() if k != "exposure"}):
         raise ValueError("price research supports only the fixed development task")
     history, source = load_spy_price_history(raw_json_path, source_metadata_path=source_metadata_path)
+    if source["provenance_type"] == "simulation_only":
+        task = replace(task, exposure="simulation_only")
     cap = feature_capability()
     frame = _price_research_rows(history)
     protocol = {"protocol_id": FEATURE_PROTOCOL, "common_warmup": cap["common_warmup"],

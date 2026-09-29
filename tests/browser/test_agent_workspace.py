@@ -19,7 +19,8 @@ import pytest
 pytestmark = pytest.mark.skipif(os.getenv("FFA_BROWSER_E2E") != "1", reason="explicit real browser gate")
 
 
-def test_agent_workspace_real_backend(tmp_path):
+@pytest.mark.parametrize("price_features", [False, True], ids=["legacy", "price_features"])
+def test_agent_workspace_real_backend(tmp_path, price_features):
     import requests
     from playwright.sync_api import Error as BrowserError
     from playwright.sync_api import expect, sync_playwright
@@ -32,10 +33,16 @@ def test_agent_workspace_real_backend(tmp_path):
     from finance_forecast_agent.focused_state import RuntimeDB, process_birth, terminate_owned_tree
     from finance_forecast_agent.research_mission import workspace_campaign, workspace_queue
 
-    out = Path(os.getenv("FFA_UI_BROWSER_ARTIFACTS", str(tmp_path / "browser"))).resolve()
+    out = Path(os.getenv("FFA_UI_BROWSER_ARTIFACTS", str(tmp_path / "browser"))).resolve() / ("price_features" if price_features else "legacy")
     out.mkdir(parents=True, exist_ok=True)
     state, project, raw = tmp_path / "runtime.sqlite3", tmp_path / "project", tmp_path / "simulation_only.csv"
     _research_frame(tmp_path).to_csv(raw, index=False)
+    if price_features:
+        from test_focused_pr5_delivery import _write_chart
+        raw = tmp_path / "simulation_only.json"
+        _write_chart(raw, 1100)
+        source = tmp_path / "simulation_source.json"
+        source.write_text(json.dumps({"provider": "simulation_only", "provenance_type": "simulation_only"}))
     contract = _contract("csv").to_dict()
     # The first deterministic batch proposes momentum and volatility candidates.
     # A two-candidate identity test must declare both feature groups. With only
@@ -156,11 +163,17 @@ def test_agent_workspace_real_backend(tmp_path):
 
             click("new")
             frame.locator("#draft-notes").fill("Browser synthetic integration — no paid provider")
+            if price_features:
+                frame.locator("#draft-change_scope").select_option("price_features")
             click("wizard-next")
-            frame.locator("#draft-input_kind").select_option("controlled")
+            if not price_features:
+                frame.locator("#draft-input_kind").select_option("controlled")
             frame.locator("#draft-raw_path").fill(str(raw))
-            frame.locator("#draft-advanced_contract").check()
-            frame.locator("#draft-contract_json").fill(json.dumps(contract))
+            if price_features:
+                frame.locator("#draft-source_metadata").fill(str(source))
+            else:
+                frame.locator("#draft-advanced_contract").check()
+                frame.locator("#draft-contract_json").fill(json.dumps(contract))
             for group in ["liquidity"]:
                 control = frame.locator(f'input[data-feature="groups"][value="{group}"]')
                 if control.count() and control.is_checked():
@@ -173,6 +186,8 @@ def test_agent_workspace_real_backend(tmp_path):
             before = counts()
             click("preflight")
             expect(frame.locator(".contract-summary")).to_contain_text("服务器预检通过")
+            if price_features:
+                expect(frame.locator('[data-testid="price-capability"]')).to_contain_text("64行")
             assert counts() == before == (0, 0)
             page.screenshot(path=str(out / "02_preflight_real_input.png"))
             click("submit")
@@ -200,6 +215,10 @@ def test_agent_workspace_real_backend(tmp_path):
                 frame.locator(f'tr[data-action="candidate"][data-id="{candidate}"]').click()
                 idle()
                 expect(frame.locator(".drawer")).to_contain_text(candidate)
+                if price_features:
+                    expected = next(i["candidate"] for b in original["rounds"] for i in b["items"] if i.get("candidate", {}).get("candidate_id") == candidate)
+                    expect(frame.locator('[data-testid="price-program"]')).to_contain_text("rolling_mean")
+                    expect(frame.locator('[data-testid="price-program"]')).to_contain_text(str(expected["feature_program"]["features"][0]["expression"]["window"]))
                 assert counts() == before
             selected = research_ids[1]
             page.screenshot(path=str(out / "04_experiments_backend.png"))
@@ -222,6 +241,9 @@ def test_agent_workspace_real_backend(tmp_path):
                 meta = json.loads(archive.read("bundle.json"))
                 assert meta["candidate"]["candidate_id"] == selected
                 assert "model.joblib" in archive.namelist()
+                if price_features:
+                    assert meta["schema_version"] == "focused_model_bundle_v3"
+                    assert meta["feature_pipeline"]["program"]["features"]
             assert counts() == before
             frame.locator('[data-action="view"][data-view="experiments"]').first.click()
             frame.locator(f'tr[data-action="candidate"][data-id="{research_ids[0]}"]').click()

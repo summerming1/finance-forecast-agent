@@ -1262,7 +1262,12 @@ class FocusedResearchController:
                         *("model:" + m for m in ALLOWED_MODELS),
                         "diagnostic:residual_summary", "diagnostic:fold_summary"]
         if self.feature_mode:
-            capabilities.append("feature_program:spy_price_features_v1")
+            # This mode cannot change the frozen estimator or built-in groups.
+            # The platform-wide catalog is not the current experiment's power.
+            capabilities = ["feature_program:spy_price_features_v1",
+                "model:" + self.starting_baseline.get("model_family", "ridge_regression"),
+                *("feature:" + g for g in self.starting_baseline.get("feature_groups", ["base_lags"])),
+                "diagnostic:residual_summary", "diagnostic:fold_summary"]
         return project_literature(self.literature_project, self.literature_review_ids,
             task=self.task.to_dict(), capabilities=capabilities,
             tenant_id=tenant_id or self.tenant_id, audience=audience)
@@ -2060,7 +2065,7 @@ class FocusedResearchController:
         for use in payload["literature_usage"]:
             if use["decisions"]:
                 use["not_used_reason"] = None
-        if self.input_provenance:
+        if self.input_provenance and self.input_provenance.get("provenance_type") != "historical_development_only":
             simulated = self.input_provenance.get("provenance_type") == "simulation_only"
             payload["input_verification"] = self.input_provenance.get("verification", {})
             payload["confirmation_status"] = "not_run_simulation_only" if simulated else "not_run_external_input_not_independently_verified"

@@ -258,7 +258,7 @@ def load_workspace_input(raw_path, source_metadata, options, *, include_raw_hist
         if options.get('input_contract'):
             raise ValueError('price feature research requires raw adjusted-price history, not external feature data')
         frame, snapshot, raw = build_spy_feature_research_frame(raw_path, source_metadata_path=source_metadata)
-        result = (frame, snapshot, {'feature_protocol':snapshot.feature_protocol}, [])
+        result = (frame, snapshot, {'feature_protocol':snapshot.feature_protocol, 'provenance_type':snapshot.exposure}, [])
         return (*result, raw) if include_raw_history else result
     if options.get('input_contract'):
         contract = ExternalDatasetContract(**options['input_contract'])
@@ -305,7 +305,8 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
         raise ValueError('fit budget is too small for frozen baselines')
     evidence = EvidenceIndex(options.get('reviewed_evidence') or []).rows
     # Preflight the same model/feature/budget contract; no execution happens here.
-    preflight = FocusedResearchController(project_dir=project['root'], frame=frame, dataset=snapshot, task=FocusedTaskSpec(),
+    preflight = FocusedResearchController(project_dir=project['root'], frame=frame, dataset=snapshot,
+        task=FocusedTaskSpec(exposure=snapshot.exposure) if snapshot.feature_protocol else FocusedTaskSpec(),
         raw_history=raw_history, feature_strategy=options.get('feature_strategy'),
         budget=budget, advisor_mode=advisor_mode, feature_specs=specs, input_provenance=provenance,
         starting_baseline=options.get('starting_baseline'), entry_mode=options.get('entry_mode'), change_scope=options.get('change_scope','explore'), allowed_feature_groups=options.get('allowed_feature_groups'),
@@ -476,7 +477,8 @@ def refit_workspace_model(state_path, project_id, campaign_id, candidate_id, *, 
     frame, snapshot, _, specs, raw_history = load_workspace_input(req['raw_path'],req['source_metadata'],req['options'], include_raw_history=True)
     if snapshot.semantic_fingerprint != current['payload']['campaign']['dataset']['semantic_fingerprint']:
         raise ValueError('refit semantic dataset differs from campaign')
-    bundle = refit_model_bundle(frame, candidate, task=FocusedTaskSpec(),dataset=snapshot,
+    bundle = refit_model_bundle(frame, candidate,
+        task=FocusedTaskSpec(exposure=snapshot.exposure) if snapshot.feature_protocol else FocusedTaskSpec(),dataset=snapshot,
         out_dir=Path(current['project']['root'])/'models'/('bundle-'+uuid.uuid4().hex),
         state_path=state_path,tenant_id=tenant_id,feature_specs=specs,raw_history=raw_history,
         literature_project=req['options'].get('literature_project'),

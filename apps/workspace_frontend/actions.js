@@ -59,6 +59,8 @@ document.addEventListener('change',event=>{
  // Text/number values are already saved on input. Repainting on blur would
  // remove the next button between mousedown and click and swallow that action.
  if(el.dataset.draft){if(el.tagName!=='SELECT')return;const key=el.dataset.draft;S.draft[key]=el.value;S.preview=null;
+ if(key==='change_scope'&&el.value==='price_features'){S.draft.groups=['base_lags','momentum','volatility'];S.draft.starting_groups=['base_lags'];S.draft.input_kind='yahoo';S.draft.max_rounds=2;S.draft.max_new_candidates_per_round=2;S.draft.max_fit_calls=32;toast('已切换价格专用范围：固定价格组、Yahoo输入、最多32次研究fit；请重新核对。')}
+ if(key==='feature_arm'&&el.value==='one_shot')S.draft.max_rounds=1;
  if(key==='family')S.draft.params=S.draft.family==='ridge_regression'?' {"alpha":1}':S.draft.family==='random_forest_regressor'?' {"n_estimators":80,"max_depth":4,"min_samples_leaf":5}':' {"n_estimators":80,"learning_rate":0.03,"max_depth":2}';
  if(key==='project_id'){rpc('select',{project_id:el.value}).catch(showError)}
  render(true);saveDraft();return}

@@ -50,7 +50,8 @@ def main() -> None:
             raise ValueError("price research does not accept external feature datasets")
         frame, snapshot, raw_history = build_spy_feature_research_frame(
             args.raw_spy_json, task=task, source_metadata_path=args.source_metadata)
-        provenance = {"feature_protocol": snapshot.feature_protocol}
+        task = FocusedTaskSpec(exposure=snapshot.exposure)
+        provenance = {"feature_protocol": snapshot.feature_protocol, "provenance_type": snapshot.exposure}
     elif options.get("input_contract"):
         from finance_forecast_agent.focused_byo import ExternalDatasetContract, load_external_focused_dataset
         contract = ExternalDatasetContract(**options["input_contract"])

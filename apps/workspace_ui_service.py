@@ -27,7 +27,7 @@ FORM_FIELDS = {
     'project_id', 'project_dir', 'raw_path', 'source_metadata', 'input_kind', 'input_contract',
     'mode', 'entry_mode', 'starting_config', 'change_scope', 'allowed_feature_groups', 'research_notes',
     'preset', 'budget', 'fixture_dir', 'replay_call_ids', 'literature_project', 'literature_review_ids',
-    'data_consent', 'live_consent',
+    'data_consent', 'live_consent', 'feature_strategy',
 }
 BUDGET_FIELDS = {'max_rounds', 'max_new_candidates_per_round', 'max_fit_calls', 'max_advisor_calls',
                  'max_http_requests', 'max_provider_seconds'}
@@ -88,6 +88,13 @@ class WorkspaceUI:
                                   'change_scope': form.get('change_scope', 'explore'),
                                   'context_mode': 'compact_v1',
                                   'research_notes': _text(form.get('research_notes', ''), maximum=4000)}
+        price_mode = options['change_scope'] == 'price_features'
+        if 'feature_strategy' in form:
+            if not price_mode:
+                raise ValueError('Price planning policy requires the explicit price_features scope')
+            options['feature_strategy'] = copy.deepcopy(form['feature_strategy'])
+        if price_mode and input_kind != 'yahoo':
+            raise ValueError('Price feature research currently requires frozen adjusted-price Yahoo JSON')
         if input_kind == 'controlled':
             contract = form.get('input_contract')
             if not isinstance(contract, dict) or not all(contract.get(k) for k in
@@ -121,7 +128,12 @@ class WorkspaceUI:
         elif form.get('replay_call_ids'):
             raise ValueError('Replay call mapping supplied for a non-Replay run')
         if form.get('preset', 'quick') == 'quick':
-            budget = mission.quick_trial_budget(starting_config=options.get('starting_baseline'))
+            if price_mode:
+                one_shot = (options.get('feature_strategy') or {}).get('arm') == 'one_shot'
+                budget = ResearchBudget(max_rounds=1, max_new_candidates_per_round=1,
+                    max_fit_calls=32 if one_shot else 20)
+            else:
+                budget = mission.quick_trial_budget(starting_config=options.get('starting_baseline'))
         elif form.get('preset') == 'custom':
             supplied = form.get('budget', {})
             if not isinstance(supplied, dict) or set(supplied) - BUDGET_FIELDS:
@@ -134,15 +146,17 @@ class WorkspaceUI:
                                ('max_http_requests', 1, 200), ('max_provider_seconds', 1, 86400)]:
             if not low <= getattr(budget, key) <= high:
                 raise ValueError('Budget is outside the workspace bounds: ' + key)
-        frame, snapshot, provenance, specs = mission.load_workspace_input(raw, source, options)
+        frame, snapshot, provenance, specs, raw_history = mission.load_workspace_input(raw, source, options, include_raw_history=True)
         controller = FocusedResearchController(
-            project_dir=project_dir, task=FocusedTaskSpec(), dataset=snapshot, frame=frame, budget=budget,
+            project_dir=project_dir, task=FocusedTaskSpec(exposure=snapshot.exposure) if price_mode else FocusedTaskSpec(),
+            dataset=snapshot, frame=frame, budget=budget,
             advisor_mode=mode, fixture_dir=fixture, state_path=self.state_path, tenant_id=self.tenant_id,
             starting_baseline=options.get('starting_baseline'), entry_mode=options['entry_mode'],
             change_scope=options['change_scope'], allowed_feature_groups=options.get('allowed_feature_groups'),
             research_notes=options['research_notes'], input_provenance=provenance, feature_specs=specs,
             literature_project=options['literature_project'], literature_review_ids=review_ids,
-            context_mode='compact_v1', replay_call_ids=options.get('replay_call_ids'))
+            context_mode='compact_v1', replay_call_ids=options.get('replay_call_ids'),
+            raw_history=raw_history, feature_strategy=options.get('feature_strategy'))
         controller.split_spec.build_splits(len(frame))
         if budget.max_fit_calls < controller.required_initial_fit_calls():
             raise ValueError('Budget is too small for the fixed controls and user start')
@@ -163,6 +177,13 @@ class WorkspaceUI:
                    'initial_fit_calls': controller.required_initial_fit_calls(),
                    'mode': mode, 'literature_count': len(review_ids), 'currency_cost': None,
                    'provider': provider, 'fit_calls_started': 0, 'http_requests_sent': 0}
+        if price_mode:
+            from finance_forecast_agent.focused_feature_program import feature_capability
+            preview.update(feature_capability=feature_capability(), feature_strategy=controller.feature_strategy,
+                planning_policy=controller._feature_policy(), literature_capabilities=[
+                    {'review_id': row['evidence_id'], **row.get('recipe_capabilities', {
+                        'local_executable': row['applicability']['executable'], 'audit_package_exportable': True,
+                        'full_model_bundle_exportable': None})} for row in controller.literature_snapshot])
         return request, preview
 
     def preflight(self, form: dict) -> dict:
@@ -220,7 +241,8 @@ class WorkspaceUI:
                                'is_user_start': cid == start, 'hypothesis': detail.get('hypothesis'),
                                'config_diff': detail.get('config_diff'), 'feedback': detail.get('feedback'),
                                'research_verdict': data.get('research_verdict'),
-                               'actual_features': data.get('actual_features', [])})
+                               'actual_features': data.get('actual_features', []),
+                               'feature_execution': data.get('feature_execution')})
         selected = candidate_id if candidate_id in details else payload.get('best_candidate_id')
         if selected not in details:
             selected = next(iter(details), '')

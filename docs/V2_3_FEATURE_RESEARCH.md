@@ -414,6 +414,16 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 - Ruff受影响3个生产文件和2个新测试文件、全src/apps/scripts/tests compileall、diff检查exit0。源包身份`delivery-source-v1=c8eb2709123e5d94824c6f179530ff1b833c585c18e534403f1d4b213a3c3be0`。真实Provider HTTP=0，工程数据/文献模拟，用户原DB不修改。C5新增模式页面与C6分轴验收尚未完成。
 - 原可信确认回归另跑`tests/test_focused_r4_trust.py --basetemp D:/b05runs/v23-base-caa545c9/c4-trust-temp --junitxml D:/b05runs/v23-base-caa545c9/c4-trust.xml --tb=short`：31 passed/1 failed/59.54s/exit1。唯一失败仍创建symlink的Windows1314权限，BLOCKED_ENV，断言未删改；Linux门禁继续保留。
 
+### C5：工作台接线与真实浏览器
+
+- C4提交69101c7同SHA Linux3.11/3.13核心36562811773、原Chromium36562811923、新工作区36562811789均成功；原冻结输入36562811838仍失败，不改原验收资产。
+- 原三步向导增price_features、规划策略/种子、冻结能力和导出提示；旧features_only标明仅组合现有组。JSON/未知字段不降级。实际公式/diff/列序/L/保护除法在原候选抽屉只读呈现，规划与Advisor尝试/HTTP/fit区分。预检不训练，创建/额外refit/续接仍需明确确认。
+- 先行UI接口红测`c5-red.xml`2 failed/4 passed/3.72s；另复现固定Ridge将要求RF的recipe误标可执行（`c5-cap-red.xml`1 failed/3.08s），修复为当前固定模型/内置组的能力投影，不使用平台全目录授权。模拟source字段未传到price worker的红测`c5-provenance-red.xml`1 failed/2.91s；原始来源只接受historical_development_only/simulation_only，模拟标记绑定Snapshot/task并贯穿worker/refit/页面，历史开发不误标外部未知；不允许自封sealed。
+- 单元57 passed/7.88s/exit0；最终相关命令`python -m pytest -q tests/test_workspace_ui.py tests/test_workspace_ui_features.py tests/test_focused_feature_campaign.py tests/test_focused_feature_bundle.py tests/test_focused_feature_export.py tests/test_focused_feature_execution.py tests/test_focused_feature_program.py tests/test_focused_b3_literature.py --basetemp D:/b05runs/v23-base-caa545c9/c5-regression-temp --junitxml D:/b05runs/v23-base-caa545c9/c5-regression.xml --tb=short`，线程1：**121 passed/659.74s/exit0**。源包身份`delivery-source-v1=0dcc81af4813d6439379f6562bbc45c6d06d063ce9fc5505c020c74a03d84306`。
+- `FFA_BROWSER_E2E=1 python -m pytest -q tests/browser/test_agent_workspace.py --basetemp D:/b05runs/v23-base-caa545c9/c5-browser-temp --junitxml D:/b05runs/v23-base-caa545c9/c5-browser.xml --tb=short`：**2 passed/222.09s/exit0**，Windows Chromium153.0.8010.12、simulation_only，旧受控CSV及新价格公式流程都通过。新输入hash cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b；每批20 fits、两个已训练候选切换，刷新/新context不增fit/attempt，refit v3/选错候选下载拒绝、研究包SHA256、1280布局、父公式续接均验证。父+子研究账本16 attempts/40 reserved fits，另有1次显式refit；HTTP=0、page_errors=[]。
+- 内置浏览器额外在独立8512服务检查向导与零训练预检，显示1035行simulation_only、W64、快速试跑1次规划/1槽；截图`D:/b05runs/v23-base-caa545c9/manual-ui/v23-preflight.png`。这是助手工程验收，不是真人。Ruff受影响文件、compileall、所有前端JS语法通过。用户操作清单写入FRONTEND_USER_GUIDE，原AGENT_WORKSPACE_UI说明保留历史边界。
+- C6历史真实输入新合同smoke/指标复算、最终同SHA门禁仍待执行；Live待明确费用批准，真人须用户操作。旧A/L和47负确认不变。
+
 ### 历史：仅文档整理时的收据
 
 - 2026-09-29：合并原方案与两轮审核；选择价格-only、无自动生成式修正、DSL确认禁用，明确旧格式兼容、前置/响应后失败、规划与实际调用计数、部分完成及分轴交付。

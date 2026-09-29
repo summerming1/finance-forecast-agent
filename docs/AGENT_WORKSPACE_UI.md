@@ -1,5 +1,13 @@
 # Agent 风格研究工作区：接入与使用
 
+## V2.3增量
+
+三步向导新增price_features范围，旧features_only明确为组合现有特征组；支持One-shot/Adaptive Batch/Random规划策略、严格原始价格预检及能力/权限提示。候选抽屉显示真实AST、差异、列序和回看长度；资源页分列规划槽位、研究fit及显式refit。实际运行仍复用原Controller/Queue/RuntimeDB。
+
+切换到新范围时会明确提示价格专用默认值并要求重新预检；后端仍拒绝不支持的配置，不静默丢弃未知字段。模拟来源贯穿数据、worker、页面与包，历史开发不称独立确认。新模式输入/详细人工清单见`FRONTEND_USER_GUIDE.md`；当前实现与精确测试证据见`CURRENT_IMPLEMENTATION.md`及`V2_3_FEATURE_RESEARCH.md`。
+
+以下接入说明中“未修改研究源码”描述原2026-09-28 UI接入批次，不适用于随后V2.3研究功能实现。原本地状态库、旧入口和旧格式继续保留。
+
 ## 1. 接入范围
 
 本次是已批准 HTML/CSS/JavaScript 页面与现有 Streamlit/Python 项目的接入，不是静态演示。默认入口仍是 `apps/streamlit_app.py`，页面通过 Streamlit 自定义组件与 Python 双向通信，不增加独立 API 服务、前端构建工具或第二套研究引擎。
