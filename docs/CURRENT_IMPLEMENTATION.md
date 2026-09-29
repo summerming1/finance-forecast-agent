@@ -1,6 +1,6 @@
 # 当前版本功能与技术实现说明
 
-## 2026-09-29 V2.3：C1–C5已交付，C6工程审计完成、最终门禁与外部验证分轴
+## 2026-09-29 V2.3：C1–C6a受控工程预览可用，Live/文献语义/真人仍待验
 
 合并方案及实施批准已提交c60d173、0eda9d3；批准范围见 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 和accepted [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。
 
@@ -10,15 +10,17 @@ C2实现价格-only AST纯计算、严格XNYS原始历史验证和固定W64研�
 
 C3已在原Controller/RuntimeDB中接入price_features模式、原始历史/目标行绑定、固定模型的程序动作、整批预检、最多4提案槽和独立规划次数、确定性/Random策略、真实worker/续接及Memory协议/as-of筛选。模型实际训练与Manifest记录AST及列顺序。首次集成104通过、相关旧回归107通过；随后Snapshot别名和恢复fixture校验补修后98项边界通过，收据及各源码阶段见V23日志。当前raw ModelBundle与页面能力见下方C4/C5，不再是C3阶段的尚未开放状态；没有新付费Provider或真实确认/真人验收。
 
-2a21890同SHA Linux3.11/3.13核心与旧Chromium已通过。新工作区CI复现测试同步竞态：结果落库先于Queue退出；仅补测试等待Queue及组件状态，本地真实Chromium1通过/90.55s，生产执行代码未改。修订测试同SHA CI另核对，不能把原失败覆盖成通过。冻结输入仍BLOCKED_ASSET。
+2a21890同SHA Linux3.11/3.13核心与旧Chromium已通过。新工作区CI复现测试同步竞态：结果落库先于Queue退出；仅补测试等待Queue及组件状态，本地真实Chromium1通过/90.55s，生产执行代码未改。修订后的b80bdb4新旧Chromium已通过，后续C4/C5亦通过；原失败保留。冻结输入仍BLOCKED_ASSET。
 
-C4现已支持显式refit后原始价格ModelBundle v3、新进程一致推理、末行保留和程序/环境/可信登记核验，旧v2保持。受限程序导出降级、完整包fit前权限拒绝、撤销后拒绝加载/下载。失败refit亦计入同RuntimeDB账本，注册与完成同事务。相关94项通过；来源/用时/命令见V23日志。同SHA累计CI另核对，不能代替新模式浏览器或真实文献审核。
+C4现已支持显式refit后原始价格ModelBundle v3、新进程一致推理、末行保留和程序/环境/可信登记核验，旧v2保持。受限程序导出降级、完整包fit前权限拒绝、撤销后拒绝加载/下载。失败refit亦计入同RuntimeDB账本，注册与完成同事务。相关94项通过；来源/用时/命令见V23日志，真实文献审核仍另轴。
 
 C4同69101c7的Linux3.11/3.13核心与新旧Chromium均已通过。C5新增价格公式模式已接原工作区：预算/权限预检、实际AST与差异、原队列、受信包、完整公式续接。固定模型文献能力与模拟来源传递问题已复现并修正；最终相关121项、真实Windows Chromium新旧两流程2项通过。源码/输入hash及计数见V23日志；新模式真人清单在FRONTEND_USER_GUIDE。
 
 C5同2e5e5ed的Linux3.11/3.13核心与两套Chromium已通过。C6现有新协议三臂deterministic历史工程例，3959监督行、80研究fits、HTTP=0；29份聚合及116份fold指标、三个审计包所有成员hash、新Python原始无标签推理逐值一致、末行保留。额外审计refit累计4次，包括一次失败后保留的真实成本。新benchmark继续使用原Controller，旧TPE保留目录语义；新CLI有4槽/28fits有界预注册及执行顺序冻结。24项新旧benchmark回归通过；本地模拟HTTP→严格离线Replay通过，不是付费Live。
 
-最终全仓pytest及C6同SHA CI仍待完成，收据见V23日志§12。工程用户闭环已模拟验证，真实历史例只作development evidence；Live/真人/文献真实语义不由助手模拟关闭。整体验收未完成，原冻结输入缺失、A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
+最终本地全仓**703通过/2失败/5跳过，4645.92s**；失败为Windows创建symlink权限与历史DLinear严格回放匹配fixture缺失，未删断言/伪造记录。core+workspace+共享审核子集554通过/1权限失败/2平台跳过；收集后新增2项另测通过。功能提交dbc4014同SHA Linux3.11/3.13各537通过，新工作区24及相关54通过，原Chromium亦通过；原冻结输入CI仍BLOCKED_ASSET。文档提交后的最终SHA/CI核对见交付收据，不混用父提交，详细命令与边界见V23日志§12。
+
+工程闭环可交产品所有者受控试用；真实历史例只作development evidence。新DSL付费Live尚未取得本轮具体费用授权，真实文献配方语义与真人/回访未验；不得由助手模拟关闭。整体仍PARTIAL，原冻结输入缺失、A/L剩余状态、历史科学结果及47目标负确认不改。V3未启动，未来计划不得冒充当前能力。
 
 ## Agent 风格前端接入（2026-09-28）
 

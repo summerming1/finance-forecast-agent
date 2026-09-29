@@ -5,7 +5,7 @@
     "report": "docs/V2_3_FEATURE_RESEARCH.md",
     "current_status_authority": "docs/CURRENT_IMPLEMENTATION.md",
     "history_policy": "Additive V2.3 evidence only; no historical A/L status or 47-target negative confirmation is rewritten.",
-    "verified_through": "C1-C5 scoped engineering; C6 historical deterministic pilot and artifact audit passed; final regression and same-SHA results remain separate",
+    "verified_through": "C1-C6a scoped engineering preview; local whole repo 703 passed / 2 environment-or-asset failures / 5 skipped; dbc4014 same-SHA Linux 3.11+3.13 each 537 passed and both Chromium gates passed. Final documentation SHA is verified separately in delivery receipt.",
     "clause_links": {
       "A04_A05_A08_A23": ["tests/test_focused_feature_recovery.py", "tests/test_focused_feature_contract.py"],
       "A09_A10_A18": ["tests/test_focused_feature_contract.py", "tests/test_focused_feature_execution.py"],
@@ -17,6 +17,7 @@
     "scope": "Simulation-only controls, actual local fits/worker/browser, local HTTP record/recovery and separately identified historical-data deterministic development pilot; not new paid-provider, human or financial confirmation acceptance.",
     "remaining": {
       "original_frozen_asset": "BLOCKED_ASSET",
+      "historical_DLinear_strict_replay_fixture": "BLOCKED_ASSET: missing matching 2c05bfd22af27435 record; existing offline_assistant fixture is not a substitute",
       "new_live_provider_pilot": "NOT_RUN_PENDING_EXPLICIT_COST_APPROVAL",
       "real_recipe_semantic_adversaries": "NOT_RUN",
       "actual_user_trial_and_reuse": "BLOCKED_NO_REAL_USER",

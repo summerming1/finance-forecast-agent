@@ -10,7 +10,7 @@ C0–C6收据见V23日志§12；新特征已在原Controller/worker训练，raw 
 
 ## 既有B0–B5补测范围
 
-C5本地新增模式相关121通过、实际Windows Chromium新旧流程2通过。C6历史真实数据新合同三臂工程例及指标/包/新进程推理独立审计完成，原冻结5fb282资产不能用0bb089副本替换；最终全仓及C6同SHA门禁待收据。新Live与真人分轴保持待验，模拟HTTP录制回放不等同模型质量。操作清单见FRONTEND_USER_GUIDE，不用助手模拟补真人PASS。
+C5本地新增模式相关121通过、实际Windows Chromium新旧流程2通过。C6历史真实数据新合同三臂工程例及指标/包/新进程推理独立审计完成；功能提交dbc4014的Linux双Python各537项、新旧Chromium通过。最终本地全仓703通过/2失败/5跳过：Windows symlink权限、历史DLinear严格prompt匹配fixture缺失；恢复方法见V23日志§12，不能用offline_assistant卡改hash冒充原Live。原冻结5fb282资产不能用0bb089副本替换，远端冻结门禁仍失败于下载。文档最终SHA须独立核对CI。新Live与真人分轴保持待验，模拟HTTP录制回放不等同模型质量。操作清单见FRONTEND_USER_GUIDE，不用助手模拟补真人PASS。
 
 本文件是当前补测入口，替代旧“R0–R6尚未跑通”的清单，不改写历史验收收据。
 2026-09-28 增量证据见 [B5_INCREMENT_20260928.md](validation/B5_INCREMENT_20260928.md)；旧失败及48条原条款保留，不因新小样本完成而全部关闭。

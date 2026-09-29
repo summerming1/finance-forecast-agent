@@ -1,6 +1,6 @@
 # V2.3 受控价格特征研究：合并修改、测试与产品迭代方案
 
-日期：2026-09-29。状态：**C1–C5已提交并有同SHA工程门禁；C6历史数据工程例及独立审计完成，最终回归/CI与Live/真人分轴记录；功能状态以CURRENT_IMPLEMENTATION为准**。
+日期：2026-09-29。状态：**C1–C6a受控工程预览已实现并验证；全仓703通过/2环境或资产失败/5跳过；Live、真实语义与真人未完成，不是全产品验收通过。功能状态以CURRENT_IMPLEMENTATION为准**。
 
 本文件合并原产品方案、R1–R10对抗审查、S1–S7复核及最终三项澄清，是本里程碑唯一详细规范和后续增量日志。验收矩阵保留完整计划；实际分批证据只见§12，不能把局部通过写成整个条款完成。
 
@@ -445,6 +445,48 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 - 修正后的完整命令：`python scripts/verify_price_feature_pilot.py --matrix D:/b05runs/v23-base-caa545c9/c6-real-pilot.json --raw inputs/spy_chart_2010_2025.json --expected-sha256 0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b --state-db D:/b05runs/v23-base-caa545c9/c6-real-pilot_runs/runtime.sqlite3 --out D:/b05runs/v23-base-caa545c9/c6-real-audit-v3`，**exit0 / receipt.json PASS**。29份PredictionArtifact聚合及116份fold指标独立复算；三个ResearchPackage分别28/30/31成员hash全部匹配；三次fresh Python raw推理分别3962/4018/4018行，末行保留、逐值一致、Campaign hash不变。历史无标签接口测试不叫样本外效果。
 - 研究80 fits保持，审计累计**4次额外refit**（v2失败1+v3成功3）全部留账，HTTP=0。matrix hash=`08b15b7bc8718112619263c0b0f966b3943b4831a92f129e8337f518f0c3320c`；执行源码=`21e1bf56b92d851752f20c6583a2b621bad81317cba75349603699a3fc03e12b`；交付源码=`d028fffc8b904c1b7843e2be072fb1c38cb3058cc453cd07bb6578bd1626a2ef`。新审计未更改旧冻结验证脚本/门禁，也不消费确认授权。
 - 本批Ruff全部实际变更Python、compileall src/apps/scripts/tests、diff检查exit0。最终全仓pytest仍运行，最终同SHA CI待提交核对；不能提前称全部通过。原资产、Windows symlink权限、真实语义误引/注入和真人缺口分别保留。新Live费用授权未收到，不从推送授权推断付费授权；C6b真实Provider为NOT_RUN，C6c真人为BLOCKED_NO_REAL_USER。
+
+### 验收目标到现有证据的索引（不是55项全通过声明）
+
+C6功能提交`dbc4014ea5893109fa0a57181a501b17ee91b391`，tree=`21064e3a352815f05eaed1db6add4ce09435c73a`，已普通推送。开始数次上传连接中断，核对远端未变；稍后重试成功，未改全局代理或force push。同SHA核心[36572536404](https://github.com/summerming1/finance-forecast-agent/actions/runs/36572536404)的Python3.11/3.13均成功；已下载HEAD/JUnit到本地`c6-ci311/c6-ci313`：**各537 passed、0 skipped，671.239s/681.747s**。旧Chromium[36572536735](https://github.com/summerming1/finance-forecast-agent/actions/runs/36572536735)成功；新工作区[36572536285](https://github.com/summerming1/finance-forecast-agent/actions/runs/36572536285)下载核对HEAD/tree一致，**24 passed/117.979s**（含两条真实浏览器流程），相关回归**54 passed/111.838s**。原冻结门禁[36572536314](https://github.com/summerming1/finance-forecast-agent/actions/runs/36572536314)仍FAIL于`Download frozen audited SPY inputs`，未进入模型步骤，分类BLOCKED_ASSET。文档收据提交后的最终SHA须再次检查CI，不能借本段父提交结果冒称同SHA。
+
+#### 最终本地全仓与边界归类
+
+命令：`python -m pytest -q --basetemp D:/b05runs/v23-base-caa545c9/c6-all-temp --junitxml D:/b05runs/v23-base-caa545c9/c6-all.xml --tb=short`，三种数值线程环境均1；**703 passed / 2 failed / 5 skipped / 8 warnings，4645.92s，exit1**。不能称全仓绿。全仓运行期间src生产包保持上述d028…/21e1…身份；收集后新增的CLI预注册和审计hash域2项未混入该710项计数，另以`c6-final-doc.xml`连同文档检查**7 passed/3.18s/exit0**，并已纳入dbc4014同SHA Linux537项。八个警告为既有`record_property`与JUnit xunit2格式提示，不是忽略失败。
+
+从同一全仓JUnit按§9.1集合抽取（focused/queue/Memory/workspace UI及3共享审核文件）为**554 passed / 1 failed / 2 skipped，共557项**；case时间合计4596.485s，不是另一条独立重跑命令或墙钟。两项晚加测试另列如上，不通过简单相加各批收据伪造独立测试总数。
+
+| 失败nodeid | 首个异常、分类 | 本轮引入/恢复办法 |
+|---|---|---|
+| `tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]` | 创建测试symlink时`OSError: WinError 1314`，尚未进入反序列化；BLOCKED_ENV，缺Windows权限，不是缺Python依赖 | C0已复现，同代码Linux门禁通过；操作者可另行配置Windows符号链接权限后重测，本轮不提权、不删断言 |
+| `tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call` | `FileNotFoundError: projects/finance_agent/llm_fixtures/method_card/2c05bfd22af27435.json`；BLOCKED_ASSET，当前严格prompt无对应历史record/catalog；没有调用Provider | 测试、`method_cards.py`、`replay_llm.py`对fad63bc均无差异，未发现V23引入此路径变化。目录中仅找到不同hash的`a244047067fcaf58.json`且created_by=offline_assistant，不能改名/改hash伪造strict-live回放。需恢复原合法prompt/PDF/支持上下文对应录制；重新付费录制须另批，不能冒充原证据 |
+
+5项跳过：两条Agent工作区浏览器和原Research Workspace浏览器因本次全仓未设置显式browser环境；它们由独立真实Windows浏览器及同SHA Chromium CI覆盖。`test_queue_recovers_real_interrupted_worker`为POSIX进程组probe，Windows不运行；`test_package_rejects_symlink`明确缺symlink权限。不得把这两项本机平台边界写PASS。
+
+原历史/native其余测试本轮通过的是资产/协议/单元检查；**未重跑小时级原论文训练、GPU或macOS**。不能沿用旧“10/11失败”的数字描述本次，也不能把这些检查当所有论文重新训练成功。新旧数据、原DB、失败目录和47目标负确认保留；原验收JSON去掉新增V23节后与fad63bc逐结构完全相同，PowerShell核对exit0。30个本地Markdown链接、全部变更Python Ruff、compileall和前端JS语法通过。已关闭本轮8512测试服务，未结束原网页服务。
+
+| 最终交付轴 | 结论 | 下一步 |
+|---|---|---|
+| C1–C6a受控工程预览 | PASS（适用核心/真实浏览器/历史开发审计；上述Windows权限与旧资产单列） | 可按FRONTEND_USER_GUIDE进入产品所有者真实走查；最终文档SHA另核对CI |
+| 全仓原样零失败 / 原冻结SPY门禁 | BLOCKED_ENV / BLOCKED_ASSET | 恢复权限、匹配DLinear记录和原5fb282冻结输入；不换输入求绿 |
+| C6b新DSL真实Live→Replay / 三臂模型质量 | NOT_RUN，等待本轮明确模型/费用/资料权限 | 先冻结预算与随机顺序；不重跑旧有效付费G2A/G2B，不自动换模型 |
+| 文献真实配方/误引/说明与公式矛盾 | NOT_RUN / BLOCKED | 实际人工审核合法来源，工程fixture不能代替 |
+| C6c所有者及独立用户、回访再使用 | BLOCKED_NO_REAL_USER | 操作者按清单真实使用并反馈人时、帮助、正确理解、导出再使用；不由助手代填 |
+| 新独立金融证据 / 前瞻产品 | NOT_RUN / NOT_READY | DSL确认仍禁用；未实现或启动V3，原47目标负确认不改 |
+
+整体验收为**PARTIAL**，不是因为未出现更好分数而追加试验。最终git身份及文档提交后的同SHA CI放在交付消息/本地`D:/b05runs/v23-base-caa545c9/delivery_receipt.json`，避免把包含自身SHA的收据反复提交造成循环；上面的功能提交CI保留其实际SHA。
+
+测试文件均在`tests/`；下列是覆盖入口，具体参数化nodeid/运行时间见各JUnit。原条款只追加JSON关联，不重写历史PASS/FAIL。
+
+| 目标 | 本轮证据入口 | 未被这些证据证明的部分 |
+|---|---|---|
+| T01/T02/T05/T06/T20，X01/X02/X09/X10/X15 | `test_focused_feature_contract.py`：legacy golden、未知字段降级、身份/能力伪造、AST边界、直接grant/API在标签与状态访问前拒绝 | 不承诺旧二进制能识别新schema；DSL独立确认仍禁止 |
+| T07–T14，X05/X20 | `test_focused_feature_program.py`、`test_focused_feature_execution.py`：独立算例、未来扰动、溢出、raw/W64共同样本、实际矩阵和Manifest；C6历史产物复算 | 因果计算不证明Yahoo point-in-time；旧冻结字节仍缺 |
+| T15–T17/T25，X03/X04/X06/X07/X08/X13/X14/X18 | `test_focused_feature_campaign.py`、`test_focused_feature_recovery.py`、execution/contract：整单元拒绝、冻结模型、消融、短/无效/重复槽、review、真实worker/进程硬中断与可靠record | 本地模拟HTTP不是实际模型语义；新模式浏览器review仍复用原审核界面证据与新Controller集成，未新增真实LLM review网页试验 |
+| T18/T19/T24，X11/X12/X19 | 受影响原曝光/恢复/权限回归；`test_focused_feature_memory.py`、recipe/export/bundle及`test_focused_b3_literature.py` | 真实文献误引/说明与公式矛盾仍需人工/获准Provider；旧47目标负确认只保留历史 |
+| T21–T23/T26–T28，X03/X11/X12/X19/X20 | `test_focused_feature_bundle.py`、export、`test_workspace_ui_features.py`、`browser/test_agent_workspace.py`；C6独立package/hash/fresh Python审计 | Windows symlink本机权限不足；同SHA Linux必须另核对；ModelBundle不迁移跨机信任 |
+| T29/T30，X16/X17/X18 | `test_focused_feature_benchmark.py`及原`test_focused_r5_benchmark.py`：共享合同/目标/预算、原失败报告；C6三臂规则工程例 | 新DSL真实Live三臂尚NOT_RUN，不证明LLM自适应价值；有界Random采样不是均匀抽取所有AST |
+| T31–T34，X21 | 本日志、原验收JSON追加关联、当前状态及前端真人操作清单 | 真实配方人工审核、人时/真实使用/再次使用缺口保留；费用未知null；最终提交同SHA不能借父CI |
 
 ### 历史：仅文档整理时的收据
 
