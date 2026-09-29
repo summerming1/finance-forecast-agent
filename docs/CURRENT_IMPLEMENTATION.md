@@ -10,6 +10,8 @@ C2实现价格-only AST纯计算、严格XNYS原始历史验证和固定W64研�
 
 C3已在原Controller/RuntimeDB中接入price_features模式、原始历史/目标行绑定、固定模型的程序动作、整批预检、最多4提案槽和独立规划次数、确定性/Random策略、真实worker/续接及Memory协议/as-of筛选。模型实际训练与Manifest记录AST及列顺序。首次集成104通过、相关旧回归107通过；随后Snapshot别名和恢复fixture校验补修后98项边界通过，收据及各源码阶段见V23日志。本批同SHA累计CI待核对。raw ModelBundle仍明确拒绝新程序，新UI尚未开放；没有新付费Provider或真实确认/真人验收。
 
+2a21890同SHA Linux3.11/3.13核心与旧Chromium已通过。新工作区CI复现测试同步竞态：结果落库先于Queue退出；仅补测试等待Queue及组件状态，本地真实Chromium1通过/90.55s，生产执行代码未改。修订测试同SHA CI另核对，不能把原失败覆盖成通过。冻结输入仍BLOCKED_ASSET。
+
 当前网页仍是下述B5及Agent工作区；V2.3新模式已有隔离工程API/worker验证，完整用户闭环未交付。整体验收未完成，原A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
 
 ## Agent 风格前端接入（2026-09-28）

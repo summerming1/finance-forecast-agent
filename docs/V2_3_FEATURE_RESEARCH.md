@@ -397,6 +397,12 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 - 测试均simulation_only/assistant_authored_fixture；本地模拟HTTP走真实客户端但不是真实模型能力。Memory兼容加协议/能力/编译器、严格候选程序及冻结as-of；未知旧时间不补造、未来/错tenant/确认记录不进上下文。原引用权限继续保留，reviewed_recipe通过同一EvidenceIndex投影；真实文献语义、付费Provider、真人均未验证。C4新包与C5新页面仍未完成，refit继续显式阻断新程序，不包装成全产品通过。
 - 关联原A04/A05/A06/A08/A11–A15/A18/A23及L09/L18/L23的受影响工程回归；V23-T13–T19/T23–T27相关C3部分，完整页面、导出和Live部分保留待验。原48条历史状态与47目标负确认未改。
 
+### C3追加：Chromium收尾同步
+
+- 2a21890968f1d99aefeb4499f56703b51d3cb31b同SHA核心36559651550 Python3.11/3.13成功；旧Chromium36559651608成功。工作区36559651571的适配/浏览器步骤失败，受影响回归及静态成功；下载原HEAD、JUnit、截图和日志于`D:/b05runs/v23-base-caa545c9/c3-ci-workspace`。失败为Campaign final已完成但Queue尚在running收尾的瞬时断言，不是模型训练异常。原冻结输入36559651492仍失败于Download frozen audited SPY inputs，BLOCKED_ASSET。
+- 仅修改浏览器测试同步：已有`_wait_task`等Queue完成，再等组件消费Queue最终状态；不放宽完成状态、候选数、20 fits、包hash或续接断言。生产源码未变。
+- 本地命令`python -m pytest -q tests/browser/test_agent_workspace.py --basetemp D:/b05runs/v23-base-caa545c9/c3-browser-fix-temp --junitxml D:/b05runs/v23-base-caa545c9/c3-browser-fix.xml --tb=short`，FFA_BROWSER_E2E=1、线程1：**1 passed/90.55s/exit0**。真实Windows Chromium/Queue/worker、simulation_only数据、HTTP=0；Ruff及diff检查exit0。修订测试的同SHA远端结果仍另核对。
+
 ### 历史：仅文档整理时的收据
 
 - 2026-09-29：合并原方案与两轮审核；选择价格-only、无自动生成式修正、DSL确认禁用，明确旧格式兼容、前置/响应后失败、规划与实际调用计数、部分完成及分轴交付。

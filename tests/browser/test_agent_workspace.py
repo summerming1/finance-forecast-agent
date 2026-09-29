@@ -27,9 +27,10 @@ def test_agent_workspace_real_backend(tmp_path):
     repo = Path(__file__).resolve().parents[2]
     sys.path.insert(0, str(repo / "tests"))
     from test_focused_pr6_byo import _contract, _research_frame
+    from test_focused_r6_workspace import _wait_task
 
     from finance_forecast_agent.focused_state import RuntimeDB, process_birth, terminate_owned_tree
-    from finance_forecast_agent.research_mission import workspace_campaign
+    from finance_forecast_agent.research_mission import workspace_campaign, workspace_queue
 
     out = Path(os.getenv("FFA_UI_BROWSER_ARTIFACTS", str(tmp_path / "browser"))).resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -140,6 +141,15 @@ def test_agent_workspace_real_backend(tmp_path):
                 pid, cid = current_ids()
                 if previous_campaign is not None:
                     assert cid != previous_campaign
+                actual = workspace_campaign(state, pid, cid)
+                # A durable Campaign final precedes the worker exit and queue
+                # acknowledgement. Observe both authorities, not that race.
+                task = _wait_task(workspace_queue(state), actual["task"]["task_id"], timeout=30)
+                assert task.status == "completed"
+                # Also wait for the component to consume the final queue state;
+                # the refit/export actions below must use that fresh snapshot.
+                expect(frame.locator('[data-action="cancel"]')).to_have_count(0, timeout=30000)
+                idle()
                 actual = workspace_campaign(state, pid, cid)
                 assert actual["task"]["status"] == "completed"
                 return pid, cid, actual
