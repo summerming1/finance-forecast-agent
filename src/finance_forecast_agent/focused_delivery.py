@@ -84,6 +84,7 @@ def focused_protocol_fingerprint(
     split_spec: FocusedSplitSpec | dict[str, Any],
     evaluation_policy: EvaluationPolicy | dict[str, Any],
     feature_specs: list[dict] | None = None,
+    feature_protocol: dict | None = None,
 ) -> str:
     split_payload = split_spec.to_dict() if isinstance(split_spec, FocusedSplitSpec) else dict(split_spec)
     evaluation_payload = (
@@ -93,6 +94,14 @@ def focused_protocol_fingerprint(
     if feature_specs:
         reviewed_feature_registry(feature_specs)
         payload["reviewed_numeric_features"] = feature_specs
+    if feature_protocol is not None:
+        from .focused_feature_program import FEATURE_PROTOCOL, feature_capability
+        cap = feature_capability()
+        if (feature_specs or feature_protocol.get("protocol_id") != FEATURE_PROTOCOL
+                or feature_protocol.get("capability_hash") != cap["capability_hash"]):
+            raise ValueError("incompatible price feature Memory protocol")
+        return identity({**payload, "feature_protocol": feature_protocol, "capability": cap},
+                        domain="price-feature-memory-protocol-v1")
     return _hash(payload)
 
 
@@ -129,16 +138,36 @@ def load_focused_memory_evidence(
     evaluation_policy: EvaluationPolicy,
     exclude_campaign_id: str | None = None,
     feature_specs: list[dict] | None = None,
+    feature_protocol: dict | None = None,
+    as_of: str | None = None,
 ) -> list[dict[str, Any]]:
     records = focused_compatible_records(
         store,
         tenant_id=tenant_id,
         task_fingerprint=focused_task_fingerprint(task),
-        protocol_fingerprint=focused_protocol_fingerprint(split_spec, evaluation_policy, feature_specs),
+        protocol_fingerprint=focused_protocol_fingerprint(split_spec, evaluation_policy, feature_specs, feature_protocol),
         dataset_fingerprint=dataset_fingerprint,
     )
     if exclude_campaign_id:
         records = [row for row in records if not row.run_id.startswith(f"{exclude_campaign_id}:")]
+    if feature_protocol is not None:
+        if not as_of:
+            raise ValueError("feature Memory requires a frozen as-of time")
+        cutoff = datetime.fromisoformat(as_of)
+        if cutoff.tzinfo is None:
+            raise ValueError("feature Memory as-of must have an explicit timezone")
+        eligible = []
+        for row in records:
+            try:
+                observed = datetime.fromisoformat(row.created_at)
+            except (TypeError, ValueError):
+                continue  # Unknown historical times stay unknown, never backfilled.
+            if observed.tzinfo is None or observed > cutoff:
+                continue
+            candidate = CandidateConfig.from_dict(row.candidate_config)
+            if candidate.feature_program is not None:
+                eligible.append(row)
+        records = eligible
     return focused_memory_evidence(records)
 
 
@@ -159,6 +188,7 @@ def write_focused_campaign_memory(
         dict(payload.get("split_spec") or campaign.get("split_spec") or {}),
         dict(payload.get("evaluation_policy") or campaign.get("evaluation_policy") or {}),
         (campaign.get("research_options") or {}).get("feature_specs"),
+        dataset.get("feature_protocol"),
     )
     evaluation_fp = _hash(dict(payload.get("evaluation_policy") or campaign.get("evaluation_policy") or {}))
     dataset_fp = str(dataset.get("semantic_fingerprint") or "")

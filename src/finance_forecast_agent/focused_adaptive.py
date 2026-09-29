@@ -38,7 +38,7 @@ class EvidenceIndex:
         self._hidden: set[str] = set()
         allowed = {"evidence_id", "evidence_type", "summary", "visible", "source_ref", "applicability",
                    "role", "revision", "candidate_id", "config", "config_diff", "conditions", "limitations",
-                   "paper_fact", "literature_binding"}
+                   "paper_fact", "literature_binding", "reviewed_recipe", "recipe_capabilities"}
         seen: dict[str, str] = {}
         for original in rows:
             key = original.get("evidence_id")

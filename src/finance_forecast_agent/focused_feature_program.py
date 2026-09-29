@@ -6,6 +6,7 @@ grant new operators, data inputs, resource limits or confirmation permission.
 from __future__ import annotations
 
 import json
+import random
 import re
 from dataclasses import dataclass
 from typing import Any
@@ -211,6 +212,44 @@ def empty_feature_program() -> FeatureProgram:
     cap = feature_capability()
     return FeatureProgram.from_dict({"schema_version": PROGRAM_SCHEMA,
         "capability_id": cap["capability_id"], "capability_hash": cap["capability_hash"], "features": []})
+
+
+def sample_price_programs(seed: int, count: int, *, max_draws: int = 128) -> tuple[list[dict], dict]:
+    """Versioned full-grammar sampler; duplicate proposals are NOT redrawn.
+
+    Uniform feature count 0..2, uniform operators including terminal until depth
+    four (then terminal), uniform approved integer parameters. Invalid lookbacks
+    are bounded rejection draws, not fits. Output names are stable display IDs.
+    """
+    if (isinstance(seed, bool) or not isinstance(seed, int) or not 0 <= seed <= 2**32 - 1
+            or isinstance(count, bool) or not isinstance(count, int) or not 1 <= count <= 4
+            or isinstance(max_draws, bool) or not isinstance(max_draws, int) or not 1 <= max_draws <= 128):
+        raise ValueError("invalid bounded price sampler settings")
+    rng, cap = random.Random(seed), feature_capability()
+    def expression(depth):
+        op = "input" if depth == cap["max_depth"] else rng.choice(["input", *cap["operators"]])
+        if op == "input":
+            return {"op": "input", "name": "return_1"}
+        if op in {"add", "subtract", "multiply", "safe_divide"}:
+            return {"op": op, "left": expression(depth + 1), "right": expression(depth + 1)}
+        value = {"op": op, "arg": expression(depth + 1)}
+        if op == "lag":
+            value["periods"] = rng.choice(cap["lags"])
+        elif op != "abs":
+            value["window"] = rng.choice(cap["windows"])
+        return value
+    programs, draws, invalid = [], 0, 0
+    while len(programs) < count and draws < max_draws:
+        draws += 1
+        value = empty_feature_program().to_dict()
+        value["features"] = [{"name": f"gen_feature_{i+1}", "expression": expression(1)}
+                             for i in range(rng.randrange(cap["max_features"] + 1))]
+        try:
+            programs.append(FeatureProgram.from_dict(value).to_dict())
+        except ValueError:
+            invalid += 1
+    return programs, {"sampler_version": "price_ast_uniform_depth_v1", "draws": draws,
+                      "invalid_grammar_draws": invalid, "duplicate_redraws": 0, "max_draws": max_draws}
 
 
 @dataclass(frozen=True)

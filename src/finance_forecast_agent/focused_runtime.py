@@ -159,7 +159,59 @@ class CampaignRuntime:
             'attempt_count': len(rows),
             'accounting_policy': 'reserved fits remain charged on failure/interruption; actual consumption may be incomplete',
             'inflight_or_unknown_fits': sum(max(0, row['started_fits'] - row['completed_fits']) for row in rows),
+            **({'feature_planning': self.feature_planning_usage(db)} if self.contract.get('feature_policy') else {}),
         }
+
+    def feature_planning_usage(self, db=None) -> dict:
+        if db is None:
+            with self.db.transaction() as conn:
+                return self.feature_planning_usage(conn)
+        decisions = [json.loads(row[0]) for row in db.execute(
+            "SELECT payload FROM objects WHERE ns=? AND key LIKE 'feature_decision:%'", (self.ns,)).fetchall()]
+        settlements = {row['round_index']: row for row in [json.loads(r[0]) for r in db.execute(
+            "SELECT payload FROM objects WHERE ns=? AND key LIKE 'feature_settlement:%'", (self.ns,)).fetchall()]}
+        return {'logical_decisions': len(decisions), 'reserved_proposal_slots': sum(r['allocated_slots'] for r in decisions),
+            'charged_proposal_slots': sum(settlements.get(r['round_index'], {}).get('charged_slots', r['allocated_slots']) for r in decisions),
+            'unused_settled_slots': sum(r['unused_slots'] for r in settlements.values()),
+            'invalid_decisions': sum(r['status'] == 'proposal_invalid' for r in settlements.values())}
+
+    def reserve_feature_decision(self, round_index: int, prompt: dict) -> dict:
+        policy = self.contract.get('feature_policy')
+        if policy is None or not 1 <= round_index <= policy['max_decisions']:
+            raise ValueError('feature decision outside frozen policy')
+        record = {'round_index': round_index, 'prompt_hash': identity(prompt, domain='feature-decision-prompt-v1'),
+                  'allocated_slots': policy['slots_per_decision'], 'policy': policy}
+        with self.db.transaction() as db:
+            self.guard(db)
+            key = f'feature_decision:{round_index}'
+            old = self.db.read(db, self.ns, key)
+            if old is not None:
+                if old != record:
+                    raise ValueError('feature decision prompt or allocation mismatch')
+                return old
+            usage = self.feature_planning_usage(db)
+            if (usage['logical_decisions'] >= policy['max_decisions']
+                    or usage['charged_proposal_slots'] + record['allocated_slots'] > policy['max_proposal_slots']):
+                raise BudgetExhausted('feature planning budget exhausted')
+            self.db.write(db, self.ns, key, record, immutable=True)
+            self.db.event(db, self.ns, 'feature.decision_reserved', **record)
+        return record
+
+    def settle_feature_decision(self, round_index: int, *, count: int, invalid: bool = False) -> None:
+        with self.db.transaction() as db:
+            self.guard(db)
+            decision = self.db.read(db, self.ns, f'feature_decision:{round_index}')
+            if decision is None or isinstance(count, bool) or not isinstance(count, int) or not 0 <= count <= decision['allocated_slots']:
+                raise ValueError('invalid feature decision settlement')
+            charged = decision['allocated_slots'] if invalid else count
+            record = {'round_index': round_index, 'charged_slots': charged,
+                      'unused_slots': decision['allocated_slots'] - charged,
+                      'status': 'proposal_invalid' if invalid else 'validated'}
+            key = f'feature_settlement:{round_index}'
+            old = self.db.read(db, self.ns, key)
+            self.db.write(db, self.ns, key, record, immutable=True)
+            if old is None:
+                self.db.event(db, self.ns, 'feature.decision_settled', **record)
 
     def provider_usage(self, db=None) -> dict:
         if db is None:

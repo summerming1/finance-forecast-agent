@@ -60,9 +60,13 @@ class ExecutionManifest:
     code_revision: str
     execution_conformant: bool
     schema_version: str = "focused_execution_manifest_v1"
+    feature_execution: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        payload = asdict(self)
+        if self.feature_execution is None:
+            payload.pop("feature_execution")
+        return payload
 
 
 @dataclass(frozen=True)
@@ -140,6 +144,7 @@ def prediction_row(
         "train_count": int(train_count),
         "y_true": float(y_true),
         "y_pred": float(y_pred),
+        **({"raw_row_id": int(source["raw_row_id"])} if "raw_row_id" in frame.columns else {}),
     }
 
 
@@ -187,6 +192,18 @@ def build_execution_manifest(
             }
         )
     conformant = _params_conform(candidate.model_params, result.estimator_params, role) and list(result.actual_features) == list(expected_feature_columns)
+    feature_execution = getattr(result, "feature_execution", None)
+    if getattr(candidate, "feature_program", None) is not None:
+        from .focused_feature_program import feature_capability
+        cap = feature_capability()
+        conformant = conformant and bool(feature_execution) and (
+            feature_execution.get("program") == candidate.feature_program.to_dict()
+            and feature_execution.get("capability_hash") == cap["capability_hash"]
+            and feature_execution.get("compiler_version") == cap["compiler_version"]
+            and feature_execution.get("protocol") == dataset.feature_protocol
+            and feature_execution.get("actual_columns") == list(result.actual_features))
+    elif feature_execution is not None:
+        conformant = False
     return ExecutionManifest(
         campaign_id=campaign_id,
         candidate_id=candidate.candidate_id,
@@ -206,6 +223,8 @@ def build_execution_manifest(
         fold_row_contracts=fold_contracts,
         code_revision=os.environ.get("GITHUB_SHA") or os.environ.get("FINANCE_FORECAST_CODE_REVISION") or "unknown_local",
         execution_conformant=conformant,
+        feature_execution=feature_execution,
+        schema_version="focused_execution_manifest_v2" if feature_execution is not None else "focused_execution_manifest_v1",
     )
 
 
@@ -246,6 +265,9 @@ def candidate_config_diff(parent: Any | None, child: Any) -> dict[str, Any]:
         "feature_groups": (parent.feature_groups, child.feature_groups),
         "seed": (parent.seed, child.seed),
     }
+    if getattr(parent, "feature_program", None) is not None or getattr(child, "feature_program", None) is not None:
+        fields["feature_program"] = (parent.feature_program.to_dict() if parent.feature_program else None,
+                                     child.feature_program.to_dict() if child.feature_program else None)
     for path, (old_value, new_value) in fields.items():
         if old_value != new_value:
             changes.append({"path": path, "old_value": old_value, "new_value": new_value})

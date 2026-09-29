@@ -19,7 +19,7 @@ from sklearn.linear_model import Ridge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from .focused_data import FocusedDatasetSnapshot, FocusedTaskSpec
+from .focused_data import FocusedDatasetSnapshot, FocusedTaskSpec, validate_feature_research_binding
 from .focused_evidence import (
     build_execution_manifest,
     build_exposure_record,
@@ -30,7 +30,14 @@ from .focused_evidence import (
     prediction_metrics,
     prediction_row,
 )
-from .focused_feature_program import CANDIDATE_SCHEMA, PRICE_GROUPS, FeatureProgram, feature_capability
+from .focused_feature_program import (
+    CANDIDATE_SCHEMA,
+    PRICE_GROUPS,
+    FeatureProgram,
+    compute_price_features,
+    empty_feature_program,
+    feature_capability,
+)
 from .focused_identity import data_identity, file_sha256, identity
 from .focused_protocol import (
     FEATURE_GROUPS,
@@ -209,6 +216,7 @@ class CandidateResult:
     research_verdict: str
     relative_mae_vs_best_baseline: float
     prediction_rows: list[dict[str, Any]] = field(default_factory=list)
+    feature_execution: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -223,6 +231,7 @@ class CandidateResult:
             "development_evidence_level": self.research_verdict,
             "relative_mae_vs_best_baseline": self.relative_mae_vs_best_baseline,
             "prediction_row_count": len(self.prediction_rows),
+            **({"feature_execution": self.feature_execution} if self.feature_execution is not None else {}),
         }
 
 
@@ -325,6 +334,37 @@ def make_development_splits(
     ).build_splits(n_rows)
 
 
+def _candidate_matrix(frame, candidate, *, feature_registry=None, task=None, dataset=None, raw_history=None):
+    if candidate.feature_program is None:
+        if raw_history is not None or (dataset is not None and dataset.feature_protocol is not None):
+            raise ValueError("feature research protocol cannot execute a legacy feature configuration")
+        features = resolve_feature_columns(candidate.feature_groups, feature_registry)
+        missing = [column for column in [*features, "label"] if column not in frame.columns]
+        if missing:
+            raise ValueError("focused frame missing columns: " + ", ".join(missing))
+        return frame[features].astype(float).to_numpy(), features, None
+    if (task is None or dataset is None or raw_history is None or (feature_registry is not None
+            and (not set(candidate.feature_groups) <= set(feature_registry)
+                 or any(g not in PRICE_GROUPS or columns != FEATURE_GROUPS[g] for g, columns in feature_registry.items())))):
+        raise ValueError("feature program execution requires the feature research data protocol and raw binding")
+    history = validate_feature_research_binding(frame, dataset, task, raw_history)
+    matrix = compute_price_features(history["spy_adj_close"].to_numpy(), candidate.feature_program, candidate.feature_groups)
+    values = matrix.values[frame["raw_row_id"].to_numpy(dtype=np.int64)]
+    if not np.isfinite(values).all():
+        raise ValueError("feature research matrix is not finite on the common rows")
+    cap = feature_capability()
+    metadata = {"schema_version": "price_feature_execution_v1", "program": candidate.feature_program.to_dict(),
+        "capability_hash": cap["capability_hash"], "compiler_version": cap["compiler_version"],
+        "builtin_recipe_version": cap["builtin_recipe_version"], "raw_history_fingerprint": dataset.feature_protocol["raw_history_fingerprint"],
+        "row_mapping_hash": dataset.feature_protocol["row_mapping_hash"], "data_revision": dataset.raw_sha256,
+        "lookback": matrix.lookback, "actual_columns": list(matrix.columns),
+        "protected_divisions": matrix.protected_divisions,
+        "protected_division_scope": "all_computable_raw_rows_including_pre_common_warmup",
+        "estimated_compute_bytes": matrix.estimated_compute_bytes,
+        "protocol": json.loads(json.dumps(dataset.feature_protocol))}
+    return values, list(matrix.columns), metadata
+
+
 def evaluate_candidate(
     frame: pd.DataFrame,
     candidate: CandidateConfig,
@@ -334,16 +374,14 @@ def evaluate_candidate(
     split_spec: FocusedSplitSpec | None = None,
     fit_observer=None,
     feature_registry: dict[str, list[str]] | None = None,
+    task: FocusedTaskSpec | None = None,
+    dataset: FocusedDatasetSnapshot | None = None,
+    raw_history: pd.DataFrame | None = None,
 ) -> CandidateResult:
-    if candidate.feature_program is not None:
-        raise ValueError("feature program execution requires the feature research data protocol")
-    features = resolve_feature_columns(candidate.feature_groups, feature_registry)
-    missing = [column for column in [*features, "label"] if column not in frame.columns]
-    if missing:
-        raise ValueError("focused frame missing columns: " + ", ".join(missing))
+    x, features, feature_execution = _candidate_matrix(frame, candidate, feature_registry=feature_registry,
+        task=task, dataset=dataset, raw_history=raw_history)
     active_split_spec = split_spec or FocusedSplitSpec()
     splits = active_split_spec.build_splits(len(frame))
-    x = frame[features].astype(float).to_numpy()
     y = frame["label"].astype(float).to_numpy()
     prediction_rows: list[dict[str, Any]] = []
     effective_params: dict[str, Any] = {}
@@ -389,6 +427,7 @@ def evaluate_candidate(
         research_verdict=verdict,
         relative_mae_vs_best_baseline=relative,
         prediction_rows=prediction_rows,
+        feature_execution=feature_execution,
     )
 
 
@@ -735,6 +774,28 @@ class FocusedResearchAdvisor:
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         self.last_record, self.last_fixture_path = None, None
         if self.mode == "deterministic":
+            if prompt.get("change_scope") == "price_features":
+                from .focused_feature_program import sample_price_programs
+                policy = prompt["feature_policy"]
+                count = int(prompt["max_hypotheses"])
+                if policy["arm"] == "random":
+                    programs, self.last_telemetry = sample_price_programs(
+                        (policy["search_seed"] + prompt["round_index"] - 1) % 2**32, count)
+                    source = "random_price_ast_policy"
+                else:
+                    programs = []
+                    choices = [("rolling_mean", 5), ("rolling_mean", 20), ("rolling_std", 5), ("rolling_std", 20)]
+                    offset = 0 if policy["arm"] == "one_shot" else (prompt["round_index"] - 1) * count
+                    for op, window in choices[offset:offset + count]:
+                        value = empty_feature_program().to_dict()
+                        value["features"] = [{"name": "gen_feature_1", "expression": {
+                            "op": op, "window": window, "arg": {"op": "input", "name": "return_1"}}}]
+                        programs.append(value)
+                    self.last_telemetry = {"policy": "engineering_price_examples_v1"}
+                    source = "deterministic_price_feature_policy"
+                return {"hypotheses": [{"statement": "Bounded price feature engineering hypothesis, not literature or financial proof",
+                    "feature_program": value, "parent_candidate_id": prompt["research_start_candidate_id"],
+                    "evidence_refs": [prompt["research_start_candidate_id"]]} for value in programs]}, source
             if prompt.get("change_scope") == "features_only":
                 anchor = prompt["fixed_model"]
                 prior = [*prompt["baseline_results"], *prompt["prior_research_results"]]
@@ -863,6 +924,9 @@ def compile_hypotheses(
         "model_family", "model_params", "feature_groups", "seed", "expected_effect", "expected_observation",
         "counter_evidence_test", "evidence_refs", "based_on_feedback_ids", "ablation_component",
         "simplification_dimension", "diagnostic", "literature_uses"}
+    feature_mode = fixed_model is not None and fixed_model.feature_program is not None
+    if feature_mode:
+        allowed.add("feature_program")
     actions = {"improve", "ablate", "simplify", "diagnose", "stop", "request_review"}
     index = EvidenceIndex(visible_evidence or [])
     candidates = candidate_lookup or {}
@@ -889,7 +953,7 @@ def compile_hypotheses(
         literature_uses = validate_literature_uses(row, index.rows)
         training = action in {"improve", "ablate", "simplify"}
         # Validate unsupported models before resolving parent IDs for useful errors.
-        if training and action != "ablate" and row.get("model_family") not in ALLOWED_MODELS:
+        if training and action != "ablate" and (not feature_mode or "model_family" in row) and row.get("model_family") not in ALLOWED_MODELS:
             raise ValueError(f"advisor proposed unsupported model: {row.get('model_family')}")
         parent_id = row.get("parent_candidate_id") or (fixed_model.candidate_id if fixed_model is not None and training else "baseline_ridge" if training else None)
         control_id = row.get("control_candidate_id") or (parent_id if action in {"ablate", "simplify", "diagnose"} else None)
@@ -900,7 +964,7 @@ def compile_hypotheses(
         cid = f"r{round_index}_c{ordinal+1}_{_hash(row, 8)}"
         candidate = None
         if not training:
-            forbidden = {"model_family", "model_params", "feature_groups", "seed", "ablation_component", "simplification_dimension"}
+            forbidden = {"model_family", "model_params", "feature_groups", "seed", "ablation_component", "simplification_dimension", "feature_program"}
             if forbidden & set(row):
                 raise ValueError("control/diagnosis decisions cannot specify model configuration")
             if action == "diagnose":
@@ -908,6 +972,38 @@ def compile_hypotheses(
                     raise ValueError("diagnosis requires a completed control candidate")
                 if row.get("diagnostic", "residual_summary") not in {"residual_summary", "fold_summary"}:
                     raise ValueError("unsupported deterministic diagnostic")
+        elif feature_mode:
+            parent = candidates.get(parent_id)
+            if parent is None or parent.feature_program is None:
+                raise ValueError("feature proposal requires an accepted feature-protocol parent")
+            for key in ("model_family", "model_params", "feature_groups", "seed"):
+                if key in row and row[key] != getattr(parent, key):
+                    raise ValueError("feature proposal changes the frozen model or builtin configuration")
+            if action == "ablate":
+                component = row.get("ablation_component")
+                if parent_id != control_id or not isinstance(component, str) or not component.startswith("generated_feature:"):
+                    raise ValueError("feature ablation requires a matching parent/control and generated_feature:<name>")
+                value = parent.feature_program.to_dict()
+                name = component.split(":", 1)[1]
+                if name not in {f["name"] for f in value["features"]}:
+                    raise ValueError("ablation component is not an actual parent feature")
+                value["features"] = [f for f in value["features"] if f["name"] != name]
+                program = FeatureProgram.from_dict(value)
+                if "feature_program" in row and FeatureProgram.from_dict(row["feature_program"]) != program:
+                    raise ValueError("ablation contains a joint/contradictory program change")
+            else:
+                if "feature_program" not in row:
+                    raise ValueError("feature training requires an explicit full feature program")
+                program = FeatureProgram.from_dict(row["feature_program"])
+                if action == "simplify":
+                    dimension = row.get("simplification_dimension")
+                    old, new = parent.feature_program.complexity, program.complexity
+                    if (parent_id != control_id or dimension not in {"feature_count", "nodes", "depth"}
+                            or new[dimension] >= old[dimension]
+                            or any(new[key] > old[key] for key in ("feature_count", "nodes", "depth", "lookback"))):
+                        raise ValueError("feature simplification does not reduce declared complexity")
+            candidate = replace(parent, candidate_id=cid, parent_candidate_id=parent_id, hypothesis_id=hid,
+                                feature_program=program)
         elif action == "ablate":
             if parent_id != control_id or control_id not in candidates:
                 raise ValueError("ablation requires an actual matching parent/control")
@@ -974,6 +1070,9 @@ def validate_fixed_model(candidate: CandidateConfig, anchor: CandidateConfig,
     for value in (candidate, parent):
         if value is None or (value.model_family, effective_model_params(value.model_family, value.model_params), value.seed) != expected:
             raise ValueError("features_only requires the fixed model, parameters, seed and compatible parent")
+        if anchor.feature_program is not None and (value.feature_program is None
+                or value.feature_groups != anchor.feature_groups):
+            raise ValueError("price feature research requires the frozen builtin groups and feature-protocol parent")
 
 
 class FocusedResearchController:
@@ -1010,6 +1109,8 @@ class FocusedResearchController:
         literature_review_ids: list[str] | None = None,
         context_mode: str = "full_v1",
         continuation_from: dict[str, Any] | None = None,
+        raw_history: pd.DataFrame | None = None,
+        feature_strategy: dict[str, Any] | None = None,
     ):
         self.project_dir = Path(project_dir).resolve()
         self.state_path = Path(state_path or os.getenv("FFA_STATE_DB") or self.project_dir / "runtime.sqlite3")
@@ -1019,8 +1120,30 @@ class FocusedResearchController:
         self.task = task
         self.dataset = dataset
         self.frame = frame
+        self.feature_mode = change_scope == "price_features"
+        self.raw_history = None
+        self.feature_strategy = None
+        if self.feature_mode:
+            if feature_specs or benchmark_strategy is not None:
+                raise ValueError("price feature mode does not use external columns or the legacy finite catalog")
+            self.raw_history = validate_feature_research_binding(frame, dataset, task, raw_history)
+            self.frame = frame.copy(deep=True)
+            self.dataset = FocusedDatasetSnapshot(**dataset.to_dict())
+            strategy = feature_strategy or {"arm": "adaptive_batch", "search_seed": 42}
+            if (not isinstance(strategy, dict) or set(strategy) != {"arm", "search_seed"}
+                    or strategy["arm"] not in {"one_shot", "adaptive_batch", "random"}
+                    or isinstance(strategy["search_seed"], bool) or not isinstance(strategy["search_seed"], int)
+                    or not 0 <= strategy["search_seed"] <= 2**32 - 1):
+                raise ValueError("invalid bounded price feature strategy")
+            if strategy["arm"] == "random" and advisor_mode != "deterministic":
+                raise ValueError("Random price feature research has no provider mode")
+            self.feature_strategy = json.loads(json.dumps(strategy))
+        elif raw_history is not None or feature_strategy is not None or dataset.feature_protocol is not None:
+            raise ValueError("feature protocol and raw history require explicit price_features mode")
         self.feature_specs = json.loads(json.dumps(feature_specs or []))
         self.feature_registry = reviewed_feature_registry(self.feature_specs)
+        if self.feature_mode:
+            self.feature_registry = {g: self.feature_registry[g] for g in PRICE_GROUPS}
         allowed_groups = sorted(set(allowed_feature_groups or self.feature_registry))
         if "base_lags" not in allowed_groups or not set(allowed_groups) <= set(self.feature_registry):
             raise ValueError("research feature scope must include base_lags and only reviewed groups")
@@ -1031,8 +1154,12 @@ class FocusedResearchController:
         self.research_notes = research_notes
         self.starting_baseline = json.loads(json.dumps(starting_baseline or {}))
         if self.starting_baseline:
-            if set(self.starting_baseline) != {"model_family", "model_params", "feature_groups"}:
+            required_start = {"model_family", "model_params", "feature_groups"}
+            allowed_start = required_start | ({"schema_version", "feature_program"} if self.feature_mode else set())
+            if not required_start <= set(self.starting_baseline) or set(self.starting_baseline) - allowed_start:
                 raise ValueError("starting baseline must be a platform model configuration")
+            if self.feature_mode and bool("schema_version" in self.starting_baseline) != bool("feature_program" in self.starting_baseline):
+                raise ValueError("starting feature program requires explicit schema")
             if self.starting_baseline["model_family"] not in ALLOWED_MODELS:
                 raise ValueError("unsupported starting baseline model")
             validate_model_params(self.starting_baseline["model_family"], self.starting_baseline["model_params"])
@@ -1046,7 +1173,7 @@ class FocusedResearchController:
             raise ValueError("goal entry cannot silently carry a provided starting model")
         if self.entry_mode == "provided_start" and not self.starting_baseline:
             raise ValueError("provided_start entry requires an explicit supported model")
-        if change_scope not in {"explore", "features_only"}:
+        if change_scope not in {"explore", "features_only", "price_features"}:
             raise ValueError("unsupported change_scope")
         self.change_scope = change_scope
         self._incumbent_result = self._incumbent_payload = None
@@ -1055,7 +1182,13 @@ class FocusedResearchController:
             raise ValueError("data lacks columns required by selected research feature groups")
         if not np.isfinite(frame[[*required, "label"]].to_numpy(dtype=float)).all():
             raise ValueError("research features and labels must be finite numeric values")
-        self.budget = budget or ResearchBudget()
+        self.budget = budget or (ResearchBudget(max_rounds=2, max_new_candidates_per_round=2, max_fit_calls=32)
+                                 if self.feature_mode else ResearchBudget())
+        if self.feature_mode:
+            max_decisions = 1 if self.feature_strategy["arm"] == "one_shot" else 2
+            if (self.budget.max_rounds > max_decisions or self.budget.max_new_candidates_per_round > 2
+                    or self.budget.max_fit_calls > 32):
+                raise ValueError("price feature mode exceeds frozen decision/execution/fit bounds")
         legacy_threshold = self.budget.min_relative_mae_improvement
         self.evaluation_policy = evaluation_policy or EvaluationPolicy(
             min_relative_mae_improvement=(
@@ -1065,6 +1198,8 @@ class FocusedResearchController:
             )
         )
         self.split_spec = split_spec or FocusedSplitSpec()
+        if self.feature_mode and self.split_spec != FocusedSplitSpec():
+            raise ValueError("price feature research requires the fixed development split")
         self.reviewed_evidence = list(reviewed_evidence or [])
         if any(r.get("evidence_type") == "paper_claim" for r in self.reviewed_evidence):
             raise ValueError("paper_claim requires registered MethodCard/source review IDs; raw JSON is not approval")
@@ -1098,7 +1233,7 @@ class FocusedResearchController:
         self.spec = CampaignSpec(
             campaign_id=campaign_id or f"spy-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}-{uuid.uuid4().hex[:6]}",
             task=task,
-            dataset=dataset,
+            dataset=self.dataset,
             budget=self.budget,
             advisor_mode=advisor_mode,
             allowed_models=sorted(ALLOWED_MODELS),
@@ -1115,12 +1250,19 @@ class FocusedResearchController:
                               "literature_snapshot_hash": identity(self.literature_snapshot, domain="literature-snapshot-v1"),
                               "continuation_from": self.continuation_from, "context_mode": self.context_mode},
         )
+        if self.feature_mode:
+            self.spec.research_options["feature_strategy"] = self.feature_strategy
+            self.spec.research_options["feature_capability"] = feature_capability()
+            if self.budget.max_fit_calls < self.required_initial_fit_calls():
+                raise ValueError("fit budget is too small for frozen controls and starting model")
 
     def _project_literature(self, *, tenant_id=None, audience="local") -> list[dict]:
         from .focused_literature import project_literature
         capabilities = [*("feature:" + g for g in self.allowed_feature_groups),
                         *("model:" + m for m in ALLOWED_MODELS),
                         "diagnostic:residual_summary", "diagnostic:fold_summary"]
+        if self.feature_mode:
+            capabilities.append("feature_program:spy_price_features_v1")
         return project_literature(self.literature_project, self.literature_review_ids,
             task=self.task.to_dict(), capabilities=capabilities,
             tenant_id=tenant_id or self.tenant_id, audience=audience)
@@ -1135,12 +1277,119 @@ class FocusedResearchController:
 
     def _starting_candidate(self) -> CandidateConfig:
         values = self.starting_baseline or {"model_family":"ridge_regression", "model_params":{"alpha":1.0}, "feature_groups":["base_lags"]}
+        if self.feature_mode and "feature_program" not in values:
+            values = {**values, "schema_version": CANDIDATE_SCHEMA, "feature_program": empty_feature_program()}
         proposed = CandidateConfig("user_start", **values, seed=self.estimator_seed)
         for cid, family, params, groups in DEFAULT_BASELINES:
-            control = CandidateConfig(cid, family, params, groups, seed=self.estimator_seed)
+            control = self._baseline_candidate(cid, family, params, groups)
             if proposed.fingerprint == control.fingerprint:
                 return control
         return proposed
+
+    def _baseline_candidate(self, cid, family, params, groups):
+        kwargs = ({"schema_version": CANDIDATE_SCHEMA, "feature_program": empty_feature_program()}
+                  if self.feature_mode and not family.startswith("naive_") else {})
+        return CandidateConfig(cid, family, params, groups, seed=self.estimator_seed, **kwargs)
+
+    def _feature_matrix(self, candidate):
+        return _candidate_matrix(self.frame, candidate, feature_registry=self.feature_registry,
+            task=self.task, dataset=self.dataset, raw_history=self.raw_history)
+
+    def _feature_policy(self):
+        return {"schema_version": "price_feature_planning_v1", **self.feature_strategy,
+            "max_decisions": self.budget.max_rounds, "max_proposal_slots": 4,
+            "slots_per_decision": 4 if self.feature_strategy["arm"] == "one_shot" else self.budget.max_new_candidates_per_round,
+            "execution_unit_size": self.budget.max_new_candidates_per_round}
+
+    def _prepare_feature_prompt(self, prompt, results):
+        prompt["proposal_contract_version"] = "price_feature_advice_v1"
+        prompt["fixed_model"] = self.research_start.to_dict()
+        prompt["feature_capability"] = feature_capability()
+        prompt["feature_policy"] = self._feature_policy()
+        prompt["feature_planning_usage"] = self._runtime.feature_planning_usage()
+        prompt["max_hypotheses"] = self._feature_policy()["slots_per_decision"]
+        for section in ("baseline_results", "prior_research_results"):
+            for row in prompt[section]:
+                cfg = results[row["candidate_id"]].candidate
+                if cfg.feature_program is not None:
+                    row["schema_version"] = cfg.schema_version
+                    row["feature_program"] = cfg.feature_program.to_dict()
+        prompt["rules"] = [r for r in prompt["rules"] if not r.startswith((
+            "A simpler", "ablate declares", "simplify must", "Never supply metrics"))]
+        prompt["rules"] += [
+            "Freeze the estimator, effective parameters, seed, preprocessing and builtin feature groups. Only feature_program may change; omit model fields unless they exactly match the parent.",
+            "feature_program is DATA only. Supply the full program, including inherited generated features; at most two total. Never submit code, labels, constants, paths or external inputs.",
+            "Only the approved AST schema is accepted: input uses op/name=return_1; lag uses op/arg/periods; rolling_mean/rolling_std use op/arg/window; abs uses op/arg; binary operators use op/left/right.",
+            "Every parent/control/feedback ID must already be accepted and visible in this prompt. Planned same-batch candidates are not evidence.",
+            "ablate removes exactly one generated_feature:<actual name> from the actual parent; simplify strictly reduces feature_count|nodes|depth without increasing other complexity or lookback.",
+            "stop/request_review are sole decisions without feature_program or model fields; diagnose likewise has no feature_program. Do not invent metric, budget or evaluation changes.",
+            "The whole planning unit is validated before any candidate fit. Invalid or duplicate proposals consume slots; there is no repair generation or replacement quota.",
+            "One-shot makes one whole plan of at most four; Adaptive Batch at most two decisions of at most two, using actual previous feedback. Execution units are at most two; no replanning within a frozen plan."]
+        prompt["action_contracts"].update(
+            improve="statement, full feature_program; optional accepted compatible parent; fixed model fields may be omitted",
+            ablate="statement, matching accepted parent/control, ablation_component=generated_feature:<actual name>; derived program, no joint changes",
+            simplify="statement, full feature_program, matching accepted parent/control, simplification_dimension=feature_count|nodes|depth")
+        template = prompt["response_schema"]["hypotheses"][0]
+        for field_name in ("model_family", "model_params", "feature_groups", "seed"):
+            template.pop(field_name, None)
+        template["feature_program"] = empty_feature_program().to_dict()
+        template["ablation_component"] = "generated_feature:<actual parent output name>"
+        template["simplification_dimension"] = "feature_count|nodes|depth"
+        return prompt
+
+    def _preflight_feature_plan(self, compiled, seen, splits):
+        if self.literature_review_ids and self._project_literature() != self.literature_snapshot:
+            raise ValueError("literature permission or reviewed recipe changed before feature planning")
+        unseen = set()
+        for _, candidate in compiled:
+            if candidate is None:
+                continue
+            self._feature_matrix(candidate)  # Every item is computable before any fit.
+            if candidate.fingerprint not in seen:
+                unseen.add(candidate.fingerprint)
+        remaining = self.budget.max_fit_calls - self._runtime.resource_usage()["charged_fit_calls"]
+        if len(unseen) * len(splits) > remaining:
+            raise ValueError("whole feature plan exceeds remaining fit budget")
+
+    def _invalid_feature_plan(self, round_index, baseline_results, baseline_payloads, research_results, rounds, failed_attempts, exc):
+        self._runtime.settle_feature_decision(round_index, count=0, invalid=True)
+        payload = self._campaign_summary(baseline_results, baseline_payloads, research_results, rounds,
+                                         failed_attempts, "proposal_invalid")
+        payload.update(execution_status="partial", research_outcome="inconclusive", terminal_status="proposal_invalid",
+                       rejected_round=round_index, proposal_error=safe_error_facts(exc, phase="proposal_validation"))
+        self._runtime.complete(payload)
+        if self.use_memory_prior:
+            from .experiment_memory import ExperimentMemoryStore
+            from .focused_delivery import write_focused_campaign_memory
+            write_focused_campaign_memory(payload, ExperimentMemoryStore(self.memory_store_path),
+                tenant_id=self.tenant_id, campaign_dir=self._campaign_root)
+        self._append_event("campaign.proposal_invalid", round_index=round_index, candidate_fits=0)
+        return payload
+
+    def _verify_feature_record(self, round_index, frozen):
+        """A durable plan is not permission to discard its provider evidence.
+
+        Completed Campaign results remain readable as accepted DB facts; this
+        gate runs before resuming any unfinished provider-derived feature plan.
+        """
+        if not self.feature_mode or self.advisor.mode not in {"live", "replay"}:
+            return
+        trace = self._runtime.get(f"advice:{round_index}") or self._runtime.get(f"returned_advice:{round_index}")
+        if trace is None:
+            if frozen is not None:
+                raise ValueError("accepted feature plan is missing its recorded provider decision")
+            return
+        record = trace.get("call_record")
+        if not record or not self.advisor.fixture_dir:
+            raise ValueError("feature provider decision requires an immutable recorded call")
+        reader = ReplayLLM(self.advisor.fixture_dir, allow_legacy=False,
+            call_ids={ReplayLLM.prompt_hash(trace["prompt"]): record["call_id"]})
+        response = reader.complete_json(prompt_payload=trace["prompt"], schema_name="focused_research_advice")
+        if response != trace["advice"] or reader.last_record != record:
+            raise ValueError("feature decision recorded response or provider metadata mismatch")
+        if frozen is not None and (frozen["plan"]["prompt_hash"] != _hash(trace["prompt"])
+                or frozen["plan"].get("feature_decision") != self._runtime.get(f"feature_decision:{round_index}")):
+            raise ValueError("feature plan prompt/call/decision binding mismatch")
 
     def required_initial_fit_calls(self) -> int:
         count = len(DEFAULT_BASELINES) + int(self.research_start.candidate_id == "user_start")
@@ -1190,6 +1439,8 @@ class FocusedResearchController:
         root = self._campaign_root
         if role == "naive_baseline":
             expected_features: list[str] = []
+        elif self.feature_mode:
+            expected_features = self._feature_matrix(result.candidate)[1]
         else:
             expected_features = resolve_feature_columns(result.candidate.feature_groups, self.feature_registry)
         artifact = build_prediction_artifact(
@@ -1264,6 +1515,11 @@ class FocusedResearchController:
                 for hypothesis, candidate in compiled
             ],
         }
+        if self.feature_mode:
+            size = self.budget.max_new_candidates_per_round
+            plan["schema_version"] = "focused_batch_plan_v3"
+            plan["execution_units"] = [list(range(i, min(i + size, len(compiled)))) for i in range(0, len(compiled), size)]
+            plan["feature_decision"] = self._runtime.get(f"feature_decision:{round_index}")
         plan_hash = _hash(plan)
         plan["plan_hash"] = plan_hash
         rel = Path("batch_plans") / f"round_{round_index}.json"
@@ -1287,6 +1543,8 @@ class FocusedResearchController:
             provider = client.contract()
         return {
             "schema_version": "focused_execution_contract_v1", "project_root": str(self.project_dir), "task": self.task.to_dict(),
+            **({"feature_protocol": self.dataset.feature_protocol, "feature_policy": self._feature_policy(),
+                "feature_capability": feature_capability()} if self.feature_mode else {}),
             "dataset": actual, "dataset_semantic_identity": self.dataset.semantic_fingerprint,
             "raw_artifact_hash": self.dataset.raw_sha256,
             "provenance": {"exposure": self.dataset.exposure, "source": self.dataset.source_name},
@@ -1319,13 +1577,15 @@ class FocusedResearchController:
             prediction_count=len(artifact["rows"]), actual_features=saved["actual_features"],
             estimator_params=saved["estimator_params"], execution_status=saved["execution_status"],
             research_verdict=saved["research_verdict"], relative_mae_vs_best_baseline=saved["relative_mae_vs_best_baseline"],
-            prediction_rows=artifact["rows"])
+            prediction_rows=artifact["rows"], feature_execution=saved.get("feature_execution"))
 
     def _execute(self, candidate: CandidateConfig, *, role: str, splits, best_baseline=None,
                  parent_result=None, hypothesis=None):
         runtime = self._runtime
         assert runtime is not None
-        if role == "research_candidate" and self.change_scope == "features_only":
+        if self.feature_mode and self.literature_review_ids and self._project_literature() != self.literature_snapshot:
+            raise ValueError("literature permission or reviewed recipe changed before feature execution")
+        if role == "research_candidate" and self.change_scope in {"features_only", "price_features"}:
             validate_fixed_model(candidate, self.research_start, parent_result.candidate if parent_result else None)
         cached = runtime.accepted(candidate.candidate_id)
         if cached:
@@ -1349,6 +1609,14 @@ class FocusedResearchController:
         try:
             if role == "naive_baseline":
                 result = _evaluate_naive_baseline(self.frame, candidate, split_spec=self.split_spec)
+            elif self.feature_mode:
+                result = evaluate_candidate(self.frame, candidate,
+                    best_baseline_mae=best_baseline.metrics["mae"] if best_baseline else 0.,
+                    min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
+                    split_spec=self.split_spec, fit_observer=observe, feature_registry=self.feature_registry,
+                    task=self.task, dataset=self.dataset, raw_history=self.raw_history)
+                if role == "model_baseline":
+                    result = replace(result, research_verdict="baseline", relative_mae_vs_best_baseline=0.)
             elif role == "model_baseline":
                 result = _evaluate_model_baseline(self.frame, candidate, split_spec=self.split_spec, fit_observer=observe, feature_registry=self.feature_registry)
             else:
@@ -1427,11 +1695,13 @@ class FocusedResearchController:
                 from .focused_delivery import load_focused_memory_evidence
                 memory_evidence = load_focused_memory_evidence(ExperimentMemoryStore(self.memory_store_path),
                     tenant_id=self.tenant_id, task=self.task, dataset_fingerprint=self.dataset.semantic_fingerprint,
-                    split_spec=self.split_spec, evaluation_policy=self.evaluation_policy, exclude_campaign_id=self.spec.campaign_id, feature_specs=self.feature_specs)
+                    split_spec=self.split_spec, evaluation_policy=self.evaluation_policy, exclude_campaign_id=self.spec.campaign_id, feature_specs=self.feature_specs,
+                    feature_protocol=self.dataset.feature_protocol if self.feature_mode else None,
+                    as_of=runtime.get("spec")["created_at"] if self.feature_mode else None)
             runtime.put("memory_snapshot", memory_evidence, immutable=True)
         baseline_results, baseline_payloads = [], []
         for candidate_id, family, params, groups in [*NAIVE_BASELINES, *DEFAULT_BASELINES]:
-            candidate = CandidateConfig(candidate_id, family, params, groups, seed=self.estimator_seed)
+            candidate = self._baseline_candidate(candidate_id, family, params, groups)
             role = "naive_baseline" if family.startswith("naive_") else "model_baseline"
             result, saved = self._execute(candidate, role=role, splits=splits)
             if result is None:
@@ -1456,6 +1726,7 @@ class FocusedResearchController:
         stop_reason, failed_attempts = "max_rounds_reached", 0
         for round_index in range(1, self.budget.max_rounds + 1):
             frozen = runtime.get(f"plan:{round_index}")
+            self._verify_feature_record(round_index, frozen)
             if frozen is None:
                 recorded = runtime.get(f"advice:{round_index}")
                 if runtime.get(f"recording_failure:{round_index}"):
@@ -1510,6 +1781,8 @@ class FocusedResearchController:
                              "transfer_gap": "original task versus local task", "rationale": "why this evidence informs this decision"}]
                     if self.benchmark_strategy:
                         prompt = self.advisor.prepare_prompt(prompt, runtime)
+                    if self.feature_mode:
+                        prompt = self._prepare_feature_prompt(prompt, result_lookup)
                     if self.context_mode == "compact_v1":
                         from .focused_literature import compact_research_context
                         prompt = compact_research_context(prompt)
@@ -1518,6 +1791,8 @@ class FocusedResearchController:
                         prompt=frozen_prompt
                     else:
                         runtime.put(f"prompt:{round_index}",prompt,immutable=True)
+                    if self.feature_mode:
+                        runtime.reserve_feature_decision(round_index, prompt)
                     calls = runtime.get("advisor_call_reservations", 0)
                     if calls >= self.budget.max_advisor_calls:
                         stop_reason = "advisor_budget_exhausted"
@@ -1555,6 +1830,9 @@ class FocusedResearchController:
                         raise
                     except ProviderFailure as exc:
                         runtime.finish_provider_call(calls+1,time.monotonic()-started_at)
+                        if self.feature_mode and exc.details["error_category"] == "invalid_output":
+                            return self._invalid_feature_plan(round_index, baseline_results, baseline_payloads,
+                                research_results, rounds, failed_attempts, exc)
                         waiting=self._campaign_summary(baseline_results,baseline_payloads,research_results,rounds,
                             failed_attempts,exc.details["error_category"])
                         waiting.update(execution_status="waiting_provider",research_outcome="inconclusive",
@@ -1580,18 +1858,27 @@ class FocusedResearchController:
                         self._append_event("advisor.call_recorded", round_index=round_index,
                             call_id=self.advisor.last_record.get("call_id"), record_hash=self.advisor.last_record.get("record_hash"))
                 prompt, advice, source = recorded["prompt"], recorded["advice"], recorded["source"]
+                if self.feature_mode:
+                    runtime.reserve_feature_decision(round_index, prompt)
                 if self.benchmark_strategy:
                     advice = self.advisor.normalize_advice(advice)
                 try:
                     compiled = compile_hypotheses(advice, round_index=round_index, source=source,
-                        max_count=min(self.budget.max_new_candidates_per_round, int(prompt["max_hypotheses"])), visible_evidence=prompt["evidence_projection"],
+                        max_count=(self._feature_policy()["slots_per_decision"] if self.feature_mode else
+                                   min(self.budget.max_new_candidates_per_round, int(prompt["max_hypotheses"]))), visible_evidence=prompt["evidence_projection"],
                         candidate_lookup={key: value.candidate for key, value in result_lookup.items()},
                         default_seed=self.estimator_seed, feature_registry={g: self.feature_registry[g] for g in self.allowed_feature_groups},
-                        fixed_model=self.research_start if self.change_scope == "features_only" else None)
+                        fixed_model=self.research_start if self.change_scope in {"features_only", "price_features"} else None)
+                    if self.feature_mode:
+                        self._preflight_feature_plan(compiled, seen, splits)
+                        runtime.settle_feature_decision(round_index, count=len(compiled))
                     if self.benchmark_strategy:
                         self.advisor.validate_compiled(compiled)
                 except (ValueError, TypeError) as exc:
                     self._append_event("proposal.rejected", round_index=round_index, error_type=type(exc).__name__)
+                    if self.feature_mode:
+                        return self._invalid_feature_plan(round_index, baseline_results, baseline_payloads,
+                            research_results, rounds, failed_attempts, exc)
                     raise
                 prompt_hash = _hash(prompt)
                 plan_hash, plan_ref = self._freeze_batch_plan(round_index=round_index, source=source,

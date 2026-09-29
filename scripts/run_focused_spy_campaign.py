@@ -7,6 +7,7 @@ from pathlib import Path
 from finance_forecast_agent.focused_data import (
     FocusedTaskSpec,
     build_spy_daily_research_frame,
+    build_spy_feature_research_frame,
     write_focused_dataset_artifacts,
 )
 from finance_forecast_agent.focused_research import FocusedResearchController, ResearchBudget
@@ -43,7 +44,14 @@ def main() -> None:
     from finance_forecast_agent.focused_persistence import load_research_request
     options = load_research_request(args.request_json, args.request_hash)
     provenance, feature_specs = {}, []
-    if options.get("input_contract"):
+    raw_history = None
+    if options.get("change_scope") == "price_features":
+        if options.get("input_contract"):
+            raise ValueError("price research does not accept external feature datasets")
+        frame, snapshot, raw_history = build_spy_feature_research_frame(
+            args.raw_spy_json, task=task, source_metadata_path=args.source_metadata)
+        provenance = {"feature_protocol": snapshot.feature_protocol}
+    elif options.get("input_contract"):
         from finance_forecast_agent.focused_byo import ExternalDatasetContract, load_external_focused_dataset
         contract = ExternalDatasetContract(**options["input_contract"])
         frame, snapshot, provenance = load_external_focused_dataset(args.raw_spy_json, contract, task=task)
@@ -58,6 +66,7 @@ def main() -> None:
         task=task,
         dataset=snapshot,
         frame=frame,
+        raw_history=raw_history, feature_strategy=options.get("feature_strategy"),
         budget=budget,
         advisor_mode=args.advisor_mode,
         fixture_dir=args.fixture_dir,

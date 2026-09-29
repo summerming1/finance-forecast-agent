@@ -251,15 +251,23 @@ def workspace_queue(state_path):
     return LocalTaskQueue(settings.get('root') or store.path.parent/'task_queue', state_path=store.path)
 
 
-def load_workspace_input(raw_path, source_metadata, options):
+def load_workspace_input(raw_path, source_metadata, options, *, include_raw_history=False):
     from .focused_byo import ExternalDatasetContract, load_external_focused_dataset
-    from .focused_data import build_spy_daily_research_frame
+    from .focused_data import build_spy_daily_research_frame, build_spy_feature_research_frame
+    if options.get('change_scope') == 'price_features':
+        if options.get('input_contract'):
+            raise ValueError('price feature research requires raw adjusted-price history, not external feature data')
+        frame, snapshot, raw = build_spy_feature_research_frame(raw_path, source_metadata_path=source_metadata)
+        result = (frame, snapshot, {'feature_protocol':snapshot.feature_protocol}, [])
+        return (*result, raw) if include_raw_history else result
     if options.get('input_contract'):
         contract = ExternalDatasetContract(**options['input_contract'])
         frame, snapshot, provenance = load_external_focused_dataset(raw_path, contract)
-        return frame, snapshot, provenance, contract.reviewed_features
+        result = (frame, snapshot, provenance, contract.reviewed_features)
+        return (*result, None) if include_raw_history else result
     frame, snapshot = build_spy_daily_research_frame(raw_path, source_metadata_path=source_metadata)
-    return frame, snapshot, {}, []
+    result = (frame, snapshot, {}, [])
+    return (*result, None) if include_raw_history else result
 
 
 def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadata=None,
@@ -274,7 +282,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     from .focused_research import DEFAULT_BASELINES, FocusedResearchController, ResearchBudget
     store, project = _workspace_project(state_path, project_id, tenant_id)
     options = json.loads(json.dumps(options or {}))
-    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode','continuation_from'}
+    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode','continuation_from','feature_strategy'}
     if not isinstance(options,dict) or set(options)-allowed_options:
         raise ValueError('unsupported workspace options')
     evidence_input = options.get('reviewed_evidence') or []
@@ -284,7 +292,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     if not isinstance(replay_ids,dict) or any(not isinstance(k,str) or not isinstance(v,str) for k,v in replay_ids.items()):
         raise ValueError('replay call map must contain exact string IDs')
     validate_supported_question(question)
-    frame, snapshot, provenance, specs = load_workspace_input(raw_path, source_metadata, options)
+    frame, snapshot, provenance, specs, raw_history = load_workspace_input(raw_path, source_metadata, options, include_raw_history=True)
     budget = budget or ResearchBudget()
     limits = {"max_rounds": (1,20), "max_new_candidates_per_round": (1,6), "max_fit_calls": (12,500), "max_advisor_calls": (1,40)}
     for key, (low, high) in limits.items():
@@ -298,6 +306,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     evidence = EvidenceIndex(options.get('reviewed_evidence') or []).rows
     # Preflight the same model/feature/budget contract; no execution happens here.
     preflight = FocusedResearchController(project_dir=project['root'], frame=frame, dataset=snapshot, task=FocusedTaskSpec(),
+        raw_history=raw_history, feature_strategy=options.get('feature_strategy'),
         budget=budget, advisor_mode=advisor_mode, feature_specs=specs, input_provenance=provenance,
         starting_baseline=options.get('starting_baseline'), entry_mode=options.get('entry_mode'), change_scope=options.get('change_scope','explore'), allowed_feature_groups=options.get('allowed_feature_groups'),
         research_notes=options.get('research_notes',''), reviewed_evidence=evidence, state_path=store.path,
@@ -576,6 +585,8 @@ def validate_continuation(state_path, project_dir, binding, *, tenant_id, datase
     if dataset.semantic_fingerprint != binding['dataset_fingerprint']:
         raise ValueError('continuation currently requires the same frozen input; start a separate study for changed data')
     config = {k:getattr(cfg,k) for k in ('model_family','model_params','feature_groups')}
+    if cfg.feature_program is not None:
+        config.update(schema_version=cfg.schema_version, feature_program=cfg.feature_program.to_dict())
     if starting_baseline != config:
         raise ValueError('continuation starting configuration differs from accepted parent')
     return cfg.seed
@@ -594,6 +605,8 @@ def continue_workspace_campaign(state_path, project_id, campaign_id, candidate_i
     options = json.loads(json.dumps(request['options']))
     options.update(entry_mode='provided_start', starting_baseline={k:getattr(cfg,k)
                    for k in ('model_family','model_params','feature_groups')}, continuation_from=binding)
+    if cfg.feature_program is not None:
+        options['starting_baseline'].update(schema_version=cfg.schema_version, feature_program=cfg.feature_program.to_dict())
     options.pop('replay_call_ids', None)
     return submit_workspace_mission(state_path, project_id, raw_path=request['raw_path'],
         source_metadata=request['source_metadata'], options=options,

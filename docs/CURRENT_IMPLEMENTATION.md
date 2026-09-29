@@ -1,14 +1,16 @@
 # 当前版本功能与技术实现说明
 
-## 2026-09-29 V2.3：C1结构及C2纯计算已实现，Campaign/UI尚未上线
+## 2026-09-29 V2.3：C1–C3实现与本地验证，模型包/UI待接入
 
 合并方案及实施批准已提交c60d173、0eda9d3；批准范围见 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 和accepted [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。
 
 C1现已实现不可变FeatureProgram结构、代码拥有的能力边界、严格候选读取、旧golden hash兼容、DSL确认前置拒绝和原MethodCard可选审核配方字段。新结构测试41通过；相关旧回归141通过/1项既有Windows symlink权限失败；静态通过。01c9812同SHA Linux3.11/3.13核心及两套Chromium CI均成功，原冻结输入仍BLOCKED_ASSET。
 
-C2实现价格-only AST纯计算、严格XNYS原始历史验证和固定W64研究行映射，相关96项通过；手算、因果性、保护除法、溢出、1074行门槛与资源观测另见版本日志。原本地历史输入仅做HTTP=0/fit=0转换，3959行，未替换旧资产验收。C2同SHA累计CI待核对。新协议Campaign、raw推理包及新UI尚未实现，evaluate/refit仍明确拒绝新程序，不能静默按旧列训练。未调用新付费Provider或真实确认。
+C2实现价格-only AST纯计算、严格XNYS原始历史验证和固定W64研究行映射，相关96项通过；手算、因果性、保护除法、溢出、1074行门槛与资源观测另见版本日志。原本地历史输入仅做HTTP=0/fit=0转换，3959行，未替换旧资产验收。33915c6同SHA Linux3.11/3.13及两套浏览器CI通过；下载的3.11 JUnit为472通过、0跳过。
 
-当前可运行研究仍是下述B5及Agent工作区。V2.3局部结构证据见版本日志；整体验收未完成，原A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
+C3已在原Controller/RuntimeDB中接入price_features模式、原始历史/目标行绑定、固定模型的程序动作、整批预检、最多4提案槽和独立规划次数、确定性/Random策略、真实worker/续接及Memory协议/as-of筛选。模型实际训练与Manifest记录AST及列顺序。首次集成104通过、相关旧回归107通过；随后Snapshot别名和恢复fixture校验补修后98项边界通过，收据及各源码阶段见V23日志。本批同SHA累计CI待核对。raw ModelBundle仍明确拒绝新程序，新UI尚未开放；没有新付费Provider或真实确认/真人验收。
+
+当前网页仍是下述B5及Agent工作区；V2.3新模式已有隔离工程API/worker验证，完整用户闭环未交付。整体验收未完成，原A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
 
 ## Agent 风格前端接入（2026-09-28）
 

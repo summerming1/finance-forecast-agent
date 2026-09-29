@@ -24,6 +24,26 @@ def with_expression(expression):
 INPUT = {"op": "input", "name": "return_1"}
 
 
+def test_random_sampler_is_bounded_reproducible_and_uses_the_approved_grammar():
+    from finance_forecast_agent.focused_feature_program import sample_price_programs
+    observed = set()
+    def walk(node):
+        observed.add(node["op"])
+        for key in ("arg", "left", "right"):
+            if key in node:
+                walk(node[key])
+    for seed in range(30):
+        programs, receipt = sample_price_programs(seed, 4)
+        assert (programs, receipt) == sample_price_programs(seed, 4)
+        assert receipt["draws"] <= receipt["max_draws"] == 128
+        assert receipt["duplicate_redraws"] == 0
+        for value in programs:
+            FeatureProgram.from_dict(value)
+            for row in value["features"]:
+                walk(row["expression"])
+    assert observed == {"input", *feature_capability()["operators"]}
+
+
 @pytest.mark.parametrize("op", ["rolling_mean", "rolling_std"])
 def test_rolling_matches_independent_hand_calculation(op):
     from finance_forecast_agent.focused_feature_program import compute_price_features

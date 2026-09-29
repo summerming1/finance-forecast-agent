@@ -1,6 +1,6 @@
 # V2.3 受控价格特征研究：合并修改、测试与产品迭代方案
 
-日期：2026-09-29。状态：**用户已批准实施；C1同SHA核心/浏览器通过，C2纯计算本地验证完成、累计CI待核对；功能状态以CURRENT_IMPLEMENTATION为准**。
+日期：2026-09-29。状态：**用户已批准实施；C1/C2同SHA核心/浏览器通过，C3本地执行链验证完成、累计CI待核对；功能状态以CURRENT_IMPLEMENTATION为准**。
 
 本文件合并原产品方案、R1–R10对抗审查、S1–S7复核及最终三项澄清，是本里程碑唯一详细规范和后续增量日志。验收矩阵保留完整计划；实际分批证据只见§12，不能把局部通过写成整个条款完成。
 
@@ -176,7 +176,7 @@ ResearchPackage可保存失败/取消的审计事实，受限projection明确省
 
 C0文档准备已提交，实施授权已取得，当前进行环境/旧门禁基线核验。C1/C2资源数字和预算映射未冻结不能进入C3真实研究；无需先恢复无关native资产才能写纯函数，但适用门禁不能无证据豁免。
 
-C0基线现已核对；C1已冻结结构合同（§12），尚未上线特征计算或规划预算执行。下表中的C2–C6仍为待实施/待验收，不因文档或结构测试提前完成。
+C0基线现已核对；C1/C2冻结结构与数值合同，C3执行链本地证据见§12。下表仍保留完整验收目标；C4–C6待实施/待验收，不因局部工程测试提前完成。
 
 ## 7. 研究价值、Live与真人计划
 
@@ -382,6 +382,20 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 - 真实历史本地转换命令：调用`build_spy_feature_research_frame('inputs/spy_chart_2010_2025.json')`，exit0，HTTP=0、fit=0。原始4024行，监督3959行，2010-04-07至2025-12-30；raw hash为上述0bb089…，不是旧冻结资产。dataset fingerprint=`0a46dc5be7165d932b64ea231311aa89eb74b766571e0bd7f8f81c607ea331f5`，raw history=`dd1aac3f5c4647cbb98723f79c5af6211cb29c4bd7b68ede4f5c4fe3b01010c6`，row mapping=`0ec1a931c7a9d07aea29c04d605fcb06e1d29a06b187a49d1ce0a84d57183466`。point_in_time=false；可用时间是收盘后声明，不是观测到的provider回执。
 - 源包身份`delivery-source-v1=8956b7d3e4f7092b251d92b026d45c30c98f03393931bdc2db5d8902205d58bf`。全部收据根为`D:/b05runs/v23-base-caa545c9`。新增数学/数据测试simulation_only；既有相关回归使用隔离测试库。没有用户运行DB修改、新付费LLM、新确认或真人证据。
 - 本批仅完成T07–T12相关纯计算/数据部分；Campaign规划/预算/恢复、ModelBundle和页面仍未完成，不能用96通过关闭整体验收。C2提交后同SHA核心/浏览器待核对，C3按累计门禁继续。
+
+### C3：复用执行链、规划账本、恢复与Memory
+
+- 基于33915c62af710c8d2b95ad91c3f9954f31d3c380。C2同SHA核心36553822813 Python3.11/3.13成功，两套浏览器36553822753/36553822737成功；本地`c2-ci311`下载HEAD与JUnit核对一致，472 passed/0 skipped/457.833s。原冻结输入36553822812失败于下载原资产，仍BLOCKED_ASSET。
+- 新模式仅扩展原Controller/compiler/evaluator/RuntimeDB/Memory和mission/worker选项，不创建另一套状态或执行器。模型、有效参数、seed、内置组固定；程序计算绑定完整raw前缀、W64目标行及数据revision。One-shot整体最多4项、执行单元最多2；Adaptive至多两次规划×2槽。原内部Advisor尝试、HTTP重试、未知计费与fit账本保持，新增逻辑决定/预留/结算是同DB中的对象。
+- 明确整批schema/权限/父引用/计算/预算预检。无效整批proposal_invalid终止、只保留基线和既有结果，不训练合法子集；重复占槽不fit；短响应结算未用额度。stop/review无dummy模型，approve不赠规划轮次。Random使用price_ast_uniform_depth_v1：0–2特征、深度上限4、终结符/算子及批准参数均匀抽样、非法回看最多128次有界拒绝，重复候选不重抽；它与Live提案使用同一语法，未称Agent质量或TPE比较。
+- 先行`c3a-red2.xml`11 failed/9 passed/3.33s/exit1（接口尚未实现；此前初版测试Evidence ID字段错误也保留）；`c3b-red.xml`8 failed/3.15s/exit1；Memory红测1 failed/2.20s。实现后纯边界90 passed/5.21s。首次Campaign集成7 passed/1测试字段名错误/192.44s，按既有manifest_execution_conformant字段修正，没有放宽断言。
+- C3集成命令：`python -m pytest -q tests/test_focused_feature_campaign.py tests/test_focused_feature_recovery.py tests/test_focused_feature_memory.py tests/test_focused_feature_execution.py tests/test_focused_feature_program.py tests/test_focused_feature_contract.py tests/test_focused_feature_recipe.py --basetemp D:/b05runs/v23-base-caa545c9/c3-integration-temp --junitxml D:/b05runs/v23-base-caa545c9/c3-integration.xml --tb=short`：**104 passed/531.03s/exit0**。包括真实后台worker及继承完整父程序的新Campaign，不使用用户DB。
+- 相关旧回归命令：`python -m pytest -q tests/test_focused_r1_contracts.py tests/test_focused_r3_actions.py tests/test_focused_b2_product.py tests/test_focused_b3_literature.py tests/test_focused_b4_delivery.py tests/test_workspace_ui.py --basetemp D:/b05runs/v23-base-caa545c9/c3-regression-temp --junitxml D:/b05runs/v23-base-caa545c9/c3-regression.xml --tb=short`：**107 passed/771.46s/exit0**。两组期间冻结生产源码；这些结果先于下面两处新模式边界补修，不冒充补修后的全量同源码回归。
+- 补充复现一：调用者修改Snapshot嵌套字典会改变CampaignSpec展示合同，`c3-mutable-red.xml`1 failed/2.88s；Spec改为绑定内部副本。补充复现二：已冻结计划的fixture响应被修改、原hash保留，旧路径仍训练至20 fits，`c3-fixture-red.xml`1 failed/40.50s。新模式未完成计划恢复前增加原schema/prompt/call-ID/完整record及plan绑定核验；坏JSON/hash/缺失记录拒绝，不重发、不训练。已经完成Campaign的只读结果仍是原DB已接受事实，不保证丢失fixture仍可重新Replay。
+- 补修后最终命令：`python -m pytest -q tests/test_focused_feature_recovery.py tests/test_focused_feature_execution.py tests/test_focused_feature_memory.py tests/test_focused_feature_contract.py tests/test_focused_feature_recipe.py tests/test_focused_feature_program.py --basetemp D:/b05runs/v23-base-caa545c9/c3-final-boundary-temp --junitxml D:/b05runs/v23-base-caa545c9/c3-final-boundary.xml --tb=short`：**98 passed/198.04s/exit0**；均线程1，1项JUnit属性格式警告。最终源包身份`delivery-source-v1=46588e8e6ce12d6b138176b8032bf07ab615181a608e25376d20f4c6b2971e1c`。Ruff受影响focused/mission/script/tests、compileall和diff检查通过。同提交完整核心/Chromium另核对。
+- 关键计数：Adaptive 2决定/4槽/28 fits；One-shot 1决定/4槽/28 fits、2执行单元；重复4槽但16 fits；无效单元2槽且12基线fits；HTTP=0前置失败恢复内部尝试2、同一逻辑决定1、stop占1槽且12 fits。Review approve后原Campaign20 fits/3槽，reject12 fits/1槽。新进程中断B第一fold已实际fit：12基线+A4+孤儿B4+重试B4=24，A产物/冻结计划不变。未知HTTP投递中断后仍仅1次本地HTTP、12 fits；完整fixture/plan恢复1次本地HTTP、20 fits；损坏/缺失fixture保持1次HTTP、12 fits并拒绝。
+- 测试均simulation_only/assistant_authored_fixture；本地模拟HTTP走真实客户端但不是真实模型能力。Memory兼容加协议/能力/编译器、严格候选程序及冻结as-of；未知旧时间不补造、未来/错tenant/确认记录不进上下文。原引用权限继续保留，reviewed_recipe通过同一EvidenceIndex投影；真实文献语义、付费Provider、真人均未验证。C4新包与C5新页面仍未完成，refit继续显式阻断新程序，不包装成全产品通过。
+- 关联原A04/A05/A06/A08/A11–A15/A18/A23及L09/L18/L23的受影响工程回归；V23-T13–T19/T23–T27相关C3部分，完整页面、导出和Live部分保留待验。原48条历史状态与47目标负确认未改。
 
 ### 历史：仅文档整理时的收据
 

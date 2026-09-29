@@ -179,6 +179,24 @@ def build_spy_feature_research_frame(raw_json_path: str | Path, *, task: Focused
         raise ValueError("price research supports only the fixed development task")
     history, source = load_spy_price_history(raw_json_path, source_metadata_path=source_metadata_path)
     cap = feature_capability()
+    frame = _price_research_rows(history)
+    protocol = {"protocol_id": FEATURE_PROTOCOL, "common_warmup": cap["common_warmup"],
+        "capability_hash": cap["capability_hash"], "raw_history_fingerprint": frame_fingerprint(history),
+        "row_mapping_hash": identity(frame["raw_row_id"].tolist(), domain="price-research-raw-row-map-v1"),
+        "data_revision": source["data_revision"], "point_in_time": False, "availability": source["availability"]}
+    ids = data_identity(frame, task.to_dict())
+    fingerprint = identity({"data": ids, "feature_protocol": protocol}, domain="focused-feature-dataset-v1")
+    snapshot = FocusedDatasetSnapshot(dataset_id="spy_price_" + fingerprint, raw_sha256=source["raw_sha256"],
+        semantic_fingerprint=fingerprint, row_count=len(frame), start_date=frame.iloc[0]["timestamp"],
+        end_date=frame.iloc[-1]["timestamp"], source_name=source["source_name"], source_url=source["source_url"],
+        license_status=source["license_status"], exposure=task.exposure,
+        feature_registry_version="spy_price_builtin_v1", feature_protocol=protocol, **ids)
+    return frame, snapshot, history
+
+
+def _price_research_rows(history: pd.DataFrame) -> pd.DataFrame:
+    """One common target/feature-row constructor for loading and binding checks."""
+    cap = feature_capability()
     required = FocusedSplitSpec().required_supervised_rows
     if len(history) - cap["common_warmup"] - 1 < required:
         raise ValueError(f"feature research requires {required} supervised / {required + cap['common_warmup'] + 1} raw rows")
@@ -197,19 +215,48 @@ def build_spy_feature_research_frame(raw_json_path: str | Path, *, task: Focused
     frame["label_start_time"] = history["timestamp"].shift(-1)
     frame["label_end_time"] = history["timestamp"].shift(-1)
     frame["raw_row_id"] = np.arange(len(history))
-    frame = frame.iloc[cap["common_warmup"]:-1].reset_index(drop=True)
-    protocol = {"protocol_id": FEATURE_PROTOCOL, "common_warmup": cap["common_warmup"],
+    return frame.iloc[cap["common_warmup"]:-1].reset_index(drop=True)
+
+
+def validate_feature_research_binding(frame: pd.DataFrame, dataset: FocusedDatasetSnapshot,
+                                      task: FocusedTaskSpec, raw_history: pd.DataFrame) -> pd.DataFrame:
+    """Verify raw prefix, labels, row map and protocol before any feature fit.
+
+    This binds provided objects, not a declaration of provider point-in-time
+    correctness, legal rights or independent financial evidence.
+    """
+    if not isinstance(dataset, FocusedDatasetSnapshot) or not isinstance(task, FocusedTaskSpec):
+        raise ValueError("feature research requires explicit task and dataset binding")  # noqa: TRY004 - binding contract
+    if (task.exposure not in {"simulation_only", "historical_development_only"}
+            or _task_without_exposure(task) != _task_without_exposure(FocusedTaskSpec())
+            or dataset.exposure != task.exposure):
+        raise ValueError("feature research supports only the fixed development task")
+    history = validate_price_history(raw_history)
+    expected_frame = _price_research_rows(history)
+    if (not isinstance(frame, pd.DataFrame) or frame.columns.duplicated().any()
+            or list(frame.columns) != list(expected_frame.columns)
+            or frame_fingerprint(frame) != frame_fingerprint(expected_frame)):
+        raise ValueError("feature frame does not match raw history, labels or common row mapping")
+    cap = feature_capability()
+    expected_protocol = {"protocol_id": FEATURE_PROTOCOL, "common_warmup": cap["common_warmup"],
         "capability_hash": cap["capability_hash"], "raw_history_fingerprint": frame_fingerprint(history),
         "row_mapping_hash": identity(frame["raw_row_id"].tolist(), domain="price-research-raw-row-map-v1"),
-        "data_revision": source["data_revision"], "point_in_time": False, "availability": source["availability"]}
+        "data_revision": dataset.raw_sha256, "point_in_time": False,
+        "availability": "declared_after_close_not_observed_provider_receipt"}
     ids = data_identity(frame, task.to_dict())
-    fingerprint = identity({"data": ids, "feature_protocol": protocol}, domain="focused-feature-dataset-v1")
-    snapshot = FocusedDatasetSnapshot(dataset_id="spy_price_" + fingerprint, raw_sha256=source["raw_sha256"],
-        semantic_fingerprint=fingerprint, row_count=len(frame), start_date=frame.iloc[0]["timestamp"],
-        end_date=frame.iloc[-1]["timestamp"], source_name=source["source_name"], source_url=source["source_url"],
-        license_status=source["license_status"], exposure=task.exposure,
-        feature_registry_version="spy_price_builtin_v1", feature_protocol=protocol, **ids)
-    return frame, snapshot, history
+    fingerprint = identity({"data": ids, "feature_protocol": expected_protocol}, domain="focused-feature-dataset-v1")
+    if (dataset.feature_protocol != expected_protocol or dataset.semantic_fingerprint != fingerprint
+            or dataset.dataset_id != "spy_price_" + fingerprint or dataset.row_count != len(frame)
+            or dataset.feature_registry_version != "spy_price_builtin_v1"
+            or dataset.session_calendar != "XNYS" or dataset.session_validation != "complete_observed_sessions"
+            or dataset.start_date != frame.iloc[0]["timestamp"] or dataset.end_date != frame.iloc[-1]["timestamp"]
+            or any(getattr(dataset, key) != value for key, value in ids.items())):
+        raise ValueError("feature dataset protocol or snapshot identity mismatch")
+    return history
+
+
+def _task_without_exposure(task: FocusedTaskSpec) -> dict:
+    return {key: value for key, value in task.to_dict().items() if key != "exposure"}
 
 
 def _validate_xnys_session_completeness(frame: pd.DataFrame) -> None:
