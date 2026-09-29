@@ -1,5 +1,11 @@
 # 当前版本功能与技术实现说明
 
+## 2026-09-29 文档整理：运行能力未变
+
+新增 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 合并修改/测试/后续路线方案，以及proposed [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。本轮只整理文档，未实现FeatureProgram DSL、新协议或原始价格模型包接口，未执行新Provider/确认/训练；不构成C0全部完成或C1启动授权。
+
+当前运行功能仍是下述B5及Agent工作区。V2.3验收条款为PLANNED，原A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
+
 ## Agent 风格前端接入（2026-09-28）
 
 用户已批准将交互原型接到现有项目。默认 `apps/streamlit_app.py` 改为 Agent 风格工作区，使用 Streamlit 自定义组件及 apps/ 薄适配层连接原 workspace API，无独立 API 服务、npm/CDN 或第二套执行/状态系统。研究/实验/成果视图、三步向导、实际预检和队列、候选审阅、真实 refit/ZIP 下载、同 Mission 续接、恢复/审核/取消入口已接线。原研究 package 源码及 a75e72a 的录制恢复修复保持；`?legacy=1` 与 `?lab=1` 保留旧入口。

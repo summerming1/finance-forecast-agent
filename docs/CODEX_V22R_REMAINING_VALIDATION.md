@@ -1,5 +1,13 @@
 # Codex：B0–B5 交付后的统一补测任务
 
+## V2.3文档规划关联（2026-09-29，未启动实施）
+
+本文件继续是旧A/L剩余项的唯一交接入口。新增 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 是合并的V23修改/验收/后续路线方案；[ADR005](ADR_MISSION_PRODUCT_005.md)为proposed，不改变旧48条状态，也不自动执行下面的付费/数据/真人步骤。V23-T/X全部PLANNED；获得实施授权后C0必须映射相关旧门禁，不能一句“旧B5不阻塞”一笔豁免。
+
+只整理文档时不重复旧已有效完成的收费G2A/G2B；原冻结输入缺失、真实语义负例和真人参与缺口继续如实保留。新特征协议的工程预览、Live小试验与真人试用分别验收。当前Agent工作区验收须显式包含`tests/test_workspace_ui*.py`及`tests/browser/test_agent_workspace.py`，不能仅靠focused文件通配符覆盖。
+
+## 既有B0–B5补测范围
+
 本文件是当前补测入口，替代旧“R0–R6尚未跑通”的清单，不改写历史验收收据。
 2026-09-28 增量证据见 [B5_INCREMENT_20260928.md](validation/B5_INCREMENT_20260928.md)；旧失败及48条原条款保留，不因新小样本完成而全部关闭。
 随后限定的录制硬中断收口见 [B5_RECORDING_RECOVERY_20260928.md](validation/B5_RECORDING_RECOVERY_20260928.md)；新证据已追加关联原A04/A05/A06/A08/A23/L18。不要重复付费G2A/G2B；下一步可做受控真人试用，原冻结资产、Windows权限及真实语义负例仍分别保留。旧源码合同不能在新版强改hash恢复。
@@ -16,7 +24,7 @@ B5最终HEAD以拉取后实际Git与同SHA CI为准；不得把文档中的父�
 ### 0. 安全读取与证据基线
 
 先 `git fetch origin`、检查 `git status --short`、分支及HEAD。工作区不干净时保留用户修改，在单独worktree验收；不得reset、clean或force push。只允许 `pull --ff-only`，分歧时先检查而非覆盖。
-读取 AGENTS.md → PROJECT_ROADMAP.md → CURRENT_IMPLEMENTATION.md → ADR_MISSION_PRODUCT_004.md → FOCUSED_ARCHITECTURE.md → FOCUSED_ACCEPTANCE_TEST_PLAN.md → V2_MISSION_RESEARCH.md → 本文件 → validation/v22r_acceptance.json。
+读取顺序遵循AGENTS.md：Roadmap → Current → 最新相关版本日志（V2.3提案与原V2/B5日志）→ 相关ADRs并检查批准状态 → Architecture → Acceptance → Handoff → 本文件及validation/v22r_acceptance.json。涉及工作区时再读AGENT_WORKSPACE_UI.md与FRONTEND_USER_GUIDE.md。
 记录base/head、源码树、Python/OS/关键依赖、输入hash、命令、exit和JUnit。每项用PASS/FAIL/BLOCKED/NOT_RUN；跳过、缺凭证、未调用provider都不能写PASS。
 原R1真实Live/Replay、R2 Windows恢复、R3审核动作、原浏览器与47行负确认已经有历史证据，不能再说从未实现；本轮补的是新合同/新代码/新环境。
 
@@ -29,11 +37,12 @@ B5最终HEAD以拉取后实际Git与同SHA CI为准；不得把文档中的父�
 ```python
 import glob, subprocess, sys
 paths = sorted({p for pattern in ('tests/test_focused*.py','tests/test_task_queue*.py','tests/test_*memory*.py') for p in glob.glob(pattern)})
+paths += sorted(glob.glob('tests/test_workspace_ui*.py'))
 paths += ['tests/test_method_card_v3.py','tests/test_streamlit_review_gate.py','tests/test_p09_review_backlog_timeline.py']
 raise SystemExit(subprocess.call([sys.executable,'-m','pytest','-q',*paths,'--junitxml=validation/local-core.xml']))
 ```
 
-设置 `FFA_BROWSER_E2E=1`、`FFA_BROWSER_ARTIFACTS=validation/local-browser`，安装正常Playwright Chromium，执行 `python -m pytest -q tests/browser --junitxml=validation/local-browser.xml`。不绕过管理员浏览器/网络策略。
+设置 `FFA_BROWSER_E2E=1`、`FFA_BROWSER_ARTIFACTS`和`FFA_UI_BROWSER_ARTIFACTS`分别指向本次新的证据目录，安装正常Playwright Chromium，执行 `python -m pytest -q tests/browser --junitxml=validation/local-browser.xml`（实际运行换新的收据路径，不覆盖旧失败）。不绕过管理员浏览器/网络策略。
 重点：两个入口、数据草稿不丢、当前候选A导出A、切B不误标A、刷新/新会话不训练、总结不触发LLM、确认预检不读标签/不创建授权、新Campaign与resume区别、同Mission与正确父ID、子任务自己的完成提示、父记录不变与新增费用可核对。
 Windows符号链接权限缺失标BLOCKED_ENV，不改系统策略；macOS/GPU按用户本轮范围不执行。
 

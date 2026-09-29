@@ -9,13 +9,15 @@ Read, in this order:
 1. `AGENTS.md`
 2. `docs/PROJECT_ROADMAP.md`
 3. `docs/CURRENT_IMPLEMENTATION.md`
-4. the latest one or two version notes, currently the B0–B5 log in `docs/V2_MISSION_RESEARCH.md` (older `docs/P1_FOCUS_F0_F1.md` is historical)
-5. accepted ADRs relevant to the work, especially `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, and `docs/ADR_MISSION_PRODUCT_003.md`, `docs/ADR_MISSION_PRODUCT_004.md`
+4. the latest relevant version notes: `docs/V2_3_FEATURE_RESEARCH.md` is the consolidated V2.3 proposal, NOT implemented or authorized for code execution; `docs/V2_MISSION_RESEARCH.md` retains the B0–B5 implementation log (older `docs/P1_FOCUS_F0_F1.md` is historical)
+5. accepted ADRs relevant to the work, especially `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, `docs/ADR_MISSION_PRODUCT_003.md`, and `docs/ADR_MISSION_PRODUCT_004.md`; also read proposed `docs/ADR_MISSION_PRODUCT_005.md` for V2.3 work and check its actual approval status
 6. `docs/FOCUSED_ARCHITECTURE.md`
 7. `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`
 8. `docs/CODEX_FOCUSED_HANDOFF.md`
 
 Do not infer the current milestone from filenames alone. Check the actual branch, HEAD, and current implementation document.
+
+Then read `docs/CODEX_V22R_REMAINING_VALIDATION.md`, the affected clauses in `docs/validation/v22r_acceptance.json`, and the affected dated evidence. For workspace changes also read `docs/AGENT_WORKSPACE_UI.md` and `docs/FRONTEND_USER_GUIDE.md`. Follow the actual approval status; a planning document is not permission to start its implementation or paid tests.
 
 ## 2. Roadmap-change rule
 
@@ -149,3 +151,11 @@ Literature default recipes and research evidence are different. Bind MethodCard/
 
 ## 13. B5 remaining acceptance
 Use docs/CODEX_V22R_REMAINING_VALIDATION.md for the consolidated remaining tests. Read actual same-SHA CI; expired data-artifact failures are not passes and must not be hidden by skips or replacement data. Verify original input bytes with scripts/verify_frozen_spy_acceptance.py. Do not mistake deterministic five-arm/L0–L1 integration for provider quality or user acceptance; preserve every partial A/L clause in the JSON inventory.
+
+## 14. V2.3 planning handoff (2026-09-29; implementation not authorized)
+
+The user authorized consolidating the plan and updating documentation. `docs/ADR_MISSION_PRODUCT_005.md` remains proposed. `docs/V2_3_FEATURE_RESEARCH.md` is the single detailed plan; prior external drafts/reviews are provenance, not concurrent execution contracts. Do not implement C1–C6 until the user authorizes the scope. Future route options, paid Provider calls, real confirmation and V3-P are not automatically authorized.
+
+If implementation is authorized, record that scope in ADR005 before proceeding. Reuse the original Controller, Queue, evaluator, RuntimeDB, Memory and MethodCard authority. New schema dispatch and unsupported-DSL confirmation rejection precede execution. Preserve known legacy formats and hashes; new semantic fields must never be discarded into an old candidate.
+
+The proposed first release uses price-only features, frozen capabilities/common samples, no automatic generative repair, and separate planning/HTTP/fit accounting. Pre-training rejection is not rollback of accepted work. HTTP-zero preflight repair, invalid recorded proposals and unknown response delivery have distinct recovery rules. Review approval cannot expand capabilities. Preserve all prior A/L gaps and the 47-target negative confirmation. Engineering, Live and actual-user outcomes remain separate.

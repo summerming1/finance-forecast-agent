@@ -1,3 +1,6 @@
+## 2026-09-29 文档规划交接（无运行功能变更）
+
+用户要求将产品方案、R1–R10对抗审查与S1–S7复核合并，并同步Codex阅读入口。新里程碑提案及后续日志统一为 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md)，范围决策见proposed [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。本轮未授权/实施功能、训练或付费测试；B5当前状态与原A/L、47目标负确认不变。本文件下面保留原R/B历史，不复制V23详细规范或改写旧结果。
 
 ## R1 — identity / evidence / immutable replay（2026-09-21）
 

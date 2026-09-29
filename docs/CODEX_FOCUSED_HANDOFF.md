@@ -1,8 +1,20 @@
-# Codex handoff：B0–B5 文献驱动研究交付
+# Codex handoff：当前状态、B5补测与V2.3方案入口
+
+## 2026-09-29 当前交接
+
+本轮用户授权合并方案和修改文档，没有授权功能实现。当前HEAD审阅基线为`fad63bc8effc6bd3a8e98f7ad94b9896a599c321`；执行时以实际Git为准，保留工作区与历史证据。运行能力仍见 [CURRENT_IMPLEMENTATION.md](CURRENT_IMPLEMENTATION.md)。
+
+[V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md)是唯一合并实施/验收方案；[ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)保持proposed。后续获得明确实施授权时，先记录批准范围，核对C0适用门禁与活动任务，再做C1旧格式/新schema/能力/确认拒绝，不跳到UI或付费演示。文档准备不是C0全部完成。
+
+阅读顺序以AGENTS为准：AGENTS → Roadmap → Current → V2.3方案与V2日志相关B5记录 → ADR001–005（区分accepted/proposed）→ Architecture → Acceptance → 本交接；再读统一剩余入口、原验收JSON、相关收据及当前UI/前端指南。不要让三份外部审核稿成为并行合同。
+
+本提案不授权自动补生成、自动换模型、真实确认、新库、GPU/macOS、大型native或V3。旧原始冻结数据缺口、真实语义负例、真人未完成和47目标负确认保留。普通推送按有效明确授权；这次文档编辑不自动推送。
+
+## B0–B5 历史交接（不得按旧“下一步”重复开发）
 
 以 CURRENT_IMPLEMENTATION.md 为唯一状态，PROJECT_ROADMAP.md / ADR_MISSION_PRODUCT_004.md 为批准范围。正式分支 feat/mission-research-v2；执行前检查工作区、HEAD 与远端，不覆盖用户工作。
 
-读取 AGENTS → Roadmap → Current → ADRs → Architecture → Acceptance → V2 log / validation/v22r_acceptance.json。B0→B1→B2→B3→B4→B5：每批新增负例和受影响回归、Ruff/compile 通过后提交/推送，再开始下一批。同源码 CI 结果和未知项分别记录。
+历史B0→B1→B2→B3→B4→B5按每批新增负例和受影响回归、Ruff/compile通过后提交，并按当时授权推送。下文增量的“下一步”属于历史检查点；当前动作由顶部、实际状态和用户授权决定。同源码CI和未知项分别记录。
 
 B1 复用客户端/RuntimeDB，B2 复用 Mission/Controller，B3 复用 MethodCard/审核/EvidenceIndex，B4 只读投影与显式新 Campaign，B5 分离工程/Live/真人/增量。禁止第二套运行或论文事实源。
 

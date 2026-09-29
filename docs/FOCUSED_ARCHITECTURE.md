@@ -2,6 +2,14 @@
 
 > Status: APPROVED. ADR-FOCUS-001 establishes the SPY focused line; ADR-MISSION-002 consolidates the Mission architecture/literature role; ADR-MISSION-PRODUCT-003 adds gated PR delivery, Agent value validation and controlled BYO-before-Shadow ordering. Actual implementation status is always defined by CURRENT_IMPLEMENTATION.md.
 
+## Proposed V2.3 extension (not implemented or accepted)
+
+[ADR005](ADR_MISSION_PRODUCT_005.md) remains proposed; [the consolidated V2.3 specification](V2_3_FEATURE_RESEARCH.md) owns the detailed contract. The approved architecture below remains authoritative for current behavior.
+
+The proposal adds a data-only FeatureProgram and pure raw-price feature computation inside the existing compile/evaluate path. Candidate/program identity must survive Mission submission, persistent request, CLI worker, frozen plan, recovery, continuation, refit and raw unlabeled inference. Legacy objects retain their identities. DSL confirmation rejection must be introduced with schema dispatch, before executable integration; a valid caller-computed hash does not authorize a capability.
+
+RuntimeDB remains runtime authority, and existing Memory/MethodCard remain their respective semantic/source authorities. No additional engine, state database, numerical evaluator or permissions platform is proposed. Common research warm-up and actual bundle lookback are separate. Training-time partial completion cannot be rolled back as a free failed batch. These are planned requirements, not claims about current interfaces.
+
 ## 0. Approved gated delivery sequence
 
 ```text
