@@ -1,12 +1,14 @@
-# ADR-MISSION-PRODUCT-005：受控价格特征研究与完整交付（提案）
+# ADR-MISSION-PRODUCT-005：受控价格特征研究与完整交付
 
-- status: proposed
+- status: accepted
 - documented_at: 2026-09-29
-- authorization: 用户授权合并方案及修改项目文档；未授权本轮功能开发或新增付费测试
-- implementation_authorized: false
+- approved_by: user
+- approved_at: 2026-09-29
+- authorization: 用户明确要求提交修改并按合并方案实施修改、测试及必要前端配合；另授权普通推送及同SHA CI
+- implementation_authorized: true
 - authoritative_branch: `feat/mission-research-v2`
 - review_base: `fad63bc8effc6bd3a8e98f7ad94b9896a599c321`
-- supplements_if_accepted: ADR-FOCUS-001、ADR-MISSION-002、ADR-MISSION-PRODUCT-003/004
+- supplements: ADR-FOCUS-001、ADR-MISSION-002、ADR-MISSION-PRODUCT-003/004
 
 ## 背景与推荐决定
 
@@ -36,6 +38,6 @@
 
 按统一规范的C0→C1→C2→C3→C4→C5→C6a/b/c推进。工程、真实Provider、真人形成性使用、金融证据分别记账；没有改善可以是合法研究结论，但不自动证明产品有价值。
 
-本文件为proposed，不能据此启动功能代码。用户明确授权实施后，在这里记录批准日期/消息范围并改为accepted，再推进获准批次。付费调用、真实确认、远端写入及后续路线分别按有效授权执行，不从本文件推定无限权限。
+用户已明确批准按合并规范实施C0–C6及必要前端修改，并允许各阶段验证后的普通推送及同SHA CI。付费调用仍需单独明确模型/预算授权；真实确认、资料外发许可及后续路线不从本批准推定。真人操作只能由实际参与者完成。批准不代表功能已实现或验收通过。
 
 当前 [ADR_MISSION_PRODUCT_004.md](ADR_MISSION_PRODUCT_004.md) 的批准范围和历史验收继续有效；本提案不删除任何A/L开放项或历史负结果。

@@ -2,13 +2,13 @@
 
 ## 2026-09-29 当前交接
 
-本轮用户授权合并方案和修改文档，没有授权功能实现。当前HEAD审阅基线为`fad63bc8effc6bd3a8e98f7ad94b9896a599c321`；执行时以实际Git为准，保留工作区与历史证据。运行能力仍见 [CURRENT_IMPLEMENTATION.md](CURRENT_IMPLEMENTATION.md)。
+用户已批准合并方案的功能修改、测试、必要前端配合及验证后普通推送/同SHA CI。文档快照c60d173，原审阅基线`fad63bc8effc6bd3a8e98f7ad94b9896a599c321`；执行时以实际Git为准，保留工作区与历史证据。运行能力仍见 [CURRENT_IMPLEMENTATION.md](CURRENT_IMPLEMENTATION.md)。
 
-[V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md)是唯一合并实施/验收方案；[ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)保持proposed。后续获得明确实施授权时，先记录批准范围，核对C0适用门禁与活动任务，再做C1旧格式/新schema/能力/确认拒绝，不跳到UI或付费演示。文档准备不是C0全部完成。
+[V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md)是唯一合并实施/验收方案；[ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)已accepted。当前先核对C0适用门禁与活动任务，再做C1旧格式/新schema/能力/确认拒绝，不跳到UI或付费演示。文档准备不是C0全部完成。
 
 阅读顺序以AGENTS为准：AGENTS → Roadmap → Current → V2.3方案与V2日志相关B5记录 → ADR001–005（区分accepted/proposed）→ Architecture → Acceptance → 本交接；再读统一剩余入口、原验收JSON、相关收据及当前UI/前端指南。不要让三份外部审核稿成为并行合同。
 
-本提案不授权自动补生成、自动换模型、真实确认、新库、GPU/macOS、大型native或V3。旧原始冻结数据缺口、真实语义负例、真人未完成和47目标负确认保留。普通推送按有效明确授权；这次文档编辑不自动推送。
+本版不授权自动补生成、自动换模型、真实确认、新库、GPU/macOS、大型native或V3。旧原始冻结数据缺口、真实语义负例、真人未完成和47目标负确认保留。普通推送已授权；新付费Live仍需单独预算确认。
 
 ## B0–B5 历史交接（不得按旧“下一步”重复开发）
 

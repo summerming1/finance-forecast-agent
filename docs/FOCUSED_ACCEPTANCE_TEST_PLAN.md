@@ -5,9 +5,9 @@ Current status: `CURRENT_IMPLEMENTATION.md`. Historical PR success counts do not
 
 > Status: APPROVED. Tests are divided by milestone. Passing one layer never implies all historical native or live-LLM work was rerun.
 
-## Proposed V2.3 test inventory (PLANNED; not an acceptance receipt)
+## Approved V2.3 test inventory (tests PLANNED; not an acceptance receipt)
 
-The consolidated inventory is [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md), sections 8–9: V23-T01–T34 and V23-X01–X21. It incorporates the original proposal, both adversarial reviews, legacy schema compatibility, recovery failure classification and decision/HTTP/fit accounting. Do not treat this proposed section as already approved or implemented; ADR005 is proposed.
+The consolidated inventory is [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md), sections 8–9: V23-T01–T34 and V23-X01–X21. It incorporates the original proposal, both adversarial reviews, legacy schema compatibility, recovery failure classification and decision/HTTP/fit accounting. ADR005 and sequential implementation are approved; test outcomes still require actual receipts.
 
 Keep the existing 48 A/L clauses and actual statuses in `validation/v22r_acceptance.json` unchanged until new evidence is available. C0 must identify applicable inherited gates; new tests extend rather than replace them. Reuse existing failure/partial-run benchmark reporting and B5 crash-recording tests. New FeatureProgram paths require their own negative tests, raw inference, actual worker and browser coverage.
 

@@ -1,8 +1,8 @@
 # Codex：B0–B5 交付后的统一补测任务
 
-## V2.3文档规划关联（2026-09-29，未启动实施）
+## V2.3实施关联（2026-09-29，C0验证中）
 
-本文件继续是旧A/L剩余项的唯一交接入口。新增 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 是合并的V23修改/验收/后续路线方案；[ADR005](ADR_MISSION_PRODUCT_005.md)为proposed，不改变旧48条状态，也不自动执行下面的付费/数据/真人步骤。V23-T/X全部PLANNED；获得实施授权后C0必须映射相关旧门禁，不能一句“旧B5不阻塞”一笔豁免。
+本文件继续是旧A/L剩余项的唯一交接入口。[V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md)为用户已批准的V23实施方案；[ADR005](ADR_MISSION_PRODUCT_005.md)已accepted，不改变旧48条状态，也不自动执行下面的付费/真实确认/真人步骤。V23-T/X以实际收据更新；C0必须映射相关旧门禁，不能一句“旧B5不阻塞”一笔豁免。
 
 只整理文档时不重复旧已有效完成的收费G2A/G2B；原冻结输入缺失、真实语义负例和真人参与缺口继续如实保留。新特征协议的工程预览、Live小试验与真人试用分别验收。当前Agent工作区验收须显式包含`tests/test_workspace_ui*.py`及`tests/browser/test_agent_workspace.py`，不能仅靠focused文件通配符覆盖。
 

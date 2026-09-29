@@ -1,12 +1,12 @@
 # V2.3 受控价格特征研究：合并修改、测试与产品迭代方案
 
-日期：2026-09-29。状态：**文档方案已整理；功能未实现，实施授权待确认**。
+日期：2026-09-29。状态：**用户已批准实施；C0基线验证进行中，功能状态以CURRENT_IMPLEMENTATION为准**。
 
 本文件合并原产品方案、R1–R10对抗审查、S1–S7复核及最终三项澄清，是本里程碑唯一详细规范和后续增量日志。不是已完成验收收据。所有V23-T/V23-X均为PLANNED；运行后才另记PASS/FAIL/BLOCKED/NOT_RUN及原因。
 
 审阅基线：`feat/mission-research-v2`，HEAD `fad63bc8effc6bd3a8e98f7ad94b9896a599c321`，tree `8df2d8bde98d2c943b6b5d18cbb97bf73c5cf933`。实施时重新核对实际HEAD；不reset回此基线。
 
-范围提案见 [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)（proposed）。本轮仅授权修改文档，不启动功能、付费LLM、真实确认、资料外发或V3。实际能力只见 [CURRENT_IMPLEMENTATION.md](CURRENT_IMPLEMENTATION.md)；旧开放项仍见 [CODEX_V22R_REMAINING_VALIDATION.md](CODEX_V22R_REMAINING_VALIDATION.md)。
+范围见已接受的 [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。用户已批准功能实现、测试、必要前端修改及验证后普通推送/同SHA CI；付费LLM另需模型/预算授权，不授权真实确认、未许可资料外发或V3。实际能力只见 [CURRENT_IMPLEMENTATION.md](CURRENT_IMPLEMENTATION.md)；旧开放项仍见 [CODEX_V22R_REMAINING_VALIDATION.md](CODEX_V22R_REMAINING_VALIDATION.md)。
 
 ## 1. 产品目标与最小范围
 
@@ -174,7 +174,7 @@ ResearchPackage可保存失败/取消的审计事实，受限projection明确省
 | C6b | 原BenchmarkAdvisor和runner的小扩展 | 授权Live→record→严格离线Replay；Random/One-shot/Adaptive Batch预注册小试验；不重跑整套旧付费G2A/G2B |
 | C6c | 原真人清单/收据 | 真实参与者完成、理解、导出再使用；所有者与独立用户分层；不由助手代填 |
 
-C0本轮只完成文档准备部分。代码开工前仍须核对实际环境并获得实施授权。C1/C2资源数字和预算映射未冻结不能进入C3真实研究；无需先恢复无关native资产才能写纯函数，但适用门禁不能无证据豁免。
+C0文档准备已提交，实施授权已取得，当前进行环境/旧门禁基线核验。C1/C2资源数字和预算映射未冻结不能进入C3真实研究；无需先恢复无关native资产才能写纯函数，但适用门禁不能无证据豁免。
 
 ## 7. 研究价值、Live与真人计划
 
@@ -335,16 +335,32 @@ Ruff检查全部实际变更Python文件；compileall检查`src/finance_forecast
 ## 11. 文档权威、阅读顺序与维护
 
 1. `AGENTS.md`：执行约束、授权边界、读取顺序。
-2. `PROJECT_ROADMAP.md`：已批准方向；V23尚为明确标注的待批准提案链接。
+2. `PROJECT_ROADMAP.md`：已批准V23方向与另需批准的后续选项。
 3. `CURRENT_IMPLEMENTATION.md`：仅实际能力和已验证状态。
 4. 本文件：合并后的V23详细计划与后续唯一增量日志；`V2_MISSION_RESEARCH.md`：原B/R历史、相关B5修复。
-5. ADR001/002/003/004及ADR005：旧已接受决定与新proposed的区别。
+5. ADR001/002/003/004及已接受ADR005：历史决定与本版新增范围的区别。
 6. `FOCUSED_ARCHITECTURE.md`、`FOCUSED_ACCEPTANCE_TEST_PLAN.md`、`CODEX_FOCUSED_HANDOFF.md`。
 7. 统一剩余入口、原验收JSON、受影响B5收据及`AGENT_WORKSPACE_UI.md`/`FRONTEND_USER_GUIDE.md`。
 
 本轮只给架构/验收/交接增加指向本文件的计划入口，不复制55条到多份文档。README、安装、环境示例、前端指南没有实际功能变化，暂不写新按钮/参数。旧ADR和历史验收正文不重写。开工后每批更新本文件日志和实际Current，再按实际UI改变更新用户指南。
 
 ## 12. 本次文档整理记录
+
+### 实施授权与C0启动（后于下面的历史文档收据）
+
+用户明确要求“提交相关修改，按方案实施相应修改和测试，前端配合”，并回复允许普通推送及核对同SHA CI。文档快照已提交c60d173。git fetch后origin无新增提交；原10个未跟踪证据目录保留。检测到仓库旧Streamlit进程，未检测到对应研究worker，不结束无关进程。开始在隔离临时目录执行修改前累计回归；模型调用预算另行确认，不擅自收费。功能尚未宣称完成。
+
+### C0基线收据：生产代码尚未改动
+
+- 本地Windows 11 Pro 10.0.26200、Python3.13.3、i5-12500（6核/12线程）；GPU/macOS未测试。base=fad63bc8effc6bd3a8e98f7ad94b9896a599c321；文档HEAD=c60d173244b3ef0a1e95828f0a01845bfaf0c05f，tree=9f14b772e543699927ac2664b2d2a87c86d7fdbb。原10个未跟踪目录保持，新增负例与授权文档待后续提交。
+- 累计命令按§9.1文件集合执行（focused/queue/Memory/workspace UI及3项共享审核文件），`--basetemp D:/b05runs/v23-base-caa545c9/temp --junitxml D:/b05runs/v23-base-caa545c9/core.xml`；线程环境均1。**420 passed / 1 failed / 2 skipped，3514.79s，exit1**。唯一失败`test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]`发生在创建测试symlink，WinError1314，列为BLOCKED_ENV，不改断言；Linux同源码覆盖。无产品失败，但不称本地全绿。
+- 授权文档检查5 passed/2.18s/exit0，`c0-doc.xml`；命令同下方历史5项，新basetemp=`c0-doc-temp`。原A/L、47目标负确认和旧失败未改。
+- 普通推送c60d173成功。同SHA核心CI[36544392964](https://github.com/summerming1/finance-forecast-agent/actions/runs/36544392964) Python3.11/3.13均成功；已下载3.13 JUnit及HEAD到本地`ci313`，**408 passed/0 skipped/528.929s**。同SHA旧浏览器[36544392932](https://github.com/summerming1/finance-forecast-agent/actions/runs/36544392932)及新工作区[36544392934](https://github.com/summerming1/finance-forecast-agent/actions/runs/36544392934)成功。这些是修改前基线，不覆盖后续C1源码。
+- 冻结SPY CI[36544392953](https://github.com/summerming1/finance-forecast-agent/actions/runs/36544392953)失败于原run35204186327的`focused-real-inputs` artifact缺失，未训练，BLOCKED_ASSET。本地443821字节输入SHA256=`0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b`，不是原5fb282…；仅可作另列的新协议历史开发工程例，不能替换原验收。
+- C1先行负例收据`c1-full-red.xml`：39 failed/2.98s/exit1（新能力尚未实现）；独立旧入口复现`downgrade-red.xml`：1 failed/2.43s/exit1，`_candidate`确实静默丢弃未知feature_program。首次红测未指定basetemp导致默认pytest目录清理WinError5，后续隔离重跑，不删除旧目录。
+- 费用授权仍单列等待；本批无新付费Provider、无真实确认/新标签读取、无真人验收。C0适用基线已核对，可以进入C1；Windows权限、原资产和真实语义/真人边界不是PASS。
+
+### 历史：仅文档整理时的收据
 
 - 2026-09-29：合并原方案与两轮审核；选择价格-only、无自动生成式修正、DSL确认禁用，明确旧格式兼容、前置/响应后失败、规划与实际调用计数、部分完成及分轴交付。
 - 本轮仅文档编辑；没有功能实现、训练、Provider调用、确认标签读取或远端推送。文档一致性检查结果另在本节补记；不能作为V23功能验收。

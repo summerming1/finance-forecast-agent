@@ -1,14 +1,14 @@
 # Finance Forecast Agent 项目迭代路线图
 
-## 2026-09-29 文档规划入口（不改变当前批准范围）
+## 当前批准增量：V2.3受控价格特征研究（2026-09-29）
 
-用户已要求合并产品方案及更新Codex文档。合并规范为 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md)，范围决策为 [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)（proposed，尚未授权功能实施）。本节仅登记待批准提案，不将V2.3或后续V3写成已批准/已实现。
+用户已明确批准按合并规范 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 实施修改、测试和必要前端配合；范围决策 [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md) 已accepted。批准不代表实现或验收完成；实际状态见CURRENT_IMPLEMENTATION.md。
 
 建议下一步是原体系内的受控价格特征研究：C0合同与旧门禁→C1兼容/确认拒绝→C2特征计算→C3原执行链→C4完整交付→C5现有UI→C6工程/Live/真人分轴。收益是检验固定菜单外的研究闭环；成本是候选身份、原始数据、worker/恢复/续接、Memory和模型包全链路迁移。旧B5缺口和历史结果不因此关闭。
 
 之后仅按使用证据另行选择：薄前瞻记录V3-P；训练窗口/权重或概率任务中的一个维度；完整Shadow；按需接口集成；有隔离条件后的受控代码/相邻市场。详细推进条件和排除项见统一规范第10节，不能按此列表自动开工。
 
-## 当前批准路线：B0–B5（2026-09-23）
+## 既有批准路线：B0–B5（2026-09-23，原开放项保留）
 
 实际能力和验收状态只见 [CURRENT_IMPLEMENTATION.md](CURRENT_IMPLEMENTATION.md)。最新批准决策见 [ADR_MISSION_PRODUCT_004.md](ADR_MISSION_PRODUCT_004.md)。
 

@@ -1,8 +1,8 @@
 # 当前版本功能与技术实现说明
 
-## 2026-09-29 文档整理：运行能力未变
+## 2026-09-29 V2.3已获实施批准：C0基线核对完成，C1待实施
 
-新增 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 合并修改/测试/后续路线方案，以及proposed [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。本轮只整理文档，未实现FeatureProgram DSL、新协议或原始价格模型包接口，未执行新Provider/确认/训练；不构成C0全部完成或C1启动授权。
+合并方案已提交并推送c60d173；用户随后批准按 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 实施并配合前端修改，[ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)已accepted。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。尚未实现FeatureProgram DSL、新协议或原始价格模型包接口，未调用新Provider/真实确认。实施批准不代表验收通过。
 
 当前运行功能仍是下述B5及Agent工作区。V2.3验收条款为PLANNED，原A/L剩余状态、历史科学结果及47目标负确认不改。未来计划不得冒充当前能力。
 
