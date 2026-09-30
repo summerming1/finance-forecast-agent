@@ -14,6 +14,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
+from .bounded_json import loads as strict_json_loads
 from .config import load_env_file
 from .replay_llm import ReplayLLM
 
@@ -36,7 +37,7 @@ class ProviderPolicy:
     backoff_seconds: float = 1.0
     max_backoff_seconds: float = 8.0
     max_response_bytes: int = 4 * 1024 * 1024
-    policy_version: str = 'bounded_http_v1'
+    policy_version: str = 'bounded_http_v2_strict_json'
 
     def __post_init__(self):
         for name in ('connect_timeout','read_timeout','deadline_seconds'):
@@ -196,7 +197,7 @@ class OpenAIJsonClient:
                     'raw_response_hash':hashlib.sha256(str(content).encode()).hexdigest(),'finish_reason':finish})
                 if finish not in {None,'stop'}:
                     raise ValueError('response not complete')
-                return _parse_json_object(content)
+                return _parse_json_object(content, max_bytes=self.policy.max_response_bytes)
             except (KeyError,IndexError,TypeError,ValueError) as exc:
                 raise ProviderFailure('invalid_output',reason='incomplete_or_invalid_json',retryable=False,
                          usage_known=self.last_call_metadata['usage'] is not None) from exc
@@ -229,6 +230,10 @@ class OpenAIJsonClient:
                 status=response['status']; body=response.get('body')
                 attempt.update(http_status=status,header_seconds=response.get('header_seconds'),response_bytes=response.get('response_bytes'))
                 if 200<=status<300:
+                    if response.get('parse_error'):
+                        self.last_call_metadata['raw_response_hash'] = response.get('raw_response_hash')
+                        raise ProviderFailure('invalid_output', reason='invalid_envelope_json',
+                                              delivery_status='response_received', usage_known=False)
                     if not isinstance(body,dict):
                         raise ProviderFailure('invalid_output',reason='non_object',retryable=False,usage_known=False)
                     attempt.update(state='returned',delivery_status='response_received',usage_known=body.get('usage') is not None,
@@ -310,16 +315,16 @@ def _chat_completions_url(base_url: str) -> str:
     return f'{base_url}/chat/completions'
 
 
-def _parse_json_object(content: str) -> dict[str, Any]:
+def _parse_json_object(content: str, *, max_bytes: int = 4 * 1024 * 1024) -> dict[str, Any]:
     if not isinstance(content, str):
         raise ValueError('LLM response content must be text')  # noqa: TRY004 - public API compatibility
+    if len(content.encode('utf-8')) > max_bytes:
+        raise ValueError('LLM response size limit exceeded')
     text=content.strip()
     if text.startswith('```') and text.endswith('```'):
         text=text.removeprefix('```json').removeprefix('```')[:-3].strip()
-    def invalid_constant(_):
-        raise ValueError('non-finite JSON is not permitted')
     try:
-        data=json.loads(text, parse_constant=invalid_constant)
+        data=strict_json_loads(text, max_bytes=max_bytes)
     except ValueError as exc:
         raise ValueError('LLM response is not complete valid JSON') from exc
     if not isinstance(data, dict):

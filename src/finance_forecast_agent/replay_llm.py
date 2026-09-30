@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit, urlunsplit
 
+from .bounded_json import read as read_strict_json
 from .focused_identity import canonical_json, identity
 
 _METADATA_FIELDS = {'provider', 'model', 'base_url', 'generation_parameters', 'usage', 'request_id',
@@ -135,7 +136,7 @@ client is constructed by this reader.
             path = paths[0]
             if path.is_symlink():
                 raise ValueError('Symlink replay record is not accepted')
-            data = json.loads(path.read_text(encoding='utf-8'))
+            data = read_strict_json(path)
             if data.get('schema_version') != 'v2' or data.get('schema_name') != schema_name:
                 raise ValueError('Fixture schema/version integrity mismatch')
             expected = identity({k: v for k, v in data.items() if k != 'record_hash'}, domain='llm-record-v2')
@@ -157,7 +158,7 @@ client is constructed by this reader.
         path = folder / f'{digest}.json'
         if path.is_symlink():
             raise ValueError('Symlink legacy fixture is not accepted')
-        data = json.loads(path.read_text(encoding='utf-8')) if path.exists() else self._load_from_catalog(schema_name=schema_name, digest=digest)
+        data = read_strict_json(path) if path.exists() else self._load_from_catalog(schema_name=schema_name, digest=digest)
         if data.get('prompt_hash') != digest or data.get('schema_name') != schema_name:
             raise ValueError('fixture mismatch')
         if data.get('schema_version', 'v1') != 'v1' or not isinstance(data.get('response'), dict):
@@ -179,7 +180,7 @@ client is constructed by this reader.
             raise FileNotFoundError(self.fixture_dir / schema_name / f'{digest}.json')
         if path.is_symlink():
             raise ValueError('Symlink legacy catalog is not accepted')
-        catalog = json.loads(path.read_text(encoding='utf-8'))
+        catalog = read_strict_json(path)
         item = dict(catalog.get(schema_name, {}).get(digest, {}))
         if not item:
             raise FileNotFoundError(self.fixture_dir / schema_name / f'{digest}.json')

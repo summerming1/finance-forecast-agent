@@ -32,7 +32,7 @@ def server(responses):
                     for _ in range(1000):
                         self.wfile.write(b' '); self.wfile.flush(); time.sleep(.05)
                 else:
-                    self.wfile.write(json.dumps(config.get('body', {})).encode())
+                    self.wfile.write(config.get('raw_body', json.dumps(config.get('body', {})).encode()))
             except (BrokenPipeError, ConnectionResetError):
                 pass
     http = ThreadingHTTPServer(('127.0.0.1', 0), Handler)

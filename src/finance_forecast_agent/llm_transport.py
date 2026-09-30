@@ -7,6 +7,7 @@ Raw credentials/body are never printed on stderr or command-line arguments.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import threading
@@ -14,6 +15,11 @@ import time
 
 import psutil
 import requests
+
+if __package__:
+    from .bounded_json import loads as strict_json_loads
+else:  # This bounded worker is invoked by absolute script path.
+    from bounded_json import loads as strict_json_loads
 
 
 def main():
@@ -42,11 +48,14 @@ def main():
                 content.extend(part)
                 if len(content)>request['max_response_bytes']:
                     print(json.dumps({'transport_error':'ResponseTooLarge','response_received':True})); return
+            parse_error = False
             try:
-                body = json.loads(content)
+                body = strict_json_loads(content, max_bytes=request['max_response_bytes'])
             except (ValueError, UnicodeError):
                 body = None
+                parse_error = True
             print(json.dumps({'status':response.status_code,'body':body,
+                'parse_error':parse_error, 'raw_response_hash':hashlib.sha256(content).hexdigest(),
                 'headers':{k:response.headers[k] for k in ('Retry-After','x-request-id') if k in response.headers},
                 'header_seconds':head_time, 'elapsed_seconds':time.monotonic()-started,
                 'response_bytes':len(content)}, allow_nan=False))

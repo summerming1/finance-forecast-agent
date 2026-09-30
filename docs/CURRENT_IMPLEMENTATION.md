@@ -6,6 +6,8 @@
 
 ## 2026-09-29 V2.3：C1–C6a受控工程预览可用，Live/文献语义/真人仍待验
 
+限定修复进度：结果角色32+3项回归通过；严格Provider/Replay JSON入口已修，25项本地HTTP/边界与19项Identity回归通过。原始重复键不再被首次dict转换吞掉；新政策版本不追改旧录制。采样、核心政策和累计验收仍进行中。
+
 合并方案及实施批准已提交c60d173、0eda9d3；批准范围见 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 和accepted [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。
 
 C1现已实现不可变FeatureProgram结构、代码拥有的能力边界、严格候选读取、旧golden hash兼容、DSL确认前置拒绝和原MethodCard可选审核配方字段。新结构测试41通过；相关旧回归141通过/1项既有Windows symlink权限失败；静态通过。01c9812同SHA Linux3.11/3.13核心及两套Chromium CI均成功，原冻结输入仍BLOCKED_ASSET。

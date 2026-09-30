@@ -504,6 +504,8 @@ C6功能提交`dbc4014ea5893109fa0a57181a501b17ee91b391`，tree=`21064e3a352815f
 
 ### 历史：仅文档整理时的收据
 
+第二批严格JSON入口：原HTTP envelope、模型content、Replay及失败记录恢复检查统一拒绝重复键/非有限数/超限深度或字节数。Provider政策版本为bounded_http_v2_strict_json；不倒改旧合同与录制，不声称能从历史已解析dict找回丢失的重复键。非法正文保留失败记录、原响应hash、已知usage及未知费用null；不记录私密原文、不自动补发。fix2.xml一次测试设置错误（使用了不支持的fixture provenance）保留；修正后 `tests/test_focused_provider_json_boundary.py tests/test_focused_b1_provider.py` 25 passed / 90.32s / exit 0（fix2c.xml），R1 contracts 19 passed / 3.61s / exit 0（fix2-identity.xml）。本地HTTP模拟、每条非法回复HTTP=1；正常瞬态重试仍通过。Ruff和compileall通过。最终累计恢复回归另记。
+
 - 2026-09-29：合并原方案与两轮审核；选择价格-only、无自动生成式修正、DSL确认禁用，明确旧格式兼容、前置/响应后失败、规划与实际调用计数、部分完成及分轴交付。
 - 本轮仅文档编辑；没有功能实现、训练、Provider调用、确认标签读取或远端推送。文档一致性检查结果另在本节补记；不能作为V23功能验收。
 - 实施前下一步：用户明确授权范围后，将ADR005变为accepted，核验C0门禁/活动任务/实际HEAD，再做C1；不从“文档已整理”自动开工。

@@ -9,6 +9,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
+from .bounded_json import read as read_strict_json
 from .focused_identity import canonical_json, file_sha256, identity
 from .focused_state import RuntimeDB, atomic_json, now, process_alive, process_birth, safe_id
 
@@ -296,7 +297,7 @@ class CampaignRuntime:
                 # failed-call files and retry as though their request never happened.
                 folder = ReplayLLM(fixture_dir)._schema_dir('focused_research_advice') / 'records'
                 path = folder / f"{record['prompt_sha256']}-{record['call_id']}.json"
-                if path.is_symlink() or json.loads(path.read_text(encoding='utf-8')) != record:
+                if path.is_symlink() or read_strict_json(path) != record:
                     raise ValueError('Persisted provider failure record integrity mismatch')
 
     def reserve(self, candidate: dict, *, role: str, fits: int) -> str:
