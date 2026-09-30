@@ -2,7 +2,10 @@
   "schema_version": "v22r_acceptance_v1",
   "v23_review_hardening_20260930": {
     "base_sha": "2fbadca628928ae661e5549b19de6ef3a8e32c81",
-    "status": "targeted_verified_cumulative_pending",
+    "status": "scoped_fixes_verified_overall_acceptance_partial",
+    "verified_source_commit": "0ea18dacac848a18913213910bbf77a28bb8fad9",
+    "final_delivery_receipt": "D:/b05runs/v23-fixes-0930/delivery_receipt.json",
+    "verified_core": "Same SHA Linux Python3.11 and3.13 each565 passed; both Chromium gates passed. Final HEAD and local whole-repo outcomes require the delivery receipt.",
     "report": "docs/V2_3_FEATURE_RESEARCH.md",
     "evidence_root": "D:/b05runs/v23-fixes-0930",
     "evidence_type": "simulation_only_local_http_and_real_local_training",

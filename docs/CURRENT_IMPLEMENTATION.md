@@ -1,14 +1,14 @@
 # 当前版本功能与技术实现说明
 
-## 2026-09-30 V2.3限定修复进行中（PARTIAL）
+## 2026-09-30 V2.3四项限定修复已验证，整体产品验收仍PARTIAL
 
-2fbadca复核确认四项缺口：Benchmark无候选时基线顶替、Provider首次JSON解析重复键、Random登记/执行/汇总不一致、核心入口固定评价政策未统一。正在原架构内分批修复和回归；历史通过记录不撤销，也不能关闭新负例。第一批报告已区分研究候选/固定对照/用户起点/最佳可用模型；具体测试及旧工程例勘误见V2_3_FEATURE_RESEARCH.md增量。新Live、真人、原资产和平台权限仍待验。
+2fbadca的四项复核缺口已修：Benchmark分离研究候选/固定对照/起点/最佳可用模型，无研究结果为null；Provider/Replay在首次原始JSON解析拒绝重复键及超限；Random每决定1..128抽样进入冻结合同并与账本对账，旧catalog默认512；价格模式核心固定MAE/0.0025/development_only，拒绝旧预算覆盖。未新建Controller/Queue/Evaluator/Memory或改研究范围。
+
+本轮定向及负例、实际Campaign恢复已验证；非法模型回复模拟HTTP=1、只有基线12 fits、研究0 fits，恢复不补发。Windows新旧Chromium+公式单测两次各3项通过；候选切换/刷新/新context不加训练，read-only公式与角色已显示。0ea18da同SHA Linux3.11/3.13各565项、两套浏览器和静态通过；冻结SPY失败于原artifact缺失。该提交和f13def6的CI都是明确版本证据，不自动当成后续HEAD的通过记录。
+
+整体PARTIAL的已知边界仍是原冻结SPY字节缺失、严格DLinear原录制缺失、Windows符号链接权限、真实语义及真人验证。后两项环境/资产单测已分别复现；Linux symlink防护通过且未skip。不新增付费或确认标签读取，不重复旧G2A/G2B。最新本地全仓结果、最终HEAD/tree、普通推送及最终同SHA CI逐项见 `D:/b05runs/v23-fixes-0930/delivery_receipt.json` 和同目录JUnit；收据未完成的运行不能算通过。方案及命令见V2_3_FEATURE_RESEARCH.md当日增量。路线不变：限定修复→所有者试用→另行批准的小预算Live/真实用户；不启动V3。
 
 ## 2026-09-29 V2.3：C1–C6a受控工程预览可用，Live/文献语义/真人仍待验
-
-价格模式核心初始化已固定MAE/0.0025/development_only，并拒绝旧预算覆盖；直接/恢复入口与工作区13项通过。四项生产修复已落地；新旧Windows Chromium及公式单测3项通过，候选切换/刷新/新context不增加fit。最终全仓与同SHA CI尚待本轮收口。
-
-限定修复进度：结果角色32+3项回归通过；严格Provider/Replay JSON入口已修，25项本地HTTP/边界与19项Identity回归通过。原始重复键不再被首次dict转换吞掉；新政策版本不追改旧录制。Random价格模式每次决定上限1..128已绑定冻结合同、真实draw与报告，恢复对账通过；旧catalog默认512不变。核心政策和累计验收仍进行中。
 
 合并方案及实施批准已提交c60d173、0eda9d3；批准范围见 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 和accepted [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。
 

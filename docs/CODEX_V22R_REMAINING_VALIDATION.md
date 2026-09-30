@@ -2,7 +2,7 @@
 
 ## 2026-09-30 V2.3对抗修复关联
 
-基线2fbadca的四项复核缺陷已在原架构修复：研究结果角色、原始JSON严格解析、Random抽样合同对账、核心固定评价政策。定向收据及历史Random审计勘误见V2_3_FEATURE_RESEARCH.md当日增量；当前累计及Chromium/同SHA CI未收口前不宣称完整通过。本轮不收费、不下载新确认标签，旧A/L缺口和47目标负确认不变。历史2fbadca CI和原703/2/5仅是父提交证据。
+基线2fbadca的四项复核缺陷已在原架构修复：研究结果角色、原始JSON严格解析、Random抽样合同对账、核心固定评价政策。0ea18da同SHA Linux双Python各565通过、双浏览器与静态通过；定向收据及历史Random勘误见V2_3_FEATURE_RESEARCH.md当日增量。最终HEAD/全仓/同SHA CI以D:/b05runs/v23-fixes-0930/delivery_receipt.json核对，未结束运行不计通过。本轮不收费、不下载新确认标签，旧A/L缺口和47目标负确认不变。Windows symlink特权和原strict fixture缺失已重新复现，原SPY artifact缺失仍阻塞；历史2fbadca CI和原703/2/5仅是父提交证据。下一步是所有者试用，不以助手模拟补真人PASS。
 
 ## V2.3实施关联（2026-09-29，C6工程审计后）
 

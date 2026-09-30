@@ -1,6 +1,6 @@
 # V2.3 受控价格特征研究：合并修改、测试与产品迭代方案
 
-日期：2026-09-30。状态：**V2.3功能已实现；复核发现四项合同缺口，正在分批修复与回归，工程收口暂为PARTIAL。9月29日通过记录保留为历史证据；Live、真实语义与真人未完成。功能状态以CURRENT_IMPLEMENTATION为准**。
+日期：2026-09-30。状态：**V2.3功能及四项复核修复已实现；限定负例、Linux累计与新旧浏览器已验证，整体产品验收仍PARTIAL。最新全仓/最终SHA详见当日交付收据；9月29日记录仍是历史证据。Live、真实语义与真人未完成。功能状态以CURRENT_IMPLEMENTATION为准**。
 
 本文件合并原产品方案、R1–R10对抗审查、S1–S7复核及最终三项澄清，是本里程碑唯一详细规范和后续增量日志。验收矩阵保留完整计划；实际分批证据只见§12，不能把局部通过写成整个条款完成。
 
@@ -516,7 +516,19 @@ C6功能提交`dbc4014ea5893109fa0a57181a501b17ee91b391`，tree=`21064e3a352815f
 
 前端只读补充：候选详情从已保存AST确定性展示`rolling_mean(return_1, 20)`等公式，原AST仍可展开；研究页分开最佳研究候选、固定对照、用户起点、最佳可用模型。零研究结果显式未评估，不显示假0%研究改善。Node单测1 passed / 0.11s（fix5.xml）；`FFA_BROWSER_E2E=1 python -m pytest -q tests/test_workspace_ui_formula.py tests/browser/test_agent_workspace.py` 3 passed / 222.65s / exit0（browser.xml），真实Windows Chromium、隔离模拟数据/原Queue：新旧模式选择候选/刷新/新context不加fit，显式refit另计，导出可读。最终全仓仍运行，未提前验收。未新增模型、UI状态库或训练入口。
 
-### 历史：仅文档整理时的收据
+### 2026-09-30 交付收据
+
+#### 本次交付收据与剩余边界
+
+修复提交184aa3b、7e7fd98、89581a1、eaa6748；整链测试/UI为f13def6，视觉对齐0ea18da。0ea18da同SHA Linux3.11/3.13核心各565 passed（684.42s/691.79s），Ruff/compile成功；新UI25 passed+受影响54 passed，旧浏览器成功。该提交冻结SPY门禁明确在下载focused-real-inputs时失败（原run35204186327），不是真实训练通过。
+
+本机另复现`tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]`：1 failed / 4.98s / exit1，WinError1314发生在创建测试链接，BLOCKED_ENV；Linux同用例两版本均PASS无skip。`tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call`：1 failed / 3.08s / exit1，缺method_card/2c05bfd22af27435.json，BLOCKED_ASSET。恢复应分别提供符号链接权限、恢复原始匹配录制及上下文，不能删断言或把助手fixture改名。原SPY字节须匹配规定5fb282哈希，当前不同字节副本不能替代。
+
+最终本地完整命令：`python -m pytest -q --basetemp D:/b05runs/v23-fixes-0930/full-temp --junitxml D:/b05runs/v23-fixes-0930/full.xml`。运行结束的数量/退出码/时长、最终HEAD/tree与同SHA CI、JUnit/hash见该目录`delivery_receipt.json`；不是用本段父提交CI冒充最终提交。各批重叠，不相加当独立覆盖。收据为运行产物，不是第二个状态库。
+
+限定代码修复可以进入所有者受控试用；不是全部科学/商业验收。真实LLM语义、真人操作、旧资产恢复继续走统一剩余入口。没有新Live/付费请求、确认标签、GPU/macOS或大型native训练。本轮不改路线/ADR方向，不创建V3代码。旧失败、原RuntimeDB与47目标负确认保持。
+
+### 历史文档整理记录（以下非本次功能验证）
 
 - 2026-09-29：合并原方案与两轮审核；选择价格-only、无自动生成式修正、DSL确认禁用，明确旧格式兼容、前置/响应后失败、规划与实际调用计数、部分完成及分轴交付。
 - 本轮仅文档编辑；没有功能实现、训练、Provider调用、确认标签读取或远端推送。文档一致性检查结果另在本节补记；不能作为V23功能验收。
