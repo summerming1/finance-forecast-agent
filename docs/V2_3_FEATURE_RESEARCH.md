@@ -1,6 +1,6 @@
 # V2.3 受控价格特征研究：合并修改、测试与产品迭代方案
 
-日期：2026-09-29。状态：**C1–C6a受控工程预览已实现并验证；全仓703通过/2环境或资产失败/5跳过；Live、真实语义与真人未完成，不是全产品验收通过。功能状态以CURRENT_IMPLEMENTATION为准**。
+日期：2026-09-30。状态：**V2.3功能已实现；复核发现四项合同缺口，正在分批修复与回归，工程收口暂为PARTIAL。9月29日通过记录保留为历史证据；Live、真实语义与真人未完成。功能状态以CURRENT_IMPLEMENTATION为准**。
 
 本文件合并原产品方案、R1–R10对抗审查、S1–S7复核及最终三项澄清，是本里程碑唯一详细规范和后续增量日志。验收矩阵保留完整计划；实际分批证据只见§12，不能把局部通过写成整个条款完成。
 
@@ -487,6 +487,20 @@ C6功能提交`dbc4014ea5893109fa0a57181a501b17ee91b391`，tree=`21064e3a352815f
 | T21–T23/T26–T28，X03/X11/X12/X19/X20 | `test_focused_feature_bundle.py`、export、`test_workspace_ui_features.py`、`browser/test_agent_workspace.py`；C6独立package/hash/fresh Python审计 | Windows symlink本机权限不足；同SHA Linux必须另核对；ModelBundle不迁移跨机信任 |
 | T29/T30，X16/X17/X18 | `test_focused_feature_benchmark.py`及原`test_focused_r5_benchmark.py`：共享合同/目标/预算、原失败报告；C6三臂规则工程例 | 新DSL真实Live三臂尚NOT_RUN，不证明LLM自适应价值；有界Random采样不是均匀抽取所有AST |
 | T31–T34，X21 | 本日志、原验收JSON追加关联、当前状态及前端真人操作清单 | 真实配方人工审核、人时/真实使用/再次使用缺口保留；费用未知null；最终提交同SHA不能借父CI |
+
+### 2026-09-30 对抗复核与限定修复
+
+基线2fbadca628928ae661e5549b19de6ef3a8e32c81，Windows/Python3.13.3。用户批准四项缺陷修复、必要只读展示和相关验收；不新增付费LLM、确认标签读取、GPU/macOS/native训练。旧RuntimeDB及47目标负确认不变。
+
+复核在隔离模拟库重现：零研究候选仍拿baseline_mean配对；原始模型JSON重复键被首次解析吞掉；Random登记1而执行128、实际4+2抽样却报告0；核心构造器与旧预算字段可改变价格模式固定政策。初始复核72项通过不覆盖这些负例。证据D:/b05runs/v23-second-review-l0efdb1_。
+
+历史工程例勘误：c6-real-pilot.json的Random登记max_sampler_draws=512，实际两次上限128，draws=4+2，报告总数0。保留原报告、注册、账本和预测；不倒改hash或追认合规预注册。三臂实际最佳固定对照均为Ridge，原政策0.0025/development_only；两规则演示最佳均为rolling_mean(return_1,20)，不是真实自适应或消融成果。
+
+第一批将Benchmark角色显式分为研究候选/固定对照/用户起点/最佳可用模型。新报告v3的best兼容字段指向最佳研究候选；没有候选时null，有退化时保留负改善；基线MAE=0时相对值null。策略与文献比较不以旧best字段代替研究结果。已保存的旧报告字节不重写。
+
+新失败收据位于D:/b05runs/v23-fixes-0930：red1.xml初次4失败/1测试目录设置错误；修正目录后red1b.xml真实整Campaign零候选失败。red2初次超长测试ID设置错误保留；固定短ID后red2b.xml六项JSON入口负例失败。red3.xml采样合同失败，red4.xml六项核心/恢复初始化政策负例失败。各批修复后的定向/回归及最终同SHA CI另记，不提前报通过。
+
+第一批验证：`python -m pytest -q tests/test_focused_v23_review.py tests/test_focused_r5_benchmark.py tests/test_focused_feature_benchmark.py`，32 passed / 789.53s / exit 0，JUnit `fix1.xml`；追加空提案/全部重复/训练失败三项，3 passed / 100.50s / exit 0，`fix1-extra.xml`。均模拟数据、真实本地Controller训练，HTTP=0；相关Ruff、compileall、diff --check通过。不是Live或金融确认。
 
 ### 历史：仅文档整理时的收据
 

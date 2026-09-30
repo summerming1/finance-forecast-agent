@@ -1,5 +1,9 @@
 # 当前版本功能与技术实现说明
 
+## 2026-09-30 V2.3限定修复进行中（PARTIAL）
+
+2fbadca复核确认四项缺口：Benchmark无候选时基线顶替、Provider首次JSON解析重复键、Random登记/执行/汇总不一致、核心入口固定评价政策未统一。正在原架构内分批修复和回归；历史通过记录不撤销，也不能关闭新负例。第一批报告已区分研究候选/固定对照/用户起点/最佳可用模型；具体测试及旧工程例勘误见V2_3_FEATURE_RESEARCH.md增量。新Live、真人、原资产和平台权限仍待验。
+
 ## 2026-09-29 V2.3：C1–C6a受控工程预览可用，Live/文献语义/真人仍待验
 
 合并方案及实施批准已提交c60d173、0eda9d3；批准范围见 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 和accepted [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。

@@ -316,6 +316,34 @@ class BenchmarkAdvisor:
         return None
 
 
+def _result_selection(results: list[dict], roles: dict[str, str]) -> dict:
+    """Read-only role projection; controls never stand in for research evidence."""
+    def best(rows):
+        return min(rows, key=lambda r: r["metrics"]["mae"]) if rows else None
+    controls = [r for r in results if roles.get(r["candidate"]["candidate_id"]) in {"model_baseline", "naive_baseline"}]
+    candidates = [r for r in results if roles.get(r["candidate"]["candidate_id"]) == "research_candidate"]
+    starts = [r for r in results if roles.get(r["candidate"]["candidate_id"]) == "user_incumbent"]
+    baseline, research = best(controls), best(candidates)
+    relative = None
+    reason = "no_completed_research_candidate" if research is None else "no_completed_baseline" if baseline is None else None
+    if research is not None and baseline is not None:
+        if baseline["metrics"]["mae"] == 0:
+            reason = "zero_baseline_mae"
+        else:
+            relative = (baseline["metrics"]["mae"] - research["metrics"]["mae"]) / baseline["metrics"]["mae"]
+    return {"best_research_candidate": research, "best_baseline": baseline, "best_available": best(results),
+            "user_start": best(starts), "relative_mae_improvement": relative,
+            "relative_improvement_reason": reason,
+            "research_result_reason": "no_completed_research_candidate" if research is None else None,
+            "results": candidates}
+
+
+def _research_best(report: dict) -> dict | None:
+    # Also makes legacy reports safe to compare without rewriting their bytes.
+    rows = report.get("results", [])
+    return min(rows, key=lambda r: r["metrics"]["mae"]) if rows else None
+
+
 def _report(controller, *, error: Exception | None, elapsed: float, comparison_contract: dict, algorithm: dict) -> dict:
     runtime = controller._runtime
     if runtime is None:
@@ -339,11 +367,11 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
         "environment": runtime.contract["environment"],
     }
     results = [(obj["row"].get("result") or obj["row"]) for key, obj in objects.items() if key.startswith("result:")]
-    baseline_ids = {row[0] for row in DEFAULT_BASELINES} | {"baseline_zero", "baseline_mean", "baseline_median"}
-    baselines = [row for row in results if row["candidate"]["candidate_id"] in baseline_ids]
-    candidates = [row for row in results if row["candidate"]["candidate_id"] not in baseline_ids]
-    best = min([*baselines, *candidates], key=lambda row: row["metrics"]["mae"]) if results else None
-    baseline = min(baselines, key=lambda row: row["metrics"]["mae"]) if baselines else None
+    roles = {json.loads(a["payload"])["candidate"]["candidate_id"]: a["role"] for a in attempts}
+    selection = _result_selection(results, roles)
+    best, baseline = selection["best_research_candidate"], selection["best_baseline"]
+    candidates = selection["results"]
+    available = selection["best_available"]
     target_contracts = set()
     for row in results:
         accepted = runtime.accepted(row["candidate"]["candidate_id"])
@@ -383,7 +411,7 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
     final = objects.get("final") or objects.get("pause") or {}
     round_items = [item for key, obj in objects.items() if key.startswith("round:") for item in obj["items"]]
     report = {
-        "schema_version": "focused_benchmark_arm_v2",
+        "schema_version": "focused_benchmark_arm_v3",
         "arm": algorithm["arm"],
         "algorithm": algorithm,
         "strategy_execution_contract": {"provider": runtime.contract["provider"], "advisor_mode": controller.advisor.mode},
@@ -392,7 +420,7 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
         "comparison_contract": comparison_contract,
         "comparison_contract_hash": identity(comparison_contract, domain="benchmark-comparison-v2"),
         "comparison_target_hash": next(iter(target_contracts), None),
-        "comparison_target_count": best.get("prediction_row_count", best.get("prediction_count", 0)) if best else 0,
+        "comparison_target_count": available.get("prediction_row_count", available.get("prediction_count", 0)) if available else 0,
         "campaign_id": controller.spec.campaign_id,
         "campaign_dir": str(runtime.root),
         "execution_contract_hash": runtime.contract_hash,
@@ -402,10 +430,7 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
         "error_type": type(error).__name__ if error else None,
         "best": best,
         "baseline": baseline,
-        "results": candidates,
-        "relative_mae_improvement": ((baseline["metrics"]["mae"] - best["metrics"]["mae"]) / baseline["metrics"]["mae"])
-        if best and baseline
-        else None,
+        **selection,
         "fold_stability": {
             "mae_by_fold": [x["mae"] for x in best["fold_metrics"]],
             "mae_std": float(np.std([x["mae"] for x in best["fold_metrics"]])),
@@ -668,13 +693,15 @@ def benchmark_summary(arms: list[dict]) -> dict:
     paired = []
     for left in arms:
         for right in arms:
-            if (left["arm"] < right["arm"] and left["best"] and right["best"]
+            left_best, right_best = _research_best(left), _research_best(right)
+            if (left["arm"] < right["arm"] and left_best and right_best
+                    and left.get("comparison_target_hash") and right.get("comparison_target_hash")
                     and left["execution_status"] == right["execution_status"] == "completed"):
                 paired.append(
                     {
                         "left": left["arm"],
                         "right": right["arm"],
-                        "mae_delta": left["best"]["metrics"]["mae"] - right["best"]["metrics"]["mae"],
+                        "mae_delta": left_best["metrics"]["mae"] - right_best["metrics"]["mae"],
                     }
                 )
     return {
@@ -709,10 +736,11 @@ def literature_comparison(without: dict, with_literature: dict) -> dict:
     if without["literature_treatment"]["review_ids"] or not with_literature["literature_treatment"]["review_ids"]:
         raise ValueError("G2B must compare no explicit literature against a fixed selected set")
     complete = without["execution_status"] == with_literature["execution_status"] == "completed"
+    without_best, with_best = _research_best(without), _research_best(with_literature)
     return {"schema_version": "explicit_literature_comparison_v1", "without": without,
         "with_literature": with_literature, "engineering_complete": complete,
-        "paired_mae_delta": (with_literature["best"]["metrics"]["mae"] - without["best"]["metrics"]["mae"])
-            if complete and without["best"] and with_literature["best"] else None,
+        "paired_mae_delta": (with_best["metrics"]["mae"] - without_best["metrics"]["mae"])
+            if complete and without_best and with_best and without.get("comparison_target_hash") else None,
         "literature_value_established": False,
         "limitations": ["No explicit literature is not a model without pretrained knowledge.",
                         "Costs, fidelity, valid experiments and human time require separate interpretation."]}
