@@ -512,6 +512,8 @@ C6功能提交`dbc4014ea5893109fa0a57181a501b17ee91b391`，tree=`21064e3a352815f
 
 补充Provider整Campaign链路：`test_duplicate_model_content_ends_campaign_without_candidate_fit_or_resend` 1 passed / 23.25s / exit0（fix2-campaign.xml）。本地模拟HTTP=1，基线fits=12，研究candidate fits=0；同Campaign恢复仍HTTP=1/fits=12。不是实际模型语义测试。
 
+截图复核后只将角色区块套用现有reading宽度。再次运行相同Node+新旧真实Chromium命令，3 passed / 250.21s / exit0（browser-layout.xml，截图/browser-layout）；无页面错误，切换/刷新/新context不加训练。文档/旧条款一致性16 passed / 493.95s（docs.xml）。父f13def6的两套Linux Chromium CI已成功（新UI25项+相关54项），冻结SPY门禁失败于原artifact缺失；最终SHA与全仓收据单独核对，不借父提交成功。
+
 前端只读补充：候选详情从已保存AST确定性展示`rolling_mean(return_1, 20)`等公式，原AST仍可展开；研究页分开最佳研究候选、固定对照、用户起点、最佳可用模型。零研究结果显式未评估，不显示假0%研究改善。Node单测1 passed / 0.11s（fix5.xml）；`FFA_BROWSER_E2E=1 python -m pytest -q tests/test_workspace_ui_formula.py tests/browser/test_agent_workspace.py` 3 passed / 222.65s / exit0（browser.xml），真实Windows Chromium、隔离模拟数据/原Queue：新旧模式选择候选/刷新/新context不加fit，显式refit另计，导出可读。最终全仓仍运行，未提前验收。未新增模型、UI状态库或训练入口。
 
 ### 历史：仅文档整理时的收据

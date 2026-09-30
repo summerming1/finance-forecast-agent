@@ -48,6 +48,6 @@ function researchResultRoles(c){
  const baseline=best(rows.filter(r=>r.role==='fixed_control'));
  const start=rows.find(r=>r.is_user_start||r.role==='user_start');
  const available=best(rows), label=r=>r?`${r.id} · MAE ${fmt(r.metrics.mae)}`:'无已完成结果';
- return `<section class="drawer-section" data-testid="research-result-roles"><h3>结果角色</h3>${kv('最佳研究候选',label(research))}${kv('最佳固定对照',label(baseline))}${kv('用户起点',label(start))}${kv('最佳可用模型（含对照）',label(available))}${research?'<p>开发集观察，不代表独立确认或盈利。</p>':'<p>未评估研究效果：没有已完成研究候选；基线结果不能替代研究结果。</p>'}</section>`;
+ return `<section class="reading drawer-section" data-testid="research-result-roles"><h3>结果角色</h3>${kv('最佳研究候选',label(research))}${kv('最佳固定对照',label(baseline))}${kv('用户起点',label(start))}${kv('最佳可用模型（含对照）',label(available))}${research?'<p>开发集观察，不代表独立确认或盈利。</p>':'<p>未评估研究效果：没有已完成研究候选；基线结果不能替代研究结果。</p>'}</section>`;
 }
 
