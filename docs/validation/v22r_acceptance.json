@@ -1,5 +1,20 @@
 {
   "schema_version": "v22r_acceptance_v1",
+  "v23_review_hardening_20260930": {
+    "base_sha": "2fbadca628928ae661e5549b19de6ef3a8e32c81",
+    "status": "targeted_verified_cumulative_pending",
+    "report": "docs/V2_3_FEATURE_RESEARCH.md",
+    "evidence_root": "D:/b05runs/v23-fixes-0930",
+    "evidence_type": "simulation_only_local_http_and_real_local_training",
+    "clause_links": {
+      "A04_A05_A08_A23": ["tests/test_focused_provider_json_boundary.py", "tests/test_focused_feature_recovery.py"],
+      "A09_A10_A18": ["tests/test_focused_price_policy.py"],
+      "A11_A12_A14": ["tests/test_focused_v23_review.py", "tests/test_focused_price_sampler.py"],
+      "V23_T29_T30_X16_X17_X18": ["tests/test_focused_feature_benchmark.py", "tests/test_focused_v23_review.py"],
+      "V23_T21_T26_T28": ["tests/test_workspace_ui_formula.py", "tests/browser/test_agent_workspace.py"]
+    },
+    "history_policy": "No prior A/L status, original report, fixture hash or 47-target confirmation is rewritten. No new paid provider, real user, or financial confirmation evidence."
+  },
   "v23_scoped_engineering_20260929": {
     "base_sha": "fad63bc8effc6bd3a8e98f7ad94b9896a599c321",
     "report": "docs/V2_3_FEATURE_RESEARCH.md",

@@ -502,13 +502,19 @@ C6功能提交`dbc4014ea5893109fa0a57181a501b17ee91b391`，tree=`21064e3a352815f
 
 第一批验证：`python -m pytest -q tests/test_focused_v23_review.py tests/test_focused_r5_benchmark.py tests/test_focused_feature_benchmark.py`，32 passed / 789.53s / exit 0，JUnit `fix1.xml`；追加空提案/全部重复/训练失败三项，3 passed / 100.50s / exit 0，`fix1-extra.xml`。均模拟数据、真实本地Controller训练，HTTP=0；相关Ruff、compileall、diff --check通过。不是Live或金融确认。
 
-### 历史：仅文档整理时的收据
+#### 后续修复批次验证
 
 第四批核心固定政策：price_features在Controller初始化、Runtime/训练/Provider之前要求原EvaluationPolicy（MAE、0.0025、development_only），也拒绝旧预算字段间接改阈值；不更改旧模式政策能力。red4六负例→`test_focused_price_policy.py test_workspace_ui_features.py` 13 passed / 6.23s / exit0（fix4.xml），涵盖直接入口、恢复初始化及工作区门禁，模拟数据。后续累计包含队列与continuation。
 
 第三批抽样合同：价格模式max_sampler_draws是每次决定1..128（默认128），旧catalog默认512不变；省略值在执行前解析，CLI预注册、Controller冻结policy、实际sampler、逐次账本与汇总一致。非法语法也消耗draw；恢复复用记录，改cap不能修改旧合同hash。red3→fix3.xml 1 passed / 23.66s；扩大fix3b.xml 33 passed、1测试注入错误（拦截了空模板初始化）；修正注入后fix3c.xml 2 passed / 29.00s / exit0。fix3b通过项含本地HTTP录制→断网回放、同空间三臂和纯公式测试；均模拟，非新Live成果。最终累计会再跑完整集合。
 
 第二批严格JSON入口：原HTTP envelope、模型content、Replay及失败记录恢复检查统一拒绝重复键/非有限数/超限深度或字节数。Provider政策版本为bounded_http_v2_strict_json；不倒改旧合同与录制，不声称能从历史已解析dict找回丢失的重复键。非法正文保留失败记录、原响应hash、已知usage及未知费用null；不记录私密原文、不自动补发。fix2.xml一次测试设置错误（使用了不支持的fixture provenance）保留；修正后 `tests/test_focused_provider_json_boundary.py tests/test_focused_b1_provider.py` 25 passed / 90.32s / exit 0（fix2c.xml），R1 contracts 19 passed / 3.61s / exit 0（fix2-identity.xml）。本地HTTP模拟、每条非法回复HTTP=1；正常瞬态重试仍通过。Ruff和compileall通过。最终累计恢复回归另记。
+
+补充Provider整Campaign链路：`test_duplicate_model_content_ends_campaign_without_candidate_fit_or_resend` 1 passed / 23.25s / exit0（fix2-campaign.xml）。本地模拟HTTP=1，基线fits=12，研究candidate fits=0；同Campaign恢复仍HTTP=1/fits=12。不是实际模型语义测试。
+
+前端只读补充：候选详情从已保存AST确定性展示`rolling_mean(return_1, 20)`等公式，原AST仍可展开；研究页分开最佳研究候选、固定对照、用户起点、最佳可用模型。零研究结果显式未评估，不显示假0%研究改善。Node单测1 passed / 0.11s（fix5.xml）；`FFA_BROWSER_E2E=1 python -m pytest -q tests/test_workspace_ui_formula.py tests/browser/test_agent_workspace.py` 3 passed / 222.65s / exit0（browser.xml），真实Windows Chromium、隔离模拟数据/原Queue：新旧模式选择候选/刷新/新context不加fit，显式refit另计，导出可读。最终全仓仍运行，未提前验收。未新增模型、UI状态库或训练入口。
+
+### 历史：仅文档整理时的收据
 
 - 2026-09-29：合并原方案与两轮审核；选择价格-only、无自动生成式修正、DSL确认禁用，明确旧格式兼容、前置/响应后失败、规划与实际调用计数、部分完成及分轴交付。
 - 本轮仅文档编辑；没有功能实现、训练、Provider调用、确认标签读取或远端推送。文档一致性检查结果另在本节补记；不能作为V23功能验收。

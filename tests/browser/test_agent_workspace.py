@@ -218,6 +218,8 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 if price_features:
                     expected = next(i["candidate"] for b in original["rounds"] for i in b["items"] if i.get("candidate", {}).get("candidate_id") == candidate)
                     expect(frame.locator('[data-testid="price-program"]')).to_contain_text("rolling_mean")
+                    expect(frame.locator('[data-testid="readable-formula"]')).to_contain_text(
+                        f"rolling_mean(return_1, {expected['feature_program']['features'][0]['expression']['window']})")
                     expect(frame.locator('[data-testid="price-program"]')).to_contain_text(str(expected["feature_program"]["features"][0]["expression"]["window"]))
                 assert counts() == before
             selected = research_ids[1]

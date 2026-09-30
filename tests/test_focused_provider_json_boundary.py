@@ -69,3 +69,21 @@ def test_record_with_duplicate_key_is_not_repaired(tmp_path):
     with pytest.raises(ValueError, match="Duplicate"):
         replay.complete_json(prompt_payload={}, schema_name="test")
     assert path.exists()
+
+
+def test_duplicate_model_content_ends_campaign_without_candidate_fit_or_resend(tmp_path, monkeypatch):
+    from test_focused_feature_campaign import controller
+    body = good()
+    body["choices"][0]["message"]["content"] = '{"hypotheses":[],"hypotheses":[]}'
+    with server([{"body": body}]) as (url, received):
+        for key, value in {"OPENAI_API_KEY": "simulation-only", "OPENAI_MODEL": "local-test",
+                "LLM_PROVIDER": "bailian", "OPENAI_BASE_URL": url, "LLM_CALL_DEADLINE": "30"}.items():
+            monkeypatch.setenv(key, value)
+        kwargs = {"arm": "one_shot", "advisor_mode": "live", "fixture_dir": tmp_path / "fixtures"}
+        first = controller(tmp_path, **kwargs).run()
+        assert len(received) == 1
+        assert first["fit_calls"] == 12  # Fixed controls only; no research fit.
+        assert not any(r.get("items") for r in first["rounds"])
+        resumed = controller(tmp_path, resume=True, **kwargs).run()
+        assert len(received) == 1
+        assert resumed["fit_calls"] == first["fit_calls"]
