@@ -47,6 +47,7 @@ def main() -> int:
     p.add_argument("--context-mode", choices=["full_v1", "compact_v1"], default="full_v1")
     p.add_argument("--batch-size", type=int, default=4)
     p.add_argument("--startup-trials", type=int, default=4)
+    p.add_argument("--max-sampler-draws", type=int, help="Per decision: defaults to 128 for price grammar, 512 for legacy catalog")
     p.add_argument("--small-catalog", action="store_true")
     p.add_argument(
         "--arms",
@@ -96,6 +97,7 @@ def main() -> int:
         "estimator_seed": a.estimator_seed,
         "startup_trials": a.startup_trials,
         "batch_size": a.batch_size,
+        "max_sampler_draws": a.max_sampler_draws if a.max_sampler_draws is not None else (128 if a.price_features else 512),
     }
     evidence = json.loads(a.evidence_json.read_text()) if a.evidence_json else []
     calls = json.loads(a.replay_call_map.read_text()) if a.replay_call_map else {}

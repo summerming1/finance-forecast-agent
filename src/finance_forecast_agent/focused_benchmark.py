@@ -12,7 +12,7 @@ import copy
 import json
 import random
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from importlib.metadata import version
 from pathlib import Path
 
@@ -41,13 +41,15 @@ class BenchmarkSpec:
     search_seed: int = 42
     estimator_seed: int = 42
     startup_trials: int = 4
-    max_sampler_draws: int = 512
+    max_sampler_draws: int | None = None
     batch_size: int = 4
     schema_version: str = "focused_benchmark_contract_v3"
 
     def __post_init__(self):
         for key in ("candidate_budget", "startup_trials", "max_sampler_draws", "batch_size"):
             value = getattr(self, key)
+            if key == "max_sampler_draws" and value is None:
+                continue
             if isinstance(value, bool) or not isinstance(value, int) or value < 1:
                 raise ValueError(f"{key} must be a positive integer")
         for key in ("search_seed", "estimator_seed"):
@@ -133,6 +135,8 @@ class BenchmarkAdvisor:
         if self.arm not in ARMS:
             raise ValueError("unsupported benchmark arm")
         self.spec = BenchmarkSpec(**config["spec"])
+        if self.spec.max_sampler_draws is None:
+            self.spec = replace(self.spec, max_sampler_draws=512)
         self.catalog = validate_catalog(config["catalog"])
         if self.spec.candidate_budget > len(self.catalog):
             raise ValueError("candidate budget exceeds unique catalog size")
@@ -458,7 +462,8 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
             "advisor_reservations": objects.get("advisor_call_reservations", 0),
             "provider_usage": [r.get("provider_metadata", {}).get("usage") for r in live],
             "llm_cost": cost,
-            "sampler_draws": sum(x["telemetry"].get("sampler_draws", 0) for x in decisions),
+            "sampler_draws": sum(x["telemetry"].get("sampler_draws", x["telemetry"].get("draws", 0)) for x in decisions),
+            "invalid_grammar_draws": sum(x["telemetry"].get("invalid_grammar_draws", 0) for x in decisions),
             "sampler_duplicate_rejections": sum(
                 x["telemetry"].get("sampler_duplicate_rejections", 0) for x in decisions
             ),
@@ -505,6 +510,8 @@ def run_benchmark_arm(
     context_mode: str = "full_v1",
     raw_history=None,
 ) -> dict:
+    if spec.max_sampler_draws is None:
+        spec = replace(spec, max_sampler_draws=128 if raw_history is not None or dataset.feature_protocol is not None else 512)
     if raw_history is not None or dataset.feature_protocol is not None:
         if catalog is not None or use_memory_prior or memory_store_path is not None:
             raise ValueError("first price-grammar pilot is cold Memory and not a finite model catalog")
@@ -619,7 +626,9 @@ def _run_price_benchmark_arm(frame, dataset, *, raw_history, project_dir, arm, s
         raise ValueError("price pilot requires raw history, three approved arms, 4 slots, batch2, seed42 and fixed split")
     task = FocusedTaskSpec(exposure=dataset.exposure)
     split = FocusedSplitSpec()
-    strategy = {"arm": arm, "search_seed": spec.search_seed}
+    if not 1 <= spec.max_sampler_draws <= 128:
+        raise ValueError("price sampler permits 1..128 draws per decision")
+    strategy = {"arm": arm, "search_seed": spec.search_seed, "max_sampler_draws": spec.max_sampler_draws}
     budget = ResearchBudget(max_rounds=1 if arm == "one_shot" else 2, max_new_candidates_per_round=2,
         max_fit_calls=28, max_advisor_calls=5, max_http_requests=8, max_provider_seconds=1200)
     target_keys = target_row_ids(frame, task.to_dict())

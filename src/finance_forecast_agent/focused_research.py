@@ -780,7 +780,8 @@ class FocusedResearchAdvisor:
                 count = int(prompt["max_hypotheses"])
                 if policy["arm"] == "random":
                     programs, self.last_telemetry = sample_price_programs(
-                        (policy["search_seed"] + prompt["round_index"] - 1) % 2**32, count)
+                        (policy["search_seed"] + prompt["round_index"] - 1) % 2**32, count,
+                        max_draws=policy["max_sampler_draws"])
                     source = "random_price_ast_policy"
                 else:
                     programs = []
@@ -1130,11 +1131,15 @@ class FocusedResearchController:
             self.frame = frame.copy(deep=True)
             self.dataset = FocusedDatasetSnapshot(**dataset.to_dict())
             strategy = feature_strategy or {"arm": "adaptive_batch", "search_seed": 42}
-            if (not isinstance(strategy, dict) or set(strategy) != {"arm", "search_seed"}
+            if (not isinstance(strategy, dict) or not {"arm", "search_seed"} <= set(strategy)
+                    or set(strategy) - {"arm", "search_seed", "max_sampler_draws"}
                     or strategy["arm"] not in {"one_shot", "adaptive_batch", "random"}
                     or isinstance(strategy["search_seed"], bool) or not isinstance(strategy["search_seed"], int)
                     or not 0 <= strategy["search_seed"] <= 2**32 - 1):
                 raise ValueError("invalid bounded price feature strategy")
+            draws = strategy.get("max_sampler_draws", 128)
+            if isinstance(draws, bool) or not isinstance(draws, int) or not 1 <= draws <= 128:
+                raise ValueError("price sampler permits 1..128 draws per decision")
             if strategy["arm"] == "random" and advisor_mode != "deterministic":
                 raise ValueError("Random price feature research has no provider mode")
             self.feature_strategy = json.loads(json.dumps(strategy))
@@ -1301,7 +1306,8 @@ class FocusedResearchController:
             task=self.task, dataset=self.dataset, raw_history=self.raw_history)
 
     def _feature_policy(self):
-        return {"schema_version": "price_feature_planning_v1", **self.feature_strategy,
+        return {"schema_version": "price_feature_planning_v2", "max_sampler_draws": 128, **self.feature_strategy,
+            "sampler_limit_scope": "per_decision",
             "max_decisions": self.budget.max_rounds, "max_proposal_slots": 4,
             "slots_per_decision": 4 if self.feature_strategy["arm"] == "one_shot" else self.budget.max_new_candidates_per_round,
             "execution_unit_size": self.budget.max_new_candidates_per_round}
