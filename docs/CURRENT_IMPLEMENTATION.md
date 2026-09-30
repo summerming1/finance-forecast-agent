@@ -6,6 +6,8 @@
 
 ## 2026-09-29 V2.3：C1–C6a受控工程预览可用，Live/文献语义/真人仍待验
 
+价格模式核心初始化已固定MAE/0.0025/development_only，并拒绝旧预算覆盖；直接/恢复入口与工作区13项通过。四项生产修复已落地，最终累计/浏览器/同SHA CI尚待本轮收口。
+
 限定修复进度：结果角色32+3项回归通过；严格Provider/Replay JSON入口已修，25项本地HTTP/边界与19项Identity回归通过。原始重复键不再被首次dict转换吞掉；新政策版本不追改旧录制。Random价格模式每次决定上限1..128已绑定冻结合同、真实draw与报告，恢复对账通过；旧catalog默认512不变。核心政策和累计验收仍进行中。
 
 合并方案及实施批准已提交c60d173、0eda9d3；批准范围见 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 和accepted [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md)。C0本地420通过/1项symlink权限失败/2跳过；同c60d173的Linux3.11/3.13核心及两套浏览器CI通过，原冻结输入CI仍BLOCKED_ASSET。

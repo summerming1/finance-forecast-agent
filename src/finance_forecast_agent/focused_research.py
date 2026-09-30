@@ -1202,6 +1202,9 @@ class FocusedResearchController:
                 else EvaluationPolicy().min_relative_mae_improvement
             )
         )
+        if self.feature_mode and (self.evaluation_policy != EvaluationPolicy()
+                or (legacy_threshold is not None and legacy_threshold != EvaluationPolicy().min_relative_mae_improvement)):
+            raise ValueError("price feature research requires the fixed evaluation policy")
         self.split_spec = split_spec or FocusedSplitSpec()
         if self.feature_mode and self.split_spec != FocusedSplitSpec():
             raise ValueError("price feature research requires the fixed development split")
