@@ -65,6 +65,47 @@ D24-0合同；D24-1诊断；D24-2规则/配方；D24-3UI/包/选择；D24-4诊�
 
 每条具体nodeid、命令exit/JUnit、来源hash、HTTPfit和未测边界写最终收据；历史复用与本轮重跑分开。负例→定向→相关回归→静态→worker/browser→最终全仓一次。保留Win symlink权限、匹配DLinear fixture及原5fb282冻结输入BLOCKED，不改断言/旧hash/统一skip。旧A/L只有新增关联。
 
+### 原D24-T01—T36条款（编号及行为要求保留）
+
+| 条款 | 反例/行为 | 必须结果 |
+|---|---|---|
+| D24-T01 | 候选/控制目标、label、split或数据身份不同 | 比较拒绝，不取任意交集 |
+| D24-T02 | 行乱序、重复、损坏hash或非法缺行 | 明确合同错误，不伪标小样本 |
+| D24-T03 | 人工小数组MAE、残差与分位数 | 数值、符号、单位与独立手算一致 |
+| D24-T04 | 残差均值非零而中位数为零 | 不产生自动均值修正或成功结论 |
+| D24-T05 | 合理近常数基线 | 不因幅度小直接判模型失败 |
+| D24-T06 | 低相关但更差的等权组合 | 显示实际组合损失，不能自动推荐 |
+| D24-T07 | 未来收益修改、未来日期插入 | 过去特征/状态不变；不合法数据前置拒绝 |
+| D24-T08 | 分组阈值试图使用全开发或未来数据 | 只用冻结训练校准范围；分组版本可查 |
+| D24-T09 | 组总量不足、仅一折够数、诊断unavailable | insufficient_evidence，保留理由 |
+| D24-T10 | 组内改善但整体退化；或改善仅一折 | does_not_meet，主MAE政策不被覆盖 |
+| D24-T11 | 规则边界值、严格/非严格比较、展示四舍五入 | 使用原精度及冻结算子判定 |
+| D24-T12 | 运行后改阈值、参照或组定义 | 原规则不可变；新政策不得改当次结果 |
+| D24-T13 | LLM文本称成功但数值不满足 | 确定性状态不改，解释标复核 |
+| D24-T14 | 缺训练预测或跨窗口存在时间空隙 | 不新增fit，不拼接连续自相关 |
+| D24-T15 | 引用不可见、不同权限或同批未来证据 | 编译拒绝；文献保持原authority |
+| D24-T16 | 空生成程序消融、删除不存在特征、消融同时增项 | 训练前拒绝 |
+| D24-T17 | simplify增加另一复杂度；配方改变锁定模型/seed | 训练前拒绝 |
+| D24-T18 | 偷加窗口/权重/ensemble/未知DSL/schema字段 | 不降级、不忽略、不代理执行 |
+| D24-T19 | 首次基线完成、诊断重新载入、刷新重算 | 初始诊断存在，新增HTTP/fit为零，计算成本可查 |
+| D24-T20 | 首轮或第二轮显式diagnose | 占对应规划/槽；无免费第三决定 |
+| D24-T21 | One-shot前两项完成后提出重写后两项 | 不重新规划；冻结全计划可回放 |
+| D24-T22 | 非法/重复提案、无效sampler draw、超总槽 | 原计数与逐决定draw上限一致，不补额度 |
+| D24-T23 | 原始Provider/Replay重复JSON key、超限/非有限值 | 首个raw边界拒绝，不等AST才拒绝 |
+| D24-T24 | 28 fits配置增加独立起点、诊断或refit | 预检真实容量；计数和授权独立，失败预留不退款 |
+| D24-T25 | HTTP=0修复、已记录非法响应、未知交付后重启 | 三种恢复路径按原合同；无自动付费补发 |
+| D24-T26 | 冻结prompt/诊断/配方/规则或制品被篡改 | 恢复拒绝，不用新内容改历史结果 |
+| D24-T27 | review批准后试图增加特征/确认权限 | 保持capability与原确认拒绝 |
+| D24-T28 | OFF臂通过解释、Memory、工具读到新增诊断或外层信息 | 所有投影入口验证拒绝，泄漏会使对照无效 |
+| D24-T29 | 无完成研究候选，或全部差于基线 | 研究指标null/真实劣化；兜底角色单列 |
+| D24-T30 | 某臂失败/早停/不输出推荐 | 留在预登记分母；质量比较另报覆盖，不赋MAE=0 |
+| D24-T31 | 外层揭示后换推荐、挑任务或补跑赢家 | 冻结身份校验拒绝；记录协议偏离 |
+| D24-T32 | 旧数据换目录/别名或换seed声称blind | 曝光谱系不变，独立声明拒绝 |
+| D24-T33 | UI切换/刷新/新context/打开公式/读包 | HTTP/fit不增加，队列无重复任务 |
+| D24-T34 | schema新旧混读、旧hash/fixture回放 | 已知legacy兼容；未知新语义拒绝；旧字节保持 |
+| D24-T35 | 工程模拟、助手fixture或owner操作被标真人/Live | 证据类别准确，不能关闭真实条款 |
+| D24-T36 | 诊断包、推荐配置、ModelBundle来源不一致 | 交付拒绝；原trusted loader/refit防护保持 |
+
 ## 8 条件性后续路线（本轮只维护）
 
 | 版本/一句话 | 重点、功能与框架 | 边界/进入条件 | 简单例子与证据 |
@@ -123,7 +164,7 @@ D24-6预检/清单/收据准备已实现：离线驱动默认NOT_RUN/不读取�
 | T28 | campaign::test_same_legal_ast_on_visible_basis_off_domain_basis / test_v24_rejects_hidden_memory_and_uncontrolled_evidence_before_fit；pilot公平权限冻结 |
 | T29 | diagnostics::test_selection_no_candidate_all_worse_ties_partial_and_determinism；invalid设计无研究结果null |
 | T30 | pilot::test_pilot_failure_denominator_frozen_before_original_controller_dispatch；全部预登记臂保留，费用null |
-| T31 | recovery推荐篡改拒绝；外层标签没有授权也没有读入；模拟隔离不称生产安全证明 |
+| T31 | recovery推荐篡改拒绝；原feature_contract::test_confirmation_preflight_and_grant_reject_before_any_authority_or_labels / test_legacy_selection_and_simulation_confirmation_reject_program_before_frame_access，在模拟读取/fit函数上设置失败哨兵，实际前置拒绝；外层标签没有授权也没有读入；模拟隔离不称生产安全证明 |
 | T32 | 原test_focused_r4_trust曝光更名/等价时间负例；新DSL确认仍前置拒绝 |
 | T33 | tests/browser/test_agent_workspace.py[v24]，真实worker/Chromium；复用旧两模式浏览器 |
 | T34 | 原feature_contract golden identity、原fixture边界；delivery新协议local HTTP→无key严格Replay |
@@ -133,3 +174,77 @@ D24-6预检/清单/收据准备已实现：离线驱动默认NOT_RUN/不读取�
 R1=问题方向与选择分开（T09—13/16—17/29）；R2=OFF领域假设同AST合法及冷Memory（T15/28）；R3=raw/X/prediction来源与不可用（T01—08/14/19）；R4=三层冻结/选择动作（T12/26/29—31/36）。P1=合法AST非固定菜单；P2=q75/30/10/2描述性门槛不作显著性；P3=本地模拟隔离及present_day_research边界；P4=原2规划4槽/有限1对只读组合、后续窗口/权重仅需求记录。
 
 D24-6操作：先运行`python scripts/run_v24_engineering_validation.py --output-root <新目录>`只预检。加`--run-engineering`才运行隔离模拟4臂；不读取key。提供已有真实开发输入还需`--raw-spy-json <path> --allow-development-compute`明确许可与开发用途，不能冒称独立确认。默认不覆盖已有目录。真实Live/所有者/独立用户、政策价值和金融轴需后续分别授权/实际操作，不能用工程收据代替。
+
+## 11 功能源码验收及可复现演示
+
+功能提交68ba12ef5e8a68da6bb0fdc5d12e67567904dde9的所有包内Python模块执行源码身份为50368ab46305d0e6091b383cd2ff2f384dd9e88cfc9445fecf51ccb7482a90cc，browser-source-final与pilot-source-final完成期间未改src。full-final出现旧B5六项summary精简上下文的AttributeError，定向legacy-summary-red 6失败/2.60s、b5-final-probe 37通过/6失败/104.91s保留；只终止已核实PID/出生时间/命令的本次全仓进程，未完成JUnit不计PASS。最小兼容修复只在summary用getattr取得可选diagnostic_policy，不改原六个断言/终态/筛选；legacy-summary-fix 6通过/2.36s。新最终源码身份faa6b0801e330b050a50b902cc5ed81b2ac14c91cf555af6151b9a1952554fd8，在full-final2/browser-source-final2/pilot-source-final2启动前冻结，旧完整/中止证据另列。后续收据/文档提交不是远端同SHA CI；本轮不推送。较早源码通过记录不合计成最终测试数量。
+
+命令工作目录为仓库，Python均为`.venv/Scripts/python.exe`，OMP_NUM_THREADS、MKL_NUM_THREADS、OPENBLAS_NUM_THREADS均为1。
+
+| 最终执行 | exit/结果 | 收据与范围 |
+|---|---|---|
+| `python -m pytest -q --basetemp D:/b05runs/v24-20261009/full-final2-temp --junitxml D:/b05runs/v24-20261009/full-final2.xml --tb=short` | 1；778 passed、2 failed、6 skipped，5566.01s | 最终全仓，2既有环境/资产阻断单列；非全仓全绿。44项V24均通过且已包含在778内 |
+| `python -m pytest -q tests/test_focused_b5_increment.py tests/test_focused_v24_diagnostics.py tests/test_focused_v24_campaign.py --basetemp D:/b05runs/v24-20261009/legacy-summary-reg-temp --junitxml D:/b05runs/v24-20261009/legacy-summary-reg.xml --tb=short` | 0；71 passed，733.89s | 保留原43项B5、新14项纯诊断和14项实际Campaign行为 |
+| `FFA_BROWSER_E2E=1 FFA_UI_BROWSER_ARTIFACTS=D:/b05runs/v24-20261009/browser-source-final2 python -m pytest -q tests/browser/test_agent_workspace.py tests/browser/test_research_workspace.py --basetemp D:/b05runs/v24-20261009/browser-source-final2-temp --junitxml D:/b05runs/v24-20261009/browser-source-final2.xml --tb=short` | 0；4 passed，721.81s | Windows真实Chromium153.0.8010.12、原真实worker；新V24/旧价格/legacy和原Research Workspace review流程。无页面JS错误 |
+| `python scripts/run_v24_engineering_validation.py --output-root D:/b05runs/v24-20261009/pilot-source-final2 --run-engineering` | 0；4/4臂工程PASS | rule_off/on/random_reference/one_shot_demo，20/20/28/28 fits；外部HTTP=0 |
+| 原focused CI的Ruff文件集合，另含`apps/workspace_ui*.py tests/test_workspace_ui*.py scripts/run_v24_engineering_validation.py scripts/collect_v24_receipt.py` | 0；All checks passed | 文件集合按PowerShell Get-ChildItem展开，不依赖外部命令处理通配符 |
+| `python -m compileall -q src/finance_forecast_agent apps scripts` | 0 | 全相关Python |
+| `node --check apps/workspace_frontend/forms.js`；`node --check apps/workspace_frontend/views.js` | 各0 | 曾误用不存在的workspace_ui_frontend路径返回MODULE_NOT_FOUND，属于检查命令路径错误；未改JS掩盖问题 |
+| `git diff --check` | 0 | 无空白错误 |
+
+浏览器V24保存19项实际检查、16个attempt/40 charged campaign fits（父20+续接子20），另有显式refit1。读公式、切换、刷新、新context、续接预览均不增加HTTP/fit；篡改模拟诊断文件后导出拒绝。截图/研究包/真实模型ZIP在`browser-source-final2/v24/`；报告的raw SHA256为cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b，仅模拟数据。前一源码browser-source-final的4通过/626.46s继续保留为独立历史收据。
+
+最终离线pilot-source-final2原始模拟输入SHA256为0798460be4a950b39cb848833148b324cb35b642b834cb110b8e161e135ea8bd；dataset fingerprint e7a1fc373a8f1a86b8004e32bff559150f48a2fdf3d86793e08961869844eb58；预登记hash b5b8693b4d1ed44f0d09293d56c20833979a3823212df4bf9b7553dc8c651911。1100原始行→1035监督行/252开发target。四臂政策/来源/source hash/seed/能力在任何dispatch前冻结。实际逐臂wall73.12/76.54/95.81/92.72s（同机并发回归期间，不能当效率优势）；自动诊断新增fit/HTTP=0，CPU秒不可取得、费用/人工主动用时null。36份PredictionArtifact聚合和fold指标从完整行用原evaluator重算，172个包成员SHA逐个核对。四臂均retain_start，没有要求ON或Adaptive获胜。推荐时间沿原不可变final/campaign.json中的created_at和原events记录，完整final绑定同一推荐body/hash；不另建时钟或状态库。
+
+可复现演示（新目录，不能覆盖既有证据）：
+
+```powershell
+$env:OMP_NUM_THREADS="1"
+$env:MKL_NUM_THREADS="1"
+$env:OPENBLAS_NUM_THREADS="1"
+.\.venv\Scripts\python.exe scripts/run_v24_engineering_validation.py --output-root D:/b05runs/v24-my-demo --run-engineering
+```
+
+查看`rule_on/focused_campaigns/rule_on/`中的`campaign.json`、`diagnostics/`、`contexts/`、`observations/`、`batch_plans/`与`research_package.zip`。此CLI演示不会自称注册成原UI中的用户Mission。实际链：初始Ridge残差/raw/X诊断→合法rolling_mean(return_1,20)提案→4fold真实训练，MAE0.007331007277095696→整体观察meets（相对Ridge绝对改善0.000014991978354799741）→第二轮真实删除该特征的贡献消融，编译配置命中已接受Ridge，按原缓存语义不refit；删除更差支持贡献观察，仍不是推荐更差模型→主0.0025筛选未达→冻结retain_start→包逐行审计。另一个rolling_std(return_1,5)候选MAE0.007349511754582295，does_not_meet；退化数值没有藏入最佳基线。该流程只证明工程与有限策略行为，不证明市场机制或金融增益。
+
+用户界面操作沿用FRONTEND_USER_GUIDE末尾清单：原环境/状态库启动Streamlit→新研究/受控价格特征→诊断可见/规则演示/Adaptive Batch/2轮2槽32fits→实际候选详情→成果中的选择角色/研究包→显式refit及可信模型。不得为演示重置原曝光或信任。所有者和独立操作者的主动时间、帮助与结果需本人填；助手没有代签。
+
+## 12 最终交付状态与未完成边界
+
+| 批次 | 实际实现/复用 | 结果 |
+|---|---|---|
+| D24-0 | AGENTS/ADR006/唯一合同/路线/条款与实际基线，完整保留T01—T36 | PASS；原48条A/L语义与状态和95760e逐项相等 |
+| D24-1 | 纯诊断投影、原Controller自动调用、原RuntimeDB持久化；raw/X/预测来源与unavailable | PASS；自动新增fit/Provider=0 |
+| D24-2 | 有限问题规则、实际parent/control、竞争解释、不变条件及合法AST配方；原compiler/evaluator | PASS；MAE/贡献方向/简化反例及实际观察 |
+| D24-3 | 原工作区增量面板、选择角色、原研究包和显式refit/trust、配置/租户/数据绑定 | PASS（限定工程）；历史symlink平台覆盖缺口单列 |
+| D24-4 | 真实诊断驱动的有限策略、原两决定/四槽、whole One-shot、原HTTP恢复与严格Replay | PASS（模拟、本地真实fit/worker）；不是付费Live语义PASS |
+| D24-5 | 同Controller/caps/compiler/budget/cold Memory四臂预登记，原账本/失败分母/模拟外层访问拒绝 | PASS（工程）；无生产隔离或独立收益证明，四臂均保留起点 |
+| D24-6准备 | 无dispatch预检、工程驱动、真实操作者清单及只读收据 | PASS（准备）；实际Provider/真人/价值/金融NOT_RUN |
+
+最终全仓JUnit SHA256：50b624b09445595e19353e7bedd98b02175cfc00d541ff4ebff22b1e965d39f9。适用核心/Queue/Memory/MethodCard/review/工作区从同一JUnit归集629 passed/1 failed/2 skipped（632项），不是另一次运行；全部44项V24通过。71定向、44新增、629子集与778全仓有重叠，不能累加。4项真实浏览器独立开启flag通过，解释全仓4个opt-in skip，不掩盖另2个平台未运行项。
+
+| nodeid/资产 | 首个异常及分类 | 与本轮关系、恢复要求 |
+|---|---|---|
+| `tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]` | 创建模拟bundle symlink时OSError/WinError1314，尚未进入joblib加载；BLOCKED_ENV | 与基线同环境失败；known-symlink-env.xml也exit1/1失败/4.81s。需合法symlink权限或另行授权的Linux，不能删断言/擅改全局权限 |
+| `tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call` | FileNotFoundError：`projects/finance_agent/llm_fixtures/method_card/2c05bfd22af27435.json`；BLOCKED_ASSET | 与基线同缺口。恢复匹配的原录制/源文档/上下文，不改名别的fixture、不改hash、不用deterministic卡替代；未发送API |
+| 原冻结SPY SHA256 5fb282f6278d14000592e0e432fe69a5c00fdb6f7b48cbb56368fc0e3185bbcd | 原字节不可用；BLOCKED_ASSET/该验收NOT_RUN | 不拿0bb089修订历史或模拟行情替代，也不下载新确认标签 |
+
+其余2个全仓skip：`tests/test_focused_pr4_persistence.py::test_queue_recovers_real_interrupted_worker`为POSIX process-group probe，Windows原生和新增spawn恢复另测但不冒充该POSIX用例；`tests/test_focused_r6_workspace.py::test_package_rejects_symlink`原平台条件因symlink权限跳过。8个warning是原record_property/xunit2兼容警告，未删属性求无警告。
+
+分轴：限定工程PASS、有限规则策略行为PASS（simulation_only）、真实Provider语义NOT_RUN、研究策略价值NOT_RUN、独立预测NOT_RUN、所有者/独立真实用户NOT_RUN；整体产品/科学验收仍PARTIAL。Windows/Python3.13.3/Chromium153实际执行；Linux无本轮远端执行/同SHA CI，macOS/GPU/大型native NOT_RUN。全仓含历史/native适配回归，不表示小时级原论文训练已重跑。没有生产迁移、历史清理、外发、付费调用、推送或V3-P实跑。
+
+最小后续事项：所有者先实际试用并填主动时间/帮助/失败；独立用户另找真实操作者。测Provider语义/策略价值须另行明确模型、额度/HTTP/token/时间费用预算、发送内容和预登记协议；独立预测须另行批准支持的协议及合格数据/前瞻时点，不能解锁当前DSL确认或洗白历史曝光。资产/平台缺口按上表恢复，不新增大平台规划。
+
+本地提交与最终HEAD/tree、各组JUnit路径/哈希、Python/依赖、输入/政策/成本及失败原因以`D:/b05runs/v24-20261009/delivery_receipt.json`为审计收据。脚本expected_exit从JUnit推导，实际exit在上表列明。该脚本不执行模型/读取API key/关闭原A/L条款。后续文档/收据改动未改变已测试faa6b080…执行源码身份，不能称远端同SHA CI。
+
+浏览器复现需PowerShell显式设置（上表env前缀仅表示环境，不是PowerShell命令）：
+
+```powershell
+$env:FFA_BROWSER_E2E="1"
+$env:FFA_UI_BROWSER_ARTIFACTS="D:/b05runs/v24-browser-my-run"
+.\.venv\Scripts\python.exe -m pytest -q tests/browser/test_agent_workspace.py tests/browser/test_research_workspace.py --junitxml D:/b05runs/v24-browser-my-run.xml
+```
+
+每次用新的报告/临时目录保留证据。启动/真实操作见FRONTEND_USER_GUIDE；完整工程演示见上一节。本轮完成后停止，不自行进入后续开发或外部活动。
+
+最终文档检查首次误用不存在的test_focused_roadmap_contract.py，执行exit1/0 tests；final-docs.xml空报告保留为NOT_RUN，不算通过。改用实际原test_focused_b0_plan.py和test_focused_r0_status.py重跑，exit0/4通过/2.24s，见final-docs2.xml；这是执行命令路径错误，不是被删除或改名的测试。

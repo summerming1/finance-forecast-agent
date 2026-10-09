@@ -2290,7 +2290,7 @@ class FocusedResearchController:
             payload["evidence_status"]["confirmation"] = payload["confirmation_status"]
             if simulated:
                 payload["scientific_claim"] = "simulation_only_no_financial_evidence"
-        if self.diagnostic_policy:
+        if getattr(self, "diagnostic_policy", None):
             from .focused_diagnostics import select_recommendation
             def choice(result):
                 return {"candidate_id": result.candidate.candidate_id, "candidate": result.candidate.to_dict(),
