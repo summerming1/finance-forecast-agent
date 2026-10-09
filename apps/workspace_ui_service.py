@@ -27,7 +27,7 @@ FORM_FIELDS = {
     'project_id', 'project_dir', 'raw_path', 'source_metadata', 'input_kind', 'input_contract',
     'mode', 'entry_mode', 'starting_config', 'change_scope', 'allowed_feature_groups', 'research_notes',
     'preset', 'budget', 'fixture_dir', 'replay_call_ids', 'literature_project', 'literature_review_ids',
-    'data_consent', 'live_consent', 'feature_strategy',
+    'data_consent', 'live_consent', 'feature_strategy', 'diagnostic_mode',
 }
 BUDGET_FIELDS = {'max_rounds', 'max_new_candidates_per_round', 'max_fit_calls', 'max_advisor_calls',
                  'max_http_requests', 'max_provider_seconds'}
@@ -89,6 +89,8 @@ class WorkspaceUI:
                                   'context_mode': 'compact_v1',
                                   'research_notes': _text(form.get('research_notes', ''), maximum=4000)}
         price_mode = options['change_scope'] == 'price_features'
+        if form.get('diagnostic_mode') is not None:
+            options['diagnostic_mode'] = form['diagnostic_mode']
         if 'feature_strategy' in form:
             if not price_mode:
                 raise ValueError('Price planning policy requires the explicit price_features scope')
@@ -156,7 +158,8 @@ class WorkspaceUI:
             research_notes=options['research_notes'], input_provenance=provenance, feature_specs=specs,
             literature_project=options['literature_project'], literature_review_ids=review_ids,
             context_mode='compact_v1', replay_call_ids=options.get('replay_call_ids'),
-            raw_history=raw_history, feature_strategy=options.get('feature_strategy'))
+            raw_history=raw_history, feature_strategy=options.get('feature_strategy'),
+            diagnostic_mode=options.get('diagnostic_mode'), use_memory_prior=not bool(options.get('diagnostic_mode')))
         controller.split_spec.build_splits(len(frame))
         if budget.max_fit_calls < controller.required_initial_fit_calls():
             raise ValueError('Budget is too small for the fixed controls and user start')
@@ -242,7 +245,8 @@ class WorkspaceUI:
                                'config_diff': detail.get('config_diff'), 'feedback': detail.get('feedback'),
                                'research_verdict': data.get('research_verdict'),
                                'actual_features': data.get('actual_features', []),
-                               'feature_execution': data.get('feature_execution')})
+                               'feature_execution': data.get('feature_execution'),
+                               'diagnostic': detail.get('diagnostic'), 'observation': detail.get('observation')})
         selected = candidate_id if candidate_id in details else payload.get('best_candidate_id')
         if selected not in details:
             selected = next(iter(details), '')

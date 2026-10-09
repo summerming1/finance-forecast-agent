@@ -1,0 +1,391 @@
+"""V24 pure projections of accepted evidence; no fit, network or runtime authority."""
+import time
+from copy import deepcopy
+
+import numpy as np
+
+from .focused_feature_program import _expression_values, compute_price_features
+from .focused_identity import identity
+
+VERSION = "diagnostic_research_v1"
+RECIPES = {"RCP-01": "overall", "RCP-02": "contribution", "RCP-03": "simplification",
+           "RCP-04": "diagnose", "RCP-05": "diagnose"}
+
+
+def selection_policy():
+    return {"schema_version": "research_selection_v1", "primary_metric": "mae",
+            "min_relative_mae_improvement": .0025, "evidence_tier": "development_only",
+            "reference": "best_fixed_control_or_user_start", "tie_policy": "retain_start_then_candidate_id",
+            "max_degradation": 0., "fallback": "qualified_start_or_unresolved"}
+
+
+def research_policy(visibility="on"):
+    if visibility not in {"on", "off"}:
+        raise ValueError("diagnostic visibility must be on or off")
+    return {"schema_version": VERSION, "diagnostic_visibility": visibility,
+            "knowledge_mode": "present_day_research", "automatic_fit_limit": 0,
+            "recipes": RECIPES, "selection_policy": selection_policy(),
+            "rule_templates": [rule_template(k) for k in ("overall", "high_volatility", "contribution", "simplification", "diagnose")],
+            "memory": "cold", "pair_diagnostic_limit": 1,
+            "predeclared_pair": ["baseline_ridge", "baseline_rf"]}
+
+
+def rule_template(question):
+    if question not in {"overall", "high_volatility", "contribution", "simplification", "diagnose"}:
+        raise ValueError("unknown observation rule")
+    return {"schema_version": "observation_rule_v1", "question": question, "metric": "mae",
+            "unit": "return", "evidence_tier": "development_only", "precision": "float64_native",
+            "group": "past_volatility20_train_q75_linear_strict_v1" if question == "high_volatility" else "all_targets",
+            "minimum_rows": 30 if question == "high_volatility" else 1,
+            "minimum_rows_per_fold": 10, "minimum_folds": 2, "minimum_improved_folds": 2,
+            "max_degradation": 0., "missing_policy": "insufficient_evidence"}
+
+
+def freeze_rule(question, control_id, control_fingerprint, candidate_id, candidate_fingerprint=None):
+    out = {**rule_template(question), "control_candidate_id": control_id,
+           "control_fingerprint": control_fingerprint, "candidate_id": candidate_id,
+           "candidate_fingerprint": candidate_fingerprint}
+    out["rule_hash"] = identity(out, domain="observation-rule-v1")
+    return out
+
+
+def verify_rule(rule):
+    expected = freeze_rule(rule["question"], rule["control_candidate_id"], rule["control_fingerprint"], rule["candidate_id"], rule["candidate_fingerprint"])
+    if rule != expected:
+        raise ValueError("observation rule identity or policy changed")
+
+
+def _validated_rows(artifact):
+    rows = artifact["rows"]
+    if not rows:
+        raise ValueError("prediction contract: empty target rows")
+    ids = [(r["fold_id"], r["row_id"]) for r in rows]
+    if ids != sorted(ids) or len({r["row_id"] for r in rows}) != len(rows):
+        raise ValueError("prediction contract: order or duplicate targets")
+    if any(r["candidate_id"] != artifact["candidate_id"] or
+           r["candidate_fingerprint"] != artifact["candidate_fingerprint"] for r in rows):
+        raise ValueError("prediction contract: candidate identity")
+    if not np.isfinite([[r["y_true"], r["y_pred"]] for r in rows]).all():
+        raise ValueError("prediction contract: non-finite values")
+    return rows
+
+
+def aligned_predictions(a, b):
+    left, right = _validated_rows(a), _validated_rows(b)
+    for key in ("task_id", "task_version", "dataset_fingerprint", "split_spec", "evaluation_policy"):
+        if a[key] != b[key]:
+            raise ValueError("prediction contract: incompatible " + key)
+    keys = ("fold_id", "row_id", "raw_row_id", "session_date", "decision_time", "target_observed_at", "y_true")
+    if len(left) != len(right) or any(tuple(x.get(k) for k in keys) != tuple(y.get(k) for k in keys)
+                                      for x, y in zip(left, right, strict=True)):
+        raise ValueError("prediction contract: incomplete or incompatible target identity")
+    return left, right
+
+
+def residual_diagnostic(artifact):
+    rows = _validated_rows(artifact)
+    actual, predicted = np.asarray([[r["y_true"], r["y_pred"]] for r in rows], dtype=float).T
+    residual = predicted-actual
+    return {"source": "complete_prediction_artifact", "rows": len(rows), "mae": float(np.mean(abs(residual))),
+            "residual_mean": float(np.mean(residual)), "residual_median": float(np.median(residual)),
+            "negative_fraction": float(np.mean(residual < 0)), "zero_fraction": float(np.mean(residual == 0)),
+            "positive_fraction": float(np.mean(residual > 0)), "residual_quantiles": np.quantile(residual, [.05, .25, .5, .75, .95], method="linear").tolist(),
+            "prediction_std": float(np.std(predicted)), "automatic_correction": False,
+            "near_constant_is_failure": False, "train_development_gap": "unavailable_no_saved_train_predictions",
+            "continuous_autocorrelation": "unavailable_disjoint_development_windows"}
+
+
+def pair_diagnostic(a, b):
+    left, right = aligned_predictions(a, b)
+    ra = np.array([r["y_pred"]-r["y_true"] for r in left])
+    rb = np.array([r["y_pred"]-r["y_true"] for r in right])
+    return {"source": "aligned_existing_predictions", "weights": [.5, .5],
+            "residual_correlation": float(np.corrcoef(ra, rb)[0, 1]) if np.std(ra) > 0 and np.std(rb) > 0 else None,
+            "equal_weight_mae": float(np.mean(abs((ra+rb)/2))),
+            "best_member_mae": min(float(np.mean(abs(ra))), float(np.mean(abs(rb)))),
+            "recommendation_authorized": False, "new_fit_calls": 0}
+
+
+def volatility_groups(prices, raw_splits):
+    prices = np.asarray(prices, dtype=float)
+    if prices.ndim != 1 or not np.isfinite(prices).all() or np.any(prices <= 0):
+        raise ValueError("raw price contract invalid")
+    returns = np.r_[np.nan, prices[1:]/prices[:-1]-1]
+    vol, _, _ = _expression_values({"op": "rolling_std", "window": 20,
+        "arg": {"op": "input", "name": "return_1"}}, returns)
+    groups = []
+    for fold_id, (train, test) in enumerate(raw_splits):
+        train, test = np.asarray(train, dtype=int), np.asarray(test, dtype=int)
+        if (len(train) == 0 or len(test) == 0 or len(set(train)) != len(train) or
+                np.any(train < 20) or np.any(test >= len(prices)) or train[-1] >= test[0]):
+            raise ValueError("volatility calibration contract invalid")
+        threshold = float(np.quantile(vol[train], .75, method="linear"))
+        groups.append({"fold_id": fold_id, "calibration_rows": train.tolist(),
+                       "threshold": threshold, "rows": test[vol[test] > threshold].tolist(),
+                       "source": "contract_bound_raw_prices_not_prediction_labels"})
+    return groups
+
+
+def _protection_events(node, returns, masks):
+    """Node-level input-time events; do not confuse them with output dependencies."""
+    if node["op"] == "safe_divide":
+        a, al, _ = _expression_values(node["left"], returns)
+        b, bl, _ = _expression_values(node["right"], returns)
+        mask = np.zeros(len(returns), dtype=bool)
+        begin = max(al, bl)
+        mask[begin:] = (abs(b[begin:]) < 1e-8) & np.isfinite(a[begin:])
+        masks.append(mask)
+    for key in ("arg", "left", "right"):
+        if key in node:
+            _protection_events(node[key], returns, masks)
+
+
+def derive_diagnostic(artifact, *, candidate, raw_history, frame, splits):
+    started = time.perf_counter()
+    out = {"schema_version": "deterministic_diagnostic_v1", "candidate_id": artifact["candidate_id"],
+           "prediction_hash": identity(artifact, domain="diagnostic-prediction-v1"),
+           "residual": residual_diagnostic(artifact), "volatility_groups": "unavailable",
+           "training_features": "unavailable", "protected_division": "unavailable",
+           "evidence_tier": "development_only", "new_fit_calls": 0, "provider_requests": 0}
+    if raw_history is not None:
+        raw_map = frame["raw_row_id"].to_numpy(dtype=int)
+        expected = [(i, int(row)) for i, (_, test) in enumerate(splits) for row in test]
+        if [(r["fold_id"], r["row_id"]) for r in artifact["rows"]] != expected:
+            raise ValueError("prediction contract: targets differ from frozen split")
+        if any(r.get("raw_row_id") != int(raw_map[r["row_id"]]) or
+               r["y_true"] != float(frame.iloc[r["row_id"]]["label"]) for r in artifact["rows"]):
+            raise ValueError("prediction contract: raw mapping or label changed")
+        prices = raw_history["spy_adj_close"].to_numpy(dtype=float)
+        raw_splits = [(raw_map[train], raw_map[test]) for train, test in splits]
+        groups = volatility_groups(prices, raw_splits)
+        inverse = {int(raw): int(i) for i, raw in enumerate(raw_map)}
+        for group in groups:
+            group["raw_rows"] = group["rows"]
+            group["rows"] = [inverse[r] for r in group["rows"]]
+        out["volatility_groups"] = groups
+        out["raw_history_hash"] = identity(raw_history.to_dict(orient="list"), domain="diagnostic-raw-v1")
+        if candidate.feature_program is not None:
+            matrix = compute_price_features(prices, candidate.feature_program, candidate.feature_groups)
+            stats, protected = [], []
+            returns = np.r_[np.nan, prices[1:]/prices[:-1]-1]
+            masks = []
+            for feature in candidate.feature_program.to_dict()["features"]:
+                _protection_events(feature["expression"], returns, masks)
+            for fold_id, (train, _) in enumerate(raw_splits):
+                x = matrix.values[train]
+                variances = np.var(x, axis=0)
+                nonconstant = variances > 0
+                correlations = np.corrcoef(x[:, nonconstant], rowvar=False) if sum(nonconstant) > 1 else np.empty((0, 0))
+                stats.append({"fold_id": fold_id, "source": "actual_training_feature_matrix",
+                    "raw_training_rows": train.tolist(), "columns": list(matrix.columns), "variance": variances.tolist(),
+                    "max_abs_off_diagonal_correlation": float(np.max(abs(correlations-np.eye(len(correlations))))) if correlations.size else None})
+                event_counts = [int(mask[train].sum()) for mask in masks]
+                triggered = int(np.logical_or.reduce([mask[train] for mask in masks]).sum()) if masks else 0
+                protected.append({"fold_id": fold_id, "scope": "division_node_input_events_on_actual_training_raw_rows",
+                    "node_event_count": sum(event_counts), "node_counts": event_counts,
+                    "distinct_triggered_rows": triggered, "denominator_rows": len(train), "row_rate": triggered/len(train)})
+            out["training_features"], out["protected_division"] = stats, protected
+    out["limitations"] = ["Descriptive development evidence, not significance or causal proof.",
+                          "No bias correction, ensemble selection, refit or source download."]
+    # Measured cost is audit-only, excluded from deterministic numeric identity.
+    out["diagnostic_hash"] = identity(out, domain="deterministic-diagnostic-v1")
+    out["compute_wall_seconds"] = time.perf_counter()-started
+    return out
+
+
+def observation_result(rule, child, control, *, groups=None):
+    verify_rule(rule)
+    if control["candidate_id"] != rule["control_candidate_id"] or control["candidate_fingerprint"] != rule["control_fingerprint"]:
+        raise ValueError("observation contract: wrong control")
+    cr, pr = aligned_predictions(child, control)
+    if rule["candidate_fingerprint"] is not None and child["candidate_fingerprint"] != rule["candidate_fingerprint"]:
+        raise ValueError("observation contract: child execution differs from frozen plan")
+    losses = np.array([abs(r["y_pred"]-r["y_true"]) for r in cr])
+    reference = np.array([abs(r["y_pred"]-r["y_true"]) for r in pr])
+    improvement = float(np.mean(reference)-np.mean(losses))
+    out = {"rule": deepcopy(rule), "overall_abs_improvement": improvement,
+           "prediction_improvement": improvement > 0, "folds": [],
+           "observation_status": "does_not_meet", "interpretation_review": False}
+    question = rule["question"]
+    if question == "high_volatility":
+        if groups is None or isinstance(groups, str):
+            out.update(observation_status="insufficient_evidence", reason="raw state source unavailable")
+            return out
+        if groups and [g['fold_id'] for g in groups] != sorted({r['fold_id'] for r in cr}):
+            raise ValueError('observation contract: group folds incomplete, reordered or duplicate')
+        index = {r["row_id"]: i for i, r in enumerate(cr)}
+        total = 0
+        for group in groups:
+            if any(row not in index or cr[index[row]]["fold_id"] != group["fold_id"] for row in group["rows"]):
+                raise ValueError("observation contract: wrong group targets")
+            indices = [index[row] for row in group["rows"]]
+            if len(set(indices)) != len(indices):
+                raise ValueError("observation contract: duplicate group rows")
+            delta = float(np.mean(reference[indices]-losses[indices])) if indices else None
+            total += len(indices)
+            out["folds"].append({"fold_id": group["fold_id"], "rows": len(indices), "abs_improvement": delta,
+                                 "eligible": len(indices) >= rule["minimum_rows_per_fold"]})
+        eligible = [r for r in out["folds"] if r["eligible"]]
+        if total < rule["minimum_rows"] or len(eligible) < rule["minimum_folds"]:
+            out.update(observation_status="insufficient_evidence", reason="descriptive sample minima not met")
+            return out
+        pooled = sum(r["rows"] * (r["abs_improvement"] or 0.) for r in out["folds"])/total
+        out["group_abs_improvement"] = pooled
+        met = pooled > 0 and improvement >= 0 and sum(r["abs_improvement"] > 0 for r in eligible) >= rule["minimum_improved_folds"]
+    else:
+        met = improvement < 0 if question == "contribution" else improvement >= 0 if question == "simplification" else improvement > 0
+    out["observation_status"] = "meets_predeclared_observation" if met else "does_not_meet"
+    return out
+
+
+def select_recommendation(policy, start, research, controls, *, execution_status):
+    if policy != selection_policy():
+        raise ValueError("selection policy differs from frozen approved policy")
+    def rank(row):
+        return (row["metrics"]["mae"], row["candidate_id"])
+    def qualified(row):
+        return row is not None and np.isfinite(row["metrics"]["mae"]) and row["metrics"]["mae"] >= 0
+    if any(not qualified(row) for row in [*research, *controls]):
+        raise ValueError("selection contract: invalid metric")
+    best = min(research, key=rank) if research else None
+    ref = min([*controls, *([start] if qualified(start) else [])], key=rank) if controls or qualified(start) else None
+    selected = start if qualified(start) else None
+    action = "retain_start" if selected else "unresolved"
+    relative = (ref["metrics"]["mae"]-best["metrics"]["mae"])/ref["metrics"]["mae"] if ref and best and ref["metrics"]["mae"] > 0 else None
+    if execution_status != "cancelled" and best and relative is not None and relative >= policy["min_relative_mae_improvement"] and (selected is None or best["metrics"]["mae"] < selected["metrics"]["mae"]):
+        selected, action = best, "select_research_candidate"
+    available = [*controls, *research, *([start] if qualified(start) else [])]
+    return {"schema_version": "frozen_recommendation_v1", "selection_policy": deepcopy(policy),
+            "best_research_candidate": best, "selected_recommendation": selected, "selection_action": action,
+            "best_available_model": min(available, key=rank) if available else None,
+            "relative_research_improvement_vs_selection_reference": relative,
+            "execution_status": execution_status, "evidence_tier": "development_only"}
+
+
+def verify_diagnostic(body, artifact=None):
+    numeric = {k: v for k, v in body.items() if k not in {"diagnostic_hash", "compute_wall_seconds"}}
+    if identity(numeric, domain="deterministic-diagnostic-v1") != body["diagnostic_hash"]:
+        raise ValueError("diagnostic contract: content changed")
+    if artifact is not None and body["prediction_hash"] != identity(artifact, domain="diagnostic-prediction-v1"):
+        raise ValueError("diagnostic contract: prediction changed")
+
+
+def diagnostic_projection(body):
+    """Bounded planning view; scope hashes retain identities, full rows stay in audit."""
+    verify_diagnostic(body)
+    out = deepcopy({k: v for k, v in body.items() if k != "compute_wall_seconds"})
+    for group in out["volatility_groups"] if isinstance(out["volatility_groups"], list) else []:
+        for key in ("rows", "raw_rows", "calibration_rows"):
+            group[key+"_hash"] = identity(group[key], domain="diagnostic-scope-v1")
+            group[key+"_count"] = len(group.pop(key))
+    for fold in out["training_features"] if isinstance(out["training_features"], list) else []:
+        fold["training_scope_hash"] = identity(fold["raw_training_rows"], domain="diagnostic-scope-v1")
+        fold["training_rows_count"] = len(fold.pop("raw_training_rows"))
+    out["projection_version"] = "diagnostic_planning_projection_v1"
+    return out
+
+
+def default_design(recipe, *, question=None, basis="domain_hypothesis", symptom_refs=None):
+    return {"recipe_id": recipe, "question": question or RECIPES[recipe], "basis": basis,
+            "symptom_refs": symptom_refs or [], "competing_explanation": "unknown; descriptive experiment cannot distinguish market mechanisms",
+            "falsification_condition": "Frozen deterministic observation does not meet its predeclared direction"}
+
+
+def bind_design(design, hypothesis, candidate, results, prompt):
+    from .focused_adaptive import EvidenceIndex
+    if candidate is None:
+        if design is not None and (hypothesis.action_type != "diagnose" or design != default_design("RCP-04")):
+            raise ValueError("control action cannot smuggle a training design")
+        return None
+    required = {"recipe_id", "question", "basis", "competing_explanation", "falsification_condition"}
+    if not isinstance(design, dict) or not required <= set(design) or set(design)-required-{"symptom_refs"}:
+        raise ValueError("training requires bounded research_design")
+    recipe = design["recipe_id"]
+    expected = {"improve": "RCP-01", "ablate": "RCP-02", "simplify": "RCP-03"}[hypothesis.action_type]
+    if recipe != expected or design["question"] not in ({"overall", "high_volatility"} if recipe == "RCP-01" else {RECIPES[recipe]}):
+        raise ValueError("recipe/action/question mismatch")
+    if design["basis"] not in {"domain_hypothesis", "visible_evidence"}:
+        raise ValueError("unapproved proposal basis")
+    for key in ("competing_explanation", "falsification_condition"):
+        if not isinstance(design[key], str) or not design[key].strip() or len(design[key]) > 2000:
+            raise ValueError("missing bounded research explanation")
+    refs = design.get("symptom_refs", [])
+    if not isinstance(refs, list) or any(not isinstance(r, str) for r in refs):
+        raise ValueError("invalid symptom refs")
+    index = EvidenceIndex(prompt["evidence_projection"])
+    for ref in refs:
+        index.require(ref, "diagnostic")
+    if design["basis"] == "visible_evidence" and not refs and not hypothesis.evidence_refs and not hypothesis.based_on_feedback_ids:
+        raise ValueError("visible evidence basis has no evidence")
+    control_id = hypothesis.control_candidate_id or hypothesis.parent_candidate_id
+    control = results[control_id].candidate
+    bound = {**deepcopy(design), "symptom_refs": refs, "applicability": "unknown" if not refs else "descriptive_development",
+             "parent_candidate_id": hypothesis.parent_candidate_id, "control_candidate_id": control_id,
+             "rule": freeze_rule(design["question"], control_id, control.fingerprint, candidate.candidate_id, candidate.fingerprint),
+             "invariants": {"model_family": candidate.model_family, "model_params": candidate.model_params,
+                            "seed": candidate.seed, "feature_groups": candidate.feature_groups},
+             "program_hash": identity(candidate.feature_program.to_dict(), domain="diagnostic-program-v1")}
+    bound["design_hash"] = identity(bound, domain="research-design-v1")
+    return bound
+
+
+def diagnostic_advice(prompt):
+    """Finite rule policy actually branches on visible evidence, not relabelled enumeration."""
+    from .focused_feature_program import empty_feature_program
+    start = prompt["research_start_candidate_id"]
+    count = int(prompt["max_hypotheses"])
+    previous = prompt["prior_research_results"]
+    diagnostics = {r["candidate_id"]: r for r in prompt["automatic_diagnostics"]}
+    if previous and prompt["feature_policy"]["arm"] != "one_shot":
+        parent = min(previous, key=lambda r: (r["metrics"]["mae"], r["candidate_id"]))
+        features = parent["feature_program"]["features"]
+        if not features:
+            return {"hypotheses": [{"action_type": "stop", "statement": "No actual generated feature to ablate"}]}
+        diag = diagnostics.get(parent["candidate_id"])
+        # Constant generated feature -> real simplification, else contribution test.
+        constant = bool(diag and any(f["variance"][-1] == 0 for f in diag["training_features"]))
+        action, recipe = ("simplify", "RCP-03") if constant else ("ablate", "RCP-02")
+        row = {"statement": "Check actual feature redundancy" if constant else "Test local contribution; worse child is not a recommendation",
+               "action_type": action, "parent_candidate_id": parent["candidate_id"], "control_candidate_id": parent["candidate_id"],
+               "evidence_refs": [parent["candidate_id"]], "research_design": default_design(recipe)}
+        if action == "simplify":
+            value = deepcopy(parent["feature_program"])
+            value["features"] = features[:-1]
+            row.update(feature_program=value, simplification_dimension="feature_count")
+        else:
+            row["ablation_component"] = "generated_feature:"+features[-1]["name"]
+        return {"hypotheses": [row]}
+    diagnostic = diagnostics.get(start)
+    state_available = bool(diagnostic and isinstance(diagnostic["volatility_groups"], list))
+    enough_group = state_available and sum(g.get("rows_count", len(g.get("rows", []))) for g in diagnostic["volatility_groups"]) >= 30
+    scale = bool(enough_group and diagnostic["residual"]["mae"] > 0)
+    expressions = [
+        {"op": "safe_divide", "left": {"op": "rolling_mean", "window": 5, "arg": {"op": "input", "name": "return_1"}},
+         "right": {"op": "rolling_std", "window": 20, "arg": {"op": "input", "name": "return_1"}}},
+        {"op": "rolling_mean", "window": 20, "arg": {"op": "input", "name": "return_1"}},
+        {"op": "rolling_std", "window": 5, "arg": {"op": "input", "name": "return_1"}},
+        {"op": "rolling_mean", "window": 5, "arg": {"op": "input", "name": "return_1"}},
+    ]
+    if not scale:
+        expressions = expressions[1:]+expressions[:1]
+    # A continuation's distinct incumbent already consumed real folds. Keep
+    # the approved fit cap; do not emit an unaffordable full batch or add budget.
+    from .focused_protocol import FocusedSplitSpec
+    remaining = prompt.get('remaining_budget', {}).get('remaining_fit_calls')
+    if remaining is not None:
+        count = min(count, int(remaining)//FocusedSplitSpec().max_folds)
+    if count == 0:
+        return {'hypotheses':[{'action_type':'stop', 'statement':'Frozen fit capacity exhausted; retain qualified start'}]}
+    hypotheses = []
+    for expr in expressions[:count]:
+        value = empty_feature_program().to_dict()
+        inherited = deepcopy(prompt["fixed_model"]["feature_program"]["features"])
+        if len(inherited) >= 2:
+            return {"hypotheses": [{"action_type": "stop", "statement": "Frozen feature capacity exhausted"}]}
+        value["features"] = inherited + [{"name": "gen_diagnostic_"+str(len(inherited)+1), "expression": expr}]
+        refs = ["diagnostic:"+diagnostic["diagnostic_hash"]] if diagnostic else []
+        design = default_design("RCP-01", question="high_volatility" if scale and expr["op"] == "safe_divide" else "overall",
+                                basis="visible_evidence" if diagnostic else "domain_hypothesis", symptom_refs=refs)
+        hypotheses.append({"statement": "Test scale in observed high-volatility development group" if scale else "Domain hypothesis: past returns may contain useful information",
+            "parent_candidate_id": start, "evidence_refs": [start], "feature_program": value, "research_design": design})
+    return {"hypotheses": hypotheses}

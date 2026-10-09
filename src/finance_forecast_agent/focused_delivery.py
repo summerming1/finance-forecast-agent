@@ -1022,9 +1022,29 @@ def refit_model_bundle(
 ) -> Path:
     active_policy = policy or RefitPolicy()
     if workspace_context is not None:
-        if set(workspace_context) != {"project_id", "campaign_id"}:
-            raise ValueError("refit workspace context requires project/campaign identity only")
+        legacy_fields = {"project_id", "campaign_id"}
+        diagnostic_fields = legacy_fields | {"recommendation_hash", "explicitly_selected_candidate_id", "selection_action"}
+        if set(workspace_context) not in (legacy_fields, diagnostic_fields):
+            raise ValueError("refit workspace context requires a known project/campaign binding")
         workspace_context = {key: safe_id(value) for key, value in workspace_context.items()}
+        if set(workspace_context) == diagnostic_fields:
+            authority = _authority(state_path)
+            ns = 'campaign:'+workspace_context['campaign_id']
+            saved = authority.get(ns, 'recommendation')
+            contract = authority.get(ns, 'contract')
+            accepted = authority.get(ns, 'result:'+candidate.candidate_id)
+            if (not saved or saved['body']['recommendation_hash'] != workspace_context['recommendation_hash']
+                    or saved['body']['selection_action'] != workspace_context['selection_action']
+                    or workspace_context['explicitly_selected_candidate_id'] != candidate.candidate_id
+                    or saved['body']['recommendation_hash'] != identity({k:v for k,v in saved['body'].items()
+                        if k != 'recommendation_hash'}, domain='frozen-recommendation-v1')
+                    or not contract or contract['hash'] != identity(contract['body'], domain='execution-contract-v1')
+                    or contract['body']['tenant_id'] != tenant_id
+                    or contract['body']['dataset_semantic_identity'] != dataset.semantic_fingerprint
+                    or saved['body']['execution_contract_hash'] != contract['hash']
+                    or not accepted or accepted['contract_hash'] != contract['hash']
+                    or CandidateConfig.from_dict(accepted['row']['candidate']).fingerprint != candidate.fingerprint):
+                raise ValueError('ModelBundle recommendation binding mismatch before refit')
     review_bindings = _bundle_review_bindings(literature_project, literature_review_ids,
         task=task, candidate=candidate, tenant_id=tenant_id)
     if not active_policy.fit_all_available_labels:
@@ -1099,6 +1119,7 @@ def refit_model_bundle(
         else "declared_XNYS_close_not_observed_provider_receipt",
         "refit_policy": active_policy.to_dict(),
         "refit_receipt": {"refit_attempt_id": attempt_id, "reserved_fit_calls": 1},
+        **({"research_selection_binding": workspace_context} if workspace_context and workspace_context.get("recommendation_hash") else {}),
         "environment": _environment(),
         "source": _source(),
         "evidence_relationship": "selected_on_development_then_refit_without_confirmation_tuning",

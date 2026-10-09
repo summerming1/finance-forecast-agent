@@ -282,7 +282,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     from .focused_research import DEFAULT_BASELINES, FocusedResearchController, ResearchBudget
     store, project = _workspace_project(state_path, project_id, tenant_id)
     options = json.loads(json.dumps(options or {}))
-    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode','continuation_from','feature_strategy'}
+    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode','continuation_from','feature_strategy','diagnostic_mode'}
     if not isinstance(options,dict) or set(options)-allowed_options:
         raise ValueError('unsupported workspace options')
     evidence_input = options.get('reviewed_evidence') or []
@@ -308,6 +308,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     preflight = FocusedResearchController(project_dir=project['root'], frame=frame, dataset=snapshot,
         task=FocusedTaskSpec(exposure=snapshot.exposure) if snapshot.feature_protocol else FocusedTaskSpec(),
         raw_history=raw_history, feature_strategy=options.get('feature_strategy'),
+        diagnostic_mode=options.get('diagnostic_mode'), use_memory_prior=not bool(options.get('diagnostic_mode')),
         budget=budget, advisor_mode=advisor_mode, feature_specs=specs, input_provenance=provenance,
         starting_baseline=options.get('starting_baseline'), entry_mode=options.get('entry_mode'), change_scope=options.get('change_scope','explore'), allowed_feature_groups=options.get('allowed_feature_groups'),
         research_notes=options.get('research_notes',''), reviewed_evidence=evidence, state_path=store.path,
@@ -330,7 +331,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     task = submit_focused_campaign(queue, project_dir=project['root'], raw_spy_json=raw_path,
         source_metadata=source_metadata, advisor_mode=advisor_mode, fixture_dir=request['fixture_dir'],
         rounds=budget.max_rounds,candidates_per_round=budget.max_new_candidates_per_round,max_fit_calls=budget.max_fit_calls,
-        tenant_id=tenant_id, operation_id=operation_key, research_options=options, hold=True, start_immediately=False,
+        tenant_id=tenant_id, operation_id=operation_key, research_options=options, use_memory_prior=not bool(options.get('diagnostic_mode')), hold=True, start_immediately=False,
         max_advisor_calls=budget.max_advisor_calls,max_http_requests=budget.max_http_requests,max_provider_seconds=budget.max_provider_seconds)
     campaign_id = task.research_context['campaign_id']
     mission = missions.attach_campaign(mission_id, campaign_id)
@@ -382,8 +383,41 @@ def workspace_campaign(state_path, project_id, campaign_id, *, tenant_id='defaul
                 'fit_calls':sum(a['reserved'] for a in attempts),'evidence_status':{'confirmation':'not_run'},
                 'confirmation_status':'not_run','created_at':None}
         payload = json.loads(json.dumps(payload))
+        diagnostic_policy = (payload['campaign'].get('research_options') or {}).get('diagnostic_policy')
+        if diagnostic_policy and final:
+            # Reads/downloads verify the same original DB authority without
+            # acquiring a worker lease or recomputing diagnostics/models.
+            evidence_rows = db.execute("SELECT key,payload FROM objects WHERE ns=?", (ns,)).fetchall()
+            for evidence_row in evidence_rows:
+                key = evidence_row['key']
+                if not key.startswith(('diagnostic:', 'observation:', 'diagnostic_context:', 'pair_diagnostic:')) and key != 'recommendation':
+                    continue
+                evidence = json.loads(evidence_row['payload'])
+                for ref in evidence['artifacts']:
+                    target = root/ref['path']
+                    if target.is_symlink() or root.resolve() not in target.resolve().parents or file_sha256(target) != ref['sha256']:
+                        raise ValueError('diagnostic evidence artifact hash/path mismatch')
+                    if json.loads(target.read_bytes()) != evidence['body']:
+                        raise ValueError('diagnostic evidence differs from authoritative body')
+                if key == 'recommendation' and evidence['body'] != payload['diagnostic_research']['recommendation']:
+                    raise ValueError('recommendation differs from accepted final')
         if task.status == 'cancelled':
             payload.update(execution_status='cancelled',research_outcome='inconclusive',terminal_status='cancelled')
+            policy = (payload['campaign'].get('research_options') or {}).get('diagnostic_policy')
+            if policy:
+                from .focused_diagnostics import select_recommendation
+                controls, research = [], []
+                for entry in accepted:
+                    row = entry['row']
+                    result = row.get('result', row)
+                    choice = {'candidate_id':result['candidate']['candidate_id'], 'candidate':result['candidate'],
+                              'metrics':result['metrics']}
+                    (research if row.get('hypothesis') else controls).append(choice)
+                start_id = payload['campaign']['research_options'].get('diagnostic_start_candidate_id')
+                start = next((r for r in controls if r['candidate_id'] == start_id), None)
+                selected = select_recommendation(policy['selection_policy'], start, research, controls, execution_status='cancelled')
+                selected['recommendation_freeze'] = 'unavailable_cancelled_before_freeze_read_only_projection'
+                payload['diagnostic_research'] = {'policy':policy, 'recommendation':selected, 'diagnostics':[]}
         review = store.read(db, ns, 'review:'+safe_id(payload['review_id'])) if payload.get('review_id') else pause_review
     return {'payload':payload,'task':task.to_dict(),'link':link,'project':project,'request':request,
             'projection':build_workspace_projection(payload),'review':review,'root':str(root),
@@ -477,13 +511,18 @@ def refit_workspace_model(state_path, project_id, campaign_id, candidate_id, *, 
     frame, snapshot, _, specs, raw_history = load_workspace_input(req['raw_path'],req['source_metadata'],req['options'], include_raw_history=True)
     if snapshot.semantic_fingerprint != current['payload']['campaign']['dataset']['semantic_fingerprint']:
         raise ValueError('refit semantic dataset differs from campaign')
+    workspace_context = {'project_id':project_id, 'campaign_id':campaign_id}
+    if current['payload'].get('diagnostic_research'):
+        recommendation = current['payload']['diagnostic_research']['recommendation']
+        workspace_context.update(recommendation_hash=recommendation['recommendation_hash'],
+            explicitly_selected_candidate_id=candidate_id, selection_action=recommendation['selection_action'])
     bundle = refit_model_bundle(frame, candidate,
         task=FocusedTaskSpec(exposure=snapshot.exposure) if snapshot.feature_protocol else FocusedTaskSpec(),dataset=snapshot,
         out_dir=Path(current['project']['root'])/'models'/('bundle-'+uuid.uuid4().hex),
         state_path=state_path,tenant_id=tenant_id,feature_specs=specs,raw_history=raw_history,
         literature_project=req['options'].get('literature_project'),
         literature_review_ids=req['options'].get('literature_review_ids'),
-        workspace_context={'project_id':project_id, 'campaign_id':campaign_id})
+        workspace_context=workspace_context)
     metadata = json.loads((bundle/'bundle.json').read_text())
     RuntimeDB(state_path).put('workspace-refits', metadata['bundle_id'], {
         'refit_id':metadata['bundle_id'], 'project_id':project_id, 'campaign_id':campaign_id,
@@ -567,7 +606,15 @@ def _continuation_snapshot(state_path, project_id, campaign_id, candidate_id, *,
     body = contract['body']
     if body.get('tenant_id') != tenant_id or body.get('project_root') != current['project']['root']:
         raise PermissionError('parent contract authority mismatch')
-    if current['payload'].get('execution_contract_hash') != contract['hash'] or not accepted or accepted['row'] != saved:
+    accepted_view = dict(saved)
+    if body.get('research_options', {}).get('diagnostic_policy'):
+        for field, key in (('diagnostic', 'diagnostic:'), ('observation', 'observation:')):
+            projected = accepted_view.pop(field, None)
+            if projected is not None:
+                evidence = store.get('campaign:'+campaign_id, key+candidate_id)
+                if not evidence or evidence['body'] != projected:
+                    raise ValueError('parent diagnostic projection differs from accepted evidence')
+    if current['payload'].get('execution_contract_hash') != contract['hash'] or not accepted or accepted['row'] != accepted_view:
         raise ValueError('parent candidate/final does not match accepted execution')
     binding = {'schema_version':'focused_continuation_v1', 'project_id':project_id,
         'campaign_id':campaign_id, 'candidate_id':candidate_id, 'tenant_id':tenant_id,

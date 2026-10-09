@@ -1,5 +1,17 @@
 # 当前版本功能与技术实现说明
 
+## 2026-10-09 V2.4诊断研究工程已接入；累计验收按本轮收据核对
+
+用户批准D24-0—5及D24-6准备，唯一详细合同/日志为V2_4_DIAGNOSTIC_RESEARCH.md，accepted ADR006。原Controller/Queue/Evaluator/RuntimeDB/Memory/MethodCard不重复建设；V2.3价格模型/DSL/主MAE筛选不扩大。新模式显式diagnostic_mode=on/off，旧默认仍兼容。
+
+首次规划前和接受实验后，从已接受完整预测、合同绑定raw价格和实际训练X产生版本化诊断。残差/MAE/中位数/幅度、past vol20训练q75分组、真实训练方差/冗余、除法节点事件及distinct行率分开；缺训练预测/连续时间来源显示unavailable，不隐式fit/联网。预登记固定Ridge/RF一对只读平均损失和相关，不生成组合模型。自动HTTP/fit=0，实际计算wall另记，CPU秒未知不填0。
+
+按添加/高波动/贡献消融/简化使用不同有限规则，保存实际control/parent、竞争解释、不变条件及否证。贡献观察支持不等于推荐更差child。观察、主MAE筛选、冻结推荐、最佳研究与最佳可用模型分列。OFF领域假设可用同合法AST，cold Memory，不接新诊断/观察；不是通过缺ID改变能力。原两规划四槽、整份One-shot冻结、失败/中断成本和HTTP恢复语义保留。
+
+新字段接原研究/实验/成果界面。新协议本地HTTP录制→无key严格Replay已通过，真实模型未调用；新Chromium主流程已通过。新诊断DB先保存后导出，缺失投影从同一DB恢复；坏字节拒绝，不重算更有利答案。续接分别核对原训练行与诊断投影；规则策略尊重独特起点已耗fits。ModelBundle新选择绑定在显式refit前核对原推荐，原可信登记/加载和原始推理保持。最终源码回归/浏览器矩阵、具体计数/时间/输入hash见`D:/b05runs/v24-20261009/delivery_receipt.json`，尚在运行的项不当作PASS。
+
+本轮工程使用simulation_only、助手规则及隔离库。无外部Provider、真实确认、生产迁移、推送或同SHA远端CI；后续Live/所有者与独立操作者/策略及金融价值均NOT_RUN，不能由工程演示关闭。原冻结SPY 5fb282原字节、DLinear匹配录制缺失及Windows symlink权限仍单列；原47目标负确认和历史A/L证据未改。
+
 ## 2026-09-30 V2.3四项限定修复已验证，整体产品验收仍PARTIAL
 
 2fbadca的四项复核缺口已修：Benchmark分离研究候选/固定对照/起点/最佳可用模型，无研究结果为null；Provider/Replay在首次原始JSON解析拒绝重复键及超限；Random每决定1..128抽样进入冻结合同并与账本对账，旧catalog默认512；价格模式核心固定MAE/0.0025/development_only，拒绝旧预算覆盖。未新建Controller/Queue/Evaluator/Memory或改研究范围。

@@ -83,3 +83,53 @@ D24-0合同；D24-1诊断；D24-2规则/配方；D24-3UI/包/选择；D24-4诊�
 ## 9 本轮日志
 
 D24-0：核对正式分支/HEAD，tracked clean，原10个未跟踪证据目录保留。Windows/i5-12500/Python3.13.3；未调用Provider/读取确认/变更全局环境。实现与实际测试后逐批补记。
+
+D24-1/2/3/4工程：纯诊断及问题规则沿原Controller持久化，0自动fit/HTTP；实际parent/control/规则/公式与投影绑定；cold OFF/ON、新工作区和选择角色；原ModelBundle refit/trust加已核实推荐来源。先保留red1导入失败、诊断样本范围断言和实际消融复用计数失败；实现后20项/191.32s、旧相关111项/8.95s、扩展30项/541.64s通过。后续发现并保留浏览器1续接投影错误、delivery1耗时进入pair prompt导致Replay hash不等，以及browser2新refit绑定被旧白名单拒绝。最小修复后delivery2 8项/152.21s；browser3续接独特起点预算不足时规则策略仍提2项，保留失败并修为按剩余fold容量提案（不加预算），budget-fix 5项/4.94s、browser4 1项/100.56s通过。最终target 16项/46.94s包含文本矛盾、坏fold、来源缺失和已接受诊断恢复。上述均模拟/本地真实fit，不是付费Live。
+
+工程对照pilot1四臂通过，HTTP=0，分别20/20/28/28fits，ON/OFF最终最佳研究MAE相同且均保留起点。没有强迫不同答案或胜出；Random也保留实际draw账本。这是本轮早期源码证据，最终源码pilot-final/完整回归另列，不把阶段收据当同HEAD验收。core1在浏览器3发现预算问题后显式终止，保留临时证据；没有完整JUnit，不计PASS。
+
+交付边界补测：binding-red复现同candidate_id但不同实际配置仍进入refit；最小修为同时核验原contract/tenant/dataset/accepted config fingerprint及推荐hash，binding-fix 7项/171.15s、独立config/tenant/dataset三负例73.31s通过，相关原合同/JSON/编译回归80项/47.61s通过。browser-delivery-final 1项/150.10s含模型来源绑定、诊断篡改导出拒绝；较早完整新旧浏览器4项/708.86s通过，来源版本分别保留。
+
+evidence-red发现新增诊断未同步原EvidenceIndex可见ID/投影hash；最小修为复用同一个EvidenceIndex，ON增加真实ID、OFF保持旧可见范围。首次修复遗漏局部import导致4项NameError，失败JUnit保留；静态及0fit入口1项/2.82s通过后，ON/OFF同合法AST与local HTTP→严格Replay三项/184.09s通过。原core2/full在binding-red复现后主动终止，不计完整回归PASS；最新功能源码hash50368ab46305d0e6091b383cd2ff2f384dd9e88cfc9445fecf51ccb7482a90cc，此后冻结src，在full-final/browser-source-final/pilot-source-final完成最终验收。
+
+D24-6预检/清单/收据准备已实现：离线驱动默认NOT_RUN/不读取凭证/不dispatch；显式本地计算才创建隔离目录，拒绝覆盖历史。`collect_v24_receipt.py`只归集JUnit/git/输入身份和分轴状态，不运行模型。真人签名/主动用时不由助手填写；真实Provider/政策价值/独立金融轴依旧需单独授权和条件。
+
+## 10 逐项实施/测试索引（结果以最终JUnit/收据为准）
+
+下表V24文件均为`tests/test_focused_v24_*.py`；旧用例表示原能力复用，并由本轮受影响回归再次核对，不是新建另一实现。
+
+| D24条款 | 真实行为用例 |
+|---|---|
+| T01/T02 | diagnostics::test_complete_artifact_identity_rejects_no_intersection；campaign::test_initial_and_updated_diagnostics_frozen_rules_recommendation_and_resume |
+| T03/T04/T05 | diagnostics::test_mae_mean_bias_counterexample_and_constant_is_not_failure |
+| T06 | diagnostics::test_low_correlation_does_not_authorize_combination；固定Ridge/RF一对实际初始组合诊断，无新模型交付 |
+| T07/T08 | diagnostics::test_volatility_uses_price_prefix_and_training_calibration_not_labels；原test_focused_feature_program因果性/XNYS用例 |
+| T09/T10/T11 | diagnostics::test_group_rule_all_folds_small_samples_and_precision |
+| T12 | 同上规则篡改；recovery::test_db_body_tampering_rejected_even_with_original_file_hash |
+| T13 | 不满足时解释需复核，数值状态独立；campaign初始/更新观察用例 |
+| T14 | diagnostics残差用例明确unavailable，不重训、不拼连续序列 |
+| T15 | campaign::test_invalid_v24_design_no_repair_no_candidate_fit；原EvidenceIndex与文献权限回归 |
+| T16/T17 | 原test_focused_feature_execution::test_feature_ablation_rejects_joint_change / test_feature_simplification_must_reduce_actual_complexity；V24第二轮实际贡献观察 |
+| T18 | 原test_focused_feature_contract::test_new_or_unknown_fields_never_silently_downgrade / test_expression_boundary_rejected_before_execution |
+| T19 | campaign初始诊断/完成恢复；recovery::test_diagnostic_export_failure_reuses_db_body_without_fit_or_replanning |
+| T20 | campaign::test_explicit_diagnose_uses_original_decision_and_slot，两种轮次 |
+| T21 | recovery::test_real_v24_worker_crash_reuses_context_rule_A_and_charges_B；One-shot全部计划冻结，不重规划后两槽 |
+| T22 | 原test_focused_price_sampler两计数用例；原feature_campaign重复/整计划拒绝用例 |
+| T23 | 原test_focused_provider_json_boundary首次raw解析/模拟HTTP/Replay负例，原字节未修改 |
+| T24 | 原feature_bundle失败refit计费；原feature_campaign预算与独特起点容量；V24中断尝试不退款 |
+| T25 | 原test_focused_b5_crash_recording / feature_recovery，前置修复/未知投递/坏录制三种路径 |
+| T26 | recovery DB/prompt/plan/recommendation篡改；campaign诊断文件篡改 |
+| T27 | campaign::test_v24_review_retains_frozen_context_and_original_budget；原feature_contract确认前置拒绝 |
+| T28 | campaign::test_same_legal_ast_on_visible_basis_off_domain_basis / test_v24_rejects_hidden_memory_and_uncontrolled_evidence_before_fit；pilot公平权限冻结 |
+| T29 | diagnostics::test_selection_no_candidate_all_worse_ties_partial_and_determinism；invalid设计无研究结果null |
+| T30 | pilot::test_pilot_failure_denominator_frozen_before_original_controller_dispatch；全部预登记臂保留，费用null |
+| T31 | recovery推荐篡改拒绝；外层标签没有授权也没有读入；模拟隔离不称生产安全证明 |
+| T32 | 原test_focused_r4_trust曝光更名/等价时间负例；新DSL确认仍前置拒绝 |
+| T33 | tests/browser/test_agent_workspace.py[v24]，真实worker/Chromium；复用旧两模式浏览器 |
+| T34 | 原feature_contract golden identity、原fixture边界；delivery新协议local HTTP→无key严格Replay |
+| T35 | pilot::test_d24_6_preflight_no_dispatch_no_credentials_read；receipt分开simulation/Live/owner/独立用户；真实条款仍NOT_RUN |
+| T36 | delivery研究包逐成员SHA/逐行原evaluator复算；原feature_bundle fresh-process/trusted加载；页面模型与当前候选绑定 |
+
+R1=问题方向与选择分开（T09—13/16—17/29）；R2=OFF领域假设同AST合法及冷Memory（T15/28）；R3=raw/X/prediction来源与不可用（T01—08/14/19）；R4=三层冻结/选择动作（T12/26/29—31/36）。P1=合法AST非固定菜单；P2=q75/30/10/2描述性门槛不作显著性；P3=本地模拟隔离及present_day_research边界；P4=原2规划4槽/有限1对只读组合、后续窗口/权重仅需求记录。
+
+D24-6操作：先运行`python scripts/run_v24_engineering_validation.py --output-root <新目录>`只预检。加`--run-engineering`才运行隔离模拟4臂；不读取key。提供已有真实开发输入还需`--raw-spy-json <path> --allow-development-compute`明确许可与开发用途，不能冒称独立确认。默认不覆盖已有目录。真实Live/所有者/独立用户、政策价值和金融轴需后续分别授权/实际操作，不能用工程收据代替。

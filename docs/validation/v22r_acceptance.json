@@ -1,5 +1,20 @@
 {
   "schema_version": "v22r_acceptance_v1",
+  "v24_engineering_20261009": {
+    "base_sha": "95760e264eddb4388a44df6d35442b6ce8d90928",
+    "report": "docs/V2_4_DIAGNOSTIC_RESEARCH.md",
+    "receipt": "D:/b05runs/v24-20261009/delivery_receipt.json",
+    "status": "implemented_final_regression_in_progress",
+    "historical_records_preserved": true,
+    "evidence_type": "simulation_only_local_http_actual_local_estimator_fits",
+    "clause_links": {
+      "A04_A05_A08_A23_T23_T25_T26_T34": ["tests/test_focused_v24_recovery.py", "tests/test_focused_v24_delivery.py", "tests/test_focused_b5_crash_recording.py"],
+      "A09_A10_A18_T01_T14_T27_T32": ["tests/test_focused_v24_diagnostics.py", "tests/test_focused_feature_contract.py", "tests/test_focused_r4_trust.py"],
+      "A11_A12_A14_T19_T22_T29_T31": ["tests/test_focused_v24_campaign.py", "tests/test_focused_v24_pilot.py", "tests/test_focused_price_sampler.py"],
+      "T33_T36": ["tests/browser/test_agent_workspace.py[v24]", "tests/test_focused_feature_bundle.py"]
+    },
+    "external_gates": {"live": "NOT_RUN_not_authorized", "owner": "NOT_RUN", "independent_user": "NOT_RUN", "financial": "NOT_RUN_DSL_confirmation_unsupported", "same_sha_ci": "NOT_RUN_not_pushed"}
+  },
   "v23_review_hardening_20260930": {
     "base_sha": "2fbadca628928ae661e5549b19de6ef3a8e32c81",
     "status": "scoped_fixes_verified_overall_acceptance_partial",

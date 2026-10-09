@@ -38,7 +38,7 @@ from .focused_feature_program import (
     empty_feature_program,
     feature_capability,
 )
-from .focused_identity import data_identity, file_sha256, identity
+from .focused_identity import canonical_json, data_identity, file_sha256, identity
 from .focused_protocol import (
     FEATURE_GROUPS,
     EvaluationPolicy,
@@ -199,9 +199,13 @@ class HypothesisSpec:
     simplification_dimension: str | None = None
     diagnostic: str | None = None
     literature_uses: list[dict[str, str]] = field(default_factory=list)
+    research_design: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        out = asdict(self)
+        if self.research_design is None:
+            out.pop("research_design")
+        return out
 
 
 @dataclass(frozen=True)
@@ -774,6 +778,10 @@ class FocusedResearchAdvisor:
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         self.last_record, self.last_fixture_path = None, None
         if self.mode == "deterministic":
+            if prompt.get("diagnostic_research_policy") and prompt["feature_policy"]["arm"] != "random":
+                from .focused_diagnostics import diagnostic_advice
+                self.last_telemetry = {"policy": "diagnostic_branch_v1"}
+                return diagnostic_advice(prompt), "deterministic_diagnostic_policy"
             if prompt.get("change_scope") == "price_features":
                 from .focused_feature_program import sample_price_programs
                 policy = prompt["feature_policy"]
@@ -794,9 +802,14 @@ class FocusedResearchAdvisor:
                         programs.append(value)
                     self.last_telemetry = {"policy": "engineering_price_examples_v1"}
                     source = "deterministic_price_feature_policy"
-                return {"hypotheses": [{"statement": "Bounded price feature engineering hypothesis, not literature or financial proof",
+                advice = {"hypotheses": [{"statement": "Bounded price feature engineering hypothesis, not literature or financial proof",
                     "feature_program": value, "parent_candidate_id": prompt["research_start_candidate_id"],
                     "evidence_refs": [prompt["research_start_candidate_id"]]} for value in programs]}, source
+                if prompt.get("diagnostic_research_policy"):
+                    from .focused_diagnostics import default_design
+                    for row in advice[0]["hypotheses"]:
+                        row["research_design"] = default_design("RCP-01")
+                return advice
             if prompt.get("change_scope") == "features_only":
                 anchor = prompt["fixed_model"]
                 prior = [*prompt["baseline_results"], *prompt["prior_research_results"]]
@@ -1112,6 +1125,7 @@ class FocusedResearchController:
         continuation_from: dict[str, Any] | None = None,
         raw_history: pd.DataFrame | None = None,
         feature_strategy: dict[str, Any] | None = None,
+        diagnostic_mode: str | None = None,
     ):
         self.project_dir = Path(project_dir).resolve()
         self.state_path = Path(state_path or os.getenv("FFA_STATE_DB") or self.project_dir / "runtime.sqlite3")
@@ -1122,6 +1136,12 @@ class FocusedResearchController:
         self.dataset = dataset
         self.frame = frame
         self.feature_mode = change_scope == "price_features"
+        from .focused_diagnostics import research_policy
+        if diagnostic_mode is not None and not self.feature_mode:
+            raise ValueError("diagnostic research requires price_features mode")
+        self.diagnostic_policy = research_policy(diagnostic_mode) if diagnostic_mode is not None else None
+        if self.diagnostic_policy and (use_memory_prior or reviewed_evidence):
+            raise ValueError("V24 pilot requires cold Memory and registered literature, not arbitrary evidence")
         self.raw_history = None
         self.feature_strategy = None
         if self.feature_mode:
@@ -1263,6 +1283,172 @@ class FocusedResearchController:
             self.spec.research_options["feature_capability"] = feature_capability()
             if self.budget.max_fit_calls < self.required_initial_fit_calls():
                 raise ValueError("fit budget is too small for frozen controls and starting model")
+        if self.diagnostic_policy:
+            self.spec.research_options["diagnostic_policy"] = self.diagnostic_policy
+            self.spec.research_options["diagnostic_start_candidate_id"] = self.research_start.candidate_id
+
+    def _diagnostic(self, result, splits):
+        from .focused_diagnostics import derive_diagnostic
+        runtime = self._runtime
+        stored = runtime.accepted(result.candidate.candidate_id)
+        runtime.verify_artifacts(stored["artifacts"])
+        saved = stored["row"].get("result") or stored["row"]
+        artifact = json.loads((self._campaign_root / saved["prediction_artifact_ref"]).read_text(encoding="utf-8"))
+        key = "diagnostic:" + result.candidate.candidate_id
+        old = runtime.get(key)
+        if old:
+            runtime.verify_artifacts(old["artifacts"])
+            from .focused_diagnostics import verify_diagnostic
+            verify_diagnostic(old["body"], artifact)
+            return old["body"]
+        body = derive_diagnostic(artifact, candidate=result.candidate, raw_history=self.raw_history,
+                                 frame=self.frame, splits=splits)
+        self._store_diagnostic_object(key, "diagnostics/" + result.candidate.candidate_id + ".json", body)
+        return body
+
+    def _store_diagnostic_object(self, key, rel, body):
+        # Persist the measured projection once in the existing authority before
+        # exporting it. A crash must not recompute elapsed cost into a new body.
+        ref = {"path": rel, "sha256": hashlib.sha256((canonical_json(body)+"\n").encode("utf-8")).hexdigest()}
+        self._runtime.put(key, {"body": body, "artifacts": [ref]}, immutable=True)
+        self._runtime.artifact(rel, body)
+
+    def _verify_diagnostic_objects(self):
+        runtime = self._runtime
+        with runtime.db.transaction() as db:
+            rows = db.execute("SELECT key,payload FROM objects WHERE ns=?", (runtime.ns,)).fetchall()
+        for row in rows:
+            key = row["key"]
+            if key.startswith("plan:"):
+                stored = json.loads(row["payload"])
+                runtime.verify_artifacts(stored["artifacts"])
+                if stored["plan"] != json.loads((self._campaign_root / stored["plan_ref"]).read_text(encoding="utf-8")):
+                    raise ValueError("frozen diagnostic plan differs from accepted export")
+                from .focused_diagnostics import verify_rule
+                for item in stored["plan"]["items"]:
+                    design = item["hypothesis"].get("research_design")
+                    if design:
+                        verify_rule(design["rule"])
+                        if identity({k: v for k, v in design.items() if k != "design_hash"}, domain="research-design-v1") != design["design_hash"]:
+                            raise ValueError("frozen research design changed")
+                continue
+            if not key.startswith(("diagnostic:", "observation:", "diagnostic_context:", "pair_diagnostic:")) and key != "recommendation":
+                continue
+            stored = json.loads(row["payload"])
+            for ref in stored["artifacts"]:
+                if ref["sha256"] != hashlib.sha256((canonical_json(stored["body"])+"\n").encode("utf-8")).hexdigest():
+                    raise ValueError("diagnostic database body hash mismatch")
+                if not (self._campaign_root / ref["path"]).exists():
+                    runtime.artifact(ref["path"], stored["body"])
+            runtime.verify_artifacts(stored["artifacts"])
+            exported = json.loads((self._campaign_root / stored["artifacts"][0]["path"]).read_text(encoding="utf-8"))
+            if exported != stored["body"]:
+                raise ValueError("diagnostic/context/observation/recommendation binding mismatch")
+            if key.startswith("diagnostic_context:") and runtime.get("prompt:"+key.split(":", 1)[1]) != stored["body"]:
+                raise ValueError("frozen planning context changed")
+
+    def _freeze_recommendation(self, payload):
+        if not self.diagnostic_policy:
+            return
+        selected = payload["diagnostic_research"]["recommendation"]
+        selected["execution_status"] = payload["execution_status"]
+        selected.pop("recommendation_hash", None)
+        selected["recommendation_hash"] = identity(selected, domain="frozen-recommendation-v1")
+        self._store_diagnostic_object("recommendation", "diagnostics/recommendation.json", selected)
+
+    def _prepare_diagnostic_prompt(self, prompt, result_lookup, splits):
+        from .focused_adaptive import EvidenceIndex
+        from .focused_diagnostics import diagnostic_projection, verify_diagnostic
+        prompt["proposal_contract_version"] = "diagnostic_price_advice_v1"
+        prompt["diagnostic_research_policy"] = self.diagnostic_policy
+        # OFF projection is built from old feedback, never by redacting a new summary.
+        visible = self.diagnostic_policy["diagnostic_visibility"] == "on"
+        prompt["automatic_diagnostics"] = []
+        prompt["observation_feedback"] = []
+        pair = self._pair_diagnostic(result_lookup)
+        prompt["pair_diagnostics"] = [{k:v for k,v in pair.items() if k != "compute_wall_seconds"}] if visible and pair else []
+        for result in result_lookup.values():
+            diagnostic = self._diagnostic(result, splits)
+            verify_diagnostic(diagnostic)
+            if visible:
+                projected = diagnostic_projection(diagnostic)
+                prompt["automatic_diagnostics"].append(projected)
+                prompt["evidence_projection"].append({"evidence_id": "diagnostic:"+diagnostic["diagnostic_hash"],
+                    "evidence_type": "current_experiment", "role": "diagnostic", "visible": True,
+                    "summary": "Deterministic development diagnostic", "candidate_id": result.candidate.candidate_id})
+                observation = self._runtime.get("observation:" + result.candidate.candidate_id)
+                if observation:
+                    self._runtime.verify_artifacts(observation["artifacts"])
+                    prompt["observation_feedback"].append(observation["body"])
+        index = EvidenceIndex(prompt["evidence_projection"])
+        prompt["evidence_projection"] = index.rows
+        prompt["available_evidence_ids"] = index.ids
+        prompt["evidence_projection_hash"] = identity(index.rows, domain="evidence-projection-v1")
+        prompt["rules"] += [
+            "research_design is required for training: recipe_id, question, basis (domain_hypothesis|visible_evidence), competing_explanation, falsification_condition. Optional symptom_refs must be real visible diagnostic IDs. No arbitrary rule threshold/operator is permitted.",
+            "RCP-01 allows any legal existing AST; use overall or high_volatility. RCP-02 ablate uses contribution. RCP-03 simplify uses simplification. RCP-04/05 record demand only; no window/ensemble execution.",
+            "Without visible diagnostic use an explicit domain_hypothesis and unknown applicability; diagnosis is not technical AST permission. Observation is not model recommendation."]
+        return prompt
+
+    def _pair_diagnostic(self, result_lookup):
+        from .focused_diagnostics import pair_diagnostic
+        ids = self.diagnostic_policy["predeclared_pair"]
+        if not all(cid in result_lookup for cid in ids):
+            return None
+        key = "pair_diagnostic:fixed_controls"
+        saved = self._runtime.get(key)
+        if saved:
+            self._runtime.verify_artifacts(saved["artifacts"])
+            return saved["body"]
+        artifacts = []
+        for cid in ids:
+            stored = self._runtime.accepted(cid)
+            self._runtime.verify_artifacts(stored["artifacts"])
+            row = stored["row"].get("result", stored["row"])
+            artifacts.append(json.loads((self._campaign_root/row["prediction_artifact_ref"]).read_text(encoding="utf-8")))
+        begin = time.perf_counter()
+        body = pair_diagnostic(*artifacts)
+        body.update(candidate_ids=ids, prediction_hashes=[identity(a, domain="diagnostic-prediction-v1") for a in artifacts],
+                    provider_requests=0, compute_wall_seconds=time.perf_counter()-begin,
+                    evidence_tier="development_only")
+        self._store_diagnostic_object(key, "diagnostics/fixed_pair.json", body)
+        return body
+
+    def _bind_research_design(self, advice, prompt, result_lookup, round_index, max_count, source):
+        from .focused_diagnostics import bind_design
+        clean = json.loads(json.dumps(advice))
+        designs = [row.pop("research_design", None) for row in clean.get("hypotheses", [])]
+        compiled = compile_hypotheses(clean, round_index=round_index, source=source,
+            max_count=max_count, visible_evidence=prompt["evidence_projection"],
+            candidate_lookup={k: v.candidate for k, v in result_lookup.items()},
+            default_seed=self.estimator_seed, feature_registry=self.feature_registry, fixed_model=self.research_start)
+        out = []
+        for (hypothesis, candidate), design in zip(compiled, designs, strict=True):
+            bound = bind_design(design, hypothesis, candidate, result_lookup, prompt)
+            out.append((replace(hypothesis, research_design=bound), candidate))
+        return out
+
+    def _observe_research(self, hypothesis, result, result_lookup, splits, *, proposal_id=None):
+        from .focused_diagnostics import observation_result
+        diagnostic = self._diagnostic(result, splits)
+        rule = hypothesis.research_design["rule"]
+        control = result_lookup[rule["control_candidate_id"]]
+        control_diag = self._diagnostic(control, splits)
+        def artifact(r):
+            stored = self._runtime.accepted(r.candidate.candidate_id)
+            self._runtime.verify_artifacts(stored["artifacts"])
+            saved = stored["row"].get("result") or stored["row"]
+            return json.loads((self._campaign_root / saved["prediction_artifact_ref"]).read_text(encoding="utf-8"))
+        body = observation_result(rule, artifact(result), artifact(control), groups=control_diag["volatility_groups"])
+        body["diagnostic_hash"] = diagnostic["diagnostic_hash"]
+        body["control_diagnostic_hash"] = control_diag["diagnostic_hash"]
+        body["interpretation_review"] = bool(hypothesis.expected_observation) and body["observation_status"] != "meets_predeclared_observation"
+        body["interpretation_review_basis"] = "unverified narrative requires review; no automatic semantic entailment"
+        object_id = proposal_id or result.candidate.candidate_id
+        body["evaluated_candidate_id"] = result.candidate.candidate_id
+        body["proposal_candidate_id"] = object_id
+        self._store_diagnostic_object("observation:" + object_id, "observations/" + object_id + ".json", body)
+        return body
 
     def _project_literature(self, *, tenant_id=None, audience="local") -> list[dict]:
         from .focused_literature import project_literature
@@ -1349,6 +1535,9 @@ class FocusedResearchController:
         template["feature_program"] = empty_feature_program().to_dict()
         template["ablation_component"] = "generated_feature:<actual parent output name>"
         template["simplification_dimension"] = "feature_count|nodes|depth"
+        if self.diagnostic_policy:
+            from .focused_diagnostics import default_design
+            template["research_design"] = default_design("RCP-01")
         return prompt
 
     def _preflight_feature_plan(self, compiled, seen, splits):
@@ -1371,6 +1560,7 @@ class FocusedResearchController:
                                          failed_attempts, "proposal_invalid")
         payload.update(execution_status="partial", research_outcome="inconclusive", terminal_status="proposal_invalid",
                        rejected_round=round_index, proposal_error=safe_error_facts(exc, phase="proposal_validation"))
+        self._freeze_recommendation(payload)
         self._runtime.complete(payload)
         if self.use_memory_prior:
             from .experiment_memory import ExperimentMemoryStore
@@ -1669,6 +1859,8 @@ class FocusedResearchController:
         self._runtime = runtime
         with runtime.lease():
             runtime.verify_all()
+            if self.diagnostic_policy:
+                self._verify_diagnostic_objects()
             final = runtime.get("final")
             if final:
                 self._append_event("attempt.reused", scope="accepted_campaign", refits=0)
@@ -1797,6 +1989,8 @@ class FocusedResearchController:
                         prompt = self.advisor.prepare_prompt(prompt, runtime)
                     if self.feature_mode:
                         prompt = self._prepare_feature_prompt(prompt, result_lookup)
+                    if self.diagnostic_policy:
+                        prompt = self._prepare_diagnostic_prompt(prompt, result_lookup, splits)
                     if self.context_mode == "compact_v1":
                         from .focused_literature import compact_research_context
                         prompt = compact_research_context(prompt)
@@ -1805,6 +1999,8 @@ class FocusedResearchController:
                         prompt=frozen_prompt
                     else:
                         runtime.put(f"prompt:{round_index}",prompt,immutable=True)
+                    if self.diagnostic_policy:
+                        self._store_diagnostic_object(f"diagnostic_context:{round_index}", f"contexts/decision-{round_index}.json", prompt)
                     if self.feature_mode:
                         runtime.reserve_feature_decision(round_index, prompt)
                     calls = runtime.get("advisor_call_reservations", 0)
@@ -1877,7 +2073,8 @@ class FocusedResearchController:
                 if self.benchmark_strategy:
                     advice = self.advisor.normalize_advice(advice)
                 try:
-                    compiled = compile_hypotheses(advice, round_index=round_index, source=source,
+                    compiled = self._bind_research_design(advice, prompt, result_lookup, round_index,
+                        self._feature_policy()["slots_per_decision"], source) if self.diagnostic_policy else compile_hypotheses(advice, round_index=round_index, source=source,
                         max_count=(self._feature_policy()["slots_per_decision"] if self.feature_mode else
                                    min(self.budget.max_new_candidates_per_round, int(prompt["max_hypotheses"]))), visible_evidence=prompt["evidence_projection"],
                         candidate_lookup={key: value.candidate for key, value in result_lookup.items()},
@@ -1932,8 +2129,14 @@ class FocusedResearchController:
                 parent = result_lookup.get(candidate.parent_candidate_id)
                 diff = candidate_config_diff(parent.candidate if parent else None, candidate)
                 if candidate.fingerprint in seen:
-                    round_rows.append({"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(),
-                                       "config_diff": diff, "status": "skipped_duplicate"})
+                    duplicate = {"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(),
+                                 "config_diff": diff, "status": "skipped_duplicate"}
+                    if self.diagnostic_policy:
+                        reused = next(r for r in result_lookup.values() if r.candidate.fingerprint == candidate.fingerprint)
+                        duplicate["reused_candidate_id"] = reused.candidate.candidate_id
+                        duplicate["observation"] = self._observe_research(hypothesis, reused, result_lookup, splits,
+                                                                          proposal_id=candidate.candidate_id)
+                    round_rows.append(duplicate)
                     continue
                 seen.add(candidate.fingerprint)
                 try:
@@ -1952,6 +2155,11 @@ class FocusedResearchController:
                 research_results.append(result)
                 result_lookup[candidate.candidate_id] = result
                 successful += 1
+                if self.diagnostic_policy:
+                    row = dict(row)
+                    row["diagnostic"] = self._diagnostic(result, splits)
+                    row["observation"] = self._observe_research(hypothesis, result, result_lookup, splits)
+                    round_rows[-1] = row
                 if row.get("feedback"):
                     feedback_history.append(row["feedback"])
             round_payload = {"round_index": round_index, "advisor_source": source, "prompt_hash": prompt_hash,
@@ -1970,6 +2178,7 @@ class FocusedResearchController:
                 break
 
         payload = self._campaign_summary(baseline_results, baseline_payloads, research_results, rounds, failed_attempts, stop_reason)
+        self._freeze_recommendation(payload)
         runtime.complete(payload)
         if self.use_memory_prior:
             from .experiment_memory import ExperimentMemoryStore
@@ -2081,6 +2290,27 @@ class FocusedResearchController:
             payload["evidence_status"]["confirmation"] = payload["confirmation_status"]
             if simulated:
                 payload["scientific_claim"] = "simulation_only_no_financial_evidence"
+        if self.diagnostic_policy:
+            from .focused_diagnostics import select_recommendation
+            def choice(result):
+                return {"candidate_id": result.candidate.candidate_id, "candidate": result.candidate.to_dict(),
+                        "metrics": result.metrics, "prediction_hash": self._diagnostic(result, self.split_spec.build_splits(len(self.frame)))["prediction_hash"]}
+            starts = [r for r in valid_results if r.candidate.candidate_id == self.research_start.candidate_id]
+            selected = select_recommendation(self.diagnostic_policy["selection_policy"], choice(starts[0]) if starts else None,
+                [choice(r) for r in research_results], [choice(r) for r in baseline_results], execution_status=execution_status)
+            selected.update(execution_contract_hash=runtime.contract_hash,
+                context_hashes=[identity(runtime.get(f"prompt:{r['round_index']}"), domain="diagnostic-context-v1") for r in rounds],
+                policy_hash=identity(self.diagnostic_policy, domain="diagnostic-policy-v1"),
+                dataset_fingerprint=self.dataset.semantic_fingerprint, outer_labels_accessed=False)
+            selected["recommendation_hash"] = identity(selected, domain="frozen-recommendation-v1")
+            payload["diagnostic_research"] = {"policy": self.diagnostic_policy, "recommendation": selected,
+                "diagnostics": [self._diagnostic(r, self.split_spec.build_splits(len(self.frame))) for r in valid_results],
+                "pair_diagnostics": [self._pair_diagnostic({r.candidate.candidate_id:r for r in valid_results})]}
+            payload["resource_usage"]["automatic_diagnostics"] = {
+                "new_fit_calls": 0, "provider_requests": 0,
+                "compute_wall_seconds": sum(d["compute_wall_seconds"] for d in payload["diagnostic_research"]["diagnostics"])
+                    + sum(d["compute_wall_seconds"] for d in payload["diagnostic_research"]["pair_diagnostics"] if d),
+                "accounting_scope": "persisted projections; CPU seconds unavailable, not zero"}
         return payload
 
     def _persist(self, payload: dict[str, Any]) -> None:

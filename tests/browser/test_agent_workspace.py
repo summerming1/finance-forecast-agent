@@ -19,7 +19,7 @@ import pytest
 pytestmark = pytest.mark.skipif(os.getenv("FFA_BROWSER_E2E") != "1", reason="explicit real browser gate")
 
 
-@pytest.mark.parametrize("price_features", [False, True], ids=["legacy", "price_features"])
+@pytest.mark.parametrize("price_features", [False, True, "v24"], ids=["legacy", "price_features", "v24"])
 def test_agent_workspace_real_backend(tmp_path, price_features):
     import requests
     from playwright.sync_api import Error as BrowserError
@@ -33,7 +33,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
     from finance_forecast_agent.focused_state import RuntimeDB, process_birth, terminate_owned_tree
     from finance_forecast_agent.research_mission import workspace_campaign, workspace_queue
 
-    out = Path(os.getenv("FFA_UI_BROWSER_ARTIFACTS", str(tmp_path / "browser"))).resolve() / ("price_features" if price_features else "legacy")
+    out = Path(os.getenv("FFA_UI_BROWSER_ARTIFACTS", str(tmp_path / "browser"))).resolve() / ("v24" if price_features == "v24" else "price_features" if price_features else "legacy")
     out.mkdir(parents=True, exist_ok=True)
     state, project, raw = tmp_path / "runtime.sqlite3", tmp_path / "project", tmp_path / "simulation_only.csv"
     _research_frame(tmp_path).to_csv(raw, index=False)
@@ -183,6 +183,8 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             frame.locator('[data-action="draft-preset"][data-value="custom"]').click()
             for key, value in {"max_rounds": 1, "max_new_candidates_per_round": 2, "max_fit_calls": 20}.items():
                 frame.locator("#draft-" + key).fill(str(value))
+            if price_features == "v24":
+                frame.locator("#draft-diagnostic_mode").select_option("on")
             before = counts()
             click("preflight")
             expect(frame.locator(".contract-summary")).to_contain_text("服务器预检通过")
@@ -196,6 +198,10 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             pid, cid, first = wait_completed()
             assert first["payload"]["scientific_claim"] == "simulation_only_no_financial_evidence"
             assert first["payload"]["fit_calls"] == 20
+            if price_features == "v24":
+                assert first["payload"]["diagnostic_research"]["recommendation"]["recommendation_hash"]
+                expect(frame.locator('[data-testid="diagnostic-research"]')).to_contain_text("自动新增 HTTP=0 / fit=0")
+                report["checks"].append("v24_diagnostics_and_frozen_recommendation")
             assert set(first["request"]["options"]["allowed_feature_groups"]) == {
                 "base_lags", "momentum", "volatility"
             }
@@ -217,10 +223,14 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 expect(frame.locator(".drawer")).to_contain_text(candidate)
                 if price_features:
                     expected = next(i["candidate"] for b in original["rounds"] for i in b["items"] if i.get("candidate", {}).get("candidate_id") == candidate)
-                    expect(frame.locator('[data-testid="price-program"]')).to_contain_text("rolling_mean")
-                    expect(frame.locator('[data-testid="readable-formula"]')).to_contain_text(
-                        f"rolling_mean(return_1, {expected['feature_program']['features'][0]['expression']['window']})")
-                    expect(frame.locator('[data-testid="price-program"]')).to_contain_text(str(expected["feature_program"]["features"][0]["expression"]["window"]))
+                    if price_features == "v24":
+                        expect(frame.locator('[data-testid="observation-detail"]')).to_contain_text("确定性判定")
+                        expect(frame.locator('[data-testid="readable-formula"]')).to_contain_text(expected["feature_program"]["features"][0]["expression"]["op"])
+                    else:
+                        expect(frame.locator('[data-testid="price-program"]')).to_contain_text("rolling_mean")
+                        expect(frame.locator('[data-testid="readable-formula"]')).to_contain_text(
+                            f"rolling_mean(return_1, {expected['feature_program']['features'][0]['expression']['window']})")
+                        expect(frame.locator('[data-testid="price-program"]')).to_contain_text(str(expected["feature_program"]["features"][0]["expression"]["window"]))
                 assert counts() == before
             selected = research_ids[1]
             page.screenshot(path=str(out / "04_experiments_backend.png"))
@@ -246,6 +256,10 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 if price_features:
                     assert meta["schema_version"] == "focused_model_bundle_v3"
                     assert meta["feature_pipeline"]["program"]["features"]
+                if price_features == 'v24':
+                    binding = meta['research_selection_binding']
+                    assert binding['explicitly_selected_candidate_id'] == selected
+                    assert binding['recommendation_hash'] == original['diagnostic_research']['recommendation']['recommendation_hash']
             assert counts() == before
             frame.locator('[data-action="view"][data-view="experiments"]').first.click()
             frame.locator(f'tr[data-action="candidate"][data-id="{research_ids[0]}"]').click()
@@ -288,6 +302,21 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             assert child["request"]["options"]["entry_mode"] == "provided_start"
             report["checks"] += ["fresh_context_restore", "reload_no_training", "continuation_preview_zero_fit",
                                  "explicit_new_campaign_same_mission", "parent_unchanged", "provided_start_worker"]
+            if price_features == 'v24':
+                from finance_forecast_agent.research_mission import export_workspace_package
+                artifact = Path(child['root'])/'diagnostics/baseline_ridge.json'
+                original_bytes = artifact.read_bytes()
+                damaged = json.loads(original_bytes)
+                damaged['residual']['mae'] = 99
+                try:
+                    artifact.write_text(json.dumps(damaged), encoding='utf-8')
+                    (out/'simulation_tampered_diagnostic.json').write_text(json.dumps(damaged), encoding='utf-8')
+                    with pytest.raises(ValueError, match='hash'):
+                        export_workspace_package(state, pid, child_cid)
+                finally:
+                    artifact.write_bytes(original_bytes)  # Only this test's generated simulation artifact.
+                assert workspace_campaign(state, pid, child_cid)['payload'] == child['payload']
+                report['checks'].append('tampered_diagnostic_delivery_rejected')
             report["counts"] = counts()
             report["browser_version"] = browser.version
             report["page_errors"] = errors

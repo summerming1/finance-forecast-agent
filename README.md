@@ -145,3 +145,7 @@ The default home links to the shared goal/provided-start Research Mission. Compl
 Default goal-only or controlled supplied-start research shares one engine, with version-reviewed literature, explicit continuation and candidate-bound exports. Actual status: [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md). Remaining Live, literature-value and real-user gates: [Codex unified handoff](docs/CODEX_V22R_REMAINING_VALIDATION.md). Engineering test success does not replace these gates; the historical negative confirmation and failed value matrix remain visible.
 
 Original frozen-SPY CI inputs can expire. A replacement artifact must contain the identical authorized bytes, checked by `scripts/verify_frozen_spy_acceptance.py`; never auto-download newer adjusted prices just to make a test pass.
+
+## V2.4 diagnostic research
+
+Approved scope and current receipts: [V2_4_DIAGNOSTIC_RESEARCH.md](docs/V2_4_DIAGNOSTIC_RESEARCH.md). Price research optionally derives zero-fit diagnostics, freezes finite experiment observations and separately records the final recommendation. Existing Streamlit workspace, queue and trusted ModelBundle remain the entry points. Engineering simulations are not Provider, real-user or independent financial evidence. This increment defaults to local-only commits; future training windows/weights, ensembles and Shadow remain conditional.
