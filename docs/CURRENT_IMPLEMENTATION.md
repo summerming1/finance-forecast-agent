@@ -1,6 +1,6 @@
 # 当前版本功能与技术实现说明
 
-## 2026-10-09 V2.4诊断研究工程已接入；累计验收按本轮收据核对
+## 2026-10-09 V2.4-A/B限定工程交付已验证；外部及历史阻断单列
 
 用户批准D24-0—5及D24-6准备，唯一详细合同/日志为V2_4_DIAGNOSTIC_RESEARCH.md，accepted ADR006。原Controller/Queue/Evaluator/RuntimeDB/Memory/MethodCard不重复建设；V2.3价格模型/DSL/主MAE筛选不扩大。新模式显式diagnostic_mode=on/off，旧默认仍兼容。
 
@@ -8,9 +8,11 @@
 
 按添加/高波动/贡献消融/简化使用不同有限规则，保存实际control/parent、竞争解释、不变条件及否证。贡献观察支持不等于推荐更差child。观察、主MAE筛选、冻结推荐、最佳研究与最佳可用模型分列。OFF领域假设可用同合法AST，cold Memory，不接新诊断/观察；不是通过缺ID改变能力。原两规划四槽、整份One-shot冻结、失败/中断成本和HTTP恢复语义保留。
 
-新字段接原研究/实验/成果界面。新协议本地HTTP录制→无key严格Replay已通过，真实模型未调用；新Chromium主流程已通过。新诊断DB先保存后导出，缺失投影从同一DB恢复；坏字节拒绝，不重算更有利答案。续接分别核对原训练行与诊断投影；规则策略尊重独特起点已耗fits。ModelBundle新选择绑定在显式refit前核对原推荐，原可信登记/加载和原始推理保持。最终源码回归/浏览器矩阵、具体计数/时间/输入hash见`D:/b05runs/v24-20261009/delivery_receipt.json`，尚在运行的项不当作PASS。
+新字段接原研究/实验/成果界面。新协议本地HTTP录制→无key严格Replay已通过，真实模型未调用。新诊断DB先保存后导出，缺失投影从同一DB恢复；坏字节拒绝，不重算更有利答案。续接分别核对原训练行与诊断投影；规则策略尊重独特起点已耗fits。ModelBundle新选择绑定在显式refit前核对原推荐，原可信登记/加载和原始推理保持。全仓发现原summary精简上下文缺可选diagnostic_policy六负例，已保留失败并做最小兼容修复，未改原断言。最新源码faa6b080…的相关回归71项/733.89s、真实Chromium新旧矩阵4项/721.81s、离线四臂96fits/HTTP=0及包审计通过。最终全仓full-final2：778 passed、2 failed、6 skipped，5566.01s/exit1；44项V24均通过（已包含在778内）。两个失败为既有WinError1314与匹配DLinear fixture缺失；4项浏览器在全仓中opt-in跳过但独立矩阵通过，其余2项POSIX/符号链接环境跳过。不称全仓全绿。适用核心+工作区子集从同一JUnit归集为629通过/1权限失败/2平台跳过，没有另造同SHA CI。准确HEAD/tree、依赖、命令/输入hash与分轴见`D:/b05runs/v24-20261009/delivery_receipt.json`及V24日志。
 
 本轮工程使用simulation_only、助手规则及隔离库。无外部Provider、真实确认、生产迁移、推送或同SHA远端CI；后续Live/所有者与独立操作者/策略及金融价值均NOT_RUN，不能由工程演示关闭。原冻结SPY 5fb282原字节、DLinear匹配录制缺失及Windows symlink权限仍单列；原47目标负确认和历史A/L证据未改。
+
+最终测试启动时Git HEAD为68ba12e、旧summary兼容修复尚未提交；整个运行期间执行源码冻结为faa6b080…。相同源码随后本地提交5499e439848c2615fac36614c85aac2eaa891db7，后续只改文档/只读收据脚本，不冒称测试启动于该SHA或已取得远端CI。完整本地commit清单与最终HEAD/tree在交付收据。
 
 ## 2026-09-30 V2.3四项限定修复已验证，整体产品验收仍PARTIAL
 

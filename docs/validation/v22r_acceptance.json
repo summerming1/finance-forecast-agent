@@ -4,7 +4,11 @@
     "base_sha": "95760e264eddb4388a44df6d35442b6ce8d90928",
     "report": "docs/V2_4_DIAGNOSTIC_RESEARCH.md",
     "receipt": "D:/b05runs/v24-20261009/delivery_receipt.json",
-    "status": "implemented_final_regression_in_progress",
+    "status": "scoped_engineering_verified_historical_and_external_gates_retained",
+    "verified_source_hash": "faa6b0801e330b050a50b902cc5ed81b2ac14c91cf555af6151b9a1952554fd8",
+    "final_local_regression": {"passed":778,"failed":2,"skipped":6,"exit_code":1,"seconds":5566.01,"junit":"D:/b05runs/v24-20261009/full-final2.xml"},
+    "v24_tests": {"passed":44,"included_in_full_regression":true},
+    "real_browser": {"passed":4,"seconds":721.81,"junit":"D:/b05runs/v24-20261009/browser-source-final2.xml","provenance":"simulation_only_actual_worker_and_Chromium"},
     "historical_records_preserved": true,
     "evidence_type": "simulation_only_local_http_actual_local_estimator_fits",
     "clause_links": {

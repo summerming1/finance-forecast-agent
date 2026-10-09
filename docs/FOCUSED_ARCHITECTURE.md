@@ -2,7 +2,11 @@
 
 > Status: APPROVED. ADR-FOCUS-001 establishes the SPY focused line; ADR-MISSION-002 consolidates the Mission architecture/literature role; ADR-MISSION-PRODUCT-003 adds gated PR delivery, Agent value validation and controlled BYO-before-Shadow ordering. Actual implementation status is always defined by CURRENT_IMPLEMENTATION.md.
 
-## Approved V2.3 extension (implementation gated; not a completion claim)
+## Current V2.4 diagnostic extension
+
+[ADR006](ADR_MISSION_PRODUCT_006.md) and [V2_4_DIAGNOSTIC_RESEARCH.md](V2_4_DIAGNOSTIC_RESEARCH.md) define the approved diagnostic/observation increment. Actual implementation and evidence are in CURRENT_IMPLEMENTATION.md. The original Controller invokes pure projections and persists frozen evidence in the existing RuntimeDB; OFF/ON differ in visible information, not compiler permissions. ModelBundle remains an explicitly refitted trusted model, not diagnostic JSON. Future windows, weights, ensembles and Shadow are conditional roadmap items, not this increment.
+
+## Historical approved V2.3 extension (approval was not a completion claim)
 
 [ADR005](ADR_MISSION_PRODUCT_005.md) is accepted; [the consolidated V2.3 specification](V2_3_FEATURE_RESEARCH.md) owns the detailed contract. Existing authorities below are retained; actual delivered behavior remains in CURRENT_IMPLEMENTATION.md.
 
@@ -19,7 +23,9 @@ PR-3 / V2-B  Adaptive Research + Agent Value Benchmark
 PR-4 / V2-B  Persistent Execution + ResearchPackage
 PR-5 / V2.1  Memory + Confirmation + ModelBundle
 PR-6 / V2.2  Controlled BYO Data/Model Pilot
-V3           Shadow Forecasting
+V2.3         Controlled price feature research
+V2.4         Deterministic diagnostic / observation research
+V3           Shadow Forecasting (separately approved, conditional)
 ```
 
 Research Tree is a read-only/product projection of recorded parent/hypothesis/experiment/config-diff/result facts, not a second graph execution engine. Exposure recording starts in V2-A; confirmation isolation remains V2.1. Execution status and research outcome are separate dimensions so engineering failure cannot become a scientific negative result.
@@ -103,7 +109,7 @@ ResearchController  <-- only research authority
       |     task/protocol/capabilities
       |     development feedback
       |     reviewed MethodCard evidence
-      |     compatible Memory (later)
+      |     compatible Memory (implemented; cold in the V2.4 pilot)
       |
       +-- ResearchAdvisor
       |     deterministic baseline policy
@@ -293,4 +299,4 @@ The frozen-SPY auditor reads existing predictions and delegates refit/load/packa
 
 ## V2.4 diagnostic extension (ADR006)
 
-Pure focused_diagnostics functions derive diagnostics only from accepted PredictionArtifact, contract-bound raw history and actual training masks. The original Controller owns invocation, frozen context/design/observation/recommendation; RuntimeDB persists them with existing immutable artifact references. No second evaluator, queue or Memory. Automatic derivation does not fit; missing train predictions remain unavailable. OFF planning projection excludes new diagnostics/observations, and the initial pilot uses cold Memory to exclude indirect retrieval leakage. Memory itself is already implemented (the earlier diagram's later annotation is historical).
+Pure focused_diagnostics functions derive diagnostics only from accepted PredictionArtifact, contract-bound raw history and actual training masks. The original Controller owns invocation, frozen context/design/observation/recommendation; RuntimeDB persists them with existing immutable artifact references. No second evaluator, queue or Memory. Automatic derivation does not fit; missing train predictions remain unavailable. OFF planning projection excludes new diagnostics/observations, and the initial pilot uses cold Memory to exclude indirect retrieval leakage. Memory itself is already implemented.

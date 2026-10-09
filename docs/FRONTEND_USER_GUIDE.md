@@ -363,6 +363,8 @@ projects/finance_agent/llm_fixtures/               Replay 响应
 
 沿用原环境和已确认的原状态库启动 `.venv/Scripts/python.exe -m streamlit run apps/streamlit_app.py`。新研究选受控价格特征，在第三步“诊断与观察”选V2.4诊断可见；先用deterministic、Adaptive Batch、2轮/2槽/32 fits。合法数据及费用授权规则不变；本轮不授权Live。
 
+使用已有合法的真实开发输入，并如实保持historical_development_only；不要将离线演示脚本生成的simulation_only JSON当成真实Yahoo行情。CLI演示只写独立工程目录，不自动创建UI Mission。原活动Campaign的恢复仍要求原源码/环境/合同，更新源码不是自动迁移许可；不改旧hash强行恢复，可按原版本路径恢复或显式创建新Campaign，不能重置曝光/信任库。
+
 检查配置应0fit/0HTTP。开始后查看首次诊断来源与训练校准行；选实际研究候选看公式/diff/control/竞争解释/规则数值。注意消融后更差不等于推荐更差模型，样本不足不等于合同错误。成果查看冻结推荐与最佳研究候选/最佳可用模型的区别。刷新、两候选切换、新context重开不得增加fit。导出研究包，显式refit额外1次，按原可信库用raw无标签接口推理。
 
 请实际记录身份（所有者/独立用户）、主动用时、帮助、完成/失败步骤、解释理解、导出及再次使用；没有操作写NOT_RUN。助手测试仅simulation_only。

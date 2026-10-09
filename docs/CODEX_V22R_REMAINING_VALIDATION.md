@@ -1,5 +1,11 @@
 # Codex：B0–B5 交付后的统一补测任务
 
+## 2026-10-09 当前V2.4交付及剩余入口
+
+D24-0—5限定工程已在原体系实现验证，D24-6预检/操作清单/收据入口已准备。详见V2_4_DIAGNOSTIC_RESEARCH.md及CURRENT_IMPLEMENTATION；最终源码faa6b080…的全仓778通过/2失败/6跳过，4项独立真实浏览器通过，44项V24通过已包含在全仓通过数中。全仓exit1不改成PASS：WinError1314为BLOCKED_ENV，原严格DLinear 2c05bfd22af27435.json缺失为BLOCKED_ASSET；6跳过中4浏览器已独立跑，POSIX和Windows包symlink两项未跑。旧48条A/L语义与状态逐项保持基线一致，只追加关联；原47目标负确认不改。
+
+当前最小下一步：所有者沿用户指南实际操作并留主动时间/帮助/失败；独立用户须另一个真实操作者。真实Provider语义、Diag-OFF/ON策略价值与独立预测仍NOT_RUN，须新授权、预登记预算/发送范围及合格数据/协议；DSL确认仍不支持。原5fb282冻结SPY字节缺失仍BLOCKED_ASSET，不能用0bb089或模拟输入替代；原fixture须恢复匹配的原始内容/上下文而非改名。Windows权限补测需合法符号链接权限或另行授权的Linux/CI，不能删断言或篡改global设置求绿。本轮没有推送/同SHA远端CI/macOS/GPU大型native，历史父提交证据不能冒充本轮。以下旧执行提示为历史/按新授权选择，不自动续跑付费矩阵。
+
 ## 2026-09-30 V2.3对抗修复关联
 
 基线2fbadca的四项复核缺陷已在原架构修复：研究结果角色、原始JSON严格解析、Random抽样合同对账、核心固定评价政策。0ea18da同SHA Linux双Python各565通过、双浏览器与静态通过；定向收据及历史Random勘误见V2_3_FEATURE_RESEARCH.md当日增量。最终HEAD/全仓/同SHA CI以D:/b05runs/v23-fixes-0930/delivery_receipt.json核对，未结束运行不计通过。本轮不收费、不下载新确认标签，旧A/L缺口和47目标负确认不变。Windows symlink特权和原strict fixture缺失已重新复现，原SPY artifact缺失仍阻塞；历史2fbadca CI和原703/2/5仅是父提交证据。下一步是所有者试用，不以助手模拟补真人PASS。

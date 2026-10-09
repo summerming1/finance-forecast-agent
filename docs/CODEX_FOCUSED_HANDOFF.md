@@ -2,7 +2,7 @@
 
 ## 2026-10-09 当前V2.4交接
 
-以实际HEAD为准，不回退95760e。用户已批准D24-0—5工程和D24-6准备；唯一合同V2_4_DIAGNOSTIC_RESEARCH.md/accepted ADR006。默认仅本地提交，无推送/远端CI/付费Provider/真实确认。当前批次和测试见V24日志及CURRENT_IMPLEMENTATION；下面C0/C1等指令为历史，不重复开发。先完成适用工程/worker/browser/最终回归，再交真实操作者清单。原旧A/L/47目标负确认保留。
+以实际HEAD为准，不回退95760e。D24-0—5限定工程及D24-6准备已完成，唯一合同/测试映射为V2_4_DIAGNOSTIC_RESEARCH.md/accepted ADR006。当前下一步是所有者按FRONTEND_USER_GUIDE实际试用、记录主动用时/帮助/失败，不代填真人PASS；不要重做C1或启动后续版本。最终源码faa6b080…：全仓778通过/2历史环境资产失败/6跳过，真实新旧浏览器4通过，离线四臂96fits/HTTP=0，来源/源码/实际HEAD/tree见交付收据。下面旧C0/C1等为历史。默认仅本地提交，无推送/远端CI/付费Provider/真实确认，需新授权才执行。原A/L、47目标负确认、5fb282原输入、DLinear原fixture及Windows权限缺口保留；新源码不意味着原活动合同可强制迁移。
 
 ## 2026-09-29 历史交接
 
