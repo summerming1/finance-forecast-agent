@@ -1,6 +1,12 @@
 # Finance Forecast Agent 项目迭代路线图
 
-## 当前批准增量：V2.3受控价格特征研究（2026-09-29）
+## 当前批准增量：V2.4诊断研究（2026-10-09）
+
+用户明确批准D24-0—D24-5工程及D24-6准备。唯一详细合同及后续每版重点/功能/边界/进入条件/框架/说明/例子见[V2_4_DIAGNOSTIC_RESEARCH.md](V2_4_DIAGNOSTIC_RESEARCH.md)，范围ADR006。批准不是通过，实际状态仍见CURRENT_IMPLEMENTATION。
+
+条件性路线：V2.5.0训练窗口→V2.5.1时间权重；按需V2.6两成员组合（不是V3前置）；V3-P固定基线前瞻可单独批准并行→V3.0候选/对照Shadow；V4.0原Memory经验检索及有限研究方向/预算选择；按需单独审查V4.1一个相邻任务或可信源；V5窄研究接口与受控扩展。本轮不开发这些功能，不宣称专家优势/预测优势或无泄漏。专家实践和潜在产品增量分别验证。
+
+## 历史批准增量：V2.3受控价格特征研究（2026-09-29）
 
 用户已明确批准按合并规范 [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md) 实施修改、测试和必要前端配合；范围决策 [ADR_MISSION_PRODUCT_005.md](ADR_MISSION_PRODUCT_005.md) 已accepted。批准不代表实现或验收完成；实际状态见CURRENT_IMPLEMENTATION.md。
 

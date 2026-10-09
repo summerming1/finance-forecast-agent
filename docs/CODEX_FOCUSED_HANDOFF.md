@@ -1,6 +1,10 @@
 # Codex handoff：当前状态、B5补测与V2.3方案入口
 
-## 2026-09-29 当前交接
+## 2026-10-09 当前V2.4交接
+
+以实际HEAD为准，不回退95760e。用户已批准D24-0—5工程和D24-6准备；唯一合同V2_4_DIAGNOSTIC_RESEARCH.md/accepted ADR006。默认仅本地提交，无推送/远端CI/付费Provider/真实确认。当前批次和测试见V24日志及CURRENT_IMPLEMENTATION；下面C0/C1等指令为历史，不重复开发。先完成适用工程/worker/browser/最终回归，再交真实操作者清单。原旧A/L/47目标负确认保留。
+
+## 2026-09-29 历史交接
 
 用户已批准合并方案的功能修改、测试、必要前端配合及验证后普通推送/同SHA CI。文档快照c60d173，原审阅基线`fad63bc8effc6bd3a8e98f7ad94b9896a599c321`；执行时以实际Git为准，保留工作区与历史证据。运行能力仍见 [CURRENT_IMPLEMENTATION.md](CURRENT_IMPLEMENTATION.md)。
 

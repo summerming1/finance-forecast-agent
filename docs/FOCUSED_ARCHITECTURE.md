@@ -290,3 +290,7 @@ Capability-only confirmation preflight precedes registry access; its not_checked
 
 ### B5 validation-only boundary
 The frozen-SPY auditor reads existing predictions and delegates refit/load/package to existing APIs; it owns no campaign or metric authority. The original raw hash is pinned. Independent arithmetic detects corruption; it cannot promote development evidence. Core CI and browser evidence are separate from unavailable external inputs, real provider reliability, literature semantics and true user outcomes.
+
+## V2.4 diagnostic extension (ADR006)
+
+Pure focused_diagnostics functions derive diagnostics only from accepted PredictionArtifact, contract-bound raw history and actual training masks. The original Controller owns invocation, frozen context/design/observation/recommendation; RuntimeDB persists them with existing immutable artifact references. No second evaluator, queue or Memory. Automatic derivation does not fit; missing train predictions remain unavailable. OFF planning projection excludes new diagnostics/observations, and the initial pilot uses cold Memory to exclude indirect retrieval leakage. Memory itself is already implemented (the earlier diagram's later annotation is historical).

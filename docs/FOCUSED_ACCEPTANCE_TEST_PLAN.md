@@ -319,3 +319,7 @@ Run all focused/queue/Memory tests plus test_method_card_v3, test_streamlit_revi
 Use scripts/verify_frozen_spy_acceptance.py for original-hash input verification and independent arithmetic/package/new-process interface audit. Input-only PASS_INPUT_ONLY is not campaign PASS. Original input missing means BLOCKED_ASSET/nonzero, never silent Yahoo refresh. Workflow saves only this run's identity/environment/receipts, not a mixture of tracked historical validation outputs.
 
 The complete remaining A/L clause inventory is b_delivery.stages.B5.remaining_clause_ids. All external steps, safe commands, budgets, historical47-row exclusion and true user participation are in CODEX_V22R_REMAINING_VALIDATION.md. Valid implementation/engineering delivery can coexist with overall scientific acceptance PARTIAL and unavailable remote frozen-input CI.
+
+## V2.4 approved engineering gates
+
+Use V2_4_DIAGNOSTIC_RESEARCH.md T01–T36 mapping and ADR006. D24-0–5 are engineering; D24-6 Provider/user/value outcomes require separate evidence. Add raw-source/training-scope arithmetic, different observation directions, complete-target identity, genuine diagnostic branches, frozen rules/context/selection, OFF/ON same-AST permissions and failure denominator tests. Retain legacy JSON/recovery/trust/budget/queue/browser regressions. No remote CI claim without running it. Efficiency and prediction gains are separate, and comparison against strong controls remains required for research-value claims.
