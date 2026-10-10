@@ -14,7 +14,30 @@ RCP-04/05允许有界diagnose需求设计并持久保存，不执行窗口或组
 
 pilot在输入预检前登记四臂分母，构造/执行/导出/校验全部纳入失败收据；只有执行完成且包审计通过才PASS。新测试收据需运行前start manifest及结束后的实际exit/hash；缺绑定、零测试、全跳过、计数不一致或覆盖不足均不能PASS，策略行为不继承全仓PASS。历史收据只作历史，禁止覆盖。
 
-执行记录待本轮定向、回归、worker/browser及最终全仓完成后补充。不调用付费Provider，不外发、不读取确认标签、不推送。
+本轮五批限定修复与适用工程验证完成，完整产品/外部验收仍PARTIAL。实际执行提交7be2fab6db4a6e6ea5154423e07538d7d3dfdf53，tree 06f8e4153e3fd885ae115632fdaac3260112e515；基线3097ece873108ac80253078c6f39bb9fe483124a。后续只提交验收文档，准确最终HEAD/tree由收据记录，不回填测试启动SHA。Windows/i5-12500/Python3.13.3；执行源码419dd4b245bc6f4315dcd147df5bcac924bf9657b3b1667195544fa9558f0cce，核心依赖及全部222个源码/前端/脚本/测试文件身份在运行前start和运行后end中绑定；实际exit1、JUnit SHA256 37e60b6eae3086c20aec1bb58ae6468ef46db6c9c0fb79a59f23a0c026ac8d6f。归集使用与执行一致的正常进程权限；受限沙箱枚举不全时应拒绝绑定而非PASS。
+
+| 批次/复审行为 | 最小实现与真实负例归属 | 本轮结论 |
+|---|---|---|
+| 收据真值/失败分母 | pilot预检、构造、导出、审计失败；manifest缺失/计数错误/全跳过/exit或源码或覆盖不匹配；test_pilot_all_failure_stages_remain_failed、test_shared_input_failure_preserves_all_arms_and_nonzero_cli、test_manifest_binding_cannot_invent_a_pass | PASS，模拟故障 |
+| 非法结构/需求设计 | 共用结构门禁先于字段访问；null、混合列表等7负例终态且resume不重规划；RCP04/05自定义有界需求保留设计而不训练 | PASS，assistant fixture，基线12fits/研究0fits |
+| 缓存观察/原预算 | 首轮全缓存消融产生新观察，引用实际复用模型，ON第二规划接收、OFF无泄漏；只用原第二规划，恢复不refit | PASS，实际本地训练及缓存 |
+| compact两轮 | 显式v2来源去重/列式规划投影；ON/OFF、提供起点、约3900字符备注、两次规划及resume，64000上限未变 | PASS，无真实Provider |
+| 有限策略依据 | 完全对齐候选/Ridge预测的相对组损失；相同全局MAE但弱点位置不同；具名特征必须每fold常数，移除实际组件而非数组末项 | PASS，手算/规则行为，非策略价值证明 |
+| 原UI/交付/累计回归 | 两轮真实worker、提供起点续接、只读切换/刷新/新context、包及显式refit；本轮新增27项与原V24 44项 | PASS，simulation_only实际Chromium/训练 |
+
+证据根目录`.v24-review-assessment-20261010`，不覆盖历史收据。最终命令：`.venv/Scripts/python.exe -m pytest -q --basetemp=.t24full --junitxml=.v24-review-assessment-20261010/final-delivery/full-final2.xml --tb=short`，OMP/MKL/OPENBLAS_NUM_THREADS=1，运行前`collect_v24_receipt.py --begin-run full-final2.xml --command <上述命令> --required-node tests/test_focused_v24_review_fixes.py --required-node tests/test_focused_v24_delivery.py --required-node tests/test_focused_v24_recovery.py --required-node tests/test_workspace_ui.py`，运行后`--end-run full-final2.xml --exit-code 1`。805 passed、2 failed、6 skipped、5592.52秒/exit1；其中V24 71 passed/0 failed/0 skipped（含27新增，不额外相加）。全仓工程轴PARTIAL。两个失败：`tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]`，首异常WinError1314/BLOCKED_ENV，需合法symlink权限或另行批准的平台验证；`tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call`，首异常FileNotFoundError/BLOCKED_ASSET，需原匹配2c05bfd22af27435.json及上下文，不能改名其他fixture。原5fb282冻结SPY资产仍缺，本轮未另跑原smoke。4 browser opt-in跳过已由独立矩阵验证；另2跳过为POSIX process-group probe及Windows package symlink权限，不能写PASS。
+
+实际浏览器矩阵4 passed/590.53秒/exit0（browser-matrix.xml），Chromium153.0.8010.12、page_errors=[]。复现方式：设置FFA_BROWSER_E2E=1及独立FFA_UI_BROWSER_ARTIFACTS/FFA_BROWSER_ARTIFACTS输出目录，运行`.venv/Scripts/python.exe -m pytest -q tests/browser --basetemp=<新的短临时目录> --junitxml=<新的报告.xml>`；不要覆盖本轮browser-matrix及browser-matrix-old证据。V24报告19项检查、研究fit总44（父20/续接24）、attempt17；显式refit1另计；候选只读切换/刷新/new-context没有新增fit或HTTP。模拟输入raw cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b。
+
+离线四臂：`.venv/Scripts/python.exe scripts/run_v24_engineering_validation.py --output-root .v24-review-assessment-20261010/pilot-repair --run-engineering`，exit0，OFF20/ON20/Random28/One-shot28共96fits，逻辑规划2/2/2/1、外部HTTP0、费用null、真人主动时间null；4 PASS必须执行完成且导出/审计完成。36预测制品逐行及fold复算，172索引文件；4臂均retain_start，不要求ON获胜。raw 0798460be4a950b39cb848833148b324cb35b642b834cb110b8e161e135ea8bd，dataset e7a1fc373a8f1a86b8004e32bff559150f48a2fdf3d86793e08961869844eb58，预登记bc757a71d8c81968d3459061b9bf3948184246762be4d8b8d55823d3b1e075ad。纯simulation，不是市场表现或真实模型质量。
+
+本地HTTP录制→严格离线Replay在正常权限/短临时路径下1 passed/88.38秒/exit0（delivery-http.xml），模拟HTTP1、Replay HTTP0、各独立Campaign20 fits且计划/数值一致。此前target-frozen.xml为70 passed/1环境路径失败/1326.72秒；delivery-short.xml为8 passed/1沙箱HTTP未到达失败/157.54秒；不能称这两次全绿，最终全仓该节点已通过。更早fixes-first/second/third、compact/start容量失败及browser-repair启动失败全部保留；部分中间合同不匹配源于测试期间修改源码，最终改为冻结后完整重跑，未删除断言或扩大上限。适用Ruff8文件、compileall src/apps/scripts、node --check views.js及git diff --check均exit0。
+
+正常与负例的新证据关联T07—10/T15—17/T19—20/T22/T26/T28/T30/T33—36；原A/L与47目标负确认逐字段保留。完整审计中保留所有来源/范围与生成特征相关对；规划v2只给有界摘要及完整审计hash/引用，不宣称所有原始数组都进入prompt。相对fold_reference列顺序为fold_id/group/rows/reference_mae，fold_values为candidate_mae/loss_delta；正值更差，不是统计显著性。
+
+基线tree d6584e7dd462359dfc21f843a87f033c1a0056af。离线四臂wall分别52.40/51.48/73.48/71.93秒，合计249.29秒；当时有并行测试，不能用于研究效率优劣论断。全仓控制台5592.52秒与JUnit suite 5592.506秒是不同计时边界。最终源码不再变化，后续文档提交不等于重跑测试。历史复用仅引用旧证据；本轮重跑、模拟/真实、PASS/FAIL/BLOCKED/NOT_RUN按上述项区分。自动收据不从全仓PASS推导策略轴，strategy_behavior保守标NOT_RUN；本节有限规则行为由具名负例单独证明，Live语义及真实研究价值仍未验证。
+
+限制：极端DB/输出均不可写可能无法完整持久化，证据缺口需明确，缺记录不能自动重发，也不承诺恰好一次计费。有限策略行为PASS不代表Live语义/策略价值；后者、所有者/独立用户、独立金融证据均NOT_RUN。DSL独立确认仍不支持。原资产/权限缺口保留；Linux同SHA CI、macOS、GPU大型native、推送、生产迁移及V2.5+均NOT_RUN。不调用付费Provider，不外发、不读取确认标签。可以结束本轮限定代码修复，按FRONTEND_USER_GUIDE进入所有者实际试用；不能代签真人验收或启动下一版本。
 
 SPY daily下一XNYS session调整收盘收益回归、forecast_only；主筛选MAE/0.0025/development_only。原价格DSL、参数域、两条生成特征（含继承）、固定模型/参数/seed/预处理/内置组、共同W64和四fold不变。新协议显式选择；旧候选/fixture/hash/模型数值语义不改。保留原Exposure/Trust/RuntimeDB和47目标负确认。
 

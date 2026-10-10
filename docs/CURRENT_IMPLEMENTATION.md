@@ -1,8 +1,12 @@
 # 当前版本功能与技术实现说明
 
-## 2026-10-10 V2.4复审修复进行中（基线3097ece）
+## 2026-10-10 V2.4限定复审修复已验证；总体验收仍PARTIAL
 
-上轮独立复审已复现compact ON第二轮容量失败、null提案非受控异常、缓存观察漏入上下文、pilot/收据假PASS、构造失败漏分母及RCP-05需求拒绝。当前按批准的五批修复实施，尚未取得本轮最终回归/浏览器收据，不能沿用下方历史PASS作为当前验收。旧3097ece证据及原48条、47目标负确认、原输入身份保留；本轮无推送/付费模型/确认标签读取。
+以3097ece为基线，已最小修复compact ON第二轮容量、null/非对象提案受控终止、缓存消融观察入上下文及剩余第二规划、pilot导出/审计失败状态、预检/构造失败分母、JUnit身份/覆盖绑定和RCP-04/05有界需求设计。新显式planning projection/advice v2保留64000上限、原预算及完整审计；相对诊断使用事前冻结Ridge，规则策略依据真实分组相对弱点及每fold具名特征，不把全局MAE>0或数组末项当诊断。原主MAE/0.0025、能力、Controller/Queue/RuntimeDB/Memory不变。
+
+实际执行提交7be2fab6db4a6e6ea5154423e07538d7d3dfdf53（tree 06f8e4153e3fd885ae115632fdaac3260112e515）；执行源码419dd4b245bc6f4315dcd147df5bcac924bf9657b3b1667195544fa9558f0cce。最终全仓805 passed/2 failed/6 skipped，5592.52秒、exit1；V24的71项全部通过（其中27新增，已包含在805内）。两失败为既有Windows symlink WinError1314和原DLinear 2c05bfd22af27435.json缺失。四个opt-in浏览器用例在全仓跳过但独立实际Chromium矩阵4 passed/590.53秒；另外POSIX中断探针和Windows包symlink两项仍平台跳过。本轮两轮/提供起点的worker、只读切换、刷新、新context、续接、包及显式refit流程已实际测试。四臂模拟审计4 PASS、96真实本地fits/外部HTTP0、36预测制品复算及172索引文件通过；这不证明策略增益。
+
+最终运行前后源码/核心依赖/JUnit/真实exit绑定为BOUND；全仓总体PARTIAL，不称全绿。收据在`.v24-review-assessment-20261010/final-delivery/delivery_receipt.json`，准确命令/输入hash/失败及本地提交见V24当日日志。后续文档提交不冒称是全仓执行SHA。保留所有中间失败、旧3097ece证据、原48条/47目标负确认和原输入身份。原冻结SPY字节、真实Provider语义/策略价值、真人与金融确认仍未关闭；无推送、同SHA CI、付费模型、确认标签读取、生产迁移或后续版本开发。
 
 ## 2026-10-09 V2.4-A/B限定工程交付已验证；外部及历史阻断单列
 

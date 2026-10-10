@@ -2,7 +2,9 @@
 
 ## 2026-10-10 V2.4复审收口
 
-当前先完成已批准的限定代码修复及适用回归，见V2_4_DIAGNOSTIC_RESEARCH当日增量；下方2026-10-09的测试数只作历史。两轮compact ON/OFF、提供起点、缓存观察及失败收据是本轮新增门禁。收据需运行前后身份与真实exit，不允许回填历史SHA。工程最终验收之前不以旧PASS宣布当前修复完成。原48条和47目标负确认、资产/平台/真人/真实Provider及金融边界不变。
+限定修复已在7be2fab完成实际回归：全仓805通过/2失败/6跳过，V24 71通过（27新增），两套真实浏览器矩阵4通过，四臂模拟审计通过；源码/依赖/JUnit/exit运行前后绑定通过。详见V2_4_DIAGNOSTIC_RESEARCH当日增量和本轮final-delivery收据，下方2026-10-09只作历史。两轮compact ON/OFF、提供起点、缓存观察、需求设计及失败收据新增门禁已验证，但不代表新投影真实Provider质量通过。
+
+仍未完成：Windows symlink权限（BLOCKED_ENV，另有POSIX及包symlink跳过）；原DLinear 2c05bfd22af27435.json及5fb282冻结SPY原字节（BLOCKED_ASSET，后者本轮未另跑smoke，不替换输入）；真人（NOT_RUN，操作清单已准备）；真实Provider语义/Diag-OFF/ON研究价值/独立预测（NOT_RUN，需新授权及合格协议/数据，DSL confirmation仍不支持）；同SHA CI/推送/macOS/GPU大型native（NOT_RUN）。四个全仓opt-in browser跳过已有本轮独立4通过证据。原48条与47目标负确认保持，不能由本轮工程PASS关闭。
 
 ## 2026-10-09 当前V2.4交付及剩余入口
 

@@ -2,7 +2,14 @@
   "schema_version": "v22r_acceptance_v1",
   "v24_review_repairs_20261010": {
     "base_sha": "3097ece873108ac80253078c6f39bb9fe483124a",
-    "status": "implementation_validation_in_progress",
+    "status": "scoped_repairs_verified_overall_acceptance_partial",
+    "tested_sha": "7be2fab6db4a6e6ea5154423e07538d7d3dfdf53",
+    "verified_source_hash": "419dd4b245bc6f4315dcd147df5bcac924bf9657b3b1667195544fa9558f0cce",
+    "final_local_regression": {"passed":805,"failed":2,"skipped":6,"exit_code":1,"seconds":5592.52,"junit":".v24-review-assessment-20261010/final-delivery/full-final2.xml","binding":"BOUND"},
+    "v24_tests": {"passed":71,"new":27,"included_in_full_regression":true},
+    "real_browser": {"passed":4,"seconds":590.53,"exit_code":0,"junit":".v24-review-assessment-20261010/browser-matrix.xml","provenance":"simulation_only_actual_worker_Chromium"},
+    "offline_pilot": {"status":"PASS","fits":96,"external_http":0,"audited_predictions":36,"indexed_files":172,"provenance":"simulation_only"},
+    "receipt": ".v24-review-assessment-20261010/final-delivery/delivery_receipt.json",
     "report": "docs/V2_4_DIAGNOSTIC_RESEARCH.md",
     "evidence_root": ".v24-review-assessment-20261010",
     "clause_links": {
