@@ -361,6 +361,8 @@ projects/finance_agent/llm_fixtures/               Replay 响应
 
 ## V2.4所有者操作清单（未代填真人结果）
 
+2026-10-10复审增量：相对诊断使用Campaign前冻结的Ridge控制，分组损失差为“候选−控制”，正值更差；观察改善仍是“控制−候选”，不要混淆符号。候选详情优先显示研究问题/配方/控制/数值判定，缓存观察标明复用的实际模型及0新增fit。新规划使用显式v2共同来源/列式投影，完整数值与范围仍在原审计包；读页面不重新生成上下文。按2轮/2槽/32fits测试，不能只用一轮验收两轮产品路径。旧活动Campaign不改hash迁移，新源码须显式新Campaign并保留原曝光库。
+
 沿用原环境和已确认的原状态库启动 `.venv/Scripts/python.exe -m streamlit run apps/streamlit_app.py`。新研究选受控价格特征，在第三步“诊断与观察”选V2.4诊断可见；先用deterministic、Adaptive Batch、2轮/2槽/32 fits。合法数据及费用授权规则不变；本轮不授权Live。
 
 使用已有合法的真实开发输入，并如实保持historical_development_only；不要将离线演示脚本生成的simulation_only JSON当成真实Yahoo行情。CLI演示只写独立工程目录，不自动创建UI Mission。原活动Campaign的恢复仍要求原源码/环境/合同，更新源码不是自动迁移许可；不改旧hash强行恢复，可按原版本路径恢复或显式创建新Campaign，不能重置曝光/信任库。

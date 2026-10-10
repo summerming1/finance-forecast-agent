@@ -4,6 +4,8 @@
 
 ## Current V2.4 diagnostic extension
 
+The 2026-10-10 repair uses explicit v2 planning projection: identical facts are interned in a deterministic small-reference table bound by the original frozen prompt hash; columnar loss records retain complete group/fold numeric entries. The full audit keeps original scope hashes, raw provenance and named feature statistics. This is a pure projection inside the existing Controller, not a new context engine or state authority. Cached controlled observations are keyed by proposal and project all completed events; OFF excludes the entire new source table. The fixed diagnostic comparator is bound before the first decision; numeric selection authority is unchanged. Test-start/end manifests are audit exports, not a replacement for RuntimeDB or historical receipts.
+
 [ADR006](ADR_MISSION_PRODUCT_006.md) and [V2_4_DIAGNOSTIC_RESEARCH.md](V2_4_DIAGNOSTIC_RESEARCH.md) define the approved diagnostic/observation increment. Actual implementation and evidence are in CURRENT_IMPLEMENTATION.md. The original Controller invokes pure projections and persists frozen evidence in the existing RuntimeDB; OFF/ON differ in visible information, not compiler permissions. ModelBundle remains an explicitly refitted trusted model, not diagnostic JSON. Future windows, weights, ensembles and Shadow are conditional roadmap items, not this increment.
 
 ## Historical approved V2.3 extension (approval was not a completion claim)

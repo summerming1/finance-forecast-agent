@@ -1,5 +1,19 @@
 {
   "schema_version": "v22r_acceptance_v1",
+  "v24_review_repairs_20261010": {
+    "base_sha": "3097ece873108ac80253078c6f39bb9fe483124a",
+    "status": "implementation_validation_in_progress",
+    "report": "docs/V2_4_DIAGNOSTIC_RESEARCH.md",
+    "evidence_root": ".v24-review-assessment-20261010",
+    "clause_links": {
+      "T19_T20_T22_T26_T28_T34": ["tests/test_focused_v24_review_fixes.py", "tests/test_focused_v24_recovery.py"],
+      "T07_T08_T09_T10_T15_T16_T17": ["tests/test_focused_v24_review_fixes.py", "tests/test_focused_v24_diagnostics.py"],
+      "T30_T33_T35_T36": ["tests/test_focused_v24_review_fixes.py", "tests/test_focused_v24_pilot.py", "tests/browser/test_agent_workspace.py[v24]"]
+    },
+    "historical_records_preserved": true,
+    "evidence_type": "simulation_only_local_http_actual_local_estimator_fits",
+    "external_gates": {"provider": "NOT_RUN", "actual_user": "NOT_RUN", "financial": "NOT_RUN", "same_sha_ci": "NOT_RUN"}
+  },
   "v24_engineering_20261009": {
     "base_sha": "95760e264eddb4388a44df6d35442b6ce8d90928",
     "report": "docs/V2_4_DIAGNOSTIC_RESEARCH.md",

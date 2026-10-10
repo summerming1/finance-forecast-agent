@@ -1,5 +1,9 @@
 # Codex：B0–B5 交付后的统一补测任务
 
+## 2026-10-10 V2.4复审收口
+
+当前先完成已批准的限定代码修复及适用回归，见V2_4_DIAGNOSTIC_RESEARCH当日增量；下方2026-10-09的测试数只作历史。两轮compact ON/OFF、提供起点、缓存观察及失败收据是本轮新增门禁。收据需运行前后身份与真实exit，不允许回填历史SHA。工程最终验收之前不以旧PASS宣布当前修复完成。原48条和47目标负确认、资产/平台/真人/真实Provider及金融边界不变。
+
 ## 2026-10-09 当前V2.4交付及剩余入口
 
 D24-0—5限定工程已在原体系实现验证，D24-6预检/操作清单/收据入口已准备。详见V2_4_DIAGNOSTIC_RESEARCH.md及CURRENT_IMPLEMENTATION；最终源码faa6b080…的全仓778通过/2失败/6跳过，4项独立真实浏览器通过，44项V24通过已包含在全仓通过数中。全仓exit1不改成PASS：WinError1314为BLOCKED_ENV，原严格DLinear 2c05bfd22af27435.json缺失为BLOCKED_ASSET；6跳过中4浏览器已独立跑，POSIX和Windows包symlink两项未跑。旧48条A/L语义与状态逐项保持基线一致，只追加关联；原47目标负确认不改。

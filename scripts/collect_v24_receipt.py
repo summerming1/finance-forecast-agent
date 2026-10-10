@@ -17,19 +17,124 @@ def git(*args):
     return subprocess.check_output(['git', *args], text=True).strip()
 
 
+def inspect_junit(path):
+    """Count actual cases, never promote a count attribute or skipped report."""
+    tree = ET.parse(path).getroot()
+    suites = [tree] if tree.tag == 'testsuite' else list(tree.findall('testsuite'))
+    cases = list(tree.iter('testcase'))
+    declared = {k:sum(int(s.get(k, '0')) for s in suites) for k in ('tests','failures','errors','skipped')}
+    actual = {'tests':len(cases), **{k:sum(c.find(tag) is not None for c in cases)
+        for k, tag in [('failures','failure'), ('errors','error'), ('skipped','skipped')]}}
+    if declared != actual:
+        raise ValueError('JUnit declared counts differ from actual testcases')
+    return actual
+
+
+def source_files(repo):
+    return {p.relative_to(repo).as_posix():file_sha256(p)
+        for directory in ('src', 'apps', 'scripts', 'tests')
+        for p in sorted((repo/directory).rglob('*'))
+        if p.is_file() and p.suffix in {'.py', '.js', '.html', '.css'}}
+
+
+def dependency_versions():
+    result = {}
+    for name in ('numpy', 'pandas', 'scikit-learn', 'streamlit', 'pytest', 'ruff', 'playwright',
+                 'psutil', 'exchange-calendars', 'pyarrow', 'optuna'):
+        try:
+            result[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            result[name] = None
+    return result
+
+
+def run_manifest(root, repo, name, *, command=None, required=None, exit_code=None, inputs=None):
+    """Start identity is captured before execution, not reconstructed by collector."""
+    from datetime import datetime, timezone
+    start = root/(name+'.start.json')
+    end = root/(name+'.end.json')
+    if exit_code is None:
+        if start.exists() or (root/name).exists() or not command or not required:
+            raise ValueError('new run name, command and explicit coverage required')
+        root.mkdir(parents=True, exist_ok=True)
+        atomic_json(start, {'schema_version':'v24_test_start_v2', 'head':git('rev-parse','HEAD'),
+            'tree':git('rev-parse','HEAD^{tree}'), 'working_tree':git('status','--short'),
+            'source_files':source_files(repo), 'python':platform.python_version(), 'dependencies':dependency_versions(),
+            'platform':platform.platform(), 'inputs':{str(Path(p).resolve()):file_sha256(p) for p in (inputs or [])},
+            'command':command, 'required_nodes':required, 'junit':name,
+            'started_at':datetime.now(timezone.utc).isoformat()})
+    else:
+        if not start.exists() or end.exists() or not (root/name).is_file():
+            raise ValueError('missing start/report or existing end evidence')
+        atomic_json(end, {'start_sha256':file_sha256(start), 'junit_sha256':file_sha256(root/name),
+            'actual_exit_code':exit_code, 'source_files':source_files(repo), 'dependencies':dependency_versions(),
+            'python':platform.python_version(), 'platform':platform.platform(),
+            'finished_at':datetime.now(timezone.utc).isoformat()})
+
+
+def bound_status(root, repo, row):
+    path = Path(row['junit'])
+    start, end = root/(path.name+'.start.json'), root/(path.name+'.end.json')
+    if not start.exists() or not end.exists():
+        row['binding_status'] = 'NOT_RUN_missing_start_end_manifest'
+        return 'NOT_RUN'
+    before, after = json.loads(start.read_text()), json.loads(end.read_text())
+    row['run_manifest'] = before
+    row['actual_exit_code'] = after['actual_exit_code']
+    if (file_sha256(start) != after['start_sha256'] or row['sha256'] != after['junit_sha256'] or
+            before['source_files'] != after['source_files'] or after['source_files'] != source_files(repo) or
+            before['dependencies'] != after['dependencies'] or after['dependencies'] != dependency_versions()):
+        row['binding_status'] = 'FAIL_identity_changed'
+        return 'FAIL'
+    if before['python'] != after['python'] or before['platform'] != after['platform'] or any(
+            not Path(p).is_file() or file_sha256(p) != digest for p, digest in before.get('inputs', {}).items()):
+        row['binding_status'] = 'FAIL_environment_or_input_changed'
+        return 'FAIL'
+    cases = list(ET.parse(path).getroot().iter('testcase'))
+    nodes = [c.get('classname','').replace('.','/')+'.py::'+c.get('name','')
+             for c in cases if c.find('skipped') is None]
+    required = before.get('required_nodes', [])
+    if not required or any(not any(n == req or n.startswith(req+'::') for n in nodes) for req in required):
+        row['binding_status'] = 'FAIL_required_coverage_missing'
+        return 'FAIL'
+    if after['actual_exit_code'] != row['expected_exit']:
+        row['binding_status'] = 'FAIL_actual_exit_mismatch'
+        return 'FAIL'
+    row['binding_status'] = 'BOUND'
+    if not row['passed']:
+        return 'NOT_RUN'
+    if row['failures'] or row['errors']:
+        return 'FAIL' if any(f['classification'] == 'FAIL_PRODUCT' for f in row['failures_detail']) else 'PARTIAL'
+    return 'PARTIAL' if row['skipped'] else 'PASS'
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--evidence-root', type=Path, required=True)
     parser.add_argument('--pilot-name', default='pilot-source-final2')
     parser.add_argument('--browser-name', default='browser-source-final2')
+    parser.add_argument('--begin-run')
+    parser.add_argument('--end-run')
+    parser.add_argument('--command')
+    parser.add_argument('--required-node', action='append', default=[])
+    parser.add_argument('--exit-code', type=int)
+    parser.add_argument('--input', action='append', default=[])
     args = parser.parse_args()
     root = args.evidence_root.resolve()
     repo = Path(__file__).resolve().parents[1]
+    if args.begin_run or args.end_run:
+        if args.end_run and args.exit_code is None:
+            parser.error('--end-run requires actual --exit-code')
+        run_manifest(root, repo, args.begin_run or args.end_run, command=args.command,
+                     required=args.required_node, exit_code=args.exit_code if args.end_run else None, inputs=args.input)
+        return
+    if (root/'delivery_receipt.json').exists():
+        raise ValueError('historical receipt already exists; never overwrite')
     runs = []
     for path in sorted(root.glob('*.xml')):
         tree = ET.parse(path).getroot()
         suites = [tree] if tree.tag=='testsuite' else list(tree.findall('testsuite'))
-        counts = {k:sum(int(s.get(k, '0')) for s in suites) for k in ('tests','failures','errors','skipped')}
+        counts = inspect_junit(path)
         failures = []
         skipped = []
         for case in tree.iter('testcase'):
@@ -63,8 +168,7 @@ def main():
                  if p.name in {'receipt.json','preregistration.json'}}
     browser = root/args.browser_name/'v24/report.json'
     final = next((run for run in runs if Path(run['junit']).name == 'full-final2.xml'), None)
-    engineering = 'NOT_RUN' if final is None else (
-        'FAIL' if any(f['classification'] == 'FAIL_PRODUCT' for f in final['failures_detail']) else 'PASS')
+    engineering = bound_status(root, repo, final) if final else 'NOT_RUN'
     dependencies = {}
     for name in ('numpy', 'pandas', 'scikit-learn', 'torch', 'streamlit', 'pytest', 'ruff',
                  'playwright', 'psutil', 'exchange-calendars', 'pyarrow', 'optuna'):
@@ -72,21 +176,18 @@ def main():
             dependencies[name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
             dependencies[name] = None
-    receipt = {'schema_version':'v24_local_delivery_receipt_v1',
-        'base_sha':'95760e264eddb4388a44df6d35442b6ce8d90928',
-        'tested_source_commit':'5499e439848c2615fac36614c85aac2eaa891db7',
-        'final_run_git_context':{'head_at_start':'68ba12ef5e8a68da6bb0fdc5d12e67567904dde9',
-            'source_guard_fix_uncommitted_at_start':True,
-            'verification':'source bytes frozen during final runs; identical bytes committed afterward, not same-SHA remote CI'},
-        'commits':git('log','95760e264eddb4388a44df6d35442b6ce8d90928..HEAD','--format=%H %s').splitlines(),
+    receipt = {'schema_version':'v24_local_delivery_receipt_v2',
+        'tested_source_commit':final.get('run_manifest', {}).get('head') if final else None,
+        'final_run_git_context':final.get('run_manifest') if final else None,
+        'collection_recent_commits':git('log','-20','--format=%H %s').splitlines(),
         'branch':git('branch','--show-current'), 'head':git('rev-parse','HEAD'), 'tree':git('rev-parse','HEAD^{tree}'),
-        'working_tree':git('status','--short'), 'source_hash':identity(source, domain='research-execution-source-v1'),
-        'source_files':source, 'python':platform.python_version(), 'platform':platform.platform(),
+        'working_tree':git('status','--short'), 'collection_source_hash':identity(source, domain='research-execution-source-v1'),
+        'collection_source_files':source, 'python':platform.python_version(), 'platform':platform.platform(),
         'dependencies':dependencies,
         'final_regression':final,
         'acceptance_axes':{'engineering':engineering,
             'engineering_scope':'local simulation, actual estimator/worker/browser; historical blockers separately retained',
-            'strategy_behavior':'PASS' if engineering == 'PASS' else 'NOT_RUN',
+            'strategy_behavior':'NOT_RUN',
             'strategy_behavior_scope':'finite deterministic policy only, not Provider research quality',
             'provider_semantics':'NOT_RUN', 'research_strategy_value':'NOT_RUN',
             'independent_prediction':'NOT_RUN', 'actual_user':'NOT_RUN'},
@@ -100,7 +201,7 @@ def main():
         'scope':'simulation_only local HTTP and actual local estimator fits; no financial advantage claim'}
     atomic_json(root/'delivery_receipt.json', receipt)
     print(json.dumps({'receipt':str(root/'delivery_receipt.json'), 'head':receipt['head'],
-                      'source_hash':receipt['source_hash'], 'junit_runs':len(runs)}, ensure_ascii=False))
+                      'source_hash':receipt['collection_source_hash'], 'junit_runs':len(runs)}, ensure_ascii=False))
 
 
 if __name__ == '__main__':

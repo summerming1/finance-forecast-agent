@@ -6,6 +6,16 @@
 
 ## 1 合同及授权
 
+### 2026-10-10 批准的复审收口
+
+以3097ece为本轮实际基线，修复复现的输入/恢复/上下文/收据缺口，不扩研究能力。新增planning_projection_v2及diagnostic_price_advice_v2显式合同；v1纯投影读取保留，旧fixture/hash不修改，活动任务按原源码版本处理而非强行迁移。64000字符上限不提高；训练/组范围与共同来源确定性去重，完整审计继续原RuntimeDB和制品。固定baseline_ridge为相对诊断参照，在Campaign前冻结，不按组内成绩重新挑控制；正loss_delta表示候选更差，与观察的control-minus-child改善符号区分。样本门槛仍是描述性而非显著性。
+
+RCP-04/05允许有界diagnose需求设计并持久保存，不执行窗口或组合；缓存消融完成的是新观察，不是新模型或免费fit，仍消耗原槽，仅允许剩余的第二次规划。ON投影读取所有已完成提案观察，OFF不接收新增诊断源或观察。异常结构进入原proposal_invalid终态，不自动修复/补请求。
+
+pilot在输入预检前登记四臂分母，构造/执行/导出/校验全部纳入失败收据；只有执行完成且包审计通过才PASS。新测试收据需运行前start manifest及结束后的实际exit/hash；缺绑定、零测试、全跳过、计数不一致或覆盖不足均不能PASS，策略行为不继承全仓PASS。历史收据只作历史，禁止覆盖。
+
+执行记录待本轮定向、回归、worker/browser及最终全仓完成后补充。不调用付费Provider，不外发、不读取确认标签、不推送。
+
 SPY daily下一XNYS session调整收盘收益回归、forecast_only；主筛选MAE/0.0025/development_only。原价格DSL、参数域、两条生成特征（含继承）、固定模型/参数/seed/预处理/内置组、共同W64和四fold不变。新协议显式选择；旧候选/fixture/hash/模型数值语义不改。保留原Exposure/Trust/RuntimeDB和47目标负确认。
 
 Adaptive最多两次规划、每次两槽、总四槽；One-shot一次冻结四槽计划，执行单元两项。显式diagnose占规划和槽，不能新增第三轮。非法/重复/失败/draw/HTTP/refit按原账本，无生成式修正、自动换模型或搜到赢家才停。纯诊断fit/HTTP=0，实际计算耗时另记。三基线四fold=12 fits，四新候选16；独特起点再4，实际缓存/配置决定容量，显式refit额外计费。

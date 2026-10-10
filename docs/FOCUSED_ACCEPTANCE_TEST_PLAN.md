@@ -2,10 +2,14 @@
 
 Current status: `CURRENT_IMPLEMENTATION.md`. Historical PR success counts do not close reopened R contracts. The machine-readable clause map is `validation/v22r_acceptance.json`. Every new R gate needs a negative test plus related regressions, and exact source/command/artifact identity.
 
+## Current V2.4 review-repair gate (2026-10-10)
+
+Use the current V2.4 contract and `test_focused_v24_review_fixes.py`: pilot construction/export/audit failures, shared-input denominator, malformed advice with unchanged accepted work, cached ablation feedback ON versus OFF, RCP-04/05 demand-only persistence, full two-decision compact provided-start/long-note resume, paired group losses and named constant features, immutable test-start/end identity and negative JUnit coverage. Run existing V24 recovery/delivery plus affected legacy Provider/Replay/Queue/workspace tests, the real Chromium two-round parent and provided-start child, and final full regression on frozen source. Do not reuse a historical receipt as same-source PASS. Existing blockers and all original A/L clauses remain.
+
 
 > Status: APPROVED. Tests are divided by milestone. Passing one layer never implies all historical native or live-LLM work was rerun.
 
-## Approved V2.3 test inventory (tests PLANNED; not an acceptance receipt)
+## Historical approved V2.3 test inventory (not a current acceptance receipt)
 
 The consolidated inventory is [V2_3_FEATURE_RESEARCH.md](V2_3_FEATURE_RESEARCH.md), sections 8–9: V23-T01–T34 and V23-X01–X21. It incorporates the original proposal, both adversarial reviews, legacy schema compatibility, recovery failure classification and decision/HTTP/fit accounting. ADR005 and sequential implementation are approved; test outcomes still require actual receipts.
 

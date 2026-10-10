@@ -181,7 +181,9 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             frame.locator("#draft-data_consent").check()
             click("wizard-next")
             frame.locator('[data-action="draft-preset"][data-value="custom"]').click()
-            for key, value in {"max_rounds": 1, "max_new_candidates_per_round": 2, "max_fit_calls": 20}.items():
+            for key, value in {"max_rounds": 2 if price_features == "v24" else 1,
+                               "max_new_candidates_per_round": 2,
+                               "max_fit_calls": 32 if price_features == "v24" else 20}.items():
                 frame.locator("#draft-" + key).fill(str(value))
             if price_features == "v24":
                 frame.locator("#draft-diagnostic_mode").select_option("on")
@@ -200,6 +202,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             assert first["payload"]["fit_calls"] == 20
             if price_features == "v24":
                 assert first["payload"]["diagnostic_research"]["recommendation"]["recommendation_hash"]
+                assert first["payload"]["resource_usage"]["feature_planning"]["logical_decisions"] == 2
                 expect(frame.locator('[data-testid="diagnostic-research"]')).to_contain_text("自动新增 HTTP=0 / fit=0")
                 report["checks"].append("v24_diagnostics_and_frozen_recommendation")
             assert set(first["request"]["options"]["allowed_feature_groups"]) == {
@@ -300,6 +303,8 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             assert child["link"]["mission_id"] == first["link"]["mission_id"]
             assert workspace_campaign(state, pid, cid)["payload"] == original
             assert child["request"]["options"]["entry_mode"] == "provided_start"
+            if price_features == 'v24':
+                assert child['payload']['resource_usage']['feature_planning']['logical_decisions'] == 2
             report["checks"] += ["fresh_context_restore", "reload_no_training", "continuation_preview_zero_fit",
                                  "explicit_new_campaign_same_mission", "parent_unchanged", "provided_start_worker"]
             if price_features == 'v24':

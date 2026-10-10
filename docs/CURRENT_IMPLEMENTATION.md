@@ -1,5 +1,9 @@
 # 当前版本功能与技术实现说明
 
+## 2026-10-10 V2.4复审修复进行中（基线3097ece）
+
+上轮独立复审已复现compact ON第二轮容量失败、null提案非受控异常、缓存观察漏入上下文、pilot/收据假PASS、构造失败漏分母及RCP-05需求拒绝。当前按批准的五批修复实施，尚未取得本轮最终回归/浏览器收据，不能沿用下方历史PASS作为当前验收。旧3097ece证据及原48条、47目标负确认、原输入身份保留；本轮无推送/付费模型/确认标签读取。
+
 ## 2026-10-09 V2.4-A/B限定工程交付已验证；外部及历史阻断单列
 
 用户批准D24-0—5及D24-6准备，唯一详细合同/日志为V2_4_DIAGNOSTIC_RESEARCH.md，accepted ADR006。原Controller/Queue/Evaluator/RuntimeDB/Memory/MethodCard不重复建设；V2.3价格模型/DSL/主MAE筛选不扩大。新模式显式diagnostic_mode=on/off，旧默认仍兼容。

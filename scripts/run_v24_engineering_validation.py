@@ -55,6 +55,8 @@ def audit_package(path):
                 if prediction_metrics(rows) != result['metrics'] or fold_metrics_from_rows(rows) != result['fold_metrics']:
                     raise ValueError('prediction metrics mismatch')
                 count += 1
+        if count != len(result_by_id) or count == 0:
+            raise ValueError('package prediction coverage incomplete')
         return {'sha256':file_sha256(path), 'audited_predictions':count, 'indexed_files':len(index['files'])}
 
 
@@ -63,16 +65,28 @@ def run(root, *, raw_path=None, source_metadata=None):
     if root.exists():
         raise ValueError('use a new isolated output directory; existing evidence is never cleared')
     root.mkdir(parents=True)
+    arms = [('rule_off', 'adaptive_batch', 'off'), ('rule_on', 'adaptive_batch', 'on'),
+            ('random_reference', 'random', 'off'), ('one_shot_demo', 'one_shot', 'on')]
+    # Freeze the denominator before input validation or any Controller dispatch.
+    atomic_json(root/'preregistration.json', {'schema_version':'v24_offline_preflight_v2',
+        'arms':arms, 'failure_denominator':'all_preregistered_arms'})
     if raw_path is None:
         raw_path = root/'simulation_only.json'
-        simulation_prices(raw_path)
         exposure = 'simulation_only'
     else:
         exposure = 'historical_development_only'
     task = FocusedTaskSpec(exposure=exposure)
-    frame, dataset, raw = build_spy_feature_research_frame(raw_path, task=task, source_metadata_path=source_metadata)
-    arms = [('rule_off', 'adaptive_batch', 'off'), ('rule_on', 'adaptive_batch', 'on'),
-            ('random_reference', 'random', 'off'), ('one_shot_demo', 'one_shot', 'on')]
+    try:
+        if exposure == 'simulation_only':
+            simulation_prices(raw_path)
+        frame, dataset, raw = build_spy_feature_research_frame(raw_path, task=task, source_metadata_path=source_metadata)
+    except Exception as exc:  # noqa: BLE001 - shared preflight is not a successful arm
+        results = [{'arm':name, 'status':'FAIL', 'failed_stage':'input_preflight',
+                    'error_type':type(exc).__name__, 'usage':None, 'provider_cost':None,
+                    'human_operation_minutes':None} for name, _, _ in arms]
+        atomic_json(root/'receipt.json', {'results':results, 'pending':[], 'live_llm':'NOT_RUN',
+            'independent_confirmation':'NOT_RUN', 'real_user':'NOT_RUN'})
+        return results
     source = {p.name:file_sha256(p) for p in sorted((Path(__file__).resolve().parents[1]/'src/finance_forecast_agent').glob('*.py'))}
     manifest = {'schema_version':'v24_offline_pilot_v1', 'input_provenance':exposure,
         'raw_sha256':file_sha256(raw_path), 'dataset_fingerprint':dataset.semantic_fingerprint,
@@ -85,23 +99,32 @@ def run(root, *, raw_path=None, source_metadata=None):
     results = []
     for name, strategy, visibility in arms:
         begin = time.perf_counter()
-        c = FocusedResearchController(project_dir=root/name, state_path=root/'isolated_runtime.sqlite3',
+        c = None
+        stage = 'controller_preflight'
+        row = {'arm':name, 'status':'FAIL', 'provider_cost':None, 'human_operation_minutes':None}
+        try:
+            c = FocusedResearchController(project_dir=root/name, state_path=root/'isolated_runtime.sqlite3',
             campaign_id=name, task=task, frame=frame, dataset=dataset, raw_history=raw,
             change_scope='price_features', diagnostic_mode=visibility, use_memory_prior=False,
             feature_strategy={'arm':strategy, 'search_seed':19},
             budget=ResearchBudget(max_rounds=1 if strategy=='one_shot' else 2, max_new_candidates_per_round=2,
                                   max_fit_calls=32), advisor_mode='deterministic')
-        row = {'arm':name, 'status':'FAIL', 'provider_cost':None, 'human_operation_minutes':None}
-        try:
+            stage = 'execution'
             out = c.run()
-            row.update(status='PASS' if out['execution_status']=='completed' else 'FAIL',
+            row.update(
                 execution_status=out['execution_status'], research_outcome=out['research_outcome'],
                 selection=out['diagnostic_research']['recommendation'], usage=out['resource_usage'],
                 execution_contract_hash=out['execution_contract_hash'])
+            stage = 'package_export'
             _, package = build_research_package(c._campaign_root)
+            stage = 'package_audit'
             row['package'] = audit_package(package)
+            row['status'] = 'PASS' if out['execution_status']=='completed' else 'FAIL'
+            if row['status'] != 'PASS':
+                row['failed_stage'] = 'execution'
         except Exception as exc:  # noqa: BLE001 - keep all preregistered failures in denominator
-            row.update(error_type=type(exc).__name__, usage=c._runtime.resource_usage() if c._runtime else None)
+            row.update(status='FAIL', failed_stage=stage, error_type=type(exc).__name__,
+                       usage=c._runtime.resource_usage() if c is not None and c._runtime else None)
         row['wall_seconds'] = time.perf_counter()-begin
         results.append(row)
         atomic_json(root/'receipt.json', {'preregistration_hash':identity(manifest, domain='v24-pilot-v1'),

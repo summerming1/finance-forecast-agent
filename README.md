@@ -9,6 +9,8 @@ The near-term product goal is **not** â€œsupport every financial paper or modelâ
 
 ## Current branch and status
 
+Current feature line: **V2.4 controlled diagnostic research** (SPY daily, price-only DSL, development evidence). See [the V2.4 contract and current test log](docs/V2_4_DIAGNOSTIC_RESEARCH.md) and [workspace operation checklist](docs/FRONTEND_USER_GUIDE.md). The 2026-10-10 review repairs are being validated; historical test counts below are not this revision's acceptance. Live model quality, actual users and independent financial evidence remain separate gates.
+
 Current Mission-oriented work branch:
 
 ```text
@@ -17,7 +19,7 @@ feat/mission-research-v2
 
 Current status is defined only by [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md). V2.2-R closes reopened contracts; module presence is not complete product acceptance.
 
-## Approved next increment: reliable literature-grounded research
+## Historical approved increment: reliable literature-grounded research
 
 Default entry will accept a supported research goal without an existing model;
 a second entry accepts controlled data, a supported model configuration or one

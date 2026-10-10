@@ -141,7 +141,11 @@ def test_v24_projection_ids_and_hash_include_visible_diagnostics(tmp_path, monke
     body = derive_diagnostic(artifact([0.,0.]), candidate=None, raw_history=None, frame=None, splits=None)
     monkeypatch.setattr(c, '_diagnostic', lambda *_: body)
     monkeypatch.setattr(c, '_pair_diagnostic', lambda *_: None)
-    c._runtime = SimpleNamespace(get=lambda _:None)
+    from contextlib import contextmanager
+    @contextmanager
+    def transaction():
+        yield SimpleNamespace(execute=lambda *_:SimpleNamespace(fetchall=list))
+    c._runtime = SimpleNamespace(get=lambda _:None, db=SimpleNamespace(transaction=transaction), ns='simulation')
     prompt = {'evidence_projection':[], 'available_evidence_ids':[], 'rules':[],
         'evidence_projection_hash':identity([], domain='evidence-projection-v1')}
     result = SimpleNamespace(candidate=SimpleNamespace(candidate_id='A'))

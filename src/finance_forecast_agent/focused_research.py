@@ -908,6 +908,20 @@ def _results_from_prompt(rows: list[dict[str, Any]]) -> list[CandidateResult]:
     return results
 
 
+def _advice_rows(payload, max_count):
+    """Shared structural gate before any hypothesis-specific field access."""
+    if not isinstance(payload, dict) or set(payload) != {"hypotheses"}:
+        raise ValueError("advice must contain only the hypotheses field")
+    rows = payload["hypotheses"]
+    if not isinstance(rows, list):
+        raise TypeError("research advice must contain a hypotheses list")
+    if len(rows) > max_count:
+        raise ValueError("proposal exceeds frozen batch limit")
+    if any(not isinstance(row, dict) for row in rows):
+        raise TypeError("every hypothesis must be an object")
+    return rows
+
+
 def compile_hypotheses(
     payload: dict[str, Any],
     *,
@@ -927,13 +941,7 @@ def compile_hypotheses(
     """
     from .focused_adaptive import EvidenceIndex
 
-    if not isinstance(payload, dict) or set(payload) != {"hypotheses"}:
-        raise ValueError("advice must contain only the hypotheses field")
-    rows = payload["hypotheses"]
-    if not isinstance(rows, list):
-        raise TypeError("research advice must contain a hypotheses list")
-    if len(rows) > max_count:
-        raise ValueError("proposal exceeds frozen batch limit")
+    rows = _advice_rows(payload, max_count)
     allowed = {"action_type", "statement", "mechanism", "parent_candidate_id", "control_candidate_id",
         "model_family", "model_params", "feature_groups", "seed", "expected_effect", "expected_observation",
         "counter_evidence_test", "evidence_refs", "based_on_feedback_ids", "ablation_component",
@@ -1301,8 +1309,15 @@ class FocusedResearchController:
             from .focused_diagnostics import verify_diagnostic
             verify_diagnostic(old["body"], artifact)
             return old["body"]
+        reference = None
+        reference_id = self.diagnostic_policy["diagnostic_reference"]
+        accepted_ref = runtime.accepted(reference_id)
+        if accepted_ref:
+            runtime.verify_artifacts(accepted_ref["artifacts"])
+            ref_row = accepted_ref["row"].get("result") or accepted_ref["row"]
+            reference = json.loads((self._campaign_root/ref_row["prediction_artifact_ref"]).read_text(encoding="utf-8"))
         body = derive_diagnostic(artifact, candidate=result.candidate, raw_history=self.raw_history,
-                                 frame=self.frame, splits=splits)
+                                 frame=self.frame, splits=splits, reference=reference)
         self._store_diagnostic_object(key, "diagnostics/" + result.candidate.candidate_id + ".json", body)
         return body
 
@@ -1328,7 +1343,8 @@ class FocusedResearchController:
                 for item in stored["plan"]["items"]:
                     design = item["hypothesis"].get("research_design")
                     if design:
-                        verify_rule(design["rule"])
+                        if "rule" in design:
+                            verify_rule(design["rule"])
                         if identity({k: v for k, v in design.items() if k != "design_hash"}, domain="research-design-v1") != design["design_hash"]:
                             raise ValueError("frozen research design changed")
                 continue
@@ -1359,7 +1375,7 @@ class FocusedResearchController:
     def _prepare_diagnostic_prompt(self, prompt, result_lookup, splits):
         from .focused_adaptive import EvidenceIndex
         from .focused_diagnostics import diagnostic_projection, verify_diagnostic
-        prompt["proposal_contract_version"] = "diagnostic_price_advice_v1"
+        prompt["proposal_contract_version"] = "diagnostic_price_advice_v2"
         prompt["diagnostic_research_policy"] = self.diagnostic_policy
         # OFF projection is built from old feedback, never by redacting a new summary.
         visible = self.diagnostic_policy["diagnostic_visibility"] == "on"
@@ -1371,20 +1387,94 @@ class FocusedResearchController:
             diagnostic = self._diagnostic(result, splits)
             verify_diagnostic(diagnostic)
             if visible:
-                projected = diagnostic_projection(diagnostic)
+                projected = diagnostic_projection(diagnostic, version=self.diagnostic_policy["planning_projection"])
                 prompt["automatic_diagnostics"].append(projected)
                 prompt["evidence_projection"].append({"evidence_id": "diagnostic:"+diagnostic["diagnostic_hash"],
                     "evidence_type": "current_experiment", "role": "diagnostic", "visible": True,
                     "summary": "Deterministic development diagnostic", "candidate_id": result.candidate.candidate_id})
-                observation = self._runtime.get("observation:" + result.candidate.candidate_id)
-                if observation:
-                    self._runtime.verify_artifacts(observation["artifacts"])
-                    prompt["observation_feedback"].append(observation["body"])
+        if visible:
+            # Observation identity is the proposal, not the reused estimator.
+            # Read all completed events from the existing runtime authority.
+            with self._runtime.db.transaction() as db:
+                observations = db.execute("SELECT key,payload FROM objects WHERE ns=? AND key LIKE 'observation:%' ORDER BY key",
+                                          (self._runtime.ns,)).fetchall()
+            for row in observations:
+                observation = json.loads(row["payload"])
+                self._runtime.verify_artifacts(observation["artifacts"])
+                body = observation["body"]
+                if body["evaluated_candidate_id"] not in result_lookup:
+                    raise ValueError("observation refers to an unaccepted candidate")
+                prompt["observation_feedback"].append(body)
+            # Deterministic lossless de-duplication of common source/scope facts.
+            # A new explicit projection contract; v1 fixtures are not rewritten.
+            common = {}
+            common_ids = {}
+            def intern(value):
+                digest = identity(value, domain="diagnostic-common-planning-v2")
+                if digest not in common_ids:
+                    ref = "s"+str(len(common_ids))
+                    common_ids[digest] = ref
+                    common[ref] = value
+                return common_ids[digest]
+            for projected in prompt["automatic_diagnostics"]:
+                residual = projected["residual"]
+                facts = {key:residual.pop(key) for key in ("source", "train_development_gap", "continuous_autocorrelation",
+                                                          "automatic_correction", "near_constant_is_failure")}
+                ref = intern(facts)
+                common[ref] = facts
+                residual["facts_ref"] = ref
+                columns = sorted(residual)
+                ref = intern(columns)
+                common[ref] = columns
+                projected["residual"] = {"columns_ref":ref, "values":[residual[k] for k in columns]}
+                relative = projected.get("relative_losses")
+                if relative:
+                    facts = {key:relative.pop(key) for key in ("reference_candidate_id", "reference_prediction_hash", "delta_sign", "fold_columns")}
+                    # Group definition, counts and control loss are identical for
+                    # every model: store once, keep each model's losses/deltas.
+                    values = relative["fold_values"]
+                    facts["fold_reference"] = [[row[0], row[1], row[2], row[4]] for row in values]
+                    facts["overall_reference"] = {k:relative["overall"].pop(k) for k in ("rows", "reference_mae")}
+                    facts["fold_columns"] = ["candidate_mae", "loss_delta"]
+                    relative["fold_values"] = [[row[3], row[5]] for row in values]
+                    ref = intern(facts)
+                    common[ref] = facts
+                    relative["facts_ref"] = ref
+                for field in ("volatility_groups", "raw_history_hash", "protected_division"):
+                    if field in projected:
+                        value = projected.pop(field)
+                        ref = intern(value)
+                        common[ref] = value
+                        projected[field+"_ref"] = ref
+                stats = projected.get("training_features")
+                if isinstance(stats, list):
+                    for fold in stats:
+                        scope = {key:fold.pop(key) for key in ("training_scope_hash", "training_rows_count", "columns_hash")}
+                        ref = intern(scope)
+                        common[ref] = scope
+                        fold["scope_ref"] = ref
+                    columns = list(stats[0]) if stats else []
+                    stats = {"fold_columns":columns, "fold_values":[[f[k] for k in columns] for f in stats]}
+                    ref = intern(stats)
+                    common[ref] = stats
+                    projected.pop("training_features")
+                    projected["training_features_ref"] = ref
+            # Columnar encoding removes repeated field labels, never observations.
+            encoded = []
+            for projected in prompt["automatic_diagnostics"]:
+                columns = sorted(k for k in projected if k not in {"candidate_id", "diagnostic_hash"})
+                ref = intern(columns)
+                common[ref] = columns
+                encoded.append({"candidate_id":projected["candidate_id"], "diagnostic_hash":projected["diagnostic_hash"],
+                                "columns_ref":ref, "values":[projected[k] for k in columns]})
+            prompt["automatic_diagnostics"] = encoded
+            prompt["diagnostic_common_sources"] = common
         index = EvidenceIndex(prompt["evidence_projection"])
         prompt["evidence_projection"] = index.rows
         prompt["available_evidence_ids"] = index.ids
         prompt["evidence_projection_hash"] = identity(index.rows, domain="evidence-projection-v1")
         prompt["rules"] += [
+            "diagnostic_common_limitations_v1: descriptive development evidence, not significance or causal proof; no automatic bias correction, ensemble selection, refit or source download. In planning projection v2 all *_ref fields resolve in diagnostic_common_sources; values/fold_values map to columns_ref/fold_columns, with no discarded entries. Full artifacts remain audit-only.",
             "research_design is required for training: recipe_id, question, basis (domain_hypothesis|visible_evidence), competing_explanation, falsification_condition. Optional symptom_refs must be real visible diagnostic IDs. No arbitrary rule threshold/operator is permitted.",
             "RCP-01 allows any legal existing AST; use overall or high_volatility. RCP-02 ablate uses contribution. RCP-03 simplify uses simplification. RCP-04/05 record demand only; no window/ensemble execution.",
             "Without visible diagnostic use an explicit domain_hypothesis and unknown applicability; diagnosis is not technical AST permission. Observation is not model recommendation."]
@@ -1416,6 +1506,7 @@ class FocusedResearchController:
 
     def _bind_research_design(self, advice, prompt, result_lookup, round_index, max_count, source):
         from .focused_diagnostics import bind_design
+        _advice_rows(advice, max_count)
         clean = json.loads(json.dumps(advice))
         designs = [row.pop("research_design", None) for row in clean.get("hypotheses", [])]
         compiled = compile_hypotheses(clean, round_index=round_index, source=source,
@@ -2136,6 +2227,11 @@ class FocusedResearchController:
                         duplicate["reused_candidate_id"] = reused.candidate.candidate_id
                         duplicate["observation"] = self._observe_research(hypothesis, reused, result_lookup, splits,
                                                                           proposal_id=candidate.candidate_id)
+                        # A completed new controlled observation can use the next
+                        # existing decision, but is not a newly trained candidate.
+                        if hypothesis.action_type in {"ablate", "simplify"}:
+                            new_executable += 1
+                            successful += 1
                     round_rows.append(duplicate)
                     continue
                 seen.add(candidate.fingerprint)

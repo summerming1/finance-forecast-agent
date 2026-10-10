@@ -7,7 +7,7 @@ import numpy as np
 from .focused_feature_program import _expression_values, compute_price_features
 from .focused_identity import identity
 
-VERSION = "diagnostic_research_v1"
+VERSION = "diagnostic_research_v2"
 RECIPES = {"RCP-01": "overall", "RCP-02": "contribution", "RCP-03": "simplification",
            "RCP-04": "diagnose", "RCP-05": "diagnose"}
 
@@ -27,6 +27,8 @@ def research_policy(visibility="on"):
             "recipes": RECIPES, "selection_policy": selection_policy(),
             "rule_templates": [rule_template(k) for k in ("overall", "high_volatility", "contribution", "simplification", "diagnose")],
             "memory": "cold", "pair_diagnostic_limit": 1,
+            "planning_projection": "diagnostic_planning_projection_v2",
+            "diagnostic_reference": "baseline_ridge",
             "predeclared_pair": ["baseline_ridge", "baseline_rf"]}
 
 
@@ -140,7 +142,36 @@ def _protection_events(node, returns, masks):
             _protection_events(node[key], returns, masks)
 
 
-def derive_diagnostic(artifact, *, candidate, raw_history, frame, splits):
+def relative_group_losses(artifact, reference, groups):
+    """Paired complete-target losses; positive delta means candidate is worse."""
+    rows, controls = aligned_predictions(artifact, reference)
+    losses = np.array([abs(r["y_pred"]-r["y_true"]) for r in rows])
+    ref = np.array([abs(r["y_pred"]-r["y_true"]) for r in controls])
+    out = {"reference_candidate_id":reference["candidate_id"],
+           "reference_prediction_hash":identity(reference, domain="diagnostic-prediction-v1"),
+           "delta_sign":"candidate_minus_frozen_reference_positive_is_worse",
+           "overall":{"rows":len(rows), "candidate_mae":float(losses.mean()),
+                      "reference_mae":float(ref.mean()), "loss_delta":float((losses-ref).mean())}, "folds":[]}
+    if not isinstance(groups, list):
+        out["groups"] = "unavailable_no_raw_state_source"
+        return out
+    if [g["fold_id"] for g in groups] != sorted({r["fold_id"] for r in rows}):
+        raise ValueError("relative diagnostic group fold mismatch")
+    for group in groups:
+        fold_indices = [i for i, r in enumerate(rows) if r["fold_id"] == group["fold_id"]]
+        selected = set(group["rows"])
+        if len(selected) != len(group["rows"]) or not selected <= {rows[i]["row_id"] for i in fold_indices}:
+            raise ValueError("relative diagnostic group target mismatch")
+        for name in ("all", "high_volatility", "other"):
+            idx = [i for i in fold_indices if name == "all" or (rows[i]["row_id"] in selected) == (name == "high_volatility")]
+            out["folds"].append({"fold_id":group["fold_id"], "group":name, "rows":len(idx),
+                "candidate_mae":float(losses[idx].mean()) if idx else None,
+                "reference_mae":float(ref[idx].mean()) if idx else None,
+                "loss_delta":float((losses[idx]-ref[idx]).mean()) if idx else None})
+    return out
+
+
+def derive_diagnostic(artifact, *, candidate, raw_history, frame, splits, reference=None):
     started = time.perf_counter()
     out = {"schema_version": "deterministic_diagnostic_v1", "candidate_id": artifact["candidate_id"],
            "prediction_hash": identity(artifact, domain="diagnostic-prediction-v1"),
@@ -179,12 +210,21 @@ def derive_diagnostic(artifact, *, candidate, raw_history, frame, splits):
                 stats.append({"fold_id": fold_id, "source": "actual_training_feature_matrix",
                     "raw_training_rows": train.tolist(), "columns": list(matrix.columns), "variance": variances.tolist(),
                     "max_abs_off_diagonal_correlation": float(np.max(abs(correlations-np.eye(len(correlations))))) if correlations.size else None})
+                # Names, not array tail position, identify redundant components.
+                columns = list(matrix.columns)
+                active = [i for i, value in enumerate(nonconstant) if value]
+                stats[-1]["generated_correlations"] = [
+                    {"feature":columns[i], "other":columns[j], "correlation":float(correlations[a, b])}
+                    for a, i in enumerate(active) for b, j in enumerate(active)
+                    if i < j and (columns[i].startswith("gen_") or columns[j].startswith("gen_"))]
                 event_counts = [int(mask[train].sum()) for mask in masks]
                 triggered = int(np.logical_or.reduce([mask[train] for mask in masks]).sum()) if masks else 0
                 protected.append({"fold_id": fold_id, "scope": "division_node_input_events_on_actual_training_raw_rows",
                     "node_event_count": sum(event_counts), "node_counts": event_counts,
                     "distinct_triggered_rows": triggered, "denominator_rows": len(train), "row_rate": triggered/len(train)})
             out["training_features"], out["protected_division"] = stats, protected
+    if reference is not None:
+        out["relative_losses"] = relative_group_losses(artifact, reference, out["volatility_groups"])
     out["limitations"] = ["Descriptive development evidence, not significance or causal proof.",
                           "No bias correction, ensemble selection, refit or source download."]
     # Measured cost is audit-only, excluded from deterministic numeric identity.
@@ -270,7 +310,7 @@ def verify_diagnostic(body, artifact=None):
         raise ValueError("diagnostic contract: prediction changed")
 
 
-def diagnostic_projection(body):
+def diagnostic_projection(body, *, version="diagnostic_planning_projection_v1"):
     """Bounded planning view; scope hashes retain identities, full rows stay in audit."""
     verify_diagnostic(body)
     out = deepcopy({k: v for k, v in body.items() if k != "compute_wall_seconds"})
@@ -282,6 +322,28 @@ def diagnostic_projection(body):
         fold["training_scope_hash"] = identity(fold["raw_training_rows"], domain="diagnostic-scope-v1")
         fold["training_rows_count"] = len(fold.pop("raw_training_rows"))
     out["projection_version"] = "diagnostic_planning_projection_v1"
+    if version == "diagnostic_planning_projection_v2":
+        out["projection_version"] = version
+        # All scope/column identities remain references to the immutable audit.
+        for fold in out["training_features"] if isinstance(out["training_features"], list) else []:
+            fold["columns_hash"] = identity(fold["columns"], domain="diagnostic-columns-v1")
+            names, variances = fold.pop("columns"), fold.pop("variance")
+            fold["generated_variance"] = {n:v for n, v in zip(names, variances, strict=True) if n.startswith("gen_")}
+            fold.pop("source", None)
+            # Named correlations remain descriptive; extrema plus identity bind
+            # the complete bounded pair list retained in the audit artifact.
+            pairs = fold.pop("generated_correlations", [])
+            fold["generated_correlations_hash"] = identity(pairs, domain="diagnostic-correlation-v1")
+            fold["strongest_generated_pair"] = max(pairs, key=lambda p:abs(p["correlation"])) if pairs else None
+        relative = out.get("relative_losses")
+        if relative and "folds" in relative:
+            columns = ["fold_id", "group", "rows", "candidate_mae", "reference_mae", "loss_delta"]
+            relative["fold_columns"] = columns
+            relative["fold_values"] = [[r[k] for k in columns] for r in relative.pop("folds")]
+        out.pop("limitations", None)  # common policy below, not selective evidence removal
+        out["limitations_ref"] = "diagnostic_common_limitations_v1"
+    elif version != "diagnostic_planning_projection_v1":
+        raise ValueError("unsupported diagnostic planning projection")
     return out
 
 
@@ -294,15 +356,16 @@ def default_design(recipe, *, question=None, basis="domain_hypothesis", symptom_
 def bind_design(design, hypothesis, candidate, results, prompt):
     from .focused_adaptive import EvidenceIndex
     if candidate is None:
-        if design is not None and (hypothesis.action_type != "diagnose" or design != default_design("RCP-04")):
+        if design is None:
+            return None
+        if hypothesis.action_type != "diagnose":
             raise ValueError("control action cannot smuggle a training design")
-        return None
     required = {"recipe_id", "question", "basis", "competing_explanation", "falsification_condition"}
     if not isinstance(design, dict) or not required <= set(design) or set(design)-required-{"symptom_refs"}:
         raise ValueError("training requires bounded research_design")
     recipe = design["recipe_id"]
-    expected = {"improve": "RCP-01", "ablate": "RCP-02", "simplify": "RCP-03"}[hypothesis.action_type]
-    if recipe != expected or design["question"] not in ({"overall", "high_volatility"} if recipe == "RCP-01" else {RECIPES[recipe]}):
+    expected = {"improve": {"RCP-01"}, "ablate": {"RCP-02"}, "simplify": {"RCP-03"}, "diagnose": {"RCP-04", "RCP-05"}}[hypothesis.action_type]
+    if recipe not in expected or design["question"] not in ({"overall", "high_volatility"} if recipe == "RCP-01" else {RECIPES[recipe]}):
         raise ValueError("recipe/action/question mismatch")
     if design["basis"] not in {"domain_hypothesis", "visible_evidence"}:
         raise ValueError("unapproved proposal basis")
@@ -319,6 +382,11 @@ def bind_design(design, hypothesis, candidate, results, prompt):
         raise ValueError("visible evidence basis has no evidence")
     control_id = hypothesis.control_candidate_id or hypothesis.parent_candidate_id
     control = results[control_id].candidate
+    if candidate is None:
+        bound = {**deepcopy(design), "symptom_refs":refs, "control_candidate_id":control_id,
+                 "execution":"demand_only_no_training"}
+        bound["design_hash"] = identity(bound, domain="research-design-v1")
+        return bound
     bound = {**deepcopy(design), "symptom_refs": refs, "applicability": "unknown" if not refs else "descriptive_development",
              "parent_candidate_id": hypothesis.parent_candidate_id, "control_candidate_id": control_id,
              "rule": freeze_rule(design["question"], control_id, control.fingerprint, candidate.candidate_id, candidate.fingerprint),
@@ -335,30 +403,70 @@ def diagnostic_advice(prompt):
     start = prompt["research_start_candidate_id"]
     count = int(prompt["max_hypotheses"])
     previous = prompt["prior_research_results"]
-    diagnostics = {r["candidate_id"]: r for r in prompt["automatic_diagnostics"]}
+    diagnostics = {}
+    for row in prompt["automatic_diagnostics"]:
+        if "columns_ref" in row:
+            columns = prompt["diagnostic_common_sources"][row["columns_ref"]]
+            row = {"candidate_id":row["candidate_id"], "diagnostic_hash":row["diagnostic_hash"],
+                   **dict(zip(columns, row["values"], strict=True))}
+        diagnostics[row["candidate_id"]] = row
     if previous and prompt["feature_policy"]["arm"] != "one_shot":
-        parent = min(previous, key=lambda r: (r["metrics"]["mae"], r["candidate_id"]))
+        observations = {r["evaluated_candidate_id"]:r for r in prompt.get("observation_feedback", [])}
+        # Prefer investigating a declared observation that failed; otherwise the
+        # deterministic best actual candidate. This is a finite descriptive rule.
+        unexplained = [r for r in previous if observations.get(r["candidate_id"], {}).get("observation_status") == "does_not_meet"]
+        parent = min(unexplained or previous, key=lambda r: (r["metrics"]["mae"], r["candidate_id"]))
         features = parent["feature_program"]["features"]
         if not features:
             return {"hypotheses": [{"action_type": "stop", "statement": "No actual generated feature to ablate"}]}
         diag = diagnostics.get(parent["candidate_id"])
         # Constant generated feature -> real simplification, else contribution test.
-        constant = bool(diag and any(f["variance"][-1] == 0 for f in diag["training_features"]))
+        stats = diag.get("training_features", []) if diag else []
+        if diag and "training_features_ref" in diag:
+            stats = prompt["diagnostic_common_sources"][diag["training_features_ref"]]
+            if isinstance(stats, dict) and "fold_values" in stats:
+                stats = [dict(zip(stats["fold_columns"], row, strict=True)) for row in stats["fold_values"]]
+        stats = stats if isinstance(stats, list) else []
+        constant_names = [f["name"] for f in features if stats and all(
+            fold.get("generated_variance", {}).get(f["name"],
+                dict(zip(fold.get("columns", []), fold.get("variance", []))).get(f["name"])) == 0 for fold in stats)]
+        constant = bool(constant_names)
+        target_name = constant_names[0] if constant else features[-1]["name"]
         action, recipe = ("simplify", "RCP-03") if constant else ("ablate", "RCP-02")
-        row = {"statement": "Check actual feature redundancy" if constant else "Test local contribution; worse child is not a recommendation",
+        refs = ["diagnostic:"+diag["diagnostic_hash"]] if diag else []
+        row = {"statement": "Remove the named feature constant in every training fold" if constant else "Test contribution of the actual feature after recorded observation; worse child is not a recommendation",
                "action_type": action, "parent_candidate_id": parent["candidate_id"], "control_candidate_id": parent["candidate_id"],
-               "evidence_refs": [parent["candidate_id"]], "research_design": default_design(recipe)}
+               "evidence_refs": [parent["candidate_id"]], "research_design": default_design(recipe,
+                   basis="visible_evidence" if refs else "domain_hypothesis", symptom_refs=refs)}
         if action == "simplify":
             value = deepcopy(parent["feature_program"])
-            value["features"] = features[:-1]
+            value["features"] = [f for f in features if f["name"] != target_name]
             row.update(feature_program=value, simplification_dimension="feature_count")
         else:
-            row["ablation_component"] = "generated_feature:"+features[-1]["name"]
+            row["ablation_component"] = "generated_feature:"+target_name
         return {"hypotheses": [row]}
     diagnostic = diagnostics.get(start)
-    state_available = bool(diagnostic and isinstance(diagnostic["volatility_groups"], list))
-    enough_group = state_available and sum(g.get("rows_count", len(g.get("rows", []))) for g in diagnostic["volatility_groups"]) >= 30
-    scale = bool(enough_group and diagnostic["residual"]["mae"] > 0)
+    groups = diagnostic.get("volatility_groups") if diagnostic else None
+    if diagnostic and "volatility_groups_ref" in diagnostic:
+        groups = prompt["diagnostic_common_sources"][diagnostic["volatility_groups_ref"]]
+    state_available = isinstance(groups, list)
+    enough_group = state_available and sum(g.get("rows_count", len(g.get("rows", []))) for g in groups) >= 30
+    relative = diagnostic.get("relative_losses") if diagnostic else None
+    if prompt.get("diagnostic_research_policy", {}).get("planning_projection") == "diagnostic_planning_projection_v2":
+        # Same group membership and positive global MAE are not a symptom.
+        folded = (relative or {}).get("folds", [])
+        if relative and "fold_values" in relative:
+            facts = prompt.get("diagnostic_common_sources", {}).get(relative.get("facts_ref"), {})
+            columns = relative.get("fold_columns") or facts["fold_columns"]
+            folded = [dict(zip(columns, row, strict=True)) for row in relative["fold_values"]]
+            if "fold_reference" in facts:
+                for row, scope in zip(folded, facts["fold_reference"], strict=True):
+                    row.update(zip(("fold_id", "group", "rows", "reference_mae"), scope, strict=True))
+        weak = [r for r in folded if r["group"] == "high_volatility"
+                and r["rows"] >= 10 and r["loss_delta"] is not None and r["loss_delta"] > 0]
+        scale = bool(enough_group and len(weak) >= 2)
+    else:
+        scale = bool(enough_group and diagnostic["residual"]["mae"] > 0)
     expressions = [
         {"op": "safe_divide", "left": {"op": "rolling_mean", "window": 5, "arg": {"op": "input", "name": "return_1"}},
          "right": {"op": "rolling_std", "window": 20, "arg": {"op": "input", "name": "return_1"}}},

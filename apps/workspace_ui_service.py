@@ -246,7 +246,8 @@ class WorkspaceUI:
                                'research_verdict': data.get('research_verdict'),
                                'actual_features': data.get('actual_features', []),
                                'feature_execution': data.get('feature_execution'),
-                               'diagnostic': detail.get('diagnostic'), 'observation': detail.get('observation')})
+                               'diagnostic': detail.get('diagnostic'), 'observation': detail.get('observation'),
+                               'reused_candidate_id': detail.get('reused_candidate_id')})
         selected = candidate_id if candidate_id in details else payload.get('best_candidate_id')
         if selected not in details:
             selected = next(iter(details), '')
