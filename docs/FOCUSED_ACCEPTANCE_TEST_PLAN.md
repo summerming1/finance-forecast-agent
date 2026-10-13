@@ -1,5 +1,9 @@
 # Focused / Mission Research Acceptance Plan
 
+## Approved S0–S4 gate (2026-10-13)
+
+Use the single current V2.4 log's **统一方案T01—T36实施映射**. New negative tests are `test_focused_v24_closure_audit.py`, `test_focused_v24_information.py`, `test_focused_v24_judgment.py`, plus existing worker/delivery/UI/browser tests. Exact accepted prediction coverage, finite first-event/reverse/derived identity, four-part frozen decisions, OFF/ON information boundaries, original budgets, conservative fallback and same-source package/model delivery are separate requirements. R/D/J rule-policy engineering challenges supplement but never replace the original four-arm gate; no actual Provider quality or user benefit is inferred. T36 future capability/knowledge execution is NOT_RUN without approval, not a fabricated successful test. Source-freeze all functional files/tests/dependencies/inputs before the last whole-repository run; preserve actual exit, binding and historical failures/skips.
+
 Current status: `CURRENT_IMPLEMENTATION.md`. Historical PR success counts do not close reopened R contracts. The machine-readable clause map is `validation/v22r_acceptance.json`. Every new R gate needs a negative test plus related regressions, and exact source/command/artifact identity.
 
 ## Current V2.4 review-repair gate (2026-10-10)

@@ -28,6 +28,53 @@ S2进行中证据：`.v24s/s2-red.xml`5失败复现旧机械选择及缺四项�
 
 S2累计门槛完成：`.v24s/s2-regression.xml`99 passed/6 deselected/983.39秒/exit0；6个排除节点已在integration2逐项通过，不是跳过缺口。包括真实子进程crash/resume、原预算、ON/OFF、缓存、坏设计、包与原推理绑定。Ruff及compile exit0。`run_v24_engineering_validation.py --output-root .v24s/s2-support-pilot --run-engineering --decision-support-challenge` exit0，R/D/J均PASS，20/20/24 fits、各2逻辑决策/3槽/HTTP0、8/8/9预测包复算；wall 52.763/53.749/60.975秒。三臂都retain_start，最佳研究MAE同为0.007331007277095696，J多做一次条件实验但未改善；不是LLM质量或策略优势证明。输入raw 0798460be4a950b39cb848833148b324cb35b642b834cb110b8e161e135ea8bd，独立冷Campaign且不跨臂继承研究结果，费用null。以上是S2阶段证据，S3/S4仍待执行。
 
+#### 统一方案T01—T36实施映射
+
+下列是具名行为映射，不是把42项文档核验改叫项目测试。最终通过/失败以源码冻结后JUnit及独立browser报告为准；`tests/`前缀省略。引用旧测试表示本轮回归复用其断言，不代表历史收据冒充本轮执行。
+
+| 条款 | 真实实现/测试入口 |
+|---|---|
+| T01 | `test_focused_v24_closure_audit::test_bound_all_failed_is_execution_not_not_run`：产品全失败仍FAIL |
+| T02 | 同上ENV/ASSET/UNKNOWN/混合参数：仅明确环境资产可PARTIAL |
+| T03 | `test_focused_v24_review_fixes::test_manifest_binding_cannot_invent_a_pass`、`test_collector_no_manifest_or_allskip_or_count_mismatch_cannot_pass` |
+| T04 | `test_focused_v24_closure_audit::test_package_normal_and_cached_reference`及重复ZIP/index负例 |
+| T05 | `test_package_exact_identity_not_counts[missing_with_duplicate]` |
+| T06 | 同函数unknown/wrong_config/wrong_ref/changed_params/wrong_campaign：重算真实配置，不信自报fingerprint |
+| T07 | 正常cache_alias包及`test_cached_observation_in_next_on_prompt`：原引用、16fits不加训 |
+| T08 | `test_focused_v24_information::test_reverse_reuses_base_but_recomputes_denominator_and_template`及真实cached观察 |
+| T09 | `test_two_feature_ablation_is_actual_new_execution_not_blanket_duplicate`：实际两→一特征新训练，其余config不变 |
+| T10 | `test_title_ids_do_not_manufacture_new_analysis_but_group_does`：首次合法组统计是缓存派生，非新预测 |
+| T11 | 同函数及反向比值测试；原`test_group_rule_all_folds_small_samples_and_precision` |
+| T12 | `test_changed_contract_cannot_reuse_pair`、原完整target/fold对齐及固定规则校验 |
+| T13 | `test_package_exact_identity_not_counts[conflicting_candidate]`、原`test_focused_feature_contract`配置/列顺序/身份门禁 |
+| T14 | `test_first_event_projection_rebuild_does_not_reclassify_itself`、真实`test_real_v24_worker_crash_reuses_context_rule_A_and_charges_B`核对首次observation原对象；browser提供起点续接 |
+| T15 | `test_focused_v24_judgment::test_new_judgment_does_not_delete_failed_feature_back_to_start`及R/D/J实际Controller挑战 |
+| T16 | 原feature_execution控制可见性门禁、`test_bounded_demand_design_persisted_without_fit`（04/05需求，不执行窗口组合） |
+| T17 | `test_relative_group_losses_follow_location_not_global_mae`、`test_v2_policy_same_group_and_mae_but_different_weakness`及OFF领域假设 |
+| T18 | 原`test_focused_provider_json_boundary`、`test_focused_b5_crash_recording`和`test_focused_feature_recovery`未知投递/重复/非法/计账 |
+| T19 | `test_explicit_diagnose_uses_original_decision_and_slot`、初始/更新诊断实际HTTPfit=0 |
+| T20 | `test_same_legal_ast_on_visible_basis_off_domain_basis`、隐藏Memory拒绝、cached ON/OFF空投影 |
+| T21 | 原`test_focused_feature_campaign`One-shot四槽、`test_focused_price_sampler`draw/恢复、pilot失败分母 |
+| T22 | `test_different_questions_have_different_directions_and_no_recommendation_override`、高波动局部/整体护栏 |
+| T23 | `test_selection_no_candidate_all_worse_ties_partial_and_determinism`、`test_worse_and_nonselected_candidates_not_cleared_or_baseline_substituted` |
+| T24 | `test_v24_research_package_has_context_rules_recommendation_and_recomputable_predictions`、DB/制品篡改、browser同源显示 |
+| T25 | `tests/browser/test_agent_workspace.py`三模式：切换/刷新/new-context/公式/包只读0增量，显式refit另计；原fresh-process bundle推理 |
+| T26 | 原feature_contract golden、Provider/Replay原字节；四项未知/缺字段显式版本门禁，R/D兼容无J字段 |
+| T27 | `test_compact_two_decisions_provided_start_and_resume`64000上限；原diagnostics缺训练/连续来源unavailable |
+| T28 | `test_incomplete_flow_cannot_turn_better_so_far_into_successful_recommendation`，late取消freeze同样保守 |
+| T29 | `test_worse_and_nonselected_candidates_not_cleared_or_baseline_substituted`保留真实候选，正常retain_start增益0；极小分母比值null |
+| T30 | 同上劣于起点与原selection all-worse；UI同时保留成绩/选择原因 |
+| T31 | 反向分母/模板身份/规则篡改；cached形成状态posthoc且`predeclared_observation_supported=false` |
+| T32 | 首次/已知/反向分类及cached ON/OFF，完整审计不反馈OFF |
+| T33 | `test_four_parts_pretraining_bound_and_visible_reference_gate`，DB plan/context篡改拒绝，两轮实际执行和确定性收尾 |
+| T34 | B+A真实已完成control、组弱点位置改变提案、具名常数各fold门禁；只支持有限工程行为，不宣称排除所有原因 |
+| T35 | `test_support_challenge_same_floor_cold_arms_and_failure_denominator`、R/D无J字段兼容；独立三臂实际运行及原四臂门槛 |
+| T36 | 本轮人工范围审计+原unsupported capability/confirmation前置拒绝；FRONTEND_USER_GUIDE要求真实阻塞后另批。未运行知识试点/未来训练/金融标签，不能写PASS |
+
+S3中间记录：只读渲染红例1失败/1通过；最小UI后2通过。工作区/feature UI/公式/AppTest/B2累计39通过/373.30秒/exit0。初次实际浏览器3通过/1失败/490.87秒/exit1：旧入口冷启动仍在Streamlit Running，5秒默认断言先超时；改为等待真实`.brand-name`就绪、上限30秒，不固定sleep、不跳过。V24父24/续接24 fits、18 attempts、refit1另计，19项检查、Chromium153.0.8010.12、page_errors=[]；这次矩阵不是全绿，正在完整复跑。增益极小分母红例2失败，新增固定1e-12报告边界（不改变MAE主筛选），零/极小分母null；缓存数值模板命中与事前成功计数分开。相关30项/127.42秒/exit0，均隔离模拟。
+
+S3门槛完成：完整browser重跑`.v24s/s3-browser-recheck.xml`4 passed/518.36秒/exit0，旧入口/价格模式/V24/旧Mission均实际Chromium，不是AppTest替代。`.v24s/s3-behavior.xml`2 passed/99.89秒/exit0，实际两特征消融新训练20fits/HTTP0，以及真实进程kill后原首次观察对象、A制品、计划/上下文保持并计入B重试。UI/相关core的Ruff、compileall、node --check、diff --check均exit0。保留首次browser失败与ratio红例。至此功能/测试冻结，接下来S4全仓；未提前宣布最终收口。
+
 ### 2026-10-10 批准的复审收口
 
 以3097ece为本轮实际基线，修复复现的输入/恢复/上下文/收据缺口，不扩研究能力。新增planning_projection_v2及diagnostic_price_advice_v2显式合同；v1纯投影读取保留，旧fixture/hash不修改，活动任务按原源码版本处理而非强行迁移。64000字符上限不提高；训练/组范围与共同来源确定性去重，完整审计继续原RuntimeDB和制品。固定baseline_ridge为相对诊断参照，在Campaign前冻结，不按组内成绩重新挑控制；正loss_delta表示候选更差，与观察的control-minus-child改善符号区分。样本门槛仍是描述性而非显著性。

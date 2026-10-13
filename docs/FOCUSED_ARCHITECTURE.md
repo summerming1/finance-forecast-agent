@@ -1,5 +1,9 @@
 # Focused / Mission Research Architecture
 
+## S0–S4 bounded extension (2026-10-13)
+
+The existing immutable observation objects carry finite prediction/comparison identity, first-event provenance and evidence tier. The comparison index is a read-only reconstruction, not a new store. New diagnostic v3 contracts freeze four-part research decisions and R/D/J support; legacy reference designs remain explicit, not fabricated judgment. Numerical observations, primary selection and conservative final recommendation remain separate. ON planning receives bounded visible comparison summaries; OFF receives neither these nor the new diagnostic package. Full audit objects do not become a second planning truth. Existing UI/package projections read those same objects; original explicit refit and external trusted registry remain the only model-delivery chain. Formal roadmap and future execution capabilities are unchanged.
+
 > Status: APPROVED. ADR-FOCUS-001 establishes the SPY focused line; ADR-MISSION-002 consolidates the Mission architecture/literature role; ADR-MISSION-PRODUCT-003 adds gated PR delivery, Agent value validation and controlled BYO-before-Shadow ordering. Actual implementation status is always defined by CURRENT_IMPLEMENTATION.md.
 
 ## Current V2.4 diagnostic extension

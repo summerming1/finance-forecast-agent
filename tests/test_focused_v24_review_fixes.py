@@ -121,6 +121,8 @@ def test_cached_observation_in_next_on_prompt(tmp_path, visibility):
     out = c.run()
     first = out['rounds'][0]['items'][0]
     assert first['status'] == 'skipped_duplicate' and out['fit_calls'] == 16
+    assert first['observation']['information']['formation_status'] == 'posthoc_exploratory'
+    assert first['observation']['predeclared_observation_supported'] is False
     assert len(calls) == 2
     if visibility == 'on':
         # v3 retains every numeric rule result, with full provenance in audit

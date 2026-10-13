@@ -1573,6 +1573,9 @@ class FocusedResearchController:
                 "timing_proof":"frozen_batch_plan_before_execution" if proposal_id is None else
                     "both_predictions_already_visible_before_new_question"})
         body["diagnostic_hash"] = diagnostic["diagnostic_hash"]
+        body["predeclared_observation_supported"] = (
+            body["information"]["formation_status"] == "predeclared"
+            and body["observation_status"] == "meets_predeclared_observation")
         body["control_diagnostic_hash"] = control_diag["diagnostic_hash"]
         body["interpretation_review"] = bool(hypothesis.expected_observation) and body["observation_status"] != "meets_predeclared_observation"
         body["interpretation_review_basis"] = "unverified narrative requires review; no automatic semantic entailment"

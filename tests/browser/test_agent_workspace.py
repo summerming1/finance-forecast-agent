@@ -116,7 +116,9 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             page.on("pageerror", lambda error: errors.append(str(error)))
             page.goto(base)
             frame = page.frame_locator('iframe[title*="agent_workspace"]')
-            expect(frame.locator(".brand-name")).to_be_visible()
+            # HTTP health precedes cold Streamlit/Python/component startup.
+            # Wait for the actual component, not a fixed sleep or its 5s default.
+            expect(frame.locator(".brand-name")).to_be_visible(timeout=30000)
             expect(frame.locator('[data-action="new"]').first).to_be_enabled()
             page.screenshot(path=str(out / "01_empty_workspace.png"))
 
@@ -199,7 +201,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             click("confirm-create")
             pid, cid, first = wait_completed()
             assert first["payload"]["scientific_claim"] == "simulation_only_no_financial_evidence"
-            assert first["payload"]["fit_calls"] == 20
+            assert first["payload"]["fit_calls"] == (24 if price_features == "v24" else 20)
             if price_features == "v24":
                 assert first["payload"]["diagnostic_research"]["recommendation"]["recommendation_hash"]
                 assert first["payload"]["resource_usage"]["feature_planning"]["logical_decisions"] == 2
@@ -215,7 +217,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 for item in batch["items"]
                 if item.get("status") == "completed" and item.get("candidate")
             ]
-            assert len(research_ids) == 2
+            assert len(research_ids) == (3 if price_features == "v24" else 2)
             report["checks"] += ["real_component_protocol", "preflight_zero_fit", "explicit_submit", "real_queued_worker"]
             before = counts()
             page.screenshot(path=str(out / "03_completed_backend.png"))
@@ -228,6 +230,10 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                     expected = next(i["candidate"] for b in original["rounds"] for i in b["items"] if i.get("candidate", {}).get("candidate_id") == candidate)
                     if price_features == "v24":
                         expect(frame.locator('[data-testid="observation-detail"]')).to_contain_text("确定性判定")
+                        expect(frame.locator('[data-testid="information-axes"]')).to_contain_text('simulation_only')
+                        expect(frame.locator('[data-testid="research-decision"]')).to_contain_text('本轮优先理由')
+                        detail = next(i for b in original['rounds'] for i in b['items'] if i.get('candidate',{}).get('candidate_id') == candidate)
+                        expect(frame.locator('[data-testid="information-axes"]')).to_contain_text(detail['observation']['information']['analysis_novelty'])
                         expect(frame.locator('[data-testid="readable-formula"]')).to_contain_text(expected["feature_program"]["features"][0]["expression"]["op"])
                     else:
                         expect(frame.locator('[data-testid="price-program"]')).to_contain_text("rolling_mean")
@@ -235,7 +241,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                             f"rolling_mean(return_1, {expected['feature_program']['features'][0]['expression']['window']})")
                         expect(frame.locator('[data-testid="price-program"]')).to_contain_text(str(expected["feature_program"]["features"][0]["expression"]["window"]))
                 assert counts() == before
-            selected = research_ids[1]
+            selected = research_ids[-1]
             page.screenshot(path=str(out / "04_experiments_backend.png"))
             page.set_viewport_size({"width": 1280, "height": 900})
             expect(frame.locator(".drawer")).to_be_visible()

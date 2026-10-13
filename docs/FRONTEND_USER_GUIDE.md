@@ -1,5 +1,23 @@
 # Research Mission 当前使用入口（B0–B5 / V2.3）
 
+## 2026-10-13 S0—S4所有者试用步骤
+
+这是待真人执行的清单，不是助手代签用户验收。沿用下方已核实的原数据库/项目；旧活动任务需要原源码合同，不改hash恢复。启动：
+
+```powershell
+.\.venv\Scripts\python.exe -m streamlit run apps/streamlit_app.py --server.address 127.0.0.1 --server.port 8507 --browser.gatherUsageStats false
+```
+
+1. 新建研究→受控价格特征→有使用权限的现有SPY开发数据→规则演示→Adaptive Batch→诊断可见。预算2轮、每轮2槽、32 fits；模型/参数、主MAE/0.25%只读。不把模拟JSON称为行情，不选择Live完成本清单。
+2. 预检确认0 HTTP/fit，再明确提交。完成后看研究页：实际问题、仍未区分的竞争解释、剩余预算及能力缺口。少提候选/保留起点可以合法，不要求用满预算或出现赢家。
+3. 实验页切换两个实际完成候选，核对完整ID、公式/diff、parent/control、可见依据、问题、优先理由及事前反馈分支。实际反馈另列；确定性收尾没有第三次模型调用。R/D或历史记录缺四项字段时显示参考设计，不补理由。
+4. 三轴分别为预测来源`new_execution/cache_reuse`、有限分析分类`first_valid_analysis/first_valid_derived_analysis/known_or_reverse_comparison`、数据证据层级`simulation_only/historical_development_only`。缓存首次统计不增加预测；事后探索不追称事前验证。贡献消融通过可能代表删除后更差。
+5. 成果页核对最佳研究、用户起点、冻结推荐、最佳可用及选择原因。未过主门槛仍保留候选MAE；保留起点不说明它胜过固定对照。Ridge平方损失训练与MAE筛选不同，不能据此擅自更换目标。
+6. 记录fit/attempt/HTTP，刷新、切换、关闭并用新浏览器context重开同一项目/批次，读公式并下载研究包；计数应不变。核对包内`campaign.json`、`observations/`、`contexts/`及`diagnostics/recommendation.json`与页面一致。
+7. 需要可推理模型时才显式refit，额外1次另计；保持原可信注册和无标签raw推理路径。解释JSON不是模型，复制ZIP不迁移信任。
+
+请反馈：身份、主动操作分钟数（未测null）、完成步骤、帮助次数、误解/失败、包ID、再次使用意愿和一项真实阻塞。助手演练、所有者、独立用户分别记录。尚无真实阻塞时，下一训练工具选择暂缓；本轮不自动启动窗口、权重、组合、知识接入、V3-P或付费实验。
+
 ## V2.3 受控价格特征：真人试用清单
 
 默认Agent工作区使用原`apps/streamlit_app.py`。启动前按`AGENT_WORKSPACE_UI.md`核对原状态库与活动任务，不迁移空库、不替换旧数据或强改恢复合同。以下是操作清单，不是已完成的真人验收；助手浏览器测试不能替代你的反馈。

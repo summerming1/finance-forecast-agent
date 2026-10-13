@@ -77,3 +77,36 @@ def test_direction_questions_do_not_grant_selection_authority():
     assert out['observation_status'] == 'meets_predeclared_observation'
     classification = observation(b,a)
     assert classification['recommendation_authorized'] is False
+
+
+def test_two_feature_ablation_is_actual_new_execution_not_blanket_duplicate(tmp_path):
+    from test_focused_feature_campaign import controller
+    from test_focused_feature_contract import program
+    c = controller(tmp_path, diagnostic_mode='on')
+    count = []
+    def propose(prompt):
+        count.append(prompt)
+        if len(count) == 1:
+            value = program()
+            second = deepcopy(value['features'][0])
+            second['name'] = 'gen_second'
+            second['expression']['window'] = 20
+            value['features'].append(second)
+            row = {'statement':'simulation two features', 'feature_program':value,
+                   'research_design':d.default_design('RCP-01')}
+        else:
+            parent = prompt['prior_research_results'][0]['candidate_id']
+            row = {'statement':'simulation unanswered contribution', 'action_type':'ablate',
+                'parent_candidate_id':parent, 'control_candidate_id':parent, 'evidence_refs':[parent],
+                'ablation_component':'generated_feature:gen_mean', 'research_design':d.default_design('RCP-02')}
+        return {'hypotheses':[row]}, 'assistant_authored_fixture'
+    c.advisor.propose = propose
+    out = c.run()
+    first, second = [r['items'][0] for r in out['rounds']]
+    assert second['status'] == 'completed' and out['fit_calls'] == 20
+    assert second['observation']['information']['prediction_provenance'] == 'new_execution'
+    assert [f['name'] for f in second['candidate']['feature_program']['features']] == ['gen_second']
+    for key in ('model_family','model_params','feature_groups','seed'):
+        assert first['candidate'][key] == second['candidate'][key]
+    assert out['resource_usage']['feature_planning']['logical_decisions'] == len(count) == 2
+    assert out['resource_usage']['provider']['http_requests'] == 0

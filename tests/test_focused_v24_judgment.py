@@ -96,4 +96,13 @@ def test_worse_and_nonselected_candidates_not_cleared_or_baseline_substituted():
         r = d.select_recommendation(d.selection_policy(),start,[candidate],[start],execution_status='completed')
         assert r['best_research_candidate'] == candidate
         assert r['selected_recommendation'] == start
+        assert r['recommendation_gain_vs_start'] == 0
     assert d.select_recommendation(d.selection_policy(),start,[],[start],execution_status='completed')['best_research_candidate'] is None
+
+
+@pytest.mark.parametrize('loss', [0.,1e-15])
+def test_recommendation_ratio_has_predeclared_tiny_denominator_boundary(loss):
+    start = {'candidate_id':'start','metrics':{'mae':loss}}
+    r = d.select_recommendation(d.selection_policy(),start,[],[start],execution_status='completed')
+    assert r['recommendation_gain_vs_start'] is None
+    assert r['gain_ratio_min_start_mae'] == 1e-12

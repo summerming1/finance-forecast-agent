@@ -67,6 +67,9 @@ def test_real_v24_worker_crash_reuses_context_rule_A_and_charges_B(tmp_path):
     for key in ("plan:1", "prompt:1", "diagnostic_context:1", "diagnostic:baseline_ridge"):
         assert after[key] == before[key]
     assert next(v for k, v in after.items() if k.startswith("result:r1_c1_")) == a
+    observed = {k:v for k,v in before.items() if k.startswith('observation:')}
+    assert observed  # First classification/formation must survive an actual process kill.
+    assert {k:after[k] for k in observed} == observed
     assert sum(r["status"] == "interrupted" for r in attempts) == 1
 
 

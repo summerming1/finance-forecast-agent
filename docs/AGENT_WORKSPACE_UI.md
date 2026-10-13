@@ -1,5 +1,11 @@
 # Agent 风格研究工作区：接入与使用
 
+## S0—S4增量接入（2026-10-13）
+
+继续同一Streamlit组件/WorkspaceUI/RuntimeDB。研究页只读显示问题历史、剩余fit和能力限制；实验抽屉读取原`research_design.decision`与`observation.information/actual_feedback_update`，区分事前四项、实际反馈和预测来源/分析分类/证据层级。成果页读取同一冻结推荐，显示候选/起点/最佳可用和原因，不按页面指标重新选择。OFF页面供事后审计，不回流OFF规划。历史缺字段明确旧记录，不伪造迁移。
+
+ResearchPackage原目录收录上述不可变对象，无第二套导出或解释权威。刷新、切换、新context、公式和包读取不调用Provider/fit；只有原显式refit允许模型训练。实际测试见V2_4_DIAGNOSTIC_RESEARCH当日日志，不从文档或截图推断通过。
+
 ## V2.3增量
 
 三步向导新增price_features范围，旧features_only明确为组合现有特征组；支持One-shot/Adaptive Batch/Random规划策略、严格原始价格预检及能力/权限提示。候选抽屉显示真实AST、差异、列序和回看长度；资源页分列规划槽位、研究fit及显式refit。实际运行仍复用原Controller/Queue/RuntimeDB。

@@ -355,10 +355,11 @@ def select_recommendation(policy, start, research, controls, *, execution_status
     if execution_status == "completed" and best and relative is not None and relative >= policy["min_relative_mae_improvement"] and (selected is None or best["metrics"]["mae"] < selected["metrics"]["mae"]):
         selected, action = best, "select_research_candidate"
     available = [*controls, *research, *([start] if qualified(start) else [])]
+    gain_floor = 1e-12  # Frozen reporting boundary, not a new primary selection threshold.
     gain = ((start['metrics']['mae']-selected['metrics']['mae'])/start['metrics']['mae']
-            if execution_status == 'completed' and qualified(start) and selected and start['metrics']['mae'] > 0 else None)
+            if execution_status == 'completed' and qualified(start) and selected and start['metrics']['mae'] > gain_floor else None)
     return {"schema_version": "frozen_recommendation_v1", "selection_policy": deepcopy(policy),
-            "research_start":start, "recommendation_gain_vs_start":gain,
+            "research_start":start, "recommendation_gain_vs_start":gain, "gain_ratio_min_start_mae":gain_floor,
             "selection_reason":("incomplete_execution_conservative_fallback" if execution_status != 'completed' else
                 "no_research_candidate" if best is None else "passed_frozen_primary_screen" if action == 'select_research_candidate' else
                 "research_candidate_did_not_qualify_to_replace_start"),
