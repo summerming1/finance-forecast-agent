@@ -101,10 +101,11 @@ def bound_status(root, repo, row):
         row['binding_status'] = 'FAIL_actual_exit_mismatch'
         return 'FAIL'
     row['binding_status'] = 'BOUND'
+    if row['failures'] or row['errors']:
+        details = row['failures_detail']
+        return 'PARTIAL' if details and all(f['classification'] in {'BLOCKED_ENV', 'BLOCKED_ASSET'} for f in details) else 'FAIL'
     if not row['passed']:
         return 'NOT_RUN'
-    if row['failures'] or row['errors']:
-        return 'FAIL' if any(f['classification'] == 'FAIL_PRODUCT' for f in row['failures_detail']) else 'PARTIAL'
     return 'PARTIAL' if row['skipped'] else 'PASS'
 
 

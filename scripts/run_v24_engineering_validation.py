@@ -38,10 +38,25 @@ def simulation_prices(path: Path):
 def audit_package(path):
     with zipfile.ZipFile(path) as archive:
         index = json.loads(archive.read('research_package.json'))
+        names = archive.namelist()
+        paths = [e['path'] for e in index['files']]
+        if len(names) != len(set(names)) or len(paths) != len(set(paths)):
+            raise ValueError('package duplicate paths')
+        if set(names) != set(paths) | {'research_package.json'}:
+            raise ValueError('package index coverage mismatch')
         campaign = json.loads(archive.read('campaign.json'))
         saved = [*campaign['baseline_results'], *([campaign['incumbent_result']] if campaign.get('incumbent_result') else [])]
         saved += [item['result'] for round_ in campaign['rounds'] for item in round_['items'] if item.get('result')]
-        result_by_id = {r['candidate']['candidate_id']:r for r in saved}
+        result_by_id = {}
+        for result in saved:
+            cid = result['candidate']['candidate_id']
+            if cid in result_by_id and result_by_id[cid] != result:
+                raise ValueError('conflicting accepted candidate identity')
+            result_by_id[cid] = result
+        refs = {r['prediction_artifact_ref']:cid for cid,r in result_by_id.items()}
+        if len(refs) != len(result_by_id):
+            raise ValueError('prediction reference reused by different executions')
+        covered = set()
         count = 0
         for entry in index['files']:
             data = archive.read(entry['path'])
@@ -51,12 +66,43 @@ def audit_package(path):
                 artifact = json.loads(data)
                 rows = artifact['rows']
                 # Reuse the sole deterministic evaluator; not a second authority.
-                result = result_by_id[artifact['candidate_id']]
+                cid = artifact['candidate_id']
+                if cid not in result_by_id or cid in covered or refs.get(entry['path']) != cid:
+                    raise ValueError('unknown, duplicate or substituted prediction identity')
+                result = result_by_id[cid]
+                if artifact['candidate_fingerprint'] != result['candidate']['candidate_fingerprint']:
+                    raise ValueError('prediction config identity mismatch')
+                if artifact.get('campaign_id') != campaign.get('campaign_id'):
+                    raise ValueError('prediction campaign identity mismatch')
+                for field, artifact_field in [('task','task_id'), ('dataset','dataset_fingerprint')]:
+                    expected = campaign.get(field, {})
+                    value = expected.get('task_id') if field == 'task' else expected.get('semantic_fingerprint')
+                    if value is not None and artifact.get(artifact_field) != value:
+                        raise ValueError('prediction contract identity mismatch')
+                for key in ('split_spec', 'evaluation_policy'):
+                    if key in campaign and artifact.get(key) != campaign[key]:
+                        raise ValueError('prediction policy identity mismatch')
+                manifest_ref = result.get('execution_manifest_ref')
+                if manifest_ref:
+                    if manifest_ref not in paths:
+                        raise ValueError('accepted execution manifest missing')
+                    manifest = json.loads(archive.read(manifest_ref))
+                    for key in ('campaign_id', 'candidate_id', 'candidate_fingerprint', 'task_id',
+                                'task_version', 'dataset_fingerprint', 'split_spec', 'evaluation_policy'):
+                        if artifact.get(key) != manifest.get(key):
+                            raise ValueError('prediction execution manifest mismatch')
+                if any(r['candidate_id'] != cid or r['candidate_fingerprint'] != artifact['candidate_fingerprint'] for r in rows):
+                    raise ValueError('prediction row execution mismatch')
                 if prediction_metrics(rows) != result['metrics'] or fold_metrics_from_rows(rows) != result['fold_metrics']:
                     raise ValueError('prediction metrics mismatch')
                 count += 1
-        if count != len(result_by_id) or count == 0:
+                covered.add(cid)
+        if covered != set(result_by_id) or count == 0:
             raise ValueError('package prediction coverage incomplete')
+        for round_ in campaign['rounds']:
+            for item in round_['items']:
+                if item.get('reused_candidate_id') and item['reused_candidate_id'] not in covered:
+                    raise ValueError('cached proposal has no accepted prediction')
         return {'sha256':file_sha256(path), 'audited_predictions':count, 'indexed_files':len(index['files'])}
 
 
