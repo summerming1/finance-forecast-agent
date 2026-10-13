@@ -14,6 +14,20 @@ S0红例`.v24s/s0-red3.xml`：10 failed/4 passed、exit1（6.74s），复现全�
 
 2026-10-13 S1增量：复用原不可变observation对象冻结prediction provenance / analysis novelty / evidence tier及形成序列引用。比较测量对称身份、方向规则身份分开，反向相对改善重算分母；标题/候选别名不制造新预测。首次模板的缓存统计可为派生分析；反向全目标贡献比较为已知对，仍保留真实成本与规则结论。缓存已可见结果后的新问题标posthoc_exploratory，不追称事前。重建comparison_index只从原记录投影，不重新分类自身；ON已知摘要与OFF空摘要分开，旧记录不迁移。`.v24s/s1-red.xml`8失败；s1-green 36通过/352.09s，s1-projection 12通过/23 deselected/155.58s，均simulation_only且exit0；相关Ruff/compile exit0。S0静态首次C408已在d07285f修正并重验；其行为没有变化。
 
+#### S0—S4施工合同（统一方案§4/§9/§10，非历史验收重写）
+
+- S0：真实失败先于passed=0分类；未知失败不降级。包审计按唯一索引/ZIP路径、已接受执行、实际配置、合同、预测引用及逐行指标核对，不以预测个数代替覆盖。缓存共用原预测。
+- S1：原RuntimeDB观察对象记录三轴信息及首次事件。对称预测对与有方向的观察身份分开；原精度、执行seed/config、数据/标签/切分/范围必须一致。反向比值重新算分母，标题/别名不能造新发现。全量审计与臂内规划可见性分开；重建只还原既有首次记录，不重分类自身。
+- S2：显式`diagnostic_research_v3`/`diagnostic_price_advice_v3`、`research_decision_v1`。四项为`visible_basis`、`experiment_question`、`priority_reason`、`feedback_update`；每段文本最多2000字符、引用最多8个，反馈分支为supports/weakens/not_distinguished/next_step。沿research_design事前冻结，实际数值更新另存，不事后补理由；确定性收尾不追加第三HTTP。R/D兼容旧design并明确不是结构化判断证据，未知字段仍拒绝。J优先有预算的未回答条件比较；A局部失败不宣布A永远无用。D只用本臂可见已知信息，R不获得新增去重支持；相同编译器/物理缓存/冷Memory/资源与推荐政策。ON/OFF技术权限相同，OFF无新诊断/观察/比较摘要，不能用后台信息暗中筛动作。两规划四槽、One-shot整体冻结、原Random draw/失败账本不变。
+- 新规划的`observation_planning_v1`保留全部原数值、规则、control及状态；详细information/actual_feedback_update留不可变审计，有限身份摘要另投影。这是显式的有界审计/规划分离，不静默截断，64000上限不变；原v1/v2 fixture字节/hash不迁移。旧活动Campaign继续原源码合同或显式新Campaign，不能强改hash。
+- 推荐仍主MAE/0.0025。无研究才null；全部变差或未过门槛保留真实best_research。completed可合法retain_start；partial/failed/cancelled保守留合格起点且保留失败。最佳可用模型与推荐不同；贡献观察通过不能推荐更差child。推荐相对起点增益与研究候选成绩分列，不能用失败回退洗出成功。
+- S3：在原研究/实验/成果页显示实际问题/理由、parent/control/公式diff、观察及三轴、推荐角色/成本/来源，不新增工作区。后台、ResearchPackage同源；ModelBundle保持显式refit、可信登记及原无标签推理。只读操作不新增fit/HTTP。
+- S4：最后功能修改后冻结src/apps/scripts/tests、依赖及输入，绑定实际exit/JUnit/覆盖；原四臂门槛保留，R/D/J另做有限规则挑战而不冒充真实LLM策略实验。真人清单由实际操作者填写。没有真实干预阻塞记录时，下一工具选择暂缓；本轮不开发未来能力、可选包或接入45卡。
+
+S2进行中证据：`.v24s/s2-red.xml`5失败复现旧机械选择及缺四项合同；`s2-roles-red.xml`2失败/2通过/5 deselected复现partial/failed推荐问题。`s2-integration1.xml`50通过/5失败/1137.707秒：两个旧fit计数（新J真实24而非旧缓存20）、新字段使compact超限、模拟HTTP沙箱连接未到达、审计读取错误campaign层级；均保留。修复后`s2-unit2.xml`33通过/9.36秒/exit0，`s2-integration2.xml`6通过/325.16秒/exit0，含正常权限本地HTTP1→严格Replay HTTP0及各20fits一致。新J普通流程24fits、三实际研究候选，物理缓存行为由独立显式缓存用例继续验证，未通过改计数取消缓存断言。累计受影响回归仍在执行，不能提前声明S2/S3/S4通过。
+
+S2累计门槛完成：`.v24s/s2-regression.xml`99 passed/6 deselected/983.39秒/exit0；6个排除节点已在integration2逐项通过，不是跳过缺口。包括真实子进程crash/resume、原预算、ON/OFF、缓存、坏设计、包与原推理绑定。Ruff及compile exit0。`run_v24_engineering_validation.py --output-root .v24s/s2-support-pilot --run-engineering --decision-support-challenge` exit0，R/D/J均PASS，20/20/24 fits、各2逻辑决策/3槽/HTTP0、8/8/9预测包复算；wall 52.763/53.749/60.975秒。三臂都retain_start，最佳研究MAE同为0.007331007277095696，J多做一次条件实验但未改善；不是LLM质量或策略优势证明。输入raw 0798460be4a950b39cb848833148b324cb35b642b834cb110b8e161e135ea8bd，独立冷Campaign且不跨臂继承研究结果，费用null。以上是S2阶段证据，S3/S4仍待执行。
+
 ### 2026-10-10 批准的复审收口
 
 以3097ece为本轮实际基线，修复复现的输入/恢复/上下文/收据缺口，不扩研究能力。新增planning_projection_v2及diagnostic_price_advice_v2显式合同；v1纯投影读取保留，旧fixture/hash不修改，活动任务按原源码版本处理而非强行迁移。64000字符上限不提高；训练/组范围与共同来源确定性去重，完整审计继续原RuntimeDB和制品。固定baseline_ridge为相对诊断参照，在Campaign前冻结，不按组内成绩重新挑控制；正loss_delta表示候选更差，与观察的control-minus-child改善符号区分。样本门槛仍是描述性而非显著性。

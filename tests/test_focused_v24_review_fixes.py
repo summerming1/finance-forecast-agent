@@ -123,9 +123,15 @@ def test_cached_observation_in_next_on_prompt(tmp_path, visibility):
     assert first['status'] == 'skipped_duplicate' and out['fit_calls'] == 16
     assert len(calls) == 2
     if visibility == 'on':
-        assert first['observation'] in calls[1]['observation_feedback']
+        # v3 retains every numeric rule result, with full provenance in audit
+        # and a separately declared bounded planning identity summary.
+        expected = {k:v for k,v in first['observation'].items()
+                    if k not in {'information','actual_feedback_update'}}
+        assert expected in calls[1]['observation_feedback']
+        assert calls[1]['known_comparisons'][0]['observation_identity'] == first['observation']['information']['observation_identity']
     else:
         assert calls[1]['observation_feedback'] == calls[1]['automatic_diagnostics'] == []
+        assert calls[1]['known_comparisons'] == []
         assert 'diagnostic_common_sources' not in calls[1]
 
 

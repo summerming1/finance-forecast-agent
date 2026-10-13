@@ -63,7 +63,7 @@ def test_v24_research_package_has_context_rules_recommendation_and_recomputable_
     paths = {r['path'] for r in entries}
     assert {'diagnostics/recommendation.json','diagnostics/fixed_pair.json','contexts/decision-1.json','batch_plans/round_1.json'} <= paths
     assert any(p.startswith('observations/') for p in paths)
-    assert audit_package(package)['audited_predictions'] == 8  # 3 naive + 3 model controls + 2 research
+    assert audit_package(package)['audited_predictions'] == 9  # 3 naive + 3 model controls + 3 J research
 
 
 @pytest.mark.parametrize('attack', ['hash','candidate','action','unknown'])

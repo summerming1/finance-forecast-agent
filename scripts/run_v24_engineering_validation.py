@@ -21,7 +21,7 @@ from finance_forecast_agent.focused_diagnostics import research_policy
 from finance_forecast_agent.focused_evidence import fold_metrics_from_rows, prediction_metrics
 from finance_forecast_agent.focused_identity import file_sha256, identity
 from finance_forecast_agent.focused_persistence import build_research_package
-from finance_forecast_agent.focused_research import FocusedResearchController, ResearchBudget
+from finance_forecast_agent.focused_research import CandidateConfig, FocusedResearchController, ResearchBudget
 from finance_forecast_agent.focused_state import atomic_json
 
 
@@ -45,10 +45,12 @@ def audit_package(path):
         if set(names) != set(paths) | {'research_package.json'}:
             raise ValueError('package index coverage mismatch')
         campaign = json.loads(archive.read('campaign.json'))
+        spec = campaign['campaign']
         saved = [*campaign['baseline_results'], *([campaign['incumbent_result']] if campaign.get('incumbent_result') else [])]
         saved += [item['result'] for round_ in campaign['rounds'] for item in round_['items'] if item.get('result')]
         result_by_id = {}
         for result in saved:
+            CandidateConfig.from_dict(result['candidate'])
             cid = result['candidate']['candidate_id']
             if cid in result_by_id and result_by_id[cid] != result:
                 raise ValueError('conflicting accepted candidate identity')
@@ -72,10 +74,10 @@ def audit_package(path):
                 result = result_by_id[cid]
                 if artifact['candidate_fingerprint'] != result['candidate']['candidate_fingerprint']:
                     raise ValueError('prediction config identity mismatch')
-                if artifact.get('campaign_id') != campaign.get('campaign_id'):
+                if artifact.get('campaign_id') != spec.get('campaign_id'):
                     raise ValueError('prediction campaign identity mismatch')
                 for field, artifact_field in [('task','task_id'), ('dataset','dataset_fingerprint')]:
-                    expected = campaign.get(field, {})
+                    expected = spec.get(field, {})
                     value = expected.get('task_id') if field == 'task' else expected.get('semantic_fingerprint')
                     if value is not None and artifact.get(artifact_field) != value:
                         raise ValueError('prediction contract identity mismatch')
@@ -106,13 +108,16 @@ def audit_package(path):
         return {'sha256':file_sha256(path), 'audited_predictions':count, 'indexed_files':len(index['files'])}
 
 
-def run(root, *, raw_path=None, source_metadata=None):
+def run(root, *, raw_path=None, source_metadata=None, decision_support_challenge=False):
     root = Path(root).resolve()
     if root.exists():
         raise ValueError('use a new isolated output directory; existing evidence is never cleared')
     root.mkdir(parents=True)
     arms = [('rule_off', 'adaptive_batch', 'off'), ('rule_on', 'adaptive_batch', 'on'),
             ('random_reference', 'random', 'off'), ('one_shot_demo', 'one_shot', 'on')]
+    if decision_support_challenge:
+        arms = [(f'support_{level}', 'adaptive_batch', 'on') for level in ('R','D','J')]
+    supports = {name:name[-1] if decision_support_challenge else 'J' for name,_,_ in arms}
     # Freeze the denominator before input validation or any Controller dispatch.
     atomic_json(root/'preregistration.json', {'schema_version':'v24_offline_preflight_v2',
         'arms':arms, 'failure_denominator':'all_preregistered_arms'})
@@ -137,7 +142,9 @@ def run(root, *, raw_path=None, source_metadata=None):
     manifest = {'schema_version':'v24_offline_pilot_v1', 'input_provenance':exposure,
         'raw_sha256':file_sha256(raw_path), 'dataset_fingerprint':dataset.semantic_fingerprint,
         'source_hash':identity(source, domain='research-execution-source-v1'), 'arms':arms,
-        'frozen_policies':{name:research_policy(visibility) for name, _, visibility in arms},
+        'frozen_policies':{name:research_policy(visibility, support=supports[name]) for name, _, visibility in arms},
+        'comparison_scope':'R/D/J finite rule challenge' if decision_support_challenge else 'original four-arm engineering gate',
+        'cache_policy':'all arms cold; no free cross-arm control or candidate inheritance',
         'search_seed':19, 'max_fit_calls':32, 'memory':'cold', 'failure_denominator':'all_preregistered_arms',
         'outer_labels_accessed':False, 'provider_requests_authorized':0,
         'interpretation':'engineering visibility test, not Live LLM, financial or user value'}
@@ -152,7 +159,7 @@ def run(root, *, raw_path=None, source_metadata=None):
             c = FocusedResearchController(project_dir=root/name, state_path=root/'isolated_runtime.sqlite3',
             campaign_id=name, task=task, frame=frame, dataset=dataset, raw_history=raw,
             change_scope='price_features', diagnostic_mode=visibility, use_memory_prior=False,
-            feature_strategy={'arm':strategy, 'search_seed':19},
+            feature_strategy={'arm':strategy, 'search_seed':19, 'decision_support':supports[name]},
             budget=ResearchBudget(max_rounds=1 if strategy=='one_shot' else 2, max_new_candidates_per_round=2,
                                   max_fit_calls=32), advisor_mode='deterministic')
             stage = 'execution'
@@ -183,6 +190,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output-root', type=Path, required=True)
     parser.add_argument('--run-engineering', action='store_true', help='Explicitly authorize only local bounded fits')
+    parser.add_argument('--decision-support-challenge', action='store_true', help='Separate R/D/J rule-policy comparison, not Live or a replacement for four arms')
     parser.add_argument('--raw-spy-json', type=Path)
     parser.add_argument('--source-metadata', type=Path)
     parser.add_argument('--allow-development-compute', action='store_true', help='Owner confirms local input licensing and development-only use')
@@ -197,7 +205,8 @@ def main():
                      'independent_user':'requires actual independent operator',
                      'financial':'unsupported DSL confirmation remains blocked'}}, ensure_ascii=False, indent=2))
         return
-    results = run(args.output_root, raw_path=args.raw_spy_json, source_metadata=args.source_metadata)
+    results = run(args.output_root, raw_path=args.raw_spy_json, source_metadata=args.source_metadata,
+                  decision_support_challenge=args.decision_support_challenge)
     print(json.dumps(results, ensure_ascii=False, indent=2))
     if any(r['status'] != 'PASS' for r in results):
         raise SystemExit(1)

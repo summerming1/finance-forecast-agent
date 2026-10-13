@@ -106,4 +106,4 @@ def test_diagnostic_export_failure_reuses_db_body_without_fit_or_replanning(tmp_
     restored = controller(tmp_path, resume=True, diagnostic_mode='on')
     restored.run()
     assert restored._runtime.get('diagnostic:baseline_ridge') == saved
-    assert out['fit_calls'] == 20
+    assert out['fit_calls'] == 24  # J conditional experiment; restored diagnostics add no fits.

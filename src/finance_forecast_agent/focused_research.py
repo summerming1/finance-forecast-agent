@@ -1147,7 +1147,8 @@ class FocusedResearchController:
         from .focused_diagnostics import research_policy
         if diagnostic_mode is not None and not self.feature_mode:
             raise ValueError("diagnostic research requires price_features mode")
-        self.diagnostic_policy = research_policy(diagnostic_mode) if diagnostic_mode is not None else None
+        support = feature_strategy.get("decision_support", "J") if isinstance(feature_strategy, dict) else "J"
+        self.diagnostic_policy = research_policy(diagnostic_mode, support=support) if diagnostic_mode is not None else None
         if self.diagnostic_policy and (use_memory_prior or reviewed_evidence):
             raise ValueError("V24 pilot requires cold Memory and registered literature, not arbitrary evidence")
         self.raw_history = None
@@ -1160,11 +1161,13 @@ class FocusedResearchController:
             self.dataset = FocusedDatasetSnapshot(**dataset.to_dict())
             strategy = feature_strategy or {"arm": "adaptive_batch", "search_seed": 42}
             if (not isinstance(strategy, dict) or not {"arm", "search_seed"} <= set(strategy)
-                    or set(strategy) - {"arm", "search_seed", "max_sampler_draws"}
+                    or set(strategy) - {"arm", "search_seed", "max_sampler_draws", "decision_support"}
                     or strategy["arm"] not in {"one_shot", "adaptive_batch", "random"}
                     or isinstance(strategy["search_seed"], bool) or not isinstance(strategy["search_seed"], int)
                     or not 0 <= strategy["search_seed"] <= 2**32 - 1):
                 raise ValueError("invalid bounded price feature strategy")
+            if "decision_support" in strategy and (not self.diagnostic_policy or support not in {"R", "D", "J"}):
+                raise ValueError("decision support requires explicit diagnostic research")
             draws = strategy.get("max_sampler_draws", 128)
             if isinstance(draws, bool) or not isinstance(draws, int) or not 1 <= draws <= 128:
                 raise ValueError("price sampler permits 1..128 draws per decision")
@@ -1368,6 +1371,11 @@ class FocusedResearchController:
             return
         selected = payload["diagnostic_research"]["recommendation"]
         selected["execution_status"] = payload["execution_status"]
+        if payload["execution_status"] != "completed":
+            selected["selected_recommendation"] = selected["research_start"]
+            selected["selection_action"] = "retain_start" if selected["research_start"] else "unresolved"
+            selected["selection_reason"] = "incomplete_execution_conservative_fallback"
+            selected["recommendation_gain_vs_start"] = None
         selected.pop("recommendation_hash", None)
         selected["recommendation_hash"] = identity(selected, domain="frozen-recommendation-v1")
         self._store_diagnostic_object("recommendation", "diagnostics/recommendation.json", selected)
@@ -1375,13 +1383,19 @@ class FocusedResearchController:
     def _prepare_diagnostic_prompt(self, prompt, result_lookup, splits):
         from .focused_adaptive import EvidenceIndex
         from .focused_diagnostics import comparison_projection, diagnostic_projection, verify_diagnostic
-        prompt["proposal_contract_version"] = "diagnostic_price_advice_v2"
+        prompt["proposal_contract_version"] = "diagnostic_price_advice_v3"
         prompt["diagnostic_research_policy"] = self.diagnostic_policy
         # OFF projection is built from old feedback, never by redacting a new summary.
         visible = self.diagnostic_policy["diagnostic_visibility"] == "on"
         prompt["automatic_diagnostics"] = []
         prompt["observation_feedback"] = []
         prompt["known_comparisons"] = []
+        prompt["research_decision_contract"] = {"schema_version":"research_decision_v1",
+            "support":self.diagnostic_policy["decision_support"],
+            "legacy_v1":"accepted reference design, not evidence of structured judgment",
+            "parts":["visible_basis", "experiment_question", "priority_reason", "feedback_update"],
+            "limits":{"text_chars":2000,"evidence_refs":8},
+            "feedback_update_parts":["supports","weakens","not_distinguished","next_step"]}
         pair = self._pair_diagnostic(result_lookup)
         prompt["pair_diagnostics"] = [{k:v for k,v in pair.items() if k != "compute_wall_seconds"}] if visible and pair else []
         for result in result_lookup.values():
@@ -1409,6 +1423,16 @@ class FocusedResearchController:
             prompt["known_comparisons"] = [{k:r[k] for k in ("base_comparison_id", "observation_identity",
                 "analysis_novelty", "prediction_provenance", "formation_status")}
                 for r in comparison_projection(prompt["observation_feedback"])]
+            # Explicit v3 audit/visibility split. Numerical observations stay in
+            # planning; detailed provenance is immutable audit, not duplicated
+            # into every decision. R retains its original feedback, not D support.
+            prompt["observation_projection"] = {"schema_version":"observation_planning_v1",
+                "audit_only":["information", "actual_feedback_update"],
+                "identity_source":"immutable observation artifact"}
+            if self.diagnostic_policy["decision_support"] == "R":
+                prompt["known_comparisons"] = []
+            prompt["observation_feedback"] = [{k:v for k,v in row.items()
+                if k not in {"information", "actual_feedback_update"}} for row in prompt["observation_feedback"]]
             # Deterministic lossless de-duplication of common source/scope facts.
             # A new explicit projection contract; v1 fixtures are not rewritten.
             common = {}
@@ -1480,6 +1504,7 @@ class FocusedResearchController:
         prompt["rules"] += [
             "diagnostic_common_limitations_v1: descriptive development evidence, not significance or causal proof; no automatic bias correction, ensemble selection, refit or source download. In planning projection v2 all *_ref fields resolve in diagnostic_common_sources; values/fold_values map to columns_ref/fold_columns, with no discarded entries. Full artifacts remain audit-only.",
             "research_design is required for training: recipe_id, question, basis (domain_hypothesis|visible_evidence), competing_explanation, falsification_condition. Optional symptom_refs must be real visible diagnostic IDs. No arbitrary rule threshold/operator is permitted.",
+            'J structured designs additionally use decision_version="research_decision_v1" and decision={visible_basis:{kind:domain_hypothesis|visible_evidence,evidence_refs:[],description:string},experiment_question:string,priority_reason:string,feedback_update:{supports:string,weakens:string,not_distinguished:string,next_step:string}}. Freeze before execution; each text <=2000 chars, refs <=8 and visible. Legacy designs remain reference-only, not structured-judgment evidence.',
             "RCP-01 allows any legal existing AST; use overall or high_volatility. RCP-02 ablate uses contribution. RCP-03 simplify uses simplification. RCP-04/05 record demand only; no window/ensemble execution.",
             "Without visible diagnostic use an explicit domain_hypothesis and unknown applicability; diagnosis is not technical AST permission. Observation is not model recommendation."]
         return prompt
@@ -1551,6 +1576,11 @@ class FocusedResearchController:
         body["control_diagnostic_hash"] = control_diag["diagnostic_hash"]
         body["interpretation_review"] = bool(hypothesis.expected_observation) and body["observation_status"] != "meets_predeclared_observation"
         body["interpretation_review_basis"] = "unverified narrative requires review; no automatic semantic entailment"
+        if hypothesis.research_design.get("decision_version"):
+            body["actual_feedback_update"] = {"source":"deterministic_observation_not_new_advisor_call",
+                "observation_status":body["observation_status"], "actual_abs_mae_improvement":body["overall_abs_improvement"],
+                "interpretation":"local pipeline evidence; competing causes not distinguished",
+                "next_action_authority":"remaining original planning decision or deterministic terminal summary"}
         body["evaluated_candidate_id"] = result.candidate.candidate_id
         body["proposal_candidate_id"] = object_id
         self._store_diagnostic_object("observation:" + object_id, "observations/" + object_id + ".json", body)

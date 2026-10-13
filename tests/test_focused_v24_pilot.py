@@ -51,3 +51,25 @@ def test_d24_6_preflight_no_dispatch_no_credentials_read(tmp_path, monkeypatch, 
     result = json.loads(capsys.readouterr().out)
     assert result['external_http'] == 0 and result['status'] == 'NOT_RUN'
     assert not (tmp_path/'unused').exists()
+
+
+def test_support_challenge_same_floor_cold_arms_and_failure_denominator(tmp_path, monkeypatch):
+    m = module()
+    seen = []
+    native = m.FocusedResearchController
+    def dispatch(**kwargs):
+        seen.append(kwargs)
+        c = native(**kwargs)
+        c.run = lambda: (_ for _ in ()).throw(RuntimeError('simulation failure'))
+        return c
+    monkeypatch.setattr(m, 'FocusedResearchController', dispatch)
+    rows = m.run(tmp_path/'challenge', decision_support_challenge=True)
+    assert [r['arm'] for r in rows] == ['support_R','support_D','support_J']
+    assert all(r['status'] == 'FAIL' for r in rows)
+    for row in seen:
+        assert row['budget'] == seen[0]['budget']
+        assert row['frame'].equals(seen[0]['frame'])
+        assert row['dataset'] == seen[0]['dataset']
+        assert row['diagnostic_mode'] == 'on' and row['advisor_mode'] == 'deterministic'
+        assert row['use_memory_prior'] is False
+    assert len({r['campaign_id'] for r in seen}) == 3

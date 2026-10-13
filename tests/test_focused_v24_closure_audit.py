@@ -30,27 +30,35 @@ def test_bound_all_failed_is_execution_not_not_run(tmp_path, monkeypatch, classe
 
 def make_package(path, attack=None):
     from test_focused_v24_diagnostics import artifact
+
+    from finance_forecast_agent.focused_research import CandidateConfig
+    configs = {cid:CandidateConfig(cid, 'ridge_regression', {'alpha':alpha}, ['base_lags']).to_dict()
+               for cid,alpha in [('a',1.),('b',2.)]}
     a = artifact([.1, .2, .3, .4])
     a['campaign_id'] = 'simulation'
     a['candidate_id'] = 'a'
-    a['candidate_fingerprint'] = 'config-a'
+    a['candidate_fingerprint'] = configs['a']['candidate_fingerprint']
     for row in a['rows']:
-        row.update(candidate_id='a', candidate_fingerprint='config-a', train_count=100)
+        row.update(candidate_id='a', candidate_fingerprint=a['candidate_fingerprint'], train_count=100)
     b = json.loads(json.dumps(a))
-    b['candidate_id'], b['candidate_fingerprint'] = 'b', 'config-b'
+    b['candidate_id'], b['candidate_fingerprint'] = 'b', configs['b']['candidate_fingerprint']
     for row in b['rows']:
-        row.update(candidate_id='b', candidate_fingerprint='config-b')
+        row.update(candidate_id='b', candidate_fingerprint=b['candidate_fingerprint'])
     artifacts = [a, b]
     results = []
     files = {}
     for obj in artifacts:
         cid = obj['candidate_id']
         ref = f'predictions/{cid}.json'
-        results.append({'candidate':{'candidate_id':cid, 'candidate_fingerprint':obj['candidate_fingerprint']},
+        results.append({'candidate':configs[cid],
             'prediction_artifact_ref':ref, 'metrics':prediction_metrics(obj['rows']),
             'fold_metrics':fold_metrics_from_rows(obj['rows'])})
         files[ref] = obj
-    campaign = {'baseline_results':results, 'rounds':[], 'campaign_id':'simulation'}
+    campaign = {'baseline_results':results, 'rounds':[], 'campaign':{'campaign_id':'simulation'}}
+    if attack == 'changed_params':
+        results[0]['candidate']['model_params']['alpha'] = 7.
+    if attack == 'wrong_campaign':
+        campaign['campaign']['campaign_id'] = 'other'
     if attack == 'missing_with_duplicate':
         del files['predictions/b.json']
     if attack == 'unknown':
@@ -77,7 +85,7 @@ def make_package(path, attack=None):
 
 
 @pytest.mark.parametrize('attack', ['duplicate_index','duplicate_zip','missing_with_duplicate',
-    'unknown','wrong_config','wrong_ref','conflicting_candidate'])
+    'unknown','wrong_config','wrong_ref','conflicting_candidate','changed_params','wrong_campaign'])
 def test_package_exact_identity_not_counts(tmp_path, attack):
     path = tmp_path/'simulation.zip'
     make_package(path, attack)

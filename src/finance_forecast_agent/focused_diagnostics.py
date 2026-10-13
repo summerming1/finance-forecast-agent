@@ -7,7 +7,7 @@ import numpy as np
 from .focused_feature_program import _expression_values, compute_price_features
 from .focused_identity import identity
 
-VERSION = "diagnostic_research_v2"
+VERSION = "diagnostic_research_v3"
 RECIPES = {"RCP-01": "overall", "RCP-02": "contribution", "RCP-03": "simplification",
            "RCP-04": "diagnose", "RCP-05": "diagnose"}
 
@@ -19,9 +19,11 @@ def selection_policy():
             "max_degradation": 0., "fallback": "qualified_start_or_unresolved"}
 
 
-def research_policy(visibility="on"):
+def research_policy(visibility="on", *, support="J"):
     if visibility not in {"on", "off"}:
         raise ValueError("diagnostic visibility must be on or off")
+    if support not in {"R", "D", "J"}:
+        raise ValueError("unknown bounded decision support")
     return {"schema_version": VERSION, "diagnostic_visibility": visibility,
             "knowledge_mode": "present_day_research", "automatic_fit_limit": 0,
             "recipes": RECIPES, "selection_policy": selection_policy(),
@@ -29,7 +31,9 @@ def research_policy(visibility="on"):
             "memory": "cold", "pair_diagnostic_limit": 1,
             "planning_projection": "diagnostic_planning_projection_v2",
             "diagnostic_reference": "baseline_ridge",
-            "predeclared_pair": ["baseline_ridge", "baseline_rf"]}
+            "predeclared_pair": ["baseline_ridge", "baseline_rf"],
+            "decision_support":support, "decision_contract":"research_decision_v1",
+            "legacy_design_policy":"explicit_v1_reference_not_judgment_evidence"}
 
 
 def rule_template(question):
@@ -348,10 +352,16 @@ def select_recommendation(policy, start, research, controls, *, execution_status
     selected = start if qualified(start) else None
     action = "retain_start" if selected else "unresolved"
     relative = (ref["metrics"]["mae"]-best["metrics"]["mae"])/ref["metrics"]["mae"] if ref and best and ref["metrics"]["mae"] > 0 else None
-    if execution_status != "cancelled" and best and relative is not None and relative >= policy["min_relative_mae_improvement"] and (selected is None or best["metrics"]["mae"] < selected["metrics"]["mae"]):
+    if execution_status == "completed" and best and relative is not None and relative >= policy["min_relative_mae_improvement"] and (selected is None or best["metrics"]["mae"] < selected["metrics"]["mae"]):
         selected, action = best, "select_research_candidate"
     available = [*controls, *research, *([start] if qualified(start) else [])]
+    gain = ((start['metrics']['mae']-selected['metrics']['mae'])/start['metrics']['mae']
+            if execution_status == 'completed' and qualified(start) and selected and start['metrics']['mae'] > 0 else None)
     return {"schema_version": "frozen_recommendation_v1", "selection_policy": deepcopy(policy),
+            "research_start":start, "recommendation_gain_vs_start":gain,
+            "selection_reason":("incomplete_execution_conservative_fallback" if execution_status != 'completed' else
+                "no_research_candidate" if best is None else "passed_frozen_primary_screen" if action == 'select_research_candidate' else
+                "research_candidate_did_not_qualify_to_replace_start"),
             "best_research_candidate": best, "selected_recommendation": selected, "selection_action": action,
             "best_available_model": min(available, key=rank) if available else None,
             "relative_research_improvement_vs_selection_reference": relative,
@@ -417,8 +427,12 @@ def bind_design(design, hypothesis, candidate, results, prompt):
         if hypothesis.action_type != "diagnose":
             raise ValueError("control action cannot smuggle a training design")
     required = {"recipe_id", "question", "basis", "competing_explanation", "falsification_condition"}
-    if not isinstance(design, dict) or not required <= set(design) or set(design)-required-{"symptom_refs"}:
+    if not isinstance(design, dict) or not required <= set(design) or set(design)-required-{"symptom_refs", "decision_version", "decision"}:
         raise ValueError("training requires bounded research_design")
+    if "decision" in design or "decision_version" in design:
+        if design.get("decision_version") != "research_decision_v1":
+            raise ValueError("unknown research decision version")
+        validate_decision(design.get("decision"), prompt["evidence_projection"])
     recipe = design["recipe_id"]
     expected = {"improve": {"RCP-01"}, "ablate": {"RCP-02"}, "simplify": {"RCP-03"}, "diagnose": {"RCP-04", "RCP-05"}}[hypothesis.action_type]
     if recipe not in expected or design["question"] not in ({"overall", "high_volatility"} if recipe == "RCP-01" else {RECIPES[recipe]}):
@@ -453,7 +467,7 @@ def bind_design(design, hypothesis, candidate, results, prompt):
     return bound
 
 
-def diagnostic_advice(prompt):
+def _reference_advice(prompt):
     """Finite rule policy actually branches on visible evidence, not relabelled enumeration."""
     from .focused_feature_program import empty_feature_program
     start = prompt["research_start_candidate_id"]
@@ -553,3 +567,100 @@ def diagnostic_advice(prompt):
         hypotheses.append({"statement": "Test scale in observed high-volatility development group" if scale else "Domain hypothesis: past returns may contain useful information",
             "parent_candidate_id": start, "evidence_refs": [start], "feature_program": value, "research_design": design})
     return {"hypotheses": hypotheses}
+
+
+def validate_decision(decision, evidence):
+    """Bounded pre-execution judgment fields, not a semantic/causal oracle."""
+    from .focused_adaptive import EvidenceIndex
+    if not isinstance(decision, dict) or set(decision) != {"visible_basis", "experiment_question", "priority_reason", "feedback_update"}:
+        raise ValueError("four bounded research decision parts required")
+    basis = decision["visible_basis"]
+    if not isinstance(basis, dict) or set(basis) != {"kind", "evidence_refs", "description"} or basis["kind"] not in {"visible_evidence", "domain_hypothesis"}:
+        raise ValueError("invalid visible research basis")
+    refs = basis["evidence_refs"]
+    if not isinstance(refs, list) or len(refs) > 8 or any(not isinstance(r, str) for r in refs):
+        raise ValueError("invalid decision evidence refs")
+    index = EvidenceIndex(evidence)
+    for ref in refs:
+        index.require(ref)
+    if basis["kind"] == "visible_evidence" and not refs:
+        raise ValueError("visible decision basis requires real refs")
+    update = decision["feedback_update"]
+    if not isinstance(update, dict) or set(update) != {"supports", "weakens", "not_distinguished", "next_step"}:
+        raise ValueError("bounded feedback branches required")
+    for text in [basis["description"], decision["experiment_question"], decision["priority_reason"], *update.values()]:
+        if not isinstance(text, str) or not text.strip() or len(text) > 2000:
+            raise ValueError("missing or overlong research judgment")
+    return deepcopy(decision)
+
+
+def _same_program(a, b):
+    # Exact ASTs only, no algebraic equivalence or hidden applicability filter.
+    return [f["expression"] for f in a["features"]] == [f["expression"] for f in b["features"]]
+
+
+def diagnostic_advice(prompt):
+    """Explicit reference/de-dup/judgment policies on the shared execution floor."""
+    policy = prompt.get("diagnostic_research_policy", {})
+    support = policy.get("decision_support", "R")  # Legacy pure prompts stay original.
+    prior = prompt["prior_research_results"]
+    answer = None
+    if support == "J" and prior and prompt["feature_policy"]["arm"] != "one_shot":
+        parent = min(prior, key=lambda r:(r["metrics"]["mae"], r["candidate_id"]))
+        features = parent["feature_program"]["features"]
+        # A local failed expression is not globally disproven. An already
+        # completed B is a valid single control for B+A, never batch-future B.
+        if len(features) == 1 and prompt.get("remaining_budget", {}).get("remaining_fit_calls", 4) >= 4:
+            alternatives = [f["expression"] for r in prior if r["candidate_id"] != parent["candidate_id"]
+                            for f in r["feature_program"]["features"]]
+            alternatives += [{"op":"rolling_mean", "window":w, "arg":{"op":"input", "name":"return_1"}} for w in (5,20,10)]
+            for expression in alternatives:
+                if expression == features[0]["expression"]:
+                    continue
+                value = deepcopy(parent["feature_program"])
+                name = next(f"gen_conditional_{i}" for i in range(2, 10)
+                            if f"gen_conditional_{i}" not in {f["name"] for f in features})
+                value["features"].append({"name":name, "expression":expression})
+                if any(_same_program(value, r["feature_program"]) for r in prior):
+                    continue
+                answer = {"hypotheses":[{"action_type":"improve", "statement":"Test an unanswered conditional expression; local failure does not establish another cause",
+                    "parent_candidate_id":parent["candidate_id"], "control_candidate_id":parent["candidate_id"],
+                    "evidence_refs":[parent["candidate_id"]], "feature_program":value,
+                    "research_design":default_design("RCP-01", basis="visible_evidence")}]}
+                break
+    if answer is None:
+        answer = _reference_advice(prompt)
+    if support in {"D", "J"} and prior:
+        for row in answer["hypotheses"]:
+            if row.get("action_type") not in {"ablate", "simplify"}:
+                continue
+            parent = next((r for r in prior if r["candidate_id"] == row["parent_candidate_id"]), None)
+            if not parent:
+                continue
+            target = row.get("feature_program")
+            if target is None:
+                target = deepcopy(parent["feature_program"])
+                component = row["ablation_component"].split(":",1)[1]
+                target["features"] = [f for f in target["features"] if f["name"] != component]
+            available = [r["feature_program"] for r in prior]
+            if "fixed_model" in prompt:
+                available.append(prompt["fixed_model"]["feature_program"])
+            if any(_same_program(target, p) for p in available):
+                return {"hypotheses":[{"action_type":"stop", "statement":"Remaining reverse comparison is already visible; no suitable unanswered finite experiment. No extra request or fit."}]}
+    if support == "J":
+        for row in answer["hypotheses"]:
+            design = row.get("research_design")
+            if not design:
+                continue
+            refs = list(dict.fromkeys([*design.get("symptom_refs", []), *row.get("evidence_refs", [])])) if design["basis"] == "visible_evidence" else []
+            facts = next((r for r in prior if r["candidate_id"] == row.get("control_candidate_id")), None)
+            design.update(decision_version="research_decision_v1", decision={
+                "visible_basis":{"kind":"visible_evidence" if refs else "domain_hypothesis", "evidence_refs":refs,
+                    "description":f"Completed control MAE={facts['metrics']['mae']}; local result only" if facts else "Visible diagnosis if supplied; otherwise an explicitly unverified domain hypothesis"},
+                "experiment_question":f"{design['question']}: compare actual child with its completed single control under frozen conditions",
+                "priority_reason":"Prefer an unanswered finite comparison over returning to the known start; no estimated success probability. Frozen remaining fits="+str(prompt.get('remaining_budget',{}).get('remaining_fit_calls','unknown')),
+                "feedback_update":{"supports":"Only a meets observation supports this local pipeline question",
+                    "weakens":"Does-not-meet weakens this local attempt, not every use of the feature",
+                    "not_distinguished":"Noise, expression limits and training distribution remain competing explanations",
+                    "next_step":"Use actual first-round feedback in the remaining second decision; after it only a factual summary, no third call"}})
+    return answer

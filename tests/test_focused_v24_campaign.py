@@ -29,7 +29,10 @@ def test_initial_and_updated_diagnostics_frozen_rules_recommendation_and_resume(
     assert prompts[1]["observation_feedback"]
     assert out["resource_usage"]["feature_planning"]["logical_decisions"] == 2
     assert out["resource_usage"]["feature_planning"]["charged_proposal_slots"] == 3
-    assert out["fit_calls"] == 20  # deletion aliases accepted start; no invented refit
+    assert out["fit_calls"] == 24  # J: two initial models plus one unanswered conditional model.
+    conditional = out['rounds'][1]['items'][0]
+    assert len(conditional['candidate']['feature_program']['features']) == 2
+    assert conditional['hypothesis']['research_design']['decision_version'] == 'research_decision_v1'
     assert out["rounds"][1]["items"][0]["observation"]
     observations = [r['observation'] for round_ in out['rounds'] for r in round_['items'] if r.get('observation')]
     assert any(o['observation_status'] != 'meets_predeclared_observation' and o['interpretation_review'] for o in observations)
