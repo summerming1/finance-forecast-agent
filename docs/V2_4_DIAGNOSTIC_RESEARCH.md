@@ -77,6 +77,47 @@ S3门槛完成：完整browser重跑`.v24s/s3-browser-recheck.xml`4 passed/518.3
 
 S4收尾复现并最小修复说明性缺陷：`.v24s/s4-oneshot-red.xml`1失败/5.81秒/exit1，One-shot的事前next_step误称还有第二规划，执行器实际仍只调用一次。现在分别按One-shot/Adaptive第一决策/最后决策生成冻结说明，最后仅确定性收尾，未知原因不代评议。`s4-oneshot-green.xml`16通过/100.89秒/exit0，包括实际两轮Campaign及本地HTTP严格Replay；Ruff/compile通过。不触碰已录制fixture。7e16f5c上的第一轮全仓被主动停止，其start manifest/full.log/独立四臂结果全部保留在`.v24s/final`；未完成JUnit，pytest实际exit未取得（null），外层收据命令因无完整报告exit1，不能当作产品失败数或通过。改后重新冻结并使用新目录跑完整回归，不覆盖原证据。
 
+#### 2026-10-13 S4最终收据与停止线
+
+S0/S1/S2/S3/S4限定工程均已实现并执行对应验收；整体全仓/外部验收仍PARTIAL。上述“进行中/待执行”是按时间保留的阶段日志，以本段最终结果为准。没有为了绿灯删除旧断言、换原始输入或重写fixture。统一方案T01—T35的具名行为由最终回归及独立浏览器覆盖；T36本轮只完成范围审计和未来授权门禁，真实新干预/知识试点未授权，NOT_RUN，不能当已实现能力。正式PROJECT_ROADMAP未变，下一工具需要所有者真实阻塞与另行批准；无阻塞则暂缓。
+
+Git基线df98b92ed30b052ea6e71965401eeb8571307608；最终执行源码de00ec3b55d3fb6ea64bd3fde15b7d732526b0a5，tree 6fd5f2428ffeaecc798ead7df46bfced9b2dabd5。新增本地提交d3a5f7b、d07285f、cca4275、6bf5d2f、7e16f5c、de00ec3分别为收据/包、静态修正、有限信息身份、判断/推荐、原UI、One-shot说明修复；后续仅验收文档提交，最终HEAD/tree由delivery_receipt记录，不能回填为测试开始SHA。运行前后225个src/apps/scripts/tests文件、核心依赖、Python、平台及pyproject输入一致；required coverage、JUnit实际用例和真实exit核验BOUND。
+
+运行环境Windows/i5-12500/Python3.13.3/Chromium153.0.8010.12。下面`python`实际为`.venv/Scripts/python.exe`，工作目录仓库；OMP_NUM_THREADS/MKL_NUM_THREADS/OPENBLAS_NUM_THREADS=1。测试进程删除OPENAI_API_KEY/DASHSCOPE_API_KEY/TEACHER_API_KEY，默认状态库及项目分别为`.v24s/final-r2/default_safety.sqlite3`、`default_project`，测试另用隔离临时库，不修改用户原库。没有新付费调用、资料外发、确认标签读取或生产迁移。
+
+| 最终执行命令 | 实际结果/exit | 身份与范围 |
+|---|---|---|
+| `python -m pytest -q --basetemp=.tsfull2 --junitxml=.v24s/final-r2/full-final2.xml --tb=short` | 846 passed / 2 failed / 6 skipped / 9 warnings，6486.70s，exit1 | JUnit suite 6486.687s；V24 111项全部通过且包含于846内，不与阶段测试相加 |
+| `python -m pytest -q tests/browser/test_agent_workspace.py -k v24 --basetemp=.tsbr3 --junitxml=.v24s/final-r2/browser.xml --tb=short` | 1 passed / 2 deselected，272.533s，exit0 | `FFA_BROWSER_E2E=1`、`FFA_UI_BROWSER_ARTIFACTS=<repo>/.v24s/final-r2/browser`；实际Chromium/worker，start/end绑定BOUND |
+| `python scripts/run_v24_engineering_validation.py --output-root .v24s/final-r2/pilot-source-final2 --run-engineering` | 4/4 PASS，exit0 | 原四臂工程门槛，不是Live或金融证据 |
+| `$taskChangedPy = @(git diff --name-only df98b92ed30b052ea6e71965401eeb8571307608 -- '*.py'); python -m ruff check @taskChangedPy` | All checks passed，exit0 | 本轮全部修改Python |
+| `python -m compileall -q src/finance_forecast_agent apps scripts` | exit0 | 相关Python目录 |
+| `node --check apps/workspace_frontend/views.js`；`git diff --check` | 各exit0 | 前端语法、差异空白 |
+| `python scripts/verify_frozen_spy_acceptance.py --inputs inputs --check-input-only --receipt .v24s/final/frozen-input-check.json` | exit1，BLOCKED_ASSET | 没有运行替代smoke或读取确认标签 |
+
+全仓命令前使用`collect_v24_receipt.py --evidence-root .v24s/final-r2 --begin-run full-final2.xml --command <上表完整命令> --input pyproject.toml`，required-node为closure_audit/information/judgment/recovery/delivery五个V24测试文件、test_workspace_ui.py、test_workspace_ui_formula.py、test_focused_provider_json_boundary.py。执行后先捕获`$LASTEXITCODE`，再`--end-run full-final2.xml --exit-code 1`；不从JUnit推断实际exit。浏览器同样begin/end，required-node为tests/browser/test_agent_workspace.py。全仓JUnit SHA256 `572a22466b64ae7d72b109cb87987a9b368cce7618adc6f11a129db384e4a11a`，pyproject SHA256 `ce40d239b9681568c6eb56d32f32920054ca4c36f6fe50566217c848c84aaebd`。归集命令`python scripts/collect_v24_receipt.py --evidence-root .v24s/final-r2 --browser-name browser`只读取证据，不执行模型；最终receipt区分source SHA与文档最终SHA，source hash为b3f4c962df5cb99f1afad6e12632953519ccd7f9fe260bb9675f99dd14877b10。
+
+最终四臂OFF/ON/Random/One-shot：24/24/28/28 charged fits，总104；9/9/10/10预测制品，共38逐行和fold复算；43/43/48/46索引成员，共180 SHA核验；逻辑规划2/2/2/1，外部HTTP0，provider cost及human operation minutes为null。raw输入SHA256 `0798460be4a950b39cb848833148b324cb35b642b834cb110b8e161e135ea8bd`，dataset `e7a1fc373a8f1a86b8004e32bff559150f48a2fdf3d86793e08961869844eb58`，预登记hash `68528b3c6b403c8aef134674b72e13e5defbf6760ab2bba72905eadb4bb2473c`。均simulation_only、真实本地估计器，不是真实行情表现；全部retain_start，未强迫获胜。与并行回归同机的wall只作运行审计，不作效率优势证明。
+
+可复现当前演示：用新目录运行上表pilot命令，读取`rule_on/focused_campaigns/rule_on/`的初始diagnostics、contexts、batch_plans、observations、campaign.json及research_package目录。实际链为初始诊断→第一轮两个合法单特征候选真实训练→确定性观察→第二轮基于已完成control的双特征条件实验→冻结retain_start→完整研究包。三个候选均completed、prediction_provenance=new_execution；其中第二轮观察does_not_meet，如实保留。当前J不再机械删除首轮失败特征回到起点；显式缓存/贡献消融仍由独立用例验证。原章节§11的旧删除消融演示保留为历史，不冒充当前J。
+
+浏览器最终报告`.v24s/final-r2/browser/v24/report.json`包含19项检查：3个完成候选切换、刷新、新context、只读公式/包、续接预检、原Mission新Campaign、父记录不变、诊断篡改拒绝和显式refit。研究父24+子24=48fits、18attempts，refit1单列；只读无新增fit/HTTP，page_errors=[]。输入是cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b模拟数据。`.v24s/s3-browser-recheck.xml`的4通过为S3工作树阶段证据；只有上述1项明确在de00ec3执行并绑定，不能把4项都冒称同最终SHA重跑。
+
+| 最终失败/跳过或开放项 | 准确分类、原因及恢复路径 |
+|---|---|
+| `tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]` | BLOCKED_ENV：创建模拟symlink时WinError1314，尚未进入joblib加载。需合法符号链接权限或另行批准平台；本轮不改全局权限、不删断言 |
+| `tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call` | BLOCKED_ASSET：原`projects/finance_agent/llm_fixtures/method_card/2c05bfd22af27435.json`不存在。必须恢复匹配原字节/上下文，不用其他fixture改名、不补Live |
+| 4个tests/browser opt-in skip | 全仓没有开启浏览器flag；本轮阶段完整矩阵4通过、最终V24另1通过，证据身份分别保留 |
+| `test_queue_recovers_real_interrupted_worker` | NOT_RUN：原POSIX process-group probe；Windows原生worker另测，不冒充POSIX通过 |
+| `test_package_rejects_symlink` | BLOCKED_ENV/原平台skip：symlink permission unavailable |
+| 原冻结SPY输入 | BLOCKED_ASSET：同名raw文件存在但不是规定5fb282原始字节，spy_source.json缺失；不拿当前修订字节或模拟数据替换 |
+
+9 warnings为8条已有record_property/xunit2警告及1条故意构造duplicate ZIP的负例警告，不删除负例求无警告。历史两失败未改测试，本轮没有观察到新增产品失败。旧A/L的全部原对象与基线逐项保持，只追加本轮关联；47目标负确认不变。
+
+分轴：限定S0—S4工程PASS；全仓总体PARTIAL；有限规则行为PASS（simulation_only，R/D/J未证明J胜出）；真实Provider语义、策略价值、所有者/独立用户、独立金融效果均NOT_RUN。自动collector的strategy_behavior保守为NOT_RUN，其定义不是有限规则单测，不从全仓通过推导策略增益。Linux同SHA CI/推送、macOS、GPU/大型native、可选O/K、V2.5+均NOT_RUN；全仓历史适配测试不代表小时级原论文训练。后续只有所有者按用户指南真实操作、记录主动时间/帮助/一项阻塞；恢复历史资产/平台或Live需相应条件/授权。本轮到此停止。
+
+收尾文档检查：`python -m pytest -q tests/test_focused_b0_plan.py tests/test_focused_r0_status.py --basetemp=.tsdocs3 --junitxml=.v24s/final-docs.xml --tb=short`，4 passed/5.86秒/exit0；不与全仓846相加。验收JSON所有原顶层字段与df98b92逐项序列化比较，变化0；只新增v24_s0_s4_20261013。git diff --check exit0。此后仅本地文档提交和只读收据归集，不再改功能源码。
+
 ### 2026-10-10 批准的复审收口
 
 以3097ece为本轮实际基线，修复复现的输入/恢复/上下文/收据缺口，不扩研究能力。新增planning_projection_v2及diagnostic_price_advice_v2显式合同；v1纯投影读取保留，旧fixture/hash不修改，活动任务按原源码版本处理而非强行迁移。64000字符上限不提高；训练/组范围与共同来源确定性去重，完整审计继续原RuntimeDB和制品。固定baseline_ridge为相对诊断参照，在Campaign前冻结，不按组内成绩重新挑控制；正loss_delta表示候选更差，与观察的control-minus-child改善符号区分。样本门槛仍是描述性而非显著性。

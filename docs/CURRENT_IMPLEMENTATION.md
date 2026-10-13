@@ -1,12 +1,14 @@
 # 当前版本功能与技术实现说明
 
-## 2026-10-13 S0—S4限定实施中（未最终验收）
+## 2026-10-13 S0—S4限定工程完成；整体仍PARTIAL
 
-更新：S3原页面三轴、四项事前判断/实际反馈、问题历史和推荐角色已接入；工作区/AppTest/worker39通过，相关core/UI30通过，真实消融/kill恢复2通过，实际Chromium矩阵重跑4通过。首次browser冷启动超时及所有红例保留；最终冻结全仓尚待S4，不称全部验收通过。
+实际基线df98b92；统一方案与ZIP对应MD字节一致。已复现并修正失败收据分类、预测包精确覆盖；在原不可变观察上实现预测来源/有限分析分类/证据层级及首次事件重建。事前四项判断、R/D/J显式合同、保守推荐和原页面同源显示已接入。最后补修One-shot事前说明错误，不增加规划或改历史fixture。唯一合同、36条映射与全部中间失败见V2_4_DIAGNOSTIC_RESEARCH.md。
 
-更新：S2累计99通过及另6重点集成通过，适用静态检查通过；R/D/J模拟挑战三臂包审计通过，20/20/24 fits、HTTP0，三臂均保留起点，未观察到J最佳成绩优势。S3 UI与最终冻结全仓回归仍待执行。
+最终测试源码de00ec3b55d3fb6ea64bd3fde15b7d732526b0a5（tree 6fd5f2428ffeaecc798ead7df46bfced9b2dabd5）：全仓846 passed/2 failed/6 skipped，6486.70秒、实际exit1；其中V24 111项全通过，已包含在846内。两失败分别WinError1314符号链接权限、原DLinear 2c05bfd22af27435.json缺失，分类BLOCKED_ENV/BLOCKED_ASSET，不称全仓全绿。源码/依赖/输入/required coverage/JUnit/exit绑定BOUND；报告`.v24s/final-r2/full-final2.xml`。
 
-实际基线df98b92，统一方案与ZIP对应MD字节一致。S0已复现并修正失败收据分类及预测包精确覆盖；S1已接原不可变观察的信息三轴、有限比较身份及重建。S2新增事前四项判断、R/D/J显式策略合同及不完整流程保守推荐；当前单位33项与重点集成6项通过，累计回归仍运行，S3/S4尚未完成。准确中间红/绿证据见V2_4_DIAGNOSTIC_RESEARCH当日日志；下面2026-10-10结果是历史，不是本轮源码验收。原开放项及47目标负确认未改，未推送、无新Provider或确认标签读取。
+真实Chromium阶段矩阵4通过；最终de00ec3上的V24主流程另跑1通过/272.533秒，绑定BOUND：真实worker、三个完成候选切换、刷新/new context、续接、包及显式refit。只读HTTP/fit零增量，父子研究48fits/18attempts，refit1另计，页面错误为空。最终四臂模拟演示4 PASS，共104本地fits/外部HTTP0，38预测制品逐行复算、180包成员核验；全部retain_start。S2 R/D/J三臂20/20/24fits，J多做条件实验但未提高最佳成绩，不能宣称研究价值。适用Ruff/compileall/JS语法/diff检查exit0。
+
+本地收据`.v24s/final-r2/delivery_receipt.json`区分执行SHA与后续文档提交。原A/L、47目标负确认、原冻结SPY字节/metadata缺口保持；现有同名SPY文件不等于原规定输入。无推送/同SHA CI、付费Provider、真实确认标签、生产迁移或后续版本开发；Live语义/真人/金融价值未验证，大型native未跑。当前下一步是所有者按用户指南实际试用；没有真实阻塞时暂缓新训练工具，正式路线未修改。
 
 ## 2026-10-10 V2.4限定复审修复已验证；总体验收仍PARTIAL
 

@@ -1,5 +1,28 @@
 {
   "schema_version": "v22r_acceptance_v1",
+  "v24_s0_s4_20261013": {
+    "base_sha": "df98b92ed30b052ea6e71965401eeb8571307608",
+    "tested_sha": "de00ec3b55d3fb6ea64bd3fde15b7d732526b0a5",
+    "tested_tree": "6fd5f2428ffeaecc798ead7df46bfced9b2dabd5",
+    "status": "scoped_engineering_verified_overall_acceptance_partial",
+    "plan_sha256": "284d8efbdb4957bbe462f9d6d8f2dbc87e8200d91e0489f7325d4d6f7e7fda14",
+    "final_local_regression": {"passed":846,"failed":2,"skipped":6,"exit_code":1,"seconds":6486.70,"junit":".v24s/final-r2/full-final2.xml","binding":"BOUND"},
+    "v24_tests": {"passed":111,"included_in_full_regression":true},
+    "browser": {"final_source_passed":1,"exit_code":0,"seconds":272.533,"junit":".v24s/final-r2/browser.xml","binding":"BOUND","staged_matrix_passed":4,"staged_junit":".v24s/s3-browser-recheck.xml","provenance":"simulation_only_actual_worker_Chromium"},
+    "offline_four_arm": {"status":"PASS","fits":104,"external_http":0,"audited_predictions":38,"indexed_files":180,"provenance":"simulation_only"},
+    "finite_R_D_J": {"status":"PASS","fits":[20,20,24],"external_http":0,"all_retain_start":true,"J_best_score_advantage_observed":false,"evidence_root":".v24s/s2-support-pilot","same_final_sha_claim":false},
+    "receipt": ".v24s/final-r2/delivery_receipt.json",
+    "report": "docs/V2_4_DIAGNOSTIC_RESEARCH.md",
+    "clause_links": {
+      "unified_T01_T07": ["tests/test_focused_v24_closure_audit.py","tests/test_focused_v24_review_fixes.py"],
+      "unified_T08_T14_T31_T32": ["tests/test_focused_v24_information.py","tests/test_focused_v24_recovery.py"],
+      "unified_T15_T23_T26_T30_T33_T35": ["tests/test_focused_v24_judgment.py","tests/test_focused_v24_campaign.py","tests/test_focused_v24_pilot.py"],
+      "unified_T24_T25": ["tests/test_focused_v24_delivery.py","tests/test_workspace_ui_formula.py","tests/browser/test_agent_workspace.py[v24]"],
+      "unified_T36": "scope_audit_only_future_intervention_and_knowledge_pilot_NOT_RUN"
+    },
+    "historical_records_preserved": true,
+    "external_gates": {"provider":"NOT_RUN","actual_user":"NOT_RUN","financial":"NOT_RUN","same_sha_ci":"NOT_RUN","push":"NOT_RUN_not_authorized"}
+  },
   "v24_review_repairs_20261010": {
     "base_sha": "3097ece873108ac80253078c6f39bb9fe483124a",
     "status": "scoped_repairs_verified_overall_acceptance_partial",

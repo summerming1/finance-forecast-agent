@@ -9,7 +9,7 @@ The near-term product goal is **not** “support every financial paper or model�
 
 ## Current branch and status
 
-Current feature line: **V2.4 controlled diagnostic research** (SPY daily, price-only DSL, development evidence). See [the V2.4 contract and current test log](docs/V2_4_DIAGNOSTIC_RESEARCH.md) and [workspace operation checklist](docs/FRONTEND_USER_GUIDE.md). The 2026-10-10 scoped review repairs passed 71 V2.4 tests and the four-test actual browser matrix; full regression is 805 passed, 2 historical environment/asset failures, 6 skipped (not all green). Live model quality, actual users and independent financial evidence remain separate gates. This iteration was committed locally, not pushed or verified by remote CI.
+Current feature line: **V2.4 controlled diagnostic research** (SPY daily, price-only DSL, development evidence). See [the V2.4 contract and current test log](docs/V2_4_DIAGNOSTIC_RESEARCH.md) and [workspace operation checklist](docs/FRONTEND_USER_GUIDE.md). The 2026-10-13 S0–S4 package adds exact receipt/package auditing, bounded comparison provenance, frozen research judgment and clearer result roles. Final-source regression: **846 passed, 2 historical environment/asset failures, 6 skipped** (exit 1; not all green), including 111 passing V2.4 tests. The staged four-test browser matrix and final-source V2.4 browser rerun passed. Live model quality, actual users and independent financial evidence remain separate gates. This iteration is local only: no push or same-SHA remote CI.
 
 Current Mission-oriented work branch:
 
