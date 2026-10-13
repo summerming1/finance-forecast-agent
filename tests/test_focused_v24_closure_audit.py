@@ -22,8 +22,8 @@ def test_bound_all_failed_is_execution_not_not_run(tmp_path, monkeypatch, classe
         '<testcase classname="tests.sim" name="failure"><failure message="simulation"/>'
         '</testcase></testsuite></testsuites>')
     m.run_manifest(tmp_path, tmp_path, p.name, exit_code=1)
-    row = dict(junit=str(p), sha256=m.file_sha256(p), passed=0, failures=1, errors=0,
-        skipped=0, expected_exit=1, failures_detail=[{'classification':c} for c in classes])
+    row = {'junit':str(p), 'sha256':m.file_sha256(p), 'passed':0, 'failures':1, 'errors':0,
+        'skipped':0, 'expected_exit':1, 'failures_detail':[{'classification':c} for c in classes]}
     assert m.bound_status(tmp_path, tmp_path, row) == expected
     assert row['binding_status'] == 'BOUND'
 
