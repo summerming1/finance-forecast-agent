@@ -106,3 +106,18 @@ def test_recommendation_ratio_has_predeclared_tiny_denominator_boundary(loss):
     r = d.select_recommendation(d.selection_policy(),start,[],[start],execution_status='completed')
     assert r['recommendation_gain_vs_start'] is None
     assert r['gain_ratio_min_start_mae'] == 1e-12
+
+
+@pytest.mark.parametrize('arm,round_index,expected', [
+    ('one_shot',1,'no feedback replanning'),
+    ('adaptive_batch',1,'remaining second decision'),
+    ('adaptive_batch',2,'no third Advisor call')])
+def test_next_step_respects_actual_frozen_planning_stage(arm,round_index,expected):
+    p = prompt()
+    p['feature_policy']['arm'] = arm
+    p['round_index'] = round_index
+    row = d.diagnostic_advice(p)['hypotheses'][0]
+    text = row['research_design']['decision']['feedback_update']['next_step']
+    assert expected in text
+    if arm == 'one_shot' or round_index == 2:
+        assert 'remaining second decision' not in text

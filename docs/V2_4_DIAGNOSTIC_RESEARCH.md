@@ -75,6 +75,8 @@ S3中间记录：只读渲染红例1失败/1通过；最小UI后2通过。工作
 
 S3门槛完成：完整browser重跑`.v24s/s3-browser-recheck.xml`4 passed/518.36秒/exit0，旧入口/价格模式/V24/旧Mission均实际Chromium，不是AppTest替代。`.v24s/s3-behavior.xml`2 passed/99.89秒/exit0，实际两特征消融新训练20fits/HTTP0，以及真实进程kill后原首次观察对象、A制品、计划/上下文保持并计入B重试。UI/相关core的Ruff、compileall、node --check、diff --check均exit0。保留首次browser失败与ratio红例。至此功能/测试冻结，接下来S4全仓；未提前宣布最终收口。
 
+S4收尾复现并最小修复说明性缺陷：`.v24s/s4-oneshot-red.xml`1失败/5.81秒/exit1，One-shot的事前next_step误称还有第二规划，执行器实际仍只调用一次。现在分别按One-shot/Adaptive第一决策/最后决策生成冻结说明，最后仅确定性收尾，未知原因不代评议。`s4-oneshot-green.xml`16通过/100.89秒/exit0，包括实际两轮Campaign及本地HTTP严格Replay；Ruff/compile通过。不触碰已录制fixture。7e16f5c上的第一轮全仓被主动停止，其start manifest/full.log/独立四臂结果全部保留在`.v24s/final`；未完成JUnit，pytest实际exit未取得（null），外层收据命令因无完整报告exit1，不能当作产品失败数或通过。改后重新冻结并使用新目录跑完整回归，不覆盖原证据。
+
 ### 2026-10-10 批准的复审收口
 
 以3097ece为本轮实际基线，修复复现的输入/恢复/上下文/收据缺口，不扩研究能力。新增planning_projection_v2及diagnostic_price_advice_v2显式合同；v1纯投影读取保留，旧fixture/hash不修改，活动任务按原源码版本处理而非强行迁移。64000字符上限不提高；训练/组范围与共同来源确定性去重，完整审计继续原RuntimeDB和制品。固定baseline_ridge为相对诊断参照，在Campaign前冻结，不按组内成绩重新挑控制；正loss_delta表示候选更差，与观察的control-minus-child改善符号区分。样本门槛仍是描述性而非显著性。

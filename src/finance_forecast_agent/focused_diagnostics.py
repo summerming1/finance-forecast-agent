@@ -649,6 +649,12 @@ def diagnostic_advice(prompt):
             if any(_same_program(target, p) for p in available):
                 return {"hypotheses":[{"action_type":"stop", "statement":"Remaining reverse comparison is already visible; no suitable unanswered finite experiment. No extra request or fit."}]}
     if support == "J":
+        if prompt['feature_policy']['arm'] == 'one_shot':
+            next_step = 'Whole plan frozen: no feedback replanning; deterministic terminal summary only, no further Advisor call'
+        elif prompt.get('round_index', 1) >= 2:
+            next_step = 'Final decision: deterministic factual summary only; unresolved causes remain unknown, no third Advisor call'
+        else:
+            next_step = 'Use actual first-round feedback in the remaining second decision; no extra planning allowance'
         for row in answer["hypotheses"]:
             design = row.get("research_design")
             if not design:
@@ -663,5 +669,5 @@ def diagnostic_advice(prompt):
                 "feedback_update":{"supports":"Only a meets observation supports this local pipeline question",
                     "weakens":"Does-not-meet weakens this local attempt, not every use of the feature",
                     "not_distinguished":"Noise, expression limits and training distribution remain competing explanations",
-                    "next_step":"Use actual first-round feedback in the remaining second decision; after it only a factual summary, no third call"}})
+                    "next_step":next_step}})
     return answer
