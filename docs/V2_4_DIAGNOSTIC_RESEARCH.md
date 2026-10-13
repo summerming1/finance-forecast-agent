@@ -12,6 +12,8 @@
 
 S0红例`.v24s/s0-red3.xml`：10 failed/4 passed、exit1（6.74s），复现全失败分类及重复/错身份预测包。此前s0-red为沙箱默认临时目录14 setup errors，s0-red2含4测试构造路径错误；均保留。最小修复先验证绑定/覆盖/exit，再分类实际失败，未知失败不降级；ZIP和索引路径唯一，逐accepted candidate/config/合同/声明引用核对覆盖，缓存只引用原预测。s0-green：27 passed/16 deselected、exit0/11.39s；后续真实包及最终回归仍待执行，不提前写完整验收。
 
+2026-10-13 S1增量：复用原不可变observation对象冻结prediction provenance / analysis novelty / evidence tier及形成序列引用。比较测量对称身份、方向规则身份分开，反向相对改善重算分母；标题/候选别名不制造新预测。首次模板的缓存统计可为派生分析；反向全目标贡献比较为已知对，仍保留真实成本与规则结论。缓存已可见结果后的新问题标posthoc_exploratory，不追称事前。重建comparison_index只从原记录投影，不重新分类自身；ON已知摘要与OFF空摘要分开，旧记录不迁移。`.v24s/s1-red.xml`8失败；s1-green 36通过/352.09s，s1-projection 12通过/23 deselected/155.58s，均simulation_only且exit0；相关Ruff/compile exit0。S0静态首次C408已在d07285f修正并重验；其行为没有变化。
+
 ### 2026-10-10 批准的复审收口
 
 以3097ece为本轮实际基线，修复复现的输入/恢复/上下文/收据缺口，不扩研究能力。新增planning_projection_v2及diagnostic_price_advice_v2显式合同；v1纯投影读取保留，旧fixture/hash不修改，活动任务按原源码版本处理而非强行迁移。64000字符上限不提高；训练/组范围与共同来源确定性去重，完整审计继续原RuntimeDB和制品。固定baseline_ridge为相对诊断参照，在Campaign前冻结，不按组内成绩重新挑控制；正loss_delta表示候选更差，与观察的control-minus-child改善符号区分。样本门槛仍是描述性而非显著性。

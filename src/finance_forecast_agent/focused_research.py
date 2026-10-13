@@ -1374,13 +1374,14 @@ class FocusedResearchController:
 
     def _prepare_diagnostic_prompt(self, prompt, result_lookup, splits):
         from .focused_adaptive import EvidenceIndex
-        from .focused_diagnostics import diagnostic_projection, verify_diagnostic
+        from .focused_diagnostics import comparison_projection, diagnostic_projection, verify_diagnostic
         prompt["proposal_contract_version"] = "diagnostic_price_advice_v2"
         prompt["diagnostic_research_policy"] = self.diagnostic_policy
         # OFF projection is built from old feedback, never by redacting a new summary.
         visible = self.diagnostic_policy["diagnostic_visibility"] == "on"
         prompt["automatic_diagnostics"] = []
         prompt["observation_feedback"] = []
+        prompt["known_comparisons"] = []
         pair = self._pair_diagnostic(result_lookup)
         prompt["pair_diagnostics"] = [{k:v for k,v in pair.items() if k != "compute_wall_seconds"}] if visible and pair else []
         for result in result_lookup.values():
@@ -1405,6 +1406,9 @@ class FocusedResearchController:
                 if body["evaluated_candidate_id"] not in result_lookup:
                     raise ValueError("observation refers to an unaccepted candidate")
                 prompt["observation_feedback"].append(body)
+            prompt["known_comparisons"] = [{k:r[k] for k in ("base_comparison_id", "observation_identity",
+                "analysis_novelty", "prediction_provenance", "formation_status")}
+                for r in comparison_projection(prompt["observation_feedback"])]
             # Deterministic lossless de-duplication of common source/scope facts.
             # A new explicit projection contract; v1 fixtures are not rewritten.
             common = {}
@@ -1520,7 +1524,12 @@ class FocusedResearchController:
         return out
 
     def _observe_research(self, hypothesis, result, result_lookup, splits, *, proposal_id=None):
-        from .focused_diagnostics import observation_result
+        from .focused_diagnostics import classify_observation, observation_result
+        object_id = proposal_id or result.candidate.candidate_id
+        original = self._runtime.get("observation:" + object_id)
+        if original:
+            self._runtime.verify_artifacts(original["artifacts"])
+            return original["body"]
         diagnostic = self._diagnostic(result, splits)
         rule = hypothesis.research_design["rule"]
         control = result_lookup[rule["control_candidate_id"]]
@@ -1531,15 +1540,33 @@ class FocusedResearchController:
             saved = stored["row"].get("result") or stored["row"]
             return json.loads((self._campaign_root / saved["prediction_artifact_ref"]).read_text(encoding="utf-8"))
         body = observation_result(rule, artifact(result), artifact(control), groups=control_diag["volatility_groups"])
+        history = self._comparison_history()
+        body["information"] = classify_observation(rule, artifact(result), artifact(control),
+            history=history, cached=proposal_id is not None, evidence_tier=self.task.exposure,
+            groups=control_diag["volatility_groups"], formation={"hypothesis_id":hypothesis.hypothesis_id,
+                "design_hash":hypothesis.research_design["design_hash"], "first_event_ref":"observation:" + object_id,
+                "timing_proof":"frozen_batch_plan_before_execution" if proposal_id is None else
+                    "both_predictions_already_visible_before_new_question"})
         body["diagnostic_hash"] = diagnostic["diagnostic_hash"]
         body["control_diagnostic_hash"] = control_diag["diagnostic_hash"]
         body["interpretation_review"] = bool(hypothesis.expected_observation) and body["observation_status"] != "meets_predeclared_observation"
         body["interpretation_review_basis"] = "unverified narrative requires review; no automatic semantic entailment"
-        object_id = proposal_id or result.candidate.candidate_id
         body["evaluated_candidate_id"] = result.candidate.candidate_id
         body["proposal_candidate_id"] = object_id
         self._store_diagnostic_object("observation:" + object_id, "observations/" + object_id + ".json", body)
         return body
+
+    def _comparison_history(self):
+        """Read-only projection of this Campaign's original immutable observations."""
+        with self._runtime.db.transaction() as db:
+            rows = db.execute("SELECT payload FROM objects WHERE ns=? AND key LIKE 'observation:%' ORDER BY rowid",
+                (self._runtime.ns,)).fetchall()
+        bodies = []
+        for row in rows:
+            stored = json.loads(row["payload"])
+            self._runtime.verify_artifacts(stored["artifacts"])
+            bodies.append(stored["body"])
+        return bodies
 
     def _project_literature(self, *, tenant_id=None, audience="local") -> list[dict]:
         from .focused_literature import project_literature
@@ -2402,6 +2429,8 @@ class FocusedResearchController:
             payload["diagnostic_research"] = {"policy": self.diagnostic_policy, "recommendation": selected,
                 "diagnostics": [self._diagnostic(r, self.split_spec.build_splits(len(self.frame))) for r in valid_results],
                 "pair_diagnostics": [self._pair_diagnostic({r.candidate.candidate_id:r for r in valid_results})]}
+            from .focused_diagnostics import comparison_projection
+            payload["diagnostic_research"]["comparison_index"] = comparison_projection(self._comparison_history())
             payload["resource_usage"]["automatic_diagnostics"] = {
                 "new_fit_calls": 0, "provider_requests": 0,
                 "compute_wall_seconds": sum(d["compute_wall_seconds"] for d in payload["diagnostic_research"]["diagnostics"])

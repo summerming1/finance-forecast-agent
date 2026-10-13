@@ -108,6 +108,62 @@ def pair_diagnostic(a, b):
             "recommendation_authorized": False, "new_fit_calls": 0}
 
 
+def prediction_information_id(artifact):
+    """Exact numeric/execution identity; audit aliases are not new evidence."""
+    _validated_rows(artifact)
+    content = {k:v for k,v in artifact.items() if k not in {"candidate_id", "campaign_id"}}
+    content["rows"] = [{k:v for k,v in row.items() if k != "candidate_id"} for row in artifact["rows"]]
+    return identity(content, domain="prediction-information-v1")
+
+
+def classify_observation(rule, child, control, *, history=(), cached=False,
+                         evidence_tier="development_only", formation=None, groups=None):
+    """Finite audit projection, not an execution/novelty permission or significance test."""
+    verify_rule(rule)
+    left, right = aligned_predictions(child, control)
+    child_id, control_id = prediction_information_id(child), prediction_information_id(control)
+    base = identity(sorted([child_id, control_id]), domain="comparison-measurements-v1")
+    semantics = {k:v for k,v in rule.items() if k not in {"rule_hash", "candidate_id",
+        "candidate_fingerprint", "control_candidate_id", "control_fingerprint"}}
+    observed = identity({"child":child_id, "control":control_id, "rule":semantics,
+        "groups":groups if rule["question"] == "high_volatility" else None}, domain="comparison-observation-v1")
+    prior = [row.get("information", row) for row in history]
+    exact = [r for r in prior if r.get("observation_identity") == observed]
+    reverse = [r for r in prior if r.get("base_comparison_id") == base and
+        r.get("child_prediction_id") == control_id and r.get("control_prediction_id") == child_id]
+    # Reverse overall/contribution are the already observed full-target loss
+    # comparison, but their denominator and question conclusion are recomputed.
+    known = bool(exact or (reverse and rule["question"] in {"overall", "contribution"}))
+    cl = float(np.mean([abs(r["y_pred"]-r["y_true"]) for r in left]))
+    pl = float(np.mean([abs(r["y_pred"]-r["y_true"]) for r in right]))
+    return {"schema_version":"research_information_v1", "base_comparison_id":base,
+        "observation_identity":observed, "child_prediction_id":child_id, "control_prediction_id":control_id,
+        "prediction_provenance":"cache_reuse" if cached else "new_execution",
+        "analysis_novelty":"known_or_reverse_comparison" if known else
+            "first_valid_derived_analysis" if cached else "first_valid_analysis",
+        "evidence_tier":evidence_tier, "formation_status":"posthoc_exploratory" if cached else
+            "predeclared" if formation else "timing_unverified",
+        "formation":deepcopy(formation or {"timing_proof":"unavailable"}),
+        "reference_observation_ids":[r["observation_identity"] for r in exact or reverse],
+        "child_mae":cl, "control_mae":pl,
+        "relative_mae_improvement":(pl-cl)/pl if pl > 0 else None,
+        "recommendation_authorized":False}
+
+
+def comparison_projection(observations):
+    """Rebuild from immutable first-event records, never reclassify against itself."""
+    out, seen = [], set()
+    for observation in observations:
+        row = observation.get("information", observation)
+        if row.get("schema_version") != "research_information_v1":
+            continue  # Legacy facts remain legacy, not fabricated migrations.
+        key = row["observation_identity"]
+        if key not in seen:
+            out.append(deepcopy(row))
+            seen.add(key)
+    return out
+
+
 def volatility_groups(prices, raw_splits):
     prices = np.asarray(prices, dtype=float)
     if prices.ndim != 1 or not np.isfinite(prices).all() or np.any(prices <= 0):
