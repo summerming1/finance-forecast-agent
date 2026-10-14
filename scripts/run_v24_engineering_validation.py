@@ -117,7 +117,8 @@ def run(root, *, raw_path=None, source_metadata=None, decision_support_challenge
             ('random_reference', 'random', 'off'), ('one_shot_demo', 'one_shot', 'on')]
     if decision_support_challenge:
         arms = [(f'support_{level}', 'adaptive_batch', 'on') for level in ('R','D','J')]
-    supports = {name:name[-1] if decision_support_challenge else 'J' for name,_,_ in arms}
+    supports = {name:name[-1] if decision_support_challenge else 'R' if strategy == 'random' else 'J'
+                for name,strategy,_ in arms}
     # Freeze the denominator before input validation or any Controller dispatch.
     atomic_json(root/'preregistration.json', {'schema_version':'v24_offline_preflight_v2',
         'arms':arms, 'failure_denominator':'all_preregistered_arms'})

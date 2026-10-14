@@ -8,8 +8,7 @@ from test_focused_b5_crash_recording import _kill, _receive
 from test_focused_feature_campaign import controller, proposals
 from test_focused_feature_recovery import snapshot
 from test_focused_pr5_delivery import _write_chart
-
-from finance_forecast_agent.focused_diagnostics import default_design
+from test_focused_v24_judgment import j_design as default_design
 
 
 def v24_worker(root, resume, pipe):

@@ -5,13 +5,47 @@ from pathlib import Path
 import pytest
 from test_focused_b1_provider import good, server
 from test_focused_feature_campaign import controller, proposals
+from test_focused_v24_judgment import j_design as default_design
 
-from finance_forecast_agent.focused_diagnostics import default_design
 from finance_forecast_agent.focused_persistence import build_research_package
 from finance_forecast_agent.llm_adapters import OpenAIJsonClient
 
 
-def test_v24_local_http_record_then_strict_offline_replay_same_design_predictions(tmp_path, monkeypatch):
+def test_local_http_missing_j_contract_is_recorded_rejected_not_repaired(tmp_path, monkeypatch):
+    from finance_forecast_agent.focused_diagnostics import default_design as legacy_design
+    values = proposals([5])
+    values['hypotheses'][0]['research_design'] = legacy_design('RCP-01')
+    response = good()
+    response['choices'][0]['message']['content'] = json.dumps(values)
+    fixtures = tmp_path/'fixtures'
+    recorded = tmp_path/'record'
+    recorded.mkdir()
+    with server([{'body':response}]) as (url, requests):
+        for key,value in {'OPENAI_API_KEY':'simulation-only','OPENAI_MODEL':'local-simulation',
+                          'OPENAI_BASE_URL':url,'LLM_PROVIDER':'bailian','LLM_HTTP_ATTEMPTS':'1',
+                          'LLM_CALL_DEADLINE':'30'}.items():
+            monkeypatch.setenv(key,value)
+        live = controller(recorded,arm='one_shot',diagnostic_mode='on',advisor_mode='live',fixture_dir=fixtures)
+        out = live.run()
+        assert len(requests)==1 and out['fit_calls']==12
+        assert out['terminal_status']=='proposal_invalid'
+        assert out['resource_usage']['provider']['http_requests']==1
+    calls = [json.loads(p.read_text()) for p in fixtures.rglob('*.json') if p.parent.name=='records']
+    assert len(calls)==1
+    for key in ('OPENAI_API_KEY','TEACHER_API_KEY','DASHSCOPE_API_KEY'):
+        monkeypatch.delenv(key,raising=False)
+    monkeypatch.setattr(OpenAIJsonClient,'_one_request',lambda *_a,**_k:pytest.fail('offline replay sent HTTP'))
+    replay_root = tmp_path/'replay'
+    replay_root.mkdir()
+    replay = controller(replay_root,arm='one_shot',diagnostic_mode='on',advisor_mode='replay',
+        fixture_dir=fixtures,replay_call_ids={r['prompt_sha256']:r['call_id'] for r in calls})
+    restored = replay.run()
+    assert restored['terminal_status']=='proposal_invalid' and restored['fit_calls']==12
+    assert restored['resource_usage']['provider']['http_requests']==0
+
+
+@pytest.mark.parametrize('arm',['one_shot','adaptive_batch'])
+def test_v24_local_http_record_then_strict_offline_replay_same_design_predictions(tmp_path, monkeypatch, arm):
     values = proposals([5, 20])
     for row in values['hypotheses']:
         row['research_design'] = default_design('RCP-01')
@@ -20,36 +54,44 @@ def test_v24_local_http_record_then_strict_offline_replay_same_design_prediction
     fixtures = tmp_path/'fixtures'
     record_root = tmp_path/'record'
     record_root.mkdir()
-    with server([{'body':response}]) as (url, requests):
+    stop = good()
+    stop['choices'][0]['message']['content'] = json.dumps({'hypotheses':[{'action_type':'stop','statement':'simulation frozen completion'}]})
+    expected_calls = 1 if arm == 'one_shot' else 2
+    with server([{'body':response}, *([{'body':stop}] if expected_calls==2 else [])]) as (url, requests):
         for key, value in {'OPENAI_API_KEY':'simulation-only', 'OPENAI_MODEL':'local-simulation',
                            'OPENAI_BASE_URL':url, 'LLM_PROVIDER':'bailian', 'LLM_HTTP_ATTEMPTS':'1',
                            'LLM_CALL_DEADLINE':'30'}.items():
             monkeypatch.setenv(key, value)
-        live = controller(record_root, arm='one_shot', diagnostic_mode='on', advisor_mode='live', fixture_dir=fixtures)
+        live = controller(record_root, arm=arm, diagnostic_mode='on', advisor_mode='live', fixture_dir=fixtures)
         original = live.run()
-        assert len(requests) == 1
+        assert len(requests) == expected_calls
         assert original['execution_status'] == 'completed'
     calls = [json.loads(p.read_text()) for p in fixtures.rglob('*.json') if p.parent.name=='records']
-    assert len(calls) == 1
+    assert len(calls) == expected_calls
     mapping = {r['prompt_sha256']:r['call_id'] for r in calls}
     for key in ('OPENAI_API_KEY','TEACHER_API_KEY','DASHSCOPE_API_KEY'):
         monkeypatch.delenv(key, raising=False)
     monkeypatch.setattr(OpenAIJsonClient, '_one_request', lambda *_a, **_kw: pytest.fail('Replay sent HTTP'))
     replay_root = tmp_path/'replay'
     replay_root.mkdir()
-    replay = controller(replay_root, arm='one_shot', diagnostic_mode='on', advisor_mode='replay',
+    replay = controller(replay_root, arm=arm, diagnostic_mode='on', advisor_mode='replay',
                         fixture_dir=fixtures, replay_call_ids=mapping)
     restored = replay.run()
     assert restored['execution_status'] == 'completed'
     assert restored['fit_calls'] == original['fit_calls'] == 20
     assert restored['resource_usage']['provider']['http_requests'] == 0
     assert live._runtime.get('prompt:1') == replay._runtime.get('prompt:1')
+    if expected_calls == 2:
+        assert live._runtime.get('prompt:2') == replay._runtime.get('prompt:2')
     a = live._runtime.get('plan:1')['plan']['items']
     b = replay._runtime.get('plan:1')['plan']['items']
     for x, y in zip(a, b, strict=True):
         assert x['candidate'] == y['candidate']
         assert x['hypothesis']['research_design'] == y['hypothesis']['research_design']
-    assert [r['items'][0]['result']['metrics'] for r in original['rounds']] == [r['items'][0]['result']['metrics'] for r in restored['rounds']]
+    assert [[i['status'] for i in r['items']] for r in original['rounds']] == [
+        [i['status'] for i in r['items']] for r in restored['rounds']]
+    assert [i['result']['metrics'] for r in original['rounds'] for i in r['items'] if i.get('result')] == [
+        i['result']['metrics'] for r in restored['rounds'] for i in r['items'] if i.get('result')]
     assert original['diagnostic_research']['recommendation']['selected_recommendation'] == restored['diagnostic_research']['recommendation']['selected_recommendation']
 
 

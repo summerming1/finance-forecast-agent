@@ -1,5 +1,9 @@
 # Codex：B0–B5 交付后的统一补测任务
 
+## 2026-10-14 P类修复及G类准入（最终验证中）
+
+当前入口为V2_4_DIAGNOSTIC_RESEARCH当日记录。J字段/缓存形成时点独立红例、64k容量失败均保留；18项边界回归通过、真实开发两入口阶段助手技术验证通过，但最终冻结全仓/浏览器仍待完成。G6本人主持预演与目标用户记录不能由这些证据替代。仅deterministic；当前NO-GO。所有者已确认现有0bb089输入可本机开发与受控试用，来源元数据不等于独立许可/point-in-time审核；不是原5fb282资产恢复。原A/L及47目标负确认、Windows symlink/DLinear/原冻结资产和Live/金融边界不变。
+
 ## 2026-10-13 S0—S4关联（限定工程完成，外部边界保留）
 
 默认包已完成验收工具/有限信息分类/研究判断和原页面交付，详见V2_4_DIAGNOSTIC_RESEARCH当日日志及T01—T36逐项映射。最终de00ec3全仓846通过/2失败/6跳过、exit1/6486.70秒，V24 111通过；2失败为原Windows symlink权限和DLinear匹配fixture缺失，不是新产品回归。4浏览器opt-in跳过有阶段矩阵4通过、最终源码V24另1通过；POSIX probe与Windows package symlink仍未覆盖。原48条A/L状态、47目标负确认保持。原冻结SPY检查exit1/BLOCKED_ASSET：同名raw存在但不是规定5fb282原字节，source metadata缺失，不可替换验收。Live语义/策略价值、所有者/独立用户、金融效果、同SHA CI、macOS/GPU大型native本轮未授权或未执行，不能因工程通过关闭。下一新训练工具须由实际操作者阻塞提出并另批；没有真实阻塞则暂缓，不用助手模拟代替真人。

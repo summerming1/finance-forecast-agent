@@ -1,5 +1,7 @@
 # V2.4 确定性诊断研究：唯一实施合同与批次日志
 
+当前最新批准与实施为末节“2026-10-14 试用前P1—P5/G0—G6增量”；最终验证进行中，G6未完成，不能宣称真人准入。下方旧批准/收据保留历史身份。
+
 日期2026-10-09；用户已批准D24-0—D24-5工程及D24-6准备。基线95760e264eddb4388a44df6d35442b6ce8d90928，tree 8d081ef18dd7fde0b3e45f3a593e929e3adb530d。实际结果以本文件日志及收据为准，不把计划写成通过。
 
 来源（只作provenance，不是并行合同）：实施提示词SHA256 b1194dac113195ef66715eaf2792dfea58149c5efc672f16d0bf1933f0f38d1a；基稿4c4877486bcdceaed043892a417ec5beeb82bda6798a02457e7e6a87e98a58a3；最新复审1d993d98c2bbf0b9462d087abf7b82fe99ebcbd71ffa662048dd1c19f17fe98a。R1—R4/P1—P4已合并如下。旧PROPOSED不覆盖本次明确实施批准。
@@ -393,3 +395,38 @@ $env:FFA_UI_BROWSER_ARTIFACTS="D:/b05runs/v24-browser-my-run"
 每次用新的报告/临时目录保留证据。启动/真实操作见FRONTEND_USER_GUIDE；完整工程演示见上一节。本轮完成后停止，不自行进入后续开发或外部活动。
 
 最终文档检查首次误用不存在的test_focused_roadmap_contract.py，执行exit1/0 tests；final-docs.xml空报告保留为NOT_RUN，不算通过。改用实际原test_focused_b0_plan.py和test_focused_r0_status.py重跑，exit0/4通过/2.24s，见final-docs2.xml；这是执行命令路径错误，不是被删除或改名的测试。
+## 2026-10-14 试用前 P1—P5 / G0—G6 增量（实施与验证中）
+
+本轮用户直接批准必要工程修正及试用准备。附件与ZIP同名方案字节一致，SHA256 `78db8ddd3772a756fdd69564d86cf0e43bc5089ab94e716b2fb509b5371d5191`；讨论材料是来源，不是第二合同。实际起点 `8f8e45069478af637bcfcc76098ea4ba0427414a`，branch `feat/mission-research-v2`；tracked clean，所有旧验证目录保留。正式路线不变，原36项、A/L和47目标负确认不改。
+
+先运行外部原始 `review_s0_s4_20261014/test_independent_edges.py`，**3 failed / 33.27s / exit1**，`.v24p14/red.xml`：当前J缺四项仍通过；纯函数与实际One-shot重复缓存均错误标为事后。不是把审核推测直接认定为缺陷。
+
+新运行使用 `diagnostic_research_v4` / `diagnostic_price_advice_v4`，旧活动合同必须原源码恢复，不改hash迁移。P1强制J训练四项且与response_schema一致；R/D及Random参考设计不伪造理由，stop/review无dummy训练字段。P2从冻结计划/上下文可见结果判断形成时点，缓存来源单列，未知时序明确unknown；不可变历史不重分类。P3仅投影已有计划及获准反馈；OFF不读新增观察，原逻辑两次/四槽预算不变。P4仅有界条件/命名常量简化/已知停止/无症状领域探索。P5仅现有入口、事实显示与本机交付验证，不新建权威系统。
+
+阶段负例与失败均留在 `.v24p14/`。最大设计文本+4000备注+独特起点的第二轮容量负例已复现64k阻断（`.v24p14/admission-first.xml`与`capacity-detail.xml`），不得截断、提高64000上限或增加生成调用求通过。最终源码/测试/依赖/输入冻结后另跑全仓，阶段结果不冒充最终通过。
+
+真实输入：既有 `inputs/spy_chart_2010_2025.json`，SHA256 `0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b`。用户在2026-10-14针对该精确文件的本机开发与受控试用权限确认回复“能”；来源依据保留原Yahoo获取/开发日志。`.v24p14/real-source.json`是本次所有者确认元数据，不是独立法律审核/再分发授权；不下载新数据、不替换5fb282、不读取确认标签。两入口实际计算/可信交付尚待收据。主机预演/目标用户理解只能本人完成，助手不得代签。
+
+当前 **NO-GO（验证尚在进行，G6真人预演未完成）**；allowed_advisor_mode仅`deterministic`，不是Live通过。Live L0—L3、本轮远端CI/推送、GPU/macOS/大型native、金融效果均NOT_RUN。收口后以本节最终事实和收据更新，不提前宣布试用准入。
+
+### 本轮协议与验收映射
+
+v4在任何规划前冻结每份design所有字符串值合计1000字符（包含既有研究理由及J四项），不截断已返回的文本；R/D/Random显式参考合同，旧无此标志的v1参考设计兼容。新schema给出可执行的J示例而不是漏字段的旧模板。为容纳两次决定的完整原判断，规则表用shared/columns/values，诊断公共字段和训练scope哈希用递归ref共享，保存原数值与完整制品；未扩大64000上限、结果范围或OFF权限。新source/version不用于强行恢复旧冻结合同。
+
+N01—N22是行为映射，不是22次独立运行；测试集合之间会重叠，结果不得相加。simulation_only指数据/HTTP回复，估计器fit、worker与浏览器本地实际运行。
+
+| 条款 | 实际测试/入口 | 证据性质 |
+|---|---|---|
+| N01—03 | `test_focused_v24_pilot_admission` J必填/旧合同/R/D/Random/schema；`test_focused_v24_delivery` local HTTP缺J拒绝、保留录制及离线重放 | 模拟回复，实际入口；不是Live质量 |
+| N04—07 | 原独立三负例；`test_focused_v24_information`、pilot_admission cache/timing四路径 | 冻结上下文时点、缓存来源、unknown、反向/模板身份；不改历史 |
+| N08 | `test_focused_v24_recovery::test_real_v24_worker_crash_reuses_context_rule_A_and_charges_B` | 真spawn进程中断，保留已接受A/冻结计划；20→24 charged fits |
+| N09—11 | pilot_admission `test_schema_links_max_designs_long_notes_and_real_recovery` ON/OFF；review_fixes compact独特起点 | 原四项/规则hash/反馈关联；1000字符每design、4000备注，两决定；OFF无新增观察 |
+| N12 | pilot_admission `test_four_limited_strategy_challenges`；原judgment/review_fixes策略负例 | 条件、具名常量简化、已知停止、无症状探索；不强迫差异或赢家 |
+| N13—14 | 原judgment无候选/更差/失败/取消与diagnostics选择；campaign、feature_strategy、provider runtime/recording测试 | 复用原账本/筛选，最终全仓确认 |
+| N15 | pilot_admission授权/hash/曝光三负例；原workspace/feature_contract预检 | 不合法输入前置拒绝0dispatch；不造假行情 |
+| N16—17 | `scripts/verify_v24_trial_admission.py`；browser `[v24]` | 既有真实0bb089输入；goal/provided_start，2轮×2槽、32研究fits上限，显式refit另计 |
+| N18—20 | delivery包身份/复算；真实两入口driver与browser；原feature_bundle/R4 trust | 原状态权威、包逐SHA/指标复算、只读0增量、新进程无标签预测；symlink权限缺口单列 |
+| N21 | 最后源码冻结的全仓、actual worker/browser、Ruff/compileall/node/diff | 以实际exit、JUnit和开始/结束manifest为准；无远端CI |
+| N22 | FRONTEND_USER_GUIDE主持清单及G6本人记录 | NOT_RUN，助手不可代签；目标用户NO-GO |
+
+阶段真实浏览器`.v24p14/browser-real-stage.xml`实际exit0、1 passed/174.14s；Chromium153.0.8010.12、19检查、父子48研究fits/18 attempts、refit1另计、HTTP0、页面错误为空，包9预测/46成员复算。这是助手技术验证，非主持人预演。阶段两入口driver `.pr14a/receipt.json` exit0，24/28研究fits，另各1refit；各4004无标签输出与fresh Python完全相等。最后冻结源码仍须重新绑定最终证据。

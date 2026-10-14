@@ -1,5 +1,9 @@
 # Agent 风格研究工作区：接入与使用
 
+## 2026-10-14试用前增量
+
+已有模型入口明确仅受支持配置，不导入训练权重/Notebook/任意代码。原观察抽屉分别显示缓存来源和真实形成时点；事前冻结的同批重复也能命中缓存，但不增加成功发现。新J缺四项训练设计在核心入口拒绝；旧记录/R/D/Random不补写理由。第二轮上下文原判断—获准反馈关联只用于已有规划额度；OFF不可见新增观察。G类操作表在FRONTEND_USER_GUIDE，最终准入以CURRENT_IMPLEMENTATION及收据为准；助手浏览器不是主持人签字。没有UI重做或新状态库权威。
+
 ## S0—S4增量接入（2026-10-13）
 
 继续同一Streamlit组件/WorkspaceUI/RuntimeDB。研究页只读显示问题历史、剩余fit和能力限制；实验抽屉读取原`research_design.decision`与`observation.information/actual_feedback_update`，区分事前四项、实际反馈和预测来源/分析分类/证据层级。成果页读取同一冻结推荐，显示候选/起点/最佳可用和原因，不按页面指标重新选择。OFF页面供事后审计，不回流OFF规划。历史缺字段明确旧记录，不伪造迁移。

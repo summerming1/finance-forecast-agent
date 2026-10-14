@@ -6,8 +6,9 @@ from types import SimpleNamespace
 
 import pytest
 from test_focused_feature_campaign import controller, proposals
+from test_focused_v24_judgment import j_design as default_design
 
-from finance_forecast_agent.focused_diagnostics import default_design, relative_group_losses
+from finance_forecast_agent.focused_diagnostics import relative_group_losses
 
 
 def script(name):

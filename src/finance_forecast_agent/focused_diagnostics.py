@@ -7,7 +7,7 @@ import numpy as np
 from .focused_feature_program import _expression_values, compute_price_features
 from .focused_identity import identity
 
-VERSION = "diagnostic_research_v3"
+VERSION = "diagnostic_research_v4"
 RECIPES = {"RCP-01": "overall", "RCP-02": "contribution", "RCP-03": "simplification",
            "RCP-04": "diagnose", "RCP-05": "diagnose"}
 
@@ -24,16 +24,25 @@ def research_policy(visibility="on", *, support="J"):
         raise ValueError("diagnostic visibility must be on or off")
     if support not in {"R", "D", "J"}:
         raise ValueError("unknown bounded decision support")
+    templates = [rule_template(k) for k in ("overall", "high_volatility", "contribution", "simplification", "diagnose")]
+    shared = {k:v for k,v in templates[0].items() if all(t[k] == v for t in templates)}
+    columns = [k for k in templates[0] if k not in shared]
     return {"schema_version": VERSION, "diagnostic_visibility": visibility,
             "knowledge_mode": "present_day_research", "automatic_fit_limit": 0,
             "recipes": RECIPES, "selection_policy": selection_policy(),
-            "rule_templates": [rule_template(k) for k in ("overall", "high_volatility", "contribution", "simplification", "diagnose")],
+            "rule_templates": {"shared":shared,"columns":columns,
+                               "values":[[t[k] for k in columns] for t in templates]},
             "memory": "cold", "pair_diagnostic_limit": 1,
             "planning_projection": "diagnostic_planning_projection_v2",
             "diagnostic_reference": "baseline_ridge",
             "predeclared_pair": ["baseline_ridge", "baseline_rf"],
             "decision_support":support, "decision_contract":"research_decision_v1",
-            "legacy_design_policy":"explicit_v1_reference_not_judgment_evidence"}
+            "legacy_design_policy":"old_policy_or_R_D_Random_reference_only",
+            "require_j_decision": support == "J",
+            "decision_link_projection":"frozen_decision_links_v1",
+            "shared_field_encoding":"diagnostic_shared_fields_v3",
+            "design_text_budget": 1000,
+            "formation_policy":"frozen_context_timing_v2"}
 
 
 def rule_template(question):
@@ -140,13 +149,16 @@ def classify_observation(rule, child, control, *, history=(), cached=False,
     known = bool(exact or (reverse and rule["question"] in {"overall", "contribution"}))
     cl = float(np.mean([abs(r["y_pred"]-r["y_true"]) for r in left]))
     pl = float(np.mean([abs(r["y_pred"]-r["y_true"]) for r in right]))
-    return {"schema_version":"research_information_v1", "base_comparison_id":base,
+    proof = (formation or {}).get("timing_proof")
+    timing = ("predeclared" if proof in {"frozen_batch_plan_before_execution", "frozen_automatic_rule_before_results"}
+              else "posthoc_exploratory" if proof == "both_predictions_already_visible_before_new_question"
+              else "timing_unverified")
+    return {"schema_version":"research_information_v2", "base_comparison_id":base,
         "observation_identity":observed, "child_prediction_id":child_id, "control_prediction_id":control_id,
         "prediction_provenance":"cache_reuse" if cached else "new_execution",
         "analysis_novelty":"known_or_reverse_comparison" if known else
             "first_valid_derived_analysis" if cached else "first_valid_analysis",
-        "evidence_tier":evidence_tier, "formation_status":"posthoc_exploratory" if cached else
-            "predeclared" if formation else "timing_unverified",
+        "evidence_tier":evidence_tier, "formation_status":timing,
         "formation":deepcopy(formation or {"timing_proof":"unavailable"}),
         "reference_observation_ids":[r["observation_identity"] for r in exact or reverse],
         "child_mae":cl, "control_mae":pl,
@@ -159,7 +171,7 @@ def comparison_projection(observations):
     out, seen = [], set()
     for observation in observations:
         row = observation.get("information", observation)
-        if row.get("schema_version") != "research_information_v1":
+        if row.get("schema_version") not in {"research_information_v1", "research_information_v2"}:
             continue  # Legacy facts remain legacy, not fabricated migrations.
         key = row["observation_identity"]
         if key not in seen:
@@ -430,10 +442,24 @@ def bind_design(design, hypothesis, candidate, results, prompt):
     required = {"recipe_id", "question", "basis", "competing_explanation", "falsification_condition"}
     if not isinstance(design, dict) or not required <= set(design) or set(design)-required-{"symptom_refs", "decision_version", "decision"}:
         raise ValueError("training requires bounded research_design")
+    policy = prompt.get("diagnostic_research_policy", {})
+    if candidate is not None and policy.get("require_j_decision") and not {"decision", "decision_version"} <= set(design):
+        raise ValueError("current J training requires four-part research decision")
     if "decision" in design or "decision_version" in design:
         if design.get("decision_version") != "research_decision_v1":
             raise ValueError("unknown research decision version")
         validate_decision(design.get("decision"), prompt["evidence_projection"])
+    if policy.get("design_text_budget"):
+        def text_size(value):
+            if isinstance(value, str):
+                return len(value)
+            if isinstance(value, dict):
+                return sum(text_size(v) for v in value.values())
+            if isinstance(value, list):
+                return sum(text_size(v) for v in value)
+            return 0
+        if text_size(design) > policy["design_text_budget"]:
+            raise ValueError("research design exceeds frozen aggregate text budget")
     recipe = design["recipe_id"]
     expected = {"improve": {"RCP-01"}, "ablate": {"RCP-02"}, "simplify": {"RCP-03"}, "diagnose": {"RCP-04", "RCP-05"}}[hypothesis.action_type]
     if recipe not in expected or design["question"] not in ({"overall", "high_volatility"} if recipe == "RCP-01" else {RECIPES[recipe]}):
@@ -479,6 +505,7 @@ def _reference_advice(prompt):
         if "columns_ref" in row:
             columns = prompt["diagnostic_common_sources"][row["columns_ref"]]
             row = {"candidate_id":row["candidate_id"], "diagnostic_hash":row["diagnostic_hash"],
+                   **prompt["diagnostic_common_sources"].get(row.get("constants_ref"), {}),
                    **dict(zip(columns, row["values"], strict=True))}
         diagnostics[row["candidate_id"]] = row
     if previous and prompt["feature_policy"]["arm"] != "one_shot":
@@ -498,6 +525,8 @@ def _reference_advice(prompt):
             if isinstance(stats, dict) and "fold_values" in stats:
                 stats = [dict(zip(stats["fold_columns"], row, strict=True)) for row in stats["fold_values"]]
         stats = stats if isinstance(stats, list) else []
+        stats = [{**fold, **({"columns":prompt["diagnostic_common_sources"][fold["columns_ref"]]}
+                            if "columns_ref" in fold else {})} for fold in stats]
         constant_names = [f["name"] for f in features if stats and all(
             fold.get("generated_variance", {}).get(f["name"],
                 dict(zip(fold.get("columns", []), fold.get("variance", []))).get(f["name"])) == 0 for fold in stats)]
@@ -605,8 +634,11 @@ def diagnostic_advice(prompt):
     policy = prompt.get("diagnostic_research_policy", {})
     support = policy.get("decision_support", "R")  # Legacy pure prompts stay original.
     prior = prompt["prior_research_results"]
-    answer = None
-    if support == "J" and prior and prompt["feature_policy"]["arm"] != "one_shot":
+    reference = _reference_advice(prompt)
+    # Named all-fold constant evidence is a bounded simplification opportunity,
+    # not a reason to mechanically add a second feature.
+    answer = reference if reference["hypotheses"][0].get("action_type") in {"simplify", "stop"} else None
+    if answer is None and support == "J" and prior and prompt["feature_policy"]["arm"] != "one_shot":
         parent = min(prior, key=lambda r:(r["metrics"]["mae"], r["candidate_id"]))
         features = parent["feature_program"]["features"]
         # A local failed expression is not globally disproven. An already
@@ -630,7 +662,7 @@ def diagnostic_advice(prompt):
                     "research_design":default_design("RCP-01", basis="visible_evidence")}]}
                 break
     if answer is None:
-        answer = _reference_advice(prompt)
+        answer = reference
     if support in {"D", "J"} and prior:
         for row in answer["hypotheses"]:
             if row.get("action_type") not in {"ablate", "simplify"}:

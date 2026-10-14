@@ -1,5 +1,18 @@
 {
   "schema_version": "v22r_acceptance_v1",
+  "v24_pilot_preparation_20261014": {
+    "base_sha": "8f8e45069478af637bcfcc76098ea4ba0427414a",
+    "plan_sha256": "78db8ddd3772a756fdd69564d86cf0e43bc5089ab94e716b2fb509b5371d5191",
+    "status": "final_validation_pending_NO_GO",
+    "contract_and_N01_N22": "docs/V2_4_DIAGNOSTIC_RESEARCH.md#2026-10-14",
+    "tests": ["tests/test_focused_v24_pilot_admission.py", "tests/test_focused_v24_delivery.py", "tests/test_focused_v24_recovery.py", "tests/browser/test_agent_workspace.py"],
+    "real_input_sha256": "0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b",
+    "permission_basis": "owner_confirmed_local_development_use_not_redistribution_license",
+    "allowed_advisor_mode": "deterministic",
+    "G6_actual_host_rehearsal": "NOT_RUN",
+    "historical_records_preserved": true,
+    "external_gates": {"paid_live":"NOT_RUN_not_authorized", "actual_user":"NOT_RUN", "financial":"NOT_RUN", "remote_ci":"NOT_RUN_not_authorized", "push":"NOT_RUN_not_authorized"}
+  },
   "v24_s0_s4_20261013": {
     "base_sha": "df98b92ed30b052ea6e71965401eeb8571307608",
     "tested_sha": "de00ec3b55d3fb6ea64bd3fde15b7d732526b0a5",

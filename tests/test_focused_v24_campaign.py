@@ -4,8 +4,9 @@ from copy import deepcopy
 
 import pytest
 from test_focused_feature_campaign import controller, proposals
+from test_focused_v24_judgment import j_design as default_design
 
-from finance_forecast_agent.focused_diagnostics import default_design, diagnostic_advice
+from finance_forecast_agent.focused_diagnostics import diagnostic_advice
 
 
 def test_initial_and_updated_diagnostics_frozen_rules_recommendation_and_resume(tmp_path):
@@ -150,6 +151,9 @@ def test_v24_projection_ids_and_hash_include_visible_diagnostics(tmp_path, monke
         yield SimpleNamespace(execute=lambda *_:SimpleNamespace(fetchall=list))
     c._runtime = SimpleNamespace(get=lambda _:None, db=SimpleNamespace(transaction=transaction), ns='simulation')
     prompt = {'evidence_projection':[], 'available_evidence_ids':[], 'rules':[],
+        'round_index':1, 'research_start_candidate_id':'A', 'max_hypotheses':2,
+        'feature_policy':{'arm':'adaptive_batch'}, 'fixed_model':{'feature_program':{'features':[]}},
+        'response_schema':{'hypotheses':[{}]},
         'evidence_projection_hash':identity([], domain='evidence-projection-v1')}
     result = SimpleNamespace(candidate=SimpleNamespace(candidate_id='A'))
     projected = c._prepare_diagnostic_prompt(prompt, {'A':result}, None)

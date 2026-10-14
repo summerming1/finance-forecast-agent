@@ -1,5 +1,13 @@
 # 当前版本功能与技术实现说明
 
+## 2026-10-14 P1—P5试用前修正：最终验证进行中，NO-GO
+
+原J门禁和缓存时点三个独立负例已复现并修复；新v4合同强制J四项训练判断、Random显式R参考、缓存与形成时点分离、第二轮关联原判断及获准反馈。OFF不读新增观察；不修改历史fixture/计划/记录。为遵守64k，新合同事先限制每份design全部字符串值合计1000字符；公共规则/诊断常量/身份字段无损共享，原数值及完整审计保留。四种有限策略挑战、最大文本/长备注/独特起点ON/OFF与恢复共18项通过（`.v24p14/capacity-fifth.xml`，exit0/170.41s），不是Live语义证明。
+
+用户已确认原0bb089…输入的本轮本机开发/受控试用使用权限。阶段真实数据两入口 `.pr14a/receipt.json`：goal24研究fits+1refit、provided_start28+1；均HTTP0、完成、包复算及fresh-process无标签推理4004行一致、只读计数不变。这是修改过程中的助手技术验证，最终冻结源码验证另列；不是主持人或量化用户签字，也不替代5fb282。
+
+最终全仓、worker/Chromium及收据尚未完成；**不能开始邀请真人试用**。`allowed_advisor_mode=deterministic`。G6主持人本人预演未完成；付费Live L0—L3、独立金融效果、远端CI/推送、GPU/macOS/大型native NOT_RUN。原Windows symlink、DLinear fixture、冻结SPY、A/L和47目标负确认不关闭。唯一合同/日志为V2_4_DIAGNOSTIC_RESEARCH的2026-10-14增量，操作和本人记录表见FRONTEND_USER_GUIDE。
+
 ## 2026-10-13 S0—S4限定工程完成；整体仍PARTIAL
 
 实际基线df98b92；统一方案与ZIP对应MD字节一致。已复现并修正失败收据分类、预测包精确覆盖；在原不可变观察上实现预测来源/有限分析分类/证据层级及首次事件重建。事前四项判断、R/D/J显式合同、保守推荐和原页面同源显示已接入。最后补修One-shot事前说明错误，不增加规划或改历史fixture。唯一合同、36条映射与全部中间失败见V2_4_DIAGNOSTIC_RESEARCH.md。

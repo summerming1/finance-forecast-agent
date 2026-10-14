@@ -9,14 +9,15 @@ from finance_forecast_agent.focused_data import FocusedTaskSpec, build_spy_featu
 from finance_forecast_agent.focused_research import FocusedResearchController, ResearchBudget
 
 
-def controller(tmp_path, *, arm="adaptive_batch", resume=False, budget=None, **extra):
+def controller(tmp_path, *, arm="adaptive_batch", resume=False, budget=None, decision_support=None, **extra):
     raw_path = tmp_path / "simulation.json"
     if not raw_path.exists():
         _write_chart(raw_path, 1100)
     task = FocusedTaskSpec(exposure="simulation_only")
     frame, snapshot, raw = build_spy_feature_research_frame(raw_path, task=task)
     return FocusedResearchController(project_dir=tmp_path / "project", task=task, frame=frame, dataset=snapshot,
-        raw_history=raw, change_scope="price_features", feature_strategy={"arm": arm, "search_seed": 19},
+        raw_history=raw, change_scope="price_features", feature_strategy={"arm": arm, "search_seed": 19,
+            **({"decision_support":decision_support} if decision_support is not None else {})},
         budget=budget or ResearchBudget(max_rounds=1 if arm == "one_shot" else 2,
             max_new_candidates_per_round=2, max_fit_calls=32),
         campaign_id="feature-campaign", resume_existing=resume, use_memory_prior=False, **extra)

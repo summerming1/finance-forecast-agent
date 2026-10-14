@@ -306,3 +306,7 @@ The frozen-SPY auditor reads existing predictions and delegates refit/load/packa
 ## V2.4 diagnostic extension (ADR006)
 
 Pure focused_diagnostics functions derive diagnostics only from accepted PredictionArtifact, contract-bound raw history and actual training masks. The original Controller owns invocation, frozen context/design/observation/recommendation; RuntimeDB persists them with existing immutable artifact references. No second evaluator, queue or Memory. Automatic derivation does not fit; missing train predictions remain unavailable. OFF planning projection excludes new diagnostics/observations, and the initial pilot uses cold Memory to exclude indirect retrieval leakage. Memory itself is already implemented.
+
+## 2026-10-14 当前V2.4增量索引
+
+唯一详细合同和N01—N22映射见`V2_4_DIAGNOSTIC_RESEARCH.md`当日增量。新v4 J门禁与实际schema一致；R/D/Random保持参考合同。原Controller从冻结上下文/计划推导观察形成时点，不从缓存命中推导；原RuntimeDB仍是权威，不重分类旧事件。第二轮仅有界关联原判断与获准结果，OFF不读取新增观察；共享字段压缩不截断数值，原64k和2规划/4槽不变。真实两入口技术driver复用WorkspaceUI/Queue/evaluator/trust，隔离测试库不是新增状态系统。

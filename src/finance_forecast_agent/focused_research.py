@@ -1148,6 +1148,8 @@ class FocusedResearchController:
         if diagnostic_mode is not None and not self.feature_mode:
             raise ValueError("diagnostic research requires price_features mode")
         support = feature_strategy.get("decision_support", "J") if isinstance(feature_strategy, dict) else "J"
+        if isinstance(feature_strategy, dict) and feature_strategy.get("arm") == "random":
+            support = "R"  # Sampling has no fabricated structured judgment.
         self.diagnostic_policy = research_policy(diagnostic_mode, support=support) if diagnostic_mode is not None else None
         if self.diagnostic_policy and (use_memory_prior or reviewed_evidence):
             raise ValueError("V24 pilot requires cold Memory and registered literature, not arbitrary evidence")
@@ -1383,7 +1385,7 @@ class FocusedResearchController:
     def _prepare_diagnostic_prompt(self, prompt, result_lookup, splits):
         from .focused_adaptive import EvidenceIndex
         from .focused_diagnostics import comparison_projection, diagnostic_projection, verify_diagnostic
-        prompt["proposal_contract_version"] = "diagnostic_price_advice_v3"
+        prompt["proposal_contract_version"] = "diagnostic_price_advice_v4"
         prompt["diagnostic_research_policy"] = self.diagnostic_policy
         # OFF projection is built from old feedback, never by redacting a new summary.
         visible = self.diagnostic_policy["diagnostic_visibility"] == "on"
@@ -1392,9 +1394,10 @@ class FocusedResearchController:
         prompt["known_comparisons"] = []
         prompt["research_decision_contract"] = {"schema_version":"research_decision_v1",
             "support":self.diagnostic_policy["decision_support"],
-            "legacy_v1":"accepted reference design, not evidence of structured judgment",
+            "legacy_v1":"R/D/Random reference only; current J training requires all four parts",
             "parts":["visible_basis", "experiment_question", "priority_reason", "feedback_update"],
-            "limits":{"text_chars":2000,"evidence_refs":8},
+            "limits":{"text_chars":2000,"evidence_refs":8,
+                      "aggregate_design_text_chars":self.diagnostic_policy["design_text_budget"]},
             "feedback_update_parts":["supports","weakens","not_distinguished","next_step"]}
         pair = self._pair_diagnostic(result_lookup)
         prompt["pair_diagnostics"] = [{k:v for k,v in pair.items() if k != "compute_wall_seconds"}] if visible and pair else []
@@ -1477,7 +1480,11 @@ class FocusedResearchController:
                 stats = projected.get("training_features")
                 if isinstance(stats, list):
                     for fold in stats:
+                        if "columns" in fold:
+                            fold["columns_ref"] = intern(fold.pop("columns"))
                         scope = {key:fold.pop(key) for key in ("training_scope_hash", "training_rows_count", "columns_hash")}
+                        for field in ("training_scope_hash", "columns_hash"):
+                            scope[field+"_ref"] = intern(scope.pop(field))
                         ref = intern(scope)
                         common[ref] = scope
                         fold["scope_ref"] = ref
@@ -1490,11 +1497,14 @@ class FocusedResearchController:
             # Columnar encoding removes repeated field labels, never observations.
             encoded = []
             for projected in prompt["automatic_diagnostics"]:
+                constants = {key:projected.pop(key) for key in ("schema_version", "projection_version",
+                    "evidence_tier", "limitations_ref", "new_fit_calls", "provider_requests")}
+                constants_ref = intern(constants)
                 columns = sorted(k for k in projected if k not in {"candidate_id", "diagnostic_hash"})
                 ref = intern(columns)
                 common[ref] = columns
                 encoded.append({"candidate_id":projected["candidate_id"], "diagnostic_hash":projected["diagnostic_hash"],
-                                "columns_ref":ref, "values":[projected[k] for k in columns]})
+                                "constants_ref":constants_ref, "columns_ref":ref, "values":[projected[k] for k in columns]})
             prompt["automatic_diagnostics"] = encoded
             prompt["diagnostic_common_sources"] = common
         index = EvidenceIndex(prompt["evidence_projection"])
@@ -1507,7 +1517,77 @@ class FocusedResearchController:
             'J structured designs additionally use decision_version="research_decision_v1" and decision={visible_basis:{kind:domain_hypothesis|visible_evidence,evidence_refs:[],description:string},experiment_question:string,priority_reason:string,feedback_update:{supports:string,weakens:string,not_distinguished:string,next_step:string}}. Freeze before execution; each text <=2000 chars, refs <=8 and visible. Legacy designs remain reference-only, not structured-judgment evidence.',
             "RCP-01 allows any legal existing AST; use overall or high_volatility. RCP-02 ablate uses contribution. RCP-03 simplify uses simplification. RCP-04/05 record demand only; no window/ensemble execution.",
             "Without visible diagnostic use an explicit domain_hypothesis and unknown applicability; diagnosis is not technical AST permission. Observation is not model recommendation."]
+        if self.diagnostic_policy["require_j_decision"]:
+            from .focused_diagnostics import diagnostic_advice
+            example_prompt = {**prompt, "prior_research_results":[], "automatic_diagnostics":[],
+                              "remaining_budget":{"remaining_fit_calls":8}}
+            example = diagnostic_advice(example_prompt)["hypotheses"][0]
+            prompt["response_schema"]["hypotheses"] = [example]
+        prompt["rules"].append("Current v4 J training MUST provide decision_version and all four decision parts. R/D/Random use reference designs. stop/request_review omit research_design; diagnose is demand-only. The sum of ALL string values in each design must be <=1000 characters, each text <=2000; reject, never truncate or repair.")
+        # Versioned wording consolidation, not truncation of result/evidence data.
+        # Literature-specific permission/citation clauses remain verbatim.
+        literature_rules = [r for r in prompt["rules"] if r.startswith(("Paper text", "Separate author",
+            "Citing a reviewed", "Every literature_uses", "For improve/ablate/simplify citing",
+            "Roles:", "No citation"))]
+        prompt["rules"] = [
+            'Return only {"hypotheses":[...]}; each action needs a nonempty statement. Use appropriate action_contracts, not every example field; no placeholder IDs/null model fields.',
+            'Only feature_program changes. Freeze estimator/effective params/seed/preprocessing/builtin groups. Send the full inherited program, <=2 features, within feature_capability; no code/labels/constants/paths/external inputs.',
+            'AST: input(op,name=return_1); lag(op,arg,periods); rolling_mean/rolling_std(op,arg,window); abs(op,arg); binary(op,left,right). Evidence/parent/control/feedback IDs must exactly match accepted visible IDs; batch-future items are not evidence.',
+            'ablate removes one generated_feature:<actual name>; simplify reduces feature_count|nodes|depth without increasing other complexity/lookback. stop/request_review stand alone with statement/optional refs, no model/program/design. diagnose has control and residual_summary|fold_summary, no model/program.',
+            'Validate whole plan before fits; invalid/duplicates consume slots, no repair/replacements. One-shot freezes <=4 slots once; Adaptive <=2 decisions x2 slots; execution units <=2. Use actual prior feedback, no within-plan replanning or third call. No metric/budget/evaluation edits.',
+            'Training needs research_design matching recipe/question/basis/competing explanation/falsification; symptom_refs are visible diagnostic IDs. J MUST include decision_version=research_decision_v1 and all research_decision_contract parts. R/D/Random are reference-only. All design strings total <=1000 chars, each <=2000, decision refs <=8; reject, never truncate.',
+            'RCP-01: overall|high_volatility, any legal AST; RCP-02: contribution; RCP-03: simplification; RCP-04/05: demand only, no window/ensemble execution. No custom thresholds/operators. OFF may propose domain_hypothesis, unknown applicability; symptoms are not AST permission.',
+            'diagnostic_common_limitations_v1: descriptive development only, no causal/significance/profitability/strict-reproduction claim. No automatic correction, ensemble selection, refit or downloads. Observation is not recommendation. Planning *_ref resolves recursively in diagnostic_common_sources; constants_ref merges shared fields; values/fold_values follow columns_ref/fold_columns. rule_templates merges shared with each columns/values row; no numerical entries discarded. Full artifacts stay in audit.',
+            *literature_rules]
+        self._project_prior_decisions(prompt)
         return prompt
+
+    def _project_prior_decisions(self, prompt):
+        """Lossless bounded links from original plans; OFF never reads observations."""
+        prompt["prior_decision_links"] = []
+        prompt["prior_decision_designs"] = {}
+        prompt["decision_link_projection"] = "frozen_decision_links_v1"
+        prompt["decision_link_fields"] = ["recipe_id", "question", "basis", "symptom_refs",
+            "competing_explanation", "falsification_condition", "decision_version", "decision"]
+        prompt["decision_link_contract"] = "Original proposal fields keyed by full bound design hash; parent/control in links; actual config/diff in prior results/feedback; complete bound rule/invariants stay in original batch plan. No regenerated narrative."
+        visible = self.diagnostic_policy["diagnostic_visibility"] == "on"
+        if self.diagnostic_policy["decision_support"] != "J":
+            return
+        for number in range(1, prompt["round_index"]):
+            stored = self._runtime.get(f"plan:{number}")
+            if not stored:
+                continue
+            self._runtime.verify_artifacts(stored["artifacts"])
+            for item in stored["plan"]["items"]:
+                h, candidate = item["hypothesis"], item["candidate"]
+                design = h.get("research_design")
+                if not design or not candidate:
+                    continue
+                key = design["design_hash"]
+                prompt["prior_decision_designs"][key] = {k:design[k] for k in prompt["decision_link_fields"] if k in design}
+                link = {"hypothesis_id":h["hypothesis_id"], "proposal_candidate_id":candidate["candidate_id"],
+                        "design_hash":key, "decision_index":number,
+                        "frozen_prompt_hash":stored["plan"]["prompt_hash"],
+                        "parent_candidate_id":design["parent_candidate_id"],
+                        "rule_hash":design["rule"]["rule_hash"],
+                        "control_candidate_id":design["control_candidate_id"]}
+                # Old visible feedback is available in both arms by exact ID.
+                link["feedback_ids"] = [f["feedback_id"] for f in prompt.get("structured_feedback", [])
+                                        if f.get("candidate_id") == candidate["candidate_id"]]
+                config_id = CandidateConfig.from_dict(candidate).config_identity
+                link["evaluated_candidate_id"] = next((r["candidate_id"]
+                    for r in [*prompt["baseline_results"], *prompt["prior_research_results"]]
+                    if r["config_identity"] == config_id), None)
+                if visible:
+                    observation = self._runtime.get("observation:"+candidate["candidate_id"])
+                    if observation:
+                        self._runtime.verify_artifacts(observation["artifacts"])
+                        body = observation["body"]
+                        link["actual_observation"] = {k:body[k] for k in (
+                            "evaluated_candidate_id", "observation_status", "overall_abs_improvement")}
+                        link["observation_ref"] = observation["artifacts"][0]["path"]
+                        link["observation_identity"] = body["information"]["observation_identity"]
+                prompt["prior_decision_links"].append(link)
 
     def _pair_diagnostic(self, result_lookup):
         from .focused_diagnostics import pair_diagnostic
@@ -1568,13 +1648,11 @@ class FocusedResearchController:
         history = self._comparison_history()
         body["information"] = classify_observation(rule, artifact(result), artifact(control),
             history=history, cached=proposal_id is not None, evidence_tier=self.task.exposure,
-            groups=control_diag["volatility_groups"], formation={"hypothesis_id":hypothesis.hypothesis_id,
-                "design_hash":hypothesis.research_design["design_hash"], "first_event_ref":"observation:" + object_id,
-                "timing_proof":"frozen_batch_plan_before_execution" if proposal_id is None else
-                    "both_predictions_already_visible_before_new_question"})
+            groups=control_diag["volatility_groups"], formation=self._observation_formation(hypothesis, result, control))
         body["diagnostic_hash"] = diagnostic["diagnostic_hash"]
         body["predeclared_observation_supported"] = (
             body["information"]["formation_status"] == "predeclared"
+            and body["information"]["analysis_novelty"] != "known_or_reverse_comparison"
             and body["observation_status"] == "meets_predeclared_observation")
         body["control_diagnostic_hash"] = control_diag["diagnostic_hash"]
         body["interpretation_review"] = bool(hypothesis.expected_observation) and body["observation_status"] != "meets_predeclared_observation"
@@ -1588,6 +1666,25 @@ class FocusedResearchController:
         body["proposal_candidate_id"] = object_id
         self._store_diagnostic_object("observation:" + object_id, "observations/" + object_id + ".json", body)
         return body
+
+    def _observation_formation(self, hypothesis, result, control):
+        """Use the pre-execution plan/context, not whether execution hit a cache."""
+        for number in range(1, self.budget.max_rounds+1):
+            stored = self._runtime.get(f"plan:{number}")
+            if not stored or not any(i["hypothesis"] == hypothesis.to_dict() for i in stored["plan"]["items"]):
+                continue
+            self._runtime.verify_artifacts(stored["artifacts"])
+            context = self._runtime.get(f"prompt:{number}")
+            if context is None or _hash(context) != stored["plan"]["prompt_hash"]:
+                raise ValueError("observation timing frozen context mismatch")
+            visible_ids = {r["candidate_id"] for section in ("baseline_results", "prior_research_results")
+                           for r in context[section]}
+            both = {result.candidate.candidate_id, control.candidate.candidate_id} <= visible_ids
+            return {"timing_proof":"both_predictions_already_visible_before_new_question" if both else
+                    "frozen_batch_plan_before_execution", "both_predictions_visible_at_planning":both,
+                    "plan_hash":stored["plan"]["plan_hash"], "prompt_hash":stored["plan"]["prompt_hash"],
+                    "design_hash":hypothesis.research_design["design_hash"], "hypothesis_id":hypothesis.hypothesis_id}
+        return {"timing_proof":"unavailable"}
 
     def _comparison_history(self):
         """Read-only projection of this Campaign's original immutable observations."""
@@ -2142,7 +2239,7 @@ class FocusedResearchController:
                         prompt = self._prepare_feature_prompt(prompt, result_lookup)
                     if self.diagnostic_policy:
                         prompt = self._prepare_diagnostic_prompt(prompt, result_lookup, splits)
-                    if self.context_mode == "compact_v1":
+                    if self.context_mode == "compact_v1" or self.diagnostic_policy:
                         from .focused_literature import compact_research_context
                         prompt = compact_research_context(prompt)
                     frozen_prompt = runtime.get(f"prompt:{round_index}")

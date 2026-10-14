@@ -25,6 +25,7 @@ def test_pilot_failure_denominator_frozen_before_original_controller_dispatch(tm
         seen.append(kwargs)
         # Replace run only: construction still uses the actual original gates.
         c = original(**kwargs)
+        assert manifest['frozen_policies'][kwargs['campaign_id']] == c.diagnostic_policy
         c.run = lambda: (_ for _ in ()).throw(RuntimeError('simulation failure'))
         return c
     monkeypatch.setattr(m, 'FocusedResearchController', dispatch)

@@ -1,4 +1,4 @@
-"""Real Streamlit component + actual queue/worker; all inputs simulation_only."""
+"""Real component/worker: simulation by default; explicit owner-bound real input opt-in."""
 
 from __future__ import annotations
 
@@ -37,7 +37,17 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
     out.mkdir(parents=True, exist_ok=True)
     state, project, raw = tmp_path / "runtime.sqlite3", tmp_path / "project", tmp_path / "simulation_only.csv"
     _research_frame(tmp_path).to_csv(raw, index=False)
-    if price_features:
+    real_raw = os.getenv('FFA_ADMISSION_REAL_RAW')
+    provenance = 'historical_development_only' if real_raw else 'simulation_only'
+    if real_raw:
+        assert price_features == 'v24', 'real-data opt-in requires exact v24 browser node'
+        raw = Path(real_raw).resolve()
+        source = Path(os.environ['FFA_ADMISSION_SOURCE']).resolve()
+        metadata = json.loads(source.read_text(encoding='utf-8'))
+        assert metadata['owner_local_use_confirmed'] is True
+        assert metadata['provenance_type']==provenance
+        assert hashlib.sha256(raw.read_bytes()).hexdigest()==metadata['raw_sha256']==os.environ['FFA_ADMISSION_SHA256']
+    elif price_features:
         from test_focused_pr5_delivery import _write_chart
         raw = tmp_path / "simulation_only.json"
         _write_chart(raw, 1100)
@@ -52,7 +62,9 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
         volatility_5="at_or_before_decision", volatility_20="at_or_before_decision"
     )
     report = {
-        "input_provenance": "simulation_only",
+        "input_provenance": provenance,
+        "operator": "assistant_browser_technical_rehearsal_not_human",
+        "allowed_advisor_mode": "deterministic",
         "raw_sha256": hashlib.sha256(raw.read_bytes()).hexdigest(),
         "checks": [],
     }
@@ -200,7 +212,8 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             assert counts() == before
             click("confirm-create")
             pid, cid, first = wait_completed()
-            assert first["payload"]["scientific_claim"] == "simulation_only_no_financial_evidence"
+            assert first["payload"]["scientific_claim"] == (
+                "development_only_no_profitability_claim" if real_raw else "simulation_only_no_financial_evidence")
             assert first["payload"]["fit_calls"] == (24 if price_features == "v24" else 20)
             if price_features == "v24":
                 assert first["payload"]["diagnostic_research"]["recommendation"]["recommendation_hash"]
@@ -230,7 +243,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                     expected = next(i["candidate"] for b in original["rounds"] for i in b["items"] if i.get("candidate", {}).get("candidate_id") == candidate)
                     if price_features == "v24":
                         expect(frame.locator('[data-testid="observation-detail"]')).to_contain_text("确定性判定")
-                        expect(frame.locator('[data-testid="information-axes"]')).to_contain_text('simulation_only')
+                        expect(frame.locator('[data-testid="information-axes"]')).to_contain_text(provenance)
                         expect(frame.locator('[data-testid="research-decision"]')).to_contain_text('本轮优先理由')
                         detail = next(i for b in original['rounds'] for i in b['items'] if i.get('candidate',{}).get('candidate_id') == candidate)
                         expect(frame.locator('[data-testid="information-axes"]')).to_contain_text(detail['observation']['information']['analysis_novelty'])
@@ -285,6 +298,10 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 index = json.loads(archive.read("research_package.json"))
                 for item in index["files"]:
                     assert hashlib.sha256(archive.read(item["path"])).hexdigest() == item["sha256"]
+            if price_features == 'v24':
+                sys.path.insert(0,str(repo/'scripts'))
+                from run_v24_engineering_validation import audit_package
+                report['package_recomputation'] = audit_package(out/'research_package.zip')
             report["checks"] += ["single_candidate_selection", "no_fit_on_view", "real_bound_model_zip",
                                  "wrong_candidate_cannot_download", "real_research_package_hashes", "1280_layout"]
             url = page.url

@@ -331,3 +331,7 @@ The complete remaining A/L clause inventory is b_delivery.stages.B5.remaining_cl
 ## V2.4 approved engineering gates
 
 Use V2_4_DIAGNOSTIC_RESEARCH.md T01–T36 mapping and ADR006. D24-0–5 are engineering; D24-6 Provider/user/value outcomes require separate evidence. Add raw-source/training-scope arithmetic, different observation directions, complete-target identity, genuine diagnostic branches, frozen rules/context/selection, OFF/ON same-AST permissions and failure denominator tests. Retain legacy JSON/recovery/trust/budget/queue/browser regressions. No remote CI claim without running it. Efficiency and prediction gains are separate, and comparison against strong controls remains required for research-value claims.
+
+## 2026-10-14 P1—P5试用前增量
+
+新增条款N01—N22映射及最终命令/证据以`V2_4_DIAGNOSTIC_RESEARCH.md`当日增量为准。G0—G5技术事实与G6主持人本人预演分开；助手模拟HTTP、实际本地fit/worker/Chromium、真实开发行情、真实Provider和真人签字不能互相代替。只允许已有获确认0bb089输入用于开发测试，不替代原5fb282验收；主机许可、资产缺口、A/L及47负确认继续保留。无外部Provider授权时allowed_advisor_mode仅deterministic。

@@ -301,5 +301,6 @@ def compact_research_context(prompt: dict, *, max_chars: int = 64000) -> dict:
                     'feedback explanation/narrative (numeric facts retained)'],
         'all_result_statuses_retained': True}
     if len(json.dumps(body, ensure_ascii=False)) > max_chars:
-        raise ValueError('research context exceeds frozen character budget; no silent truncation')
+        sizes = {k:len(json.dumps(v,ensure_ascii=False)) for k,v in body.items()}
+        raise ValueError('research context exceeds frozen character budget; no silent truncation; field sizes='+str(sizes))
     return body

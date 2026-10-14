@@ -15,6 +15,13 @@ def prompt():
         'prior_research_results':[], 'remaining_budget':{'remaining_fit_calls':12}}
 
 
+def j_design(recipe, **kwargs):
+    """New assistant-authored v4 fixture, never rewriting an old stored record."""
+    decision = d.diagnostic_advice(prompt())['hypotheses'][0]['research_design']['decision']
+    return {**d.default_design(recipe, **kwargs), 'decision_version':'research_decision_v1',
+            'decision':decision}
+
+
 def test_new_judgment_does_not_delete_failed_feature_back_to_start():
     p = prompt()
     p['prior_research_results'] = [{'candidate_id':'actual-a', 'metrics':{'mae':.02}, 'feature_program':program()}]

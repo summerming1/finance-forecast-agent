@@ -1,5 +1,9 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+## Current trial-preparation approval (2026-10-14)
+
+User approved necessary P1–P5 engineering repairs and G0–G6 preparation in the existing V2.4 log. Reproduce the independent J-gate and cached-timing failures; freeze new contracts rather than rewriting old plans/fixtures. Current J training requires bounded four-part decisions; R/D/Random and legacy paths are explicitly distinct. Link original decisions to permitted feedback without OFF leakage or a third call. Test the actual two-entry workflow, package and same-host trusted inference. Only existing owner-authorized real development inputs may run; assistant technical rehearsal is not host/user signoff. No paid/external Provider, new confirmation labels, production changes, push/remote CI, optional packages or future-version execution. Report G0–G6 individually and a concrete GO/NO-GO; keep roadmap and historical evidence unchanged.
+
 ## Current bounded approval (2026-10-13)
 
 User approved S0–S4 of the unified plan (SHA256 `284d8efbdb4957bbe462f9d6d8f2dbc87e8200d91e0489f7325d4d6f7e7fda14`). Its implementation clauses and actual batch evidence live in the existing `docs/V2_4_DIAGNOSTIC_RESEARCH.md`, not parallel discussion documents. Preserve the original 36 behavior requirements, historical failures and the 47-target negative confirmation. Local scoped commits are allowed; this approval does not authorize push, paid/external Provider calls, optional RMSE/knowledge packages, confirmation labels, production migration or V2.5+ execution. Keep the formal roadmap unchanged unless §2 approval is separately obtained. Distinguish prediction provenance, finite analysis novelty and evidence tier; cached/posthoc analysis is not a new predeclared success. Final source/tests/dependencies/input identity must be frozen across the full regression.

@@ -3,6 +3,7 @@ from copy import deepcopy
 
 import pytest
 from test_focused_v24_diagnostics import artifact
+from test_focused_v24_judgment import j_design
 
 from finance_forecast_agent import focused_diagnostics as d
 
@@ -11,7 +12,9 @@ def observation(child, control, question='overall', history=(), cached=True):
     rule = d.freeze_rule(question, control['candidate_id'], control['candidate_fingerprint'],
         child['candidate_id'], child['candidate_fingerprint'])
     return d.classify_observation(rule, child, control, history=history, cached=cached,
-        evidence_tier='simulation_only', formation={'plan_ref':'simulation-plan', 'prior_visible_ids':[]})
+        evidence_tier='simulation_only', formation={'plan_ref':'simulation-plan',
+            'timing_proof':'both_predictions_already_visible_before_new_question' if cached else
+                'frozen_batch_plan_before_execution'})
 
 
 def pair():
@@ -93,12 +96,12 @@ def test_two_feature_ablation_is_actual_new_execution_not_blanket_duplicate(tmp_
             second['expression']['window'] = 20
             value['features'].append(second)
             row = {'statement':'simulation two features', 'feature_program':value,
-                   'research_design':d.default_design('RCP-01')}
+                   'research_design':j_design('RCP-01')}
         else:
             parent = prompt['prior_research_results'][0]['candidate_id']
             row = {'statement':'simulation unanswered contribution', 'action_type':'ablate',
                 'parent_candidate_id':parent, 'control_candidate_id':parent, 'evidence_refs':[parent],
-                'ablation_component':'generated_feature:gen_mean', 'research_design':d.default_design('RCP-02')}
+                'ablation_component':'generated_feature:gen_mean', 'research_design':j_design('RCP-02')}
         return {'hypotheses':[row]}, 'assistant_authored_fixture'
     c.advisor.propose = propose
     out = c.run()
