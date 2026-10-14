@@ -57,7 +57,7 @@ def run_manifest(root, repo, name, *, command=None, required=None, exit_code=Non
         if start.exists() or (root/name).exists() or not command or not required:
             raise ValueError('new run name, command and explicit coverage required')
         root.mkdir(parents=True, exist_ok=True)
-        atomic_json(start, {'schema_version':'v24_test_start_v2', 'head':git('rev-parse','HEAD'),
+        atomic_json(start, {'schema_version':'v24_test_start_v3', 'head':git('rev-parse','HEAD'),
             'tree':git('rev-parse','HEAD^{tree}'), 'working_tree':git('status','--short'),
             'source_files':source_files(repo), 'python':platform.python_version(), 'dependencies':dependency_versions(),
             'platform':platform.platform(), 'inputs':{str(Path(p).resolve()):file_sha256(p) for p in (inputs or [])},
@@ -66,7 +66,17 @@ def run_manifest(root, repo, name, *, command=None, required=None, exit_code=Non
     else:
         if not start.exists() or end.exists() or not (root/name).is_file():
             raise ValueError('missing start/report or existing end evidence')
-        atomic_json(end, {'start_sha256':file_sha256(start), 'junit_sha256':file_sha256(root/name),
+        before = json.loads(start.read_text(encoding='utf-8'))
+        end_inputs, input_errors = {}, {}
+        for p in before.get('inputs', {}):
+            try:
+                end_inputs[p] = file_sha256(p)
+            except OSError as exc:
+                end_inputs[p] = None
+                input_errors[p] = type(exc).__name__
+        atomic_json(end, {'schema_version':'v24_test_end_v3',
+            'inputs':end_inputs, 'input_errors':input_errors,
+            'start_sha256':file_sha256(start), 'junit_sha256':file_sha256(root/name),
             'actual_exit_code':exit_code, 'source_files':source_files(repo), 'dependencies':dependency_versions(),
             'python':platform.python_version(), 'platform':platform.platform(),
             'finished_at':datetime.now(timezone.utc).isoformat()})
@@ -86,10 +96,26 @@ def bound_status(root, repo, row):
             before['dependencies'] != after['dependencies'] or after['dependencies'] != dependency_versions()):
         row['binding_status'] = 'FAIL_identity_changed'
         return 'FAIL'
-    if before['python'] != after['python'] or before['platform'] != after['platform'] or any(
-            not Path(p).is_file() or file_sha256(p) != digest for p, digest in before.get('inputs', {}).items()):
+    if before['python'] != after['python'] or before['platform'] != after['platform']:
         row['binding_status'] = 'FAIL_environment_or_input_changed'
         return 'FAIL'
+    input_snapshot_missing = 'inputs' not in before or 'inputs' not in after
+    start_inputs = before.get('inputs', {})
+    if (not isinstance(start_inputs, dict) or
+            (not input_snapshot_missing and (after['inputs'] != start_inputs or after.get('input_errors')))):
+        row['binding_status'] = 'FAIL_input_end_identity_changed'
+        return 'FAIL'
+    try:
+        current_inputs = {p:file_sha256(p) for p in start_inputs}
+    except OSError:
+        row['binding_status'] = 'FAIL_input_missing_or_unreadable'
+        return 'FAIL'
+    if current_inputs != start_inputs:
+        row['binding_status'] = 'FAIL_input_current_identity_changed'
+        return 'FAIL'
+    row['input_binding_status'] = ('PARTIAL_start_input_snapshot_not_recorded' if 'inputs' not in before else
+        'PARTIAL_end_input_snapshot_not_recorded_start_matches_current' if input_snapshot_missing else
+        'BOUND_start_end_current')
     cases = list(ET.parse(path).getroot().iter('testcase'))
     nodes = [c.get('classname','').replace('.','/')+'.py::'+c.get('name','')
              for c in cases if c.find('skipped') is None]
@@ -100,13 +126,13 @@ def bound_status(root, repo, row):
     if after['actual_exit_code'] != row['expected_exit']:
         row['binding_status'] = 'FAIL_actual_exit_mismatch'
         return 'FAIL'
-    row['binding_status'] = 'BOUND'
+    row['binding_status'] = ('PARTIAL_input_snapshot_not_recorded' if input_snapshot_missing else 'BOUND')
     if row['failures'] or row['errors']:
         details = row['failures_detail']
         return 'PARTIAL' if details and all(f['classification'] in {'BLOCKED_ENV', 'BLOCKED_ASSET'} for f in details) else 'FAIL'
     if not row['passed']:
         return 'NOT_RUN'
-    return 'PARTIAL' if row['skipped'] else 'PASS'
+    return 'PARTIAL' if row['skipped'] or input_snapshot_missing else 'PASS'
 
 
 def main():
