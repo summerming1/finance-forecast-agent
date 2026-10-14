@@ -395,7 +395,7 @@ $env:FFA_UI_BROWSER_ARTIFACTS="D:/b05runs/v24-browser-my-run"
 每次用新的报告/临时目录保留证据。启动/真实操作见FRONTEND_USER_GUIDE；完整工程演示见上一节。本轮完成后停止，不自行进入后续开发或外部活动。
 
 最终文档检查首次误用不存在的test_focused_roadmap_contract.py，执行exit1/0 tests；final-docs.xml空报告保留为NOT_RUN，不算通过。改用实际原test_focused_b0_plan.py和test_focused_r0_status.py重跑，exit0/4通过/2.24s，见final-docs2.xml；这是执行命令路径错误，不是被删除或改名的测试。
-## 2026-10-14 试用前 P1—P5 / G0—G6 增量（实施与验证中）
+## 2026-10-14 试用前 P1—P5 / G0—G6 增量（限定工程完成，G6待本人）
 
 本轮用户直接批准必要工程修正及试用准备。附件与ZIP同名方案字节一致，SHA256 `78db8ddd3772a756fdd69564d86cf0e43bc5089ab94e716b2fb509b5371d5191`；讨论材料是来源，不是第二合同。实际起点 `8f8e45069478af637bcfcc76098ea4ba0427414a`，branch `feat/mission-research-v2`；tracked clean，所有旧验证目录保留。正式路线不变，原36项、A/L和47目标负确认不改。
 
@@ -405,9 +405,9 @@ $env:FFA_UI_BROWSER_ARTIFACTS="D:/b05runs/v24-browser-my-run"
 
 阶段负例与失败均留在 `.v24p14/`。最大设计文本+4000备注+独特起点的第二轮容量负例已复现64k阻断（`.v24p14/admission-first.xml`与`capacity-detail.xml`），不得截断、提高64000上限或增加生成调用求通过。最终源码/测试/依赖/输入冻结后另跑全仓，阶段结果不冒充最终通过。
 
-真实输入：既有 `inputs/spy_chart_2010_2025.json`，SHA256 `0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b`。用户在2026-10-14针对该精确文件的本机开发与受控试用权限确认回复“能”；来源依据保留原Yahoo获取/开发日志。`.v24p14/real-source.json`是本次所有者确认元数据，不是独立法律审核/再分发授权；不下载新数据、不替换5fb282、不读取确认标签。两入口实际计算/可信交付尚待收据。主机预演/目标用户理解只能本人完成，助手不得代签。
+真实输入：既有 `inputs/spy_chart_2010_2025.json`，SHA256 `0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b`。用户在2026-10-14针对该精确文件的本机开发与受控试用权限确认回复“能”；来源依据保留原Yahoo获取/开发日志。`.v24p14/real-source.json`是本次所有者确认元数据，不是独立法律审核/再分发授权；不下载新数据、不替换5fb282、不读取确认标签。两入口实际计算/可信交付的最终收据见本节末。主机预演/目标用户理解只能本人完成，助手不得代签。
 
-当前 **NO-GO（验证尚在进行，G6真人预演未完成）**；allowed_advisor_mode仅`deterministic`，不是Live通过。Live L0—L3、本轮远端CI/推送、GPU/macOS/大型native、金融效果均NOT_RUN。收口后以本节最终事实和收据更新，不提前宣布试用准入。
+当前 **NO-GO（G6主持人本人预演未完成）**；下方最终证据确认G0—G5限定技术准备，allowed_advisor_mode仅`deterministic`，不是Live通过。Live L0—L3、本轮远端CI/推送、GPU/macOS/大型native、金融效果均NOT_RUN。不把目标用户完成试用设为招募前循环门槛。
 
 ### 本轮协议与验收映射
 
@@ -429,4 +429,59 @@ N01—N22是行为映射，不是22次独立运行；测试集合之间会重叠
 | N21 | 最后源码冻结的全仓、actual worker/browser、Ruff/compileall/node/diff | 以实际exit、JUnit和开始/结束manifest为准；无远端CI |
 | N22 | FRONTEND_USER_GUIDE主持清单及G6本人记录 | NOT_RUN，助手不可代签；目标用户NO-GO |
 
-阶段真实浏览器`.v24p14/browser-real-stage.xml`实际exit0、1 passed/174.14s；Chromium153.0.8010.12、19检查、父子48研究fits/18 attempts、refit1另计、HTTP0、页面错误为空，包9预测/46成员复算。这是助手技术验证，非主持人预演。阶段两入口driver `.pr14a/receipt.json` exit0，24/28研究fits，另各1refit；各4004无标签输出与fresh Python完全相等。最后冻结源码仍须重新绑定最终证据。
+阶段真实浏览器`.v24p14/browser-real-stage.xml`实际exit0、1 passed/174.14s；Chromium153.0.8010.12、19检查、父子48研究fits/18 attempts、refit1另计、HTTP0、页面错误为空，包9预测/46成员复算。这是助手技术验证，非主持人预演。阶段两入口driver `.pr14a/receipt.json` exit0，24/28研究fits，另各1refit；各4004无标签输出与fresh Python完全相等。此为阶段记录，最终冻结源码绑定见下节。
+
+### 2026-10-14 最终收据与准入结论
+
+实际源码提交`1bdcacebb99788877b880e22fe402bc49cecdc86`、tree `bafe569db414e7b2d5c8477867405ea67c5a7e86`；起点8f8e450，既有用户/历史目录保留。本次没有改正式路线、原36条和48条A/L内容。最终文档提交与源码提交分开，最终HEAD/tree以本地git及`.v24p14/final/delivery_receipt.json`为准，不能称远端同SHA CI。227源码/测试文件、所记录核心依赖及两个输入哈希运行前后相同，实际exit写入end manifest；源码冻结期间没有修代码、安装依赖或换输入。
+
+目标环境Windows11 build26200、i5-12500、Python3.13.3、Chromium153.0.8010.12；numpy2.5.3/pandas3.0.6/sklearn1.9.1/Streamlit1.64.0/pytest9.1.1/ruff0.16.8/Playwright1.63.0/Optuna4.9.0。命令均在仓库根运行，`python`表示`.\.venv\Scripts\python.exe`。最终全仓PYTHONPATH=`src;tests`，真实driver/浏览器=`src`，OMP/MKL/OPENBLAS线程数显式1。测试集合有重叠，不能累计成一次通过数。
+
+| 实际命令（省略前述python完整路径） | actual exit / 结果 | 证据 |
+|---|---|---|
+| `python -m pytest -q --basetemp=.tp14full --junitxml=.v24p14/final/full-final2.xml --tb=short` | **1；867 passed、2 failed、6 skipped；stdout6460.78s，JUnit6460.745s** | 最后功能变更后的全仓；132项V24全通过并包含在867内；9 warnings，不是全绿 |
+| `python -m pytest -q tests/test_focused_v24_delivery.py tests/test_focused_v24_pilot_admission.py tests/test_focused_v24_pilot.py tests/test_workspace_ui_formula.py --basetemp=.tp14j --junitxml=.v24p14/last-targeted.xml --tb=short` | 0；35 passed、706.87s | 阶段定向，后由最终全仓覆盖 |
+| `python -m pytest -q 'C:/Users/13716/.codex/visualizations/2026/09/29/01a0eaf6-ca29-7db3-832d-e208ce48acca/review_s0_s4_20261014/test_independent_edges.py' tests/test_focused_b0_plan.py tests/test_focused_r0_status.py --basetemp=.tp14orig --junitxml=.v24p14/independent-green.xml --tb=short` | 0；7 passed、58.46s | 原3负例未修改，另4状态/文档测试 |
+| `python -m pytest -q 'tests/browser/test_agent_workspace.py::test_agent_workspace_real_backend[v24]' --basetemp=.tp14br2 --junitxml=.v24p14/final/browser.xml --tb=short` | 0；1 passed、281.54s | FFA_BROWSER_E2E=1；实际Chromium/worker，真实0bb089数据；start/end身份一致 |
+| `python -m pytest -q tests/browser/test_agent_workspace.py tests/browser/test_research_workspace.py -k 'not v24' --basetemp=.tp14br3 --junitxml=.v24p14/final/browser-legacy.xml --tb=short` | 0；3 passed、1 deselected、449.69s | FFA_BROWSER_E2E=1；模拟旧工作区/价格/原Research Workspace，实际Chromium/worker |
+| `python scripts/verify_v24_trial_admission.py --output-root .pr14b --raw inputs/spy_chart_2010_2025.json --source-metadata .v24p14/real-source.json --expected-sha256 0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b --allow-local-development-compute` | 0；两入口PASS，159.74/150.93s（并发回归期间，不作速度承诺） | 源码1bdcace、tracked_changes为空；`.pr14b/receipt.json`保存实际配置、库/项目/任务/包ID和模块hash |
+| 原focused CI Ruff集合+workspace UI/测试+三个V24脚本 | 0；All checks passed | 完整集合展开命令见下方 |
+| `python -m compileall -q src apps scripts tests` | 0 | 最终源码检查 |
+| `node --check apps/workspace_frontend/forms.js`；`node --check apps/workspace_frontend/views.js` | 各0 | 最终前端语法 |
+
+Ruff实际PowerShell集合：
+
+```powershell
+$files = @(Get-ChildItem src/finance_forecast_agent/focused*.py, tests/test_focused*.py, tests/browser/*.py, apps/workspace_ui*.py, tests/test_workspace_ui*.py | ForEach-Object FullName) + @('src/finance_forecast_agent/research_mission.py','src/finance_forecast_agent/task_queue.py','src/finance_forecast_agent/experiment_memory.py','src/finance_forecast_agent/replay_llm.py','src/finance_forecast_agent/llm_adapters.py','src/finance_forecast_agent/review_state.py','scripts/review_focused_literature.py','scripts/verify_frozen_spy_acceptance.py','scripts/run_focused_spy_campaign.py','scripts/run_research_value_benchmark.py','scripts/verify_price_feature_pilot.py','scripts/run_focused_confirmation.py','scripts/probe_focused_failure_semantics.py','scripts/run_v24_engineering_validation.py','scripts/verify_v24_trial_admission.py','scripts/collect_v24_receipt.py','apps/pages/8_Focused_Research.py')
+.\.venv\Scripts\python.exe -m ruff check $files
+```
+
+最终全仓SHA256 `791a8e5587f9ec69a8314f28e1ff71cbc39a42f804eeda88bcc516710d3cab83`。真实raw SHA为0bb089…；来源/权限声明SHA `8a50b99524ff0f3a12fdbc5f140ced835d38f71c1334fee0bd660d9735ef754b`。后者是所有者本机许可声明，不是独立法律/point-in-time审核或再分发授权。数据未下载/替换，4024原始行→3959监督行，2010-04-07至2025-12-30、historical_development_only；不是5fb282验收或独立确认。
+
+浏览器完整环境：真实运行使用`FFA_UI_BROWSER_ARTIFACTS=<repo>/.v24p14/final/browser-source-final2`，`FFA_ADMISSION_REAL_RAW=<repo>/inputs/spy_chart_2010_2025.json`、`FFA_ADMISSION_SOURCE=<repo>/.v24p14/real-source.json`、`FFA_ADMISSION_SHA256=0bb089…完整hash`；旧矩阵没有这三个REAL开关，artifact根为`<repo>/.v24p14/final/browser-legacy`。legacy start manifest的命令描述误写`-k not-v24`，实际工具执行的是上表`-k 'not v24'`；原收据未修改，更正单为`browser-legacy.command-correction.json`。真实浏览器旧自动化任务名仍含synthetic，这是自由任务标题而非数据来源：界面实际显示历史开发/3959行，输入hash/metadata明确真实；保留截图原貌，不把标题当数据身份。本次本人预演使用`.pr14b`的技术任务，不使用做过篡改负例的浏览器临时库。
+
+最终真实两入口均completed、冻结`select_research_candidate`：先测mean(return_1,20)与std(return_1,5)，再以已接受的单特征候选作control测组合，保留更好的单特征研究候选。这里是有限规则行为，不是模型理解或市场机制证明。goal24/提供起点28 charged fits、attempt9/10；各2逻辑决定/3实际槽/4预留槽/1未用结清槽，HTTP0；各显式refit1次另计，不影响原研究账本。研究包各9/10预测、46/49成员用原evaluator逐行复算/SHA核对。各4004行原始无标签输入，fresh Python退出0且逐值等于原进程；不是样本外表现。两入口只读切换/new service快照及预测后计数不变。真实浏览器另外验证父子48fits/18attempts、refit1、19检查、刷新/新context/切换/读包0新增HTTP或fit，页面错误=[]；包9预测/46成员复算。费用与人工主动用时为null；不同运行的计算没有相互冲销。
+
+| G gate | 结论与实际边界 |
+|---|---|
+| G0 | PASS：原红例→绿；J/schema、缓存时点、原判断关联、OFF及四挑战行为有实际测试 |
+| G1 | PASS（本次试用路径，历史例外明确）；全仓实际exit1/PARTIAL而非全绿，未知新产品失败0，源码/核心依赖/输入绑定及实际worker/browser通过 |
+| G2 | PASS：所有者确认的真实开发输入、两个入口预检0fit/HTTP、真实训练/冻结推荐/交付；操作者是助手技术验证，不是用户验收 |
+| G3 | PASS：原目标主机研究包复算、原可信登记+新进程无标签推理、只读0增量；不提供跨机信任或任意模型导入 |
+| G4 | PASS（准备）：FRONTEND_USER_GUIDE含短任务书A/B、真实配置/启动/ID、主持步骤、失败处理和空白记录表 |
+| G5 | PASS（仅规则工作流）：allowed_advisor_mode=deterministic，Live L0—L3 NOT_RUN/未批准；四段齐全不证明LLM会研究 |
+| G6 | NOT_RUN：所有者/主持人未提交本人真实操作预演记录；助手浏览器不能代签 |
+
+**目标用户试点NO-GO；允许进入主持人本人预演。** G6完成且无新阻塞后，仅放行1—3人的规则工作流试点；不要求先有目标用户验收才允许招募。Live理解/策略增量、真实用户价值、独立金融效果仍未验证，不从工程PASS推断。Windows实际执行，Linux/同SHA远端CI未授权，macOS/GPU/大型native、本次付费Provider/外发/确认标签/生产迁移/后续版本NOT_RUN。没有推送。
+
+### 历史例外与保留的失败
+
+全仓失败1：`tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]`，fixture创建symlink时报WinError1314，未进入joblib；BLOCKED_ENV。需合法Windows权限或另行授权的平台验证，不删断言/改全局权限。本次实际路径只使用自己生成、原登记的本机包；`.pr14b`159条目检查无symlink/junction，不能据此声称该攻击在Windows已验证。
+
+全仓失败2：`tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call`，FileNotFoundError缺`projects/finance_agent/llm_fixtures/method_card/2c05bfd22af27435.json`；BLOCKED_ASSET。DLinear不在本次Ridge试用路径，须恢复匹配原录制/原上下文，不能用其他fixture改名。无API调用。上述两文件的失败与基线相同，相关生产实现未被本次修改，不豁免新产品失败。
+
+6 skipped：4个opt-in浏览器在同源码独立4通过；`test_focused_pr4_persistence::test_queue_recovers_real_interrupted_worker`为POSIX进程组探针，Windows真实spawn/Queue恢复另测但不冒充POSIX；`test_focused_r6_workspace::test_package_rejects_symlink`因Windows权限跳过。原5fb282输入缺失、A/L开放项和47目标负确认均历史复用、不重写为PASS。
+
+所有迭代失败保留在`.v24p14/`：red 3失败/exit1；p12-first 64通过3失败/842.88s（并发改源码导致恢复合同不一致、测试helper错误强制非诊断J、容量问题，后续冻结及helper修复）；admission-first/second与capacity-detail/third/fourth的容量失败分别为15/1、15/1、0/1、31/1、18/1，均exit1；capacity-fifth 18通过/170.40s/exit0。delivery-recovery 22通过2失败/459.30s是沙箱localhost不可达（实际HTTP0），普通权限重测local-http-normal 2通过1失败/258.98s的剩余失败是测试错误索引stop.result，保留且修正为核对全部状态与实际训练结果；最终35定向和全仓覆盖通过。未删断言、历史fixture或失败记录。初始spy真实演练`.pr14a`和阶段浏览器亦保留，不冒充最终source-bound证据。
+
+最终文档更新后，`python -m pytest -q tests/test_focused_b0_plan.py tests/test_focused_r0_status.py --basetemp=.tp14docs --junitxml=.v24p14/final/docs.xml --tb=short`实际exit0、4通过/7.44s；`git diff --check`退出0。此为文档检查，不替代/重写冻结全仓。总收据的通用collector历史scope描述仅作原字段保留，实际数据性质以新增scope注释、browser.input_provenance、`.pr14b/receipt.json`和`pilot_admission_receipt.json`逐运行记录为准；模拟回归与真实行情技术演练不能混淆。

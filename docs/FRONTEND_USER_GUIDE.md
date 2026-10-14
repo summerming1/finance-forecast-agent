@@ -4,6 +4,33 @@
 
 本轮仅允许规则 `deterministic`；没有新的Live授权。已有模型入口接收受支持的**模型配置**，不导入权重、Notebook或任意脚本。所有结果为开发证据。不要把助手技术预演记为真人记录。
 
+最终技术收据已取得（1bdcace源码）：G0—G5限定路径通过，G6主持人本人预演尚未提供。**可以开始主持人预演，但还不能宣布邀请目标用户GO。** 原两项权限/native资产失败不影响已实际验证的本机Ridge路径，未被改写成PASS。G6通过且没有新阻塞后，可邀请1—3名真实量化研究用户做规则工作流试点；不要求先有目标用户验收才允许招募。
+
+本机已验证的状态库为`.pr14b/runtime.sqlite3`，不是生产库；不要复制SQLite到另一机器来冒充信任迁移。以下启动不会占用之前的8507端口，也不修改全局环境（若8514已使用，另选空闲端口）：
+
+```powershell
+Set-Location 'D:/AI Agent/finance_forecast_agent_v1'
+$env:PYTHONPATH='src'
+$env:OMP_NUM_THREADS='1'
+$env:MKL_NUM_THREADS='1'
+$env:OPENBLAS_NUM_THREADS='1'
+$env:FFA_WORKSPACE_STATE_DB='D:/AI Agent/finance_forecast_agent_v1/.pr14b/runtime.sqlite3'
+$env:FFA_WORKSPACE_PROJECT_DIR='D:/AI Agent/finance_forecast_agent_v1/.pr14b/goal'
+$env:FFA_WORKSPACE_TENANT='default'
+.\.venv\Scripts\python.exe -m streamlit run apps/streamlit_app.py --server.address 127.0.0.1 --server.port 8514 --browser.gatherUsageStats false
+```
+
+从全部研究选择已完成任务；goal项目`project-899bf0c7ec7913f13e37`、Campaign `persistent-5677915a1a56aa0b7547dac8`；已有配置项目`project-9309608c8e8d290a622b`、Campaign `persistent-ce9fd0eb0b1346a07bcc573c`。对应配置/预检、研究包、模型包路径在`.pr14b/receipt.json`与`goal-configuration.json`、`provided_start-configuration.json`。这两个任务可用于只读熟悉界面，但**不能把助手已完成的任务当成本人预演**；主持人还需明确创建并提交一个自己的新任务，记录新的ID和实际操作。不要重置现有库或重复点击提交同一任务。
+
+短任务书（不提示必须选哪个实验或必须改善）：
+
+- A：我没有现成模型，想在这份已获准的真实SPY开发数据上检验价格收益表达是否有用，按固定MAE完成一次预算内课题。
+- B：我已有受支持Ridge配置（本轮验证alpha=2、base_lags），想在模型、标签、切分和参数不变的条件下检验价格特征改动；不是上传模型权重或Python。
+
+两入口的验证配置均为SPY/daily/next-session return、price_features、diagnostic_mode=on、Adaptive Batch、deterministic、seed42、2轮×每轮2槽、32研究fits上限。A起点Ridge alpha1，B是独特alpha2；实际研究消耗24/28 fits、9/10 attempts、各2逻辑规划、3实际槽/4预留槽；各显式refit1次另计，HTTP0、费用未知null。两个真实任务的研究包合计19份预测/95成员复算通过；各4004行原始无标签价格输入的新进程输出一致。这是交付可用性验证，不是把删除标签后的历史数据称为样本外表现。
+
+失败处理：预检失败时不提交；等待/暂停时先看原Queue状态，保留失败任务、ID和错误，不清库或自动重提；合同/source不匹配要用原版本或明确新任务，不改hash；包或可信加载校验失败立即停止该交付，不绕过登记；只读操作若增加HTTP/fit，将其记录为新阻塞，不邀请用户。Live仍需另批模型、发送范围和费用/HTTP/token/timeout上限。主持人不替目标用户做核心操作，不预告哪条特征应获胜，帮助与代操作需记录。
+
 现有获所有者确认的输入为 `inputs/spy_chart_2010_2025.json`，SHA256 `0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b`，配套本轮来源/权限声明 `.v24p14/real-source.json`。原始4024行，价格DSL监督3959行（2010-04-07至2025-12-30）；不是原5fb282验收输入。所有者确认不等于独立许可审核/再分发许可，也不证明point-in-time。
 
 技术验证脚本（仅针对已授权本地开发计算，每次必须新的输出目录；两入口各最多32研究fits，显式refit各1次；无外部Provider）：
