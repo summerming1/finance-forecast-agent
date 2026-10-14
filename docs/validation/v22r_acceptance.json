@@ -1,5 +1,21 @@
 {
   "schema_version": "v22r_acceptance_v1",
+  "v24_receipt_input_review_20261014": {
+    "base_sha": "2fcdd23d4bad27d646f83143dfe1f80ac26a9a6f",
+    "fix_sha": "08ca0555a9c1167bce552b94be10ebd411285d33",
+    "status": "receipt_fix_verified_overall_regression_PARTIAL_target_user_NO_GO_pending_G6",
+    "final_regression": {"passed":879,"failed":2,"skipped":6,"exit_code":1,"stdout_seconds":6430.09,"junit_seconds":6430.074,"v24_passed_included":144,"junit":".p14fix/final/full-final2.xml","sha256":"8545f0ea8e8af7677ddbdf8e150c82a688467f20f5f710218641a298b6d7d433","binding":"BOUND","input_binding":"BOUND_start_end_current"},
+    "browser": {"final_passed":4,"real_passed":1,"simulation_passed":3,"exit_codes":[0,0],"junit":[".p14fix/final/browser-v24.xml",".p14fix/final/browser-legacy.xml"],"initial_configuration_failures_retained":".p14fix/final/browser.xml"},
+    "real_two_entry_receipt": ".pr14fix/receipt.json",
+    "final_review_receipt": ".p14fix/final/review_receipt.json",
+    "evidence_root": ".p14fix",
+    "tests": ["tests/test_focused_v24_receipt_inputs.py"],
+    "historical_input_binding_correction": "Old end manifests did not record input snapshots; start/current equality is not complete start/end/current BOUND. Original receipts are retained, never retrofilled.",
+    "snapshot_limit": "Three sampled identities are not continuous filesystem monitoring.",
+    "G6": "NOT_RUN_host_must_operate",
+    "allowed_advisor_mode": "deterministic",
+    "remote_push_and_ci": "NOT_RUN_not_authorized"
+  },
   "v24_pilot_preparation_20261014": {
     "base_sha": "8f8e45069478af637bcfcc76098ea4ba0427414a",
     "plan_sha256": "78db8ddd3772a756fdd69564d86cf0e43bc5089ab94e716b2fb509b5371d5191",

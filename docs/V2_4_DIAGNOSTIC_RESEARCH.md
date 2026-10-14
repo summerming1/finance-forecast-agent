@@ -1,6 +1,6 @@
 # V2.4 确定性诊断研究：唯一实施合同与批次日志
 
-当前最新批准与实施为末节“2026-10-14 试用前P1—P5/G0—G6增量”；最终验证进行中，G6未完成，不能宣称真人准入。下方旧批准/收据保留历史身份。
+当前最新批准与实施为末节“2026-10-14 试用前P1—P5/G0—G6增量”。限定工程及结束输入快照修复已完成；新冻结全仓879通过/2历史失败/6跳过，整体PARTIAL，输入开始/结束/当前绑定BOUND。G6本人预演未完成，目标用户准入仍NO-GO。下方旧批准/收据保留历史身份，最新收口见末节勘误与最终验证。
 
 日期2026-10-09；用户已批准D24-0—D24-5工程及D24-6准备。基线95760e264eddb4388a44df6d35442b6ce8d90928，tree 8d081ef18dd7fde0b3e45f3a593e929e3adb530d。实际结果以本文件日志及收据为准，不把计划写成通过。
 
@@ -433,7 +433,7 @@ N01—N22是行为映射，不是22次独立运行；测试集合之间会重叠
 
 ### 2026-10-14 最终收据与准入结论
 
-实际源码提交`1bdcacebb99788877b880e22fe402bc49cecdc86`、tree `bafe569db414e7b2d5c8477867405ea67c5a7e86`；起点8f8e450，既有用户/历史目录保留。本次没有改正式路线、原36条和48条A/L内容。最终文档提交与源码提交分开，最终HEAD/tree以本地git及`.v24p14/final/delivery_receipt.json`为准，不能称远端同SHA CI。227源码/测试文件、所记录核心依赖及两个输入哈希运行前后相同，实际exit写入end manifest；源码冻结期间没有修代码、安装依赖或换输入。
+实际源码提交`1bdcacebb99788877b880e22fe402bc49cecdc86`、tree `bafe569db414e7b2d5c8477867405ea67c5a7e86`；起点8f8e450，既有用户/历史目录保留。本次没有改正式路线、原36条和48条A/L内容。最终文档提交与源码提交分开，最终HEAD/tree以本地git及`.v24p14/final/delivery_receipt.json`为准，不能称远端同SHA CI。227源码/测试文件、所记录核心依赖运行前后相同，实际exit写入end manifest。勘误：两个输入仅有开始快照与汇总时核对，结束输入快照未记录，不能据此证明运行结束时哈希相同；旧收据不补写快照。未发现真实输入被替换的证据，但证据缺口不能作完整输入BOUND。
 
 目标环境Windows11 build26200、i5-12500、Python3.13.3、Chromium153.0.8010.12；numpy2.5.3/pandas3.0.6/sklearn1.9.1/Streamlit1.64.0/pytest9.1.1/ruff0.16.8/Playwright1.63.0/Optuna4.9.0。命令均在仓库根运行，`python`表示`.\.venv\Scripts\python.exe`。最终全仓PYTHONPATH=`src;tests`，真实driver/浏览器=`src`，OMP/MKL/OPENBLAS线程数显式1。测试集合有重叠，不能累计成一次通过数。
 
@@ -485,3 +485,45 @@ $files = @(Get-ChildItem src/finance_forecast_agent/focused*.py, tests/test_focu
 所有迭代失败保留在`.v24p14/`：red 3失败/exit1；p12-first 64通过3失败/842.88s（并发改源码导致恢复合同不一致、测试helper错误强制非诊断J、容量问题，后续冻结及helper修复）；admission-first/second与capacity-detail/third/fourth的容量失败分别为15/1、15/1、0/1、31/1、18/1，均exit1；capacity-fifth 18通过/170.40s/exit0。delivery-recovery 22通过2失败/459.30s是沙箱localhost不可达（实际HTTP0），普通权限重测local-http-normal 2通过1失败/258.98s的剩余失败是测试错误索引stop.result，保留且修正为核对全部状态与实际训练结果；最终35定向和全仓覆盖通过。未删断言、历史fixture或失败记录。初始spy真实演练`.pr14a`和阶段浏览器亦保留，不冒充最终source-bound证据。
 
 最终文档更新后，`python -m pytest -q tests/test_focused_b0_plan.py tests/test_focused_r0_status.py --basetemp=.tp14docs --junitxml=.v24p14/final/docs.xml --tb=short`实际exit0、4通过/7.44s；`git diff --check`退出0。此为文档检查，不替代/重写冻结全仓。总收据的通用collector历史scope描述仅作原字段保留，实际数据性质以新增scope注释、browser.input_provenance、`.pr14b/receipt.json`和`pilot_admission_receipt.json`逐运行记录为准；模拟回归与真实行情技术演练不能混淆。
+
+### 2026-10-14 独立复审：结束输入快照修复与勘误
+
+基线2fcdd23d4bad27d646f83143dfe1f80ac26a9a6f，正式分支不变，tracked clean、原未跟踪证据保留。两项意见均核实：P2在原收据工具中复现，P3首页仍写进行中而末节已完成。审核其余肯定结论仅按已有具名证据复用，不据审核文字新增Live/真人/金融通过。
+
+原审核`review_pilot_20261014/test_input_end_binding.py`原样运行：`.p14fix/red.xml`，1 failed/6.54s/exit1，返回PASS/BOUND而应FAIL。所有输入均临时模拟文件，HTTP=0、fit=0；没有篡改真实SPY或历史收据。最小修复提交08ca0555a9c1167bce552b94be10ebd411285d33，tree8874d5a3752d09fa138dd64f3d66c745228f949c，只改collector及新增测试，不改研究/页面/账本/模型语义。
+
+新start/end v3：结束时按原开始清单的精确路径记录输入SHA256，结束命令不能换输入清单；缺文件/权限错误保存null和异常类型，不丢实际exit。汇总必须开始、结束、当前三组映射完全一致。旧记录缺结束快照明确PARTIAL；不补写旧字段、不覆盖原BOUND历史输出，而以本勘误限制其解释。三次快照不是连续文件监控，不能证明快照间从未瞬时改变。运行使用受控操作者和冻结输入，未增加第二套运行权威。
+
+新增`test_focused_v24_receipt_inputs.py`12项：正常、结束变化、变化后恢复、结束缺失、缺失后恢复、汇总变化/缺失、路径集合变化、旧格式缺结束/两端字段、结束不可读、结束CLI更换输入。`.p14fix/target.xml`24 passed/31 deselected/9.63s，pytest exit0；同次Ruff曾报PIE807，已最小改为dict并保留输出，后续Ruff exit0。原反例+12项重跑`.p14fix/green.xml`13 passed/7.49s/exit0。准确命令：`python -m pytest -q tests/test_focused_v24_receipt_inputs.py <原审核目录>/test_input_end_binding.py --basetemp=.tprfixgreen --junitxml=.p14fix/green.xml --tb=short`。compileall src/apps/scripts/tests及diff检查exit0。
+
+冻结后新证据根`.p14fix/final`，真实两入口为`.pr14fix`，不覆盖`.v24p14/final`或`.pr14b`。全仓与浏览器begin/end使用新collector、明确required_nodes及三个输入（raw0bb089、原许可元数据8a50b9、pyproject）。全仓与浏览器完成状态待下面最终收据，不能把原867通过升级成08ca055通过。
+
+真实两入口命令：`python scripts/verify_v24_trial_admission.py --output-root .pr14fix --raw inputs/spy_chart_2010_2025.json --source-metadata .v24p14/real-source.json --expected-sha256 0bb0896126adb0393f34ae09b90487cb501b2c6aa681a66d2a8f02348669036b --allow-local-development-compute`，actual exit0，goal/provided_start各PASS/89.958s、108.663s。两入口各4004行fresh-process预测逐值一致/child exit0、各1显式refit、只读计数不变、外部HTTP0。命令执行前后Get-FileHash核对raw和元数据相同；实际收据`.pr14fix/receipt.json`。仍是所有者授权真实开发输入的助手技术演练，不是G6本人或独立金融验证。
+
+浏览器首次`.p14fix/final/browser.xml`：`python -m pytest -q tests/browser --basetemp=.tprfixbr --junitxml=.p14fix/final/browser.xml --tb=short`，2 passed/2 failed/396.23s/actual exit1。失败是启动命令把仅支持v24的真实输入环境开关带入legacy/price_features，二者在测试前置assert拒绝；这是本轮执行配置错误，不能把该报告整体写PASS，也没有改断言。v24真实行情与原Research Workspace两节点通过，实际19检查/页面错误空/只读零增量。关闭三个FFA_ADMISSION_REAL_RAW/SOURCE/SHA256开关后重跑：`python -m pytest -q tests/browser -k 'not v24' --basetemp=.tprfixbr2 --junitxml=.p14fix/final/browser-legacy.xml --tb=short`，3 passed/1 deselected/442.12s/actual exit0。这次是旧模式模拟输入；独立新start/end快照保留，两次合起来覆盖4个独特节点，不把重复节点相加作5项。两次均FFA_BROWSER_E2E=1，实际Chromium/worker，源码未变。
+
+为将最终真实准入收据与旧模式分开，另在同一冻结源码单独运行原v24节点（不是修断言求绿）：`python -m pytest -q tests/browser/test_agent_workspace.py::test_agent_workspace_real_backend[v24] --basetemp=.tprfixbr3 --junitxml=.p14fix/final/browser-v24.xml --tb=short`，1 passed/211.93s/actual exit0。FFA_UI_BROWSER_ARTIFACTS指向`.p14fix/final/browser-v24-corrected`，三个真实输入开关恢复原授权raw/meta/hash。最终浏览器依据为该1项+旧模式重跑3项，首次2/2报告保留；重复训练成本不抵销。v24报告19检查、18attempts/48研究fits、显式refit另计、9预测/46包文件复算、page_errors空、刷新/new-context/切换/只读0新增HTTP或fit。源码与三个输入开始/结束快照一致，最终汇总时再核对当前字节。
+
+#### 本次独立复审最终验证与停止线
+
+两项审核意见属实并完成修复。上述“待最终收据”是施工阶段记录，以本段为准。执行源码08ca055、tree8874d5a3752d09fa138dd64f3d66c745228f949c；228个src/apps/scripts/tests文件及所记录核心依赖开始/结束/汇总时相同。全仓新JUnit SHA256 `8545f0ea8e8af7677ddbdf8e150c82a688467f20f5f710218641a298b6d7d433`，旧`.v24p14/final/full-final2.xml`仍为791a8e…原字节。真实raw、许可元数据、pyproject的三个输入映射开始/结束/当前均一致，`input_binding_status=BOUND_start_end_current`；新结束格式v3已实际用于CLI。三时点采样仍不证明采样间连续不变。
+
+环境与上一轮相同：Windows11/i5-12500/Python3.13.3/Chromium153.0.8010.12；Python为`.venv/Scripts/python.exe`，工作目录仓库。PYTHONPATH=src;tests，OMP/MKL/OPENBLAS线程数1；子进程移除Provider keys。全仓默认库/项目为`.p14fix/final/safety.sqlite3`/default_project，测试另用隔离临时库。没有新外部Provider、确认标签、生产迁移或远端CI。
+
+| 本轮最终命令 | actual exit / 结果 | 收据及性质 |
+|---|---|---|
+| `python -m pytest -q --basetemp=.tprfixfull --junitxml=.p14fix/final/full-final2.xml --tb=short` | **1；879 passed/2 failed/6 skipped/9 warnings，stdout6430.09s；JUnit6430.074s** | 887实际用例；全部144项V24通过，含新增12项，已包含于879；整体PARTIAL |
+| `python -m pytest -q tests/browser -k 'not v24' --basetemp=.tprfixbr2 --junitxml=.p14fix/final/browser-legacy.xml --tb=short` | 0；3 passed/1 deselected，442.12s | 模拟旧模式，实际Chromium/worker；源码/依赖/输入三方BOUND |
+| `python -m pytest -q tests/browser/test_agent_workspace.py::test_agent_workspace_real_backend[v24] --basetemp=.tprfixbr3 --junitxml=.p14fix/final/browser-v24.xml --tb=short` | 0；1 passed，211.93s | 真实获准开发输入；源码/依赖/输入三方BOUND |
+| 前述`verify_v24_trial_admission.py --output-root .pr14fix ...` | 0；两入口PASS | 24/28 charged fits、9/10 attempts、各2规划/3槽/4预留槽、各1refit；外部HTTP0；19预测/95成员复算；各4004行fresh-process一致 |
+| 适用focused+workspace+browser+验证脚本Ruff；`python -m compileall -q src apps scripts tests`；forms.js/views.js `node --check`；`git diff --check` | 各0 | 静态检查；没有修改研究/前端源码 |
+
+开始命令为`python scripts/collect_v24_receipt.py --evidence-root .p14fix/final --begin-run full-final2.xml --command <上表完整命令> --required-node tests/test_focused_v24_receipt_inputs.py --required-node tests/test_focused_v24_recovery.py --required-node tests/test_focused_v24_delivery.py --input inputs/spy_chart_2010_2025.json --input .v24p14/real-source.json --input pyproject.toml`；结束捕获实际pytest exit，再`--end-run full-final2.xml --exit-code 1`。两个最终浏览器报告也各用独立begin/end；v24显式required_node为完整节点，legacy为两个测试文件。最后归集命令`python scripts/collect_v24_receipt.py --evidence-root .p14fix/final --browser-name browser-v24-corrected`，只读审计`.p14fix/final_audit.py`写`.p14fix/final/review_receipt.json`，记录最终Git上下文、各报告绑定与真实两入口收据。源测试SHA与后续文档SHA分列，未推送。
+
+Ruff本轮准确集合：`$checkFiles = @(Get-ChildItem src/finance_forecast_agent/focused*.py, tests/test_focused*.py, tests/browser/*.py, apps/workspace_ui*.py, tests/test_workspace_ui*.py | ForEach-Object FullName) + @('src/finance_forecast_agent/research_mission.py','src/finance_forecast_agent/task_queue.py','src/finance_forecast_agent/experiment_memory.py','src/finance_forecast_agent/replay_llm.py','src/finance_forecast_agent/llm_adapters.py','scripts/collect_v24_receipt.py','scripts/verify_v24_trial_admission.py','scripts/run_v24_engineering_validation.py')`，随后`python -m ruff check $checkFiles`。其他命令为`python -m compileall -q src apps scripts tests`、`node --check apps/workspace_frontend/forms.js`、`node --check apps/workspace_frontend/views.js`、`git diff --check`，均exit0。
+
+全仓两失败分别为`test_focused_r4_trust::test_model_bundle_tamper_rejected_before_load[symlink]`（WinError1314，创建链接失败、未进入加载；BLOCKED_ENV）和`test_p1_real_validation_artifacts::test_dlinear_strict_live_card_replays_without_an_api_call`（原2c05bfd22af27435.json缺失；BLOCKED_ASSET），与基线相同。6跳过包括4个opt-in browser（已独立重跑4项通过）、POSIX进程组探针、Windows package symlink权限。没有观察到本轮新增产品失败；首轮browser启动配置错误的2失败单列保留。原输入5fb282、47负确认、A/L与全部原验收JSON顶层值保持，不用新数据替代旧验收。
+
+P2输入证据收口PASS、P3文档状态同步PASS；全仓仍PARTIAL。G0—G5限定技术准备具备，G6本人预演NOT_RUN，目标用户邀请NO-GO；可按原用户指南本人预演。允许模式仍deterministic。Live语义/策略价值、真实用户、独立金融效果、远端CI、macOS/GPU大型native及后续版本NOT_RUN。没有恢复资产/改变系统权限来求绿。本轮到此停止，Git最终HEAD/tree及本地提交见review_receipt。
+
+最终文档检查：`python -m pytest -q tests/test_focused_b0_plan.py tests/test_focused_r0_status.py --basetemp=.tprfixdocsfinal --junitxml=.p14fix/docs-final.xml --tb=short`，4 passed/7.25s/actual exit0。`git diff --check`exit0，原验收JSON所有顶层值与2fcdd23逐项相同，只新增本复审入口；`git diff 2fcdd23 -- src apps`为空。后续仅提交本轮文档和只读归集，不重新标记旧报告或执行新研究。

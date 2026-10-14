@@ -1,8 +1,14 @@
 # 当前版本功能与技术实现说明
 
+## 2026-10-14 独立复审收口完成；目标用户NO-GO待G6
+
+独立审核两项意见已核实并修复：结束收据没有输入快照，模拟输入结束时改变、汇总前恢复会错误BOUND；版本首页状态未同步。08ca055新增v3结束快照，从原开始清单的精确路径取hash，核对开始/结束/当前映射，缺失/不可读/不同字节拒绝完整绑定；旧格式明确PARTIAL，不回填历史。原未修改反例由1失败转通过，新增12项及静态通过。
+
+冻结源码重新全仓**879通过/2失败/6跳过，exit1/6430.09s**，全部144项V24通过且包含于879。228源码/测试文件、核心依赖、raw/许可元数据/pyproject的开始/结束/当前身份一致，BOUND；整体PARTIAL，两失败仍为WinError1314与DLinear原fixture缺失。最终真实Chromium1项+模拟旧模式3项通过；首次real开关错带入旧模式的2个前置断言失败保留，原测试未改。真实两入口`.pr14fix`各PASS：24/28研究fits、各1refit、外部HTTP0、19预测/95包文件复算、各4004行新进程一致、只读0增量。准确命令/源码/输入/失败见V24末节及`.p14fix/final/review_receipt.json`。研究与前端源码无变化，未推送。G0—G5技术准备具备，G6本人预演仍NOT_RUN，目标用户邀请NO-GO；本人可按原指南预演。三时点哈希不证明连续文件监控，原47负确认/A-L/5fb282资产及Live/真人/金融边界保持。
+
 ## 2026-10-14 最终：P1—P5限定工程完成，目标用户试点NO-GO（待G6）
 
-测试源码 `1bdcacebb99788877b880e22fe402bc49cecdc86`，tree `bafe569db414e7b2d5c8477867405ea67c5a7e86`。最后功能改动后的全仓：**867 passed、2 failed、6 skipped，实际exit1，stdout 6460.78s**；全部132项V2.4用例通过，已包含在867内。227个源码/测试文件、所记录核心依赖及输入哈希前后相同。完整命令、失败与N01—N22映射见唯一V24日志；`.v24p14/final/full-final2.xml`，最终收据`.v24p14/final/delivery_receipt.json`。不是全仓全绿、不是远端CI。
+测试源码 `1bdcacebb99788877b880e22fe402bc49cecdc86`，tree `bafe569db414e7b2d5c8477867405ea67c5a7e86`。最后功能改动后的全仓：**867 passed、2 failed、6 skipped，实际exit1，stdout 6460.78s**；全部132项V2.4用例通过，已包含在867内。227个源码/测试文件及所记录核心依赖前后相同。输入勘误：结束快照未记录，只能核对开始与汇总时相同；不能作完整输入BOUND。完整命令、失败与N01—N22映射见唯一V24日志；`.v24p14/final/full-final2.xml`，最终收据`.v24p14/final/delivery_receipt.json`保留原貌。不是全仓全绿、不是远端CI。
 
 两失败仍为Windows创建symlink的WinError1314（尚未进入反序列化）及DLinear原`2c05bfd22af27435.json`缺失。本次试用仅用已生成并登记的本机规则模型，真实演练目录159条目无symlink/junction；不用DLinear/native模型。4个opt-in浏览器跳过已在同源码实际Chromium另跑4通过（1真实SPY数据，3模拟旧路径），另2跳过仍为POSIX进程组及Windows package symlink权限。原5fb282资产、A/L、47目标负确认不关闭。
 
