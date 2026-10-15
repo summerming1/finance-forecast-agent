@@ -94,6 +94,22 @@ def test_action_allowlist_and_confirmations(ui):
         service.execute("create", {}, "x")
 
 
+@pytest.mark.parametrize('action', ['refit', 'download_model'])
+def test_recommended_delivery_rejects_inspected_other_candidate(ui, monkeypatch, action):
+    import workspace_ui_service
+
+    service, _ = ui
+    frozen = {'payload': {'diagnostic_research': {'recommendation': {
+        'selected_recommendation': {'candidate_id': 'recommended'}}}},
+        'projection': {'candidate_details': {'recommended': {}, 'inspected': {}}}}
+    monkeypatch.setattr(workspace_ui_service.mission, 'workspace_campaign', lambda *a, **kw: frozen)
+    before = count(service.state_path)
+    with pytest.raises(ValueError, match='Frozen recommendation'):
+        service.execute(action, {'project_id': 'p', 'campaign_id': 'c', 'candidate_id': 'inspected',
+                                'delivery_scope': 'recommended', 'confirmed': True}, 'wrong-target')
+    assert count(service.state_path) == before
+
+
 def test_full_existing_worker_selection_refit_download_continue(ui):
     service, form = ui
     preview = service.preflight(form)
@@ -118,6 +134,11 @@ def test_full_existing_worker_selection_refit_download_continue(ui):
     assert selected["comparison"]["candidate_id"] == a
     assert all(v["comparable"] for v in selected["comparison"]["comparisons"])
     assert service.snapshot(p, c, b)["current"]["selected_candidate_id"] == b
+    assert selected['delivery']['recommendation_id'] is None  # legacy: not invented from best
+    assert selected['delivery']['by_candidate'][a]['eligible']
+    with pytest.raises(ValueError, match='Frozen recommendation'):
+        service.execute('refit', {'project_id': p, 'campaign_id': c, 'candidate_id': a,
+                                'delivery_scope': 'recommended', 'confirmed': True}, 'no-recommendation')
     assert count(service.state_path) == before
     refit_args = {"project_id": p, "campaign_id": c, "candidate_id": a, "confirmed": True}
     result = service.execute("refit", refit_args, "refit-ui-1")
@@ -137,6 +158,9 @@ def test_full_existing_worker_selection_refit_download_continue(ui):
             "download_model", {**refit_args, "candidate_id": b, "refit_id": result["refit_id"]}, "download-bad"
         )
     assert service.snapshot(p, c, b)["current"]["refits"] == []
+    other_view = service.snapshot(p, c, b)['current']
+    assert other_view['delivery']['by_candidate'][a]['refits'][0]['refit_id'] == result['refit_id']
+    assert other_view['delivery']['by_candidate'][b]['refits'] == []
     old = copy.deepcopy(service.snapshot(p, c, a)["current"]["payload"])
     preview = service.execute("preview_continue", refit_args, "preview-1")
     assert preview["preview_fit_calls"] == 0

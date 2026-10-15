@@ -257,6 +257,19 @@ class WorkspaceUI:
                            current['task']['status'] == 'completed')
         refits = mission.workspace_refits(self.state_path, project_id, campaign_id, selected,
                                          tenant_id=self.tenant_id) if selected else []
+        # Delivery is explicit and independent of the read-only inspected candidate.
+        recommendation = (payload.get('diagnostic_research') or {}).get('recommendation') or {}
+        recommended_id = (recommendation.get('selected_recommendation') or {}).get('candidate_id')
+        if recommended_id not in details:
+            recommended_id = None  # Never promote legacy best/selected as a frozen recommendation.
+        delivery = {'recommendation_id': recommended_id, 'by_candidate': {}}
+        for row in candidates:
+            eligible = bool(row['status'] == 'completed' and
+                            not row['candidate']['model_family'].startswith('naive_') and
+                            current['task']['status'] == 'completed')
+            records = refits if row['id'] == selected else mission.workspace_refits(
+                self.state_path, project_id, campaign_id, row['id'], tenant_id=self.tenant_id)
+            delivery['by_candidate'][row['id']] = {'eligible': eligible, 'refits': records}
         summary = mission.workspace_research_summary(self.state_path, project_id, campaign_id, tenant_id=self.tenant_id)
         safe_events = [{k: e[k] for k in ('type', 'event_type', 'at', 'created_at', 'candidate_id',
                        'round_index', 'error_type', 'status') if k in e} for e in current['events'][-100:]]
@@ -285,6 +298,7 @@ class WorkspaceUI:
                     evaluation_windows.append({'fold_id': fold_id, 'start': min(dates),
                                                'end': max(dates), 'count': len(dates)})
         result['current'] = {'payload': payload, 'task': current['task'], 'link': current['link'],
+                             'delivery': delivery,
                              'evaluation_windows': evaluation_windows,
                              'candidate_comparisons': {r['id']: build_candidate_comparison(
                                  payload, current['accepted_manifests'], r['id'])
@@ -356,6 +370,13 @@ class WorkspaceUI:
         candidate = args.get('candidate_id', '')
         if action in {'refit', 'continue', 'preview_continue', 'download_model'} and candidate not in current['projection']['candidate_details']:
             raise ValueError('Select an actual accepted candidate from this campaign')
+        if action in {'refit', 'download_model'} and 'delivery_scope' in args:
+            if args['delivery_scope'] not in {'recommended', 'other'}:
+                raise ValueError('Unknown delivery scope')
+            recommendation = (current['payload'].get('diagnostic_research') or {}).get('recommendation') or {}
+            recommended = (recommendation.get('selected_recommendation') or {}).get('candidate_id')
+            if args['delivery_scope'] == 'recommended' and candidate != recommended:
+                raise ValueError('Frozen recommendation does not match requested delivery candidate')
         if action in {'continue', 'resume'} and current['request']['advisor_mode'] == 'live' and args.get('live_consent') is not True:
             raise PermissionError('Live continuation/resume requires explicit additional cost consent')
         if action == 'preview_continue':

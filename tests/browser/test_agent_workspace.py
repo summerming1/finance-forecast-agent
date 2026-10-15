@@ -144,6 +144,10 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 with RuntimeDB(state).transaction() as db:
                     return tuple(db.execute("SELECT COUNT(*),COALESCE(SUM(reserved),0) FROM attempts").fetchone())
 
+            def refit_count():
+                with RuntimeDB(state).transaction() as db:
+                    return db.execute("SELECT COUNT(*) FROM objects WHERE ns='workspace-refits'").fetchone()[0]
+
             def current_ids():
                 q = parse_qs(urlparse(page.url).query)
                 return q["project"][0], q["campaign"][0]
@@ -233,12 +237,14 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             assert len(research_ids) == (3 if price_features == "v24" else 2)
             report["checks"] += ["real_component_protocol", "preflight_zero_fit", "explicit_submit", "real_queued_worker"]
             before = counts()
+            assert refit_count() == 0
             page.screenshot(path=str(out / "03_completed_backend.png"))
             if price_features == 'v24':
                 expect(frame.locator('[data-testid="trial-experiment"]')).to_have_count(3)
                 expect(frame.locator('[data-testid="trial-experiment"]').first).to_contain_text('实际改动')
                 expect(frame.locator('[data-testid="diagnostic-research"]')).to_contain_text('不随当前选中候选切换')
                 expect(frame.locator('[data-testid="research-result-roles"]')).to_contain_text('未提供')
+                expect(frame.locator('[data-testid="diagnostic-fold"]')).not_to_have_attribute('open', '')
                 frame.locator('[data-testid="mae-help"] summary').click()
                 expect(frame.locator('[data-testid="mae-help"]')).to_contain_text('252')
                 page.screenshot(path=str(out / '03_trial_clarity.png'))
@@ -272,18 +278,40 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             page.screenshot(path=str(out / "05_review_1280.png"))
             page.set_viewport_size({"width": 1440, "height": 900})
             frame.locator('[data-action="view"][data-view="artifacts"]').first.click()
-            click("refit")
+            expect(frame.locator('[data-testid="trial-experiment"]')).to_have_count(0)
+            if price_features == 'v24':
+                recommended = original['diagnostic_research']['recommendation']['selected_recommendation']['candidate_id']
+                expect(frame.locator('[data-testid="delivery-recommended"]')).to_have_attribute('data-delivery-candidate', recommended)
+                # Inspection remains on another model; primary delivery is frozen.
+                primary = frame.locator('[data-testid="delivery-recommended"]')
+                primary.locator('[data-action="refit"]').click()
+                expect(frame.locator('#modal-root')).to_contain_text(recommended)
+                click('confirm-refit')
+                expect(primary.locator('[data-action="download-model"]')).to_be_visible(timeout=60000)
+                with page.expect_download() as event:
+                    primary.locator('[data-action="download-model"]').click()
+                event.value.save_as(str(out / 'recommended_model.zip'))
+                with zipfile.ZipFile(out / 'recommended_model.zip') as archive:
+                    assert json.loads(archive.read('bundle.json'))['candidate']['candidate_id'] == recommended
+                assert counts() == before
+                assert refit_count() == 1
+                report['checks'].append('frozen_recommendation_delivery_independent_of_inspection')
+            frame.locator('[data-testid="other-delivery"] > summary').click()
+            other = frame.locator(f'[data-testid="delivery-other"][data-delivery-candidate="{selected}"]')
+            other.locator('[data-action="refit"]').click()
             expect(frame.locator('[data-action="confirm-refit"]')).to_have_text('确认额外训练1次')
             expect(frame.locator('#modal-root')).to_contain_text('不调用 LLM')
             page.screenshot(path=str(out / '05_refit_confirmation.png'), animations='disabled')
             click('close-modal')
             assert counts() == before
-            click('refit')
+            assert refit_count() == (1 if price_features == 'v24' else 0)
+            other.locator('[data-action="refit"]').click()
             assert counts() == before
             click("confirm-refit")
-            expect(frame.locator('[data-action="download-model"]')).to_be_visible(timeout=60000)
+            expect(other.locator('[data-action="download-model"]')).to_be_visible(timeout=60000)
+            assert refit_count() == (2 if price_features == 'v24' else 1)
             with page.expect_download() as event:
-                click("download-model")
+                other.locator('[data-action="download-model"]').click()
             event.value.save_as(str(out / "selected_model.zip"))
             with zipfile.ZipFile(out / "selected_model.zip") as archive:
                 meta = json.loads(archive.read("bundle.json"))
@@ -301,7 +329,18 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             frame.locator(f'tr[data-action="candidate"][data-id="{research_ids[0]}"]').click()
             idle()
             frame.locator('[data-action="view"][data-view="artifacts"]').first.click()
-            expect(frame.locator('[data-action="download-model"]')).to_have_count(0)
+            # Existing delivery remains candidate-bound after a different row is inspected.
+            expect(frame.locator(f'[data-delivery-candidate="{selected}"] [data-action="download-model"]')).to_have_count(1)
+            expect(frame.locator(f'[data-delivery-candidate="{research_ids[0]}"] [data-action="download-model"]')).to_have_count(0)
+            if price_features == 'v24':
+                expect(frame.locator('[data-testid="delivery-recommended"]')).to_have_attribute('data-delivery-candidate', recommended)
+                expect(frame.locator('[data-testid="delivery-recommended"] [data-action="download-model"]')).to_be_visible()
+                page.set_viewport_size({'width': 700, 'height': 900})
+                expect(frame.locator('[data-testid="delivery-recommended"] [data-action="download-model"]')).to_be_visible()
+                assert page.locator('iframe[title*="agent_workspace"]').evaluate(
+                    '(f) => f.contentDocument.documentElement.scrollWidth <= f.contentDocument.documentElement.clientWidth + 1')
+                page.screenshot(path=str(out / '06_recommended_700.png'), animations='disabled')
+                page.set_viewport_size({'width': 1440, 'height': 900})
             assert counts() == before
             page.screenshot(path=str(out / "06_artifacts_binding.png"))
             click("export")
@@ -331,6 +370,9 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             expect(frame.locator(".workspace-header")).to_contain_text("完成")
             assert counts() == before
             frame.locator('[data-action="view"][data-view="artifacts"]').first.click()
+            if price_features == 'v24':
+                expect(frame.locator('[data-testid="delivery-recommended"] [data-action="download-model"]')).to_be_visible()
+            frame.locator('summary').filter(has_text='继续研究（新批次与新增预算）').click()
             click("continue")
             expect(frame.locator('[role="dialog"]')).to_contain_text("不是恢复")
             assert counts() == before
@@ -360,6 +402,8 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 assert workspace_campaign(state, pid, child_cid)['payload'] == child['payload']
                 report['checks'].append('tampered_diagnostic_delivery_rejected')
             report["counts"] = counts()
+            report['explicit_refits'] = refit_count()
+            assert refit_count() == (2 if price_features == 'v24' else 1)
             report["browser_version"] = browser.version
             report["page_errors"] = errors
             assert not errors

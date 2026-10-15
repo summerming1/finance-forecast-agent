@@ -1,5 +1,48 @@
 # V2.4 确定性诊断研究：唯一实施合同与批次日志
 
+## 2026-10-15 第二轮所有者反馈：信息分层与交付防误操作（当前批次）
+
+基线 dcdc7e4ac49c4b911a5dc332c235a6a14f43be85，正式分支，tracked clean；用户批准本轮必要UI/薄适配/测试/文档修改。本人想下载推荐R1·C1，却因实验页正在查看R1·C2，在确认后为R1·C2额外refit；这是交付意图不一致FAIL，不删真实训练和可信记录。本人又反馈研究/成果信息过多。先前逐轮和MAE理解是在助手解释后形成，不能升级为首次独立理解PASS。A未开始，独立用户仍未验。
+
+本轮合同：研究页默认结论和逐轮真实改动/依据/控制/结果/后续关联；诊断、观察规则与审计折叠。成果页默认冻结推荐、研究包、推荐模型包，不重复时间线。推荐交付与当前浏览候选分离；其他候选在折叠区逐对象显式操作；没有冻结推荐不从best/当前候选造一个。既有原接口仍做候选/包/信任核验，新增recommended请求在薄层核对冻结推荐；不增加推荐算法或状态权威。已有登记包只提供下载，错误/撤销/损坏由原下载门禁拒绝，不静默改为重训。取消0提交，确认捕获候选ID，不因后续浏览切换绑定。旧API未传delivery_scope继续兼容。
+
+不改研究源码、评价、预算、原合同、数据、RuntimeDB历史或正式路线。所有自动测试使用隔离simulation_only；不在用户B库训练、不调用外部Provider、不推送。映射原A13/A15/A16、D24-T29/T30/T33/T34/T36；失败、部分执行、无推荐不能被精简页面藏成成功。
+
+### 本批已执行证据（限定工程完成，非全仓全绿）
+
+Windows/Python3.13.3/Chromium153.0.8010.12，证据目录`.trialux2`，测试临时库`.tux2*`。下列Python为项目`.venv/Scripts/python.exe`；`PYTHONPATH=src;tests`，OMP/MKL/OPENBLAS线程均1。不是用户原任务操作，不是Live或真人验收。
+
+```powershell
+python -m pytest -q tests/test_workspace_ui.py tests/test_workspace_ui_features.py tests/test_workspace_ui_formula.py tests/test_workspace_ui_trial_clarity.py tests/test_focused_v24_delivery.py --basetemp=.tux2reg --junitxml=.trialux2/regression.xml --tb=short
+python -m pytest -q tests/test_workspace_ui_trial_clarity.py tests/test_workspace_ui_formula.py tests/test_workspace_ui.py -k 'recommended_delivery or trial_clarity or formula' --basetemp=.tux2target --junitxml=.trialux2/target-final2.xml --tb=short
+# FFA_BROWSER_E2E=1; FFA_UI_BROWSER_ARTIFACTS=<repo>/.trialux2/browser2
+python -m pytest -q tests/browser/test_agent_workspace.py --basetemp=.tux2br2 --junitxml=.trialux2/browser2.xml --tb=short
+# 独立进程清除浏览器opt-in及三个Provider key，原B不作为测试库
+python -m pytest -q --basetemp=.tux2full --junitxml=.trialux2/full.xml --tb=short
+python -m ruff check apps/workspace_ui_service.py tests/test_workspace_ui.py tests/test_workspace_ui_trial_clarity.py tests/browser/test_agent_workspace.py
+python -m compileall -q apps/workspace_ui_service.py tests/test_workspace_ui.py tests/test_workspace_ui_trial_clarity.py tests/browser/test_agent_workspace.py
+node --check apps/workspace_frontend/actions.js
+node --check apps/workspace_frontend/views.js
+node --check apps/workspace_frontend/forms.js
+git diff --check
+```
+
+失败证据保留：red.xml实际新状态映射负例1失败/exit1；browser.xml首次3失败/exit1/419.37s，原因是RPC重绘导致显式其他模型区自动折叠，下载存在但不可见。最小修复仅在同页面/Campaign/查看对象下保持展开状态，不新增数据库。`target-final.xml`虽然用例5通过，但pytest清理共享临时目录发生WinError5，不能作成功命令证据；换隔离basetemp后`target-final2.xml`5通过、15未选/exit0/4.07s。
+
+阶段受影响回归36通过/exit0/492.93s，早于最后展开状态修复；最终源码另由全仓覆盖。最终浏览器`browser2.xml`三模式全部通过/exit0/427.37s（legacy、price_features、v24），真实worker、模拟数据、外部Provider HTTP=0、page_errors为空。V24原研究与续接合计18 attempts/48研究fit，推荐及显式其他对象各1 refit；取消/查看/刷新/新context零新增fit。研究包9份预测/46索引文件复算通过，包SHA256 `6796259ef68021a8b566c101108685a6422a16887a0c4e87f0f06e193c7fc824`；1280及700宽截图已检查。V24模拟raw SHA256 `cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b`。原B误操作记录不因上述模拟通过而改成真人PASS。
+
+静态检查全部exit0。全仓开始前由既有`collect_v24_receipt.py --begin-run full.xml`保存源码/测试、依赖、pyproject输入及命令快照，结束收据由同一包装命令记录实际退出码。最终全仓 **882 passed / 2 failed / 6 skipped / 9 warnings，exit1，5838.46s**；JUnit共890节点、errors0。229个源码/测试文件、依赖及声明输入pyproject开始/结束/交付时一致；JUnit和开始清单hash也匹配。模拟浏览器原始输入身份另见其report；不把仅pyproject输入快照说成所有生产数据连续监控。测试运行于基线HEAD的修改工作树，最终本地提交仅封存这批已核对源码与文档，不冒称运行时HEAD已是交付提交。
+
+两失败与前批完全同节点、同原因，未发现新增产品失败：`test_model_bundle_tamper_rejected_before_load[symlink]`在测试创建链接阶段WinError1314，BLOCKED_ENV；`test_dlinear_strict_live_card_replays_without_an_api_call`缺原`method_card/2c05bfd22af27435.json`，BLOCKED_ASSET。未放宽断言、提升系统权限或替换历史录制。六跳过为4个opt-in浏览器节点（本批另跑新工作区三模式全部通过，旧Research Workspace未另跑）、Windows不适用的POSIX进程组probe、package symlink权限不足。九warning为既有8条JUnit record_property兼容警告和1条重复ZIP成员负例警告。
+
+| 原验收关联 | 本轮工程证据 | 状态及限制 |
+|---|---|---|
+| A13/A15，D24-T29/T30 | 逐轮真实差异、命名控制、主线/审计分层；Node与三模式Chromium | PASS工程；所有者理解仍待本人复核 |
+| A16，D24-T33/T34/T36 | 推荐与浏览隔离、非推荐显式操作、取消零提交、真实包ID/索引/预测复算、刷新与新context | PASS模拟工程；不代签真实用户或跨机信任 |
+| 原算法/历史协议/恢复边界 | 冻结源码全仓882通过、2历史阻塞、6跳过 | PARTIAL全仓；原A/L与47负确认保持 |
+
+本批功能修改完成，允许本人先只读复核B，再按原批准范围主持A试验；不等于独立用户或金融价值通过。旧B误操作FAIL保留，新版真人复核NOT_RUN。远端CI/推送、付费Live、独立用户和金融确认本轮NOT_RUN。原数据、曝光、信任和失败记录不重置。
+
 ## 2026-10-15 所有者B试用后的可理解性修正（当前批次）
 
 用户批准先修复共性体验，再试用A。本轮基线a4f36117dd6b8fdf6175b52c08631d8ba7e44a8d，tracked clean；不改研究源码/合同/评价/预算，不推送、不调用Provider、不操作真实任务来跑回归。仅现有UI及薄投影、隔离测试、现有文档。正式路线不变。
