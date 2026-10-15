@@ -260,7 +260,35 @@ class WorkspaceUI:
         summary = mission.workspace_research_summary(self.state_path, project_id, campaign_id, tenant_id=self.tenant_id)
         safe_events = [{k: e[k] for k in ('type', 'event_type', 'at', 'created_at', 'candidate_id',
                        'round_index', 'error_type', 'status') if k in e} for e in current['events'][-100:]]
+        evaluation_windows = []
+        reference_id = payload.get('research_start_candidate_id') or payload.get('best_baseline_candidate_id')
+        entry = self.store.get('campaign:' + campaign_id, 'result:' + reference_id) if reference_id else None
+        if entry:
+            accepted_result = entry['row'].get('result', entry['row'])
+            prediction_ref = accepted_result.get('prediction_artifact_ref')
+            for ref in entry.get('artifacts', []):
+                if ref['path'] != prediction_ref:
+                    continue
+                root = Path(current['root']).resolve()
+                target = root / ref['path']
+                if target.is_symlink() or root not in target.resolve().parents:
+                    raise ValueError('prediction display path mismatch')
+                data = target.read_bytes()
+                if hashlib.sha256(data).hexdigest() != ref['sha256']:
+                    raise ValueError('prediction display hash mismatch')
+                prediction = json.loads(data)
+                rows = prediction['rows']
+                if prediction['candidate_id'] != reference_id or prediction['campaign_id'] != campaign_id:
+                    raise ValueError('prediction display identity mismatch')
+                for fold_id in sorted({r['fold_id'] for r in rows}):
+                    dates = [r['session_date'] for r in rows if r['fold_id'] == fold_id]
+                    evaluation_windows.append({'fold_id': fold_id, 'start': min(dates),
+                                               'end': max(dates), 'count': len(dates)})
         result['current'] = {'payload': payload, 'task': current['task'], 'link': current['link'],
+                             'evaluation_windows': evaluation_windows,
+                             'candidate_comparisons': {r['id']: build_candidate_comparison(
+                                 payload, current['accepted_manifests'], r['id'])
+                                 for r in candidates if r['role'] == 'research_candidate'},
                              'request': current['request'], 'summary': summary,
                              'selected_candidate_id': selected, 'candidates': candidates, 'refits': refits,
                              'deliverable': deliverable, 'review': current['review'], 'events': safe_events,

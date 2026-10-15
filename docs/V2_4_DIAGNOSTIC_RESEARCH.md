@@ -1,6 +1,58 @@
 # V2.4 确定性诊断研究：唯一实施合同与批次日志
 
-当前最新批准与实施为末节“2026-10-14 试用前P1—P5/G0—G6增量”。限定工程及结束输入快照修复已完成；新冻结全仓879通过/2历史失败/6跳过，整体PARTIAL，输入开始/结束/当前绑定BOUND。G6本人预演未完成，目标用户准入仍NO-GO。下方旧批准/收据保留历史身份，最新收口见末节勘误与最终验证。
+## 2026-10-15 所有者B试用后的可理解性修正（当前批次）
+
+用户批准先修复共性体验，再试用A。本轮基线a4f36117dd6b8fdf6175b52c08631d8ba7e44a8d，tracked clean；不改研究源码/合同/评价/预算，不推送、不调用Provider、不操作真实任务来跑回归。仅现有UI及薄投影、隔离测试、现有文档。正式路线不变。
+
+实际反馈来源为所有者本人扮演无模型B，不是两个独立量化用户。B Campaign `persistent-b9a0a4e59a324fb18a35604b`：本人成功查看、切换、刷新、无痕重开、导出；本人表示无法从页面理解轮次改动、结果参照及MAE，并确认生成模型包前不知道会额外训练。体验理解与计算提示FAIL，不能由助手讲解后补记独立通过。此前9次操作指引/帮助为混合计数，不是9次独立阻塞；主动时间未知。模型包通过原登记只读核验及新进程4004行无标签推理（助手技术核验，不是样本外效果）。原B记录、数据及47负确认不改。
+
+修正范围：逐轮卡片展示真实配置差异/parent/control/结果/后续父子关系，默认展开并置于详细诊断之前；MAE计算说明与已接受预测文件的实际fold日期；用户提供配置和本次研究起点分名；比较对象带名称、负改善改成误差升高；研究起点诊断注明对象及不随选择切换；refit按钮/确认明确额外1fit、训练范围、非样本外、无LLM。历史理由仅原文展示，有限规则不包装成LLM诊断能力。
+
+首次Node测试red/red2为测试宿主缺document/post的构造错误，保留；red3实际缺新展示行为失败。target.xml 3通过/0.28s/exit0。最终中文状态补充时target-final.xml暴露JS引号转义错误，3失败；已修正，target-final2.xml 3通过/0.22s/exit0，失败证据不删除。受影响regression.xml 36通过/488.04s/exit0（最后中文状态补充前的阶段证据）；最终源码另由全仓覆盖。
+
+### 本批命令与证据（限定工程验证完成）
+
+本机Windows/Python3.13.3，Node24.0.0、Chromium153.0.8010.12；虚拟环境不升级。各命令使用`PYTHONPATH=src;tests`、OMP/MKL/OPENBLAS线程1，隔离状态/项目位于`.trialux`，不是原B库。以下Python均为`.venv/Scripts/python.exe`：
+
+```powershell
+python -m pytest -q tests/test_workspace_ui.py tests/test_workspace_ui_features.py tests/test_workspace_ui_formula.py tests/test_workspace_ui_trial_clarity.py tests/test_focused_v24_delivery.py --basetemp=.trialux/tmp-regression --junitxml=.trialux/regression.xml --tb=short
+python -m pytest -q tests/test_workspace_ui_formula.py tests/test_workspace_ui_trial_clarity.py --junitxml=.trialux/target-final2.xml
+# FFA_BROWSER_E2E=1, FFA_UI_BROWSER_ARTIFACTS=<repo>/.trialux/browser-final
+python -m pytest -q 'tests/browser/test_agent_workspace.py::test_agent_workspace_real_backend[v24]' --basetemp=.trialux/tmp-browser-final --junitxml=.trialux/browser-final.xml --tb=short
+# 新进程不设置浏览器opt-in；浏览器证据单列
+python -m pytest -q --basetemp=.trialux/tmp-full --junitxml=.trialux/full.xml --tb=short
+python -m ruff check apps/workspace_ui_service.py tests/test_workspace_ui_trial_clarity.py tests/browser/test_agent_workspace.py
+python -m compileall -q apps/workspace_ui_service.py tests/test_workspace_ui_trial_clarity.py tests/browser/test_agent_workspace.py
+node --check apps/workspace_frontend/actions.js
+node --check apps/workspace_frontend/views.js
+git diff --check
+```
+
+最终Chromium **1 passed/196.75s/exit0**，真实worker但输入`simulation_only`，raw SHA256 `cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b`。研究+续接共18attempt/48研究fits，显式refit另1次；Provider请求0，取消确认/切换/刷新/新context不增加fit。9份预测/46索引文件复算，package SHA256 `dd83c4ef56a988d9101c357ba48d485a90982e570e393eb70ed13e80573c2612`；page_errors为空，报告与截图位于`.trialux/browser-final/v24`。首轮Chromium1通过/199.36s仅阶段证据。静态四项及diff检查exit0。未运行同SHA远端CI或Live，未修改用户B库，不能把模拟数据表现当真实预测价值。
+
+最终源码清单`.trialux/source-start.json`记录229个源码/测试/脚本与依赖；采集于全仓启动后不久，不能冒称启动前快照。启动后未改这些文件，后续只更新文档；结束核对结果见下段及`.trialux/delivery_receipt.json`。此前真人B的理解FAIL留存，更新版待本人只读复核，A尚未开始；本批不代签G6。
+
+最终全仓：**880 passed / 2 failed / 6 skipped / 9 warnings，exit1，6120.33s**；JUnit`.trialux/full.xml`，共888节点、errors0。`.trialux/source-end.json`确认229文件与依赖一致；不是完整生产输入三时点收据，也不迁移旧历史验收。未发现本轮新增失败，两项均与前次全仓相同：
+
+- `tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]`：WinError1314发生在创建测试symlink时、尚未进入加载；BLOCKED_ENV，不删断言/不修改本机全局权限。
+- `tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call`：原匹配`projects/finance_agent/llm_fixtures/method_card/2c05bfd22af27435.json`缺失；BLOCKED_ASSET，不生成或改名替代录制。
+
+六跳过：4个显式browser门槛（本批V24新工作区另跑1通过；legacy、price_features及旧Research Workspace三节点本批未另跑，不沿用历史冒称本次通过）；POSIX process-group probe在Windows不适用；package symlink权限不可用。九warning为8条既有JUnit record_property兼容警告和1条故意重复ZIP成员负例警告。保留平台/历史边界，不统一skip或宣称全仓全绿。
+
+本轮结论：限定UI工程PASS；原B数据/记录保持；所有者新版理解复核NOT_RUN，A尚未操作；独立目标用户、Live及金融价值NOT_RUN。允许进入本人B只读复核后A主持试验，不等于外部用户/生产准入GO。原A/L和47目标负确认不关闭；不推送或运行远端CI。
+
+| 所有者反馈 | 本批行为及验收入口 | 边界 |
+|---|---|---|
+| 看不到每轮改了什么 | trialExperiment读取实际parent/config，公式增删中文摘要；Chromium断言3个真实完成候选卡 | 不补造历史研究理由，不保证规则研究有增量价值 |
+| 不清楚相对谁改善 | referenceLabel给出角色/模型，原比较接口决定可比性；正负/零/未知Node断言 | 不同参照分母不合并 |
+| 不知道MAE怎么算 | 原预测文件hash/身份核对后投影4窗口252目标；浏览器及Node说明检查 | 不把监督行当评价行，不增加金融证据 |
+| 诊断0差异与选中候选混淆 | 明示研究起点诊断固定对象，不随选中切换 | 不重新算诊断，不隐式refit |
+| 无模型却显示用户模型 | 用户提供配置、本次研究起点分列，goal显示未提供 | A配置起点仍不是旧权重导入 |
+| 生成模型包额外训练未理解 | 按钮/确认注明额外1fit、范围；取消0提交，确认1次；实际browser验证 | 新版提示是否被本人理解仍待验收 |
+
+原B库只读逻辑dump SHA256仍为`98b4c5f68e849b4f618f9eb7aeda48175d11476ca653f6c2b837169ff07f9f5d`，与前次核验一致；原下载研究包仍为`0f9d17764c21b7252524955284a5033ce4c2fd8e47f80e6fcaf677acabd2fd01`。本轮回归不使用该库或包训练。
+
+历史状态快照（2026-10-14，当前以本文件顶部增量为准）：当时最新批准与实施为末节“2026-10-14 试用前P1—P5/G0—G6增量”。限定工程及结束输入快照修复已完成；新冻结全仓879通过/2历史失败/6跳过，整体PARTIAL，输入开始/结束/当前绑定BOUND。G6本人预演未完成，目标用户准入仍NO-GO。下方旧批准/收据保留历史身份，最新收口见末节勘误与最终验证。
 
 日期2026-10-09；用户已批准D24-0—D24-5工程及D24-6准备。基线95760e264eddb4388a44df6d35442b6ce8d90928，tree 8d081ef18dd7fde0b3e45f3a593e929e3adb530d。实际结果以本文件日志及收据为准，不把计划写成通过。
 

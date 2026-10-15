@@ -234,6 +234,14 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             report["checks"] += ["real_component_protocol", "preflight_zero_fit", "explicit_submit", "real_queued_worker"]
             before = counts()
             page.screenshot(path=str(out / "03_completed_backend.png"))
+            if price_features == 'v24':
+                expect(frame.locator('[data-testid="trial-experiment"]')).to_have_count(3)
+                expect(frame.locator('[data-testid="trial-experiment"]').first).to_contain_text('实际改动')
+                expect(frame.locator('[data-testid="diagnostic-research"]')).to_contain_text('不随当前选中候选切换')
+                expect(frame.locator('[data-testid="research-result-roles"]')).to_contain_text('未提供')
+                frame.locator('[data-testid="mae-help"] summary').click()
+                expect(frame.locator('[data-testid="mae-help"]')).to_contain_text('252')
+                page.screenshot(path=str(out / '03_trial_clarity.png'))
             frame.locator('[data-action="view"][data-view="experiments"]').first.click()
             for candidate in research_ids:
                 frame.locator(f'tr[data-action="candidate"][data-id="{candidate}"]').click()
@@ -265,6 +273,12 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             page.set_viewport_size({"width": 1440, "height": 900})
             frame.locator('[data-action="view"][data-view="artifacts"]').first.click()
             click("refit")
+            expect(frame.locator('[data-action="confirm-refit"]')).to_have_text('确认额外训练1次')
+            expect(frame.locator('#modal-root')).to_contain_text('不调用 LLM')
+            page.screenshot(path=str(out / '05_refit_confirmation.png'), animations='disabled')
+            click('close-modal')
+            assert counts() == before
+            click('refit')
             assert counts() == before
             click("confirm-refit")
             expect(frame.locator('[data-action="download-model"]')).to_be_visible(timeout=60000)
