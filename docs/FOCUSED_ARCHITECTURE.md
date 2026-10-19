@@ -1,9 +1,11 @@
 # Focused / Mission Research Architecture
 
-## Approved V2.5.0 extension (2026-10-19; implementation underway)
+## V2.5.0 extension (2026-10-19; bounded engineering verified)
 
 ADR007 and V2_5_METHOD_RESEARCH.md authorize one feature_window profile in the existing Controller. Full methods inherit from accepted controls; one axis changes per experiment. Three scopes separate comparison/calibration, eligible and selected training. Same-response research_update remains advice, never numeric authority. Actual fit receipts and versioned window-consistent refit reuse existing runtime/trust. Old contracts are historical and remain compatible; no second service or state store.
 
+
+Final evidence is in V2_5_METHOD_RESEARCH.md §9 and CURRENT_IMPLEMENTATION.md. Compact method references are reversible planning projections, not stored semantic or numeric authority; actual candidates/bundles keep full legal methods. Old source-bound campaigns are not silently migrated.
 
 ## S0–S4 bounded extension (2026-10-13)
 

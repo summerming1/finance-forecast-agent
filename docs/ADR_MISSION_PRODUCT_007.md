@@ -30,3 +30,5 @@ production migration, global permission changes, remote CI or push. Synthetic
 worker/fit/predict/refit/local HTTP/replay/browser and local commits are authorized.
 G6 remains attempted with issues pending human recheck. P/F/M, weights, HPO,
 knowledge, internal coding, Shadow and publishing remain conditional future work.
+
+Implementation evidence recorded 2026-10-19: N0–N5 bounded synthetic engineering, 59 new tests and four browser modes pass; full regression retains two historical failures. Exact status belongs only to CURRENT_IMPLEMENTATION.md and evidence to V2_5_METHOD_RESEARCH.md §9. This note does not change this ADR approval, authorize future packages, or sign financial/Provider/human acceptance.

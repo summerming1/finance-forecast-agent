@@ -1,9 +1,8 @@
 # Finance Forecast Agent
 
-## V2.5.0 approved implementation (2026-10-19)
+## V2.5.0 bounded local engineering delivery (2026-10-19)
 
-N0–N5 feature/window research and feedback updates are authorized; implementation evidence will be recorded in [V2_5_METHOD_RESEARCH.md](docs/V2_5_METHOD_RESEARCH.md) and actual status in [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md). ADR007 supplements prior decisions. This is not a completed release. Synthetic local engineering only; no real Provider/market experiments, push or remote CI. Prior owner trial issues remain pending human recheck.
-
+One Campaign can choose feature or training-window changes, one axis per experiment relative to an accepted complete control. Same-response research updates, actual selected training, recovery, original workspace and window-consistent model delivery are connected. The 59 new version tests and all four browser modes pass; the full applicable regression is 939 passed / 2 historical failures / 7 skipped (exit 1), not all green. Actual status is only in [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md); the sole contract and exact evidence are in [V2_5_METHOD_RESEARCH.md](docs/V2_5_METHOD_RESEARCH.md). No real Provider/market effect or human acceptance is established; prior owner trial issues await human recheck. No push or remote CI.
 
 A financial machine-learning research workbench with two compatible paths:
 

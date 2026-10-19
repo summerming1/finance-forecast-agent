@@ -1,9 +1,11 @@
 # Focused / Mission Research Acceptance Plan
 
-## V2.5.0 N0–N5 (2026-10-19 approved, results not yet claimed)
+## V2.5.0 N0–N5 (2026-10-19 bounded engineering result recorded)
 
 Use the unique V2_5_METHOD_RESEARCH.md contract and ADR007. Verify same-response updates including stop, full method inheritance both ways, mature selected training versus fixed calibration, real fit receipts, cache/observation identity, trusted window refit, recovery/continuation and original UI. Synthetic worker/HTTP/replay/browser allowed; no new real Provider or market experiments. Final source/tests/dependencies/inputs freeze and exact exit required; existing A/L/47-negative records stay historical.
 
+
+Final observed result: 59 new version tests pass; 948 applicable cases reconcile exactly (939 pass, 2 historical failures, 7 skips, exit1). Four browser modes pass; same-source HTTP/replay/recovery and full model delivery pass. This is not whole-repository green, Provider quality, real-user or financial acceptance. Raw commands, failures and binding are in V2_5_METHOD_RESEARCH.md §9 and validation/v25_local_acceptance.json.
 
 ## Approved S0–S4 gate (2026-10-13)
 

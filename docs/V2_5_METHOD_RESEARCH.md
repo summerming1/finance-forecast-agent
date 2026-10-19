@@ -229,3 +229,149 @@ max-ast-last.xml22通过/1失败/166.54s/exit1，均仍在最大ON组合触及64
 整体上限64000仍保留；不承诺任意附加资料和全部合法字段的笛卡尔积都能容纳，超限
 仍显式拒绝，不能静默删事实/负例。新一轮最终源码/依赖/输入绑定及适用回归在final5，
 未结束前本段不是最终验收。
+
+
+## 9 最终实施、验收与交接报告（2026-10-19）
+
+结论：N0—N5在本次授权的隔离合成工程范围内收口；R1—R4已进入实际代码、原工作区和交付。
+完整适用回归为939通过、2历史失败、7跳过，actual exit1，**不是全仓全绿**。
+59个不同的V2.5测试用例全部通过，没有靠隔离重测覆盖本次完整回归失败。
+最终四模式Chromium4通过/550.37s/exit0（17+17+20+20=74项检查、页错误0）；
+同源码本地HTTP/严格Replay/kill恢复3通过/269.28s/exit0；双轨迹交付驱动exit0。
+原试用G6已尝试有问题待本人复核，不能由本报告代签。
+
+### 9.1 批次与修订映射
+
+| 批次/修订 | 已实现内容 | 关键位置与验证 |
+|---|---|---|
+| N0 | 唯一V2.5合同、ADR007、当前必读顺序、两轴正式路线；外部稿只为来源 | 本文§1—§8、AGENTS、PROJECT_ROADMAP、ADR007；不改V24历史及A/L |
+| N1 / R1 | method_research_advice_v1同次响应的research_update；原命题/规则/可见结果绑定；第二轮继续/停止/待审核，首次及One-shot为null | focused_methods.validate_research_update、focused_research._bind_research_design；methods/acceptance/recovery测试 |
+| N2 | v4完整方法身份；parent=control；特征/窗口单轴diff；继承窗口/全部特征，累计最多2条；差成绩控制合法 | focused_research.CandidateConfig、compile_hypotheses；compile/acceptance测试 |
+| N3 / R2 | 固定comparison/calibration、成熟eligible、policy-selected三范围；每折一次拟合/63目标；入口捕获实际行/列/参数/Scaler统计 | focused_methods.training_scopes/fit_method、focused_research.evaluate_candidate、focused_diagnostics；execution测试含756与历史依赖扰动 |
+| N3 / 身份 | 完整方法缓存，预测与比较/观察身份分开；相同最终方法复用，方向/分母/时点各自保存；失败不当成功 | focused_research._observe_research、原RuntimeDB及缓存；双路径、失败/恢复测试 |
+| N4 / R3 | 原两个入口/worker/续接/研究包；新快照窗口refit、原完整特征、显式asof及真实行身份；v4可信包/新进程无标签推理；旧包语义保留 | focused_delivery.refit_model_bundle/predict_model_bundle、research_mission、原UI service；delivery及浏览器 |
+| N5 / R4 | 原Benchmark适配器的四项风格参考/认识更新/同域有限简单策略；同配置/权限/预算，各臂仅用自身结果；同目标不同窗口可比 | focused_benchmark、focused_summary；benchmark/comparison/recovery测试；不是实际LLM价值结果 |
+| N5 / 容量 | compact_method_context_v3、可逆method_reference_projection_v3、实际wire计量；规则/AST/程序元数据共享，特征名不变；提交引用标记仍拒绝 | focused_methods.project_method_references/restore_method_references、focused_literature、llm_adapters；原始失败全部保留，最大AST/备注/设计ON/OFF在最终59项中通过 |
+
+R1认识更新与事前feedback_update、确定性actual_feedback_update职责不同，不互相代替。
+引用有效不代表因果解释正确；支持包提供更新入口，不声称真实LLM已经会研究。
+研究参数/seed/内置组/处理算法在研究起点冻结，实验不搜索；504/756只是本版有限域。
+不强迫换轴/用满槽/找到赢家。窗口与Scaler/正则环境联动，只解释整体方法结果。
+
+### 9.2 最终源码、依赖、输入与命令
+
+测试源码提交：`b10c49562124d8fdb7ea49001d83559f9092d79b`，分支`feat/mission-research-v2`。
+238个执行/测试文件集合摘要（v25-tested-source-files-v1）：
+`fc37b33ec3bbad6561715418790d6829b68875b0e43bae7161fbe6be464d1598`。
+Python3.13.3；核心依赖与完整已安装distribution版本见机器收据。
+全回归环境start/end/current版本一致；各执行收据的声明输入、源码、核心依赖及JUnit
+开始/结束/当前三方匹配。输入包括pyproject、声明的simulation_only JSON/来源与驱动；
+临时生成数据由冻结的测试生成器复现，各Campaign另存raw SHA/实际训练行身份。
+这不是连续磁盘监控、wheel字节审计或封存标签检查。辅助fixture Git元数据不冒充运行前字节快照。
+
+在仓库根目录，先设置`$env:PYTHONPATH='src;tests;apps;scripts'`。最终实际命令：
+
+```powershell
+.venv/Scripts/python.exe .v250/run_browser_v3.py
+.venv/Scripts/python.exe -m pytest -q tests/test_focused_v25_recovery.py --basetemp=.t25recover5 --junitxml=.v250/final5/recovery-pre.xml --tb=short
+.venv/Scripts/python.exe .v250/run_frozen_regression_v3.py --root .v250/final5 --basetemp-prefix .t25s5 --shards 4
+.venv/Scripts/python.exe .v250/deliver_trace_models_v3.py --root .v250/final5/trace-delivery --manifest .v250/final5/preregistration.json --case-prefix '.t25s5*'
+.venv/Scripts/python.exe .v250/static_final_v3.py
+```
+
+以上按列表exit依次0、0、1、0、0（最后一项是静态收集驱动结束；子检查exit逐项如下）。
+四分片真实pytest argv与required集合完整记录在`.v250/final5/preregistration.json`，
+每片start/end和stdout/JUnit都保存；分片exit依次1/0/1/0，案例数234/233/234/247。
+收集950项，以下两项真实股票训练未授权，明确deselect后适用948项：
+`test_models_and_harness::test_harness_runs_real_data`、
+`test_methodcard_p0_pipeline::test_methodcard_derived_paperspec_runs_p0_harness`。
+948个JUnit案例与收集node逐条一致：missing=[]、extra=[]、duplicate_count=0。
+7个跳过包含4个显式浏览器opt-in（已在同源另跑4通过）与3个平台/原条件跳过，逐项原因见机器收据。
+
+静态：本轮受管修改文件Ruff、Python compileall、三份修改JS的node --check、git diff --check均exit0。
+`ruff check src apps scripts tests`实际exit1：97项/52个既有未修改文件，当前修改文件命中0。
+`ruff check .`在完整回归前138项、后140项，额外包含保留的临时历史证据、本轮验收辅助脚本及
+新生成探针的样式问题，不声称工作区全量lint通过，也不为求绿修改已哈希的冻结验收脚本。
+精确分类见`.v250/final5/lint_scope_review.json`与原始输出。
+
+两项完整回归失败均保留：
+1. `tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call`：原`2c05bfd22af27435.json`匹配fixture缺失，BLOCKED_ASSET；未造新fixture替代。
+2. `tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]`：Windows创建symlink的WinError1314，尚未进入加载，BLOCKED_ENV；未改全局权限。
+
+本次完整回归没有两个新入口的120秒等待失败；旧final3并行等待失败/隔离通过、final4未完成中断、
+最大上下文数次原始红例仍是历史原貌，不能拿旧通过替代本次证据。最终机器收据：
+[受管副本](validation/v25_local_acceptance.json)，完整原始目录`.v250/final5`。
+
+### 9.3 可复现轨迹与完整模型交付
+
+轨迹A：`baseline_ridge`→特征`r1_c1_3cfadc9f`（expanding）→窗口
+`r2_c1_c1ffd8a2`（rolling504，保留gen_mean）。另一分支先得窗口
+`r1_c2_e43b290d`再加同特征，`r2_c2_93670e2a`复用前者预测；各自控制、观察与时点不合并。
+
+轨迹B：已有rolling504的`user_start`→两生成特征`r1_c1_fa01e116`→消融
+`r2_c1_d276ae71`（仅移除gen_mean，保留gen_second和rolling504）。未推荐的父候选仍合法作control。
+两轨迹均第一轮无认识更新、第二轮有绑定真实可见结果的更新，2次规划、外部HTTP0，研究fit各24。
+原冻结推荐分别仍是baseline_ridge和user_start，未因浏览或演示交付而改写。
+
+| 演示 | 显式交付对象 | selected训练行 | 保留特征 | 新进程输出逐值一致 | 另计refit |
+|---|---|---:|---|---:|---:|
+| feature→window | r2_c1_c1ffd8a2 | 504 | gen_mean | 1094行，exit0 | 1 |
+| window→feature→ablate | r2_c1_d276ae71 | 504 | gen_second | 1080行，exit0 | 1 |
+
+这是**显式其他已接受候选**交付演示，绝不是把它们偷偷改成推荐或金融赢家；推荐包默认交付另由原工作区测试验证。
+每条研究包9份预测制品完成审计；真实asof、列序/有效参数、实际fit入口及行哈希均在完整模型metadata。
+两份模型ZIP与完整控制/反馈/观察/推荐在`.v250/final5/trace-delivery/receipt.json`及同目录。
+上述两次额外fit独立计费；其他单元/worker/browser测试各有自己的隔离计数，不混成一个Campaign预算。
+同快照显式refit与无标签predict已验证，不包含新数据自动更新或跨机信任迁移。
+
+复现实验使用两个原测试：`test_focused_v25_execution.py::test_both_axis_paths_reuse_same_final_method_but_keep_distinct_observations`
+和`test_focused_v25_acceptance.py::test_window_to_two_cumulative_features_then_ablate_poor_accepted_control`。
+必须使用新的basetemp；交付驱动支持`--root`、`--manifest`、`--case-prefix`，可选择新输出目录，拒绝覆盖原证据。
+原实际驱动命令与输入hash见trace-delivery/start.json；重新生成模型是新的显式refit，不当作免费复用。
+
+### 9.4 使用、迁移、未测边界与G门
+
+启动`.venv/Scripts/python.exe -m streamlit run apps/streamlit_app.py`。
+选V2.5特征＋窗口范围，原“没有现成模型”和“已有模型配置”两入口均可用；本轮只验证合成输入。
+先预检再确认执行；研究页看真实control/单轴diff/第二轮认识更新；详情核对eligible/selected和实际回执。
+成果页默认交付冻结推荐；浏览不会换包。其他候选需显式选择并核对ID；生成新包额外1fit，已有包下载不fit。
+继续研究是新Campaign，继承完整窗口及特征；无标签推理只transform/predict。原活动需原源码/依赖绑定，
+不改旧hash迁移；旧v2/v3包保留语义。本次无生产DB迁移、依赖新增或新平台。
+
+| 门/证据轴 | 本轮状态 |
+|---|---|
+| G0 研究合同/判断 | 新范围单元/集成通过；原J红例和行为历史保留 |
+| G1 软件/源输入绑定 | 限定工程GO；全仓实际PARTIAL，2历史阻塞+全量lint问题不伪装绿灯 |
+| G2 真实开发输入与两入口 | 旧所有者授权真实输入历史不改；新V2.5两入口合成实际fit通过，真实行情研究本轮NOT_RUN |
+| G3 包复算/可信推理/只读 | 本轮合成研究包/同主机新进程通过；不等于跨机任意模型导入 |
+| G4 主持/操作准备 | 原指南已同步新范围；不是本人操作签收 |
+| G5 Agent模式 | 规则/本地模拟HTTP/严格Replay工程通过；真实LLM理解与等预算选择价值未验证 |
+| G6 本人/用户 | 已尝试有问题，待本人复核；独立目标用户未签收，不退回“从未试用” |
+
+结论分开：工程完成（限定合成与受支持本机路径）；真实LLM理解NOT_RUN；研究选择价值
+NOT_ESTABLISHED；独立预测效果NOT_RUN。目标用户邀请不由AI代签，仍按原G6复核条件；
+不是因缺无关旧资产而阻止其它获准工程。P/F/M、受控内部改写、K1/K2、权重/参数、V2.6/V3等
+仅保留PROJECT_ROADMAP顶部的具体条件包，本轮不执行。没有付费/真实Provider、外发、封存标签、
+真实市场研究、生产迁移、全局权限修改、推送或远端CI。原A/L、47目标负确认和科学失败不关闭。
+
+### 9.5 本地提交与收口
+
+以下为本轮实现提交；最终文档/收据以仅文档提交收口（哈希见git log及交付回复）。全部本地，无推送，执行源保持上述238文件摘要。
+
+```text
+3ef2e5c docs(v25): freeze approved two-axis research contract and gates
+6378e44 feat(v25): bind bounded research updates to versioned advice and plans
+5046c85 feat(v25): compile versioned complete methods with one-axis controls
+ee860ce fix(v25): clear N2 static checks and correct staged validation log
+33686fd feat(v25): execute selected training windows and preserve comparison observations
+e9fd06c feat(v25): connect window-aware refit bundles workspace and continuation
+728e14f feat(v25): close failure feedback comparison and fair benchmark gates
+2aeddb1 test(v25): synchronize all workspace assertions with component readiness
+961eb8c fix(v25): preserve bounded lossless context for feature-bearing continuation
+b10c495 fix(v25): losslessly project complex feature contexts within the frozen budget
+```
+
+源码测试后仅同步文档和受管收据；文档状态回归结果另存`.v250/final5/docs-check.xml`，
+最终再次核对源文件摘要不变。原所有未跟踪证据和用户文件保留，不清理回滚。
+
+文档收口实际结果：`pytest -q tests/test_focused_r0_status.py tests/test_focused_b0_plan.py --basetemp=.t25doc5 --junitxml=.v250/final5/docs-check.xml --tb=short`，4通过/2.18s/exit0；所读AGENTS/README/路线/CURRENT/handoff在开始/结束绑定。执行/测试238文件集合摘要仍为fc37b33e…d1598，无功能修改。
