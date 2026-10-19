@@ -196,6 +196,62 @@ def fit_method(model,x,y,scope,columns,*,expected_family=None):
     return receipt
 
 
+def project_method_references(prompt):
+    """Losslessly share original rules and already visible method values."""
+    import json
+    body=deepcopy(prompt)
+    nodes=[*body.get('observation_feedback',[]),*body.get('prior_decision_designs',{}).values()]
+    occurrences={}
+    for node in nodes:
+        if isinstance(node.get('rule'),dict):
+            digest=identity(node['rule'],domain='method-context-rule-v1')
+            occurrences.setdefault(digest,[]).append(node)
+    rules={}
+    for same in occurrences.values():
+        if len(same)<2:continue
+        ref='r'+str(len(rules));rules[ref]=deepcopy(same[0]['rule'])
+        for node in same:node['rule']={'method_rule_ref':ref}
+    methods={r['candidate_id']:r for r in [*body.get('baseline_results',[]),*body.get('prior_research_results',[])]}
+    fixed=body.get('fixed_model')
+    if fixed:methods.setdefault(fixed['candidate_id'],fixed)
+    replacements=0
+    for feedback in body.get('structured_feedback',[]):
+        for change in (feedback.get('config_diff') or {}).get('changes',[]):
+            path=change['path']
+            for field,key in [('old_value','parent_candidate_id'),('new_value','candidate_id')]:
+                cid=feedback.get(key);method=methods.get(cid,{})
+                ref={'method_value_ref':{'candidate_id':cid,'path':path}}
+                if (path in method and change.get(field)==method[path]
+                        and len(json.dumps(change[field]))>len(json.dumps(ref))):
+                    change[field]=ref;replacements+=1
+    if rules or replacements:
+        body['method_context_refs']={'schema_version':'method_reference_projection_v1','rules':rules,
+            'source_hash':identity(prompt,domain='method-context-original-v1'),
+            'contract':'method_rule_ref resolves in method_context_refs.rules. method_value_ref reads the exact path of the candidate in baseline_results/prior_research_results/fixed_model. No numerical values omitted.'}
+    return body
+
+
+def restore_method_references(prompt):
+    """Inspectable inverse for audit/tests; no new numeric/state authority."""
+    body=deepcopy(prompt);refs=body.pop('method_context_refs',None)
+    if not refs:return body
+    methods={r['candidate_id']:r for r in [*body.get('baseline_results',[]),*body.get('prior_research_results',[])]}
+    fixed=body.get('fixed_model')
+    if fixed:methods.setdefault(fixed['candidate_id'],fixed)
+    def expand(value):
+        if isinstance(value,dict):
+            if set(value)=={'method_rule_ref'}:return deepcopy(refs['rules'][value['method_rule_ref']])
+            if set(value)=={'method_value_ref'}:
+                ref=value['method_value_ref'];return deepcopy(methods[ref['candidate_id']][ref['path']])
+            return {k:expand(v) for k,v in value.items()}
+        if isinstance(value,list):return [expand(v) for v in value]
+        return value
+    restored=expand(body)
+    if identity(restored,domain='method-context-original-v1')!=refs['source_hash']:
+        raise ValueError('method reference projection is not lossless')
+    return restored
+
+
 def project_method_prompt(prompt,feedback_support):
     """Extend the original bounded projection; facts are not a second store."""
     from .focused_diagnostics import default_design

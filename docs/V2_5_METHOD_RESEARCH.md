@@ -190,3 +190,23 @@ browser-verified.xml已通过窗口比较/包/零增量浏览，但新context恢
 最终冻结/全仓及浏览器结果尚待后续实际运行，不以本段阶段测试替代。
 
 最终首冻728e14f/238文件：browser-final.xml四模式2通过/2失败/785.82s/exit1，旧price preflight及v25续接dialog均在异步iframe挂载后的默认5秒断言超时，原内容/资源断言不改。现统一该测试就绪预算30秒并重新冻结。full-final2首跑因测试源码将改变主动中断，实际exit15，非完整回归；原stdout/start及full-interruption.json保留，不以其中已运行用例代替完整验收。完整适用集合为939/941，2项真实股票harness重训按本轮权限单列NOT_RUN，不改原测试。为减少等待，下一次按原测试文件分片隔离执行，同一冻结源码/依赖，逐条核对939个收集node与实际JUnit案例/exit；不是抽样定向验收。
+
+N5容量修订（真实失败保留）：第二次冻结2aeddb1/源码hash
+6be0285ad2769166ef91b0321b27ee2bea9b810ac15a22f0387f3c8f9a921f25，完整适用939项
+实际928通过/4失败/7跳过，四分片exit=1,0,1,1；不是全绿。两项旧缺资产/Windows权限，
+两项新worker在并行负载超过原120秒等待，随后同源码/原120秒条件隔离2通过/225.59s/exit0。
+原分片失败不覆盖。原集合核对器错误替换参数中的Unicode转义，保留原aggregate，另据原始
+收集及JUnit仅规范文件名重新逐条核对939项无遗漏/额外/重复，coverage_reconciliation.json。
+全四模式浏览器3通过/1失败/591.76s/exit1：新v25带特征续接第二轮真实超过64000上下文，
+不是等待问题。该浏览器仅有start身份，修复前未写end身份，不追填伪造冻结结束收据。
+原全仓、浏览器、模型轨迹及失败均留在.v250/final3，不能冒充后续源码验收。
+
+新增版本化compact_method_context_v1/compact_json_v1：容量按实际Provider prompt JSON
+计算，旧profile的默认JSON字节保持原样。method_reference_projection_v1只共享相同的原规则
+及已完整展示候选的方法值，不删数值、负例或原理由；带原始投影hash及可验证的逆变换。
+引用在权限筛选及原紧凑上下文构造后产生，引用不扩大可见范围。不是新增记忆/事实权威，
+没有额外LLM调用，没有放宽64000。context-final.xml阶段28通过/557.62s/exit0，含本地HTTP/
+严格Replay/kill恢复；随后逆变换位置修订及真实wire/篡改负例，context-last.xml20通过/
+91.33s/exit0。最长备注/带特征续接的原始红例和首次ON失败仍保留。最终源码需再冻结回归。
+更正早期n5b：外层执行返回exit1，错误pytest路径未运行测试；pytest内部独立exit未捕获，
+前段写exit4不作为精确收据。其他逐次pytest结果以原XML及实际执行返回为准。

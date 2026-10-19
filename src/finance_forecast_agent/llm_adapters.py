@@ -23,6 +23,14 @@ load_env_file()
 BAILIAN_PROVIDERS = {'bailian', 'aliyun_bailian', 'aliyun_compatible', 'dashscope_compatible'}
 
 
+def serialize_prompt_payload(payload: dict[str, Any]) -> str:
+    """Versioned whitespace only; legacy wire bytes and every JSON value stay."""
+    manifest=payload.get('context_manifest')
+    compact=isinstance(manifest,dict) and manifest.get('serialization')=='compact_json_v1'
+    options={'separators':(',',':')} if compact else {}
+    return json.dumps(payload,ensure_ascii=False,sort_keys=True,allow_nan=False,**options)
+
+
 class LLMJsonClient(Protocol):
     def complete_json(self, *, prompt_payload: dict[str, Any], schema_name: str) -> dict[str, Any]: ...
 
@@ -176,7 +184,7 @@ class OpenAIJsonClient:
 
     def complete_json(self, *, prompt_payload: dict[str,Any], schema_name: str) -> dict[str,Any]:
         prompt=(f'You are extracting schema {schema_name}. Return only valid JSON. '
-                'Use unknowns instead of guessing. Preserve evidence spans.\n\n'+json.dumps(prompt_payload,ensure_ascii=False,sort_keys=True,allow_nan=False))
+                'Use unknowns instead of guessing. Preserve evidence spans.\n\n'+serialize_prompt_payload(prompt_payload))
         payload={'model':self.model,'messages':[{'role':'user','content':prompt}],
                  'temperature':0,'max_tokens':self.max_tokens}
         if self.provider not in BAILIAN_PROVIDERS:

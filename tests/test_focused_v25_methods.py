@@ -74,3 +74,43 @@ def test_execution_failure_reference_cannot_be_a_scientific_negative_or_control(
     u['items'][0]['assessment']='execution_incomplete'
     assert validate_research_update(u,p)==u
     with pytest.raises(ValueError,match='candidate_result'):EvidenceIndex(p['evidence_projection']).require('f','candidate_result')
+
+
+def test_versioned_prompt_wire_is_lossless_and_legacy_bytes_stay_exact():
+    import json
+
+    from finance_forecast_agent.llm_adapters import serialize_prompt_payload
+    p={'fact':[1,2,.001234567890123456], 'text':'中文 exact strings'}
+    assert serialize_prompt_payload(p)==json.dumps(p,ensure_ascii=False,sort_keys=True,allow_nan=False)
+    p['context_manifest']={'schema_version':'compact_method_context_v1','serialization':'compact_json_v1'}
+    wire=serialize_prompt_payload(p)
+    assert json.loads(wire)==p and len(wire)<len(json.dumps(p,ensure_ascii=False))
+
+def test_lossless_method_references_restore_original_and_reject_tampering():
+    from finance_forecast_agent.focused_methods import project_method_references, restore_method_references
+    rule={'threshold':0.0025,'metric':'mae','direction':'lower'}
+    fp={'schema_version':'feature_program_v1','features':[{'name':'gen_x','expression':{'op':'rolling_mean','window':20}}]}
+    p={'baseline_results':[{'candidate_id':'b','feature_program':fp}],
+       'prior_research_results':[{'candidate_id':'c','feature_program':fp}],
+       'prior_decision_designs':{'p':{'rule':rule}},'observation_feedback':[{'rule':rule,'delta':-0.001}],
+       'structured_feedback':[{'candidate_id':'c','parent_candidate_id':'b','config_diff':{'changes':[
+           {'path':'feature_program','old_value':fp,'new_value':fp}]}}]}
+    q=project_method_references(p)
+    assert restore_method_references(q)==p
+    assert q['prior_decision_designs']['p']['rule']=={'method_rule_ref':'r0'}
+    q['observation_feedback'][0]['delta']=0.123
+    with pytest.raises(ValueError,match='not lossless'):restore_method_references(q)
+
+
+def test_actual_http_wire_uses_versioned_serializer_and_preserves_legacy():
+    import json
+
+    from test_focused_b1_provider import client, good, server
+
+    from finance_forecast_agent.llm_adapters import serialize_prompt_payload
+    with server([{'body':good()}]) as (url,calls):
+        for p in ({'legacy':['a','b'],'number':0.0025},
+                  {'context_manifest':{'serialization':'compact_json_v1'},'values':['a','b'],'number':0.0025}):
+            assert client(url).complete_json(prompt_payload=p,schema_name='wire-test')=={'status':'ok'}
+            wire=calls[-1]['messages'][0]['content'].split('\n\n',1)[1]
+            assert wire==serialize_prompt_payload(p) and json.loads(wire)==p

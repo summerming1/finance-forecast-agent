@@ -128,3 +128,38 @@ def test_mixed_fit_failure_is_not_cached_success_and_update_retains_execution_fa
     updates=out['rounds'][1]['research_update']['items']
     assert len(updates)==2 and any(i['assessment']=='execution_incomplete' for i in updates)
     assert out['diagnostic_research']['recommendation']['best_research_candidate'] is not None
+
+
+@pytest.mark.parametrize('visibility',['on','off'])
+def test_feature_start_continuation_with_max_notes_fits_actual_wire_budget(tmp_path,visibility):
+    import json
+
+    from finance_forecast_agent.focused_methods import restore_method_references, text_size
+    from finance_forecast_agent.llm_adapters import serialize_prompt_payload
+    config=method(features=True).to_dict()
+    config['feature_program']['features'][0]['name']='gen_method_1'
+    config['feature_program']['features'][0]['expression']['window']=20
+    start={k:config[k] for k in ['schema_version','model_family','model_params','feature_groups','feature_program','training_policy']}
+    c=controller(tmp_path,entry_mode='provided_start',starting_baseline=start,
+        research_notes='n'*4000,diagnostic_mode=visibility)
+    original=c.advisor.propose;prompts=[]
+    def propose(p):
+        wire=serialize_prompt_payload(p);assert json.loads(wire)==p
+        assert len(wire)<=64000
+        assert p['context_manifest']['serialization']=='compact_json_v1'
+        restored=restore_method_references(p)
+        assert 'method_context_refs' not in restored
+        if p['round_index']==2 and visibility=='on':
+            assert p['method_context_refs']['rules']
+        prompts.append(p)
+        advice,source=original(p)
+        if p['round_index']==1:
+            for row in advice['hypotheses']:
+                if 'research_design' in row:
+                    d=row['research_design']
+                    d['falsification_condition']+='x'*(1000-text_size(d))
+        return advice,source
+    c.advisor.propose=propose
+    out=c.run()
+    assert out['execution_status']=='completed' and len(prompts)==2
+    assert out['rounds'][1]['research_update']

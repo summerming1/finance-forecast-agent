@@ -300,7 +300,15 @@ def compact_research_context(prompt: dict, *, max_chars: int = 64000) -> dict:
         'omitted': ['duplicate literature/memory bodies (retained in evidence_projection)',
                     'feedback explanation/narrative (numeric facts retained)'],
         'all_result_statuses_retained': True}
-    if len(json.dumps(body, ensure_ascii=False)) > max_chars:
+    if body.get('method_policy'):
+        body['context_manifest'].update(schema_version='compact_method_context_v1',serialization='compact_json_v1')
+        from .focused_methods import project_method_references
+        body=project_method_references(body)
+        from .llm_adapters import serialize_prompt_payload
+        actual_chars=len(serialize_prompt_payload(body))
+    else:
+        actual_chars=len(json.dumps(body,ensure_ascii=False))
+    if actual_chars > max_chars:
         sizes = {k:len(json.dumps(v,ensure_ascii=False)) for k,v in body.items()}
         raise ValueError('research context exceeds frozen character budget; no silent truncation; field sizes='+str(sizes))
     return body
