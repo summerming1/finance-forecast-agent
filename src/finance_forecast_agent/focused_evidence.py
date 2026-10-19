@@ -207,6 +207,8 @@ def build_execution_manifest(
                 conformant = conformant and (receipt['fold_id'] == fold_id and selected == expected
                     and receipt['selected_train_hash'] == identity(selected,domain='method-training-rows-v1')
                     and receipt['columns'] == list(expected_feature_columns) and receipt['actual_fit_calls'] == 1
+                    and _params_conform(candidate.model_params, receipt['effective_params'], role)
+                    and receipt['effective_params'] == result.estimator_params
                     and receipt['test_row_ids'] == [int(i) for i in splits[fold_id][1]])
                 fold_contracts.append({'fold_id':fold_id,'train_count':len(selected),
                     'train_first_row':selected[0],'train_last_row':selected[-1],

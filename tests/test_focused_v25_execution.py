@@ -121,3 +121,17 @@ def test_maturity_precedes_exact_window_and_never_shrinks(tmp_path):
     assert rows[0]['eligible_count']==736 and rows[0]['selected_count']==504
     with pytest.raises(ValueError,match='insufficient eligible'):
         training_scopes(frame,TrainingPolicy('rolling',756),splits)
+
+
+@pytest.mark.parametrize('attack',['missing_scaler','changed_scaler'])
+def test_actual_fit_rejects_changed_ridge_preprocessing_before_fit(attack):
+    from sklearn.linear_model import Ridge
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+
+    from finance_forecast_agent.focused_identity import identity
+    from finance_forecast_agent.focused_methods import fit_method
+    model=Ridge() if attack=='missing_scaler' else make_pipeline(StandardScaler(with_std=False),Ridge())
+    scope={'selected_train':[0,1,2,3],'selected_train_hash':identity([0,1,2,3],domain='method-training-rows-v1')}
+    with pytest.raises(ValueError,match='Scaler'):
+        fit_method(model,np.ones((4,2)),np.zeros(4),scope,['a','b'],expected_family='ridge_regression')

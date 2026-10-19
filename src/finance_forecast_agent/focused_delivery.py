@@ -992,7 +992,13 @@ def _price_bundle_pipeline(candidate: CandidateConfig, data_revision: str) -> di
     root = Path(__file__).parent
     compiler_source = {name: file_sha256(root / name) for name in (
         "focused_feature_program.py", "focused_data.py", "focused_protocol.py", "focused_identity.py", "focused_delivery.py")}
-    return {"schema_version": "price_bundle_pipeline_v1", "program": program.to_dict(),
+    method_fields = {}
+    if candidate.training_policy is not None:
+        from .focused_methods import method_capability
+        compiler_source['focused_methods.py'] = file_sha256(root / 'focused_methods.py')
+        method_fields = {'training_policy': candidate.training_policy.to_dict(),
+            'method_profile': method_capability(), 'refit_semantics': 'focused_method_snapshot_refit_v1'}
+    return {"schema_version": "price_bundle_pipeline_v1", **method_fields, "program": program.to_dict(),
         "capability_hash": cap["capability_hash"], "compiler_version": cap["compiler_version"],
         "builtin_recipe_version": cap["builtin_recipe_version"], "compiler_source": compiler_source,
         "feature_groups": candidate.feature_groups, "actual_columns": columns,
@@ -1020,7 +1026,8 @@ def refit_model_bundle(
     literature_review_ids: list[str] | None = None,
     workspace_context: dict | None = None,
 ) -> Path:
-    active_policy = policy or RefitPolicy()
+    method_mode = candidate.training_policy is not None
+    active_policy = policy or (RefitPolicy('focused_method_snapshot_refit_v1', False) if method_mode else RefitPolicy())
     if workspace_context is not None:
         legacy_fields = {"project_id", "campaign_id"}
         diagnostic_fields = legacy_fields | {"recommendation_hash", "explicitly_selected_candidate_id", "selection_action"}
@@ -1047,7 +1054,9 @@ def refit_model_bundle(
                 raise ValueError('ModelBundle recommendation binding mismatch before refit')
     review_bindings = _bundle_review_bindings(literature_project, literature_review_ids,
         task=task, candidate=candidate, tenant_id=tenant_id)
-    if not active_policy.fit_all_available_labels:
+    if method_mode and active_policy != RefitPolicy('focused_method_snapshot_refit_v1', False):
+        raise ValueError('method refit requires versioned snapshot/window semantics')
+    if not method_mode and not active_policy.fit_all_available_labels:
         raise ValueError("only the explicit all-matured-development-label refit policy is supported")
     pipeline = None
     if candidate.feature_program is not None:
@@ -1070,8 +1079,18 @@ def refit_model_bundle(
     cutoff = pd.Timestamp(training_asof) if training_asof else pd.Timestamp.now(tz="UTC")
     if cutoff.tzinfo is None:
         raise ValueError("training_asof must be timezone-aware")
-    if (available > cutoff).any():
+    if not method_mode and (available > cutoff).any():
         raise ValueError("refit contains labels that have not matured by training_asof")
+    selected = np.arange(len(frame))
+    training_execution = None
+    if method_mode:
+        eligible = np.flatnonzero((available <= cutoff).to_numpy())
+        selected = candidate.training_policy.select(eligible)
+        training_execution = {'eligible_train': eligible.tolist(), 'selected_train': selected.tolist(),
+            'eligible_count': len(eligible), 'selected_count': len(selected), 'training_asof': cutoff.isoformat(),
+            'availability_basis': 'explicit_available_at' if 'label_available_at' in frame else 'declared_XNYS_close'}
+        for name in ('eligible_train', 'selected_train'):
+            training_execution[name+'_hash'] = identity(training_execution[name], domain='method-training-rows-v1')
     store = _authority(state_path)
     root = _physical_path(out_dir)
     if root == store.path.parent or root in store.path.parents:
@@ -1090,7 +1109,12 @@ def refit_model_bundle(
         attempt["workspace_context"] = workspace_context
     store.put("model-refit-attempts", attempt_id, attempt, immutable=True)
     try:
-        model.fit(x, frame["label"].to_numpy(dtype=float))
+        if method_mode:
+            from .focused_methods import fit_method
+            training_execution = fit_method(model, x, frame['label'].to_numpy(dtype=float), training_execution, features,
+                expected_family=candidate.model_family)
+        else:
+            model.fit(x, frame["label"].to_numpy(dtype=float))
     except BaseException as exc:
         store.put("model-refit-attempts", attempt_id, {**attempt, "status": "failed", "error_type": type(exc).__name__})
         raise
@@ -1099,7 +1123,7 @@ def refit_model_bundle(
     model_path = root / "model.joblib"
     joblib.dump(model, model_path)
     metadata = {
-        "schema_version": "focused_model_bundle_v3" if pipeline else "focused_model_bundle_v2",
+        "schema_version": "focused_model_bundle_v4" if method_mode else "focused_model_bundle_v3" if pipeline else "focused_model_bundle_v2",
         "bundle_id": "bundle-" + uuid.uuid4().hex,
         "candidate": candidate.to_dict(),
         "feature_columns": features,
@@ -1109,10 +1133,11 @@ def refit_model_bundle(
         **({"literature_authority": review_bindings} if review_bindings else {}),
         "task": task.to_dict(),
         "dataset_fingerprint": dataset.semantic_fingerprint,
-        "training_rows": len(frame),
-        "training_target_rows": target_row_ids(frame, task.to_dict()),
-        "training_cutoff": str(frame.iloc[-1]["timestamp"]),
-        "last_training_label_available_at": available.max().isoformat(),
+        "training_rows": len(selected),
+        "training_target_rows": target_row_ids(frame.iloc[selected], task.to_dict()),
+        "training_cutoff": str(frame.iloc[int(selected[-1])]["timestamp"]),
+        "last_training_label_available_at": available.iloc[selected].max().isoformat(),
+        **({'training_execution': training_execution, 'method_identity': candidate.config_identity} if method_mode else {}),
         "training_asof": cutoff.isoformat(),
         "label_availability_basis": "explicit_available_at"
         if "label_available_at" in frame
@@ -1163,9 +1188,22 @@ def verified_model_bundle_bytes(
         raise ValueError("model environment version mismatch; rebuild in the registered environment")
     metadata_bytes = _read_bytes(root / "bundle.json", record["metadata"])
     metadata = json.loads(metadata_bytes)
-    if metadata.get("schema_version") not in {"focused_model_bundle_v2", "focused_model_bundle_v3"} or metadata.get("model_file") != "model.joblib":
+    if metadata.get("schema_version") not in {"focused_model_bundle_v2", "focused_model_bundle_v3", "focused_model_bundle_v4"} or metadata.get("model_file") != "model.joblib":
         raise ValueError("invalid registered model schema/path")
     parsed_candidate = CandidateConfig.from_dict(metadata["candidate"])
+    if (metadata['schema_version'] == 'focused_model_bundle_v4') != (parsed_candidate.training_policy is not None):
+        raise ValueError('method bundle cannot downgrade window/refit semantics')
+    if parsed_candidate.training_policy is not None:
+        receipt = metadata.get('training_execution') or {}
+        if (metadata.get('refit_policy') != RefitPolicy('focused_method_snapshot_refit_v1', False).to_dict()
+                or metadata.get('method_identity') != parsed_candidate.config_identity
+                or receipt.get('selected_train') != parsed_candidate.training_policy.select(receipt.get('eligible_train', [])).tolist()
+                or receipt.get('selected_train_hash') != identity(receipt['selected_train'], domain='method-training-rows-v1')
+                or receipt.get('selected_count') != metadata['training_rows']
+                or receipt.get('columns') != metadata['feature_columns']
+                or receipt.get('actual_fit_calls') != 1 or receipt.get('training_asof') != metadata['training_asof']
+                or pd.Timestamp(metadata['last_training_label_available_at']) > pd.Timestamp(metadata['training_asof'])):
+            raise ValueError('registered method refit consumption mismatch')
     bindings = metadata.get("literature_authority")
     if bindings is not None and _bundle_review_bindings(bindings["project_dir"], bindings["review_ids"],
             task=FocusedTaskSpec(**metadata["task"]), candidate=parsed_candidate, tenant_id=tenant_id) != bindings:
@@ -1199,7 +1237,7 @@ def predict_model_bundle(
     bundle_dir: str | Path, frame: pd.DataFrame, *, state_path: str | Path | None = None, tenant_id: str = "default"
 ) -> np.ndarray:
     metadata, model = load_model_bundle(bundle_dir, state_path=state_path, tenant_id=tenant_id)
-    if metadata["schema_version"] == "focused_model_bundle_v3":
+    if metadata["schema_version"] in {"focused_model_bundle_v3", "focused_model_bundle_v4"}:
         from .focused_data import validate_price_history
         from .focused_feature_program import compute_price_features
         raw = validate_price_history(frame)
@@ -1207,7 +1245,10 @@ def predict_model_bundle(
         matrix = compute_price_features(raw["spy_adj_close"].to_numpy(), candidate.feature_program, candidate.feature_groups)
         if list(matrix.columns) != metadata["feature_columns"] or matrix.lookback != metadata["feature_pipeline"]["lookback"]:
             raise ValueError("raw prediction transform differs from the trusted bundle")
-        prediction = np.asarray(model.predict(matrix.values[matrix.lookback:]), dtype=float)
+        values = matrix.values[matrix.lookback:]
+        if candidate.training_policy is not None:
+            values = pd.DataFrame(values, columns=metadata['feature_columns'])
+        prediction = np.asarray(model.predict(values), dtype=float)
         if prediction.shape != (len(raw) - matrix.lookback,) or not np.isfinite(prediction).all():
             raise ValueError("invalid raw model prediction output")
         return prediction

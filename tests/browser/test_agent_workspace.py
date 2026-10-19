@@ -19,7 +19,7 @@ import pytest
 pytestmark = pytest.mark.skipif(os.getenv("FFA_BROWSER_E2E") != "1", reason="explicit real browser gate")
 
 
-@pytest.mark.parametrize("price_features", [False, True, "v24"], ids=["legacy", "price_features", "v24"])
+@pytest.mark.parametrize("price_features", [False, True, "v24", "v25"], ids=["legacy", "price_features", "v24", "v25"])
 def test_agent_workspace_real_backend(tmp_path, price_features):
     import requests
     from playwright.sync_api import Error as BrowserError
@@ -33,7 +33,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
     from finance_forecast_agent.focused_state import RuntimeDB, process_birth, terminate_owned_tree
     from finance_forecast_agent.research_mission import workspace_campaign, workspace_queue
 
-    out = Path(os.getenv("FFA_UI_BROWSER_ARTIFACTS", str(tmp_path / "browser"))).resolve() / ("v24" if price_features == "v24" else "price_features" if price_features else "legacy")
+    out = Path(os.getenv("FFA_UI_BROWSER_ARTIFACTS", str(tmp_path / "browser"))).resolve() / (str(price_features) if price_features in {"v24", "v25"} else "price_features" if price_features else "legacy")
     out.mkdir(parents=True, exist_ok=True)
     state, project, raw = tmp_path / "runtime.sqlite3", tmp_path / "project", tmp_path / "simulation_only.csv"
     _research_frame(tmp_path).to_csv(raw, index=False)
@@ -182,7 +182,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             click("new")
             frame.locator("#draft-notes").fill("Browser synthetic integration — no paid provider")
             if price_features:
-                frame.locator("#draft-change_scope").select_option("price_features")
+                frame.locator("#draft-change_scope").select_option("feature_window" if price_features == "v25" else "price_features")
             click("wizard-next")
             if not price_features:
                 frame.locator("#draft-input_kind").select_option("controlled")
@@ -199,11 +199,11 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             frame.locator("#draft-data_consent").check()
             click("wizard-next")
             frame.locator('[data-action="draft-preset"][data-value="custom"]').click()
-            for key, value in {"max_rounds": 2 if price_features == "v24" else 1,
+            for key, value in {"max_rounds": 2 if price_features in {"v24", "v25"} else 1,
                                "max_new_candidates_per_round": 2,
-                               "max_fit_calls": 32 if price_features == "v24" else 20}.items():
+                               "max_fit_calls": 32 if price_features in {"v24", "v25"} else 20}.items():
                 frame.locator("#draft-" + key).fill(str(value))
-            if price_features == "v24":
+            if price_features in {"v24", "v25"}:
                 frame.locator("#draft-diagnostic_mode").select_option("on")
             before = counts()
             click("preflight")
@@ -218,12 +218,16 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             pid, cid, first = wait_completed()
             assert first["payload"]["scientific_claim"] == (
                 "development_only_no_profitability_claim" if real_raw else "simulation_only_no_financial_evidence")
-            assert first["payload"]["fit_calls"] == (24 if price_features == "v24" else 20)
-            if price_features == "v24":
+            assert first["payload"]["fit_calls"] == (24 if price_features in {"v24", "v25"} else 20)
+            if price_features in {"v24", "v25"}:
                 assert first["payload"]["diagnostic_research"]["recommendation"]["recommendation_hash"]
                 assert first["payload"]["resource_usage"]["feature_planning"]["logical_decisions"] == 2
                 expect(frame.locator('[data-testid="diagnostic-research"]')).to_contain_text("自动新增 HTTP=0 / fit=0")
-                report["checks"].append("v24_diagnostics_and_frozen_recommendation")
+                report["checks"].append("versioned_diagnostics_and_frozen_recommendation")
+                if price_features == 'v25':
+                    expect(frame.locator('[data-testid="research-update"]')).to_have_count(1)
+                    expect(frame.locator('[data-testid="trial-experiment"]').nth(1)).to_contain_text('训练窗口')
+                    assert first['payload']['rounds'][1]['research_update']['items']
             assert set(first["request"]["options"]["allowed_feature_groups"]) == {
                 "base_lags", "momentum", "volatility"
             }
@@ -234,12 +238,12 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 for item in batch["items"]
                 if item.get("status") == "completed" and item.get("candidate")
             ]
-            assert len(research_ids) == (3 if price_features == "v24" else 2)
+            assert len(research_ids) == (3 if price_features in {"v24", "v25"} else 2)
             report["checks"] += ["real_component_protocol", "preflight_zero_fit", "explicit_submit", "real_queued_worker"]
             before = counts()
             assert refit_count() == 0
             page.screenshot(path=str(out / "03_completed_backend.png"))
-            if price_features == 'v24':
+            if price_features in {'v24', 'v25'}:
                 expect(frame.locator('[data-testid="trial-experiment"]')).to_have_count(3)
                 expect(frame.locator('[data-testid="trial-experiment"]').first).to_contain_text('实际改动')
                 expect(frame.locator('[data-testid="diagnostic-research"]')).to_contain_text('不随当前选中候选切换')
@@ -255,13 +259,16 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 expect(frame.locator(".drawer")).to_contain_text(candidate)
                 if price_features:
                     expected = next(i["candidate"] for b in original["rounds"] for i in b["items"] if i.get("candidate", {}).get("candidate_id") == candidate)
-                    if price_features == "v24":
+                    if price_features in {"v24", "v25"}:
                         expect(frame.locator('[data-testid="observation-detail"]')).to_contain_text("确定性判定")
                         expect(frame.locator('[data-testid="information-axes"]')).to_contain_text(provenance)
                         expect(frame.locator('[data-testid="research-decision"]')).to_contain_text('本轮优先理由')
                         detail = next(i for b in original['rounds'] for i in b['items'] if i.get('candidate',{}).get('candidate_id') == candidate)
                         expect(frame.locator('[data-testid="information-axes"]')).to_contain_text(detail['observation']['information']['analysis_novelty'])
-                        expect(frame.locator('[data-testid="readable-formula"]')).to_contain_text(expected["feature_program"]["features"][0]["expression"]["op"])
+                        if expected['feature_program']['features']:
+                            expect(frame.locator('[data-testid="readable-formula"]')).to_contain_text(expected['feature_program']['features'][0]['expression']['op'])
+                        else:
+                            assert price_features == 'v25' and expected['training_policy']['mode']=='rolling'
                     else:
                         expect(frame.locator('[data-testid="price-program"]')).to_contain_text("rolling_mean")
                         expect(frame.locator('[data-testid="readable-formula"]')).to_contain_text(
@@ -279,7 +286,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             page.set_viewport_size({"width": 1440, "height": 900})
             frame.locator('[data-action="view"][data-view="artifacts"]').first.click()
             expect(frame.locator('[data-testid="trial-experiment"]')).to_have_count(0)
-            if price_features == 'v24':
+            if price_features in {'v24', 'v25'}:
                 recommended = original['diagnostic_research']['recommendation']['selected_recommendation']['candidate_id']
                 expect(frame.locator('[data-testid="delivery-recommended"]')).to_have_attribute('data-delivery-candidate', recommended)
                 # Inspection remains on another model; primary delivery is frozen.
@@ -304,12 +311,12 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             page.screenshot(path=str(out / '05_refit_confirmation.png'), animations='disabled')
             click('close-modal')
             assert counts() == before
-            assert refit_count() == (1 if price_features == 'v24' else 0)
+            assert refit_count() == (1 if price_features in {'v24', 'v25'} else 0)
             other.locator('[data-action="refit"]').click()
             assert counts() == before
             click("confirm-refit")
             expect(other.locator('[data-action="download-model"]')).to_be_visible(timeout=60000)
-            assert refit_count() == (2 if price_features == 'v24' else 1)
+            assert refit_count() == (2 if price_features in {'v24', 'v25'} else 1)
             with page.expect_download() as event:
                 other.locator('[data-action="download-model"]').click()
             event.value.save_as(str(out / "selected_model.zip"))
@@ -318,9 +325,9 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 assert meta["candidate"]["candidate_id"] == selected
                 assert "model.joblib" in archive.namelist()
                 if price_features:
-                    assert meta["schema_version"] == "focused_model_bundle_v3"
+                    assert meta["schema_version"] == ("focused_model_bundle_v4" if price_features == "v25" else "focused_model_bundle_v3")
                     assert meta["feature_pipeline"]["program"]["features"]
-                if price_features == 'v24':
+                if price_features in {'v24', 'v25'}:
                     binding = meta['research_selection_binding']
                     assert binding['explicitly_selected_candidate_id'] == selected
                     assert binding['recommendation_hash'] == original['diagnostic_research']['recommendation']['recommendation_hash']
@@ -332,7 +339,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             # Existing delivery remains candidate-bound after a different row is inspected.
             expect(frame.locator(f'[data-delivery-candidate="{selected}"] [data-action="download-model"]')).to_have_count(1)
             expect(frame.locator(f'[data-delivery-candidate="{research_ids[0]}"] [data-action="download-model"]')).to_have_count(0)
-            if price_features == 'v24':
+            if price_features in {'v24', 'v25'}:
                 expect(frame.locator('[data-testid="delivery-recommended"]')).to_have_attribute('data-delivery-candidate', recommended)
                 expect(frame.locator('[data-testid="delivery-recommended"] [data-action="download-model"]')).to_be_visible()
                 page.set_viewport_size({'width': 700, 'height': 900})
@@ -351,7 +358,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 index = json.loads(archive.read("research_package.json"))
                 for item in index["files"]:
                     assert hashlib.sha256(archive.read(item["path"])).hexdigest() == item["sha256"]
-            if price_features == 'v24':
+            if price_features in {'v24', 'v25'}:
                 sys.path.insert(0,str(repo/'scripts'))
                 from run_v24_engineering_validation import audit_package
                 report['package_recomputation'] = audit_package(out/'research_package.zip')
@@ -370,7 +377,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             expect(frame.locator(".workspace-header")).to_contain_text("完成")
             assert counts() == before
             frame.locator('[data-action="view"][data-view="artifacts"]').first.click()
-            if price_features == 'v24':
+            if price_features in {'v24', 'v25'}:
                 expect(frame.locator('[data-testid="delivery-recommended"] [data-action="download-model"]')).to_be_visible()
             frame.locator('summary').filter(has_text='继续研究（新批次与新增预算）').click()
             click("continue")
@@ -382,11 +389,11 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             assert child["link"]["mission_id"] == first["link"]["mission_id"]
             assert workspace_campaign(state, pid, cid)["payload"] == original
             assert child["request"]["options"]["entry_mode"] == "provided_start"
-            if price_features == 'v24':
+            if price_features in {'v24', 'v25'}:
                 assert child['payload']['resource_usage']['feature_planning']['logical_decisions'] == 2
             report["checks"] += ["fresh_context_restore", "reload_no_training", "continuation_preview_zero_fit",
                                  "explicit_new_campaign_same_mission", "parent_unchanged", "provided_start_worker"]
-            if price_features == 'v24':
+            if price_features in {'v24', 'v25'}:
                 from finance_forecast_agent.research_mission import export_workspace_package
                 artifact = Path(child['root'])/'diagnostics/baseline_ridge.json'
                 original_bytes = artifact.read_bytes()
@@ -403,7 +410,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 report['checks'].append('tampered_diagnostic_delivery_rejected')
             report["counts"] = counts()
             report['explicit_refits'] = refit_count()
-            assert refit_count() == (2 if price_features == 'v24' else 1)
+            assert refit_count() == (2 if price_features in {'v24', 'v25'} else 1)
             report["browser_version"] = browser.version
             report["page_errors"] = errors
             assert not errors

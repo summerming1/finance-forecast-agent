@@ -426,8 +426,7 @@ def evaluate_candidate(
             model.fit(x[train_idx], y[train_idx])
         else:
             from .focused_methods import fit_method
-            receipt = fit_method(model, x, y, planned_training[fold_id], features)
-            receipt['effective_params'] = _effective_estimator_params(model)
+            receipt = fit_method(model, x, y, planned_training[fold_id], features, expected_family=candidate.model_family)
             training_execution.append(receipt)
             train_idx = np.asarray(receipt['selected_train'], dtype=int)
         if fit_observer:
@@ -2435,7 +2434,7 @@ class FocusedResearchController:
                                    min(self.budget.max_new_candidates_per_round, int(prompt["max_hypotheses"]))), visible_evidence=prompt["evidence_projection"],
                         candidate_lookup={key: value.candidate for key, value in result_lookup.items()},
                         default_seed=self.estimator_seed, feature_registry={g: self.feature_registry[g] for g in self.allowed_feature_groups},
-                        fixed_model=self.research_start if self.change_scope in {"features_only", "price_features"} else None)
+                        fixed_model=self.research_start if self.change_scope in {"features_only", "price_features", "feature_window"} else None)
                     if self.feature_mode:
                         self._preflight_feature_plan(compiled, seen, splits)
                         runtime.settle_feature_decision(round_index, count=len(compiled))
@@ -2470,7 +2469,8 @@ class FocusedResearchController:
                         diagnostic_history.append(row["diagnostic_result"])
                     if row["status"] == "waiting_review":
                         round_snapshot = {"round_index": round_index, "advisor_source": source, "prompt_hash": prompt_hash,
-                            "plan_hash": plan_hash, "plan_ref": plan_ref, "items": round_rows}
+                            "plan_hash": plan_hash, "plan_ref": plan_ref, "items": round_rows,
+                            **({'research_update': plan.get('research_update')} if self.method_mode else {})}
                         waiting = self._campaign_summary(baseline_results, baseline_payloads, research_results,
                             [*rounds, round_snapshot], failed_attempts, "waiting_review")
                         waiting.update(execution_status="waiting_review", research_outcome="not_evaluated" if not research_results else "inconclusive",
@@ -2525,7 +2525,8 @@ class FocusedResearchController:
                 if row.get("feedback"):
                     feedback_history.append(row["feedback"])
             round_payload = {"round_index": round_index, "advisor_source": source, "prompt_hash": prompt_hash,
-                             "plan_hash": plan_hash, "plan_ref": plan_ref, "items": round_rows}
+                             "plan_hash": plan_hash, "plan_ref": plan_ref, "items": round_rows,
+                             **({'research_update': plan.get('research_update')} if self.method_mode else {})}
             if not runtime.get(f"round:{round_index}"):
                 runtime.put(f"round:{round_index}", round_payload, immutable=True)
                 self._append_event("round.completed", round_index=round_index, plan_hash=plan_hash)

@@ -133,3 +133,8 @@ N1基础接口：先新增负例，n1-red.xml因缺新模块1 collection error/e
 N2：n2-red.xml原9项因尚无training_policy失败，exit1；保留。新增显式v4候选/完整方法身份、单轴control编译与diff，旧v3/legacy序列化未改。`python -m pytest -q tests/test_focused_v25_compile.py tests/test_focused_v25_methods.py tests/test_focused_feature_contract.py tests/test_focused_v24_judgment.py -k 'not no_third' --basetemp=.t25n2 --junitxml=.v250/n2.xml --tb=short`：71通过/1未选/6.00s/exit0。首次Ruff实际exit1（F401未使用预备import、PIE800测试dict写法），前条误记通过在此更正；不影响71项pytest实际exit0。移除预备import并简化测试构造后，Ruff exit0，原71项在n2b.xml再次通过/1未选/5.73s/exit0。diff检查exit0。新profile真实训练尚未接通，N3继续。
 
 N3：接通三范围/成熟后取窗口、实际DataFrame fit/Scaler统计回执、固定公共分组、完整方法缓存与独立观察。n3-red.xml两项原不支持scope失败/exit1；n3a.xml双向实际训练2通过/58.12s/exit0；n3b.xml新合同/编译/执行及V2.4诊断/准入55通过、2未选/58.34s/exit0。n3c.xml固定selected的无依赖扰动与合法历史回看、成熟先于窗口2通过/9.14s/exit0。实际24研究fit、2规划、HTTP0；同最终方法预测复用而控制观察不同，完成后恢复不再规划。Ruff首次3项格式问题及补测2项import排序失败均保留并修复，无历史fixture更改。N4交付/工作区待贯通。
+
+N4阶段验证：n4.xml首次2通过/2失败/21.64s/exit1，失败为新测试脚本错误（不存在的submit动作、不完整FeatureProgram），保留并修正。n4b.xml两个原入口/窗口refit4通过/173.86s/exit0。n4c.xml扩大为真实worker+续接+研究包、带特征窗口包、新进程预测及旧包/原价格UI回归20通过/355.58s/exit0。新scope接入原UI/worker/Mission，续接完整保留窗口及特征；refit v4按成熟标签及最终窗口选行，旧v2/v3保持旧语义。已保存原始失败，未碰用户生产库。随后实际入口审查新增Scaler算法负例fit-red.xml（2失败/exit1），已加显式类型/参数及每折参数回执检查，正在N5重跑。原J0—G6及47目标负确认不因此签收。
+静态扩大检查：全仓Ruff实际97错误/52文件/exit1，全部位于本轮未修改文件，原始txt/json在.v250；不作全仓lint通过。定向修改文件Ruff、Python编译、三个前端JS node --check、diff检查均已实际exit0。最终冻结后复核。
+
+N4贯通后N5首轮：n5a.xml 35通过/602.44s/exit0，包括实际Scaler算法拒绝、双向/累计两特征/消融、停止/待审核的实际更新、同域有限简单顺序、本地HTTP四项参考/认识更新两臂各2次请求及严格离线Replay、实际进程kill与28fit恢复（原失败计费），不是Live质量。browser-stage.xml Chromium 1通过/382.42s/exit0，含模型包/研究包、浏览不改推荐、700/1280布局、刷新/新上下文、续接/原父不变，页错误0；但人工核图发现新窗口对比被旧训练范围等式错误阻断。comparison-red.xml两项真实失败/8.77s/exit1：同目标窗口不可比、参考臂省略新语义字段被拒绝。两项继续在N5修复，不据上述绿灯宣布最终验收。

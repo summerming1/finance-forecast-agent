@@ -43,9 +43,11 @@ def main() -> None:
     task = FocusedTaskSpec()
     from finance_forecast_agent.focused_persistence import load_research_request
     options = load_research_request(args.request_json, args.request_hash)
+    if options.get('change_scope') == 'feature_window':
+        options.setdefault('diagnostic_mode', 'on')
     provenance, feature_specs = {}, []
     raw_history = None
-    if options.get("change_scope") == "price_features":
+    if options.get("change_scope") in {"price_features","feature_window"}:
         if options.get("input_contract"):
             raise ValueError("price research does not accept external feature datasets")
         frame, snapshot, raw_history = build_spy_feature_research_frame(

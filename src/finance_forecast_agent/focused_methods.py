@@ -152,9 +152,19 @@ def training_scopes(frame,policy,splits):
     return out
 
 
-def fit_method(model,x,y,scope,columns):
+def fit_method(model,x,y,scope,columns,*,expected_family=None):
     """Capture the actual DataFrame entering trusted fit, then verify consumption."""
     import pandas as pd
+    from sklearn.linear_model import Ridge
+    from sklearn.preprocessing import StandardScaler
+
+    from .focused_research import _effective_estimator_params
+    scaler=getattr(model,'named_steps',{}).get('standardscaler')
+    if expected_family=='ridge_regression' and (
+            not isinstance(scaler,StandardScaler) or scaler.get_params()!=StandardScaler().get_params()
+            or list(model.named_steps)!=['standardscaler','ridge']
+            or not isinstance(model.named_steps['ridge'],Ridge)):
+        raise ValueError('method profile requires the frozen StandardScaler + Ridge algorithm')
     selected=np.asarray(scope['selected_train'],dtype=int)
     data=pd.DataFrame(x[selected].copy(),index=selected,columns=columns)
     actual_rows=data.index.to_list();actual_columns=data.columns.to_list()
@@ -163,9 +173,10 @@ def fit_method(model,x,y,scope,columns):
     model.fit(data,np.asarray(y)[selected])
     if getattr(model,'n_features_in_',None)!=len(columns):
         raise ValueError('estimator did not consume the declared input columns')
-    scaler=getattr(model,'named_steps',{}).get('standardscaler')
     receipt={**deepcopy(scope),'columns':actual_columns,'actual_fit_calls':1,
         'actual_transformer_fit_calls':int(scaler is not None),
+        'effective_params':_effective_estimator_params(model),
+        'preprocessing':None if scaler is None else {'algorithm':'StandardScaler','params':scaler.get_params()},
         'input_matrix_hash':identity(data.to_numpy().tolist(),domain='actual-method-fit-matrix-v1')}
     if scaler is not None:
         if (int(scaler.n_samples_seen_)!=len(actual_rows) or
@@ -183,7 +194,8 @@ def project_method_prompt(prompt,feedback_support):
     prompt['proposal_contract_version']='method_research_advice_v1'
     if 'improve' in prompt.get('action_contracts',{}):
         prompt['action_contracts']['improve']='Complete accepted control; declare features with full feature_program OR training_window with training_policy, inheriting the other axis.'
-    prompt['rules']=[r for r in prompt['rules'] if not r.startswith('Only feature_program changes.')]
+    prompt['rules']=[r for r in prompt['rules'] if not r.startswith(('Only feature_program changes.', 'Return only {'))]
+    prompt['rules'].append('RCP-01 also permits the approved training_window axis with overall/high_volatility. RCP-04/05 remain demand-only, not window execution aliases.')
     prompt['rules'] += [
         ('METHOD: copy the complete accepted control; parent_candidate_id MUST equal control_candidate_id. '
         'Training declares exactly one axis: features or training_window. Feature changes inherit training_policy; '
@@ -238,7 +250,14 @@ def method_advice(prompt):
         return any(r['feature_program']==fp and r['training_policy']==tp for r in known)
     base=next(r for r in known if r['candidate_id']==prompt['research_start_candidate_id'])
     choices=[]
-    if prior and prompt['feature_policy']['arm']!='one_shot':
+    if prompt['feature_policy']['arm']=='random':
+        # Predeclared same-domain simple strategy; no outcome-ranked search.
+        choices=[(base,feature(base,20)),(base,feature(base,5)),
+            *[(base,window(base,w)) for w in method_capability()['rolling_sessions']]]
+        import random
+        random.Random(prompt['feature_policy']['search_seed']).shuffle(choices)
+        choices=choices[:prompt['feature_policy']['max_sampler_draws']]
+    elif prior and prompt['feature_policy']['arm']!='one_shot':
         # A poor completed method is still legal; numeric ordering is merely this
         # finite reference policy, never a compiler/adoption qualification.
         for parent in sorted(prior,key=lambda r:(r['metrics']['mae'],r['candidate_id'])):
@@ -251,9 +270,6 @@ def method_advice(prompt):
     else:
         choices=[(base,feature(base)),(base,window(base,504))]
         if prompt['feature_policy']['arm']=='one_shot':choices += [(base,window(base,756)),(base,feature(base,5))]
-    if prompt['feature_policy']['arm']=='random':
-        import random
-        random.Random(prompt['feature_policy']['search_seed']+prompt['round_index']).shuffle(choices)
     slots=min(prompt['max_hypotheses'],int(prompt['remaining_budget']['remaining_fit_calls'])//4)
     rows=[]
     for parent,patch in choices:

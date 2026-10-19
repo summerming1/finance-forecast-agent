@@ -88,7 +88,10 @@ class WorkspaceUI:
                                   'change_scope': form.get('change_scope', 'explore'),
                                   'context_mode': 'compact_v1',
                                   'research_notes': _text(form.get('research_notes', ''), maximum=4000)}
-        price_mode = options['change_scope'] == 'price_features'
+        method_mode = options['change_scope'] == 'feature_window'
+        price_mode = options['change_scope'] in {'price_features','feature_window'}
+        if method_mode:
+            options['diagnostic_mode'] = 'on'
         if form.get('diagnostic_mode') is not None:
             options['diagnostic_mode'] = form['diagnostic_mode']
         if 'feature_strategy' in form:
@@ -130,7 +133,9 @@ class WorkspaceUI:
         elif form.get('replay_call_ids'):
             raise ValueError('Replay call mapping supplied for a non-Replay run')
         if form.get('preset', 'quick') == 'quick':
-            if price_mode:
+            if method_mode:
+                budget = ResearchBudget(max_rounds=2, max_new_candidates_per_round=2, max_fit_calls=32)
+            elif price_mode:
                 one_shot = (options.get('feature_strategy') or {}).get('arm') == 'one_shot'
                 budget = ResearchBudget(max_rounds=1, max_new_candidates_per_round=1,
                     max_fit_calls=32 if one_shot else 20)
@@ -187,6 +192,9 @@ class WorkspaceUI:
                     {'review_id': row['evidence_id'], **row.get('recipe_capabilities', {
                         'local_executable': row['applicability']['executable'], 'audit_package_exportable': True,
                         'full_model_bundle_exportable': None})} for row in controller.literature_snapshot])
+        if method_mode:
+            from finance_forecast_agent.focused_methods import method_capability
+            preview['method_capability'] = method_capability()
         return request, preview
 
     def preflight(self, form: dict) -> dict:
@@ -246,6 +254,7 @@ class WorkspaceUI:
                                'research_verdict': data.get('research_verdict'),
                                'actual_features': data.get('actual_features', []),
                                'feature_execution': data.get('feature_execution'),
+                               'training_execution': data.get('training_execution'),
                                'diagnostic': detail.get('diagnostic'), 'observation': detail.get('observation'),
                                'reused_candidate_id': detail.get('reused_candidate_id')})
         selected = candidate_id if candidate_id in details else payload.get('best_candidate_id')
