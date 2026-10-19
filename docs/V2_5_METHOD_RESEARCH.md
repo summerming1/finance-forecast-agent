@@ -124,3 +124,8 @@ N5：同域简单策略/语义挑战工程验证、最后功能修改后冻结�
 
 N0进行中：已核对正式分支及c6bdd28干净tracked工作区，保留旧证据。
 本文件是施工合同，不是软件或金融验收。后续逐批写实际结果。
+
+N0完成：3ef2e5c封存唯一合同/ADR007/路线及权限，原状态4测试通过/34.63s/exit0，diff检查通过。
+N1基础接口：先新增负例，n1-red.xml因缺新模块1 collection error/exit1；保留。
+新增有界版本响应/认识更新验证、原plan冻结挂载点，尚未在新profile执行（N2/N3继续）。
+命令`python -m pytest -q tests/test_focused_v25_methods.py tests/test_focused_feature_contract.py tests/test_focused_v24_judgment.py -k 'not no_third and not distinct and not two_' --basetemp=.t25n1r --junitxml=.v250/n1-regression.xml --tb=short`：62 passed/1 deselected/6.87s/exit0；13新合同测试含stop/request_review及旧合同负例。Ruff/compileall/diff均exit0。无Provider或真实行情。

@@ -1615,6 +1615,9 @@ class FocusedResearchController:
 
     def _bind_research_design(self, advice, prompt, result_lookup, round_index, max_count, source):
         from .focused_diagnostics import bind_design
+        if prompt.get("method_policy"):
+            from .focused_methods import normalize_method_advice
+            advice = normalize_method_advice(advice, prompt)
         _advice_rows(advice, max_count)
         clean = json.loads(json.dumps(advice))
         designs = [row.pop("research_design", None) for row in clean.get("hypotheses", [])]
@@ -1954,6 +1957,7 @@ class FocusedResearchController:
         source: str,
         prompt_hash: str,
         compiled: list[tuple[HypothesisSpec, CandidateConfig | None]],
+        research_update: dict | None = None,
     ) -> tuple[str, str]:
         plan = {
             "schema_version": "focused_batch_plan_v2",
@@ -1972,6 +1976,9 @@ class FocusedResearchController:
             plan["schema_version"] = "focused_batch_plan_v3"
             plan["execution_units"] = [list(range(i, min(i + size, len(compiled)))) for i in range(0, len(compiled), size)]
             plan["feature_decision"] = self._runtime.get(f"feature_decision:{round_index}")
+        if getattr(self, "method_mode", False):
+            plan["schema_version"] = "focused_batch_plan_v4"
+            plan["research_update"] = research_update
         plan_hash = _hash(plan)
         plan["plan_hash"] = plan_hash
         rel = Path("batch_plans") / f"round_{round_index}.json"
@@ -2341,7 +2348,8 @@ class FocusedResearchController:
                     raise
                 prompt_hash = _hash(prompt)
                 plan_hash, plan_ref = self._freeze_batch_plan(round_index=round_index, source=source,
-                                                            prompt_hash=prompt_hash, compiled=compiled)
+                    prompt_hash=prompt_hash, compiled=compiled,
+                    research_update=advice.get("research_update") if getattr(self, "method_mode", False) else None)
                 plan = json.loads((self._campaign_root / plan_ref).read_text())
                 frozen = {"plan": plan, "plan_ref": plan_ref, "artifacts": [{"path": plan_ref, "sha256": file_sha256(self._campaign_root / plan_ref)}]}
                 runtime.put(f"plan:{round_index}", frozen, immutable=True)
