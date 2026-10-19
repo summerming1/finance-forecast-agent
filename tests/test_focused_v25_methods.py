@@ -57,3 +57,20 @@ def test_same_envelope_update_survives_nontraining_decision(action):
     hypotheses=[{'action_type':action,'statement':'bounded synthetic decision'}]
     assert normalize_method_advice({'schema_version':'method_research_advice_v1',
         'research_update':update(),'hypotheses':hypotheses},prompt())=={'hypotheses':hypotheses}
+
+
+def test_reference_arm_can_omit_new_semantic_field_without_fabricating_it():
+    p=prompt();p['method_policy']['feedback_support']='reference'
+    rows=[{'action_type':'stop','statement':'legal reference decision'}]
+    assert normalize_method_advice({'schema_version':'method_research_advice_v1','hypotheses':rows},p)=={'hypotheses':rows}
+
+
+def test_execution_failure_reference_cannot_be_a_scientific_negative_or_control():
+    from finance_forecast_agent.focused_adaptive import EvidenceIndex
+    p=prompt();link=p['prior_decision_links'][0];link.update(evaluated_candidate_id=None,execution_failure_ref='f')
+    p['evidence_projection'][0]['role']='execution_failure'
+    u=update()
+    with pytest.raises(ValueError,match='scientific'):validate_research_update(u,p)
+    u['items'][0]['assessment']='execution_incomplete'
+    assert validate_research_update(u,p)==u
+    with pytest.raises(ValueError,match='candidate_result'):EvidenceIndex(p['evidence_projection']).require('f','candidate_result')

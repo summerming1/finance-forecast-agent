@@ -818,7 +818,7 @@ class FocusedResearchAdvisor:
             if prompt.get('method_policy'):
                 from .focused_methods import method_advice
                 self.last_telemetry = {'policy':'finite_method_reference_v1'}
-                return method_advice(prompt), 'deterministic_method_policy'
+                return method_advice(prompt, telemetry=self.last_telemetry), 'deterministic_method_policy'
             if prompt.get("diagnostic_research_policy") and prompt["feature_policy"]["arm"] != "random":
                 from .focused_diagnostics import diagnostic_advice
                 self.last_telemetry = {"policy": "diagnostic_branch_v1"}
@@ -1631,6 +1631,8 @@ class FocusedResearchController:
         prompt["decision_link_projection"] = "frozen_decision_links_v1"
         prompt["decision_link_fields"] = ["recipe_id", "question", "basis", "symptom_refs",
             "competing_explanation", "falsification_condition", "decision_version", "decision"]
+        if self.method_mode:
+            prompt['decision_link_fields'].append('rule')  # Original predeclared rule, never OFF outcomes.
         prompt["decision_link_contract"] = "Original proposal fields keyed by full bound design hash; parent/control in links; actual config/diff in prior results/feedback; complete bound rule/invariants stay in original batch plan. No regenerated narrative."
         visible = self.diagnostic_policy["diagnostic_visibility"] == "on"
         if self.diagnostic_policy["decision_support"] != "J":
@@ -1657,6 +1659,17 @@ class FocusedResearchController:
                 link["feedback_ids"] = [f["feedback_id"] for f in prompt.get("structured_feedback", [])
                                         if f.get("candidate_id") == candidate["candidate_id"]]
                 config_id = CandidateConfig.from_dict(candidate).config_identity
+                if self.method_mode:
+                    link['method_identity'] = config_id
+                    failure = self._runtime.get('failure:'+candidate['candidate_id'])
+                    if failure:
+                        failure_ref = 'execution_failure:'+candidate['candidate_id']
+                        link['execution_failure_ref'] = failure_ref
+                        prompt['evidence_projection'].append({'evidence_id':failure_ref,
+                            'evidence_type':'current_experiment','role':'execution_failure','visible':True,
+                            'candidate_id':candidate['candidate_id'],'source_ref':'runtime:failure:'+candidate['candidate_id'],
+                            'summary':'Execution failed ('+failure['error_type']+'); no accepted predictions or scientific verdict.',
+                            'conditions':{'reserved_fit_calls':failure['reserved_fit_calls'],'method_identity':config_id}})
                 link["evaluated_candidate_id"] = next((r["candidate_id"]
                     for r in [*prompt["baseline_results"], *prompt["prior_research_results"]]
                     if r["config_identity"] == config_id), None)
@@ -1670,6 +1683,11 @@ class FocusedResearchController:
                         link["observation_ref"] = observation["artifacts"][0]["path"]
                         link["observation_identity"] = body["information"]["observation_identity"]
                 prompt["prior_decision_links"].append(link)
+        if self.method_mode:
+            from .focused_adaptive import EvidenceIndex
+            index=EvidenceIndex(prompt['evidence_projection'])
+            prompt.update(evidence_projection=index.rows,available_evidence_ids=index.ids,
+                evidence_projection_hash=identity(index.rows,domain='evidence-projection-v1'))
 
     def _pair_diagnostic(self, result_lookup):
         from .focused_diagnostics import pair_diagnostic
@@ -2489,7 +2507,12 @@ class FocusedResearchController:
                     duplicate = {"hypothesis": hypothesis.to_dict(), "candidate": candidate.to_dict(),
                                  "config_diff": diff, "status": "skipped_duplicate"}
                     if self.diagnostic_policy:
-                        reused = next(r for r in result_lookup.values() if r.candidate.fingerprint == candidate.fingerprint)
+                        reused = next((r for r in result_lookup.values() if r.candidate.fingerprint == candidate.fingerprint),None)
+                        if reused is None and self.method_mode:
+                            duplicate.update(status='skipped_failed_execution',
+                                reason='No accepted prediction exists for this previously failed method; not cache success.')
+                            round_rows.append(duplicate)
+                            continue
                         duplicate["reused_candidate_id"] = reused.candidate.candidate_id
                         duplicate["observation"] = self._observe_research(hypothesis, reused, result_lookup, splits,
                                                                           proposal_id=candidate.candidate_id)

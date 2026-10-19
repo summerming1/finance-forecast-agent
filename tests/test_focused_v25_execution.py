@@ -16,7 +16,7 @@ def controller(tmp_path,**options):
     frame,snapshot,raw=build_spy_feature_research_frame(path,task=FocusedTaskSpec(exposure='simulation_only'))
     return FocusedResearchController(project_dir=tmp_path/'project',frame=frame,dataset=snapshot,
         task=FocusedTaskSpec(exposure='simulation_only'),raw_history=raw,change_scope='feature_window',
-        use_memory_prior=False,diagnostic_mode='on',budget=ResearchBudget(max_rounds=2,
+        use_memory_prior=False,diagnostic_mode=options.pop('diagnostic_mode','on'),budget=ResearchBudget(max_rounds=2,
         max_new_candidates_per_round=2,max_fit_calls=32),campaign_id='methods',**options)
 
 
@@ -86,6 +86,10 @@ def test_selected_training_is_distinct_from_fixed_calibration_and_fits_scaler(tm
     assert [len(r['raw_training_rows']) for r in diagnostic['training_features']]==[756]*4
     assert len(diagnostic['volatility_groups'][-1]['calibration_rows'])>756
     assert all(np.isfinite(r['scaler_mean']).all() for r in result.training_execution)
+    expanding=evaluate_candidate(c.frame,method(),best_baseline_mae=.01,min_relative_improvement=.0025,
+        task=c.task,dataset=c.dataset,raw_history=c.raw_history)
+    assert result.training_execution[0]['selected_train']==expanding.training_execution[0]['selected_train']
+    assert [r['y_pred'] for r in result.prediction_rows[:63]]==[r['y_pred'] for r in expanding.prediction_rows[:63]]
 
 
 def test_fixed_selected_training_allows_legal_lookback_but_ignores_unrelated_history():

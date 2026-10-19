@@ -1,7 +1,7 @@
 """Bounded method/feedback contracts, pure functions inside the existing engine.
 
-No execution, queue, state store, metric or numerical selection authority lives
-here. Old FeatureProgram capabilities and candidate bytes remain unchanged.
+No controller, queue, state store, metric or numerical selection authority lives
+here. Helpers serve the existing execution entries; old candidate bytes stay unchanged.
 """
 from __future__ import annotations
 
@@ -79,7 +79,7 @@ def validate_research_update(update,prompt):
             raise ValueError('missing or overlong research update text')
     text(update['choice_reason'])
     links={r['proposal_candidate_id']:r for r in prompt.get('prior_decision_links',[])}
-    expected={k for k,v in links.items() if v.get('evaluated_candidate_id') is not None}
+    expected={k for k,v in links.items() if v.get('evaluated_candidate_id') is not None or v.get('execution_failure_ref')}
     seen=set();index=EvidenceIndex(prompt['evidence_projection'])
     for item in update['items']:
         if not isinstance(item,dict) or set(item)!={'proposal_id','design_hash','rule_hash','evidence_refs',
@@ -90,7 +90,7 @@ def validate_research_update(update,prompt):
                 or item['rule_hash']!=link['rule_hash']):
             raise ValueError('research update original plan binding mismatch')
         refs=item['evidence_refs']
-        permitted=set(link.get('feedback_ids',[]))|{link.get('evaluated_candidate_id')}
+        permitted=set(link.get('feedback_ids',[]))|{link.get('evaluated_candidate_id'),link.get('execution_failure_ref')}
         if (not isinstance(refs,list) or not refs or len(refs)>cap['update_refs']
                 or any(not isinstance(ref,str) or ref not in permitted for ref in refs)):
             raise ValueError('research update requires its actual visible result/feedback')
@@ -99,6 +99,8 @@ def validate_research_update(update,prompt):
         if item['assessment'] not in {'local_support','expectation_not_supported',
                 'not_distinguished','unchanged','execution_incomplete'}:
             raise ValueError('unknown bounded assessment; never numeric authority')
+        if link.get('execution_failure_ref') and not link.get('evaluated_candidate_id') and item['assessment']!='execution_incomplete':
+            raise ValueError('execution failure is not a scientific negative result')
         seen.add(key)
     if seen!=expected:raise ValueError('research update must retain each available prior result, including negatives')
     return deepcopy(update)
@@ -112,19 +114,26 @@ def reference_update(prompt):
     if not required:return None
     items=[]
     for link in prompt.get('prior_decision_links',[]):
-        if link.get('evaluated_candidate_id') is None:continue
-        refs=link.get('feedback_ids') or [link['evaluated_candidate_id']]
+        failed=link.get('evaluated_candidate_id') is None
+        if failed and not link.get('execution_failure_ref'):continue
+        refs=([link['execution_failure_ref']] if failed else link.get('feedback_ids') or [link['evaluated_candidate_id']])
         items.append({'proposal_id':link['proposal_candidate_id'],'design_hash':link['design_hash'],
             'rule_hash':link['rule_hash'],'evidence_refs':refs[:1],
             'before':'Local method hypothesis, not a market cause.',
-            'finding':'Use the linked actual metrics and original rule; negatives remain visible.',
-            'assessment':'not_distinguished','open_question':'Which legal conditional change is still unanswered?'})
+            'finding':'Execution failed; there is no accepted prediction or scientific result.' if failed else
+                'Use the linked actual metrics and original rule; negatives remain visible.',
+            'assessment':'execution_incomplete' if failed else 'not_distinguished',
+            'open_question':'Which legal conditional change is still unanswered?'})
     return {'schema_version':'research_update_v1','items':items,
         'choice_reason':'Finite engineering choice using own visible history; causes remain unknown.'}
 
 
 def normalize_method_advice(advice,prompt):
     """Validate the new envelope before the unchanged bounded action compiler."""
+    reference=(prompt['method_policy']['feedback_support']=='reference'
+        or prompt['diagnostic_research_policy']['decision_support']!='J')
+    if reference and isinstance(advice,dict) and 'research_update' not in advice:
+        advice={**advice,'research_update':None}
     if (not isinstance(advice,dict) or set(advice)!={'schema_version','research_update','hypotheses'}
             or advice['schema_version']!='method_research_advice_v1'):
         raise ValueError('new method profile requires its explicit response version')
@@ -200,7 +209,8 @@ def project_method_prompt(prompt,feedback_support):
         ('METHOD: copy the complete accepted control; parent_candidate_id MUST equal control_candidate_id. '
         'Training declares exactly one axis: features or training_window. Feature changes inherit training_policy; '
         'window changes inherit the complete feature_program. Fixed model/params/seed/builtin groups/Scaler algorithm/uniform weights never change. '
-        'Window is expanding or rolling504/756, once per fold, not per target. No same-batch future control, no joint/no-op change, <=2 total features.'),
+        'training_policy={mode:expanding,sessions:null} or {mode:rolling,sessions:504|756}; '
+        'once per fold, not per target. No same-batch future control, no joint/no-op change, <=2 total features.'),
         ('Return method_research_advice_v1 envelope: schema_version, research_update, hypotheses. '
         'First/one-shot/reference research_update=null. Second J update binds each available prior result via proposal_id/design_hash/rule_hash/evidence_refs; '
         'items contain before/finding/assessment/open_question; choice_reason covers this decision, including stop/review. '
@@ -215,7 +225,7 @@ def project_method_prompt(prompt,feedback_support):
     return prompt
 
 
-def method_advice(prompt):
+def method_advice(prompt,*,telemetry=None):
     """Finite engineering/reference policy. Real LLM choice is separately tested."""
     from .focused_diagnostics import default_design
     from .focused_feature_program import empty_feature_program
@@ -245,9 +255,13 @@ def method_advice(prompt):
         policy={'mode':'rolling','sessions':w}
         return None if parent.get('training_policy')==policy else {'declared_axis':'training_window','training_policy':policy}
     def is_known(parent,patch):
+        from .focused_research import CandidateConfig
         fp=patch.get('feature_program',parent.get('feature_program',empty_feature_program().to_dict()))
         tp=patch.get('training_policy',parent['training_policy'])
-        return any(r['feature_program']==fp and r['training_policy']==tp for r in known)
+        fields={k:v for k,v in start.items() if k not in {'config_identity','candidate_fingerprint'}}
+        proposed=CandidateConfig.from_dict({**fields,'feature_program':fp,'training_policy':tp})
+        attempted={l['method_identity'] for l in prompt.get('prior_decision_links',[]) if l.get('method_identity')}
+        return proposed.config_identity in attempted or any(r['config_identity']==proposed.config_identity for r in known)
     base=next(r for r in known if r['candidate_id']==prompt['research_start_candidate_id'])
     choices=[]
     if prompt['feature_policy']['arm']=='random':
@@ -272,8 +286,19 @@ def method_advice(prompt):
         if prompt['feature_policy']['arm']=='one_shot':choices += [(base,window(base,756)),(base,feature(base,5))]
     slots=min(prompt['max_hypotheses'],int(prompt['remaining_budget']['remaining_fit_calls'])//4)
     rows=[]
+    if telemetry is not None and prompt['feature_policy']['arm']=='random':
+        telemetry.update(draws=0,max_draws=prompt['feature_policy']['max_sampler_draws'],
+            finite_pool_size=2+len(method_capability()['rolling_sessions']),
+            duplicate_draws=0,invalid_grammar_draws=0,limit_scope='per_decision')
     for parent,patch in choices:
-        if not patch or is_known(parent,patch) or len(rows)>=slots:continue
+        if telemetry is not None and prompt['feature_policy']['arm']=='random':telemetry['draws']+=1
+        if not patch:
+            if telemetry is not None and 'invalid_grammar_draws' in telemetry:telemetry['invalid_grammar_draws']+=1
+            continue
+        if is_known(parent,patch):
+            if telemetry is not None and 'duplicate_draws' in telemetry:telemetry['duplicate_draws']+=1
+            continue
+        if len(rows)>=slots:continue
         control=parent['candidate_id']
         rows.append({'action_type':'improve','statement':'Finite synthetic/reference method experiment, not causal inference.',
             'parent_candidate_id':control,'control_candidate_id':control,'evidence_refs':[control],

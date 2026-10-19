@@ -138,3 +138,53 @@ N4阶段验证：n4.xml首次2通过/2失败/21.64s/exit1，失败为新测试�
 静态扩大检查：全仓Ruff实际97错误/52文件/exit1，全部位于本轮未修改文件，原始txt/json在.v250；不作全仓lint通过。定向修改文件Ruff、Python编译、三个前端JS node --check、diff检查均已实际exit0。最终冻结后复核。
 
 N4贯通后N5首轮：n5a.xml 35通过/602.44s/exit0，包括实际Scaler算法拒绝、双向/累计两特征/消融、停止/待审核的实际更新、同域有限简单顺序、本地HTTP四项参考/认识更新两臂各2次请求及严格离线Replay、实际进程kill与28fit恢复（原失败计费），不是Live质量。browser-stage.xml Chromium 1通过/382.42s/exit0，含模型包/研究包、浏览不改推荐、700/1280布局、刷新/新上下文、续接/原父不变，页错误0；但人工核图发现新窗口对比被旧训练范围等式错误阻断。comparison-red.xml两项真实失败/8.77s/exit1：同目标窗口不可比、参考臂省略新语义字段被拒绝。两项继续在N5修复，不据上述绿灯宣布最终验收。
+
+
+## 8 实际API、操作及解释边界
+
+唯一新profile为 `change_scope="feature_window"`，新候选 `focused_candidate_v4`。
+`TrainingPolicy` 的两个精确字段为 `mode`、`sessions`：
+`{"mode":"expanding","sessions":null}` 或 `{"mode":"rolling","sessions":504}` / 756。
+特征操作声明 `declared_axis="features"`；窗口操作声明 `declared_axis="training_window"`。
+各训练项明确给出相同的已接受 `parent_candidate_id` / `control_candidate_id`。
+前者提交完整继承的FeatureProgram（或合法ablate/simplify操作），后者只提交新TrainingPolicy。
+模型/参数/seed/内置组固定；不把窗口缩短引起的Scaler统计及Ridge有效正则环境变化
+误说成已经识别的单独因果机制；只能评价这项整体窗口方法。
+
+新响应 `method_research_advice_v1` 包含 `hypotheses` 和 `research_update`。
+第一轮/One-shot为null，第二轮update-J必须给有界对象；四项风格参考及R/D/Random
+可省略这个新语义字段，编译为同一个null含义，不能因缺新语义误拒合法参考。
+原规则正文和hash随原decision链接投影；OFF只获得原事前规则及允许的旧结果/执行失败，
+不获得新诊断观察。执行失败引用原RuntimeDB failure记录的安全事实，不是候选结果权限，
+更新必须execution_incomplete；不能冒充科学负面结论、控制或缓存成功。
+同方法旧尝试失败但无接受预测时标skipped_failed_execution，仍为不完整研究。
+
+原Benchmark新增可选参数 `method_profile="spy_feature_window_v1"`、
+`feedback_support="reference"|"update"`；旧调用保持。示例：
+`run_benchmark_arm(frame,dataset,raw_history=raw,project_dir=isolated_dir,arm="adaptive_batch",
+spec=BenchmarkSpec(candidate_budget=4,batch_size=2),method_profile="spy_feature_window_v1",
+feedback_support="update",context_mode="compact_v1")`。
+用三个独立目录分别运行reference/update以及arm=random的有限同域简单策略。
+复用原Controller、登记、报告和summary，不新增规划/评价权威。共同28fit上限、同源同环境、
+同资料/工具域/冷历史；简单策略只检查预登记的四项方法，逐决定记录draw及重复，不暗中全枚举。
+Provider配置不同的参考/更新报告拒绝汇总。模拟/规则结果不升级成真实LLM理解或选择价值。
+
+原工作区：启动 `.\.venv\Scripts\python.exe -m streamlit run apps/streamlit_app.py`，
+新建研究选择“V2.5 特征＋训练窗口”，加载已许可原始价格JSON及来源元数据。
+本轮证据只用simulation_only；真实研究未获本轮授权，不自动开始。
+“没有现成模型”及“已有模型配置”均复用原入口；新profile研究起点仅Ridge。
+默认两轮四槽/最多32研究fit；One-shot与有限简单策略显式选择，不把预算当完成量。
+结果页读实际单轴改动、控制、MAE分母和第二轮已冻结认识更新；详情查看实际selected/eligible
+与Scaler/模型fit回执。成果页默认交付冻结推荐，不因浏览其它候选而换对象。
+显式生成模型包另拟合一次，v4模型包遵循最终窗口与全部特征；已有包下载及无标签推理不重训。
+继续研究创建新Campaign，保留完整方法及原曝光/信任边界，原Campaign不修改。
+
+N5增量日志：comparison-red两项已修，n5c.xml 21通过/168.45s/exit0；n5b误用不存在测试路径，
+exit4/no tests，不能算通过。benchmark-red.xml原无新profile入口1失败/6.61s/exit1，保留。
+后续完整身份筛重时错误复用了起点派生hash，n5d.xml 28通过/4失败/311.73s/exit1，
+browser-comparison.xml因此在等完成时失败/183.27s/exit1；已修为从完整原始方法重新计算身份。
+failure-red.xml 1失败/45.88s/exit1，确认混合失败未进入认识更新；已接入原failure事实及失败缓存拒绝。
+n5e.xml 27通过/498.82s/exit0，包含混合真实fit失败、最大文本ON/OFF、三臂原Benchmark。
+browser-verified.xml已通过窗口比较/包/零增量浏览，但新context恢复默认5秒就绪等待超时，
+1失败/225.88s/exit1；server无异常。仅改就绪等待为与启动一致的30秒，状态、资源和交付断言不改。
+最终冻结/全仓及浏览器结果尚待后续实际运行，不以本段阶段测试替代。

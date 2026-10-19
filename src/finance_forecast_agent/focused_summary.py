@@ -26,7 +26,7 @@ def build_candidate_comparison(payload: dict, manifests: dict, candidate_id: str
     items = {i['candidate']['candidate_id']: i for r in payload.get('rounds', []) for i in r.get('items', [])
              if i.get('status') == 'completed' and i.get('result') and i.get('candidate')}
     results.update({cid: i['result'] for cid, i in items.items()})
-    keys = ('task_id', 'task_version', 'dataset_fingerprint', 'split_spec', 'evaluation_policy', 'fold_row_contracts')
+    keys = ('task_id', 'task_version', 'dataset_fingerprint', 'split_spec', 'evaluation_policy')
     current = results.get(candidate_id, {})
     cm = manifests.get(candidate_id, {})
     comparisons, rows = [], []
@@ -39,7 +39,15 @@ def build_candidate_comparison(payload: dict, manifests: dict, candidate_id: str
         if cid == candidate_id:
             continue
         ref = manifests.get(cid, {})
+        method_comparison = 'focused_execution_manifest_v3' in {cm.get('schema_version'),ref.get('schema_version')}
+        def targets(manifest):
+            folds=manifest.get('fold_row_contracts')
+            if not isinstance(folds,list) or not folds:return None
+            return [{'fold_id':r.get('fold_id'),'test_row_ids':r.get('test_row_ids')} for r in folds]
+        same_rows = (targets(cm) is not None and targets(cm)==targets(ref)) if method_comparison else (
+            cm.get('fold_row_contracts') is not None and cm['fold_row_contracts']==ref.get('fold_row_contracts'))
         comparable = (cm.get('execution_conformant') is True and ref.get('execution_conformant') is True
+                      and same_rows
                       and all(cm.get(k) is not None and cm.get(k) == ref.get(k) for k in keys))
         score, baseline = _number(current.get('metrics', {}).get('mae')), _number(result.get('metrics', {}).get('mae'))
         comparable = bool(comparable and score is not None and baseline is not None)

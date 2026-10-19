@@ -227,6 +227,8 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 if price_features == 'v25':
                     expect(frame.locator('[data-testid="research-update"]')).to_have_count(1)
                     expect(frame.locator('[data-testid="trial-experiment"]').nth(1)).to_contain_text('训练窗口')
+                    for trial in frame.locator('[data-testid="trial-experiment"]').all():
+                        expect(trial).not_to_contain_text('不可比 / 未知')
                     assert first['payload']['rounds'][1]['research_update']['items']
             assert set(first["request"]["options"]["allowed_feature_groups"]) == {
                 "base_lags", "momentum", "volatility"
@@ -366,7 +368,8 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                                  "wrong_candidate_cannot_download", "real_research_package_hashes", "1280_layout"]
             url = page.url
             page.reload()
-            expect(frame.locator(".workspace-header")).to_contain_text("完成")
+            # Component readiness, not a five-second cold-start performance SLA.
+            expect(frame.locator(".workspace-header")).to_contain_text("完成", timeout=30000)
             assert counts() == before
             context.close()
             context = browser.new_context(viewport={"width": 1440, "height": 900}, accept_downloads=True)
@@ -374,7 +377,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             page.set_default_timeout(30000)
             page.goto(url)
             frame = page.frame_locator('iframe[title*="agent_workspace"]')
-            expect(frame.locator(".workspace-header")).to_contain_text("完成")
+            expect(frame.locator(".workspace-header")).to_contain_text("完成", timeout=30000)
             assert counts() == before
             frame.locator('[data-action="view"][data-view="artifacts"]').first.click()
             if price_features in {'v24', 'v25'}:

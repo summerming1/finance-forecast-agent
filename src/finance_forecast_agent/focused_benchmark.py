@@ -32,7 +32,7 @@ from .focused_research import (
 from .focused_state import atomic_json
 
 ARMS = ("random", "tpe", "one_shot", "adaptive", "adaptive_batch", "enumerate")
-LLM_ARMS = {"one_shot", "adaptive", "adaptive_batch"}
+LLM_ARMS = {"one_shot", "adaptive", "adaptive_batch", "method_reference", "method_update"}
 
 
 @dataclass(frozen=True)
@@ -509,7 +509,15 @@ def run_benchmark_arm(
     literature_review_ids: list[str] | None = None,
     context_mode: str = "full_v1",
     raw_history=None,
+    method_profile: str | None = None,
+    feedback_support: str = 'update',
 ) -> dict:
+    if method_profile not in {None,'spy_feature_window_v1'} or feedback_support not in {'reference','update'}:
+        raise ValueError('unsupported method benchmark profile/support')
+    if method_profile is None and feedback_support != 'update':
+        raise ValueError('method feedback support requires explicit method profile')
+    if method_profile is not None and raw_history is None:
+        raise ValueError('method benchmark requires actual bound raw history')
     if spec.max_sampler_draws is None:
         spec = replace(spec, max_sampler_draws=128 if raw_history is not None or dataset.feature_protocol is not None else 512)
     if raw_history is not None or dataset.feature_protocol is not None:
@@ -519,7 +527,8 @@ def run_benchmark_arm(
             arm=arm, spec=spec, split_spec=split_spec, llm_mode=llm_mode, fixture_dir=fixture_dir,
             replay_call_ids=replay_call_ids, reviewed_evidence=reviewed_evidence,
             resume_existing=resume_existing, state_path=state_path, literature_project=literature_project,
-            literature_review_ids=literature_review_ids, context_mode=context_mode)
+            literature_review_ids=literature_review_ids, context_mode=context_mode,
+            method_profile=method_profile, feedback_support=feedback_support)
     split = split_spec or FocusedSplitSpec()
     catalog = validate_catalog(catalog or default_catalog())
     budget = ResearchBudget(
@@ -611,7 +620,7 @@ def run_benchmark_arm(
 
 def _run_price_benchmark_arm(frame, dataset, *, raw_history, project_dir, arm, spec, split_spec,
         llm_mode, fixture_dir, replay_call_ids, reviewed_evidence, resume_existing, state_path,
-        literature_project, literature_review_ids, context_mode):
+        literature_project, literature_review_ids, context_mode, method_profile=None, feedback_support='update'):
     """Report adapter to native C3 planning; no second planner/compiler/evaluator.
 
     The legacy BenchmarkAdvisor remains a finite model-catalog adapter. Price
@@ -629,6 +638,8 @@ def _run_price_benchmark_arm(frame, dataset, *, raw_history, project_dir, arm, s
     if not 1 <= spec.max_sampler_draws <= 128:
         raise ValueError("price sampler permits 1..128 draws per decision")
     strategy = {"arm": arm, "search_seed": spec.search_seed, "max_sampler_draws": spec.max_sampler_draws}
+    if method_profile:
+        strategy.update(feedback_support=feedback_support,decision_support='R' if arm=='random' else 'J')
     budget = ResearchBudget(max_rounds=1 if arm == "one_shot" else 2, max_new_candidates_per_round=2,
         max_fit_calls=28, max_advisor_calls=5, max_http_requests=8, max_provider_seconds=1200)
     target_keys = target_row_ids(frame, task.to_dict())
@@ -645,10 +656,22 @@ def _run_price_benchmark_arm(frame, dataset, *, raw_history, project_dir, arm, s
     algorithm = {**strategy, "search_representation": "bounded_price_ast_v1",
         "sampler_policy": "price_ast_uniform_depth_v1" if arm == "random" else "native_bounded_price_advisor",
         "no_automatic_repair": True, "no_duplicate_redraw": True}
+    if method_profile:
+        from .focused_methods import method_capability
+        from .llm_adapters import OpenAIJsonClient
+        comparison.update(schema_version='method_benchmark_comparison_v1',method_capability=method_capability(),
+            history_policy='cold own accepted results only; no cross-arm outcomes',
+            reference_configuration=OpenAIJsonClient().contract() if llm_mode=='live' else {'mode':llm_mode},
+            comparison_scope='complete research workflows; support-package increment, not isolated causal attribution',
+            semantic_challenge='separate frozen-context exercise; not a replacement for full workflows')
+        algorithm.update(arm='method_simple' if arm=='random' else 'method_'+feedback_support,
+            search_representation='bounded_feature_window_v1',
+            sampler_policy='predeclared_seeded_four_methods_no_outcome_ranking' if arm=='random' else 'native_bounded_method_advisor')
     campaign_id = "price-benchmark-" + identity({"strategy": algorithm, "comparison": comparison,
         "mode": llm_mode, "project": str(Path(project_dir).resolve())}, domain="price-benchmark-arm-v1")[:20]
     controller = FocusedResearchController(project_dir=project_dir, frame=frame, dataset=dataset, task=task,
-        raw_history=raw_history, change_scope="price_features", feature_strategy=strategy, budget=budget,
+        raw_history=raw_history, change_scope="feature_window" if method_profile else "price_features",
+        diagnostic_mode='on' if method_profile else None, feature_strategy=strategy, budget=budget,
         advisor_mode=llm_mode if arm != "random" else "deterministic", fixture_dir=fixture_dir,
         replay_call_ids=replay_call_ids, reviewed_evidence=reviewed_evidence, use_memory_prior=False,
         literature_project=literature_project, literature_review_ids=literature_review_ids, context_mode=context_mode,
