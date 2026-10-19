@@ -24,6 +24,9 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
     import requests
     from playwright.sync_api import Error as BrowserError
     from playwright.sync_api import expect, sync_playwright
+    # Streamlit remounts the iframe after RPC; keep all exact assertions but use
+    # the same readiness budget as initial startup, not Playwright's 5s default.
+    expect.set_options(timeout=30000)
 
     repo = Path(__file__).resolve().parents[2]
     sys.path.insert(0, str(repo / "tests"))

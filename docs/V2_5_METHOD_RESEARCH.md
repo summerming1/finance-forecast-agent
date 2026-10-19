@@ -188,3 +188,5 @@ n5e.xml 27通过/498.82s/exit0，包含混合真实fit失败、最大文本ON/OF
 browser-verified.xml已通过窗口比较/包/零增量浏览，但新context恢复默认5秒就绪等待超时，
 1失败/225.88s/exit1；server无异常。仅改就绪等待为与启动一致的30秒，状态、资源和交付断言不改。
 最终冻结/全仓及浏览器结果尚待后续实际运行，不以本段阶段测试替代。
+
+最终首冻728e14f/238文件：browser-final.xml四模式2通过/2失败/785.82s/exit1，旧price preflight及v25续接dialog均在异步iframe挂载后的默认5秒断言超时，原内容/资源断言不改。现统一该测试就绪预算30秒并重新冻结。full-final2首跑因测试源码将改变主动中断，实际exit15，非完整回归；原stdout/start及full-interruption.json保留，不以其中已运行用例代替完整验收。完整适用集合为939/941，2项真实股票harness重训按本轮权限单列NOT_RUN，不改原测试。为减少等待，下一次按原测试文件分片隔离执行，同一冻结源码/依赖，逐条核对939个收集node与实际JUnit案例/exit；不是抽样定向验收。
