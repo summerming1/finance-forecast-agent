@@ -301,7 +301,7 @@ def compact_research_context(prompt: dict, *, max_chars: int = 64000) -> dict:
                     'feedback explanation/narrative (numeric facts retained)'],
         'all_result_statuses_retained': True}
     if body.get('method_policy'):
-        body['context_manifest'].update(schema_version='compact_method_context_v1',serialization='compact_json_v1')
+        body['context_manifest'].update(schema_version='compact_method_context_v3',serialization='compact_json_v1')
         from .focused_methods import project_method_references
         body=project_method_references(body)
         from .llm_adapters import serialize_prompt_payload

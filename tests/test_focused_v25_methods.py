@@ -114,3 +114,36 @@ def test_actual_http_wire_uses_versioned_serializer_and_preserves_legacy():
             assert client(url).complete_json(prompt_payload=p,schema_name='wire-test')=={'status':'ok'}
             wire=calls[-1]['messages'][0]['content'].split('\n\n',1)[1]
             assert wire==serialize_prompt_payload(p) and json.loads(wire)==p
+
+def test_shared_feature_definitions_are_lossless_planning_only_and_tamper_evident():
+    from finance_forecast_agent.focused_feature_program import validate_feature_program
+    from finance_forecast_agent.focused_methods import project_method_references, restore_method_references
+    feature={'name':'gen_long','expression':{'op':'rolling_mean','window':20,'arg':{'op':'input','name':'return_1'}}}
+    fp={'schema_version':'feature_program_v1','features':[feature]}
+    p={'baseline_results':[{'candidate_id':'b','feature_program':deepcopy(fp)}],
+       'prior_research_results':[{'candidate_id':'c','feature_program':deepcopy(fp)}],
+       'fixed_model':{'candidate_id':'b','feature_program':deepcopy(fp)}}
+    q=project_method_references(p)
+    assert q['method_context_refs']['schema_version']=='method_reference_projection_v3'
+    assert len(q['method_context_refs']['expressions'])==1
+    assert q['fixed_model']['feature_program']['features'][0]['name']=='gen_long'
+    assert restore_method_references(q)==p
+    assert project_method_references(q)==q
+    with pytest.raises(ValueError):validate_feature_program(q['fixed_model']['feature_program'])
+    q['method_context_refs']['expressions']['e0']['window']=60
+    with pytest.raises(ValueError,match='not lossless'):restore_method_references(q)
+
+def test_repeated_program_metadata_is_reversible_and_names_remain_inline():
+    from finance_forecast_agent.focused_feature_program import feature_capability
+    from finance_forecast_agent.focused_methods import project_method_references, restore_method_references
+    cap=feature_capability()
+    fp={'schema_version':'feature_program_v1','capability_id':cap['capability_id'],
+        'capability_hash':cap['capability_hash'],'features':[]}
+    p={'baseline_results':[{'candidate_id':'a','feature_program':deepcopy(fp)},
+        {'candidate_id':'b','feature_program':deepcopy(fp)}]}
+    q=project_method_references(p)
+    assert len(q['method_context_refs']['program_headers'])==1
+    assert q['baseline_results'][0]['feature_program']=={'method_program_header_ref':'h0','features':[]}
+    assert restore_method_references(q)==p and project_method_references(q)==q
+    q['method_context_refs']['program_headers']['h0']['capability_hash']='0'*64
+    with pytest.raises(ValueError,match='not lossless'):restore_method_references(q)

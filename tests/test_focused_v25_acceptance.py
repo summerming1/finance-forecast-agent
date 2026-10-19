@@ -131,7 +131,8 @@ def test_mixed_fit_failure_is_not_cached_success_and_update_retains_execution_fa
 
 
 @pytest.mark.parametrize('visibility',['on','off'])
-def test_feature_start_continuation_with_max_notes_fits_actual_wire_budget(tmp_path,visibility):
+@pytest.mark.parametrize('wide_ast',[False,True])
+def test_feature_start_continuation_with_max_notes_fits_actual_wire_budget(tmp_path,visibility,wide_ast):
     import json
 
     from finance_forecast_agent.focused_methods import restore_method_references, text_size
@@ -139,6 +140,11 @@ def test_feature_start_continuation_with_max_notes_fits_actual_wire_budget(tmp_p
     config=method(features=True).to_dict()
     config['feature_program']['features'][0]['name']='gen_method_1'
     config['feature_program']['features'][0]['expression']['window']=20
+    if wide_ast:
+        def expression(depth):
+            return ({'op':'input','name':'return_1'} if depth==1 else
+                {'op':'add','left':expression(depth-1),'right':expression(depth-1)})
+        config['feature_program']['features'][0]['expression']=expression(4)
     start={k:config[k] for k in ['schema_version','model_family','model_params','feature_groups','feature_program','training_policy']}
     c=controller(tmp_path,entry_mode='provided_start',starting_baseline=start,
         research_notes='n'*4000,diagnostic_mode=visibility)

@@ -22,8 +22,8 @@ Read, in this order:
 1. `AGENTS.md`
 2. `docs/PROJECT_ROADMAP.md`
 3. `docs/CURRENT_IMPLEMENTATION.md`
-4. the latest relevant version notes: `docs/V2_4_DIAGNOSTIC_RESEARCH.md` is the current approved contract and incremental log; `docs/V2_3_FEATURE_RESEARCH.md` and `docs/V2_MISSION_RESEARCH.md` retain V2.3 and B0–B5 history (older `docs/P1_FOCUS_F0_F1.md` is historical)
-5. accepted ADRs relevant to the work, especially `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, `docs/ADR_MISSION_PRODUCT_003.md`, `docs/ADR_MISSION_PRODUCT_004.md`, `docs/ADR_MISSION_PRODUCT_005.md`, and `docs/ADR_MISSION_PRODUCT_006.md`; approval is not an implementation or acceptance claim
+4. the current approved contract and incremental log: `docs/V2_5_METHOD_RESEARCH.md`; `docs/V2_4_DIAGNOSTIC_RESEARCH.md` retains the previous V2.4 contract and evidence; `docs/V2_3_FEATURE_RESEARCH.md` and `docs/V2_MISSION_RESEARCH.md` retain V2.3 and B0–B5 history (older `docs/P1_FOCUS_F0_F1.md` is historical)
+5. accepted ADRs relevant to the work, especially current `docs/ADR_MISSION_PRODUCT_007.md`, then `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, `docs/ADR_MISSION_PRODUCT_003.md`, `docs/ADR_MISSION_PRODUCT_004.md`, `docs/ADR_MISSION_PRODUCT_005.md`, and `docs/ADR_MISSION_PRODUCT_006.md`; approval is not an implementation or acceptance claim
 6. `docs/FOCUSED_ARCHITECTURE.md`
 7. `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`
 8. `docs/CODEX_FOCUSED_HANDOFF.md`

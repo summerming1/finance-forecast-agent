@@ -1716,7 +1716,8 @@ class FocusedResearchController:
     def _bind_research_design(self, advice, prompt, result_lookup, round_index, max_count, source):
         from .focused_diagnostics import bind_design
         if prompt.get("method_policy"):
-            from .focused_methods import normalize_method_advice
+            from .focused_methods import normalize_method_advice, restore_method_references
+            prompt=restore_method_references(prompt)
             advice = normalize_method_advice(advice, prompt)
         _advice_rows(advice, max_count)
         clean = json.loads(json.dumps(advice))

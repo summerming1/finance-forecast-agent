@@ -197,8 +197,9 @@ def fit_method(model,x,y,scope,columns,*,expected_family=None):
 
 
 def project_method_references(prompt):
-    """Losslessly share original rules and already visible method values."""
+    """Losslessly share original rules, repeated ASTs and method values."""
     import json
+    if prompt.get('method_context_refs'):prompt=restore_method_references(prompt)
     body=deepcopy(prompt)
     nodes=[*body.get('observation_feedback',[]),*body.get('prior_decision_designs',{}).values()]
     occurrences={}
@@ -224,10 +225,53 @@ def project_method_references(prompt):
                 if (path in method and change.get(field)==method[path]
                         and len(json.dumps(change[field]))>len(json.dumps(ref))):
                     change[field]=ref;replacements+=1
-    if rules or replacements:
-        body['method_context_refs']={'schema_version':'method_reference_projection_v1','rules':rules,
+    groups={}
+    def collect(value):
+        if isinstance(value,dict):
+            # Diffs also hold bare named definitions, outside a FeatureProgram.
+            if (set(value)=={'name','expression'} and isinstance(value['expression'],dict)
+                    and len(json.dumps(value['expression']))>=64):
+                expr=value['expression'];digest=identity(expr,domain='method-context-expression-v1')
+                groups.setdefault(digest,[]).append((value,expr))
+                return
+            for item in value.values():collect(item)
+        elif isinstance(value,list):
+            for item in value:collect(item)
+    collect(body)
+    expressions={}
+    for same in groups.values():
+        if len(same)<2:continue
+        ref='e'+str(len(expressions));expressions[ref]=deepcopy(same[0][1])
+        for feature,_ in same:feature['expression']={'method_expression_ref':ref}
+    header_groups={}
+    def collect_headers(value):
+        if isinstance(value,dict):
+            if value.get('schema_version')=='feature_program_v1' and isinstance(value.get('features'),list):
+                header={k:v for k,v in value.items() if k!='features'}
+                if len(json.dumps(header))>=64:
+                    digest=identity(header,domain='method-context-program-header-v1')
+                    header_groups.setdefault(digest,[]).append((value,header))
+                return
+            for item in value.values():collect_headers(item)
+        elif isinstance(value,list):
+            for item in value:collect_headers(item)
+    collect_headers(body)
+    headers={}
+    for same in header_groups.values():
+        if len(same)<2:continue
+        ref='h'+str(len(headers));headers[ref]=deepcopy(same[0][1])
+        for program,_ in same:
+            features=program['features'];program.clear()
+            program.update(method_program_header_ref=ref,features=features)
+    if rules or replacements or expressions or headers:
+        body['method_context_refs']={'schema_version':'method_reference_projection_v3','rules':rules,
+            'expressions':expressions,'program_headers':headers,
             'source_hash':identity(prompt,domain='method-context-original-v1'),
-            'contract':'method_rule_ref resolves in method_context_refs.rules. method_value_ref reads the exact path of the candidate in baseline_results/prior_research_results/fixed_model. No numerical values omitted.'}
+            'contract':('method_rule_ref resolves in rules; method_expression_ref resolves in expressions (original AST); feature names stay inline. '
+                'method_program_header_ref supplies every original program field except its inline features. '
+                'method_value_ref reads the exact candidate path in baseline_results/prior_research_results/fixed_model. '
+                'Resolve these planning-only references before submitting a full legal FeatureProgram; never submit references as DSL. '
+                'No numerical values omitted; component references grant no control permissions.')}
     return body
 
 
@@ -240,9 +284,14 @@ def restore_method_references(prompt):
     if fixed:methods.setdefault(fixed['candidate_id'],fixed)
     def expand(value):
         if isinstance(value,dict):
+            if 'method_program_header_ref' in value:
+                if set(value)!={'method_program_header_ref','features'}:raise ValueError('invalid program header reference')
+                return {**deepcopy(refs['program_headers'][value['method_program_header_ref']]),'features':expand(value['features'])}
             if set(value)=={'method_rule_ref'}:return deepcopy(refs['rules'][value['method_rule_ref']])
+            if set(value)=={'method_feature_ref'}:return deepcopy(refs['features'][value['method_feature_ref']])
+            if set(value)=={'method_expression_ref'}:return deepcopy(refs['expressions'][value['method_expression_ref']])
             if set(value)=={'method_value_ref'}:
-                ref=value['method_value_ref'];return deepcopy(methods[ref['candidate_id']][ref['path']])
+                ref=value['method_value_ref'];return expand(deepcopy(methods[ref['candidate_id']][ref['path']]))
             return {k:expand(v) for k,v in value.items()}
         if isinstance(value,list):return [expand(v) for v in value]
         return value
@@ -285,6 +334,7 @@ def method_advice(prompt,*,telemetry=None):
     """Finite engineering/reference policy. Real LLM choice is separately tested."""
     from .focused_diagnostics import default_design
     from .focused_feature_program import empty_feature_program
+    prompt=restore_method_references(prompt)
     start=prompt['fixed_model']
     prior=prompt['prior_research_results']
     known=[r for r in [*prompt['baseline_results'],*prior] if r.get('training_policy')]
