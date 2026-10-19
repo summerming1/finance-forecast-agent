@@ -39,7 +39,7 @@ from .focused_feature_program import (
     feature_capability,
 )
 from .focused_identity import canonical_json, data_identity, file_sha256, identity
-from .focused_methods import METHOD_SCHEMA, METHOD_SCOPE, TrainingPolicy, method_capability
+from .focused_methods import METHOD_SCHEMA, TrainingPolicy, method_capability
 from .focused_protocol import (
     FEATURE_GROUPS,
     EvaluationPolicy,

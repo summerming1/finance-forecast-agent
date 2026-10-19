@@ -15,8 +15,8 @@ def method(name='p',features=False,mode='expanding',sessions=None):
 
 
 def compile_row(parent,row):
-    return compile_hypotheses({'hypotheses':[{**{'statement':'synthetic method change',
-        'parent_candidate_id':parent.candidate_id,'control_candidate_id':parent.candidate_id},**row}]},
+    return compile_hypotheses({'hypotheses':[{'statement':'synthetic method change',
+        'parent_candidate_id':parent.candidate_id,'control_candidate_id':parent.candidate_id,**row}]},
         round_index=2,source='assistant_authored_fixture',max_count=2,
         visible_evidence=[{'evidence_id':parent.candidate_id,'evidence_type':'current_experiment',
             'role':'candidate_result','visible':True}],candidate_lookup={parent.candidate_id:parent},fixed_model=method('start'))[0]
