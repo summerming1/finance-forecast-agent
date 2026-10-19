@@ -243,7 +243,7 @@ def relative_group_losses(artifact, reference, groups):
     return out
 
 
-def derive_diagnostic(artifact, *, candidate, raw_history, frame, splits, reference=None):
+def derive_diagnostic(artifact, *, candidate, raw_history, frame, splits, reference=None, training_execution=None):
     started = time.perf_counter()
     out = {"schema_version": "deterministic_diagnostic_v1", "candidate_id": artifact["candidate_id"],
            "prediction_hash": identity(artifact, domain="diagnostic-prediction-v1"),
@@ -275,6 +275,13 @@ def derive_diagnostic(artifact, *, candidate, raw_history, frame, splits, refere
             for feature in candidate.feature_program.to_dict()["features"]:
                 _protection_events(feature["expression"], returns, masks)
             for fold_id, (train, _) in enumerate(raw_splits):
+                if getattr(candidate, 'training_policy', None) is not None:
+                    if not training_execution or len(training_execution) != len(raw_splits):
+                        raise ValueError('method diagnostic requires actual training receipts')
+                    receipt = training_execution[fold_id]
+                    if receipt['fold_id'] != fold_id:
+                        raise ValueError('method diagnostic training fold mismatch')
+                    train = raw_map[np.asarray(receipt['selected_train'], dtype=int)]
                 x = matrix.values[train]
                 variances = np.var(x, axis=0)
                 nonconstant = variances > 0
@@ -295,6 +302,8 @@ def derive_diagnostic(artifact, *, candidate, raw_history, frame, splits, refere
                     "node_event_count": sum(event_counts), "node_counts": event_counts,
                     "distinct_triggered_rows": triggered, "denominator_rows": len(train), "row_rate": triggered/len(train)})
             out["training_features"], out["protected_division"] = stats, protected
+            if getattr(candidate, 'training_policy', None) is not None:
+                out['training_policy'] = candidate.training_policy.to_dict()
     if reference is not None:
         out["relative_losses"] = relative_group_losses(artifact, reference, out["volatility_groups"])
     out["limitations"] = ["Descriptive development evidence, not significance or causal proof.",

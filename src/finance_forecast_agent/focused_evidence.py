@@ -61,11 +61,14 @@ class ExecutionManifest:
     execution_conformant: bool
     schema_version: str = "focused_execution_manifest_v1"
     feature_execution: dict[str, Any] | None = None
+    training_execution: list[dict] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         if self.feature_execution is None:
             payload.pop("feature_execution")
+        if self.training_execution is None:
+            payload.pop("training_execution")
         return payload
 
 
@@ -192,6 +195,23 @@ def build_execution_manifest(
             }
         )
     conformant = _params_conform(candidate.model_params, result.estimator_params, role) and list(result.actual_features) == list(expected_feature_columns)
+    training_execution = getattr(result, 'training_execution', None)
+    if getattr(candidate, 'training_policy', None) is not None:
+        from .focused_identity import identity
+        conformant = conformant and bool(training_execution) and len(training_execution) == len(splits)
+        if training_execution:
+            fold_contracts = []
+            for fold_id,receipt in enumerate(training_execution):
+                expected = candidate.training_policy.select(receipt['eligible_train']).tolist()
+                selected = receipt['selected_train']
+                conformant = conformant and (receipt['fold_id'] == fold_id and selected == expected
+                    and receipt['selected_train_hash'] == identity(selected,domain='method-training-rows-v1')
+                    and receipt['columns'] == list(expected_feature_columns) and receipt['actual_fit_calls'] == 1
+                    and receipt['test_row_ids'] == [int(i) for i in splits[fold_id][1]])
+                fold_contracts.append({'fold_id':fold_id,'train_count':len(selected),
+                    'train_first_row':selected[0],'train_last_row':selected[-1],
+                    'eligible_count':receipt['eligible_count'],'selected_train_hash':receipt['selected_train_hash'],
+                    'test_row_ids':receipt['test_row_ids']})
     feature_execution = getattr(result, "feature_execution", None)
     if getattr(candidate, "feature_program", None) is not None:
         from .focused_feature_program import feature_capability
@@ -224,7 +244,9 @@ def build_execution_manifest(
         code_revision=os.environ.get("GITHUB_SHA") or os.environ.get("FINANCE_FORECAST_CODE_REVISION") or "unknown_local",
         execution_conformant=conformant,
         feature_execution=feature_execution,
-        schema_version="focused_execution_manifest_v2" if feature_execution is not None else "focused_execution_manifest_v1",
+        training_execution=training_execution,
+        schema_version="focused_execution_manifest_v3" if training_execution is not None else
+            "focused_execution_manifest_v2" if feature_execution is not None else "focused_execution_manifest_v1",
     )
 
 

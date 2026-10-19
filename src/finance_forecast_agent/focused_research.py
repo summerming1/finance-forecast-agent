@@ -243,6 +243,7 @@ class CandidateResult:
     relative_mae_vs_best_baseline: float
     prediction_rows: list[dict[str, Any]] = field(default_factory=list)
     feature_execution: dict[str, Any] | None = None
+    training_execution: list[dict] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -258,6 +259,7 @@ class CandidateResult:
             "relative_mae_vs_best_baseline": self.relative_mae_vs_best_baseline,
             "prediction_row_count": len(self.prediction_rows),
             **({"feature_execution": self.feature_execution} if self.feature_execution is not None else {}),
+            **({"training_execution": self.training_execution} if self.training_execution is not None else {}),
         }
 
 
@@ -411,14 +413,27 @@ def evaluate_candidate(
     y = frame["label"].astype(float).to_numpy()
     prediction_rows: list[dict[str, Any]] = []
     effective_params: dict[str, Any] = {}
+    training_execution = None
+    if candidate.training_policy is not None:
+        from .focused_methods import training_scopes
+        training_execution = []
+        planned_training = training_scopes(frame, candidate.training_policy, splits)
     for fold_id, (train_idx, test_idx) in enumerate(splits):
         model = _make_model(candidate)
         if fit_observer:
             fit_observer("started")
-        model.fit(x[train_idx], y[train_idx])
+        if candidate.training_policy is None:
+            model.fit(x[train_idx], y[train_idx])
+        else:
+            from .focused_methods import fit_method
+            receipt = fit_method(model, x, y, planned_training[fold_id], features)
+            receipt['effective_params'] = _effective_estimator_params(model)
+            training_execution.append(receipt)
+            train_idx = np.asarray(receipt['selected_train'], dtype=int)
         if fit_observer:
             fit_observer("completed")
-        pred = np.asarray(model.predict(x[test_idx]), dtype=float)
+        predict_x = pd.DataFrame(x[test_idx], columns=features) if candidate.training_policy is not None else x[test_idx]
+        pred = np.asarray(model.predict(predict_x), dtype=float)
         actual = y[test_idx]
         effective_params = _effective_estimator_params(model)
         for row_index, target, prediction in zip(test_idx, actual, pred):
@@ -454,6 +469,7 @@ def evaluate_candidate(
         relative_mae_vs_best_baseline=relative,
         prediction_rows=prediction_rows,
         feature_execution=feature_execution,
+        training_execution=training_execution,
     )
 
 
@@ -800,6 +816,10 @@ class FocusedResearchAdvisor:
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         self.last_record, self.last_fixture_path = None, None
         if self.mode == "deterministic":
+            if prompt.get('method_policy'):
+                from .focused_methods import method_advice
+                self.last_telemetry = {'policy':'finite_method_reference_v1'}
+                return method_advice(prompt), 'deterministic_method_policy'
             if prompt.get("diagnostic_research_policy") and prompt["feature_policy"]["arm"] != "random":
                 from .focused_diagnostics import diagnostic_advice
                 self.last_telemetry = {"policy": "diagnostic_branch_v1"}
@@ -1191,7 +1211,10 @@ class FocusedResearchController:
         self.task = task
         self.dataset = dataset
         self.frame = frame
-        self.feature_mode = change_scope == "price_features"
+        self.method_mode = change_scope == "feature_window"
+        self.feature_mode = change_scope in {"price_features", "feature_window"}
+        if self.method_mode and diagnostic_mode is None:
+            diagnostic_mode = 'on'
         from .focused_diagnostics import research_policy
         if diagnostic_mode is not None and not self.feature_mode:
             raise ValueError("diagnostic research requires price_features mode")
@@ -1211,7 +1234,8 @@ class FocusedResearchController:
             self.dataset = FocusedDatasetSnapshot(**dataset.to_dict())
             strategy = feature_strategy or {"arm": "adaptive_batch", "search_seed": 42}
             if (not isinstance(strategy, dict) or not {"arm", "search_seed"} <= set(strategy)
-                    or set(strategy) - {"arm", "search_seed", "max_sampler_draws", "decision_support"}
+                    or set(strategy) - ({"arm", "search_seed", "max_sampler_draws", "decision_support"}
+                        | ({"feedback_support"} if self.method_mode else set()))
                     or strategy["arm"] not in {"one_shot", "adaptive_batch", "random"}
                     or isinstance(strategy["search_seed"], bool) or not isinstance(strategy["search_seed"], int)
                     or not 0 <= strategy["search_seed"] <= 2**32 - 1):
@@ -1224,6 +1248,10 @@ class FocusedResearchController:
             if strategy["arm"] == "random" and advisor_mode != "deterministic":
                 raise ValueError("Random price feature research has no provider mode")
             self.feature_strategy = json.loads(json.dumps(strategy))
+            if self.method_mode:
+                feedback = self.feature_strategy.setdefault('feedback_support', 'update')
+                if feedback not in {'reference', 'update'}:
+                    raise ValueError('unknown method feedback support')
         elif raw_history is not None or feature_strategy is not None or dataset.feature_protocol is not None:
             raise ValueError("feature protocol and raw history require explicit price_features mode")
         self.feature_specs = json.loads(json.dumps(feature_specs or []))
@@ -1241,13 +1269,15 @@ class FocusedResearchController:
         self.starting_baseline = json.loads(json.dumps(starting_baseline or {}))
         if self.starting_baseline:
             required_start = {"model_family", "model_params", "feature_groups"}
-            allowed_start = required_start | ({"schema_version", "feature_program"} if self.feature_mode else set())
+            allowed_start = required_start | ({"schema_version", "feature_program"} if self.feature_mode else set()) | ({'training_policy'} if self.method_mode else set())
             if not required_start <= set(self.starting_baseline) or set(self.starting_baseline) - allowed_start:
                 raise ValueError("starting baseline must be a platform model configuration")
             if self.feature_mode and bool("schema_version" in self.starting_baseline) != bool("feature_program" in self.starting_baseline):
                 raise ValueError("starting feature program requires explicit schema")
             if self.starting_baseline["model_family"] not in ALLOWED_MODELS:
                 raise ValueError("unsupported starting baseline model")
+            if self.method_mode and self.starting_baseline['model_family'] != 'ridge_regression':
+                raise ValueError('new method profile only supports a Ridge research start')
             validate_model_params(self.starting_baseline["model_family"], self.starting_baseline["model_params"])
             if not set(self.starting_baseline["feature_groups"]) <= set(allowed_groups):
                 raise ValueError("starting baseline outside allowed feature scope")
@@ -1259,7 +1289,7 @@ class FocusedResearchController:
             raise ValueError("goal entry cannot silently carry a provided starting model")
         if self.entry_mode == "provided_start" and not self.starting_baseline:
             raise ValueError("provided_start entry requires an explicit supported model")
-        if change_scope not in {"explore", "features_only", "price_features"}:
+        if change_scope not in {"explore", "features_only", "price_features", "feature_window"}:
             raise ValueError("unsupported change_scope")
         self.change_scope = change_scope
         self._incumbent_result = self._incumbent_payload = None
@@ -1342,6 +1372,8 @@ class FocusedResearchController:
         if self.feature_mode:
             self.spec.research_options["feature_strategy"] = self.feature_strategy
             self.spec.research_options["feature_capability"] = feature_capability()
+            if self.method_mode:
+                self.spec.research_options['method_profile'] = method_capability()
             if self.budget.max_fit_calls < self.required_initial_fit_calls():
                 raise ValueError("fit budget is too small for frozen controls and starting model")
         if self.diagnostic_policy:
@@ -1370,7 +1402,7 @@ class FocusedResearchController:
             ref_row = accepted_ref["row"].get("result") or accepted_ref["row"]
             reference = json.loads((self._campaign_root/ref_row["prediction_artifact_ref"]).read_text(encoding="utf-8"))
         body = derive_diagnostic(artifact, candidate=result.candidate, raw_history=self.raw_history,
-                                 frame=self.frame, splits=splits, reference=reference)
+            frame=self.frame, splits=splits, reference=reference, training_execution=result.training_execution)
         self._store_diagnostic_object(key, "diagnostics/" + result.candidate.candidate_id + ".json", body)
         return body
 
@@ -1588,6 +1620,9 @@ class FocusedResearchController:
             'diagnostic_common_limitations_v1: descriptive development only, no causal/significance/profitability/strict-reproduction claim. No automatic correction, ensemble selection, refit or downloads. Observation is not recommendation. Planning *_ref resolves recursively in diagnostic_common_sources; constants_ref merges shared fields; values/fold_values follow columns_ref/fold_columns. rule_templates merges shared with each columns/values row; no numerical entries discarded. Full artifacts stay in audit.',
             *literature_rules]
         self._project_prior_decisions(prompt)
+        if self.method_mode:
+            from .focused_methods import project_method_prompt
+            project_method_prompt(prompt, self.feature_strategy['feedback_support'])
         return prompt
 
     def _project_prior_decisions(self, prompt):
@@ -1676,6 +1711,11 @@ class FocusedResearchController:
         out = []
         for (hypothesis, candidate), design in zip(compiled, designs, strict=True):
             bound = bind_design(design, hypothesis, candidate, result_lookup, prompt)
+            if candidate is not None and candidate.training_policy is not None:
+                from .focused_methods import training_scopes
+                bound['method_contract']['training_plan'] = training_scopes(self.frame, candidate.training_policy,
+                    self.split_spec.build_splits(len(self.frame)))
+                bound['design_hash'] = identity({k:v for k,v in bound.items() if k != 'design_hash'}, domain='research-design-v1')
             out.append((replace(hypothesis, research_design=bound), candidate))
         return out
 
@@ -1777,6 +1817,9 @@ class FocusedResearchController:
         values = self.starting_baseline or {"model_family":"ridge_regression", "model_params":{"alpha":1.0}, "feature_groups":["base_lags"]}
         if self.feature_mode and "feature_program" not in values:
             values = {**values, "schema_version": CANDIDATE_SCHEMA, "feature_program": empty_feature_program()}
+        if self.method_mode:
+            values = {**values, 'schema_version':METHOD_SCHEMA,
+                'training_policy':values.get('training_policy', TrainingPolicy().to_dict())}
         proposed = CandidateConfig("user_start", **values, seed=self.estimator_seed)
         for cid, family, params, groups in DEFAULT_BASELINES:
             control = self._baseline_candidate(cid, family, params, groups)
@@ -1787,6 +1830,8 @@ class FocusedResearchController:
     def _baseline_candidate(self, cid, family, params, groups):
         kwargs = ({"schema_version": CANDIDATE_SCHEMA, "feature_program": empty_feature_program()}
                   if self.feature_mode and not family.startswith("naive_") else {})
+        if self.method_mode and not family.startswith('naive_'):
+            kwargs.update(schema_version=METHOD_SCHEMA, training_policy=TrainingPolicy())
         return CandidateConfig(cid, family, params, groups, seed=self.estimator_seed, **kwargs)
 
     def _feature_matrix(self, candidate):
@@ -1813,6 +1858,8 @@ class FocusedResearchController:
                 if cfg.feature_program is not None:
                     row["schema_version"] = cfg.schema_version
                     row["feature_program"] = cfg.feature_program.to_dict()
+                if cfg.training_policy is not None:
+                    row['training_policy'] = cfg.training_policy.to_dict()
         prompt["rules"] = [r for r in prompt["rules"] if not r.startswith((
             "A simpler", "ablate declares", "simplify must", "Never supply metrics"))]
         prompt["rules"] += [
@@ -2084,7 +2131,7 @@ class FocusedResearchController:
             prediction_count=len(artifact["rows"]), actual_features=saved["actual_features"],
             estimator_params=saved["estimator_params"], execution_status=saved["execution_status"],
             research_verdict=saved["research_verdict"], relative_mae_vs_best_baseline=saved["relative_mae_vs_best_baseline"],
-            prediction_rows=artifact["rows"], feature_execution=saved.get("feature_execution"))
+            prediction_rows=artifact["rows"], feature_execution=saved.get("feature_execution"), training_execution=saved.get('training_execution'))
 
     def _execute(self, candidate: CandidateConfig, *, role: str, splits, best_baseline=None,
                  parent_result=None, hypothesis=None):
@@ -2092,7 +2139,7 @@ class FocusedResearchController:
         assert runtime is not None
         if self.feature_mode and self.literature_review_ids and self._project_literature() != self.literature_snapshot:
             raise ValueError("literature permission or reviewed recipe changed before feature execution")
-        if role == "research_candidate" and self.change_scope in {"features_only", "price_features"}:
+        if role == "research_candidate" and self.change_scope in {"features_only", "price_features", "feature_window"}:
             validate_fixed_model(candidate, self.research_start, parent_result.candidate if parent_result else None)
         cached = runtime.accepted(candidate.candidate_id)
         if cached:
@@ -2122,6 +2169,12 @@ class FocusedResearchController:
                     min_relative_improvement=self.evaluation_policy.min_relative_mae_improvement,
                     split_spec=self.split_spec, fit_observer=observe, feature_registry=self.feature_registry,
                     task=self.task, dataset=self.dataset, raw_history=self.raw_history)
+                if self.method_mode and hypothesis:
+                    planned = hypothesis.research_design['method_contract']['training_plan']
+                    if (not result.training_execution or len(result.training_execution) != len(planned)
+                            or any(any(actual[k] != expected[k] for k in expected)
+                                   for actual,expected in zip(result.training_execution,planned,strict=True))):
+                        raise ValueError('actual training receipt differs from frozen method plan')
                 if role == "model_baseline":
                     result = replace(result, research_verdict="baseline", relative_mae_vs_best_baseline=0.)
             elif role == "model_baseline":
