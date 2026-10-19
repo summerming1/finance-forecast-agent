@@ -129,3 +129,5 @@ N0完成：3ef2e5c封存唯一合同/ADR007/路线及权限，原状态4测试�
 N1基础接口：先新增负例，n1-red.xml因缺新模块1 collection error/exit1；保留。
 新增有界版本响应/认识更新验证、原plan冻结挂载点，尚未在新profile执行（N2/N3继续）。
 命令`python -m pytest -q tests/test_focused_v25_methods.py tests/test_focused_feature_contract.py tests/test_focused_v24_judgment.py -k 'not no_third and not distinct and not two_' --basetemp=.t25n1r --junitxml=.v250/n1-regression.xml --tb=short`：62 passed/1 deselected/6.87s/exit0；13新合同测试含stop/request_review及旧合同负例。Ruff/compileall/diff均exit0。无Provider或真实行情。
+
+N2：n2-red.xml原9项因尚无training_policy失败，exit1；保留。新增显式v4候选/完整方法身份、单轴control编译与diff，旧v3/legacy序列化未改。`python -m pytest -q tests/test_focused_v25_compile.py tests/test_focused_v25_methods.py tests/test_focused_feature_contract.py tests/test_focused_v24_judgment.py -k 'not no_third' --basetemp=.t25n2 --junitxml=.v250/n2.xml --tb=short`：71通过/1未选/6.00s/exit0。适用Ruff/diff检查exit0。新profile真实训练尚未接通，N3继续。

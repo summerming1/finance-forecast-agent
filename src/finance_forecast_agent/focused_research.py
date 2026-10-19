@@ -39,6 +39,7 @@ from .focused_feature_program import (
     feature_capability,
 )
 from .focused_identity import canonical_json, data_identity, file_sha256, identity
+from .focused_methods import METHOD_SCHEMA, METHOD_SCOPE, TrainingPolicy, method_capability
 from .focused_protocol import (
     FEATURE_GROUPS,
     EvaluationPolicy,
@@ -110,12 +111,20 @@ class CandidateConfig:
     hypothesis_id: str | None = None
     schema_version: str | None = None
     feature_program: FeatureProgram | dict | None = None
+    training_policy: TrainingPolicy | dict | None = None
 
     def __post_init__(self):
-        if self.schema_version is None and self.feature_program is None:
+        if self.schema_version is None and self.feature_program is None and self.training_policy is None:
             return  # Legacy objects retain exactly their existing bytes/identity.
-        if self.schema_version != CANDIDATE_SCHEMA or self.feature_program is None:
+        if self.schema_version not in {CANDIDATE_SCHEMA, METHOD_SCHEMA} or self.feature_program is None:
             raise ValueError("feature program requires the explicit focused_candidate_v3 schema")
+        if self.schema_version == METHOD_SCHEMA:
+            policy = self.training_policy
+            if not isinstance(policy, TrainingPolicy):
+                policy = TrainingPolicy.from_dict(policy)
+            object.__setattr__(self, "training_policy", policy)
+        elif self.training_policy is not None:
+            raise ValueError("training policy requires explicit method schema")
         if (not isinstance(self.feature_groups, list) or not self.feature_groups
                 or any(not isinstance(g, str) or g not in PRICE_GROUPS for g in self.feature_groups)
                 or len(set(self.feature_groups)) != len(self.feature_groups)):
@@ -134,8 +143,10 @@ class CandidateConfig:
         if not isinstance(payload, dict) or set(payload) - allowed or not required <= set(payload):
             raise ValueError("unknown or missing candidate fields")
         if ({"schema_version", "feature_program"} & set(payload)
-                and (payload.get("schema_version") != CANDIDATE_SCHEMA or payload.get("feature_program") is None)):
+                and (payload.get("schema_version") not in {CANDIDATE_SCHEMA, METHOD_SCHEMA} or payload.get("feature_program") is None)):
             raise ValueError("new candidate semantics cannot downgrade to legacy schema")
+        if "training_policy" in payload and (payload.get("schema_version") != METHOD_SCHEMA or payload["training_policy"] is None):
+            raise ValueError("training semantics cannot downgrade to an old candidate")
         if (not isinstance(payload["candidate_id"], str) or not payload["candidate_id"]
                 or not isinstance(payload["model_family"], str)
                 or not isinstance(payload["model_params"], dict)
@@ -156,6 +167,11 @@ class CandidateConfig:
         params = (self.model_params if self.model_family.startswith("naive_")
                   else effective_model_params(self.model_family, self.model_params))
         if self.feature_program is not None:
+            if self.training_policy is not None:
+                return identity({"schema_version":self.schema_version,"model_family":self.model_family,
+                    "effective_params":params,"feature_groups":self.feature_groups,
+                    "feature_program":self.feature_program.to_dict(),"training_policy":self.training_policy.to_dict(),
+                    "method_capability":method_capability()},domain="focused-method-config-v1")
             return identity({"schema_version": self.schema_version, "model_family": self.model_family,
                 "effective_params": params, "feature_groups": self.feature_groups,
                 "feature_program": self.feature_program.to_dict(), "capability": feature_capability()},
@@ -168,10 +184,13 @@ class CandidateConfig:
         if isinstance(self.seed, bool) or not isinstance(self.seed, int) or not 0 <= self.seed <= 2**32 - 1:
             raise ValueError("Estimator seed must be a non-negative 32-bit integer")
         return identity({"config_identity": self.config_identity, "seed": self.seed},
-                        domain="focused-execution-config-v3" if self.feature_program is not None else "focused-execution-config-v2")
+                        domain="focused-method-execution-v1" if self.training_policy is not None else
+                            "focused-execution-config-v3" if self.feature_program is not None else "focused-execution-config-v2")
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
+        if self.training_policy is None:
+            payload.pop("training_policy")
         if self.feature_program is None:
             payload.pop("schema_version")
             payload.pop("feature_program")
@@ -200,11 +219,14 @@ class HypothesisSpec:
     diagnostic: str | None = None
     literature_uses: list[dict[str, str]] = field(default_factory=list)
     research_design: dict[str, Any] | None = None
+    declared_axis: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out = asdict(self)
         if self.research_design is None:
             out.pop("research_design")
+        if self.declared_axis is None:
+            out.pop("declared_axis")
         return out
 
 
@@ -947,8 +969,11 @@ def compile_hypotheses(
         "counter_evidence_test", "evidence_refs", "based_on_feedback_ids", "ablation_component",
         "simplification_dimension", "diagnostic", "literature_uses"}
     feature_mode = fixed_model is not None and fixed_model.feature_program is not None
+    method_mode = fixed_model is not None and fixed_model.training_policy is not None
     if feature_mode:
         allowed.add("feature_program")
+    if method_mode:
+        allowed.update({"declared_axis", "training_policy"})
     actions = {"improve", "ablate", "simplify", "diagnose", "stop", "request_review"}
     index = EvidenceIndex(visible_evidence or [])
     candidates = candidate_lookup or {}
@@ -985,8 +1010,16 @@ def compile_hypotheses(
         hid = f"r{round_index}_h{ordinal+1}_{_hash(row, 8)}"
         cid = f"r{round_index}_c{ordinal+1}_{_hash(row, 8)}"
         candidate = None
+        if training and method_mode:
+            parent = candidates.get(parent_id)
+            if (parent is None or parent.training_policy is None or parent_id != control_id
+                    or row.get("declared_axis") not in {"features", "training_window"}):
+                raise ValueError("method change requires one declared axis and its accepted parent/control")
+            if (row["declared_axis"] == "features" and "training_policy" in row
+                    and TrainingPolicy.from_dict(row["training_policy"]) != parent.training_policy):
+                raise ValueError("feature change cannot reset the inherited training window")
         if not training:
-            forbidden = {"model_family", "model_params", "feature_groups", "seed", "ablation_component", "simplification_dimension", "feature_program"}
+            forbidden = {"model_family", "model_params", "feature_groups", "seed", "ablation_component", "simplification_dimension", "feature_program", "training_policy", "declared_axis"}
             if forbidden & set(row):
                 raise ValueError("control/diagnosis decisions cannot specify model configuration")
             if action == "diagnose":
@@ -994,6 +1027,17 @@ def compile_hypotheses(
                     raise ValueError("diagnosis requires a completed control candidate")
                 if row.get("diagnostic", "residual_summary") not in {"residual_summary", "fold_summary"}:
                     raise ValueError("unsupported deterministic diagnostic")
+        elif method_mode and row["declared_axis"] == "training_window":
+            if action != "improve" or set(row) & {"ablation_component", "simplification_dimension"}:
+                raise ValueError("window change is an overall/conditional improvement experiment")
+            parent = candidates[parent_id]
+            for key in ("model_family", "model_params", "feature_groups", "seed"):
+                if key in row and row[key] != getattr(parent, key):
+                    raise ValueError("window change alters frozen model settings")
+            if "feature_program" in row and FeatureProgram.from_dict(row["feature_program"]) != parent.feature_program:
+                raise ValueError("window change cannot alter inherited features")
+            candidate = replace(parent, candidate_id=cid, parent_candidate_id=parent_id, hypothesis_id=hid,
+                training_policy=TrainingPolicy.from_dict(row.get("training_policy")))
         elif feature_mode:
             parent = candidates.get(parent_id)
             if parent is None or parent.feature_program is None:
@@ -1070,6 +1114,8 @@ def compile_hypotheses(
                     raise ValueError("simplification does not reduce its declared complexity dimension")
         if candidate is not None and fixed_model is not None:
             validate_fixed_model(candidate, fixed_model, candidates.get(parent_id))
+        if candidate is not None and method_mode and candidate.fingerprint == candidates[parent_id].fingerprint:
+            raise ValueError("no-op method change is not a new experiment")
         hypothesis = HypothesisSpec(hypothesis_id=hid, statement=row["statement"].strip(),
             mechanism=str(row.get("mechanism", "")), parent_candidate_id=parent_id,
             proposed_changes=(candidate_config_diff(candidates.get(parent_id), candidate).get("changes", []) if candidate else []),
@@ -1080,7 +1126,7 @@ def compile_hypotheses(
             expected_observation=str(row.get("expected_observation", "")),
             ablation_component=row.get("ablation_component"), simplification_dimension=row.get("simplification_dimension"),
             diagnostic=row.get("diagnostic", "residual_summary") if action == "diagnose" else None,
-            literature_uses=literature_uses)
+            literature_uses=literature_uses, declared_axis=row.get("declared_axis") if method_mode else None)
         compiled.append((hypothesis, candidate))
     return compiled
 
@@ -1095,6 +1141,8 @@ def validate_fixed_model(candidate: CandidateConfig, anchor: CandidateConfig,
         if anchor.feature_program is not None and (value.feature_program is None
                 or value.feature_groups != anchor.feature_groups):
             raise ValueError("price feature research requires the frozen builtin groups and feature-protocol parent")
+        if anchor.training_policy is not None and (value.training_policy is None or value.schema_version != METHOD_SCHEMA):
+            raise ValueError("method research cannot discard its full inherited method")
 
 
 class FocusedResearchController:

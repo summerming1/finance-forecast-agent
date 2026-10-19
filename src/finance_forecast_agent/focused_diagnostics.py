@@ -490,6 +490,10 @@ def bind_design(design, hypothesis, candidate, results, prompt):
              "invariants": {"model_family": candidate.model_family, "model_params": candidate.model_params,
                             "seed": candidate.seed, "feature_groups": candidate.feature_groups},
              "program_hash": identity(candidate.feature_program.to_dict(), domain="diagnostic-program-v1")}
+    if getattr(candidate, "training_policy", None) is not None:
+        bound["method_contract"] = {"declared_axis":hypothesis.declared_axis,
+            "control_method_identity":control.config_identity,"candidate_method_identity":candidate.config_identity,
+            "training_policy":candidate.training_policy.to_dict()}
     bound["design_hash"] = identity(bound, domain="research-design-v1")
     return bound
 

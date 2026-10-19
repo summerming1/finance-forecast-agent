@@ -268,6 +268,9 @@ def candidate_config_diff(parent: Any | None, child: Any) -> dict[str, Any]:
     if getattr(parent, "feature_program", None) is not None or getattr(child, "feature_program", None) is not None:
         fields["feature_program"] = (parent.feature_program.to_dict() if parent.feature_program else None,
                                      child.feature_program.to_dict() if child.feature_program else None)
+    if getattr(parent, "training_policy", None) is not None or getattr(child, "training_policy", None) is not None:
+        fields["training_policy"] = (parent.training_policy.to_dict() if parent.training_policy else None,
+                                     child.training_policy.to_dict() if child.training_policy else None)
     for path, (old_value, new_value) in fields.items():
         if old_value != new_value:
             changes.append({"path": path, "old_value": old_value, "new_value": new_value})
