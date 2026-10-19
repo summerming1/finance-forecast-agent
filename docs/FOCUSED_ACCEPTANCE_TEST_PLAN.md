@@ -1,5 +1,10 @@
 # Focused / Mission Research Acceptance Plan
 
+## V2.5.0 N0–N5 (2026-10-19 approved, results not yet claimed)
+
+Use the unique V2_5_METHOD_RESEARCH.md contract and ADR007. Verify same-response updates including stop, full method inheritance both ways, mature selected training versus fixed calibration, real fit receipts, cache/observation identity, trusted window refit, recovery/continuation and original UI. Synthetic worker/HTTP/replay/browser allowed; no new real Provider or market experiments. Final source/tests/dependencies/inputs freeze and exact exit required; existing A/L/47-negative records stay historical.
+
+
 ## Approved S0–S4 gate (2026-10-13)
 
 Use the single current V2.4 log's **统一方案T01—T36实施映射**. New negative tests are `test_focused_v24_closure_audit.py`, `test_focused_v24_information.py`, `test_focused_v24_judgment.py`, plus existing worker/delivery/UI/browser tests. Exact accepted prediction coverage, finite first-event/reverse/derived identity, four-part frozen decisions, OFF/ON information boundaries, original budgets, conservative fallback and same-source package/model delivery are separate requirements. R/D/J rule-policy engineering challenges supplement but never replace the original four-arm gate; no actual Provider quality or user benefit is inferred. T36 future capability/knowledge execution is NOT_RUN without approval, not a fabricated successful test. Source-freeze all functional files/tests/dependencies/inputs before the last whole-repository run; preserve actual exit, binding and historical failures/skips.

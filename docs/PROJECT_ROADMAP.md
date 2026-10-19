@@ -1,5 +1,12 @@
 # Finance Forecast Agent 项目迭代路线图
 
+## 当前批准 V2.5.0 两轴方法研究与反馈更新（2026-10-19）
+
+用户已明确批准N0—N5及ADR007。唯一施工合同为[V2_5_METHOD_RESEARCH.md](V2_5_METHOD_RESEARCH.md)。同一Campaign特征＋窗口两轴可选，每项实验相对实际control单轴修改；新增expanding/rolling504/756，复用价格AST，完整反馈、执行和交付。下方旧窗口-only条款是历史方向，不覆盖本批准。实际完成仍只见CURRENT_IMPLEMENTATION.md。
+
+随后条件性能力位置：V2.5.1权重；V2.5.2有限参数；按需求可提前单独批准P预处理/F特征扩展/M注册模型替换；内部组件/隔离开发验证注册；K1/K2知识接线与价值；可选V2.6两成员组合；V3-P可单独并行、V3.0 Shadow；之后经验/适配/受控更新。仅维护方向，未批准本次执行这些包，不以编号要求全部做完。
+
+
 ## 当前批准增量：V2.4诊断研究（2026-10-09）
 
 用户明确批准D24-0—D24-5工程及D24-6准备。唯一详细合同及后续每版重点/功能/边界/进入条件/框架/说明/例子见[V2_4_DIAGNOSTIC_RESEARCH.md](V2_4_DIAGNOSTIC_RESEARCH.md)，范围ADR006。批准不是通过，实际状态仍见CURRENT_IMPLEMENTATION。

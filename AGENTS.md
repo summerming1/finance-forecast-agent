@@ -1,5 +1,10 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+## Current V2.5.0 implementation approval (2026-10-19)
+
+User explicitly approved N0–N5 of `docs/V2_5_METHOD_RESEARCH.md`, including R1–R4 and the causal-history perturbation qualification. ADR007 is accepted. The new feature_window profile allows features plus expanding/rolling504/756 in one Campaign, one declared axis relative to an accepted control per experiment. Preserve the original authorities, old schemas/hashes, two plans/four slots, MAE/0.0025 and historical evidence. Same-response bounded research_update, three distinct training scopes, actual fit receipts and window-consistent trusted refit are required. Only isolated synthetic engineering/worker/fit/predict/refit/local HTTP/replay/browser/static/regressions and scoped local commits are authorized. No real Provider, fees, sends, real-market research, sealed labels, production migration, global permissions, remote CI or push. G6 was attempted with issues and awaits human recheck. Future packages remain conditional. Read V2_5_METHOD_RESEARCH after Current, then relevant V2.4 history. This approval supersedes old window-only future scope, not historical records.
+
+
 ## Current trial-preparation approval (2026-10-14)
 
 User approved necessary P1–P5 engineering repairs and G0–G6 preparation in the existing V2.4 log. Reproduce the independent J-gate and cached-timing failures; freeze new contracts rather than rewriting old plans/fixtures. Current J training requires bounded four-part decisions; R/D/Random and legacy paths are explicitly distinct. Link original decisions to permitted feedback without OFF leakage or a third call. Test the actual two-entry workflow, package and same-host trusted inference. Only existing owner-authorized real development inputs may run; assistant technical rehearsal is not host/user signoff. No paid/external Provider, new confirmation labels, production changes, push/remote CI, optional packages or future-version execution. Report G0–G6 individually and a concrete GO/NO-GO; keep roadmap and historical evidence unchanged.

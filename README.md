@@ -1,5 +1,10 @@
 # Finance Forecast Agent
 
+## V2.5.0 approved implementation (2026-10-19)
+
+N0–N5 feature/window research and feedback updates are authorized; implementation evidence will be recorded in [V2_5_METHOD_RESEARCH.md](docs/V2_5_METHOD_RESEARCH.md) and actual status in [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md). ADR007 supplements prior decisions. This is not a completed release. Synthetic local engineering only; no real Provider/market experiments, push or remote CI. Prior owner trial issues remain pending human recheck.
+
+
 A financial machine-learning research workbench with two compatible paths:
 
 1. **Focused product line** — currently SPY daily next-session return research: frozen real data, controlled baselines, structured hypotheses, real model execution, deterministic evaluation and bounded stopping.

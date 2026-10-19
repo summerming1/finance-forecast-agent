@@ -1,5 +1,10 @@
 # Focused / Mission Research Architecture
 
+## Approved V2.5.0 extension (2026-10-19; implementation underway)
+
+ADR007 and V2_5_METHOD_RESEARCH.md authorize one feature_window profile in the existing Controller. Full methods inherit from accepted controls; one axis changes per experiment. Three scopes separate comparison/calibration, eligible and selected training. Same-response research_update remains advice, never numeric authority. Actual fit receipts and versioned window-consistent refit reuse existing runtime/trust. Old contracts are historical and remain compatible; no second service or state store.
+
+
 ## S0–S4 bounded extension (2026-10-13)
 
 The existing immutable observation objects carry finite prediction/comparison identity, first-event provenance and evidence tier. The comparison index is a read-only reconstruction, not a new store. New diagnostic v3 contracts freeze four-part research decisions and R/D/J support; legacy reference designs remain explicit, not fabricated judgment. Numerical observations, primary selection and conservative final recommendation remain separate. ON planning receives bounded visible comparison summaries; OFF receives neither these nor the new diagnostic package. Full audit objects do not become a second planning truth. Existing UI/package projections read those same objects; original explicit refit and external trusted registry remain the only model-delivery chain. Formal roadmap and future execution capabilities are unchanged.
