@@ -375,3 +375,33 @@ b10c495 fix(v25): losslessly project complex feature contexts within the frozen 
 最终再次核对源文件摘要不变。原所有未跟踪证据和用户文件保留，不清理回滚。
 
 文档收口实际结果：`pytest -q tests/test_focused_r0_status.py tests/test_focused_b0_plan.py --basetemp=.t25doc5 --junitxml=.v250/final5/docs-check.xml --tb=short`，4通过/2.18s/exit0；所读AGENTS/README/路线/CURRENT/handoff在开始/结束绑定。执行/测试238文件集合摘要仍为fc37b33e…d1598，无功能修改。
+
+## 10 文档一致性与发布状态同步（2026-10-20）
+
+用户要求核对并正确更新供后续Codex使用的功能/路线文件。核对基线为正式分支
+`feat/mission-research-v2`、HEAD `4f8b2c65d281de3171f7e1ccf7e10a446f3038c5`；
+tracked工作区干净，原未跟踪数据/运行证据保留。V2.5主体文档此前已更新；本次只补
+仍将V2.4标为当前的README/交接/指南标题、旧读序、当前与历史指令优先级、下一步和发布状态，
+不改产品范围、代码、ADR accepted状态、历史科学证据或旧验收JSON。
+
+同步位置：AGENTS、README、PROJECT_ROADMAP、CURRENT_IMPLEMENTATION、
+CODEX_FOCUSED_HANDOFF、CODEX_V22R_REMAINING_VALIDATION、FOCUSED_ARCHITECTURE、
+FOCUSED_ACCEPTANCE_TEST_PLAN、FRONTEND_USER_GUIDE及本文。AGENT_WORKSPACE_UI与ADR007
+已核对，原功能/操作和批准边界无需另改。P/F/M、内部受控模型改写、K1/K2等明确条件性位置
+保留，不自动实施。N0—N5限定工程已完成；G6已尝试有问题待本人复核，不退回未尝试，
+也不以合成两轴演示代签真人/真实LLM/研究选择或独立预测效果。
+
+发布勘误为追加记录，不回填§9或原机器收据：用户后续明确批准“全部提交并且推送”，
+2026-10-20普通push将`c6bdd28..4f8b2c6`的11个实现/文档提交同步至远端；
+`git ls-remote origin refs/heads/feat/mission-research-v2`返回完整4f8b2c6 SHA，
+本地/远端领先落后为0/0，push exit0。该动作不是远端CI验收；本地原始数据、数据库、
+模型及运行证据目录未上传。后续本次文档提交身份以实际git log为准，不冒充b10c495测试执行源。
+
+本次实际检查：设置`PYTHONPATH=src;tests;apps;scripts`后执行
+`.venv/Scripts/python.exe -m pytest -q tests/test_focused_r0_status.py tests/test_focused_b0_plan.py --basetemp=.v250/docs-sync-20261020-090745/temp --junitxml=.v250/docs-sync-20261020-090745/docs-check.xml --tb=short`，
+4通过/3.02s/exit0。另核对10份修改仅为MD、原238个执行/测试文件逐文件SHA256匹配
+final5预登记、6份历史/验收/已正确指南及ADR受保护文件无差异、53处相对MD/JSON链接有效，
+检查exit0；`git diff --check` exit0。检查索引在
+`.v250/docs-sync-20261020-090745/document_check.json`；提交前再次核对源码和diff。
+完整948项回归、四模式浏览器与模型交付本次不重跑，仍按§9准确引用；
+不把旧2失败/7跳过改成全绿，不更新原机器验收收据或伪造新金融/Provider/真人证据。

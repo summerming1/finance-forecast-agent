@@ -7,13 +7,15 @@ Use the unique V2_5_METHOD_RESEARCH.md contract and ADR007. Verify same-response
 
 Final observed result: 59 new version tests pass; 948 applicable cases reconcile exactly (939 pass, 2 historical failures, 7 skips, exit1). Four browser modes pass; same-source HTTP/replay/recovery and full model delivery pass. This is not whole-repository green, Provider quality, real-user or financial acceptance. Raw commands, failures and binding are in V2_5_METHOD_RESEARCH.md §9 and validation/v25_local_acceptance.json.
 
+Reading rule (2026-10-20): N0–N5 engineering is closed within the recorded scope; the remaining entry is CODEX_V22R_REMAINING_VALIDATION.md. Earlier gates below retain their dated evidence and open clauses, not competing current execution instructions. A documentation-only update checks document consistency and frozen source identity; it does not rerun or upgrade the prior full-regression, financial, Provider or human evidence. Normal code/documentation push has since occurred; remote CI has not been verified.
+
 ## Approved S0–S4 gate (2026-10-13)
 
 Use the single current V2.4 log's **统一方案T01—T36实施映射**. New negative tests are `test_focused_v24_closure_audit.py`, `test_focused_v24_information.py`, `test_focused_v24_judgment.py`, plus existing worker/delivery/UI/browser tests. Exact accepted prediction coverage, finite first-event/reverse/derived identity, four-part frozen decisions, OFF/ON information boundaries, original budgets, conservative fallback and same-source package/model delivery are separate requirements. R/D/J rule-policy engineering challenges supplement but never replace the original four-arm gate; no actual Provider quality or user benefit is inferred. T36 future capability/knowledge execution is NOT_RUN without approval, not a fabricated successful test. Source-freeze all functional files/tests/dependencies/inputs before the last whole-repository run; preserve actual exit, binding and historical failures/skips.
 
 Current status: `CURRENT_IMPLEMENTATION.md`. Historical PR success counts do not close reopened R contracts. The machine-readable clause map is `validation/v22r_acceptance.json`. Every new R gate needs a negative test plus related regressions, and exact source/command/artifact identity.
 
-## Current V2.4 review-repair gate (2026-10-10)
+## Historical V2.4 review-repair gate (2026-10-10)
 
 Use the current V2.4 contract and `test_focused_v24_review_fixes.py`: pilot construction/export/audit failures, shared-input denominator, malformed advice with unchanged accepted work, cached ablation feedback ON versus OFF, RCP-04/05 demand-only persistence, full two-decision compact provided-start/long-note resume, paired group losses and named constant features, immutable test-start/end identity and negative JUnit coverage. Run existing V24 recovery/delivery plus affected legacy Provider/Replay/Queue/workspace tests, the real Chromium two-round parent and provided-start child, and final full regression on frozen source. Do not reuse a historical receipt as same-source PASS. Existing blockers and all original A/L clauses remain.
 

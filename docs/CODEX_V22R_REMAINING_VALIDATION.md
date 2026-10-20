@@ -1,11 +1,12 @@
-# Codex：B0–B5 交付后的统一补测任务
+# Codex：统一剩余验收入口（V2.5与历史A/L）
 
-## V2.5.0关联（2026-10-19批准施工）
+## 当前V2.5.0关联（2026-10-20文档同步）
 
 新行为按V2_5_METHOD_RESEARCH.md的N0—N5追加证据，不覆盖下方原A/L和47负确认。旧资产/平台缺口单列，不阻止无依赖合成工程。G6真实状态保持已尝试有问题待本人复核；Live/独立预测/选择价值不由工程代签。
 
 V2.5工程结果已记录：59新用例/四浏览器通过；完整948项939通过、2历史失败、7跳过，exit1。不是旧A/L关闭或金融确认。当前源/命令/原始失败见V2.5日志§9及validation/v25_local_acceptance.json。G6仍是已尝试有问题待本人复核；本轮没有新增真实Provider、真实行情研究或封存标签访问。
 
+当前剩余项为本人复核/独立用户、真实LLM理解、等预算选择价值、独立预测证据及原资产/平台边界，逐项见CURRENT_IMPLEMENTATION.md与V2.5日志§9.4。新profile的真实数据/Provider验证不因旧V2.4授权自动放行。2026-10-20已有普通代码/文档推送，不再将“未推送”当当前缺项；远端CI未核查，旧收据不回填。以下日期段和旧执行任务为历史快照，不能自动重跑付费或真实金融矩阵，当前操作按顶部及AGENTS。
 
 ## 2026-10-15 第二轮UI剩余验收
 
@@ -69,7 +70,7 @@ B5最终HEAD以拉取后实际Git与同SHA CI为准；不得把文档中的父�
 ### 0. 安全读取与证据基线
 
 先 `git fetch origin`、检查 `git status --short`、分支及HEAD。工作区不干净时保留用户修改，在单独worktree验收；不得reset、clean或force push。只允许 `pull --ff-only`，分歧时先检查而非覆盖。
-读取顺序遵循AGENTS.md：Roadmap → Current → 最新相关版本日志（V2.3提案与原V2/B5日志）→ 相关ADRs并检查批准状态 → Architecture → Acceptance → Handoff → 本文件及validation/v22r_acceptance.json。涉及工作区时再读AGENT_WORKSPACE_UI.md与FRONTEND_USER_GUIDE.md。
+读取顺序遵循AGENTS.md的现行清单：Roadmap → Current → V2.5唯一合同与受影响的V2.4/原V2历史 → ADR007及相关已接受ADR → Architecture → Acceptance → Handoff → 本文件及validation/v22r_acceptance.json。涉及工作区时再读AGENT_WORKSPACE_UI.md与FRONTEND_USER_GUIDE.md。原A/L清单保持历史状态，不以新版本号重置。
 记录base/head、源码树、Python/OS/关键依赖、输入hash、命令、exit和JUnit。每项用PASS/FAIL/BLOCKED/NOT_RUN；跳过、缺凭证、未调用provider都不能写PASS。
 原R1真实Live/Replay、R2 Windows恢复、R3审核动作、原浏览器与47行负确认已经有历史证据，不能再说从未实现；本轮补的是新合同/新代码/新环境。
 

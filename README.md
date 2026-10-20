@@ -1,8 +1,8 @@
 # Finance Forecast Agent
 
-## V2.5.0 bounded local engineering delivery (2026-10-19)
+## V2.5.0 bounded engineering delivery (implementation 2026-10-19; docs synced 2026-10-20)
 
-One Campaign can choose feature or training-window changes, one axis per experiment relative to an accepted complete control. Same-response research updates, actual selected training, recovery, original workspace and window-consistent model delivery are connected. The 59 new version tests and all four browser modes pass; the full applicable regression is 939 passed / 2 historical failures / 7 skipped (exit 1), not all green. Actual status is only in [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md); the sole contract and exact evidence are in [V2_5_METHOD_RESEARCH.md](docs/V2_5_METHOD_RESEARCH.md). No real Provider/market effect or human acceptance is established; prior owner trial issues await human recheck. No push or remote CI.
+One Campaign can choose feature or training-window changes, one axis per experiment relative to an accepted complete control. Same-response research updates, actual selected training, recovery, original workspace and window-consistent model delivery are connected. The 59 new version tests and all four browser modes pass; the full applicable regression is 939 passed / 2 historical failures / 7 skipped (exit 1), not all green. Actual status is only in [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md); the sole contract and exact evidence are in [V2_5_METHOD_RESEARCH.md](docs/V2_5_METHOD_RESEARCH.md). No real Provider/market effect or human acceptance is established; prior owner trial issues await human recheck. On 2026-10-20 the user authorized normal push: all 11 implementation/documentation commits through `4f8b2c6` were pushed and the remote branch verified equal. Remote CI has not been verified; local raw inputs/state/models/evidence directories were not uploaded.
 
 A financial machine-learning research workbench with two compatible paths:
 
@@ -13,9 +13,9 @@ The near-term product goal is **not** “support every financial paper or model�
 
 ## Current branch and status
 
-2026-10-14 update: P1–P5 bounded fixes are complete. Final-source regression: **867 passed, 2 historical environment/asset failures, 6 skipped** (exit 1); all 132 V2.4 tests passed. Four actual Chromium paths and two owner-authorized real-SPY technical workflows passed. See the V2.4 log for exact commands, exceptions and G0–G6 receipts. Target-user admission remains **NO-GO pending the host's own G6 rehearsal**; only deterministic workflow trials are in scope, not Live-model or financial validation. No push/remote CI. The following 2026-10-13 results remain historical.
+Current feature line: **V2.5.0 controlled feature + training-window research** on the existing SPY daily next-session return task. Select `feature_window` explicitly in the original workspace; supported windows are expanding or the last 504/756 eligible mature training rows. Research candidates keep the starting Ridge/StandardScaler configuration fixed, inherit the complete accepted control and change only one declared axis. Generated features remain capped at two including inherited features; two planning decisions / four slots, MAE and the 0.0025 development screening policy remain unchanged. Existing profiles keep their own contracts.
 
-Current feature line: **V2.4 controlled diagnostic research** (SPY daily, price-only DSL, development evidence). See [the V2.4 contract and current test log](docs/V2_4_DIAGNOSTIC_RESEARCH.md) and [workspace operation checklist](docs/FRONTEND_USER_GUIDE.md). The 2026-10-13 S0–S4 package adds exact receipt/package auditing, bounded comparison provenance, frozen research judgment and clearer result roles. Final-source regression: **846 passed, 2 historical environment/asset failures, 6 skipped** (exit 1; not all green), including 111 passing V2.4 tests. The staged four-test browser matrix and final-source V2.4 browser rerun passed. Live model quality, actual users and independent financial evidence remain separate gates. This iteration is local only: no push or same-SHA remote CI.
+N0–N5 bounded engineering is complete. The next step is the owner's recheck of the issues found during actual use, followed by the existing G6 admission decision. G6 has been attempted with issues; it is neither an unattempted test nor a pass. New-profile real-data, real-Provider, research-value and independent prediction studies require their applicable explicit authorization and separate evidence. Conditional weights/HPO/P/F/M/knowledge/Shadow packages are not automatically enabled. See the [approved roadmap](docs/PROJECT_ROADMAP.md) and [operation guide](docs/FRONTEND_USER_GUIDE.md).
 
 Current Mission-oriented work branch:
 
@@ -24,6 +24,14 @@ feat/mission-research-v2
 ```
 
 Current status is defined only by [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md). V2.2-R closes reopened contracts; module presence is not complete product acceptance.
+
+### Historical V2.4 status snapshots
+
+The dated results below remain historical, including their then-current push and G6 state; they do not override the V2.5 status above.
+
+2026-10-14 update: P1–P5 bounded fixes are complete. Final-source regression: **867 passed, 2 historical environment/asset failures, 6 skipped** (exit 1); all 132 V2.4 tests passed. Four actual Chromium paths and two owner-authorized real-SPY technical workflows passed. See the V2.4 log for exact commands, exceptions and G0–G6 receipts. Target-user admission remains **NO-GO pending the host's own G6 rehearsal**; only deterministic workflow trials are in scope, not Live-model or financial validation. No push/remote CI. The following 2026-10-13 results remain historical.
+
+Historical feature line at 2026-10-13: **V2.4 controlled diagnostic research** (SPY daily, price-only DSL, development evidence). See [the V2.4 contract and dated test log](docs/V2_4_DIAGNOSTIC_RESEARCH.md). The S0–S4 package adds exact receipt/package auditing, bounded comparison provenance, frozen research judgment and clearer result roles. Final-source regression: **846 passed, 2 historical environment/asset failures, 6 skipped** (exit 1; not all green), including 111 passing V2.4 tests. The staged four-test browser matrix and final-source V2.4 browser rerun passed. Live model quality, actual users and independent financial evidence remain separate gates. That iteration was local only: no push or same-SHA remote CI.
 
 ## Historical approved increment: reliable literature-grounded research
 
@@ -44,13 +52,15 @@ Start with these documents:
 - `AGENTS.md` — mandatory contract for Codex/coding agents.
 - `docs/PROJECT_ROADMAP.md` — approved product/research direction.
 - `docs/CURRENT_IMPLEMENTATION.md` — actual current functionality and verified boundaries.
+- `docs/V2_5_METHOD_RESEARCH.md` — sole current V2.5 contract, batch log and acceptance evidence.
+- `docs/ADR_MISSION_PRODUCT_007.md` — accepted two-axis scope and compatibility decision.
 - `docs/ADR_MISSION_RESEARCH_002.md` — why Mission is thin and how literature participates in research.
 - `docs/FOCUSED_ARCHITECTURE.md` — target architecture and object authority.
 - `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md` — milestone acceptance contract.
 - `docs/CODEX_FOCUSED_HANDOFF.md` — implementation sequence for later Codex sessions.
-- `docs/P1_FOCUS_F0_F1.md` — current focused version history, V1.1 fixes and test evidence.
+- `docs/P1_FOCUS_F0_F1.md` — historical focused baseline, V1.1 fixes and test evidence.
 
-## Focused Mission V2.2 at a glance
+## Focused Mission workflow (V2.5 extends the existing V2.2 chain)
 
 ```text
 supported SPY Research Mission
@@ -59,9 +69,10 @@ supported SPY Research Mission
  -> reviewed evidence + compatible Memory weak prior
  -> deterministic/replay/live Advisor interface
  -> allow-listed hypothesis compilation
+ -> complete control inheritance / one declared feature or window change (V2.5 profile)
  -> persistent attempts / recovery
  -> actual fit/predict + PredictionArtifact + Manifest
- -> deterministic Feedback -> adaptive next action / stop
+ -> deterministic Feedback -> next action / stop (same-response research update in V2.5 Adaptive)
  -> ResearchPackage
  -> explicit refit ModelBundle
  -> optional controlled same-task CSV/Parquet + reviewed built-in Adapter

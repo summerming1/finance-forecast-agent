@@ -7,13 +7,15 @@ ADR007 and V2_5_METHOD_RESEARCH.md authorize one feature_window profile in the e
 
 Final evidence is in V2_5_METHOD_RESEARCH.md §9 and CURRENT_IMPLEMENTATION.md. Compact method references are reversible planning projections, not stored semantic or numeric authority; actual candidates/bundles keep full legal methods. Old source-bound campaigns are not silently migrated.
 
+Reading rule (2026-10-20): the V2.5 extension above is current; dated sections below record earlier increments and reusable responsibilities. Their then-future window-only scope does not constrain the approved two-axis profile. No new architectural authority or platform is introduced by the documentation sync.
+
 ## S0–S4 bounded extension (2026-10-13)
 
 The existing immutable observation objects carry finite prediction/comparison identity, first-event provenance and evidence tier. The comparison index is a read-only reconstruction, not a new store. New diagnostic v3 contracts freeze four-part research decisions and R/D/J support; legacy reference designs remain explicit, not fabricated judgment. Numerical observations, primary selection and conservative final recommendation remain separate. ON planning receives bounded visible comparison summaries; OFF receives neither these nor the new diagnostic package. Full audit objects do not become a second planning truth. Existing UI/package projections read those same objects; original explicit refit and external trusted registry remain the only model-delivery chain. Formal roadmap and future execution capabilities are unchanged.
 
 > Status: APPROVED. ADR-FOCUS-001 establishes the SPY focused line; ADR-MISSION-002 consolidates the Mission architecture/literature role; ADR-MISSION-PRODUCT-003 adds gated PR delivery, Agent value validation and controlled BYO-before-Shadow ordering. Actual implementation status is always defined by CURRENT_IMPLEMENTATION.md.
 
-## Current V2.4 diagnostic extension
+## Historical V2.4 diagnostic extension
 
 The 2026-10-10 repair uses explicit v2 planning projection: identical facts are interned in a deterministic small-reference table bound by the original frozen prompt hash; columnar loss records retain complete group/fold numeric entries. The full audit keeps original scope hashes, raw provenance and named feature statistics. This is a pure projection inside the existing Controller, not a new context engine or state authority. Cached controlled observations are keyed by proposal and project all completed events; OFF excludes the entire new source table. The fixed diagnostic comparator is bound before the first decision; numeric selection authority is unchanged. Test-start/end manifests are audit exports, not a replacement for RuntimeDB or historical receipts.
 

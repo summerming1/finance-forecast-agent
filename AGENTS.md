@@ -1,15 +1,23 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+## Current delivery and next action (2026-10-20)
+
+V2.5.0 N0–N5 bounded engineering is implemented; do not restart those batches from an old handoff. `docs/CURRENT_IMPLEMENTATION.md` is the only current status authority; `docs/V2_5_METHOD_RESEARCH.md` is the sole V2.5 implementation contract and evidence log. Current direction is one Campaign choosing features or training windows, with one declared axis changed per experiment from an actual accepted complete control. Historical approvals and their then-current instructions below do not override this scope or the mandatory read order.
+
+The owner has attempted G6 and reported issues; human recheck remains open. Preserve the original B results and extra refit, use existing packages for the read-only recheck, and do not sign for the owner. New V2.5 real-data/Provider experiments still require the applicable explicit data/resource authorization; old V2.4 trials do not validate the new profile. Do not automatically start weights, HPO, P/F/M, internal model coding, K1/K2, ensembles or Shadow. Their conditional entry criteria remain in PROJECT_ROADMAP.
+
+The user subsequently authorized committing and normally pushing project code/documentation on 2026-10-20. The implementation/documentation through `4f8b2c65d281de3171f7e1ccf7e10a446f3038c5` was pushed and the remote branch verified equal. Earlier “no push” statements describe their dated approval, not a current prohibition on this authorized delivery. This does not authorize remote CI execution, paid calls, material/data sends, production migration, force push or new product scope. Local raw data, databases, models and runtime evidence stay local; the tracked acceptance receipt is the distributable audit index. A push is not a CI or product-acceptance result.
+
 ## Current V2.5.0 implementation approval (2026-10-19)
 
 User explicitly approved N0–N5 of `docs/V2_5_METHOD_RESEARCH.md`, including R1–R4 and the causal-history perturbation qualification. ADR007 is accepted. The new feature_window profile allows features plus expanding/rolling504/756 in one Campaign, one declared axis relative to an accepted control per experiment. Preserve the original authorities, old schemas/hashes, two plans/four slots, MAE/0.0025 and historical evidence. Same-response bounded research_update, three distinct training scopes, actual fit receipts and window-consistent trusted refit are required. Only isolated synthetic engineering/worker/fit/predict/refit/local HTTP/replay/browser/static/regressions and scoped local commits are authorized. No real Provider, fees, sends, real-market research, sealed labels, production migration, global permissions, remote CI or push. G6 was attempted with issues and awaits human recheck. Future packages remain conditional. Read V2_5_METHOD_RESEARCH after Current, then relevant V2.4 history. This approval supersedes old window-only future scope, not historical records.
 
 
-## Current trial-preparation approval (2026-10-14)
+## Historical trial-preparation approval (2026-10-14)
 
 User approved necessary P1–P5 engineering repairs and G0–G6 preparation in the existing V2.4 log. Reproduce the independent J-gate and cached-timing failures; freeze new contracts rather than rewriting old plans/fixtures. Current J training requires bounded four-part decisions; R/D/Random and legacy paths are explicitly distinct. Link original decisions to permitted feedback without OFF leakage or a third call. Test the actual two-entry workflow, package and same-host trusted inference. Only existing owner-authorized real development inputs may run; assistant technical rehearsal is not host/user signoff. No paid/external Provider, new confirmation labels, production changes, push/remote CI, optional packages or future-version execution. Report G0–G6 individually and a concrete GO/NO-GO; keep roadmap and historical evidence unchanged.
 
-## Current bounded approval (2026-10-13)
+## Historical bounded approval (2026-10-13)
 
 User approved S0–S4 of the unified plan (SHA256 `284d8efbdb4957bbe462f9d6d8f2dbc87e8200d91e0489f7325d4d6f7e7fda14`). Its implementation clauses and actual batch evidence live in the existing `docs/V2_4_DIAGNOSTIC_RESEARCH.md`, not parallel discussion documents. Preserve the original 36 behavior requirements, historical failures and the 47-target negative confirmation. Local scoped commits are allowed; this approval does not authorize push, paid/external Provider calls, optional RMSE/knowledge packages, confirmation labels, production migration or V2.5+ execution. Keep the formal roadmap unchanged unless §2 approval is separately obtained. Distinguish prediction provenance, finite analysis novelty and evidence tier; cached/posthoc analysis is not a new predeclared success. Final source/tests/dependencies/input identity must be frozen across the full regression.
 
