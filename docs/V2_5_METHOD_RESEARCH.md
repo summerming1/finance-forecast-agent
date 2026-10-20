@@ -406,7 +406,7 @@ final5预登记、6份历史/验收/已正确指南及ADR受保护文件无差�
 完整948项回归、四模式浏览器与模型交付本次不重跑，仍按§9准确引用；
 不把旧2失败/7跳过改成全绿，不更新原机器验收收据或伪造新金融/Provider/真人证据。
 
-## 11 2026-10-20 定向修补（用户已批准，验收进行中）
+## 11 2026-10-20 定向修补（限定工程完成；以下过程记录按时序保留）
 
 本轮基线3f45a3e514d819f32ec9d4fe9461334afd852e8d、正式分支、tracked clean。
 不重开N0—N5、不扩路线；保留原B、额外refit、旧fixture/包/hash及全部失败。
@@ -549,3 +549,23 @@ One-shot快速入口真实隔离worker另记录1次规划、4冻结槽、4候选
 `python -m pytest -q tests/test_focused_r0_status.py tests/test_focused_b0_plan.py --basetemp=.t25fixdocs --junitxml=.v25fix/final3/docs.xml --tb=short`：
 4通过/4.30s/exit0；`git diff --check` exit0。提交后逐文件核对242源码/测试hash不变；
 统一旧验收JSON除新增本批索引外所有原值相同。原数据/数据库/模型/失败记录未提交或清理。
+
+## 12 本轮推送后的状态同步（2026-10-20）
+
+用户随后要求“帮我推送本轮修改后代码”。执行`git push origin feat/mission-research-v2`，
+exit0，远端由3f45a3e前进至5d3f576；随后`git ls-remote --heads origin refs/heads/feat/mission-research-v2`
+exit0，返回`5d3f57687592b46693e687cc0611bd492adac065`，与当时本地一致，tracked工作区干净。
+代码提交517b2cc、文档提交5d3f576；未force push、未上传本地数据/状态/模型目录。
+这是已测工程分支交付，不是正式产品全面验收；本轮未创建tag/GitHub Release、未核查远端CI。
+§11及原验收JSON保留收集时的“未推送”状态；本节追加后发生的事实，不回填原收据。
+
+用户本次要求同步路线和发布状态。仅更新AGENTS、README、路线、CURRENT、handoff、
+剩余验证入口和本日志；不改研究范围/里程碑顺序、代码、测试、依赖、原验收或数据库。
+下一步保持所有者G6只读复核原B，再核对A的新任务及权限；新V2.5真实研究另核授权。
+旧B不重训，独立用户、Live研究理解/选择价值和独立预测效果仍未签收，不自动推进后续能力。
+
+本次文档检查：`PYTHONPATH=src;tests;apps;scripts`下执行
+`.venv/Scripts/python.exe -m pytest -q tests/test_focused_r0_status.py tests/test_focused_b0_plan.py --basetemp=.t25statussync1 --junitxml=.v25fix/status-sync-20261020.xml --tb=short`，
+4通过/4.44s/exit0；`git diff --check` exit0。242个已验源码/测试文件逐文件与修补收据相同，
+仅7个MD变化，原验收JSON及本地原始收据未改。本次不重复全仓或浏览器，不触发训练/Provider。
+状态同步为后续本地文档提交，尚未推送；前述5d3f576是已核实的修补交付SHA，不冒称本次文档SHA。

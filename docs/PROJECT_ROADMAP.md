@@ -1,5 +1,11 @@
 # Finance Forecast Agent 项目迭代路线图
 
+## 2026-10-20 发布与当前下一步（状态同步，不改变路线）
+
+V2.5.0限定工程及本轮定向修补已完成，代码提交`517b2cc`、验收文档提交`5d3f576`已普通推送至`feat/mission-research-v2`，当次远端完整SHA核对为`5d3f57687592b46693e687cc0611bd492adac065`。这表示分支代码已交付，不代表正式产品全面验收或同SHA CI通过；本轮未创建发布标签/Release，未核查远端CI。准确工程结果和缺口仍只由[CURRENT_IMPLEMENTATION.md](CURRENT_IMPLEMENTATION.md)维护。
+
+下一步保持原顺序：所有者先对原B做只读复核，确认过程、MAE参照和推荐交付对象；再核对A的独立新任务配置、数据及计算权限后操作。旧B不重训、不改hash续跑。新V2.5真实两轴研究、Live及研究价值验证各需适用授权和单独证据；G6仍待本人复核，不能用工程通过代签。权重、有限参数、P/F/M、K1/K2及Shadow等条件性后续能力和原进入门槛不变。
+
 ## 当前批准 V2.5.0 两轴方法研究与反馈更新（2026-10-19）
 
 用户已明确批准N0—N5及ADR007。唯一施工合同为[V2_5_METHOD_RESEARCH.md](V2_5_METHOD_RESEARCH.md)。同一Campaign特征＋窗口两轴可选，每项实验相对实际control单轴修改；新增expanding/rolling504/756，复用价格AST，完整反馈、执行和交付。下方旧窗口-only条款是历史方向，不覆盖本批准。实际完成仍只见CURRENT_IMPLEMENTATION.md。
