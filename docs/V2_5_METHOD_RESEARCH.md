@@ -249,7 +249,7 @@ max-ast-last.xml22通过/1失败/166.54s/exit1，均仍在最大ON组合触及64
 | N2 | v4完整方法身份；parent=control；特征/窗口单轴diff；继承窗口/全部特征，累计最多2条；差成绩控制合法 | focused_research.CandidateConfig、compile_hypotheses；compile/acceptance测试 |
 | N3 / R2 | 固定comparison/calibration、成熟eligible、policy-selected三范围；每折一次拟合/63目标；入口捕获实际行/列/参数/Scaler统计 | focused_methods.training_scopes/fit_method、focused_research.evaluate_candidate、focused_diagnostics；execution测试含756与历史依赖扰动 |
 | N3 / 身份 | 完整方法缓存，预测与比较/观察身份分开；相同最终方法复用，方向/分母/时点各自保存；失败不当成功 | focused_research._observe_research、原RuntimeDB及缓存；双路径、失败/恢复测试 |
-| N4 / R3 | 原两个入口/worker/续接/研究包；新快照窗口refit、原完整特征、显式asof及真实行身份；v4可信包/新进程无标签推理；旧包语义保留 | focused_delivery.refit_model_bundle/predict_model_bundle、research_mission、原UI service；delivery及浏览器 |
+| N4 / R3 | 原两个入口/worker/续接/研究包；同一许可快照、显式 training_asof 下的窗口refit、原完整特征及真实行身份；v4可信包/新进程无标签推理；旧包语义保留 | focused_delivery.refit_model_bundle/predict_model_bundle、research_mission、原UI service；delivery及浏览器 |
 | N5 / R4 | 原Benchmark适配器的四项风格参考/认识更新/同域有限简单策略；同配置/权限/预算，各臂仅用自身结果；同目标不同窗口可比 | focused_benchmark、focused_summary；benchmark/comparison/recovery测试；不是实际LLM价值结果 |
 | N5 / 容量 | compact_method_context_v3、可逆method_reference_projection_v3、实际wire计量；规则/AST/程序元数据共享，特征名不变；提交引用标记仍拒绝 | focused_methods.project_method_references/restore_method_references、focused_literature、llm_adapters；原始失败全部保留，最大AST/备注/设计ON/OFF在最终59项中通过 |
 
@@ -405,3 +405,147 @@ final5预登记、6份历史/验收/已正确指南及ADR受保护文件无差�
 `.v250/docs-sync-20261020-090745/document_check.json`；提交前再次核对源码和diff。
 完整948项回归、四模式浏览器与模型交付本次不重跑，仍按§9准确引用；
 不把旧2失败/7跳过改成全绿，不更新原机器验收收据或伪造新金融/Provider/真人证据。
+
+## 11 2026-10-20 定向修补（用户已批准，验收进行中）
+
+本轮基线3f45a3e514d819f32ec9d4fe9461334afd852e8d、正式分支、tracked clean。
+不重开N0—N5、不扩路线；保留原B、额外refit、旧fixture/包/hash及全部失败。
+授权只用于隔离合成工程、真实本地worker/HTTP/Replay/browser及本地提交；
+不新增外部Provider/付费、真实行情研究、标签读取、生产迁移或远端CI。
+
+1. 通信：单一线程一次communicate完整输入，主线程轮询取消/deadline；
+   终止后有界wait/join，不用第二次communicate清理，不以清理失败掩盖原错误。
+   正常瞬态HTTP重试及跨进程未知投递禁重发语义不变；未知费用仍null。
+2. 快速入口：One-shot一次规划、最多四槽、原执行单元两项；Adaptive两次规划。
+   不放宽核心门禁，不允许同计划未来控制；范围下拉仅一个selected。
+3. refit：只补最终候选窗口及快照/selected区别、明确额外成本；不新增精确预览状态。
+   实际asof/行数仍来自原执行回执；提交前取消零fit，提交后不保证零消耗。
+   原operation幂等及失败/未知留账保留；不禁止有明确新授权的新refit。
+4. Benchmark：原最佳研究候选和旧mae_delta含义保留；只读验证原冻结推荐、
+   自身Campaign/合同/数据/政策/上下文/已接受结果/预测及目标身份，不重新选择。
+   新delivery_comparisons两种绝对差均为左MAE减右MAE、收益率小数单位、负数左优。
+   各臂相对自身起点的原gain为另一比例；不同臂不要求execution/hash相等。
+   仅完整且可比的推荐进入成对推荐比较，旧缺记录不补算，损坏明确报错，
+   failed/partial回退可保留展示但不构成成功对照，无研究候选仍保持研究指标null。
+
+负例与分批原始证据置于`.v25fix/`，不覆盖`.review25-20261020`或`.v250/final5`。
+red-io.xml四失败、red-default.xml入口/DOM失败、red-rec.xml九失败均保留。
+transport-defaults.xml：26通过/114.77s/exit0（本地模拟HTTP、提供者回归、默认预检、
+确认框；不含之后新增测试）。default-worker.xml：17通过/90.90s/exit0。
+Windows3.13.3/WSL Linux3.10.12真实子进程屏障测试各success/cancel/deadline通过，
+HTTP/fit0；这是通信专项，不是Linux全项目验收。受限沙箱第一次loopback失败保留，
+允许本机loopback后重跑；未放宽生产timeout或断言。最终冻结回归及浏览器待后续记录。
+
+历史包兼容边界：保留旧schema语义不等于历史实物包可以在任意当前源码加载。
+原B的v3编译源字节绑定历史环境，当前源不匹配仍拒绝；不得改hash或重训替代。
+匹配环境实际加载未验证，不把只读历史源码比对当加载PASS。
+
+后续实测追加：last-targeted.xml39通过/194.84s/exit0；原新旧Benchmark相关
+recommendation.xml37通过/1167.83s/exit0，均为阶段证据。第一次冻结浏览器
+final/browser.xml4通过/886.75s/exit0，原74项流程检查、页面错误0，已检查确认框
+与700宽成果截图。随后新增零fit/HTTP探针复现：推荐已冻结但后续导出报错时，
+新汇总错误拒绝整个失败臂。red-post-final.xml1失败/5.74s/exit1保留；最小修订为
+保留原冻结状态，显式执行错误仍是failed、paired_eligible=false，不能进入成功比较；
+没有重写原推荐或免费重算。post-final-green.xml6通过/5.94s/exit0。
+第一次完整回归尚未结束，按精确PID/birth终止本轮专属测试树以修复此缺口，
+外层exit1、未完成，不推测各分片exit。原stdout/start及interruption.json保留。
+此后最终验收使用final2新目录，不能把final的浏览器/中途通过冒充修订后同源收口。
+
+历史B实物核验追加：原登记库以SQLite只读连接查询，原验证器仍检查登记hash、
+依赖版本、模型/metadata字节及五个编译文件；不创建替代信任库、不更改登记。
+当前源码拒绝三份旧包（编译实现不匹配）。隔离归档c6bdd28、恢复记录时的原换行
+字节后，三份编译源和已登记依赖精确匹配，分别在新进程中实际可信加载并对明确
+模拟的无标签输入两次预测，233/247/233行逐值一致、fit/HTTP0，原DB hash不变。
+这是历史编译/依赖匹配的有限实物推理，不是整个历史OS重建或金融表现。
+最初换行不符的BLOCKED与处理记录另存，不把初次失败擦去；未修改旧包hash。
+
+第二次冻结final2：四模式浏览器4通过/617.54s/exit0；推荐专项22通过/62.23s/exit0，
+含实际_report后置导出错误路径。随后事件延迟对抗发现新测试脚本仅在第三次轮询
+释放子进程，晚就绪可误报deadline。该问题仅在测试屏障，不是新增产品故障；
+旧脚本与final2开始清单SHA256 `c1d7eb1f…2e6f838`完全一致的副本已保存，
+原事件延迟负例再次真实exit1、HTTP/fit0，日志late-old-red.stdout.txt保留。
+最小测试修订为实际就绪后只释放一次，增加第四次才就绪负例，产品deadline不变。
+final2完整回归未结束，按本轮精确PID/birth终止，外层exit1、不推测分片exit；
+原始目录及第二份interruption.json保留，不用中途结果交付。
+
+最终final3冻结242源码/测试文件，集合摘要
+`d5fdf1cfc5398d0e5abda9202584299b2021ee41442f2f2e6e23ebb0add8849f`。
+四模式Chromium4通过/547.24s/exit0；修订管道11通过/8.42s/exit0；
+Windows/WSL Linux实际子进程专项各3条通过（stdlib实际方法，不是Linux全项目），
+HTTP/fit0。修改文件Ruff、compileall、修改JS语法、diff检查exit0；全目录Ruff
+仍97项/52个未修改文件/exit1。最终完整适用回归正在执行，后续只追加事实收据。
+
+### 11.1 最终冻结回归事实（2026-10-20）
+
+final3完整回归已结束：**979 passed / 2 failed / 7 skipped，actual exit1**；
+不是全仓全绿。收集990项，按原权限明确排除2项真实股票重训后适用988项；
+实际988个JUnit节点与预登记逐条一致，missing/extra均空、重复0。
+四分片依次229/185/334/240项，exit1/0/1/0；其中新增40个修补用例与原59个
+V2.5用例全部通过，均已包含在979内，不把重复阶段测试相加。
+并行运行起止收据包络3997.73秒（不是把四个分片时长相加当墙钟）。
+242文件摘要仍为上面的d5fdf1cf…8849f，开始/结束/收据收集时一致；声明输入、
+核心依赖及完整installed-distribution版本前后相同，环境版本摘要
+`0fabb551aa7cb50f542cba6ea1f28402410de06bcd41859e74a3745f01d3e09d`。
+本机Python3.13.3、Windows11 build26200、12逻辑CPU。原始收据
+`.v25fix/final3/receipt.json`保存实际命令、JUnit/清单hash、覆盖、失败与平台边界。
+
+实际执行（仓库根目录；先设`PYTHONPATH=src;tests;apps;scripts`）：
+
+```powershell
+.venv/Scripts/python.exe .v25fix/run_browser.py .v25fix/final3 .t25bfix3
+.venv/Scripts/python.exe -m pytest -q tests/test_provider_pipe_ownership.py --junitxml=.v25fix/final3/pipe.xml --tb=short
+.venv/Scripts/python.exe .v25fix/run_platform.py .v25fix/final3/platform.json
+.venv/Scripts/python.exe .v25fix/run_static.py .v25fix/final3
+.venv/Scripts/python.exe .v25fix/run_final_regression.py .v25fix/final3 .t25fix3s
+.venv/Scripts/python.exe .v25fix/collect_receipt.py
+```
+
+上述exit依次0/0/0/0/1/0；静态驱动的broad-Ruff子命令exit1单列，不称全部lint通过。
+回归实际调用原`.v250/run_frozen_regression_v3.py --root .v25fix/final3/regression --basetemp-prefix .t25fix3s --shards 4`，
+每片pytest完整argv在preregistration.json和机器索引中。无需调度包装器时，可以
+`python -m pytest -q --deselect=tests/test_models_and_harness.py::test_harness_runs_real_data --deselect=tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness`
+复现同一适用集合；这是新的运行，须用新输出目录，不能覆盖本次证据。
+
+原失败逐项：
+
+| nodeid | 首个异常及归属 | 处理/恢复 |
+|---|---|---|
+| test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call | FileNotFoundError：原method_card/2c05bfd22af27435.json缺失，BLOCKED_ASSET；非本轮引入 | 恢复匹配原录制、原上下文和来源；不能改名或合成替代 |
+| test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink] | 测试创建链接时WinError1314，尚未到反序列化，BLOCKED_ENV；非本轮引入 | 由所有者另行批准提供symlink权限环境，或在已获准适用平台验证；不删断言或更改全局权限 |
+
+7个跳过的实际构成为**5个opt-in浏览器**（原Research Workspace一项＋Agent四模式），
+以及POSIX进程组probe、Windows package symlink权限各一项，不沿用旧收据的不同分组说法。
+Agent四模式已在同一最终冻结源码独立4通过/547.24s，74项检查、页面错误0。
+原Research Workspace另补实际浏览器：首跑在初始标题的默认5秒expect就绪处失败、
+页面仍Running、未提交训练，12.20s/exit1；原文件与5秒门槛均未修改，同源码复跑
+1通过/146.40s/exit0，完成原完整流程。首跑不改绿，冷启动就绪稳定性风险仍保留，
+不能把复跑通过当作从未失败。两项平台条件跳过继续保留。
+
+四个Agent模式的原始计数（每行含本模式父/续接的独立Campaign，不能当成单Campaign预算）：
+
+| 模式 | attempts / 研究fits | 显式refits | 检查 / JS错误 |
+|---|---:|---:|---:|
+| legacy配置 | 15 / 36 | 1 | 17 / 0 |
+| price_features | 16 / 40 | 1 | 17 / 0 |
+| V2.4 | 18 / 48 | 2 | 20 / 0 |
+| V2.5 | 19 / 52 | 2 | 20 / 0 |
+
+One-shot快速入口真实隔离worker另记录1次规划、4冻结槽、4候选、28研究fits、
+外部HTTP0（default-worker.xml）；32是预算上限，不硬改执行结果配旧计数。
+包索引/预测复算、实际refit/可信包、刷新/new context/只读零增量、续接保留原父均有
+上述模拟技术证据；不是所有者G6签字、Live质量或金融增量。
+
+### 11.2 本批交付结论
+
+通信、默认入口、范围选择、窗口refit告知及冻结推荐报告五项限定修补工程完成；
+源/测试冻结后完整适用回归已结束，不重开N0—N5。机器索引见
+[v25_repair_acceptance.json](validation/v25_repair_acceptance.json)，包含准确命令、退出码、JUnit及身份。
+测试执行时HEAD为3f45a3e及其工作区改动；后续代码提交只封存这组已测字节，不能倒称测试在新提交上启动。
+本批本地提交，不推送、不运行远端CI。旧验收A/L及47目标负确认保持，路线未改变。
+下一步为所有者按用户指南只读复核原B及交付对象；独立用户签收、Live理解/研究选择价值、
+独立金融效果均未验证。旧工作区冷启动就绪稳定性、原录制缺失及权限问题保留，不宣称全面验收。
+
+封存代码提交517b2cc79b4c159278744ad49bc8c9b77a0075cb；文档收口另验
+`python -m pytest -q tests/test_focused_r0_status.py tests/test_focused_b0_plan.py --basetemp=.t25fixdocs --junitxml=.v25fix/final3/docs.xml --tb=short`：
+4通过/4.30s/exit0；`git diff --check` exit0。提交后逐文件核对242源码/测试hash不变；
+统一旧验收JSON除新增本批索引外所有原值相同。原数据/数据库/模型/失败记录未提交或清理。

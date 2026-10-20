@@ -1,0 +1,2404 @@
+{
+  "schema_version": "v25_repair_acceptance_v1",
+  "base": "3f45a3e514d819f32ec9d4fe9461334afd852e8d",
+  "branch": "feat/mission-research-v2",
+  "test_start_head": "3f45a3e514d819f32ec9d4fe9461334afd852e8d",
+  "source_files_count": 242,
+  "source_hash": "d5fdf1cfc5398d0e5abda9202584299b2021ee41442f2f2e6e23ebb0add8849f",
+  "source_files": {
+    "src/finance_forecast_agent/__init__.py": "b31714a2755a34a99385052051e8682b0f01e8ba54dcc0762f91075445971216",
+    "src/finance_forecast_agent/adapter_backlog.py": "4698a34bc5c721b78bbaafe2a5e1a511084afe8280771c82aafc300ee2a1bd46",
+    "src/finance_forecast_agent/benchmark.py": "7256c3885beaf94cd73e73092ff46f192c061a0f87260f7f94d2bef6da461cf5",
+    "src/finance_forecast_agent/benchmark_registry.py": "e156642e89c9da1f9bfcf2b655e25268cddcf67bcffaf3cb4b29dfb570179917",
+    "src/finance_forecast_agent/bounded_json.py": "e069a4d63cb19c56d820e884493c152741451e83b214f76793b3f855112c1314",
+    "src/finance_forecast_agent/candidate_execution.py": "4f8be5fda4d756f0b0ece087f927891205bed7fa7c00d9ddd98499ff6e734406",
+    "src/finance_forecast_agent/candidate_triage.py": "7176fbb448b18edf1d689c0de6c23a09db490ae281d370cae541598b8a81936b",
+    "src/finance_forecast_agent/comparability.py": "ca4dca72fc8568fcc91972ec444d4c5be7bb6b90e2342d0d8a4ef1008b13540e",
+    "src/finance_forecast_agent/config.py": "6f0ee94ee87de19c6f604081b7d2967ff88425091d8d97dccdb850ebe6933d33",
+    "src/finance_forecast_agent/contracts.py": "04d1f418243445e93ad0b26d66cde60ddd54476ab171c707866bf41390a8f779",
+    "src/finance_forecast_agent/data.py": "a8d26d06093e068e171f10a297dcd2c55e8bed508d066a4f7e6b832470ec5c28",
+    "src/finance_forecast_agent/data_acquisition.py": "a938e1ec3dce87200c76619e28a4cfe6c9400c5afa117e8180f1988b7b22f98b",
+    "src/finance_forecast_agent/evaluation.py": "3bf434c99b7b9cfe0c7ea3713a95323e07476ea00e1275814bfb169b270754c8",
+    "src/finance_forecast_agent/experiment_memory.py": "6b98f536fc0ef5b35e691cdcf01bd261a430e588b5c91827f049b31bef466d70",
+    "src/finance_forecast_agent/experiment_protocols.py": "3491a8de7d2573718791a43c46c409b6c74c03849d91fa79017ab9d60ebd0975",
+    "src/finance_forecast_agent/focused_adaptive.py": "488094f471622f0be3bc2898d1a702d1810ccadc48080f052be189bbac4a3c5d",
+    "src/finance_forecast_agent/focused_benchmark.py": "626fe888822a839063aa488a8a35bcf5618dc0ac116225040d5a390c0ed2147c",
+    "src/finance_forecast_agent/focused_byo.py": "405c0a1524412865c2e5702b056980037f5c3bcc675d407becac7308efa32886",
+    "src/finance_forecast_agent/focused_data.py": "837576ead074147c7588e0894889dc38887ffb8120e27873aa9c12b800c93fbc",
+    "src/finance_forecast_agent/focused_delivery.py": "e64ae0f6b96421fa65dfc3ecd47013c24bdd3522c22ad20d9b6346e38de73dc1",
+    "src/finance_forecast_agent/focused_diagnostics.py": "f4e9b46b6832f75f42556d04075a3b94527c29ac62424a4b46adf56ee258ca70",
+    "src/finance_forecast_agent/focused_evidence.py": "4d8ac1d90afa3729c45332df39f4070ab27cbb31774c2f65c9157fc993d7fb7e",
+    "src/finance_forecast_agent/focused_feature_program.py": "247858bd483670a6ecce75901d954111bde84c9c301b0b97f83d0d03cdaf9207",
+    "src/finance_forecast_agent/focused_identity.py": "7fcdda125d86eca440f7fe7588b9be715e93ca6e313f733c26697325eb44c7d2",
+    "src/finance_forecast_agent/focused_literature.py": "05e06b1dc7cbcf1992b0473f3f410e483768f827a315aa8b2a7cf81f074460d9",
+    "src/finance_forecast_agent/focused_methods.py": "1b7f098294a4129708a60c0902b1c29a5c336551656eeb8331a217cf3c891565",
+    "src/finance_forecast_agent/focused_persistence.py": "c2fd15fad75c3616d687723707cfafc0d7958bfe66e73cfa437d4962324b8c3e",
+    "src/finance_forecast_agent/focused_protocol.py": "8aa4be5a285e5ce114ac99152f09b52b993cee1679b071bba6ab9e31a687ac1f",
+    "src/finance_forecast_agent/focused_research.py": "66a77d17141a202528ce15fc8cfcc0833bd80e3c8615532fe1316ad4a8e6ea19",
+    "src/finance_forecast_agent/focused_runtime.py": "db0ff3eb49607bfcb1341f791ce78ae359094301db837c56e8e7a1bfd8ff1a30",
+    "src/finance_forecast_agent/focused_state.py": "5c6fb96c76fd5d7b2f5caee112351f11350ce8ea5ebdbc603c164b301bdd7e90",
+    "src/finance_forecast_agent/focused_summary.py": "5e5347e13b69ed7ac648d26a17f4713f3e646a577ea03fbbd16a31f4ed4d45bc",
+    "src/finance_forecast_agent/frontend_flow_trace.py": "f4d06a09ca7e9f2fed4b83a46bc3447c953e454f904e540eee61934f9bb4314c",
+    "src/finance_forecast_agent/frontend_view_model.py": "456fc7bd78512dbe752e427072f220a353ae3926285da1f824a121d84a682f09",
+    "src/finance_forecast_agent/frontend_workbench.py": "22240336cd48457286c6125fc68888b4e375828f60ff42636cd4563360963e61",
+    "src/finance_forecast_agent/generality.py": "d059a076c12ab6bd33eecc8ac6d9ce8434a0550c22fb80c0ff5d64f8ec6fee7a",
+    "src/finance_forecast_agent/golden_sets.py": "6682cf6de0a624690e44f94e44c2315a867fed651970cf0a87005dac129c83ec",
+    "src/finance_forecast_agent/harness.py": "8c29df0f143e6e27421dded2b518a65bf46e8657cb105c99ca63be7ce8f46af7",
+    "src/finance_forecast_agent/heldout_validation.py": "7b1b394ba986dbe2493906b98d7976b700f32982c0bfb34f11e309bec40cf5f3",
+    "src/finance_forecast_agent/lineage.py": "af2f39361b649a67ca080f18c624c42308b699be1398cb3d8a8d2cd6a37149f6",
+    "src/finance_forecast_agent/literature_corpus.py": "4e3d2326af6a50098453618b248132732c7424a169cd198254d2a9c7a934bc1a",
+    "src/finance_forecast_agent/llm_adapters.py": "c0d7bdb1db69775914329cb622a8e73a2781c91973e45bc3fcbac72fcccefa68",
+    "src/finance_forecast_agent/llm_transport.py": "2c4d75c3c75462ea33187af33223b7b5c00de59d381dd63ba48a1765853a6640",
+    "src/finance_forecast_agent/memory_scheduler.py": "f804ef2d6e4aa989bc81fb9f88952e74b6c11553388eb3adb3f965d25c4fe599",
+    "src/finance_forecast_agent/method_adapters.py": "9155c2cec43f2b8d1fb293f4f97ff9d08dc8fc2edc801b8713ac1886c2dad5a4",
+    "src/finance_forecast_agent/method_card_quality.py": "a82870502fc0b16ad088a982791974b0d85ef903f02f177ce3faf15faf59a122",
+    "src/finance_forecast_agent/method_card_v3.py": "2a3e530da5ff7e18eec5c4a1c24ea83d61513de9ca8c57fe953b85f64b5cb737",
+    "src/finance_forecast_agent/method_cards.py": "4f86e270f3f8d2d4c13dd37c77baaaaba2a73f5372ca7e833473ad248b278e5c",
+    "src/finance_forecast_agent/model_registry.py": "9b21d61f0e195af2c7b7e11487f34dac5ec740b4c8fdbe87be5b32d20a588bba",
+    "src/finance_forecast_agent/models.py": "a24489579bf3783711e624d590929d2f63f1443fb02c45245f7cfce6a3ef9b64",
+    "src/finance_forecast_agent/multi_benchmark.py": "414af94cfde9e6a589ca7dbbb236b9ce347bcedffb7d51054dc4b607ac9a044a",
+    "src/finance_forecast_agent/native_claim_compiler.py": "b5e60d91320d59b4950459e11bb9f0afaf23fdb4b57b1f8e1cefd5139c659d6c",
+    "src/finance_forecast_agent/native_execution.py": "39628e3a2b7a27d5ca31ffa57df7cd2a368b0b50137b2dcc607453bde345e24d",
+    "src/finance_forecast_agent/native_plugins.py": "e1eb645c3ccdaa272ca2b689b786c85ec93d4322bab6c6e8829ffcd5bbf618bd",
+    "src/finance_forecast_agent/native_reproductions.py": "ac2c737d00e4ff5a8d39b448712697690e3ef3abc686c87d7272de55184f49f8",
+    "src/finance_forecast_agent/oa_blocker_resolution.py": "7af1e2e7b2f7f8b04431bf7ff50c2f555ceae9c5df5476694f2034010b83bcad",
+    "src/finance_forecast_agent/p1_protocol.py": "d91bfd05de7c78447b775ddfc87fe53560e1c8bb1f1f073f8ba2bb5dbe8b26ff",
+    "src/finance_forecast_agent/p2_readiness.py": "a17be62b88bb63ccbfbdebf957ca9c4f13ad1209c21242ec2c2f7935891929eb",
+    "src/finance_forecast_agent/paper_run_delta.py": "78505bbe477e695ef6a9748e7fb46b0db67bc85dc7ffa83ae881413221c0ad3c",
+    "src/finance_forecast_agent/papers.py": "40949a4393ec0659f9d89cdb71612b706618e999292e11093a6c3f1b9831f9c0",
+    "src/finance_forecast_agent/protocol_normalizer.py": "39bdd2fd63196af931e6c52107066f0c5c82a26603455325f61559caa54cc8b8",
+    "src/finance_forecast_agent/registry.py": "ce27e560e7e0e5aec680b1dc66ffb5a2b5bc5ccef45b5f574344df9b2905dccb",
+    "src/finance_forecast_agent/replay_llm.py": "4a3842729ee6c8301961eb04c7b6069d15a8beb5f424d50f7291cb23c628b963",
+    "src/finance_forecast_agent/reproduction_portfolio.py": "e03c077aa444eaa725050bdfea53615baef1afa1a673261f5b49ea8d9ea53769",
+    "src/finance_forecast_agent/research_accounting.py": "87c3907836770f8f5b7b1f3e9407e8f5a40734ad6345d0a83beb8b9dd3c27c2f",
+    "src/finance_forecast_agent/research_journal.py": "91170910791b914ce1291b773c46e2eaec8814aac366de9400036fbea9e3db80",
+    "src/finance_forecast_agent/research_mission.py": "db3d38371b69aabb822e78f3b71e1bdaed091641cfe23215ef26d0a7d105d656",
+    "src/finance_forecast_agent/review_state.py": "20bd594e11f13dde57e0221946a236e019ab2cc03f94e7cb1f4bfe39a63f3353",
+    "src/finance_forecast_agent/run_timeline.py": "34641ecd16bd9fff78a0d81874cf10cf82be3cf06d3017146791c00c66abc735",
+    "src/finance_forecast_agent/schemas.py": "c659932b1603e211caa8792ba25f27805cbd4bde2db54233fed71b485f6cb814",
+    "src/finance_forecast_agent/scientific_acceptance.py": "5133c45c3c4e3d7d5e6398684c00273a62660fc74ac06bf9ddd6afd2a212750e",
+    "src/finance_forecast_agent/source_bundles.py": "5f405b45ed9baa9873e29ed292db811634dc420aa297c2545a36602fbd232c39",
+    "src/finance_forecast_agent/source_data_contracts.py": "0975d2fa6e941bb5fb7695cf7c913e7dddcccd5391993aad599d1e006dd986a8",
+    "src/finance_forecast_agent/splitters.py": "d59ce2270fcb9f6558abc37ea8647139ac76619d843ed1bb52cec62eac8f211f",
+    "src/finance_forecast_agent/streamlit_p09.py": "0031253c1e475dea55100f5ba59275fb3d8f954fa3ef10baab969849b1de9fd0",
+    "src/finance_forecast_agent/task_queue.py": "d2e34b50c4532f340fc1b047ef40298bd8872bfaf9109343d31a61e5d88a94c3",
+    "src/finance_forecast_agent/tracking.py": "384e328502d4eb25c3cea9427be34608cd3a168af2e75eb7851c8306e114c3dc",
+    "src/finance_forecast_agent/tracking_reconciliation.py": "efbbd83c2fe8fea720af5a6e9c65117641e1b36cce5489df461cf5a2fb86e781",
+    "src/finance_forecast_agent/vertical_validation.py": "20bd6d7249a9664cdb8edbbd0ac69256cc3875fc3b8f827be9fe3ca522a80b8f",
+    "apps/pages/8_Focused_Research.py": "d7ebe263d2b2e28ed3376a35acd6edfbae1cc8ca470d6420ce7578830e67a7bf",
+    "apps/streamlit_app.py": "4708e29ba5a1fb30254f8be65e479114ad979b58ed05034c3744412ddce246fe",
+    "apps/workspace_frontend/actions.js": "25f4ae8d5b119f764a8d3e6911673a995de339f710a1cd4be8d85541744b5a3f",
+    "apps/workspace_frontend/core.js": "d53c1fa9cde2cd011787409900870d70ede9cd3e14fe1686ce70e9965ab99c1d",
+    "apps/workspace_frontend/forms.js": "e9db38af10d290e8c5f2104183be82098937c5746e4c9d6e206e6b12fc7cd95e",
+    "apps/workspace_frontend/index.html": "cde1d947a9ee2608f6deb1ef31ee3ce0eafb23a4576d25040566e3a3d69f9a3c",
+    "apps/workspace_frontend/styles.css": "82b89aea0d270850165d918bd866f47fd0efed80b15f5eccec6ccbd7f80572c7",
+    "apps/workspace_frontend/views.js": "e8938c098b6364c42bada9ff2ff63babe80c62709a8448605208cc1297f826f9",
+    "apps/workspace_ui.py": "439fa3379d29a1a46ad5ec2b7db3152332181c0a6928d5dc17566c30917f4adb",
+    "apps/workspace_ui_service.py": "15e822928ac215a90f00d1ba0f744349006d26c5bd51ec6942618af9bcfa5646",
+    "scripts/assess_p2_readiness.py": "6c695f89470db5729115767a1694d78cd235688d3b41678079af85fbb8f27dc7",
+    "scripts/audit_official_sources.py": "7599c31d98bf1fb896e98846b5b424a63a974182b9d49135575c4041327a1cc6",
+    "scripts/build_benchmark_registry.py": "ee12398d74bfd4b944d204d1eda7d69139f51ee4882a4574c69c855b3e66582d",
+    "scripts/build_literature_corpus.py": "d4ced77bae5ead5e374ac9757e715c3b15884a245094b71f43ffceb38183fc9b",
+    "scripts/build_method_card_v3.py": "9223f37dd3bb09c396f953c85d6ec8d71bd1d827036eefad0bcf79d7eb2ecf9b",
+    "scripts/build_native_exchange_catalog.py": "4150161a1d4343feb5889182ce1022baa23baf5e372badb03befedcff0e596f6",
+    "scripts/build_reproduction_portfolio.py": "ba4d11b6e9cdb3322b2b9c0ce9884edb92c7b01458976b9fd49b22c8421a11b2",
+    "scripts/build_research_journal.py": "ee30ae2fc1aa070c52393d20d1ff8f4699865ec8850f1fe97804fe1d170e5cbe",
+    "scripts/build_scientific_acceptance.py": "6f381757569761f48f0ce7ae4f15801405fcbad494e6c72f9e15becc0826454c",
+    "scripts/collect_v24_receipt.py": "96edf8225aa8cfc4b23d3e833468629de4567690ef4ff16dfcce85fba5efdc41",
+    "scripts/compile_native_claims.py": "f05bd8d0bcc4e4bc992bb403de52fd71794ea398cf14146690466a908f05cc0b",
+    "scripts/configure_tracking.py": "db392ee6d4f3ccce08488f123443cc42aa007b887898e7e264deea6ca432663e",
+    "scripts/download_market_data.py": "85afe4e262ff960efe5d82ec2fa18ca01126494a8406c934a4b0cda6996b98d6",
+    "scripts/execute_candidate_portfolio.py": "6ccc2e478cc9107bca3ad1a01e83c0073506449745d85cdda6a62967375ddb49",
+    "scripts/extract_method_cards.py": "aa728eca5003d6ba78a9d4a5a187e107a87089e6c51c3f8950075245765bff7e",
+    "scripts/extract_method_cards_live_llm.py": "94f0e88d3be57b5d271d63d41dd3105bf6bf69456101e7c7f96182f5df054aae",
+    "scripts/fetch_native_sources.py": "b4126a9f7d81049fb60ccdcf57ae8f103c33daf3a6706093502f54e15811e914",
+    "scripts/generate_methodcard_fixtures.py": "c31f33ddf531a7e42bec6f4f2cbfbcc444cb84fe9feb92125587c31fdb09b009",
+    "scripts/generate_replay_fixtures.py": "67003bf5ec3d955a3fe2abb50a3722f0e6d7f58b57b9f565e333c7263cc2b18f",
+    "scripts/probe_focused_failure_semantics.py": "c3368f8d1376d257f07a19121c57b6fe34b6ddd8999ca32b3816aa214d5ffb59",
+    "scripts/reconcile_tracking.py": "51dfcad6f5deda0a37947c59f3dc09688ebb05af3ac53bce0498191836ac0439",
+    "scripts/resolve_oa_blockers.py": "1251426831410ccffc54f9726c2e40c190e6a4874136cc4ead961f5f1e64d537",
+    "scripts/review_focused_literature.py": "e3f10955544728b66bad27bd7dbf908a6fbc3a7efc9fba92cc34a2a6c67503be",
+    "scripts/run_finance_agent.py": "b51267256b65d5146e35e136199e5ba22af0725f952b8f4f882a17958f597570",
+    "scripts/run_focused_confirmation.py": "accc874c71bc9ac35034e707bac0924ec26592aa0fc0797b86f8a7d431bb0cd8",
+    "scripts/run_focused_spy_campaign.py": "05ff5d9f95144b28f86ed1bdc6fb862ac4427840ea659f35ba99bfd3c63c1623",
+    "scripts/run_generality_validation.py": "e5d73d5df7f9f5453a22373a22fbf0ef23538a6db9807605cc3ee8463d5e7fae",
+    "scripts/run_heldout_validation.py": "fca5ef0cf9252b168948e6b9b79e63f9726f4affb3ed92cf0f5f75e9ed13320b",
+    "scripts/run_methodcard_p0_pipeline.py": "f8648df0d087377f47fbd14691a9fc97136806fe763b6f8dac593b4807271481",
+    "scripts/run_multi_benchmark_suite.py": "436b4908267d0027a3f4c081a11731b796d20b232d55b18de435b6b85ee48005",
+    "scripts/run_native_claim.py": "80adedbc8455a7dd06dc4a582cf9191990a24899a70bfa761dd2bd82bafbf74a",
+    "scripts/run_p1_validation.py": "6a501d27e65782c539de3925fa5d22862275b77bbc28c4f33b895ba90cd070c2",
+    "scripts/run_research_value_benchmark.py": "1763c2e6e6fea56f3ac64d81b240523fbc7654001c9f44f9ec8094c2a6b6c90b",
+    "scripts/run_v24_engineering_validation.py": "032b0e761b2028cdf309bb36fac2f8ac808f8585400c9535b8f73ea8893637a9",
+    "scripts/run_vertical_validation.py": "ef729f91d47a54b3e3a6a6de65bfff0a696653ac20fe74701d6fe5962882002e",
+    "scripts/triage_reproduction_portfolio.py": "19c7d92df59e48f5f6cdfb6afd3986d67c76061ad5b8c24ff1dfb667efc421d4",
+    "scripts/verify_frozen_spy_acceptance.py": "3959a0ec08fc8eea60bfd935ce6eb4424dff84075145a2493ba0aa7c27b11b34",
+    "scripts/verify_price_feature_pilot.py": "8dfcd19cc8d7d59c579d9cdf822119e31b057ce0fbfcfab1e216f9bd600e6461",
+    "scripts/verify_v24_trial_admission.py": "7736bc9687a8aac0d599d26befd82fb3be9986990b0a9160162932c7b012f418",
+    "tests/browser/test_agent_workspace.py": "e1439bc5ff87ed4f50c91d893d39da820d01bab3ad6cf0a591ca0fe783badc27",
+    "tests/browser/test_research_workspace.py": "694c818e458c37c7507b862603cc2297001176fcd73262a9846a748d5f41614e",
+    "tests/provider_pipe_probe.py": "eaa3515f824a1e0f6548d1eaec946cb0c3f5a1deb2fe816ca592876effaeb08a",
+    "tests/test_benchmark_frozen_delivery.py": "97acbeabad764bf9127910724ca7374152cb2034b67a668f873c2ac4bbd0199c",
+    "tests/test_benchmark_registry.py": "d3949706372c2a3cf564302d36e0168cbfec36e4dc0a2b2f7cd873898f974e72",
+    "tests/test_candidate_execution.py": "c40ad1a00af0d71db6f05f9f940813c9b43deff115c803cfdd9c72336254d245",
+    "tests/test_candidate_triage.py": "e7570c481ec297ec898bd60ca69c9086acc20b36ba71721423105c06a3b92edd",
+    "tests/test_core.py": "5acd110a37a6d02b06863fdfdda4519e29088d4ae9466ad3de29f0d948ff0777",
+    "tests/test_data_acquisition.py": "dd8ff5b6961af555b7d48662ca837a54bc2cbcf854b02a5369bde5067d10b03b",
+    "tests/test_experiment_protocols.py": "30bbad547e6f4da972cb85bf0785bc0b7816572d28d5906033bf7d2e348914ec",
+    "tests/test_focused_b05_supplement.py": "2ad08d00dbaa11c1f5b2774380a3ed54f1454c4b4295c42a22d38aa989a59cc2",
+    "tests/test_focused_b0_plan.py": "f6d79f5ca46f8fa0e70d9f4dd0d7bf14fa21cf904721deac33b47beab714cac2",
+    "tests/test_focused_b1_provider.py": "0f7d417cff1d811491f5b1c01d027189a6d38611767a6016e2d35456460b346c",
+    "tests/test_focused_b2_product.py": "e0183c1b4d909406ede3ddcb38982ca2db8102e75933170cb436398f19fa5207",
+    "tests/test_focused_b3_literature.py": "d73db050ef213b345dc136a7b40bd9074738febb059f53c22c705c6728aee3ca",
+    "tests/test_focused_b4_delivery.py": "98c6c770cc481925128889a6bebdcac0daccaabf9cfe9c1709a1810717ea6d4b",
+    "tests/test_focused_b5_acceptance.py": "e35202b804611720d0f02026d26d9508de8032708979f431423a480697f0b7ca",
+    "tests/test_focused_b5_comparison.py": "ba16bd6efb9f35b60d59a7eaf5c6fd7bc7c90e896e2c16245742473387bc8275",
+    "tests/test_focused_b5_crash_recording.py": "a11f0a70879a19b6dc7ee33e500fb41603414900c37d456f9fa2645fe8db16eb",
+    "tests/test_focused_b5_increment.py": "bac88bab96165ee8d0acebf575dc3168c5b220d8e774bb5bafe32e2b93374cf8",
+    "tests/test_focused_data_research.py": "433eb2e22113db43153df4ab59e843cfb3f064eb9e28bb44fdf6dde1f5ba42cb",
+    "tests/test_focused_feature_benchmark.py": "2b43d90764280d7b46a4d0f0ff77460097a5564089a822609e179018efa0debc",
+    "tests/test_focused_feature_bundle.py": "1891d3371b8c31cd60a48a67059d8991f7b05804d77c86ecb12da46637a530db",
+    "tests/test_focused_feature_campaign.py": "3266689d4526bca9a3af70ee1bea3556ee1c7fb2b8c8614e8df850dff959ce5f",
+    "tests/test_focused_feature_contract.py": "c8ff04ee9d515f246c94d2287be39d83c264eb5bc41e6ff05b75b813703d4664",
+    "tests/test_focused_feature_execution.py": "0fe1abe7863117dd81d78de97046e1cb74816e34764613d718336cfb32233048",
+    "tests/test_focused_feature_export.py": "3f47f0e934e29d4a919ce8877c9646d76e23558e217ab67f058f303f583958cc",
+    "tests/test_focused_feature_memory.py": "4d27c72ad6568b5af0c119c602d06e6e8a717716e76bdbf66f9b50e5b6a976ea",
+    "tests/test_focused_feature_program.py": "7cac4c6da1b101376de2d48e207d81429582ad44db1eeace9d06320d43608b64",
+    "tests/test_focused_feature_recipe.py": "70547593ec4901fa41ede4ce142b664cada6765d05fb63ce7f99a5f3bed1fe0d",
+    "tests/test_focused_feature_recovery.py": "2676c2c68bf9ad37321236bb95d1caee41cff5cbc91e62838f3fb5c3dc4b0460",
+    "tests/test_focused_final_acceptance.py": "9b9e9a11f04825eda61bd8b048c060f4868eaeb9084d250d7700a305959a3b7c",
+    "tests/test_focused_pr1_evidence.py": "20a7438e5cef3f1e1bd95c06db5ff703e54e83fcc7911150c442039f62907e34",
+    "tests/test_focused_pr2_mission.py": "425b636ca3467521491b8fe2f8575e26105fbe9fa169778ae180a9dfe8f85a91",
+    "tests/test_focused_pr3_adaptive.py": "6eb9538a3187342f17722fa022c0bfa2eb191a0a5e73afe36c91b0bd841ef7af",
+    "tests/test_focused_pr4_persistence.py": "ccdb8ed499777e8841d4f19704de34beba3aef0485c625b1ebb05738fe274542",
+    "tests/test_focused_pr5_delivery.py": "1bc6c199558b98baaf19b2c92599274bddeb9fc0cae739c7391e7299cdb7a0b7",
+    "tests/test_focused_pr6_byo.py": "f297909ccf93d5ac1fae74e0b55b02b60fb431418320bc1153b4aacae1780d2c",
+    "tests/test_focused_price_policy.py": "aede74c29e65defc78bcf0f21191c6e9f50871d78be180806b51df659ff5d2a4",
+    "tests/test_focused_price_sampler.py": "19649d9ca962f30631a54bd1a36bfece45ff04d88f85b0da270e478a733ddda7",
+    "tests/test_focused_prompt_contract.py": "e24bb2c5f5ff0d3a11be6953f37c1963f7e7d225670c163dc15c8461c120ad77",
+    "tests/test_focused_provider_json_boundary.py": "dfadaa747e91aa054c1700fde09909035645970f103a073bfa8b54a71098f836",
+    "tests/test_focused_r0_status.py": "40d5d7cc5515a3e148b8bb786ca671389306a555bb45d841d614e8e9e55818b4",
+    "tests/test_focused_r1_contracts.py": "eb0cc12179f453dab44544f8f0a455432eb93317babfa208b9b0080f026a8593",
+    "tests/test_focused_r2_runtime.py": "1e8c4db95054aaa89f4110b9fbe0d731a8986df243ef488c874f8e7ffdea01ec",
+    "tests/test_focused_r3_actions.py": "ee55fb047aab0611be8e021a21046f7f585e61434a1c07a08775353665ebfd6b",
+    "tests/test_focused_r4_trust.py": "2413a313047cf08f8f133f0ba7808cf916c198fe4d1dfd89da736db42c81c531",
+    "tests/test_focused_r5_benchmark.py": "bf012e08fec62c18489026daff79da8686d9e404a60b0a5d17fdb969c5ee3ccd",
+    "tests/test_focused_r6_workspace.py": "c96db5f965306f7d6fa9f9183ae77a624cb1b1d28527631f932e031b91c4ac9b",
+    "tests/test_focused_streamlit_page.py": "d032ffe29a770f71c37d1102dcb8f3664083aee6ab783b3bc6178b9c00942d7a",
+    "tests/test_focused_supplemental_validation.py": "0ec928ab523f002f2ea69a6cd67fe2d31398964e492bfeaa531400a44a356e29",
+    "tests/test_focused_v23_review.py": "58bf7e27313f2c451285170622659d81e5a6bde3eb46ec66d3cf6389ccf90b47",
+    "tests/test_focused_v24_campaign.py": "194abbaafed0f6bf95f976e368c5eef77d9d35b9a324c17e210ec22e5fe63ca6",
+    "tests/test_focused_v24_closure_audit.py": "6c3fd3c460c600a9ed0e12e0d5c0c47f1293bde49086d7043978732816c969f6",
+    "tests/test_focused_v24_delivery.py": "2a957e4c4e8180b3f78fa56a9f1c92891f9c82865250bb75f71b10dedda4795c",
+    "tests/test_focused_v24_diagnostics.py": "66817e3eaeae0ec6c9dc6d6ce87dce045696c2382c940ecee932932a8ea93988",
+    "tests/test_focused_v24_information.py": "48bfa19abb5d5ded0a865e179f8e4432660acfbb524266fc932e2883eb5cc162",
+    "tests/test_focused_v24_judgment.py": "5e39e1dc4d9685f162ebb772579a72d5e7c48d72476ba13ebbb8474988aa64e9",
+    "tests/test_focused_v24_pilot.py": "bab2c5ae0e8bd80426b6f5745f54caad2e70454db743e848c16b14a89f883ccd",
+    "tests/test_focused_v24_pilot_admission.py": "ec2f94e9e5301e379ff1fdc8061cb8b9e05e0c39a52e4049e2b155eed9c7195e",
+    "tests/test_focused_v24_receipt_inputs.py": "bf6aa00b2151001d3660e6450d79b18e248e9e6b1dc8c75e8974ec8b58646060",
+    "tests/test_focused_v24_recovery.py": "05316fe0312fdd0b794e6bf17e22f8b0f56b8de03dc0ca5dd7bf5471c444e1a4",
+    "tests/test_focused_v24_review_fixes.py": "a4851afbbce28033b0036c462ff4e407bfc02fb19419f5e41c81edff84257399",
+    "tests/test_focused_v25_acceptance.py": "ed333b5a08c045ffc43cad6c02484de829918afa61ff522f3cc73674af10e5d1",
+    "tests/test_focused_v25_benchmark.py": "3018667fc9ecb913ab9da5cbfee968f90d798f9e182b7c048ef866e11b6652c3",
+    "tests/test_focused_v25_comparison.py": "e51287b3d9e57012a91c905b7ce1e6b1fdbc29e2ea7de0cd4815f5282f285f45",
+    "tests/test_focused_v25_compile.py": "168ecdd936b434838dc0f7f19f1f621ef0417cba3037ee50c7f81b9b6cd72116",
+    "tests/test_focused_v25_delivery.py": "f1ee08fe745430ec5555d62d68f9bb791b03a7091dac665ee2b02dd0a717513a",
+    "tests/test_focused_v25_execution.py": "50b1d1593eb125a6b98e6b941fc4993a99bd241b120bdbffec69716e5ef23d78",
+    "tests/test_focused_v25_methods.py": "8c9cf4f3016dcc56244edd71d77b1d8c15f1caa3746d07394972851cead5d772",
+    "tests/test_focused_v25_recovery.py": "7b8ed3716b037b4d4a7e617489e44a319479f5f147630527ee8d04ff6a2cfe39",
+    "tests/test_frontend_flow_trace.py": "5ac7a2c602b957881120713b38c32c6c4bbd8276f90b9a9b5d0c82e9d0cb59ee",
+    "tests/test_frontend_view_model.py": "ef848db538b8232b15eeae90e049d03dde924c7ae5a2fc0ca6d6ae1183ac45c7",
+    "tests/test_frontend_workbench.py": "dcfc6bc040968f589e0142b58ce0031acfb9fe4e631c3c1c1050afab1fd61a2d",
+    "tests/test_generality_validation.py": "20a8153e15ad6ec9821480e7fa801fea6fed3b85d90d539061d5a77168b442f6",
+    "tests/test_heldout_validation.py": "d7d93e3ed6d82d96944b692ef57f293ce0f9bdd92d5b00252b82a9d9c1ea4f42",
+    "tests/test_literature_and_data.py": "e90288cdb6319a4d7ee3f4a199d4f7894a6a557b56933d3d506bf1bd4a039b48",
+    "tests/test_literature_corpus.py": "9c9b5ad76c440681eba0453047fdc67acb1e0d8a5996d186bf4ea441c48b230e",
+    "tests/test_memory_scheduler.py": "5f5993f23eb9135ffe95fec4a792af5fdbb603aef53e4a345aa3ef0229aed1ec",
+    "tests/test_method_card_experiment_type.py": "28de202111bdee1debe1d36d1c05a4cb7a2f7e48852e322f22f13a1814dbdb69",
+    "tests/test_method_card_v3.py": "34d56e01e175189a31a73be981bf5d8f43541a6363bb9476aec77bf1c22ca05f",
+    "tests/test_methodcard_agent.py": "2040c211b17094532b61cd5643b908979108a02f551278b8ba386464df918f65",
+    "tests/test_methodcard_p0_pipeline.py": "86b7dbd3ccc13baac5bf9441d3c150919dc699d7ec7ce424bef61e806c4a95b0",
+    "tests/test_methodcard_quality_protocol.py": "d226c4ebe4288045d91d34e83153c1b795e2fe9816098509ef9d66bc753cc3a3",
+    "tests/test_models_and_harness.py": "1956d1050161b795b070b6597b7c9f31b0721788f6ed7f7d7694bfeee2038bf7",
+    "tests/test_multi_benchmark_suite.py": "a23cb3a79287b80a8a14dd60801d81b04d493d5af1b04b23ace0bd75fb00eac5",
+    "tests/test_native_catalog_builder.py": "6c7d826b1879217796522a82ccbc8eb9ade883fda22281f3b6ea137d3fef7bbb",
+    "tests/test_native_claim_compiler.py": "17e651ab2f5af1fe0cb024ee415463eae43640f4bffab243132fc4f84904ab9b",
+    "tests/test_native_execution.py": "ac5b232c74ac1d90fe7d7a47e792c28001f43a8e61c3ff2ecf5dfe515b015936",
+    "tests/test_native_plugins.py": "3c83a2fe82fe1d0d416a9c34a7c1b5d0c3a03a8c4206de3093153f768d062712",
+    "tests/test_native_reproduction.py": "16a973772212117c1cb918be30b3e0a7682f28fe55c446ad058a7cf167228dc1",
+    "tests/test_oa_blocker_resolution.py": "85c49544d7937103f84d235365cb71fae5250470b6cfc61601c7d6ee1db6026a",
+    "tests/test_p09_review_backlog_timeline.py": "363ceb5ecc2d36ca9d215429e54197309d29582e2728980c814519159e9a5c57",
+    "tests/test_p1_benchmark_memory.py": "8afae515891368efec9c79017be40647b15657d297dce3014225f00067a4fca7",
+    "tests/test_p1_protocol.py": "54ce84648e2bfe2dc1a6670b993a2d31b744beddebcb808c4e9b1899ccb919e5",
+    "tests/test_p1_real_validation_artifacts.py": "a0b99b5c4166d96ee33688d2b6bf4f3a30a322da53f47b66e46b0d330d3fe6f1",
+    "tests/test_p2_readiness.py": "19424ef51453b198b045f1ae892ce9c245ff7eff5755eff0af51635c2faf9b60",
+    "tests/test_provider_pipe_ownership.py": "90007b0b4e442d2a4a16d58b7f3439fc221a615d0d0fde6b40debd8adef64228",
+    "tests/test_reproduction_portfolio.py": "6c5755ff5a50c120a61f0b11e5ec0477a713030c9c3b24131f012fe23c08ab4a",
+    "tests/test_research_accounting.py": "a51b81eb17ff0699fa91657a0419ffe80e588fb669f732556be1df9c6c6f9ef8",
+    "tests/test_research_journal.py": "084e30d7ba922f44623d2c50602ae861cb4972eb79b12e165f668501f4722f7a",
+    "tests/test_scientific_acceptance.py": "10ac1f7908a362a151f0a47b8138be9a67f0bc2de523030c7ae73ebce2e76550",
+    "tests/test_source_bundles.py": "a58a2c54e0892a640265e540f0332cf70af3f35d7490421bad35b8e993101db2",
+    "tests/test_source_data_contracts.py": "71b08236aa9c53aaf78e12867f08d743ea718e30e34fa059b4e30200aebf5878",
+    "tests/test_streamlit_p09.py": "5b5f9bf111fb9affc7a3fba7d76dd30a5811d9232722e847b5310f5df60d6c5c",
+    "tests/test_streamlit_review_gate.py": "8a9e8bfbe137af81caa770a78cf069ec7381c8f37fb25fd331a27ac641b5f11d",
+    "tests/test_streamlit_workbench_app.py": "eb6f6567a93de668a3f79334d427a24f2dde4334171418e6c1f0c2c253683ab5",
+    "tests/test_task_queue_lineage.py": "4e817a04f4bf39538b44fd90098c117a1cd915a2b672f2389c165fa078067937",
+    "tests/test_v25_default_repairs.py": "f14ea48a93a054f4f4112f81897bbd49b3c6ed62090a35ad0d172bcae9bc1e9f",
+    "tests/test_vertical_validation.py": "4e4343a2f9d0f53e1fbc0806a303164740acc610b77192e3538fe4c02c8e4007",
+    "tests/test_workspace_ui.py": "6432cc00aae9538f6602532953a79344d82c7bff012fdb4d7b10d8aa1e358551",
+    "tests/test_workspace_ui_features.py": "3d52a971a7efc3b82b7e0664a4d3a21a52c1c77aecb44c3b506daa8998b87fca",
+    "tests/test_workspace_ui_formula.py": "88b918bc703c17e97d06a56fbb2dcbe78876ec3e2eb4c1cb78d5a1565bc4517f",
+    "tests/test_workspace_ui_trial_clarity.py": "51ff86de158eb39cda17e5441e3b2c9a931499818e16cd34648085eb3119055f"
+  },
+  "environment": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "streamlit": "1.64.0",
+    "pytest": "9.1.1",
+    "ruff": "0.16.8",
+    "playwright": "1.63.0",
+    "psutil": "7.2.2",
+    "exchange-calendars": "4.13.2",
+    "pyarrow": "25.0.1",
+    "optuna": "4.9.0"
+  },
+  "aggregate": {
+    "aggregate_exit": 1,
+    "coverage": {
+      "actual": 988,
+      "duplicate_count": 0,
+      "exact": true,
+      "expected": 988,
+      "extra": [],
+      "missing": []
+    },
+    "excluded_not_authorized": [
+      "tests/test_models_and_harness.py::test_harness_runs_real_data",
+      "tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness"
+    ],
+    "scope": "all collected applicable tests; not a financial or Live-provider acceptance",
+    "shards": [
+      {
+        "actual_exit": 1,
+        "errors": 0,
+        "failures": 1,
+        "shard": 1,
+        "skipped": 0,
+        "tests": 229
+      },
+      {
+        "actual_exit": 0,
+        "errors": 0,
+        "failures": 0,
+        "shard": 2,
+        "skipped": 1,
+        "tests": 185
+      },
+      {
+        "actual_exit": 1,
+        "errors": 0,
+        "failures": 1,
+        "shard": 3,
+        "skipped": 5,
+        "tests": 334
+      },
+      {
+        "actual_exit": 0,
+        "errors": 0,
+        "failures": 0,
+        "shard": 4,
+        "skipped": 1,
+        "tests": 240
+      }
+    ],
+    "source_hash": "d5fdf1cfc5398d0e5abda9202584299b2021ee41442f2f2e6e23ebb0add8849f"
+  },
+  "bound_reports": [
+    {
+      "junit": ".v25fix\\final3\\browser.xml",
+      "sha256": "eb56ea67dc177c5b4e37daeaca2363841aaef906d52de37af4b15bc5729ceac2",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "binding_status": "BOUND_start_end_current",
+      "command": "\"D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe\" -u -m pytest -q tests/browser/test_agent_workspace.py --basetemp=.t25bfix3 --junitxml=.v25fix\\final3\\browser.xml --tb=short; FFA_BROWSER_E2E=1; simulation_only",
+      "actual_exit_code": 0,
+      "started_at": "2026-10-20T04:01:41.384744+00:00",
+      "finished_at": "2026-10-20T04:10:50.367640+00:00",
+      "junit_seconds": 547.242,
+      "start_sha256": "451020c2fcd4cd0660a66941b65882d6fe45aa9657ee5f3e443d37dbf3c52824",
+      "end_sha256": "dd80cdbb3a2a4a20f331e2315cdfc844aa390caf7857fc064bb136971c30744b"
+    },
+    {
+      "junit": ".v25fix\\final3\\regression\\shard-1.xml",
+      "sha256": "9b5aaa3d7e7180db309d97cb40fab9a4b84150cbc47bd9c1307b86ed90ca1b49",
+      "tests": 229,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "binding_status": "BOUND_start_end_current",
+      "command": "\"D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe\" -u -m pytest -q tests/test_focused_r5_benchmark.py tests/test_focused_v24_delivery.py tests/test_focused_v25_delivery.py tests/test_focused_b3_literature.py tests/test_focused_v23_review.py tests/test_focused_b5_increment.py tests/test_focused_data_research.py tests/test_focused_streamlit_page.py tests/test_native_execution.py tests/test_focused_feature_bundle.py tests/test_focused_r1_contracts.py tests/test_p1_real_validation_artifacts.py tests/test_focused_b05_supplement.py tests/test_focused_price_policy.py tests/test_benchmark_registry.py tests/test_experiment_protocols.py tests/test_focused_feature_memory.py tests/test_focused_v24_judgment.py tests/test_frontend_flow_trace.py tests/test_heldout_validation.py tests/test_method_card_experiment_type.py tests/test_multi_benchmark_suite.py tests/test_native_reproduction.py tests/test_p2_readiness.py tests/test_research_journal.py tests/test_streamlit_review_gate.py tests/test_workspace_ui_trial_clarity.py --deselect=tests/test_models_and_harness.py::test_harness_runs_real_data --deselect=tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness \"--basetemp=D:\\AI Agent\\finance_forecast_agent_v1\\.t25fix3s1\" \"--junitxml=D:\\AI Agent\\finance_forecast_agent_v1\\.v25fix\\final3\\regression\\shard-1.xml\" --tb=short",
+      "actual_exit_code": 1,
+      "started_at": "2026-10-20T04:11:00.054636+00:00",
+      "finished_at": "2026-10-20T05:14:13.000404+00:00",
+      "junit_seconds": 3788.477,
+      "start_sha256": "f7393ab8c47a77620af3deb76c1efacd3c243d36c6cb26bb3a22e7f2c8b3e9c8",
+      "end_sha256": "d45f69b94a9ccdd7d2768e4917b7e0e57bd11d81fa242d2deb607e1eb48ecc34"
+    },
+    {
+      "junit": ".v25fix\\final3\\regression\\shard-2.xml",
+      "sha256": "0898ba63f8233631c6d9a4cf8a32677ae8ebba9bf8436383342521097f56351a",
+      "tests": 185,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "binding_status": "BOUND_start_end_current",
+      "command": "\"D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe\" -u -m pytest -q tests/test_focused_b5_crash_recording.py tests/test_focused_b5_acceptance.py tests/test_focused_v25_recovery.py tests/test_focused_feature_benchmark.py tests/test_focused_r3_actions.py tests/test_focused_v25_benchmark.py tests/test_focused_b2_product.py tests/test_models_and_harness.py tests/test_focused_v24_information.py tests/test_focused_provider_json_boundary.py tests/test_task_queue_lineage.py tests/test_core.py tests/test_focused_pr6_byo.py tests/test_focused_v24_closure_audit.py tests/test_focused_feature_export.py tests/browser/test_research_workspace.py tests/test_candidate_triage.py tests/test_focused_b5_comparison.py tests/test_focused_r0_status.py tests/test_focused_v25_compile.py tests/test_frontend_workbench.py tests/test_literature_corpus.py tests/test_methodcard_agent.py tests/test_native_claim_compiler.py tests/test_p09_review_backlog_timeline.py tests/test_reproduction_portfolio.py tests/test_source_data_contracts.py tests/test_vertical_validation.py --deselect=tests/test_models_and_harness.py::test_harness_runs_real_data --deselect=tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness \"--basetemp=D:\\AI Agent\\finance_forecast_agent_v1\\.t25fix3s2\" \"--junitxml=D:\\AI Agent\\finance_forecast_agent_v1\\.v25fix\\final3\\regression\\shard-2.xml\" --tb=short",
+      "actual_exit_code": 0,
+      "started_at": "2026-10-20T04:11:00.521064+00:00",
+      "finished_at": "2026-10-20T05:13:00.405694+00:00",
+      "junit_seconds": 3716.652,
+      "start_sha256": "185035afac8364e6370d704428a16497b8709c559a9c248774e379362737ca6d",
+      "end_sha256": "641516ca3c18512c4ff77e7fe1a91c626c18e49a5e50d391d7a188c9ed3f4747"
+    },
+    {
+      "junit": ".v25fix\\final3\\regression\\shard-3.xml",
+      "sha256": "42aac2ef49c788c45bec2b7c7c0ebe99170d7b676e925ce64f81307449c31d92",
+      "tests": 334,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 5,
+      "binding_status": "BOUND_start_end_current",
+      "command": "\"D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe\" -u -m pytest -q tests/test_focused_v24_review_fixes.py tests/test_focused_r2_runtime.py tests/test_focused_v25_acceptance.py tests/test_focused_v24_recovery.py tests/test_focused_pr3_adaptive.py tests/test_focused_b4_delivery.py tests/test_focused_v24_pilot_admission.py tests/test_focused_r4_trust.py tests/test_focused_pr2_mission.py tests/test_focused_pr4_persistence.py tests/test_source_bundles.py tests/test_streamlit_workbench_app.py tests/test_focused_v24_pilot.py tests/test_focused_feature_execution.py tests/test_focused_feature_recipe.py tests/browser/test_agent_workspace.py tests/test_benchmark_frozen_delivery.py tests/test_data_acquisition.py tests/test_focused_feature_contract.py tests/test_focused_v24_diagnostics.py tests/test_focused_v25_methods.py tests/test_generality_validation.py tests/test_memory_scheduler.py tests/test_methodcard_quality_protocol.py tests/test_native_plugins.py tests/test_p1_protocol.py tests/test_research_accounting.py tests/test_streamlit_p09.py tests/test_workspace_ui_formula.py --deselect=tests/test_models_and_harness.py::test_harness_runs_real_data --deselect=tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness \"--basetemp=D:\\AI Agent\\finance_forecast_agent_v1\\.t25fix3s3\" \"--junitxml=D:\\AI Agent\\finance_forecast_agent_v1\\.v25fix\\final3\\regression\\shard-3.xml\" --tb=short",
+      "actual_exit_code": 1,
+      "started_at": "2026-10-20T04:11:00.916867+00:00",
+      "finished_at": "2026-10-20T05:17:37.783072+00:00",
+      "junit_seconds": 3993.692,
+      "start_sha256": "8f2aaee3bc924c09c69c951199c8d4fa93219ce01d46b905459688cc7562f765",
+      "end_sha256": "30c506353ae6d8ba71d8b94f23cd3bcec1ab8b8dc22031f82d7f40dd60acdabf"
+    },
+    {
+      "junit": ".v25fix\\final3\\regression\\shard-4.xml",
+      "sha256": "cd96453432ce63555c86867d4a14378d767d7813e9baad55c6392809a3d34f43",
+      "tests": 240,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "binding_status": "BOUND_start_end_current",
+      "command": "\"D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe\" -u -m pytest -q tests/test_focused_feature_campaign.py tests/test_focused_v24_campaign.py tests/test_focused_r6_workspace.py tests/test_focused_feature_recovery.py tests/test_focused_pr1_evidence.py tests/test_workspace_ui.py tests/test_focused_b1_provider.py tests/test_focused_v25_execution.py tests/test_focused_pr5_delivery.py tests/test_focused_price_sampler.py tests/test_focused_final_acceptance.py tests/test_p1_benchmark_memory.py tests/test_workspace_ui_features.py tests/test_focused_supplemental_validation.py tests/test_focused_v24_receipt_inputs.py tests/test_focused_feature_program.py tests/test_candidate_execution.py tests/test_focused_b0_plan.py tests/test_focused_prompt_contract.py tests/test_focused_v25_comparison.py tests/test_frontend_view_model.py tests/test_literature_and_data.py tests/test_method_card_v3.py tests/test_native_catalog_builder.py tests/test_oa_blocker_resolution.py tests/test_provider_pipe_ownership.py tests/test_scientific_acceptance.py tests/test_v25_default_repairs.py --deselect=tests/test_models_and_harness.py::test_harness_runs_real_data --deselect=tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness \"--basetemp=D:\\AI Agent\\finance_forecast_agent_v1\\.t25fix3s4\" \"--junitxml=D:\\AI Agent\\finance_forecast_agent_v1\\.v25fix\\final3\\regression\\shard-4.xml\" --tb=short",
+      "actual_exit_code": 0,
+      "started_at": "2026-10-20T04:11:01.319890+00:00",
+      "finished_at": "2026-10-20T05:14:13.433949+00:00",
+      "junit_seconds": 3788.169,
+      "start_sha256": "e93a0fbd61baceb5b7f74f28b8781b7e5a56cf939371d69a5f6c4723e8e5cb03",
+      "end_sha256": "1ae2e09b58617e03e1950f6b8a106944ca3ad0567730252afba7ca4893f54275"
+    }
+  ],
+  "stage_reports": [
+    {
+      "junit": ".v25fix\\red-io.xml",
+      "sha256": "a12393867d9b524f92f68d06884f07cc95719782c0b6a6e6b812893dc1487205",
+      "exit": 1,
+      "tests": 4,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 14.653,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    },
+    {
+      "junit": ".v25fix\\red-default.xml",
+      "sha256": "1e31786256060ecd186541bfd314a23679724cbf0e2bb22e466daaafb0e9ed1b",
+      "exit": 1,
+      "tests": 6,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 9.588,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    },
+    {
+      "junit": ".v25fix\\red-rec.xml",
+      "sha256": "da313f5ac96fd863fdd244cad6ea50fc68a63f700f8cf56f02c1fe43536925a7",
+      "exit": 1,
+      "tests": 9,
+      "failures": 9,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 69.394,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    },
+    {
+      "junit": ".v25fix\\io.xml",
+      "sha256": "0cc8d424abad73f1665b1be1eeb9062d93ebe5b0a7a50b110f9a806762489d52",
+      "exit": 1,
+      "tests": 19,
+      "failures": 11,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 83.354,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    },
+    {
+      "junit": ".v25fix\\transport-defaults.xml",
+      "sha256": "b0cddb2c70bd3438eaf5582b0ad4ed9fe9ae0c82007f30188ee156864bbca8ec",
+      "exit": 0,
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 114.767,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    },
+    {
+      "junit": ".v25fix\\default-worker.xml",
+      "sha256": "5302419f348f68c6dcb01a4b4c00cb36cc00f93771090fa97148a5e0c63b0f34",
+      "exit": 0,
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 90.901,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    },
+    {
+      "junit": ".v25fix\\recommendation.xml",
+      "sha256": "5e6b5bf4aecf088e210503623e301d55eda106ceae3a51f4f79d8bc33da05939",
+      "exit": 0,
+      "tests": 37,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 1167.829,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    },
+    {
+      "junit": ".v25fix\\last-targeted.xml",
+      "sha256": "e6d45bdd5e66657322f42cbb66d93ea45dcfe0c07b0da49ac97c63d3e4ae1ed4",
+      "exit": 0,
+      "tests": 39,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 194.836,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    },
+    {
+      "junit": ".v25fix\\red-post-final.xml",
+      "sha256": "9679294b65b7daba2349a504cd3e90e52534c459881c33dc0b050b4b107d1930",
+      "exit": 1,
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 5.738,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    },
+    {
+      "junit": ".v25fix\\post-final-green.xml",
+      "sha256": "89e56d997ba89c2da6075385cd70a691a9d5577c221992919e5c352ded966ab7",
+      "exit": 0,
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 5.939,
+      "identity_limit": "stage result; no original start/end manifest, not final BOUND evidence"
+    }
+  ],
+  "failures": [
+    {
+      "nodeid": "tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call",
+      "message": "FileNotFoundError: D:\\AI Agent\\finance_forecast_agent_v1\\projects\\finance_agent\\llm_fixtures\\method_card\\2c05bfd22af27435.json",
+      "detail": "tests\\test_p1_real_validation_artifacts.py:80: in test_dlinear_strict_live_card_replays_without_an_api_call\n    ).extract(document)\n      ^^^^^^^^^^^^^^^^^\nsrc\\finance_forecast_agent\\method_cards.py:292: in extract\n    response = self.llm.complete_json(prompt_payload=prompt, schema_name=\"method_card\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsrc\\finance_forecast_agent\\replay_llm.py:161: in complete_json\n    data = read_strict_json(path) if path.exists() else self._load_from_catalog(schema_name=schema_name, digest=digest)\n                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsrc\\finance_forecast_agent\\replay_llm.py:180: in _load_from_catalog\n    raise FileNotFoundError(self.fixture_dir / schema_name / f'{digest}.json')\nE   FileNotFoundError: D:\\AI Agent\\finance_forecast_agent_v1\\projects\\finance_agent\\llm_fixtures\\method_card\\2c05bfd22af27435.json",
+      "classification": "BLOCKED_ASSET"
+    },
+    {
+      "nodeid": "tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]",
+      "message": "OSError: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\AI Agent\\\\finance_forecast_agent_v1\\\\.t25fix3s3\\\\test_model_bundle_tamper_rejec2\\\\other.joblib' -> 'D:\\\\AI Agent\\\\finance_forecast_agent_v1\\\\.t25fix3s3\\\\test_model_bundle_tamper_rejec2\\\\bundle\\\\model.joblib'",
+      "detail": "tests\\test_focused_r4_trust.py:237: in test_model_bundle_tamper_rejected_before_load\n    (root / \"model.joblib\").symlink_to(tmp_path / \"other.joblib\")\nC:\\Python313\\Lib\\pathlib\\_local.py:789: in symlink_to\n    os.symlink(target, self, target_is_directory)\nE   OSError: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\AI Agent\\\\finance_forecast_agent_v1\\\\.t25fix3s3\\\\test_model_bundle_tamper_rejec2\\\\other.joblib' -> 'D:\\\\AI Agent\\\\finance_forecast_agent_v1\\\\.t25fix3s3\\\\test_model_bundle_tamper_rejec2\\\\bundle\\\\model.joblib'",
+      "classification": "BLOCKED_ENV"
+    }
+  ],
+  "skips": [
+    {
+      "nodeid": "tests/browser/test_research_workspace.py::test_real_browser_queue_history_refresh_download_and_byo",
+      "message": "dedicated real-browser gate; set FFA_BROWSER_E2E=1",
+      "detail": "D:\\AI Agent\\finance_forecast_agent_v1\\tests\\browser\\test_research_workspace.py:26: dedicated real-browser gate; set FFA_BROWSER_E2E=1"
+    },
+    {
+      "nodeid": "tests/test_focused_pr4_persistence.py::test_queue_recovers_real_interrupted_worker",
+      "message": "process-group kill probe targets POSIX CI",
+      "detail": "D:\\AI Agent\\finance_forecast_agent_v1\\tests\\test_focused_pr4_persistence.py:85: process-group kill probe targets POSIX CI"
+    },
+    {
+      "nodeid": "tests/browser/test_agent_workspace.py::test_agent_workspace_real_backend[legacy]",
+      "message": "explicit real browser gate",
+      "detail": "D:\\AI Agent\\finance_forecast_agent_v1\\tests\\browser\\test_agent_workspace.py:22: explicit real browser gate"
+    },
+    {
+      "nodeid": "tests/browser/test_agent_workspace.py::test_agent_workspace_real_backend[price_features]",
+      "message": "explicit real browser gate",
+      "detail": "D:\\AI Agent\\finance_forecast_agent_v1\\tests\\browser\\test_agent_workspace.py:22: explicit real browser gate"
+    },
+    {
+      "nodeid": "tests/browser/test_agent_workspace.py::test_agent_workspace_real_backend[v24]",
+      "message": "explicit real browser gate",
+      "detail": "D:\\AI Agent\\finance_forecast_agent_v1\\tests\\browser\\test_agent_workspace.py:22: explicit real browser gate"
+    },
+    {
+      "nodeid": "tests/browser/test_agent_workspace.py::test_agent_workspace_real_backend[v25]",
+      "message": "explicit real browser gate",
+      "detail": "D:\\AI Agent\\finance_forecast_agent_v1\\tests\\browser\\test_agent_workspace.py:22: explicit real browser gate"
+    },
+    {
+      "nodeid": "tests/test_focused_r6_workspace.py::test_package_rejects_symlink",
+      "message": "symlink permission unavailable",
+      "detail": "D:\\AI Agent\\finance_forecast_agent_v1\\tests\\test_focused_r6_workspace.py:211: symlink permission unavailable"
+    }
+  ],
+  "browser": {
+    "legacy": {
+      "input_provenance": "simulation_only",
+      "operator": "assistant_browser_technical_rehearsal_not_human",
+      "allowed_advisor_mode": "deterministic",
+      "raw_sha256": "d28d98a7f7eb33916051bee73a08836b653ee35768cd1344fe2dfc9aa035b24a",
+      "checks": [
+        "real_component_protocol",
+        "preflight_zero_fit",
+        "explicit_submit",
+        "real_queued_worker",
+        "single_candidate_selection",
+        "no_fit_on_view",
+        "real_bound_model_zip",
+        "wrong_candidate_cannot_download",
+        "real_research_package_hashes",
+        "1280_layout",
+        "fresh_context_restore",
+        "reload_no_training",
+        "continuation_preview_zero_fit",
+        "explicit_new_campaign_same_mission",
+        "parent_unchanged",
+        "provided_start_worker",
+        "zero_provider_requests"
+      ],
+      "counts": [
+        15,
+        36
+      ],
+      "explicit_refits": 1,
+      "browser_version": "153.0.8010.12",
+      "page_errors": []
+    },
+    "price_features": {
+      "input_provenance": "simulation_only",
+      "operator": "assistant_browser_technical_rehearsal_not_human",
+      "allowed_advisor_mode": "deterministic",
+      "raw_sha256": "cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b",
+      "checks": [
+        "real_component_protocol",
+        "preflight_zero_fit",
+        "explicit_submit",
+        "real_queued_worker",
+        "single_candidate_selection",
+        "no_fit_on_view",
+        "real_bound_model_zip",
+        "wrong_candidate_cannot_download",
+        "real_research_package_hashes",
+        "1280_layout",
+        "fresh_context_restore",
+        "reload_no_training",
+        "continuation_preview_zero_fit",
+        "explicit_new_campaign_same_mission",
+        "parent_unchanged",
+        "provided_start_worker",
+        "zero_provider_requests"
+      ],
+      "counts": [
+        16,
+        40
+      ],
+      "explicit_refits": 1,
+      "browser_version": "153.0.8010.12",
+      "page_errors": []
+    },
+    "v24": {
+      "input_provenance": "simulation_only",
+      "operator": "assistant_browser_technical_rehearsal_not_human",
+      "allowed_advisor_mode": "deterministic",
+      "raw_sha256": "cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b",
+      "checks": [
+        "versioned_diagnostics_and_frozen_recommendation",
+        "real_component_protocol",
+        "preflight_zero_fit",
+        "explicit_submit",
+        "real_queued_worker",
+        "frozen_recommendation_delivery_independent_of_inspection",
+        "single_candidate_selection",
+        "no_fit_on_view",
+        "real_bound_model_zip",
+        "wrong_candidate_cannot_download",
+        "real_research_package_hashes",
+        "1280_layout",
+        "fresh_context_restore",
+        "reload_no_training",
+        "continuation_preview_zero_fit",
+        "explicit_new_campaign_same_mission",
+        "parent_unchanged",
+        "provided_start_worker",
+        "tampered_diagnostic_delivery_rejected",
+        "zero_provider_requests"
+      ],
+      "package_recomputation": {
+        "sha256": "e2d6bdfaf951c9dc7c67b4e2ce699af062712ab843107c1a76d17aaa420e42ed",
+        "audited_predictions": 9,
+        "indexed_files": 46
+      },
+      "counts": [
+        18,
+        48
+      ],
+      "explicit_refits": 2,
+      "browser_version": "153.0.8010.12",
+      "page_errors": []
+    },
+    "v25": {
+      "input_provenance": "simulation_only",
+      "operator": "assistant_browser_technical_rehearsal_not_human",
+      "allowed_advisor_mode": "deterministic",
+      "raw_sha256": "cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b",
+      "checks": [
+        "versioned_diagnostics_and_frozen_recommendation",
+        "real_component_protocol",
+        "preflight_zero_fit",
+        "explicit_submit",
+        "real_queued_worker",
+        "frozen_recommendation_delivery_independent_of_inspection",
+        "single_candidate_selection",
+        "no_fit_on_view",
+        "real_bound_model_zip",
+        "wrong_candidate_cannot_download",
+        "real_research_package_hashes",
+        "1280_layout",
+        "fresh_context_restore",
+        "reload_no_training",
+        "continuation_preview_zero_fit",
+        "explicit_new_campaign_same_mission",
+        "parent_unchanged",
+        "provided_start_worker",
+        "tampered_diagnostic_delivery_rejected",
+        "zero_provider_requests"
+      ],
+      "package_recomputation": {
+        "sha256": "b5b32293a9482a1d7b7821e637a0d1e970ed0b9c2893b500ea1f9ca8f359c72b",
+        "audited_predictions": 9,
+        "indexed_files": 46
+      },
+      "counts": [
+        19,
+        52
+      ],
+      "explicit_refits": 2,
+      "browser_version": "153.0.8010.12",
+      "page_errors": []
+    }
+  },
+  "full_commands": [
+    [
+      "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+      "-u",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_focused_r5_benchmark.py",
+      "tests/test_focused_v24_delivery.py",
+      "tests/test_focused_v25_delivery.py",
+      "tests/test_focused_b3_literature.py",
+      "tests/test_focused_v23_review.py",
+      "tests/test_focused_b5_increment.py",
+      "tests/test_focused_data_research.py",
+      "tests/test_focused_streamlit_page.py",
+      "tests/test_native_execution.py",
+      "tests/test_focused_feature_bundle.py",
+      "tests/test_focused_r1_contracts.py",
+      "tests/test_p1_real_validation_artifacts.py",
+      "tests/test_focused_b05_supplement.py",
+      "tests/test_focused_price_policy.py",
+      "tests/test_benchmark_registry.py",
+      "tests/test_experiment_protocols.py",
+      "tests/test_focused_feature_memory.py",
+      "tests/test_focused_v24_judgment.py",
+      "tests/test_frontend_flow_trace.py",
+      "tests/test_heldout_validation.py",
+      "tests/test_method_card_experiment_type.py",
+      "tests/test_multi_benchmark_suite.py",
+      "tests/test_native_reproduction.py",
+      "tests/test_p2_readiness.py",
+      "tests/test_research_journal.py",
+      "tests/test_streamlit_review_gate.py",
+      "tests/test_workspace_ui_trial_clarity.py",
+      "--deselect=tests/test_models_and_harness.py::test_harness_runs_real_data",
+      "--deselect=tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness",
+      "--basetemp=D:\\AI Agent\\finance_forecast_agent_v1\\.t25fix3s1",
+      "--junitxml=D:\\AI Agent\\finance_forecast_agent_v1\\.v25fix\\final3\\regression\\shard-1.xml",
+      "--tb=short"
+    ],
+    [
+      "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+      "-u",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_focused_b5_crash_recording.py",
+      "tests/test_focused_b5_acceptance.py",
+      "tests/test_focused_v25_recovery.py",
+      "tests/test_focused_feature_benchmark.py",
+      "tests/test_focused_r3_actions.py",
+      "tests/test_focused_v25_benchmark.py",
+      "tests/test_focused_b2_product.py",
+      "tests/test_models_and_harness.py",
+      "tests/test_focused_v24_information.py",
+      "tests/test_focused_provider_json_boundary.py",
+      "tests/test_task_queue_lineage.py",
+      "tests/test_core.py",
+      "tests/test_focused_pr6_byo.py",
+      "tests/test_focused_v24_closure_audit.py",
+      "tests/test_focused_feature_export.py",
+      "tests/browser/test_research_workspace.py",
+      "tests/test_candidate_triage.py",
+      "tests/test_focused_b5_comparison.py",
+      "tests/test_focused_r0_status.py",
+      "tests/test_focused_v25_compile.py",
+      "tests/test_frontend_workbench.py",
+      "tests/test_literature_corpus.py",
+      "tests/test_methodcard_agent.py",
+      "tests/test_native_claim_compiler.py",
+      "tests/test_p09_review_backlog_timeline.py",
+      "tests/test_reproduction_portfolio.py",
+      "tests/test_source_data_contracts.py",
+      "tests/test_vertical_validation.py",
+      "--deselect=tests/test_models_and_harness.py::test_harness_runs_real_data",
+      "--deselect=tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness",
+      "--basetemp=D:\\AI Agent\\finance_forecast_agent_v1\\.t25fix3s2",
+      "--junitxml=D:\\AI Agent\\finance_forecast_agent_v1\\.v25fix\\final3\\regression\\shard-2.xml",
+      "--tb=short"
+    ],
+    [
+      "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+      "-u",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_focused_v24_review_fixes.py",
+      "tests/test_focused_r2_runtime.py",
+      "tests/test_focused_v25_acceptance.py",
+      "tests/test_focused_v24_recovery.py",
+      "tests/test_focused_pr3_adaptive.py",
+      "tests/test_focused_b4_delivery.py",
+      "tests/test_focused_v24_pilot_admission.py",
+      "tests/test_focused_r4_trust.py",
+      "tests/test_focused_pr2_mission.py",
+      "tests/test_focused_pr4_persistence.py",
+      "tests/test_source_bundles.py",
+      "tests/test_streamlit_workbench_app.py",
+      "tests/test_focused_v24_pilot.py",
+      "tests/test_focused_feature_execution.py",
+      "tests/test_focused_feature_recipe.py",
+      "tests/browser/test_agent_workspace.py",
+      "tests/test_benchmark_frozen_delivery.py",
+      "tests/test_data_acquisition.py",
+      "tests/test_focused_feature_contract.py",
+      "tests/test_focused_v24_diagnostics.py",
+      "tests/test_focused_v25_methods.py",
+      "tests/test_generality_validation.py",
+      "tests/test_memory_scheduler.py",
+      "tests/test_methodcard_quality_protocol.py",
+      "tests/test_native_plugins.py",
+      "tests/test_p1_protocol.py",
+      "tests/test_research_accounting.py",
+      "tests/test_streamlit_p09.py",
+      "tests/test_workspace_ui_formula.py",
+      "--deselect=tests/test_models_and_harness.py::test_harness_runs_real_data",
+      "--deselect=tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness",
+      "--basetemp=D:\\AI Agent\\finance_forecast_agent_v1\\.t25fix3s3",
+      "--junitxml=D:\\AI Agent\\finance_forecast_agent_v1\\.v25fix\\final3\\regression\\shard-3.xml",
+      "--tb=short"
+    ],
+    [
+      "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+      "-u",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_focused_feature_campaign.py",
+      "tests/test_focused_v24_campaign.py",
+      "tests/test_focused_r6_workspace.py",
+      "tests/test_focused_feature_recovery.py",
+      "tests/test_focused_pr1_evidence.py",
+      "tests/test_workspace_ui.py",
+      "tests/test_focused_b1_provider.py",
+      "tests/test_focused_v25_execution.py",
+      "tests/test_focused_pr5_delivery.py",
+      "tests/test_focused_price_sampler.py",
+      "tests/test_focused_final_acceptance.py",
+      "tests/test_p1_benchmark_memory.py",
+      "tests/test_workspace_ui_features.py",
+      "tests/test_focused_supplemental_validation.py",
+      "tests/test_focused_v24_receipt_inputs.py",
+      "tests/test_focused_feature_program.py",
+      "tests/test_candidate_execution.py",
+      "tests/test_focused_b0_plan.py",
+      "tests/test_focused_prompt_contract.py",
+      "tests/test_focused_v25_comparison.py",
+      "tests/test_frontend_view_model.py",
+      "tests/test_literature_and_data.py",
+      "tests/test_method_card_v3.py",
+      "tests/test_native_catalog_builder.py",
+      "tests/test_oa_blocker_resolution.py",
+      "tests/test_provider_pipe_ownership.py",
+      "tests/test_scientific_acceptance.py",
+      "tests/test_v25_default_repairs.py",
+      "--deselect=tests/test_models_and_harness.py::test_harness_runs_real_data",
+      "--deselect=tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness",
+      "--basetemp=D:\\AI Agent\\finance_forecast_agent_v1\\.t25fix3s4",
+      "--junitxml=D:\\AI Agent\\finance_forecast_agent_v1\\.v25fix\\final3\\regression\\shard-4.xml",
+      "--tb=short"
+    ]
+  ],
+  "excluded_not_authorized": [
+    "tests/test_models_and_harness.py::test_harness_runs_real_data",
+    "tests/test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness"
+  ],
+  "platform": {
+    "source_sha256": "c0d7bdb1db69775914329cb622a8e73a2781c91973e45bc3fcbac72fcccefa68",
+    "probe_sha256": "eaa3515f824a1e0f6548d1eaec946cb0c3f5a1deb2fe816ca592876effaeb08a",
+    "rows": [
+      {
+        "platform": "Windows",
+        "case": "success",
+        "command": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "tests/provider_pipe_probe.py",
+          "success"
+        ],
+        "exit": 0,
+        "stdout": "{\"outcome\": \"completed\", \"answer\": {\"wire_len\": 60000}, \"platform\": \"win32\", \"python\": \"3.13.3\", \"checks\": 4, \"child_reaped\": true, \"HTTP\": 0, \"fits\": 0, \"elapsed\": 0.24567239999305457}\n",
+        "stderr": "",
+        "result": {
+          "outcome": "completed",
+          "answer": {
+            "wire_len": 60000
+          },
+          "platform": "win32",
+          "python": "3.13.3",
+          "checks": 4,
+          "child_reaped": true,
+          "HTTP": 0,
+          "fits": 0,
+          "elapsed": 0.24567239999305457
+        }
+      },
+      {
+        "platform": "Windows",
+        "case": "cancel",
+        "command": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "tests/provider_pipe_probe.py",
+          "cancel"
+        ],
+        "exit": 0,
+        "stdout": "{\"outcome\": \"cancelled\", \"platform\": \"win32\", \"python\": \"3.13.3\", \"checks\": 3, \"child_reaped\": true, \"HTTP\": 0, \"fits\": 0, \"elapsed\": 0.23511840001447126}\n",
+        "stderr": "",
+        "result": {
+          "outcome": "cancelled",
+          "platform": "win32",
+          "python": "3.13.3",
+          "checks": 3,
+          "child_reaped": true,
+          "HTTP": 0,
+          "fits": 0,
+          "elapsed": 0.23511840001447126
+        }
+      },
+      {
+        "platform": "Windows",
+        "case": "deadline",
+        "command": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "tests/provider_pipe_probe.py",
+          "deadline"
+        ],
+        "exit": 0,
+        "stdout": "{\"outcome\": \"call_deadline\", \"platform\": \"win32\", \"python\": \"3.13.3\", \"checks\": 15, \"child_reaped\": true, \"HTTP\": 0, \"fits\": 0, \"elapsed\": 1.5274209000053816}\n",
+        "stderr": "",
+        "result": {
+          "outcome": "call_deadline",
+          "platform": "win32",
+          "python": "3.13.3",
+          "checks": 15,
+          "child_reaped": true,
+          "HTTP": 0,
+          "fits": 0,
+          "elapsed": 1.5274209000053816
+        }
+      },
+      {
+        "platform": "WSL_Ubuntu_22.04",
+        "case": "success",
+        "command": [
+          "wsl",
+          "-d",
+          "Ubuntu-22.04",
+          "--",
+          "python3",
+          "/mnt/d/AI Agent/finance_forecast_agent_v1/tests/provider_pipe_probe.py",
+          "success"
+        ],
+        "exit": 0,
+        "stdout": "{\"outcome\": \"completed\", \"answer\": {\"wire_len\": 60000}, \"platform\": \"linux\", \"python\": \"3.10.12\", \"checks\": 4, \"child_reaped\": true, \"HTTP\": 0, \"fits\": 0, \"elapsed\": 0.21006151000000095}\n",
+        "stderr": "w\u0000s\u0000l\u0000:\u0000 \u0000�hKm0R \u0000l\u0000o\u0000c\u0000a\u0000l\u0000h\u0000o\u0000s\u0000t\u0000 \u0000�N\u0006tM�n\f�FO*g\\��P0R \u0000W\u0000S\u0000L\u0000\u00020N\u0000A\u0000T\u0000 \u0000!j\u000f_\u000bN�v \u0000W\u0000S\u0000L\u0000 \u0000\nN/e\u0001c \u0000l\u0000o\u0000c\u0000a\u0000l\u0000h\u0000o\u0000s\u0000t\u0000 \u0000�N\u0006t\u00020\n\u0000\n\u0000",
+        "result": {
+          "outcome": "completed",
+          "answer": {
+            "wire_len": 60000
+          },
+          "platform": "linux",
+          "python": "3.10.12",
+          "checks": 4,
+          "child_reaped": true,
+          "HTTP": 0,
+          "fits": 0,
+          "elapsed": 0.21006151000000095
+        }
+      },
+      {
+        "platform": "WSL_Ubuntu_22.04",
+        "case": "cancel",
+        "command": [
+          "wsl",
+          "-d",
+          "Ubuntu-22.04",
+          "--",
+          "python3",
+          "/mnt/d/AI Agent/finance_forecast_agent_v1/tests/provider_pipe_probe.py",
+          "cancel"
+        ],
+        "exit": 0,
+        "stdout": "{\"outcome\": \"cancelled\", \"platform\": \"linux\", \"python\": \"3.10.12\", \"checks\": 3, \"child_reaped\": true, \"HTTP\": 0, \"fits\": 0, \"elapsed\": 0.20483126499999926}\n",
+        "stderr": "w\u0000s\u0000l\u0000:\u0000 \u0000�hKm0R \u0000l\u0000o\u0000c\u0000a\u0000l\u0000h\u0000o\u0000s\u0000t\u0000 \u0000�N\u0006tM�n\f�FO*g\\��P0R \u0000W\u0000S\u0000L\u0000\u00020N\u0000A\u0000T\u0000 \u0000!j\u000f_\u000bN�v \u0000W\u0000S\u0000L\u0000 \u0000\nN/e\u0001c \u0000l\u0000o\u0000c\u0000a\u0000l\u0000h\u0000o\u0000s\u0000t\u0000 \u0000�N\u0006t\u00020\n\u0000\n\u0000",
+        "result": {
+          "outcome": "cancelled",
+          "platform": "linux",
+          "python": "3.10.12",
+          "checks": 3,
+          "child_reaped": true,
+          "HTTP": 0,
+          "fits": 0,
+          "elapsed": 0.20483126499999926
+        }
+      },
+      {
+        "platform": "WSL_Ubuntu_22.04",
+        "case": "deadline",
+        "command": [
+          "wsl",
+          "-d",
+          "Ubuntu-22.04",
+          "--",
+          "python3",
+          "/mnt/d/AI Agent/finance_forecast_agent_v1/tests/provider_pipe_probe.py",
+          "deadline"
+        ],
+        "exit": 0,
+        "stdout": "{\"outcome\": \"call_deadline\", \"platform\": \"linux\", \"python\": \"3.10.12\", \"checks\": 16, \"child_reaped\": true, \"HTTP\": 0, \"fits\": 0, \"elapsed\": 1.5024272239999998}\n",
+        "stderr": "w\u0000s\u0000l\u0000:\u0000 \u0000�hKm0R \u0000l\u0000o\u0000c\u0000a\u0000l\u0000h\u0000o\u0000s\u0000t\u0000 \u0000�N\u0006tM�n\f�FO*g\\��P0R \u0000W\u0000S\u0000L\u0000\u00020N\u0000A\u0000T\u0000 \u0000!j\u000f_\u000bN�v \u0000W\u0000S\u0000L\u0000 \u0000\nN/e\u0001c \u0000l\u0000o\u0000c\u0000a\u0000l\u0000h\u0000o\u0000s\u0000t\u0000 \u0000�N\u0006t\u00020\n\u0000\n\u0000",
+        "result": {
+          "outcome": "call_deadline",
+          "platform": "linux",
+          "python": "3.10.12",
+          "checks": 16,
+          "child_reaped": true,
+          "HTTP": 0,
+          "fits": 0,
+          "elapsed": 1.5024272239999998
+        }
+      }
+    ],
+    "limit": "Linux stdlib extraction of actual method, not full project Linux regression"
+  },
+  "static": {
+    "source_files_hash": "d5fdf1cfc5398d0e5abda9202584299b2021ee41442f2f2e6e23ebb0add8849f",
+    "source_unchanged": true,
+    "rows": [
+      {
+        "name": "scoped-ruff",
+        "command": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "-m",
+          "ruff",
+          "check",
+          "src/finance_forecast_agent/llm_adapters.py",
+          "src/finance_forecast_agent/focused_benchmark.py",
+          "apps/workspace_ui_service.py",
+          "tests/test_provider_pipe_ownership.py",
+          "tests/provider_pipe_probe.py",
+          "tests/test_v25_default_repairs.py",
+          "tests/test_benchmark_frozen_delivery.py",
+          "tests/test_workspace_ui_trial_clarity.py",
+          "tests/browser/test_agent_workspace.py",
+          "tests/test_focused_v25_delivery.py"
+        ],
+        "exit": 0,
+        "seconds": 0.16117650002706796,
+        "log": ".v25fix\\final3\\scoped-ruff.txt"
+      },
+      {
+        "name": "compile",
+        "command": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "-m",
+          "compileall",
+          "-q",
+          "src",
+          "apps",
+          "scripts",
+          "tests"
+        ],
+        "exit": 0,
+        "seconds": 0.23189689998980612,
+        "log": ".v25fix\\final3\\compile.txt"
+      },
+      {
+        "name": "actions-js",
+        "command": [
+          "node",
+          "--check",
+          "apps/workspace_frontend/actions.js"
+        ],
+        "exit": 0,
+        "seconds": 0.16325749998213723,
+        "log": ".v25fix\\final3\\actions-js.txt"
+      },
+      {
+        "name": "forms-js",
+        "command": [
+          "node",
+          "--check",
+          "apps/workspace_frontend/forms.js"
+        ],
+        "exit": 0,
+        "seconds": 0.0764750000089407,
+        "log": ".v25fix\\final3\\forms-js.txt"
+      },
+      {
+        "name": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit": 0,
+        "seconds": 0.16422730003250763,
+        "log": ".v25fix\\final3\\diff.txt"
+      },
+      {
+        "name": "broad-ruff",
+        "command": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "-m",
+          "ruff",
+          "check",
+          "src",
+          "apps",
+          "scripts",
+          "tests",
+          "--output-format=json"
+        ],
+        "exit": 1,
+        "seconds": 0.17712479998590425,
+        "log": ".v25fix\\final3\\broad-ruff.txt"
+      }
+    ],
+    "broad_lint_is_not_green": true
+  },
+  "historical_b": {
+    "historical_commit": "c6bdd28",
+    "environment": {
+      "python": "3.13.3",
+      "numpy": "2.5.3",
+      "pandas": "3.0.6",
+      "scikit-learn": "1.9.1",
+      "joblib": "1.6.0",
+      "exchange-calendars": "4.13.2"
+    },
+    "registry_unchanged": true,
+    "registry_sha256": "6edb7b8789cba4e3f93903c1c67a684b3454fc8aea55e49b9c34019ab7fd3f2d",
+    "records": [
+      {
+        "bundle": ".pr14b\\goal\\models\\bundle-08efc66117d441fbbb1481dfb6f9cbe0",
+        "candidate": "r1_c1_c429ecc8",
+        "compiler_sources_match": true,
+        "metadata_sha256": "1ed1f7e9d17d1142f0642d650389d1047bf4ff2396786e44cdcdf4ca42c80f41",
+        "status": "PASS_matched_compiler_environment_trusted_inference",
+        "prediction_rows": 233,
+        "predictions_sha256": "7dd487ea37c62a0a5c3b480a94cc924e0e5f302d421c1a875919d355f95927fb"
+      },
+      {
+        "bundle": ".pr14b\\goal\\models\\bundle-669ee25f8bd54b359e00b7e34dc2393d",
+        "candidate": "r1_c2_a69b33b9",
+        "compiler_sources_match": true,
+        "metadata_sha256": "f6deb4f7e1a3b698a7e88d6a15f87c301945694a19a1a4b2a1b2a36ed6599b5f",
+        "status": "PASS_matched_compiler_environment_trusted_inference",
+        "prediction_rows": 247,
+        "predictions_sha256": "e0e950254018edaf305a3a4338e7f5be81429975efcdcd8ed19d7c7ff693e676"
+      },
+      {
+        "bundle": ".pr14b\\goal\\models\\bundle-8e5c616cea1544e280b7bcdd28c75b66",
+        "candidate": "r1_c1_c429ecc8",
+        "compiler_sources_match": true,
+        "metadata_sha256": "bade9032cd94f1c16b6514d51888503469e57ec0e92b42f4753f0a8decf94371",
+        "status": "PASS_matched_compiler_environment_trusted_inference",
+        "prediction_rows": 233,
+        "predictions_sha256": "046658abfa4c8509c9282857daf2ac8b0ab2940a1d6e20265add22ec96100cb9"
+      }
+    ],
+    "HTTP": 0,
+    "fits": 0,
+    "input_provenance": "simulation_only_unlabeled",
+    "limit": "Matched five compiler sources and registered dependency versions; not entire historical OS recreation or financial evidence"
+  },
+  "clause_map": {
+    "A01-A08/A23": [
+      "tests/test_provider_pipe_ownership.py",
+      "tests/test_focused_b1_provider.py",
+      "tests/test_focused_b5_crash_recording.py"
+    ],
+    "A12/A21": [
+      "tests/test_v25_default_repairs.py",
+      "tests/browser/test_agent_workspace.py"
+    ],
+    "A15/A16": [
+      "tests/test_workspace_ui_trial_clarity.py",
+      "tests/test_focused_v25_delivery.py",
+      "tests/browser/test_agent_workspace.py"
+    ],
+    "A20/A22": [
+      "tests/test_benchmark_frozen_delivery.py",
+      "tests/test_focused_v25_benchmark.py",
+      "tests/test_focused_r5_benchmark.py"
+    ]
+  },
+  "evidence_kind": "isolated simulation engineering; real local fits/worker/browser, local mock HTTP; no paid provider",
+  "boundaries": {
+    "live_provider": "NOT_RUN_not_authorized",
+    "human_recheck": "OPEN_no_signoff",
+    "financial_value": "NOT_ESTABLISHED",
+    "macOS_GPU_native_training": "NOT_RUN_out_of_scope",
+    "Linux_full_project": "NOT_RUN_only_stdlib_transport_probe",
+    "remote_CI": "NOT_RUN_not_authorized",
+    "push": "NOT_RUN_this_delivery",
+    "production_data_and_trust": "unchanged",
+    "historical_A_L_and_47_negative": "preserved"
+  },
+  "raw_evidence_root": ".v25fix",
+  "cost": {
+    "paid_HTTP": 0,
+    "human_minutes": null,
+    "local_currency_cost": null
+  },
+  "regression_wall_envelope_seconds": 3997.728436,
+  "wall_scope": "first shard start manifest through last shard end manifest; not sum of parallel durations",
+  "current_targeted": {
+    "junit": ".v25fix\\final3\\pipe.xml",
+    "sha256": "f29542c602e98aff180a941f5bb387c35840179dad75d8e1900a0e44a88c9675",
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "identity_limit": "no original start/end receipt; final full regression supplies the frozen coverage"
+  },
+  "host": {
+    "python": "3.13.3",
+    "os": "Windows-11-10.0.26200-SP0",
+    "cpu": "Intel64 Family 6 Model 151 Stepping 5, GenuineIntel",
+    "logical_cpus": 12,
+    "gpu": "NOT_RUN_not_in_scope"
+  },
+  "all_distributions_unchanged": true,
+  "distribution_versions_hash": "0fabb551aa7cb50f542cba6ea1f28402410de06bcd41859e74a3745f01d3e09d",
+  "broad_lint": {
+    "exit": 1,
+    "issues": 97,
+    "files": 52,
+    "scoped_file_hits": 0,
+    "classification": "preexisting_unmodified_files_not_repaired_in_this_scope"
+  },
+  "interrupted_runs": [
+    {
+      "reason": "reproduced new post-final reporting error; restart final freeze after minimal repair",
+      "pid": 5892,
+      "birth": 1792466915.931986,
+      "command": [
+        "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        ".v250/run_frozen_regression_v3.py",
+        "--root",
+        ".v25fix/final/regression",
+        "--basetemp-prefix",
+        ".t25fixs",
+        "--shards",
+        "4"
+      ],
+      "status": "interrupted_incomplete_not_a_passing_full_regression",
+      "preserve": ".v25fix/final/regression"
+    },
+    {
+      "reason": "Reproduced test-only third-poll barrier fragility; preserve outputs and freeze corrected tests in final3",
+      "pid": 31680,
+      "birth": 1792468181.804188,
+      "command": [
+        "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+        ".v250/run_frozen_regression_v3.py",
+        "--root",
+        ".v25fix\\final2\\regression",
+        "--basetemp-prefix",
+        ".t25fix2s",
+        "--shards",
+        "4"
+      ],
+      "status": "interrupted_incomplete_not_a_passing_full_regression",
+      "preserve": ".v25fix/final2/regression"
+    }
+  ],
+  "test_harness_repair": {
+    "old_probe_sha256": "c1d7eb1fc6007070e51edc98a40e7190b3d714538d6a78e6e9331a9ef2e6f838",
+    "matches_prior_frozen_source": true,
+    "red_log": ".v25fix/late-old-red.stdout.txt",
+    "red_log_sha256": "ab54b0ebc6cfdb3221a4703981a8036de1d8cc8e79863406c353d535791a91e5",
+    "red_exit": 1,
+    "actual_repro": "delayed-ready Event after third poll; no fixed sleep; HTTP/fit zero",
+    "fix": "release once after actual readiness, never require an exact polling number; original deadline unchanged"
+  },
+  "head_at_collection": "3f45a3e514d819f32ec9d4fe9461334afd852e8d",
+  "tree_at_collection": "93574bbd93cbb1cacd8b9085513d2c87cdd59c0d",
+  "delivery_seal": {
+    "implementation_commit": "517b2cc79b4c159278744ad49bc8c9b77a0075cb",
+    "tests_started_before_commit": true,
+    "pushed": false,
+    "remote_ci": "NOT_RUN",
+    "note": "Tested source hashes, not subsequent documentation commit, bind execution."
+  },
+  "additional_browser": {
+    "reports": [
+      {
+        "junit": ".v25fix\\final3\\legacy-workspace.xml",
+        "command": "\"D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe\" -m pytest -q tests/browser/test_research_workspace.py --basetemp=.t25oldws3 --junitxml=.v25fix\\final3\\legacy-workspace.xml --tb=short; FFA_BROWSER_E2E=1; simulation_only; loopback",
+        "actual_exit_code": 1,
+        "sha256": "e432bedb7dc9830c5063c8f042d9901c11343099dbd5186002bc122f4d735d30",
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "junit_seconds": 12.197,
+        "binding": "source_dependencies_and_start_end_inputs_match; orchestration wrapper subsequently parameterized for a new output directory",
+        "start_sha256": "20de271a88bffc3611aa131be0d4fb35401928554f14ac63f40dd048511f2bea",
+        "end_sha256": "436cac77abae791823a2cb94f88ce1582c6a68ff434ae483216da007fa49afe6"
+      },
+      {
+        "junit": ".v25fix\\final3\\legacy-workspace-rerun.xml",
+        "command": "\"D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe\" -m pytest -q tests/browser/test_research_workspace.py --basetemp=.t25oldws3b --junitxml=.v25fix\\final3\\legacy-workspace-rerun.xml --tb=short; FFA_BROWSER_E2E=1; simulation_only; loopback",
+        "actual_exit_code": 0,
+        "sha256": "a53427320e424af115301d6820893ec49980d061358a7a45153162c6eced48da",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "junit_seconds": 146.401,
+        "binding": "BOUND_source_dependencies_inputs_start_end_current",
+        "start_sha256": "02070d471651e8ebeec9991e0e260a7d4fc33d553ab708ad04319f468563dedb",
+        "end_sha256": "f97a428c14c256a47be3374a4e5818cedd1d088f56c5fcf05accd0d1bf33af91"
+      }
+    ],
+    "legacy_report": {
+      "input_provenance": "simulation_only",
+      "raw_sha256": "e639dcf25166f3dcba0a9c01945a516e7d72a891b0023c62bb17f542a88e42d5",
+      "checks": [
+        "queued_campaign",
+        "candidate_switch",
+        "fresh_context_restore",
+        "page_reload",
+        "package_hashes",
+        "explicit_refit",
+        "downloads",
+        "no_extra_research_fits",
+        "supported_chinese_and_unsupported_scope",
+        "history_reopen",
+        "readonly_summary",
+        "capability_without_authorization",
+        "explicit_new_campaign",
+        "parent_immutable",
+        "continuation_costs",
+        "continuation_export",
+        "second_byo_client_with_reviewed_feature"
+      ],
+      "browser_version": "153.0.8010.12",
+      "selections": [
+        {
+          "label": "Literature use",
+          "value": "None / 不使用",
+          "open_attempts": 2
+        },
+        {
+          "label": "Research candidate",
+          "value": "r1_c1_e78a28dd",
+          "open_attempts": 1
+        },
+        {
+          "label": "Research candidate",
+          "value": "r1_c2_b6399978",
+          "open_attempts": 1
+        },
+        {
+          "label": "Research candidate",
+          "value": "r1_c1_e78a28dd",
+          "open_attempts": 2
+        },
+        {
+          "label": "Research task template",
+          "value": "改进 SPY 下一交易日收益预测模型",
+          "open_attempts": 2
+        },
+        {
+          "label": "Input type",
+          "value": "Controlled CSV / Parquet",
+          "open_attempts": 1
+        },
+        {
+          "label": "Data contract input",
+          "value": "Advanced JSON",
+          "open_attempts": 1
+        },
+        {
+          "label": "Research candidate",
+          "value": "r1_c1_e78a28dd",
+          "open_attempts": 2
+        }
+      ],
+      "restore_url_query": {
+        "project": [
+          "project-7e3f6f988cf33520d06a"
+        ],
+        "mission": [
+          "mission-5eb4e31ff4c6a1175479"
+        ],
+        "campaign": [
+          "persistent-be4cc3624f89913285ac4fe9"
+        ]
+      },
+      "switched_research_candidates": [
+        "r1_c1_e78a28dd",
+        "r1_c2_b6399978"
+      ],
+      "byo_campaign": {
+        "baseline_fit_calls": 12,
+        "baseline_results": [
+          {
+            "actual_features": [],
+            "candidate": {
+              "candidate_fingerprint": "b70012b326482f79f168d1d09d2aeed81d126f164d1135ba4ec8e56bc199d0c9",
+              "candidate_id": "baseline_zero",
+              "config_identity": "68c41dd5794f1ef6f5b9da511fa16729b13321c04ef7409fc47137620d8aa96c",
+              "feature_groups": [],
+              "hypothesis_id": null,
+              "model_family": "naive_zero",
+              "model_params": {
+                "strategy": "zero"
+              },
+              "parent_candidate_id": null,
+              "seed": 42
+            },
+            "config_diff": {
+              "change_type": "baseline",
+              "changes": [],
+              "parent_candidate_id": null
+            },
+            "development_evidence_level": "baseline",
+            "estimator_params": {
+              "strategy": "zero"
+            },
+            "execution_manifest_ref": "manifests/baseline_zero-a4a118f21b1f41909b563d28af01f3fb.json",
+            "execution_status": "success",
+            "fold_metrics": [
+              {
+                "directional_accuracy": 0.5873015873015873,
+                "fold_id": 0,
+                "mae": 0.008322282114003455,
+                "rmse": 0.010101075378107446,
+                "test_count": 63,
+                "train_count": 756
+              },
+              {
+                "directional_accuracy": 0.4444444444444444,
+                "fold_id": 1,
+                "mae": 0.007475052921238216,
+                "rmse": 0.009453203248759513,
+                "test_count": 63,
+                "train_count": 875
+              },
+              {
+                "directional_accuracy": 0.47619047619047616,
+                "fold_id": 2,
+                "mae": 0.007293878364130152,
+                "rmse": 0.008683998244115324,
+                "test_count": 63,
+                "train_count": 994
+              },
+              {
+                "directional_accuracy": 0.5555555555555556,
+                "fold_id": 3,
+                "mae": 0.007470772076150902,
+                "rmse": 0.009125915066991534,
+                "test_count": 63,
+                "train_count": 1114
+              }
+            ],
+            "metrics": {
+              "directional_accuracy": 0.5158730158730159,
+              "mae": 0.007640496368880682,
+              "rmse": 0.009355331725416088
+            },
+            "prediction_artifact_ref": "predictions/baseline_zero-a4a118f21b1f41909b563d28af01f3fb.json",
+            "prediction_count": 252,
+            "prediction_row_count": 252,
+            "relative_mae_vs_best_baseline": 0,
+            "research_verdict": "baseline"
+          },
+          {
+            "actual_features": [],
+            "candidate": {
+              "candidate_fingerprint": "c6cdebe51eb104ec96f034d0e963853204b5a7a4f0880677408d426f84906e54",
+              "candidate_id": "baseline_mean",
+              "config_identity": "1911fe1973e4e5a547764b45c41af35e5085ba06cb94b620eb61547483f7a331",
+              "feature_groups": [],
+              "hypothesis_id": null,
+              "model_family": "naive_train_mean",
+              "model_params": {
+                "strategy": "train_mean"
+              },
+              "parent_candidate_id": null,
+              "seed": 42
+            },
+            "config_diff": {
+              "change_type": "baseline",
+              "changes": [],
+              "parent_candidate_id": null
+            },
+            "development_evidence_level": "baseline",
+            "estimator_params": {
+              "strategy": "train_mean"
+            },
+            "execution_manifest_ref": "manifests/baseline_mean-b2f8980772564138a772a8dda19b1971.json",
+            "execution_status": "success",
+            "fold_metrics": [
+              {
+                "directional_accuracy": 0.4126984126984127,
+                "fold_id": 0,
+                "mae": 0.00837233643828769,
+                "rmse": 0.01012767023568662,
+                "test_count": 63,
+                "train_count": 756
+              },
+              {
+                "directional_accuracy": 0.5555555555555556,
+                "fold_id": 1,
+                "mae": 0.007464751970019621,
+                "rmse": 0.009440616827258726,
+                "test_count": 63,
+                "train_count": 875
+              },
+              {
+                "directional_accuracy": 0.5238095238095238,
+                "fold_id": 2,
+                "mae": 0.007288264584803653,
+                "rmse": 0.008682733287501052,
+                "test_count": 63,
+                "train_count": 994
+              },
+              {
+                "directional_accuracy": 0.4444444444444444,
+                "fold_id": 3,
+                "mae": 0.007482922500225438,
+                "rmse": 0.009142548117376886,
+                "test_count": 63,
+                "train_count": 1114
+              }
+            ],
+            "metrics": {
+              "directional_accuracy": 0.48412698412698413,
+              "mae": 0.0076520688733341,
+              "rmse": 0.009363105706740203
+            },
+            "prediction_artifact_ref": "predictions/baseline_mean-b2f8980772564138a772a8dda19b1971.json",
+            "prediction_count": 252,
+            "prediction_row_count": 252,
+            "relative_mae_vs_best_baseline": 0,
+            "research_verdict": "baseline"
+          },
+          {
+            "actual_features": [],
+            "candidate": {
+              "candidate_fingerprint": "a7051a56364a9a4b6537e01f8819ad3e18852e455ef18c81f72704bf64f395d1",
+              "candidate_id": "baseline_median",
+              "config_identity": "76f40418981c9d50d6fda740afe9e26ed0489c0447fe5e227571d50efc075997",
+              "feature_groups": [],
+              "hypothesis_id": null,
+              "model_family": "naive_train_median",
+              "model_params": {
+                "strategy": "train_median"
+              },
+              "parent_candidate_id": null,
+              "seed": 42
+            },
+            "config_diff": {
+              "change_type": "baseline",
+              "changes": [],
+              "parent_candidate_id": null
+            },
+            "development_evidence_level": "baseline",
+            "estimator_params": {
+              "strategy": "train_median"
+            },
+            "execution_manifest_ref": "manifests/baseline_median-f0cb4c765e7b4c77a66766cde17248bd.json",
+            "execution_status": "success",
+            "fold_metrics": [
+              {
+                "directional_accuracy": 0.5873015873015873,
+                "fold_id": 0,
+                "mae": 0.008294118920432166,
+                "rmse": 0.010086213994029654,
+                "test_count": 63,
+                "train_count": 756
+              },
+              {
+                "directional_accuracy": 0.4444444444444444,
+                "fold_id": 1,
+                "mae": 0.007512281692619675,
+                "rmse": 0.00950609459974547,
+                "test_count": 63,
+                "train_count": 875
+              },
+              {
+                "directional_accuracy": 0.47619047619047616,
+                "fold_id": 2,
+                "mae": 0.0073040150948889436,
+                "rmse": 0.008690269155870416,
+                "test_count": 63,
+                "train_count": 994
+              },
+              {
+                "directional_accuracy": 0.5555555555555556,
+                "fold_id": 3,
+                "mae": 0.0074428971472246565,
+                "rmse": 0.009092276797544511,
+                "test_count": 63,
+                "train_count": 1114
+              }
+            ],
+            "metrics": {
+              "directional_accuracy": 0.5158730158730159,
+              "mae": 0.00763832821379136,
+              "rmse": 0.009357988868305366
+            },
+            "prediction_artifact_ref": "predictions/baseline_median-f0cb4c765e7b4c77a66766cde17248bd.json",
+            "prediction_count": 252,
+            "prediction_row_count": 252,
+            "relative_mae_vs_best_baseline": 0,
+            "research_verdict": "baseline"
+          },
+          {
+            "actual_features": [
+              "return_lag_1",
+              "return_lag_2",
+              "return_lag_3",
+              "return_lag_4",
+              "return_lag_5"
+            ],
+            "candidate": {
+              "candidate_fingerprint": "25138944524472801421d79d3386748271c899249e52e2f9bbfe87c7f923de06",
+              "candidate_id": "baseline_ridge",
+              "config_identity": "4be0706b3148ecc802a39ab78ee26d5a8f6131d163ce1ab77d2cd00cb5320aed",
+              "feature_groups": [
+                "base_lags"
+              ],
+              "hypothesis_id": null,
+              "model_family": "ridge_regression",
+              "model_params": {
+                "alpha": 1
+              },
+              "parent_candidate_id": null,
+              "seed": 42
+            },
+            "config_diff": {
+              "change_type": "baseline",
+              "changes": [],
+              "parent_candidate_id": null
+            },
+            "development_evidence_level": "baseline",
+            "estimator_params": {
+              "alpha": 1,
+              "random_state": null
+            },
+            "execution_manifest_ref": "manifests/baseline_ridge-fffc829fc4cd4ac1b0fe218d30811118.json",
+            "execution_status": "success",
+            "fold_metrics": [
+              {
+                "directional_accuracy": 0.49206349206349204,
+                "fold_id": 0,
+                "mae": 0.008439144964311394,
+                "rmse": 0.010384971888050017,
+                "test_count": 63,
+                "train_count": 756
+              },
+              {
+                "directional_accuracy": 0.5238095238095238,
+                "fold_id": 1,
+                "mae": 0.007441317273388874,
+                "rmse": 0.009463277826735861,
+                "test_count": 63,
+                "train_count": 875
+              },
+              {
+                "directional_accuracy": 0.5396825396825397,
+                "fold_id": 2,
+                "mae": 0.007326724902641895,
+                "rmse": 0.008710473412314415,
+                "test_count": 63,
+                "train_count": 994
+              },
+              {
+                "directional_accuracy": 0.47619047619047616,
+                "fold_id": 3,
+                "mae": 0.0074704571925549405,
+                "rmse": 0.009198640230715972,
+                "test_count": 63,
+                "train_count": 1114
+              }
+            ],
+            "metrics": {
+              "directional_accuracy": 0.5079365079365079,
+              "mae": 0.007669411083224276,
+              "rmse": 0.009458971898445974
+            },
+            "prediction_artifact_ref": "predictions/baseline_ridge-fffc829fc4cd4ac1b0fe218d30811118.json",
+            "prediction_count": 252,
+            "prediction_row_count": 252,
+            "relative_mae_vs_best_baseline": 0,
+            "research_verdict": "baseline"
+          },
+          {
+            "actual_features": [
+              "return_lag_1",
+              "return_lag_2",
+              "return_lag_3",
+              "return_lag_4",
+              "return_lag_5"
+            ],
+            "candidate": {
+              "candidate_fingerprint": "042b1077b609fccaa412ec2e8e41663f57e17457405524a1eeecf50eade17df0",
+              "candidate_id": "baseline_rf",
+              "config_identity": "b9000e6c3873fef40af50f0de8e59e2bbc46616d3827c095a9efd7299b4094c3",
+              "feature_groups": [
+                "base_lags"
+              ],
+              "hypothesis_id": null,
+              "model_family": "random_forest_regressor",
+              "model_params": {
+                "max_depth": 4,
+                "min_samples_leaf": 5,
+                "n_estimators": 80
+              },
+              "parent_candidate_id": null,
+              "seed": 42
+            },
+            "config_diff": {
+              "change_type": "baseline",
+              "changes": [],
+              "parent_candidate_id": null
+            },
+            "development_evidence_level": "baseline",
+            "estimator_params": {
+              "max_depth": 4,
+              "max_features": 1,
+              "min_samples_leaf": 5,
+              "n_estimators": 80,
+              "random_state": 42
+            },
+            "execution_manifest_ref": "manifests/baseline_rf-9ab083c810834217a44564e9547f9fed.json",
+            "execution_status": "success",
+            "fold_metrics": [
+              {
+                "directional_accuracy": 0.4126984126984127,
+                "fold_id": 0,
+                "mae": 0.00858927893639828,
+                "rmse": 0.010457788889639672,
+                "test_count": 63,
+                "train_count": 756
+              },
+              {
+                "directional_accuracy": 0.49206349206349204,
+                "fold_id": 1,
+                "mae": 0.00754304229525858,
+                "rmse": 0.009491420440345432,
+                "test_count": 63,
+                "train_count": 875
+              },
+              {
+                "directional_accuracy": 0.5396825396825397,
+                "fold_id": 2,
+                "mae": 0.007222689487818242,
+                "rmse": 0.008620880934156479,
+                "test_count": 63,
+                "train_count": 994
+              },
+              {
+                "directional_accuracy": 0.5238095238095238,
+                "fold_id": 3,
+                "mae": 0.00747773338296008,
+                "rmse": 0.009221030877548478,
+                "test_count": 63,
+                "train_count": 1114
+              }
+            ],
+            "metrics": {
+              "directional_accuracy": 0.49206349206349204,
+              "mae": 0.007708186025608795,
+              "rmse": 0.009471000593407266
+            },
+            "prediction_artifact_ref": "predictions/baseline_rf-9ab083c810834217a44564e9547f9fed.json",
+            "prediction_count": 252,
+            "prediction_row_count": 252,
+            "relative_mae_vs_best_baseline": 0,
+            "research_verdict": "baseline"
+          },
+          {
+            "actual_features": [
+              "return_lag_1",
+              "return_lag_2",
+              "return_lag_3",
+              "return_lag_4",
+              "return_lag_5"
+            ],
+            "candidate": {
+              "candidate_fingerprint": "1a21667e05dd012c5f6ac6113cb9d27bf0f408a3e1ed36f4cbc0140d9ac5d97e",
+              "candidate_id": "baseline_gbdt",
+              "config_identity": "36a9d3b24f7bfb1d1705e54315ee492e4e77424555f7e75ae72a894aeff11a91",
+              "feature_groups": [
+                "base_lags"
+              ],
+              "hypothesis_id": null,
+              "model_family": "gradient_boosting_regressor",
+              "model_params": {
+                "learning_rate": 0.03,
+                "max_depth": 2,
+                "n_estimators": 80
+              },
+              "parent_candidate_id": null,
+              "seed": 42
+            },
+            "config_diff": {
+              "change_type": "baseline",
+              "changes": [],
+              "parent_candidate_id": null
+            },
+            "development_evidence_level": "baseline",
+            "estimator_params": {
+              "alpha": 0.9,
+              "learning_rate": 0.03,
+              "max_depth": 2,
+              "max_features": null,
+              "min_samples_leaf": 1,
+              "n_estimators": 80,
+              "random_state": 42
+            },
+            "execution_manifest_ref": "manifests/baseline_gbdt-bee130dcb98d4a7cbe846a8bca9abef0.json",
+            "execution_status": "success",
+            "fold_metrics": [
+              {
+                "directional_accuracy": 0.3492063492063492,
+                "fold_id": 0,
+                "mae": 0.008464226741066982,
+                "rmse": 0.01029486627942823,
+                "test_count": 63,
+                "train_count": 756
+              },
+              {
+                "directional_accuracy": 0.5555555555555556,
+                "fold_id": 1,
+                "mae": 0.007500018301267672,
+                "rmse": 0.009497976081396168,
+                "test_count": 63,
+                "train_count": 875
+              },
+              {
+                "directional_accuracy": 0.4603174603174603,
+                "fold_id": 2,
+                "mae": 0.007285818482012898,
+                "rmse": 0.008712456567957539,
+                "test_count": 63,
+                "train_count": 994
+              },
+              {
+                "directional_accuracy": 0.5555555555555556,
+                "fold_id": 3,
+                "mae": 0.007474337170540777,
+                "rmse": 0.009215008049209708,
+                "test_count": 63,
+                "train_count": 1114
+              }
+            ],
+            "metrics": {
+              "directional_accuracy": 0.4801587301587302,
+              "mae": 0.0076811001737220825,
+              "rmse": 0.009447474452858134
+            },
+            "prediction_artifact_ref": "predictions/baseline_gbdt-bee130dcb98d4a7cbe846a8bca9abef0.json",
+            "prediction_count": 252,
+            "prediction_row_count": 252,
+            "relative_mae_vs_best_baseline": 0,
+            "research_verdict": "baseline"
+          }
+        ],
+        "best_baseline_candidate_id": "baseline_median",
+        "best_candidate_id": "baseline_median",
+        "best_candidate_is_research_candidate": false,
+        "campaign": {
+          "advisor_mode": "deterministic",
+          "allowed_feature_groups": [
+            "base_lags",
+            "external_numeric",
+            "liquidity",
+            "momentum",
+            "volatility"
+          ],
+          "allowed_models": [
+            "gradient_boosting_regressor",
+            "random_forest_regressor",
+            "ridge_regression"
+          ],
+          "budget": {
+            "max_advisor_calls": 12,
+            "max_fit_calls": 16,
+            "max_http_requests": 48,
+            "max_new_candidates_per_round": 1,
+            "max_provider_seconds": 3600,
+            "max_rounds": 1,
+            "min_relative_mae_improvement": null
+          },
+          "campaign_id": "persistent-a3614f079a4829a1c38a248d",
+          "contract_hash": "9d3a283c5fb30ef89c81",
+          "created_at": "2026-10-20T05:24:19+00:00",
+          "dataset": {
+            "dataset_id": "external_spy_daily_a4862009b3930f0c3066e37b5e28fde3b15f6b9b0fce70cdb59279fc697d8927",
+            "end_date": "2023-10-05",
+            "exposure": "external_unknown",
+            "feature_registry_version": "focused_external_features_v2",
+            "frame_fingerprint": "f9c45466216a3e973b9c14594a830686b8523ae9ac759c405dcf9daa8f27f8e4",
+            "identity_version": "focused_data_identity_v1",
+            "license_status": "simulation_only",
+            "observation_fingerprint": "f1032630dabb789e8a99d7b9b83c022dd41d2dd50c9a27eb4a50bad008e0065a",
+            "raw_sha256": "30ad6bd3da00747004323fae98e8f0927d69ed30e9723819d9a1522aac66b9cd",
+            "row_count": 1178,
+            "semantic_fingerprint": "a4862009b3930f0c3066e37b5e28fde3b15f6b9b0fce70cdb59279fc697d8927",
+            "session_calendar": "XNYS",
+            "session_validation": "complete_observed_sessions",
+            "source_name": "simulated_client_B",
+            "source_url": "simulation_only",
+            "start_date": "2019-02-01",
+            "target_content_fingerprint": "679d9612004f3836bab5cf495d50b48fe93c32cbc1d844809ef522d84aa3d55c",
+            "target_fingerprint": "cf3518e50d1458a3d6d226008329c49d5762f0bf13c898fa4ec083734b2ca9a4"
+          },
+          "evaluation_policy": {
+            "evidence_tier": "development_only",
+            "min_relative_mae_improvement": 0.0025,
+            "primary_metric": "mae"
+          },
+          "research_options": {
+            "change_scope": "explore",
+            "context_mode": "compact_v1",
+            "continuation_from": null,
+            "entry_mode": "goal",
+            "feature_specs": [
+              {
+                "name": "ext_signal",
+                "review_status": "approved",
+                "reviewer": "CI_test_operator",
+                "source_description": "simulation_only numeric lag",
+                "version": "1"
+              }
+            ],
+            "input_provenance": {
+              "contract": {
+                "column_map": {},
+                "dataset_format": "parquet",
+                "entity_id": "SPY",
+                "exposure": "external_unknown",
+                "feature_availability": {
+                  "ext_signal": "at_or_before_decision",
+                  "momentum_20": "at_or_before_decision",
+                  "momentum_5": "at_or_before_decision",
+                  "return_lag_1": "at_or_before_decision",
+                  "return_lag_2": "at_or_before_decision",
+                  "return_lag_3": "at_or_before_decision",
+                  "return_lag_4": "at_or_before_decision",
+                  "return_lag_5": "at_or_before_decision"
+                },
+                "feature_columns": [
+                  "return_lag_1",
+                  "return_lag_2",
+                  "return_lag_3",
+                  "return_lag_4",
+                  "return_lag_5",
+                  "momentum_5",
+                  "momentum_20",
+                  "ext_signal"
+                ],
+                "frequency": "daily",
+                "horizon": "next_trading_day",
+                "label_definition": "adj_close[t+1] / adj_close[t] - 1",
+                "license_status": "simulation_only",
+                "provenance_type": "simulation_only",
+                "reviewed_features": [
+                  {
+                    "name": "ext_signal",
+                    "review_status": "approved",
+                    "reviewer": "CI_test_operator",
+                    "source_description": "simulation_only numeric lag",
+                    "version": "1"
+                  }
+                ],
+                "schema_version": "focused_byo_dataset_contract_v2",
+                "source_name": "simulated_client_B",
+                "source_url": "simulation_only"
+              },
+              "dataset_fingerprint": "a4862009b3930f0c3066e37b5e28fde3b15f6b9b0fce70cdb59279fc697d8927",
+              "exposure": "external_unknown",
+              "frame_fingerprint": "f9c45466216a3e973b9c14594a830686b8523ae9ac759c405dcf9daa8f27f8e4",
+              "identity_version": "focused_data_identity_v1",
+              "license_status": "simulation_only",
+              "observation_fingerprint": "f1032630dabb789e8a99d7b9b83c022dd41d2dd50c9a27eb4a50bad008e0065a",
+              "provenance_type": "simulation_only",
+              "raw_sha256": "30ad6bd3da00747004323fae98e8f0927d69ed30e9723819d9a1522aac66b9cd",
+              "schema_version": "focused_byo_provenance_v1",
+              "source_name": "simulated_client_B",
+              "source_url": "simulation_only",
+              "target_content_fingerprint": "679d9612004f3836bab5cf495d50b48fe93c32cbc1d844809ef522d84aa3d55c",
+              "target_fingerprint": "cf3518e50d1458a3d6d226008329c49d5762f0bf13c898fa4ec083734b2ca9a4",
+              "verification": {
+                "external_feature_availability": {
+                  "ext_signal": "user_declared_unverified"
+                },
+                "feature_causality": "user_declared_not_proven",
+                "label_values": {
+                  "price_provenance": "user_supplied_not_independently_acquired",
+                  "status": "partially_recomputed_last_target_unverified",
+                  "unverified_rows": 1,
+                  "verified_rows": 1177
+                },
+                "temporal": {
+                  "decision_instants": "not_supplied_close_time_assumption",
+                  "horizon": "next_session_checked",
+                  "sessions": "exact_XNYS_checked"
+                }
+              }
+            },
+            "literature_project": null,
+            "literature_review_ids": [],
+            "literature_snapshot_hash": "86ed5337c7de679cf9908782eecbbb2dd1eac7349ce728416c65871d61c107b4",
+            "notes": "",
+            "notes_are_non_executable": true,
+            "starting_baseline": {}
+          },
+          "split_spec": {
+            "max_folds": 4,
+            "min_train": 756,
+            "purge": 1,
+            "test_size": 63
+          },
+          "task": {
+            "entity_id": "SPY",
+            "execution_claim": "forecast_only",
+            "exposure": "historical_development_only",
+            "frequency": "daily",
+            "horizon": "next_trading_day",
+            "information_cutoff": "after t close is available",
+            "label_definition": "adj_close[t+1] / adj_close[t] - 1",
+            "primary_metric": "mae",
+            "task_id": "spy_daily_next_return_research_v2",
+            "task_type": "return_regression",
+            "task_version": "v2"
+          }
+        },
+        "campaign_root": "D:\\AI Agent\\finance_forecast_agent_v1\\.t25oldws3b\\test_real_browser_queue_histor0\\project\\focused_campaigns\\persistent-a3614f079a4829a1c38a248d",
+        "candidate_roles": {
+          "baseline_gbdt": [
+            "fixed_control"
+          ],
+          "baseline_mean": [
+            "fixed_control"
+          ],
+          "baseline_median": [
+            "fixed_control"
+          ],
+          "baseline_rf": [
+            "fixed_control"
+          ],
+          "baseline_ridge": [
+            "fixed_control"
+          ],
+          "baseline_zero": [
+            "fixed_control"
+          ]
+        },
+        "confirmation_status": "not_run_simulation_only",
+        "created_at": "2026-10-20T05:24:38+00:00",
+        "development_screen_passed": false,
+        "evaluation_policy": {
+          "evidence_tier": "development_only",
+          "min_relative_mae_improvement": 0.0025,
+          "primary_metric": "mae"
+        },
+        "evidence_status": {
+          "confirmation": "not_run_simulation_only",
+          "development": "available",
+          "forward": "not_started",
+          "robustness": "not_run"
+        },
+        "execution_contract_hash": "12b863344c75aef35245af8fa88e01e10ca15715d90319e31d1e8b71029a23da",
+        "execution_status": "completed",
+        "fit_calls": 16,
+        "incumbent_result": null,
+        "input_verification": {
+          "external_feature_availability": {
+            "ext_signal": "user_declared_unverified"
+          },
+          "feature_causality": "user_declared_not_proven",
+          "label_values": {
+            "price_provenance": "user_supplied_not_independently_acquired",
+            "status": "partially_recomputed_last_target_unverified",
+            "unverified_rows": 1,
+            "verified_rows": 1177
+          },
+          "temporal": {
+            "decision_instants": "not_supplied_close_time_assumption",
+            "horizon": "next_session_checked",
+            "sessions": "exact_XNYS_checked"
+          }
+        },
+        "limitations": [
+          "No-improvement is limited to the executed candidates, frozen development rows and budget; not a claim of no market signal."
+        ],
+        "literature_snapshot": [],
+        "literature_usage": [],
+        "research_outcome": "no_improvement",
+        "research_start_candidate_id": "baseline_ridge",
+        "resource_usage": {
+          "accounting_policy": "reserved fits remain charged on failure/interruption; actual consumption may be incomplete",
+          "advisor_call_reservations": 1,
+          "attempt_count": 7,
+          "charged_fit_calls": 16,
+          "failed_attempts": 0,
+          "inflight_or_unknown_fits": 0,
+          "interrupted_attempts": 0,
+          "observed_completed_fits": 16,
+          "observed_started_fits": 16,
+          "provider": {
+            "charged_provider_seconds": 0,
+            "currency_budget_guaranteed": false,
+            "currency_cost": null,
+            "http_requests": 0,
+            "unknown_provider_intervals": 0
+          }
+        },
+        "result_semantics_version": "origin_screen_terminal_v2",
+        "rounds": [
+          {
+            "advisor_source": "deterministic_policy",
+            "items": [
+              {
+                "attempt_id": "ab006bee43f14525b59508f9abc12769",
+                "candidate": {
+                  "candidate_fingerprint": "2688b2d8356e67330a6c82d1a66830c1cf0d6a150880084dcaea7111ed448c04",
+                  "candidate_id": "r1_c1_e6b2ba8b",
+                  "config_identity": "df63a54154666659266a4dfbd93a3eab75c4961832aa618b87fa5777ed6aec14",
+                  "feature_groups": [
+                    "base_lags",
+                    "external_numeric"
+                  ],
+                  "hypothesis_id": "r1_h1_e6b2ba8b",
+                  "model_family": "ridge_regression",
+                  "model_params": {
+                    "alpha": 1
+                  },
+                  "parent_candidate_id": "baseline_ridge",
+                  "seed": 42
+                },
+                "config_diff": {
+                  "change_type": "single_component_change",
+                  "changes": [
+                    {
+                      "new_value": [
+                        "base_lags",
+                        "external_numeric"
+                      ],
+                      "old_value": [
+                        "base_lags"
+                      ],
+                      "path": "feature_groups"
+                    }
+                  ],
+                  "parent_candidate_id": "baseline_ridge"
+                },
+                "feedback": {
+                  "best_baseline_candidate_id": "baseline_median",
+                  "candidate_id": "r1_c1_e6b2ba8b",
+                  "config_diff": {
+                    "change_type": "single_component_change",
+                    "changes": [
+                      {
+                        "new_value": [
+                          "base_lags",
+                          "external_numeric"
+                        ],
+                        "old_value": [
+                          "base_lags"
+                        ],
+                        "path": "feature_groups"
+                      }
+                    ],
+                    "parent_candidate_id": "baseline_ridge"
+                  },
+                  "evidence_level": "development_only",
+                  "execution_conformance": {
+                    "actual_feature_columns": [
+                      "return_lag_1",
+                      "return_lag_2",
+                      "return_lag_3",
+                      "return_lag_4",
+                      "return_lag_5",
+                      "ext_signal"
+                    ],
+                    "effective_estimator_params": {
+                      "alpha": 1,
+                      "random_state": null
+                    },
+                    "manifest_execution_conformant": true
+                  },
+                  "feedback_id": "feedback_5dfb2547187e",
+                  "fold_deltas_vs_parent": [
+                    {
+                      "directional_accuracy_delta": 0,
+                      "fold_id": 0,
+                      "mae_delta": -1.3908861128814065e-8,
+                      "rmse_delta": -1.522220983464495e-8
+                    },
+                    {
+                      "directional_accuracy_delta": 0,
+                      "fold_id": 1,
+                      "mae_delta": -9.432898341772689e-9,
+                      "rmse_delta": -4.113153890400456e-9
+                    },
+                    {
+                      "directional_accuracy_delta": 0,
+                      "fold_id": 2,
+                      "mae_delta": 2.1499759848310485e-8,
+                      "rmse_delta": 1.0955401094983608e-8
+                    },
+                    {
+                      "directional_accuracy_delta": 0,
+                      "fold_id": 3,
+                      "mae_delta": -2.330893852063587e-9,
+                      "rmse_delta": 3.4304686851588384e-9
+                    }
+                  ],
+                  "known_limitations": [
+                    "historical SPY development data is already exposed",
+                    "development screening is not independent confirmation",
+                    "forecast-only metrics do not establish trading profitability"
+                  ],
+                  "metrics": {
+                    "directional_accuracy": 0.5079365079365079,
+                    "mae": 0.007669410040000908,
+                    "rmse": 0.009458970047727434
+                  },
+                  "parent_candidate_id": "baseline_ridge",
+                  "relative_to_best_baseline": {
+                    "absolute_delta": 0.00003108182620954747,
+                    "metric": "mae",
+                    "relative_improvement": -0.00406919228129367
+                  },
+                  "relative_to_parent": {
+                    "absolute_delta": -1.0432233679344427e-9,
+                    "metric": "mae",
+                    "relative_improvement": 1.3602392108259035e-7
+                  },
+                  "resource_usage": {
+                    "reserved_fit_calls": 4
+                  },
+                  "schema_version": "focused_structured_feedback_v1"
+                },
+                "hypothesis": {
+                  "ablation_component": null,
+                  "action_type": "improve",
+                  "based_on_feedback_ids": [],
+                  "control_candidate_id": null,
+                  "counter_evidence_test": "No improvement on frozen development targets.",
+                  "diagnostic": null,
+                  "evidence_refs": [
+                    "baseline_ridge"
+                  ],
+                  "expected_effect": "not_applicable",
+                  "expected_observation": "",
+                  "hypothesis_id": "r1_h1_e6b2ba8b",
+                  "literature_uses": [],
+                  "mechanism": "Paired feature addition; provenance and timing remain user-supplied evidence.",
+                  "parent_candidate_id": "baseline_ridge",
+                  "proposed_changes": [
+                    {
+                      "new_value": [
+                        "base_lags",
+                        "external_numeric"
+                      ],
+                      "old_value": [
+                        "base_lags"
+                      ],
+                      "path": "feature_groups"
+                    }
+                  ],
+                  "simplification_dimension": null,
+                  "source": "deterministic_policy",
+                  "statement": "Test the reviewed numeric feature with the actual Ridge control unchanged."
+                },
+                "result": {
+                  "actual_features": [
+                    "return_lag_1",
+                    "return_lag_2",
+                    "return_lag_3",
+                    "return_lag_4",
+                    "return_lag_5",
+                    "ext_signal"
+                  ],
+                  "candidate": {
+                    "candidate_fingerprint": "2688b2d8356e67330a6c82d1a66830c1cf0d6a150880084dcaea7111ed448c04",
+                    "candidate_id": "r1_c1_e6b2ba8b",
+                    "config_identity": "df63a54154666659266a4dfbd93a3eab75c4961832aa618b87fa5777ed6aec14",
+                    "feature_groups": [
+                      "base_lags",
+                      "external_numeric"
+                    ],
+                    "hypothesis_id": "r1_h1_e6b2ba8b",
+                    "model_family": "ridge_regression",
+                    "model_params": {
+                      "alpha": 1
+                    },
+                    "parent_candidate_id": "baseline_ridge",
+                    "seed": 42
+                  },
+                  "config_diff": {
+                    "change_type": "single_component_change",
+                    "changes": [
+                      {
+                        "new_value": [
+                          "base_lags",
+                          "external_numeric"
+                        ],
+                        "old_value": [
+                          "base_lags"
+                        ],
+                        "path": "feature_groups"
+                      }
+                    ],
+                    "parent_candidate_id": "baseline_ridge"
+                  },
+                  "development_evidence_level": "development_screen_not_passed",
+                  "estimator_params": {
+                    "alpha": 1,
+                    "random_state": null
+                  },
+                  "execution_manifest_ref": "manifests/r1_c1_e6b2ba8b-ab006bee43f14525b59508f9abc12769.json",
+                  "execution_status": "success",
+                  "feedback_id": "feedback_5dfb2547187e",
+                  "feedback_ref": "feedback/feedback_5dfb2547187e-ab006bee43f14525b59508f9abc12769.json",
+                  "fold_metrics": [
+                    {
+                      "directional_accuracy": 0.49206349206349204,
+                      "fold_id": 0,
+                      "mae": 0.008439131055450265,
+                      "rmse": 0.010384956665840182,
+                      "test_count": 63,
+                      "train_count": 756
+                    },
+                    {
+                      "directional_accuracy": 0.5238095238095238,
+                      "fold_id": 1,
+                      "mae": 0.0074413078404905325,
+                      "rmse": 0.00946327371358197,
+                      "test_count": 63,
+                      "train_count": 875
+                    },
+                    {
+                      "directional_accuracy": 0.5396825396825397,
+                      "fold_id": 2,
+                      "mae": 0.007326746402401743,
+                      "rmse": 0.00871048436771551,
+                      "test_count": 63,
+                      "train_count": 994
+                    },
+                    {
+                      "directional_accuracy": 0.47619047619047616,
+                      "fold_id": 3,
+                      "mae": 0.0074704548616610885,
+                      "rmse": 0.009198643661184657,
+                      "test_count": 63,
+                      "train_count": 1114
+                    }
+                  ],
+                  "metrics": {
+                    "directional_accuracy": 0.5079365079365079,
+                    "mae": 0.007669410040000908,
+                    "rmse": 0.009458970047727434
+                  },
+                  "prediction_artifact_ref": "predictions/r1_c1_e6b2ba8b-ab006bee43f14525b59508f9abc12769.json",
+                  "prediction_count": 252,
+                  "prediction_row_count": 252,
+                  "relative_mae_vs_best_baseline": -0.00406919228129367,
+                  "research_verdict": "development_screen_not_passed"
+                },
+                "status": "completed"
+              }
+            ],
+            "plan_hash": "0bb80856c39c4dbc2564",
+            "plan_ref": "batch_plans/round_1.json",
+            "prompt_hash": "cc8fe4c35fb2cec6e901",
+            "round_index": 1
+          }
+        ],
+        "schema_version": "focused_campaign_v3",
+        "scientific_claim": "simulation_only_no_financial_evidence",
+        "selection_reference_mae": 0.00763832821379136,
+        "split_spec": {
+          "max_folds": 4,
+          "min_train": 756,
+          "purge": 1,
+          "test_size": 63
+        },
+        "stop_reason": "max_rounds_reached",
+        "terminal_status": "completed_no_improvement"
+      },
+      "status": "PASS"
+    },
+    "classification": "initial_unchanged_5s_startup_readiness_failure_then_same_gate_pass",
+    "assertions_or_test_source_relaxed": false,
+    "production_HTTP": 0,
+    "limit": "The first failure remains; a passing rerun does not prove cold-start stability or human acceptance"
+  }
+}

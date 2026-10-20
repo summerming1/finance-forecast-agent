@@ -1,5 +1,11 @@
 # Codex handoff：V2.5当前交接与历史证据入口
 
+2026-10-20后续修补限定工程完成；最终收据见V2.5日志§11、validation/v25_repair_acceptance.json和
+CURRENT_IMPLEMENTATION顶部。范围为通信、默认入口、refit告知、冻结推荐报告，
+不重开N0—N5或启动后续能力。原B只读，旧源码不匹配不改hash续跑。
+本批全仓979通过/2历史失败/7跳过；四模式浏览器通过，旧工作区首跑就绪失败及同门槛复跑通过分别保留。
+当前下一步为所有者G6只读复核，不代签；本批本地提交未推送、未运行远端CI。
+
 ## V2.5.0 N0—N5限定工程交付（2026-10-20同步）
 
 用户已批准两轴、R1—R4及N0—N5；本轮限定工程已完成，不按历史交接重复施工。唯一合同[V2_5_METHOD_RESEARCH.md](V2_5_METHOD_RESEARCH.md)，ADR007；实际状态只读[CURRENT_IMPLEMENTATION.md](CURRENT_IMPLEMENTATION.md)。精确命令/源/输入/退出与两条模型轨迹见唯一V2.5日志§9。59新用例与四浏览器模式通过，全仓2历史失败保留，不称全面验收通过。

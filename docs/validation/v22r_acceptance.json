@@ -1,5 +1,6 @@
 {
   "schema_version": "v22r_acceptance_v1",
+  "v25_repairs_20261020": {"receipt":"docs/validation/v25_repair_acceptance.json","status":"scoped_engineering_complete_overall_regression_PARTIAL","historical_clause_states_unchanged":true,"live_human_financial":"NOT_RUN"},
   "v24_receipt_input_review_20261014": {
     "base_sha": "2fcdd23d4bad27d646f83143dfe1f80ac26a9a6f",
     "fix_sha": "08ca0555a9c1167bce552b94be10ebd411285d33",
