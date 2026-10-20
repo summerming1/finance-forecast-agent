@@ -8,6 +8,7 @@ import random
 import re
 import subprocess
 import sys
+import threading
 import time
 import uuid
 from dataclasses import asdict, dataclass
@@ -157,20 +158,34 @@ class OpenAIJsonClient:
         proc=subprocess.Popen([sys.executable,str(Path(__file__).with_name('llm_transport.py'))],
               stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL)
         started=time.monotonic()
+        done=threading.Event()
+        result={}
+
+        def exchange():
+            # One owner retains partial input on POSIX and owns the blocking
+            # Windows stdin write. Never re-enter communicate during cleanup.
+            try:
+                result['output'],_=proc.communicate(input=json.dumps(request).encode())
+            except Exception:  # noqa: BLE001 -- private thread boundary must never log request bytes
+                result['failed']=True  # Do not export pipe errors or request bytes.
+            finally:
+                done.set()
+
+        io=threading.Thread(target=exchange,name='provider-pipe-io',daemon=True)
         try:
-            first=True
+            io.start()
             while True:
                 self._check()
                 left=remaining-(time.monotonic()-started)
                 if left<=0:
                     raise ProviderFailure('call_deadline',delivery_status='unknown',usage_known=False)
-                try:
-                    output,_=proc.communicate(input=json.dumps(request).encode() if first else None,timeout=min(.1,left))
+                if done.wait(min(.1,left)):
+                    # Cancellation wins if it is observable at delivery time.
+                    self._check()
                     break
-                except subprocess.TimeoutExpired:
-                    first=False
-            if proc.returncode:
+            if result.get('failed') or proc.returncode:
                 raise ProviderFailure('transport_process_failed',delivery_status='unknown',usage_known=False)
+            output=result['output']
             if len(output)>self.policy.max_response_bytes*2:
                 raise ProviderFailure('invalid_output',reason='response_too_large',usage_known=False)
             try:
@@ -178,9 +193,25 @@ class OpenAIJsonClient:
             except (ValueError,UnicodeError) as exc:
                 raise ProviderFailure('invalid_output',reason='transport_invalid_json',usage_known=False) from exc
         finally:
-            if proc.poll() is None:
-                proc.kill()
-            proc.communicate()  # reap on cancellation/deadline; no unbounded network thread
+            original=sys.exc_info()[1]
+            cleanup_failed=False
+            try:
+                if proc.poll() is None:
+                    proc.kill()
+            except OSError:
+                cleanup_failed=proc.poll() is None
+            try:
+                proc.wait(timeout=.5)
+            except (OSError,subprocess.TimeoutExpired):
+                cleanup_failed=True
+            if io.ident is not None:
+                io.join(timeout=.5)
+                cleanup_failed=cleanup_failed or io.is_alive()
+            if cleanup_failed:
+                if isinstance(original,ProviderFailure):
+                    original.details['cleanup_status']='incomplete'
+                elif original is None:
+                    raise ProviderFailure('transport_cleanup_failed',delivery_status='unknown',usage_known=False)
 
     def complete_json(self, *, prompt_payload: dict[str,Any], schema_name: str) -> dict[str,Any]:
         prompt=(f'You are extracting schema {schema_name}. Return only valid JSON. '

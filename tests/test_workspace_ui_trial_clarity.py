@@ -70,8 +70,10 @@ global.rpc=async(a,args)=>{calls++;sent={a,args};return {download:{}}}; global.d
  assert.equal(confirmedContext.candidate_id,base.id);
  for(const s of ['确认额外训练1次','不调用 LLM','2020-01-01','2021-01-01','不产生新的样本外'])assert(modal.includes(s),s);
  await act('close-modal',{}); assert.equal(calls,0);
+ child.candidate.training_policy={mode:'rolling',sessions:504};
  await act('refit',{dataset:{scope:'other',candidate:'child'}});
  assert(modal.includes('非最终推荐'));
+ for(const s of ['最近 504 个成熟且合格','不是最终拟合范围','不是选中训练行数','training_asof','不足时拒绝'])assert(modal.includes(s),s);
  assert.equal(confirmedContext.candidate_id,'child');
  await act('confirm-refit',{}); assert.equal(calls,1);
  assert.equal(sent.args.candidate_id,'child');

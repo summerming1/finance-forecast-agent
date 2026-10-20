@@ -9,6 +9,7 @@ or assistant-authored replay run is plumbing evidence, not live Agent quality.
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import random
 import time
@@ -19,7 +20,7 @@ from pathlib import Path
 import numpy as np
 
 from .focused_adaptive import SEARCH_SPACE, EvidenceIndex
-from .focused_identity import identity, target_row_ids
+from .focused_identity import canonical_json, identity, target_row_ids
 from .focused_protocol import EvaluationPolicy, FocusedSplitSpec
 from .focused_research import (
     DEFAULT_BASELINES,
@@ -348,6 +349,71 @@ def _research_best(report: dict) -> dict | None:
     return min(rows, key=lambda r: r["metrics"]["mae"]) if rows else None
 
 
+def _frozen_recommendation(controller, final: dict) -> dict:
+    """Read-only delivery projection of this Campaign's original frozen choice.
+
+    Missing legacy records are not reselected. Corruption is an error, not a
+    successful arm with an omitted metric. Different arms need not have the
+    same execution hash; each choice must belong to its own execution.
+    """
+    runtime = controller._runtime
+    stored = runtime.get('recommendation')
+    if stored is None:
+        return {'schema_version': 'benchmark_frozen_recommendation_v1',
+            'status': 'missing_frozen_record' if final.get('diagnostic_research') else 'missing_legacy_record',
+            'paired_eligible': False, 'body': None}
+    body = stored.get('body', {})
+    digest = hashlib.sha256((canonical_json(body) + '\n').encode()).hexdigest()
+    refs = stored.get('artifacts', [])
+    if not refs or any(ref['sha256'] != digest for ref in refs):
+        raise ValueError('recommendation database/export binding mismatch')
+    runtime.verify_artifacts(refs)
+    if any(json.loads((runtime.root / ref['path']).read_text(encoding='utf-8')) != body for ref in refs):
+        raise ValueError('recommendation export differs from frozen body')
+    expected = identity({k: v for k, v in body.items() if k != 'recommendation_hash'}, domain='frozen-recommendation-v1')
+    if body.get('recommendation_hash') != expected:
+        raise ValueError('recommendation hash mismatch')
+    if body.get('schema_version') != 'frozen_recommendation_v1':
+        return {'schema_version': 'benchmark_frozen_recommendation_v1',
+            'status': 'incompatible_schema', 'paired_eligible': False, 'body': None}
+    policy = controller.diagnostic_policy
+    contexts = [identity(runtime.get(f"prompt:{r['round_index']}"), domain='diagnostic-context-v1') for r in final.get('rounds', [])]
+    if (body.get('execution_contract_hash') != runtime.contract_hash
+            or final.get('execution_contract_hash') != runtime.contract_hash
+            or final.get('campaign', {}).get('campaign_id') != runtime.campaign_id
+            or body.get('dataset_fingerprint') != controller.dataset.semantic_fingerprint
+            or body.get('policy_hash') != identity(policy, domain='diagnostic-policy-v1')
+            or body.get('selection_policy') != policy['selection_policy']
+            or body.get('context_hashes') != contexts
+            or body.get('execution_status') != final.get('execution_status')
+            or body.get('outer_labels_accessed') is not False
+            or final.get('diagnostic_research', {}).get('recommendation') != body):
+        raise ValueError('recommendation campaign/contract/data/policy/context/status mismatch')
+    target = None
+    # Validate every projected role, not only the winner's self hash.
+    for key in ('research_start', 'best_research_candidate', 'selected_recommendation', 'best_available_model'):
+        choice = body.get(key)
+        if choice is None:
+            continue
+        accepted = runtime.accepted(choice['candidate_id'])
+        if not accepted:
+            raise ValueError('recommendation references an unaccepted result')
+        row = accepted['row'].get('result') or accepted['row']
+        artifact = json.loads((runtime.root / row['prediction_artifact_ref']).read_text(encoding='utf-8'))
+        if (choice.get('candidate') != row['candidate'] or choice.get('metrics') != row['metrics']
+                or choice.get('prediction_hash') != identity(artifact, domain='diagnostic-prediction-v1')):
+            raise ValueError('recommendation accepted candidate/metrics/prediction mismatch')
+        keys = [(r['fold_id'], r['row_id']) for r in artifact['rows']]
+        current_target = identity(keys, domain='benchmark-evaluation-targets-v1')
+        if target is not None and target != current_target:
+            raise ValueError('recommendation target identity mismatch')
+        target = current_target
+    selected = body.get('selected_recommendation')
+    return {'schema_version': 'benchmark_frozen_recommendation_v1', 'status': 'verified',
+        'body': body, 'campaign_id': runtime.campaign_id, 'selected_target_hash': target,
+        'paired_eligible': final.get('execution_status') == 'completed' and selected is not None}
+
+
 def _report(controller, *, error: Exception | None, elapsed: float, comparison_contract: dict, algorithm: dict) -> dict:
     runtime = controller._runtime
     if runtime is None:
@@ -413,6 +479,11 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
     }
     decisions = [x for x in calls if x.get("telemetry")]
     final = objects.get("final") or objects.get("pause") or {}
+    recommendation = _frozen_recommendation(controller, final)
+    if error is not None:
+        # A later export/invocation failure cannot rewrite an already frozen
+        # choice, and cannot enter a successful recommendation comparison.
+        recommendation['paired_eligible'] = False
     round_items = [item for key, obj in objects.items() if key.startswith("round:") for item in obj["items"]]
     report = {
         "schema_version": "focused_benchmark_arm_v3",
@@ -435,6 +506,7 @@ def _report(controller, *, error: Exception | None, elapsed: float, comparison_c
         "best": best,
         "baseline": baseline,
         **selection,
+        "frozen_recommendation": recommendation,
         "fold_stability": {
             "mae_by_fold": [x["mae"] for x in best["fold_metrics"]],
             "mae_std": float(np.std([x["mae"] for x in best["fold_metrics"]])),
@@ -723,9 +795,39 @@ def benchmark_summary(arms: list[dict]) -> dict:
     if len({identity(c, domain="llm-strategy-contract") for c in llm_contracts}) > 1:
         raise ValueError("LLM arms changed model or provider policy")
     paired = []
+    delivery_pairs = []
+    for report in arms:
+        projection = report.get('frozen_recommendation') or {}
+        body = projection.get('body')
+        if body is not None:
+            expected = identity({k: v for k, v in body.items() if k != 'recommendation_hash'}, domain='frozen-recommendation-v1')
+            if (body.get('recommendation_hash') != expected
+                    or body.get('execution_contract_hash') != report['execution_contract_hash']
+                    or projection.get('campaign_id') != report['campaign_id']
+                    or (body.get('execution_status') != report['execution_status']
+                        and not (report['execution_status'] == 'failed' and report.get('error_type')))):
+                raise ValueError('benchmark recommendation report binding mismatch')
     for left in arms:
         for right in arms:
             left_best, right_best = _research_best(left), _research_best(right)
+            if left['arm'] < right['arm']:
+                lp, rp = left.get('frozen_recommendation') or {}, right.get('frozen_recommendation') or {}
+                ls, rs = (lp.get('body') or {}).get('selected_recommendation'), (rp.get('body') or {}).get('selected_recommendation')
+                comparable = (lp.get('paired_eligible') and rp.get('paired_eligible') and ls and rs
+                    and left['execution_status'] == right['execution_status'] == 'completed'
+                    and lp.get('selected_target_hash') == rp.get('selected_target_hash') == left.get('comparison_target_hash') == right.get('comparison_target_hash')
+                    and left.get('comparison_target_hash'))
+                delivery_pairs.append({'left': left['arm'], 'right': right['arm'],
+                    'best_research_mae_delta': (left_best['metrics']['mae'] - right_best['metrics']['mae'])
+                        if left_best and right_best and left['execution_status'] == right['execution_status'] == 'completed'
+                        and left.get('comparison_target_hash') and right.get('comparison_target_hash') else None,
+                    'recommended_mae_delta': ls['metrics']['mae'] - rs['metrics']['mae'] if comparable else None,
+                    'recommendation_comparable': bool(comparable),
+                    'reason': ('verified_completed_same_targets' if comparable else
+                        'incomplete_execution' if left['execution_status'] != 'completed' or right['execution_status'] != 'completed' else
+                        'missing_or_incompatible_record' if not ls or not rs else 'incompatible_targets'),
+                    'left_recommendation_status': lp.get('status', 'missing_legacy_record'),
+                    'right_recommendation_status': rp.get('status', 'missing_legacy_record')})
             if (left["arm"] < right["arm"] and left_best and right_best
                     and left.get("comparison_target_hash") and right.get("comparison_target_hash")
                     and left["execution_status"] == right["execution_status"] == "completed"):
@@ -740,6 +842,14 @@ def benchmark_summary(arms: list[dict]) -> dict:
         "schema_version": "focused_agent_value_benchmark_v2",
         "arms": arms,
         "paired_comparisons": paired,
+        "delivery_comparison_version": "frozen_recommendation_comparison_v1",
+        "delivery_comparison_semantics": {
+            "deltas": "left MAE minus right MAE; absolute next-session return units; negative means left is better",
+            "best_research_mae_delta": "research candidates only; null if no completed research result",
+            "recommended_mae_delta": "original frozen selected recommendations only; completed and same targets required",
+            "per_arm_gain": "frozen_recommendation.body.recommendation_gain_vs_start is a separate ratio against that arm's own start",
+            "legacy_mae_delta": "paired_comparisons.mae_delta retains best-research left-minus-right semantics"},
+        "delivery_comparisons": delivery_pairs,
         "agent_superiority_claim": False,
         "comparison_contract_hash": arms[0]["comparison_contract_hash"],
         "engineering_complete": all(a["execution_status"] == "completed" for a in arms),

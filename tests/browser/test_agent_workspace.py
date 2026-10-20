@@ -186,6 +186,9 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             frame.locator("#draft-notes").fill("Browser synthetic integration — no paid provider")
             if price_features:
                 frame.locator("#draft-change_scope").select_option("feature_window" if price_features == "v25" else "price_features")
+                if price_features == 'v25':
+                    expect(frame.locator('#draft-change_scope')).to_have_value('feature_window')
+                    assert frame.locator('#draft-change_scope option[selected]').count() == 1
             click("wizard-next")
             if not price_features:
                 frame.locator("#draft-input_kind").select_option("controlled")
@@ -201,11 +204,21 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                     control.uncheck()
             frame.locator("#draft-data_consent").check()
             click("wizard-next")
-            frame.locator('[data-action="draft-preset"][data-value="custom"]').click()
-            for key, value in {"max_rounds": 2 if price_features in {"v24", "v25"} else 1,
-                               "max_new_candidates_per_round": 2,
-                               "max_fit_calls": 32 if price_features in {"v24", "v25"} else 20}.items():
-                frame.locator("#draft-" + key).fill(str(value))
+            if price_features == 'v25':
+                # Exercise the default quick path, not a custom-budget bypass.
+                frame.locator('#draft-feature_arm').select_option('one_shot')
+                click('preflight')
+                expect(frame.locator('.contract-summary')).to_contain_text('服务器预检通过')
+                budget = frame.locator('body').evaluate('() => S.preview.budget')
+                assert budget['max_rounds'] == 1 and budget['max_new_candidates_per_round'] == 2
+                assert budget['max_fit_calls'] == 32 and counts() == (0, 0)
+                frame.locator('#draft-feature_arm').select_option('adaptive_batch')
+            else:
+                frame.locator('[data-action="draft-preset"][data-value="custom"]').click()
+                for key, value in {"max_rounds": 2 if price_features == "v24" else 1,
+                                   "max_new_candidates_per_round": 2,
+                                   "max_fit_calls": 32 if price_features == "v24" else 20}.items():
+                    frame.locator("#draft-" + key).fill(str(value))
             if price_features in {"v24", "v25"}:
                 frame.locator("#draft-diagnostic_mode").select_option("on")
             before = counts()

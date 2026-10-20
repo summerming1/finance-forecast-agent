@@ -87,6 +87,10 @@ def test_original_workspace_worker_package_recommendation_refit_and_continuation
     refit_args={'project_id':project,'campaign_id':campaign,'candidate_id':candidate_id,'confirmed':True}
     result=service.execute('refit',refit_args,'refit-method')
     assert result['refit_id']
+    # The same RPC operation must return its original receipt, not a second fit.
+    assert service.execute('refit',refit_args,'refit-method') == result
+    refreshed=service.snapshot(project,campaign)['current']
+    assert len(refreshed['delivery']['by_candidate'][candidate_id]['refits']) == 1
     continued=service.execute('preview_continue',refit_args,'preview-method')
     assert continued['preview_fit_calls']==0
     child=service.execute('continue',refit_args,'continue-method')

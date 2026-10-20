@@ -134,7 +134,9 @@ class WorkspaceUI:
             raise ValueError('Replay call mapping supplied for a non-Replay run')
         if form.get('preset', 'quick') == 'quick':
             if method_mode:
-                budget = ResearchBudget(max_rounds=2, max_new_candidates_per_round=2, max_fit_calls=32)
+                one_shot = (options.get('feature_strategy') or {}).get('arm') == 'one_shot'
+                budget = ResearchBudget(max_rounds=1 if one_shot else 2,
+                    max_new_candidates_per_round=2, max_fit_calls=32)
             elif price_mode:
                 one_shot = (options.get('feature_strategy') or {}).get('arm') == 'one_shot'
                 budget = ResearchBudget(max_rounds=1, max_new_candidates_per_round=1,
