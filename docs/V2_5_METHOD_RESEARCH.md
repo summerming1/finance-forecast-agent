@@ -569,3 +569,174 @@ exit0，返回`5d3f57687592b46693e687cc0611bd492adac065`，与当时本地一致
 4通过/4.44s/exit0；`git diff --check` exit0。242个已验源码/测试文件逐文件与修补收据相同，
 仅7个MD变化，原验收JSON及本地原始收据未改。本次不重复全仓或浏览器，不触发训练/Provider。
 状态同步为后续本地文档提交，尚未推送；前述5d3f576是已核实的修补交付SHA，不冒称本次文档SHA。
+
+## 13 所有者A反馈修复与三阶段补测（2026-10-20—21）
+
+本批基线b29142a5a99107dbd407dc9cc23745c39c71e0f8，原分支不变。
+用户要求先修实际界面阻塞，验证后做三阶段补测并汇总；不重开N0—N5、不改路线。
+原A/B数据库、曝光、额外refit和旧包只读保留，不修改旧合同恢复或替所有者签字。
+
+### 13.1 实际反馈与已实施的最小修复
+
+所有者A=StandardScaler+Ridge(alpha=10)、base_lags、扩展起点；本次实际Campaign
+`persistent-48505fe9ae2131256a34c174`，原B身份不变。
+用户原ZIP SHA256=12b3a7fb9f9c339229b0c3fa7e6b76b010c6aedfe0092ff31dbbb4af3e72b075，
+原行情5fb282f6278d14000592e0e432fe69a5c00fdb6f7b48cbb56368fc0e3185bbcd。
+只读审计49索引文件/10份预测，各252相同评价目标，四fold指标/原标签复算及
+20个Ridge fold的Scaler训练行统计一致；不是新训练、独立确认或许可认证。
+A使用28研究fits、HTTP0、2计划/3实际候选，无额外refit；推荐R1C1 MAE
+0.005290705400779901，相对alpha10起点降低0.320553%，达到原0.25%开发门槛。
+窗口504两项均变差，负结果保留；不能因此证明特征机制、显著性或收益可交易。
+
+实际体验问题：所有者无法理解英文JSON；期待实验报告但ZIP仅原始证据；
+步骤标题不可点；登记输入填入后仍显示手动；旧包校验失败仅英文；启动相对目录风险。
+这些是失败/阻塞，不记作用户未测试，也不把先前助手解释算首次理解通过。
+
+实现仅沿原投影/导出/向导：中文上一轮事实和本轮控制/改动/比较，原JSON折叠，
+规则来源明确非LLM；REPORT.html加入原ZIP及SHA256索引，转义HTML且不外联，
+受限导出不重新带入叙述；步骤按钮沿原校验；输入匹配原路径；错误中文指导仍拒绝不可信旧包。
+新启动脚本必须原绝对DB/项目路径且拒绝缺失DB，不设置全局环境或清理状态。
+Windows C:relative与根相对路径也必须拒绝。
+
+### 13.2 本批预登记的三阶段与授权
+
+阶段1：合成/零fit的历史结果扰动、两轴选择/合法控制/预算负例，及中文/受限导出/
+步骤校验；报告不从最低MAE重选推荐。阶段2：既有原Controller/worker的两轮与
+One-shot、缓存/中断恢复/三层训练范围/真实fit账本/窗口一致refit与新进程推理，
+四模式Chromium及冻结完整回归。合成结果与原A只读审计分别记录。
+阶段3：真实Provider有限语义挑战、严格录制回放及独立两轮研究；不拿规则模板
+或自拟LLM fixture证明真实模型质量，不预设Adaptive必须赢或必须换轴。
+
+用户批准：现有百炼配置，模型按deepseek-v4.1-flash-1017、deepseek-v4.1-flash、
+glm-5.3、deepseek-v4-pro-0813、qwen3.8-max、qwen3.7-flash顺序，仅额度错误切换。
+最多6次冻结语义挑战+2次研究规划，合计HTTP≤16（失败也计）、每次输出≤4000token、
+每次超时≤180秒、Provider活动≤1800秒。只发送SPY合同、alpha10配置及获准诊断/
+汇总指标/反馈；不发原始行情、逐行标签/预测、权重或文献。不购买额度；
+用户确认账号已设免费用尽即停，API本身不能核实账单，金额未知不能写0。
+新真实行情Campaign/refit具体计算额度仍待答复，不沿用旧A的一次训练授权。
+随后用户明确批准上述3个隔离Campaign、每个研究fit≤32及额外refit≤2；
+因此本批可执行这些新计算，不改原A/B库，不读独立确认标签。
+模型不在已冻结Campaign中静默替换；中途额度失败保留状态，不能改旧hash继续。
+
+### 13.3 测试运行日志（待最终补全）
+
+所有证据在隔离.v25owner，原失败不覆盖。初始4项红例失败；Node测试render stub修正
+前的1项失败保留。新增legacy缺失声明轴负例由失败转通过，不补造轴。
+定向最终10通过/8.10秒/exit0（absolute-path.xml），包括Windows三类非完整路径拒绝。
+受限sandbox导致原实际回环HTTP失败transport_unavailable；原断言不变、
+获准本机回环后31通过/7.91秒（loopback.xml），不是外部Provider稳定性证明。
+首次全仓因新增路径边界复核而主动中止，保存final/regression，不计通过；
+最后功能修改后的完整回归重新开始于final2/regression，最终结果尚未取得。
+浏览器阶段与最终源/输入/依赖绑定、命令/exit/语义判断后续按实际收据追加。
+原两项历史失败、平台/native/旧48条A/L和47目标负确认不因本批数量关闭。
+
+### 13.4 已取得的阶段证据（2026-10-21追加；最终冻结仍在进行）
+
+最后备注修正前的final3完整回归999项逐条覆盖，990通过/2历史失败/7跳过，
+exit1。两失败仍为原DLinear 2c05bfd22af27435.json缺失及Windows symlink权限；
+未放宽、删除或换fixture。首次final3浏览器2通过/2等待完成失败（原120秒门槛），
+与全仓并发时出现；同源码复跑未改门槛，首轮失败保留，不能直接归因为机器慢。
+原Research Workspace也出现续接URL未在原5秒内变化的失败，非首次标题失败；
+不借用上一批成功关闭本批就绪稳定性问题。
+视觉/真实A只读复核另发现报告备注实际字段为research_options.notes：新增原样
+负例1失败，再以原字段及明确旧fallback修正，定向11通过/10.17秒/exit0。
+此后最终全仓重新冻结于final4/regression；未结束不写通过。
+
+三条获准真实开发批次在.v25owner/real-{adaptive,one_shot,live}，均新建隔离库，
+同5fb282原字节、alpha10/base_lags/seed42、诊断ON、同252评价目标（4×63）。
+Adaptive实际28研究fit/2计划/3候选；One-shot32fit/1冻结计划/4候选；HTTP均0。
+二者同样推荐20日收益均值+扩展窗口，MAE=0.005290705400779901，
+相对用户起点改善0.320553%。公共对象指标逐值相同，Adaptive复现原A全部指标。
+这只支持等预算上限下本例推荐相同，不支持Adaptive胜过One-shot；实际fit不相等，
+并发/等待条件不同，不能比较97.21与93.19秒宣称效率优势。
+
+Adaptive另显式重训两项已接受rolling504候选，各1fit：基础滞后收益和保留20日均值
+的组合。实际均选504行，生成特征保持；新进程分别4018/4004行无标签预测逐值一致。
+最后报告修正源码下再次只读加载预测一致，0新增fit/HTTP。没有删原B的额外重训。
+所有新包索引hash及目标行、公共指标已独立只读核对；本地使用声明不是独立许可或
+point-in-time认证，已暴露历史数据不升级独立确认。
+
+Live六次挑战使用独立简化语义schema和合成汇总，不是生产Advisor完整schema验收。
+实际全用deepseek-v4.1-flash-1017；窗口更好、两者变差、执行失败、fit余量0四题返回
+完整JSON，逐项语义审查为有限通过；首题180秒deadline失败、delivery/usage未知；
+机制未区分题输出4000token全部reasoning、text=0、finish=length，被原严格JSON拒绝。
+因此完整反事实轴对照/机制边界挑战未通过，不用别题回答替代；4/6不是统计质量估计。
+六份不可变记录按明确call_id严格离线回放：四份逐值一致，两份失败记录拒作成功。
+已知用量合计12186token，首题用量未知，费用null，不写免费金额=0。
+
+真实Live Campaign首轮HTTP发生SSLError/transport_unavailable，进入waiting_provider，
+保留16次固定对照/用户起点fit，没有研究候选。预定两轮闭环BLOCKED_PROVIDER，
+不能写研究无改善或模型不懂合同。未关闭TLS校验、改模型/预算/hash或第三次规划。
+测试脚本的“只支持完整包”复算器在partial ZIP上另报KeyError：原失败收据保留；
+独立partial包hash/基线制品/失败Replay审计通过，不把它说成产品导出失败或Live完成。
+全部真实发送合计HTTP7、计账活动约402.88秒，真实研究fit76+显式refit2，均在批准上限内。
+没有额度错误，故没有切换后五个模型；模拟额度保护通过不等于真实fallback或余额核验。
+
+### 13.5 覆盖判断与真人边界（最终结果补全前的限定判断）
+
+两轴完整控制继承、单轴/隐藏参数拒绝、成熟eligible→精确窗口→Scaler实际fit、
+方法缓存与独立观察、研究认识更新原反馈链接、预算/暂停/kill恢复/续接、
+推荐与当前查看隔离、窗口一致可信交付均由本批原测试及真实只读/新隔离计算覆盖。
+新增test_v25_axis_policy三项扰动证明有限参考规则会随已有MAE选择不同合法控制/轴，
+不是证明Agent理解市场机制；规则实际是预设有限分支，并非两轴全局优化。
+原V2.5 59项和上一批40项测试纳入完整回归，独立用例数量不重复累加。
+
+仍缺：生产schema下真实LLM两轮实际更新/执行闭环、真实额度切换、LLM选择增量价值、
+独立金融确认、同SHA远端CI/未授权native平台。上述不是都必须真人执行的项目；
+应分别补网络/Provider、预算内自动工程及合格独立数据协议，不能混成一份“真人待测”。
+必须真人的部分：所有者无需助手解释的中文摘要/报告理解复核；独立目标用户A/B入口
+真实任务、主动时间/帮助/错误；账号免费策略及资料许可/时点的责任人确认。
+所有者已听过解释，后续不称首次无辅助理解；机器不代签G6或代表性可用性。
+
+### 13.6 最后功能修改后的最终冻结回归
+
+final4/regression四分片已结束。999适用项逐条对账，无缺失/额外/重复；
+990通过、2历史失败、7跳过，实际aggregate exit1。两个失败nodeid仍为
+`test_p1_real_validation_artifacts::test_dlinear_strict_live_card_replays_without_an_api_call`
+（原2c05bfd22af27435录制缺失）和
+`test_focused_r4_trust::test_model_bundle_tamper_rejected_before_load[symlink]`
+（WinError1314）。不放宽原断言、不下载替代录制、不改系统权限求绿。
+244个py/js/html/css源码/测试文件四个start/end及当前相同，摘要
+8a543ee59daa11b0d8d2aedaec83d2e885415f06ac09b78949cc1ea1dac31d42；
+新PowerShell启动脚本另以正向/拒绝负例及单独hash绑定，不混称包含在244内。
+新定向11项已含在990中；Ruff/compile/三JS/差异空白6项静态检查均exit0。
+原2个未授权real/native harness保持deselect，不冒称它们执行。
+
+从System32启动原明确绝对测试DB的正向检查通过并关闭本测试服务；不创建空库。
+原A的独立新只读中文HTML在1280/700实际Chromium渲染通过，原ZIP不改。
+此时完整回归已完成，最终独立Agent四模式及旧Research Workspace浏览器继续复核；
+其结果取得前不写无界面问题或全面产品验收通过。此前等待失败和源改变前阶段记录保持。
+
+### 13.7 最终浏览器与交付封存
+
+最终四模式命令仍为原test_agent_workspace.py及原断言：final4/browser合跑
+3通过/1失败，466.45秒/exit1。失败为V2.5在context.new_page重新打开页面时
+`Target crashed`，不是指标或合同失败，但仍是实际浏览器失败，不能删除或直接归因环境。
+单独执行原V2.5 node、不改断言/超时：final4/browser-v25-isolated，
+1通过/193.18秒/exit0，23项检查、page_errors为空；包括步骤导航、中文事实、
+报告hash/实际渲染、700窄屏、可信交付、重开恢复、父任务不变和无Provider。
+它覆盖本次可复现修复路径，不证明合跑崩溃/冷启动等待风险消失。
+
+代码和测试本地封存为bc327dc（测试执行HEAD仍为b29142a及相同工作区字节），
+未推送或运行远端CI。原Research Workspace最后复核1失败/130.91秒/exit1，
+仍在原line222的续接URL 5秒等待；前面的队列、切换、重开、下载/索引、显式refit及
+历史打开已走过，但子任务后续断言未取得，不补记通过。与此前同类失败分开保存。
+本批不追加真实研究/模型重训/外部调用来追求全绿，也不以延长断言掩盖。
+
+本批结论PARTIAL_BROWSER_FAILURE_LIVE_BLOCKED_HUMAN_OPEN：核心两轴/本地交付
+重点已有工程与限定真实开发证据，但未达到“界面没有问题且全部补测通过”。浏览器
+稳定性/旧工作区续接、生产Live两轮和真实额度切换均保持缺口；不是所有者或金融验收。
+唯一可分发机器索引[本批收据](validation/v25_owner_recheck.json)，原始本地封存
+.v25owner/final4/delivery_receipt.json；244源字节、依赖、声明输入、各JUnit及
+真实预算逐项绑定核对通过。原A-L条款JSON未改，正式路线不变。
+
+本地TEST_RESULTS.html为可读测试总结；A_EXPERIMENT_REPORT.html仅为原A的新增只读
+中文投影，不改旧ZIP、不用于新预测。需要真人的理解/独立操作/责任人确认与可自动补的
+网络/策略/独立数据验证分开列出。当前配置凭证精确扫描374个文本文件无命中；
+不等于全面安全审计，后续新增文件须另核。文档收口检查及提交身份后续追加。
+
+文档收口命令：`PYTHONPATH=src;tests;apps;scripts`下运行
+`.venv/Scripts/python.exe -m pytest -q tests/test_focused_r0_status.py tests/test_focused_b0_plan.py --basetemp=.t25owner-finaldocs --junitxml=.v25owner/final4/docs.xml --tb=short`，
+4通过/2.53秒/exit0；`git diff --check` exit0。测试总结在1280/700实际渲染，
+窄屏无横溢、无pageerror/外联；技术原始收据与可读报告分离。G6准入未满足前
+不自动邀请独立用户，当前仍是所有者复核及工程/Provider缺口。

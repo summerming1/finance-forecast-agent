@@ -1,4 +1,23 @@
 # Agent 风格研究工作区：接入与使用
+
+## 2026-10-20 所有者反馈修复（补测进行中）
+
+三步标题可回到已填步骤；向前仍执行原项目/数据声明校验，不直接开始研究。
+已登记输入按原数据及元数据路径显示选中项，编辑不自动训练。
+研究认识更新先显示中文的上一轮结果、实际控制/单轴改动和局部比较；
+原英文研究理由及JSON放在技术详情中，缺失理由不补造，规则演示明确不是LLM判断。
+研究包导出沿原权威增加带哈希的REPORT.html；解压后先打开它阅读实验报告。
+报告不能生成新预测，模型包仍需显式额外refit及可信登记；受限资料不因报告重新泄露。
+旧包编译源码不匹配时保留拒绝并解释原因，不自动重训/重签hash。
+
+已有工作区推荐明确指定原绝对路径启动（端口已占用时选择空闲端口）：
+
+```powershell
+& 'D:/AI Agent/finance_forecast_agent_v1/scripts/start_workspace.ps1' -StateDb 'D:/AI Agent/finance_forecast_agent_v1/.pr14b/runtime.sqlite3' -ProjectDir 'D:/AI Agent/finance_forecast_agent_v1/.pr14b/goal' -Port 8515
+```
+
+启动脚本拒绝缺失数据库、相对/驱动器相对路径，不创建替代空库；只设置本进程环境。
+实际验收以CURRENT_IMPLEMENTATION及V2.5日志§13为准，不把本说明当通过结果。
 ## V2.5操作增补（2026-10-19）
 
 2026-10-20定向修补：范围选项只允许一个selected；快速预算区分一次冻结的

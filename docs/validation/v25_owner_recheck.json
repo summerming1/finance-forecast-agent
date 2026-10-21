@@ -1,0 +1,118 @@
+{
+  "agent_browser": {
+    "actual_exit": 1,
+    "failed": 1,
+    "failure": "v25 Target crashed",
+    "junit_sha256": "1cdb28a34d35ce0bf64a20dfa7ef276b8a24f3937c6d7cf1c061e7789ce1dd0c",
+    "passed": 3,
+    "tests": 4
+  },
+  "agent_browser_isolated_retry": {
+    "actual_exit": 0,
+    "junit_sha256": "15d5a451fa0db5692e5d9fa044be3d3f1fc62968b1dc230fe3647b4d29f75285",
+    "tests": 1
+  },
+  "code_commit": "bc327dc42397189735dabc0ef479df0ab57855fb",
+  "coverage": {
+    "actual": 999,
+    "duplicate_count": 0,
+    "exact": true,
+    "expected": 999,
+    "extra": [],
+    "missing": []
+  },
+  "evidence_roots": [
+    ".v25owner/final4",
+    ".v25owner/live-challenges",
+    ".v25owner/real-adaptive",
+    ".v25owner/real-one_shot",
+    ".v25owner/real-live"
+  ],
+  "execution_head": "b29142a5a99107dbd407dc9cc23745c39c71e0f8",
+  "final_source_readonly_inference": {
+    "HTTP": 0,
+    "bundles": [
+      {
+        "final_source_prediction": "PASS_EXACT_ZERO_REFIT",
+        "id": "r1_c2_b978aae9",
+        "rows": 4018
+      },
+      {
+        "final_source_prediction": "PASS_EXACT_ZERO_REFIT",
+        "id": "r2_c1_de043b5a",
+        "rows": 4004
+      }
+    ],
+    "new_fits": 0
+  },
+  "financial_confirmation": "NOT_RUN",
+  "full_regression": {
+    "aggregate_exit": 1,
+    "applicable": 999,
+    "failed_historical": 2,
+    "passed": 990,
+    "skipped": 7
+  },
+  "historical_failures": [
+    "tests.test_p1_real_validation_artifacts::test_dlinear_strict_live_card_replays_without_an_api_call",
+    "tests.test_focused_r4_trust::test_model_bundle_tamper_rejected_before_load[symlink]"
+  ],
+  "human_acceptance": null,
+  "known_risks": [
+    "Browser completion/readiness failed earlier; final four-mode run had a v25 Target crashed, retained. Isolated retry does not prove zero flake risk; no timeout changes",
+    "Six small custom-schema semantic probes do not validate full Advisor schema or comparative value",
+    "Production Live paused on SSL transport, no research candidates or second-round update",
+    "No live quota exhaustion occurred; remaining model aliases untested",
+    "Historical adjusted Yahoo prices and the same 252 exposed targets are not independent confirmation"
+  ],
+  "original_evidence_preserved": true,
+  "overall": "PARTIAL_BROWSER_FAILURE_LIVE_BLOCKED_HUMAN_OPEN",
+  "production_policy_changed": false,
+  "push_this_batch": "NOT_RUN",
+  "real_totals": {
+    "HTTP": 7,
+    "cost": null,
+    "explicit_refits": 2,
+    "production_live": "BLOCKED_PROVIDER_SSL",
+    "provider_activity_seconds": 402.88134210009594,
+    "research_fits": 76,
+    "semantic_unassessable": 2,
+    "semantic_valid": 4
+  },
+  "receipt_path": ".v25owner\\final4\\delivery_receipt.json",
+  "receipt_sha256": "96ebc15488ccf116f76785feae1a55b8a476ff5fa5daa6387de1562851ff808a",
+  "remote_CI": "NOT_RUN",
+  "research_browser": {
+    "actual_exit": 1,
+    "junit_sha256": "4470c547a852fadad889f65d16b95381e3bdba45b631fa804c9f8398d4202ec4",
+    "tests": 1
+  },
+  "retained_prior_runs": [
+    ".v25owner/browser-stage",
+    ".v25owner/final/regression (interrupted)",
+    ".v25owner/final2/regression (interrupted)",
+    ".v25owner/final3 (before final notes fix; contains browser failures)",
+    ".v25owner/notes-red.xml",
+    ".v25owner/related-interrupted.json"
+  ],
+  "schema_version": "v25_owner_recheck_acceptance_v1",
+  "scope": "UI fixes and bounded supplemental tests; not owner/independent-user signoff or financial superiority",
+  "source_file_count": 244,
+  "source_hash": "8a543ee59daa11b0d8d2aedaec83d2e885415f06ac09b78949cc1ea1dac31d42",
+  "static_checks": {
+    "additional_source": {
+      "scripts/start_workspace.ps1": "7defbf0420ea1f8b54a0a1daf2b7c9770ab81d7b297c0304f6476e3de7abe124"
+    },
+    "checks": 6,
+    "exits": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "path": ".v25owner\\final4\\static.json",
+    "sha256": "0b869b06f4708528a19ef7e33dee2a7845e64a84c3b7eed159ef55ec48ca8d99"
+  }
+}
