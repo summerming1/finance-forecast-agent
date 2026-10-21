@@ -26,6 +26,7 @@ async function act(action,el){
  case 'draft-mode':S.draft.mode=el.dataset.value;S.draft.live_consent=false;break;
  case 'draft-preset':S.draft.preset=el.dataset.value;break;
  case 'wizard-back':S.draft.step=Math.max(1,S.draft.step-1);S.preview=null;S.error='';render();saveDraft();return;
+ case 'wizard-step':{const target=Number(el.dataset.step);if(!Number.isInteger(target)||target<1||target>3)throw new Error('无效步骤');if(target<S.draft.step){S.draft.step=target;S.preview=null;S.error='';render();saveDraft();return}while(S.draft.step<target)await act('wizard-next',el);return;}
  case 'wizard-next':if(S.draft.step===1&&!S.draft.project_id&&!S.draft.project_dir.trim())throw new Error('请指定本地项目目录。');if(S.draft.step===2&&(!S.draft.raw_path.trim()||!S.draft.data_consent))throw new Error('请选择真实本机数据并明确确认来源和可用时点。');S.draft.step=Math.min(3,S.draft.step+1);S.error='';render();saveDraft();return;
  case 'load-literature':{const root=S.draft.literature_project||S.snapshot.projects.find(p=>p.project_id===S.draft.project_id)?.root||S.draft.project_dir;const r=await rpc('literature',{project_dir:root});S.literature=r.rows;render(true);return}
  case 'preflight':S.error='';S.preview=await rpc('preflight',{form:formPayload()});render(true);return;

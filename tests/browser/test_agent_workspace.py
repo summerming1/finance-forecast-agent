@@ -190,6 +190,11 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                     expect(frame.locator('#draft-change_scope')).to_have_value('feature_window')
                     assert frame.locator('#draft-change_scope option[selected]').count() == 1
             click("wizard-next")
+            if price_features == 'v25':
+                frame.locator('[data-action="wizard-step"][data-step="1"]').click()
+                expect(frame.locator('#draft-change_scope')).to_have_value('feature_window')
+                frame.locator('[data-action="wizard-step"][data-step="2"]').click()
+                report['checks'].append('clickable_steps_preserve_scope_zero_fit')
             if not price_features:
                 frame.locator("#draft-input_kind").select_option("controlled")
             frame.locator("#draft-raw_path").fill(str(raw))
@@ -242,6 +247,12 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
                 report["checks"].append("versioned_diagnostics_and_frozen_recommendation")
                 if price_features == 'v25':
                     expect(frame.locator('[data-testid="research-update"]')).to_have_count(1)
+                    frame.locator('[data-testid="research-update"] > summary').click()
+                    expect(frame.locator('[data-testid="round-review"]')).to_contain_text('上一轮实际结果')
+                    expect(frame.locator('[data-testid="round-review"]')).to_contain_text('不是LLM')
+                    expect(frame.locator('[data-testid="round-review"] details')).not_to_have_attribute('open', '')
+                    page.screenshot(path=str(out / '03_chinese_round_review.png'))
+                    report['checks'].append('chinese_fact_review_with_collapsed_original_json')
                     expect(frame.locator('[data-testid="trial-experiment"]').nth(1)).to_contain_text('训练窗口')
                     for trial in frame.locator('[data-testid="trial-experiment"]').all():
                         expect(trial).not_to_contain_text('不可比 / 未知')
@@ -374,8 +385,21 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             event.value.save_as(str(out / "research_package.zip"))
             with zipfile.ZipFile(out / "research_package.zip") as archive:
                 index = json.loads(archive.read("research_package.json"))
+                assert index['entrypoint'] == 'REPORT.html'
+                readable = archive.read('REPORT.html').decode('utf-8')
+                assert '研究实验报告' in readable and '不包含可加载模型' in readable
+                (out / 'REPORT.html').write_text(readable, encoding='utf-8')
                 for item in index["files"]:
                     assert hashlib.sha256(archive.read(item["path"])).hexdigest() == item["sha256"]
+            report_page = context.new_page()
+            report_page.goto((out / 'REPORT.html').as_uri())
+            expect(report_page.locator('h1')).to_have_text('研究实验报告')
+            expect(report_page.locator('body')).to_contain_text('MAE与评价范围')
+            report_page.screenshot(path=str(out / '08_readable_report.png'), full_page=True)
+            report_page.set_viewport_size({'width': 700, 'height': 900})
+            assert report_page.evaluate('document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1')
+            report_page.close()
+            report['checks'].append('readable_report_rendered_and_hash_indexed')
             if price_features in {'v24', 'v25'}:
                 sys.path.insert(0,str(repo/'scripts'))
                 from run_v24_engineering_validation import audit_package

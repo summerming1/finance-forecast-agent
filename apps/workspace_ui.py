@@ -98,6 +98,13 @@ def render() -> None:
 
 def _error_message(exc: Exception) -> str:
     text = str(exc)[:2000]
+    if 'registered raw-price pipeline or compiler implementation mismatch' in text:
+        text = ('旧模型包绑定的价格处理/特征编译源码与当前版本不同，安全校验已阻止下载或加载。'
+                '这不是额外训练请求。请保留原包和可信登记，在匹配原源码与依赖的环境核验；'
+                '不要改hash、重新登记或重训替代。原始错误：' + text)
+    elif 'Unknown project or tenant mismatch' in text:
+        text = ('当前状态库或租户中找不到此项目。请打开左下角“本地工作区”核对数据库绝对路径和租户；'
+                '不要新建空库替代原研究。原始错误：' + text)
     for key in ("OPENAI_API_KEY", "DASHSCOPE_API_KEY", "TEACHER_API_KEY"):
         value = os.getenv(key)
         if value:

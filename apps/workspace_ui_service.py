@@ -20,7 +20,7 @@ from finance_forecast_agent.focused_literature import literature_choices
 from finance_forecast_agent.focused_protocol import FEATURE_GROUPS
 from finance_forecast_agent.focused_research import FocusedResearchController, ResearchBudget
 from finance_forecast_agent.focused_state import RuntimeDB, now, safe_id
-from finance_forecast_agent.focused_summary import build_candidate_comparison
+from finance_forecast_agent.focused_summary import build_candidate_comparison, build_round_reviews
 from finance_forecast_agent.llm_adapters import OpenAIJsonClient, safe_error_facts
 
 FORM_FIELDS = {
@@ -315,6 +315,7 @@ class WorkspaceUI:
                                  payload, current['accepted_manifests'], r['id'])
                                  for r in candidates if r['role'] == 'research_candidate'},
                              'request': current['request'], 'summary': summary,
+                             'round_reviews': build_round_reviews(payload),
                              'selected_candidate_id': selected, 'candidates': candidates, 'refits': refits,
                              'deliverable': deliverable, 'review': current['review'], 'events': safe_events,
                              'best_comparison': build_candidate_comparison(payload, current['accepted_manifests'], payload['best_candidate_id']) if payload.get('best_candidate_id') else None,

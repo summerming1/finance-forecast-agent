@@ -204,8 +204,16 @@ def build_research_package(
         permitted["reference_summary.json"] = json.dumps(summary,sort_keys=True).encode()
         content_bytes = permitted
         files = [{"path":rel,"sha256":hashlib.sha256(data).hexdigest(),"size":len(data)} for rel,data in sorted(permitted.items())]
+    # Build the human entry only after redistribution filtering; never revive
+    # omitted literature, prompts or narratives in the readable projection.
+    from .focused_summary import render_research_report
+    report = render_research_report(campaign, restricted=restricted).encode('utf-8')
+    content_bytes['REPORT.html'] = report
+    files = [r for r in files if r['path'] != 'REPORT.html']
+    files.append({'path': 'REPORT.html', 'sha256': hashlib.sha256(report).hexdigest(), 'size': len(report)})
     index = {
         "schema_version": "focused_research_package_v1",
+        "entrypoint": "REPORT.html",
         "campaign_id": (campaign.get("campaign") or {}).get("campaign_id", root.name),
         "execution_status": campaign.get("execution_status", "partial_or_interrupted"),
         "research_outcome": campaign.get("research_outcome", "inconclusive"),

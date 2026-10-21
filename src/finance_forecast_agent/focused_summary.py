@@ -6,6 +6,7 @@ This module does not read hidden labels, call a provider, train or mutate state.
 from __future__ import annotations
 
 import copy
+import html
 import math
 
 
@@ -13,6 +14,119 @@ def _number(value):
     if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
         return None
     return value
+
+
+def build_round_reviews(payload: dict) -> list[dict]:
+    """Chinese read-only facts, not a regenerated Advisor explanation or selection."""
+    rounds = payload.get('rounds') or []
+    reviews = []
+    def experiment(item):
+        candidate = item.get('candidate') or {}
+        hypothesis = item.get('hypothesis') or {}
+        info = (item.get('observation') or {}).get('information') or {}
+        value = _number(info.get('relative_mae_improvement'))
+        comparison = ('比较未知：缺少已保存的可比观察' if value is None else
+                      'MAE不变' if value == 0 else
+                      f"MAE{'降低' if value > 0 else '升高'}{abs(value)*100:.3f}%")
+        axis = hypothesis.get('declared_axis')
+        policy = candidate.get('training_policy') or {}
+        if axis == 'training_window':
+            change = ('训练窗口改为最近'+str(policy.get('sessions'))+'个成熟合格监督行' if policy.get('mode') == 'rolling'
+                      else '训练窗口改为扩展窗口' if policy.get('mode') == 'expanding' else '训练窗口：旧记录未保存')
+            change += '；模型、参数与完整特征是否一致请核对已保存的实际配置差异'
+        elif axis == 'features':
+            features = (candidate.get('feature_program') or {}).get('features')
+            change = '特征轴改动；完整公式与增删差异见实验详情，训练窗口以保存配置为准'
+            if features is not None:
+                change += '；本候选生成特征：'+', '.join(f.get('name', '未命名')+' = '+_report_formula(f.get('expression')) for f in features)
+        else:
+            change = ('控制动作：'+str(hypothesis.get('action_type'))+'；未生成新候选' if not candidate else
+                      '旧记录未保存声明轴；实际配置差异见原实验记录，不补造单轴结论')
+        return {'candidate_id': candidate.get('candidate_id') or hypothesis.get('hypothesis_id') or '未生成候选',
+                'control': hypothesis.get('control_candidate_id') or candidate.get('parent_candidate_id') or '未记录',
+                'status': item.get('status', 'unknown'), 'mae': _number((item.get('result') or {}).get('metrics', {}).get('mae')),
+                'comparison': comparison, 'change': change}
+    for position, batch in enumerate(rounds):
+        source = batch.get('advisor_source', '')
+        rule = source == 'deterministic_method_policy'
+        update = batch.get('research_update')
+        reviews.append({'round_index': batch.get('round_index'),
+            'prior_results': [experiment(i) for i in rounds[position-1].get('items', [])] if position else [],
+            'experiments': [experiment(i) for i in batch.get('items', [])],
+            'policy_note': ('有限规则演示，不是LLM研究判断。该参考策略按预设分支及已有研究候选MAE等选择后续合法实验。'
+                            if rule else '展示原已冻结建议；引用有效不代表解释已获证实，不补写缺失的选择理由。'),
+            'recorded_choice_reason': update.get('choice_reason') if isinstance(update, dict) else None,
+            'limitation': '分数只说明本次开发比较；噪声、特征与训练分布等竞争原因尚未区分。',
+            'has_recorded_update': isinstance(update, dict)})
+    return reviews
+
+
+def render_research_report(payload: dict, *, restricted: bool = False) -> str:
+    """Standalone escaped HTML projection; no scripts, remote assets, fits or LLM."""
+    esc = lambda value: html.escape(str(value if value is not None else '未知'))
+    labels = {'completed': '已完成', 'failed': '执行失败（不是科学负结果）',
+              'max_rounds_reached': '达到预设规划轮数，未穷尽全部改进可能',
+              'passed_frozen_primary_screen': '通过冻结的开发主筛选门槛',
+              'research_candidate_did_not_qualify_to_replace_start': '研究候选未满足替换起点的冻结门槛，保留起点',
+              'no_research_candidate': '没有完成的研究候选，不能评价搜索效果',
+              'incomplete_execution_conservative_fallback': '执行未完整结束，保守保留合格起点或未决状态',
+              'not_run': '未执行', 'waiting_provider': '等待提供者', 'running': '运行中'}
+    label = lambda value: esc(labels.get(value, value))
+    campaign = payload.get('campaign') or {}
+    heading = '<h1>研究实验报告</h1><p>本文件不包含可加载模型，不能直接生成新预测。研究包与模型包不同。</p>'
+    if restricted:
+        body = heading+'<h2>受限导出</h2><p>资料分发权限受限，不导出原文、派生研究叙述或完整方法。请查阅本包允许分发的数值制品与reference_summary.json。</p>'
+    else:
+        body = heading+f'<p>批次：{esc(campaign.get("campaign_id"))}；执行状态：{label(payload.get("execution_status"))}；研究fit：{esc(payload.get("fit_calls"))}</p>'
+        options = campaign.get('research_options') or {}
+        body += '<h2>研究目标与数据</h2><p>'+esc(options.get('notes') or options.get('research_notes') or '原任务与输入身份见contract.json')+'</p>'
+        body += '<p>数据范围：'+esc((campaign.get('dataset') or {}).get('start_date'))+' → '+esc((campaign.get('dataset') or {}).get('end_date'))+'</p>'
+        incumbent = (payload.get('incumbent_result') or {}).get('candidate') or {}
+        recommendation = (payload.get('diagnostic_research') or {}).get('recommendation') or {}
+        start = incumbent or (recommendation.get('research_start') or {}).get('candidate') or next(
+            (r.get('candidate') or {} for r in payload.get('baseline_results', [])
+             if (r.get('candidate') or {}).get('candidate_id') == payload.get('research_start_candidate_id')), {})
+        body += '<h2>研究起点</h2><p>'+('用户提供的受支持配置。' if incumbent else '未提供用户模型；使用原记录的固定研究起点。')+'</p>'
+        body += '<p>对象：'+esc(start.get('candidate_id'))+'；模型：'+esc(start.get('model_family'))+'；参数：'+esc(start.get('model_params'))+'；特征组：'+esc(start.get('feature_groups'))+'；窗口：'+esc(start.get('training_policy'))+'</p>'
+        for review in build_round_reviews(payload):
+            body += f'<h2>第 {esc(review["round_index"])} 轮</h2><p>{esc(review["policy_note"])}</p>'
+            if review['prior_results']:
+                body += '<h3>上一轮实际结果</h3>'
+                for item in review['prior_results']:
+                    body += '<p>'+esc(item['candidate_id'])+'，相对 '+esc(item['control'])+'：'+esc(item['comparison'])+'</p>'
+            body += '<h3>本轮实际实验</h3>'
+            for item in review['experiments']:
+                body += '<p>'+esc(item['candidate_id'])+'；从 '+esc(item['control'])+' 开始；'+esc(item['change'])+'；MAE='+esc(item['mae'])+'；'+esc(item['comparison'])+'；状态='+label(item['status'])+'</p>'
+            body += '<p>'+esc(review['limitation'])+'</p>'
+            if review['recorded_choice_reason']:
+                body += '<details><summary>原记录的选择理由（未经语义认证，不自动翻译）</summary><pre>'+esc(review['recorded_choice_reason'])+'</pre></details>'
+        chosen = recommendation.get('selected_recommendation') or {}
+        body += '<h2>最终冻结推荐</h2><p>对象：'+esc(chosen.get('candidate_id'))+'；选择原因：'+label(recommendation.get('selection_reason'))+'</p>'
+        body += '<p>推荐MAE：'+esc((chosen.get('metrics') or {}).get('mae'))+'；推荐相对研究起点改善比例（小数单位）：'+esc(recommendation.get('recommendation_gain_vs_start'))+'；开发筛选阈值（小数单位）：'+esc((recommendation.get('selection_policy') or {}).get('min_relative_mae_improvement'))+'</p>'
+        body += '<p>没有冻结推荐时保留未知，不用最低MAE代替推荐。停止原因：'+label(payload.get('stop_reason'))+'</p>'
+        body += '<h2>MAE与评价范围</h2><p>MAE为保存评价目标上 |预测收益率−实际收益率| 的平均。监督样本总数不是评价目标数。各折样本数和指标见下表；相对变化以每项明确的控制MAE为分母。</p>'
+        body += '<table><tr><th>对象</th><th>fold</th><th>目标数</th><th>MAE</th></tr>'
+        results = list(payload.get('baseline_results') or []) + [payload.get('incumbent_result') or {}]
+        results += [i.get('result') or {} for b in payload.get('rounds', []) for i in b.get('items', [])]
+        for result in results:
+            for fold in result.get('fold_metrics') or []:
+                body += '<tr>'+''.join('<td>'+esc(v)+'</td>' for v in [(result.get('candidate') or {}).get('candidate_id'),fold.get('fold_id'),fold.get('test_count'),fold.get('mae')])+'</tr>'
+        provider = (payload.get('resource_usage') or {}).get('provider') or {}
+        body += '</table><h2>成本、限制与证据入口</h2><p>研究fit='+esc(payload.get('fit_calls'))+'；HTTP请求='+esc(provider.get('http_requests'))+'；Provider活动秒数='+esc(provider.get('charged_provider_seconds'))+'；金额='+esc(provider.get('currency_cost'))+'。</p>'
+        body += '<p>研究计费/HTTP/失败见campaign.json的resource_usage及events.jsonl；金额未知不是零。缺训练预测时不能评估训练—开发差距。本报告不是独立确认、显著性或盈利证明。</p><p>原始证据：campaign.json、batch_plans/、observations/、predictions/、manifests/。每个导出文件的SHA256见research_package.json；报告是只读投影，不是新的运行状态权威。</p>'
+    return '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>研究实验报告</title><style>body{max-width:960px;margin:32px auto;padding:0 20px;font:16px/1.7 sans-serif;color:#18362c}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px;text-align:left}pre{white-space:pre-wrap;overflow-wrap:anywhere}h2{margin-top:32px}</style>'+body+'</html>'
+
+
+def _report_formula(node, depth=0):
+    if not isinstance(node, dict) or depth > 16:
+        return '旧记录/未知表达式'
+    op = node.get('op')
+    if op == 'input':
+        return str(node.get('name', '未知输入'))
+    if op in {'rolling_mean', 'rolling_std', 'lag', 'abs'}:
+        label = {'rolling_mean': '收益均值', 'rolling_std': '收益标准差', 'lag': '滞后', 'abs': '绝对值'}[op]
+        return label+'('+_report_formula(node.get('arg'), depth+1)+', '+str(node.get('window', node.get('periods', '')))+')'
+    return str(op or '未知运算')+'（完整表达式见原AST）'
 
 
 def build_candidate_comparison(payload: dict, manifests: dict, candidate_id: str) -> dict:
