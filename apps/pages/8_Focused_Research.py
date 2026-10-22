@@ -37,6 +37,23 @@ from finance_forecast_agent.research_mission import (
     workspace_research_summary,
 )
 
+
+def _continue_selected(state_path, project_id, campaign_id, candidate_id, tenant_id):
+    """Submit before the fragment redraws the large parent evidence tree."""
+    token = st.session_state.setdefault('continue-token-'+campaign_id+'-'+candidate_id, uuid.uuid4().hex)
+    try:
+        mission, task = continue_workspace_campaign(state_path, project_id, campaign_id, candidate_id,
+            tenant_id=tenant_id, operation_id=token)
+    except (ValueError, TypeError, KeyError, OSError, RuntimeError) as exc:
+        # Callback errors must not expose provider credentials or request text.
+        st.session_state['continuation-error'] = (
+            '续接提交未确认（'+type(exc).__name__+'）。请检查原队列记录，不要重复提交新操作。')
+        return
+    st.query_params.from_dict({'project':project_id, 'mission':mission.mission_id,
+                              'campaign':task.research_context['campaign_id']})
+    st.session_state.pop('continuation-error', None)
+    st.session_state['continuation-navigation'] = True
+
 st.set_page_config(page_title='Research Mission · SPY', layout='wide')
 st.title('Research Mission')
 st.caption('固定模板：SPY 日频下一交易日收益预测。备注不改变任务、评价或权限；只做研究，不交易。')
@@ -304,6 +321,10 @@ if run:
 # Rendering reads persisted facts. Candidate changes/refresh never train a model.
 @st.fragment(run_every='2s' if current and current['task']['status'] in {'queued','starting','running'} else None)
 def render_workspace():
+    if st.session_state.pop('continuation-navigation', False):
+        # The click originates in a fragment; navigate with a full app rerun.
+        # A rerun inside the callback itself would be ignored by Streamlit.
+        st.rerun()
     if current is None:
         return
     try:
@@ -403,13 +424,11 @@ def render_workspace():
                 if deliverable:
                     st.json(preview_workspace_continuation(state_path,query_project,query_campaign,chosen,tenant_id=tenant))
                 st.caption('下方按钮即明确提交新的Campaign；预览不训练。新任务ID在提交后显示，Replay不能直接复制父映射。')
-                if st.button('Start new research from selected candidate',key='continue-'+query_campaign+'-'+chosen,
-                             disabled=not deliverable or selected['request']['advisor_mode']=='replay'):
-                    token=st.session_state.setdefault('continue-token-'+query_campaign+'-'+chosen,uuid.uuid4().hex)
-                    mission,new_task=continue_workspace_campaign(state_path,query_project,query_campaign,chosen,
-                        tenant_id=tenant,operation_id=token)
-                    st.query_params.from_dict({'project':query_project,'mission':mission.mission_id,'campaign':new_task.research_context['campaign_id']})
-                    st.rerun()
+                st.button('Start new research from selected candidate',key='continue-'+query_campaign+'-'+chosen,
+                          disabled=not deliverable or selected['request']['advisor_mode']=='replay',
+                          on_click=_continue_selected, args=(state_path,query_project,query_campaign,chosen,tenant))
+                if st.session_state.get('continuation-error'):
+                    st.error(st.session_state['continuation-error'])
             with st.expander('Confirmation capability / 确认能力预检'):
                 st.caption('仅检查模型和协议能力，不读取确认标签、不封存、不创建授权；不代表具备确认资格。')
                 if st.button('Check selected confirmation capability',disabled=not deliverable):

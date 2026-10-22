@@ -42,9 +42,15 @@ def build_round_reviews(payload: dict) -> list[dict]:
         else:
             change = ('控制动作：'+str(hypothesis.get('action_type'))+'；未生成新候选' if not candidate else
                       '旧记录未保存声明轴；实际配置差异见原实验记录，不补造单轴结论')
+        duplicate = item.get('status') == 'skipped_duplicate'
+        reused = item.get('reused_candidate_id')
+        if duplicate:
+            change = '重复提案，未新增fit；'+('复用 '+str(reused) if reused else '复用对象未记录')+'；'+change
+            comparison = '沿用已保存观察（不是本轮新实验）：'+comparison
         return {'candidate_id': candidate.get('candidate_id') or hypothesis.get('hypothesis_id') or '未生成候选',
                 'control': hypothesis.get('control_candidate_id') or candidate.get('parent_candidate_id') or '未记录',
-                'status': item.get('status', 'unknown'), 'mae': _number((item.get('result') or {}).get('metrics', {}).get('mae')),
+                'status': item.get('status', 'unknown'), 'is_duplicate': duplicate, 'reused_candidate_id': reused,
+                'mae': None if duplicate else _number((item.get('result') or {}).get('metrics', {}).get('mae')),
                 'comparison': comparison, 'change': change}
     for position, batch in enumerate(rounds):
         source = batch.get('advisor_source', '')
@@ -66,6 +72,8 @@ def render_research_report(payload: dict, *, restricted: bool = False) -> str:
     esc = lambda value: html.escape(str(value if value is not None else '未知'))
     labels = {'completed': '已完成', 'failed': '执行失败（不是科学负结果）',
               'max_rounds_reached': '达到预设规划轮数，未穷尽全部改进可能',
+              'no_new_executable_hypothesis': '没有新的可执行实验（如重复或无变化），不代表穷尽改进可能',
+              'skipped_duplicate': '重复提案（复用已完成结果，未新增训练）',
               'passed_frozen_primary_screen': '通过冻结的开发主筛选门槛',
               'research_candidate_did_not_qualify_to_replace_start': '研究候选未满足替换起点的冻结门槛，保留起点',
               'no_research_candidate': '没有完成的研究候选，不能评价搜索效果',
@@ -87,7 +95,13 @@ def render_research_report(payload: dict, *, restricted: bool = False) -> str:
             (r.get('candidate') or {} for r in payload.get('baseline_results', [])
              if (r.get('candidate') or {}).get('candidate_id') == payload.get('research_start_candidate_id')), {})
         body += '<h2>研究起点</h2><p>'+('用户提供的受支持配置。' if incumbent else '未提供用户模型；使用原记录的固定研究起点。')+'</p>'
-        body += '<p>对象：'+esc(start.get('candidate_id'))+'；模型：'+esc(start.get('model_family'))+'；参数：'+esc(start.get('model_params'))+'；特征组：'+esc(start.get('feature_groups'))+'；窗口：'+esc(start.get('training_policy'))+'</p>'
+        policy = start.get('training_policy') or {}
+        window = ('扩展窗口' if policy.get('mode') == 'expanding' else
+                  '最近'+str(policy.get('sessions'))+'个成熟合格监督行' if policy.get('mode') == 'rolling' else '旧记录未保存')
+        group_names = {'base_lags':'滞后收益', 'momentum':'动量', 'volatility':'波动率', 'volume_change':'成交量变化'}
+        groups = '、'.join(group_names.get(g,g) for g in start.get('feature_groups') or []) or '未知'
+        models = {'ridge_regression':'Ridge', 'random_forest_regressor':'随机森林', 'gradient_boosting_regressor':'梯度提升'}
+        body += '<p>对象：'+esc(start.get('candidate_id'))+'；模型：'+esc(models.get(start.get('model_family'),start.get('model_family')))+'；参数：'+esc(start.get('model_params'))+'；特征组：'+esc(groups)+'；窗口：'+esc(window)+'</p>'
         for review in build_round_reviews(payload):
             body += f'<h2>第 {esc(review["round_index"])} 轮</h2><p>{esc(review["policy_note"])}</p>'
             if review['prior_results']:
@@ -96,7 +110,8 @@ def render_research_report(payload: dict, *, restricted: bool = False) -> str:
                     body += '<p>'+esc(item['candidate_id'])+'，相对 '+esc(item['control'])+'：'+esc(item['comparison'])+'</p>'
             body += '<h3>本轮实际实验</h3>'
             for item in review['experiments']:
-                body += '<p>'+esc(item['candidate_id'])+'；从 '+esc(item['control'])+' 开始；'+esc(item['change'])+'；MAE='+esc(item['mae'])+'；'+esc(item['comparison'])+'；状态='+label(item['status'])+'</p>'
+                score = '本项未新增训练/预测，不产生新的MAE' if item['is_duplicate'] else 'MAE='+esc(item['mae'])
+                body += '<p>'+esc(item['candidate_id'])+'；从 '+esc(item['control'])+' 开始；'+esc(item['change'])+'；'+score+'；'+esc(item['comparison'])+'；状态='+label(item['status'])+'</p>'
             body += '<p>'+esc(review['limitation'])+'</p>'
             if review['recorded_choice_reason']:
                 body += '<details><summary>原记录的选择理由（未经语义认证，不自动翻译）</summary><pre>'+esc(review['recorded_choice_reason'])+'</pre></details>'

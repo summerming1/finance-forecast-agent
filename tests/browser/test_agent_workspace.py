@@ -124,7 +124,22 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
         with sync_playwright() as pw:
             executable = os.getenv("FFA_TEST_CHROMIUM")
             browser = pw.chromium.launch(headless=True, **({"executable_path": executable} if executable else {}))
-            context = browser.new_context(viewport={"width": 1440, "height": 900}, accept_downloads=True)
+            report['page_crashes'] = []
+            report['lifecycle'] = []
+
+            def checkpoint(stage):
+                import psutil
+                report['lifecycle'].append({'stage':stage, 'monotonic':time.monotonic(),
+                    'available_memory_bytes':psutil.virtual_memory().available,
+                    'browser_connected':browser.is_connected()})
+
+            def watch_context(value):
+                value.on('page', lambda opened: opened.on('crash', lambda: report['page_crashes'].append(
+                    {'stage':report['lifecycle'][-1]['stage'] if report['lifecycle'] else 'startup'})))
+                return value
+
+            checkpoint('initial_context')
+            context = watch_context(browser.new_context(viewport={"width": 1440, "height": 900}, accept_downloads=True))
             page = context.new_page()
             page.set_default_timeout(30000)
             errors = []
@@ -411,14 +426,31 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             # Component readiness, not a five-second cold-start performance SLA.
             expect(frame.locator(".workspace-header")).to_contain_text("完成", timeout=30000)
             assert counts() == before
+            checkpoint('before_context_close')
             context.close()
-            context = browser.new_context(viewport={"width": 1440, "height": 900}, accept_downloads=True)
+            checkpoint('fresh_context')
+            context = watch_context(browser.new_context(viewport={"width": 1440, "height": 900}, accept_downloads=True))
             page = context.new_page()
             page.set_default_timeout(30000)
             page.goto(url)
             frame = page.frame_locator('iframe[title*="agent_workspace"]')
             expect(frame.locator(".workspace-header")).to_contain_text("完成", timeout=30000)
             assert counts() == before
+            checkpoint('fresh_context_restored')
+            if price_features == 'v25':
+                for reopen in range(3):
+                    context.close()
+                    checkpoint('repeat_fresh_context_'+str(reopen))
+                    context = watch_context(browser.new_context(viewport={'width':1440, 'height':900}, accept_downloads=True))
+                    page = context.new_page()
+                    page.set_default_timeout(30000)
+                    page.on('pageerror', lambda error: errors.append(str(error)))
+                    page.goto(url)
+                    frame = page.frame_locator('iframe[title*="agent_workspace"]')
+                    expect(frame.locator('.workspace-header')).to_contain_text('完成', timeout=30000)
+                    assert counts() == before
+                    checkpoint('repeat_restored_'+str(reopen))
+                report['checks'].append('three_additional_context_restores_zero_fit')
             frame.locator('[data-action="view"][data-view="artifacts"]').first.click()
             if price_features in {'v24', 'v25'}:
                 expect(frame.locator('[data-testid="delivery-recommended"] [data-action="download-model"]')).to_be_visible()
@@ -457,6 +489,7 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             report["browser_version"] = browser.version
             report["page_errors"] = errors
             assert not errors
+            assert not report['page_crashes']
             with RuntimeDB(state).transaction() as db:
                 assert db.execute("SELECT COUNT(*) FROM objects WHERE key LIKE 'http:%'").fetchone()[0] == 0
             report["checks"].append("zero_provider_requests")

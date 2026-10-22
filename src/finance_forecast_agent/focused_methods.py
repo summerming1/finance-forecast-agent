@@ -237,7 +237,10 @@ def project_method_references(prompt):
             for item in value.values():collect(item)
         elif isinstance(value,list):
             for item in value:collect(item)
-    collect(body)
+    # The output example must itself be executable DSL. Planning-only references
+    # belong in input facts, never in the schema an Advisor is asked to copy.
+    for key,value in body.items():
+        if key!='response_schema':collect(value)
     expressions={}
     for same in groups.values():
         if len(same)<2:continue
@@ -255,7 +258,8 @@ def project_method_references(prompt):
             for item in value.values():collect_headers(item)
         elif isinstance(value,list):
             for item in value:collect_headers(item)
-    collect_headers(body)
+    for key,value in body.items():
+        if key!='response_schema':collect_headers(value)
     headers={}
     for same in header_groups.values():
         if len(same)<2:continue
@@ -263,8 +267,21 @@ def project_method_references(prompt):
         for program,_ in same:
             features=program['features'];program.clear()
             program.update(method_program_header_ref=ref,features=features)
-    if rules or replacements or expressions or headers:
-        body['method_context_refs']={'schema_version':'method_reference_projection_v3','rules':rules,
+    # Share only identical *input* judgments, not conclusions or output examples.
+    # Every per-design hash/control remains inline and the inverse verifies all facts.
+    decision_groups={}
+    for design in body.get('prior_decision_designs',{}).values():
+        decision=design.get('decision')
+        if isinstance(decision,dict) and len(json.dumps(decision))>=160:
+            digest=identity(decision,domain='method-context-decision-v1')
+            decision_groups.setdefault(digest,[]).append(design)
+    decisions={}
+    for same in decision_groups.values():
+        if len(same)<2:continue
+        ref='d'+str(len(decisions));decisions[ref]=deepcopy(same[0]['decision'])
+        for design in same:design['decision']={'method_decision_ref':ref}
+    if rules or replacements or expressions or headers or decisions:
+        body['method_context_refs']={'schema_version':'method_reference_projection_v4' if decisions else 'method_reference_projection_v3','rules':rules,
             'expressions':expressions,'program_headers':headers,
             'source_hash':identity(prompt,domain='method-context-original-v1'),
             'contract':('method_rule_ref resolves in rules; method_expression_ref resolves in expressions (original AST); feature names stay inline. '
@@ -272,6 +289,9 @@ def project_method_references(prompt):
                 'method_value_ref reads the exact candidate path in baseline_results/prior_research_results/fixed_model. '
                 'Resolve these planning-only references before submitting a full legal FeatureProgram; never submit references as DSL. '
                 'No numerical values omitted; component references grant no control permissions.')}
+        if decisions:
+            body['method_context_refs']['decisions']=decisions
+            body['method_context_refs']['contract']+=' method_decision_ref resolves in decisions (original input judgment); output example remains inline.'
     return body
 
 
@@ -290,6 +310,7 @@ def restore_method_references(prompt):
             if set(value)=={'method_rule_ref'}:return deepcopy(refs['rules'][value['method_rule_ref']])
             if set(value)=={'method_feature_ref'}:return deepcopy(refs['features'][value['method_feature_ref']])
             if set(value)=={'method_expression_ref'}:return deepcopy(refs['expressions'][value['method_expression_ref']])
+            if set(value)=={'method_decision_ref'}:return deepcopy(refs['decisions'][value['method_decision_ref']])
             if set(value)=={'method_value_ref'}:
                 ref=value['method_value_ref'];return expand(deepcopy(methods[ref['candidate_id']][ref['path']]))
             return {k:expand(v) for k,v in value.items()}

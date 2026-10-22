@@ -22,6 +22,9 @@ from .replay_llm import ReplayLLM
 load_env_file()
 
 BAILIAN_PROVIDERS = {'bailian', 'aliyun_bailian', 'aliyun_compatible', 'dashscope_compatible'}
+# Explicitly documented hybrid models only; do not infer support from a prefix.
+BAILIAN_THINKING_MODELS = {'deepseek-v4.1-flash', 'deepseek-v4-flash-0731',
+                          'deepseek-v4-pro', 'deepseek-v4-pro-0813'}
 
 
 def serialize_prompt_payload(payload: dict[str, Any]) -> str:
@@ -103,7 +106,8 @@ class OpenAIJsonClient:
     """
     def __init__(self, *, model: str | None = None, api_key: str | None = None,
                  base_url: str | None = None, timeout: int | None = None,
-                 policy: ProviderPolicy | None = None, observer=None, cancel_check=None):
+                 policy: ProviderPolicy | None = None, observer=None, cancel_check=None,
+                 enable_thinking: bool | None = None):
         self.provider = _normalize_provider(os.getenv('LLM_PROVIDER') or os.getenv('TEACHER_PROVIDER') or 'openai_compatible')
         self.model=model or os.getenv('OPENAI_MODEL') or os.getenv('TEACHER_MODEL') or 'gpt-4.1-mini'
         self.base_url=_normalize_base_url(base_url or os.getenv('OPENAI_BASE_URL') or os.getenv('TEACHER_BASE_URL')
@@ -119,6 +123,17 @@ class OpenAIJsonClient:
         self.max_tokens=int(os.getenv('LLM_MAX_TOKENS') or os.getenv('TEACHER_MAX_TOKENS') or 4096)
         if not 1<=self.max_tokens<=65536:
             raise ValueError('max output tokens must be in [1,65536]')
+        if enable_thinking is None and 'LLM_ENABLE_THINKING' in os.environ:
+            setting=os.environ['LLM_ENABLE_THINKING'].strip().lower()
+            if setting not in {'true','false'}:
+                raise ValueError('enable_thinking must be true or false')
+            enable_thinking=setting=='true'
+        if enable_thinking is not None:
+            if not isinstance(enable_thinking,bool):
+                raise ValueError('enable_thinking must be a bool')
+            if self.provider not in BAILIAN_PROVIDERS or self.model not in BAILIAN_THINKING_MODELS:
+                raise ValueError('enable_thinking is not registered for this provider/model')
+        self.enable_thinking=enable_thinking
         self.observer,self.cancel_check=observer,cancel_check
         self.last_call_metadata: dict[str,Any]={}
         if not self.api_key:
@@ -126,11 +141,14 @@ class OpenAIJsonClient:
 
     def contract(self):
         from .replay_llm import sanitized_endpoint
-        return {'provider':self.provider,'model':self.model,'base_url':sanitized_endpoint(self.base_url),
+        contract={'provider':self.provider,'model':self.model,'base_url':sanitized_endpoint(self.base_url),
                 'max_tokens':self.max_tokens,'temperature':0,'http_retries':self.retries,
                 'provider_policy':self.policy.to_dict(),'stream':False,
                 'response_format':'provider_default' if self.provider in BAILIAN_PROVIDERS else 'json_object',
                 'pricing_status':'unknown','model_revision':'alias_unresolved'}
+        if self.enable_thinking is not None:
+            contract['enable_thinking']=self.enable_thinking
+        return contract
 
     def preflight(self):
         """No-network configuration inspection; never claims to know account balance."""
@@ -218,11 +236,15 @@ class OpenAIJsonClient:
                 'Use unknowns instead of guessing. Preserve evidence spans.\n\n'+serialize_prompt_payload(prompt_payload))
         payload={'model':self.model,'messages':[{'role':'user','content':prompt}],
                  'temperature':0,'max_tokens':self.max_tokens}
+        generation={'temperature':0,'max_tokens':self.max_tokens}
+        if self.enable_thinking is not None:
+            payload['enable_thinking']=self.enable_thinking
+            generation['enable_thinking']=self.enable_thinking
         if self.provider not in BAILIAN_PROVIDERS:
             payload['response_format']={'type':'json_object'}
         wire=json.dumps(payload,ensure_ascii=False,sort_keys=True,allow_nan=False)
         started=time.monotonic()
-        self.last_call_metadata={'generation_parameters':{'temperature':0,'max_tokens':self.max_tokens},
+        self.last_call_metadata={'generation_parameters':generation,
              'provider_policy':self.policy.to_dict(),'wire_payload_hash':hashlib.sha256(wire.encode()).hexdigest(),
              'usage':None,'cost':None,'http_attempts':0,'http_records':[], 'finish_reason':None}
         try:

@@ -27,6 +27,22 @@ def envelope(prompt,rows):
 def design(prompt):return deepcopy(prompt['response_schema']['hypotheses'][0]['research_design'])
 
 
+def test_literal_response_example_compiles_through_both_decisions(tmp_path):
+    c=controller(tmp_path)
+    prompts=[]
+
+    def propose(p):
+        prompts.append(deepcopy(p))
+        return deepcopy(p['response_schema']), 'assistant_authored_fixture'
+
+    c.advisor.propose=propose
+    out=c.run()
+    assert out['execution_status']=='completed' and len(prompts)==2
+    assert out['rounds'][1]['research_update']
+    assert out['resource_usage']['provider']['http_requests']==0
+    assert out['fit_calls']<=32
+
+
 def test_both_axis_paths_reuse_same_final_method_but_keep_distinct_observations(tmp_path):
     c=controller(tmp_path)
     prompts=[]

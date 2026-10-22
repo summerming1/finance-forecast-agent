@@ -136,3 +136,36 @@ def test_goal_report_uses_recorded_start_and_translates_conservative_recommendat
     assert '未提供用户模型' in report and 'alpha' in report and '10' in report
     assert '研究候选未满足替换起点的冻结门槛' in report
     assert 'HTTP请求=0' in report and '金额=未知' in report
+
+
+def test_duplicate_report_explains_reuse_without_inventing_new_mae():
+    from finance_forecast_agent.focused_summary import build_round_reviews, render_research_report
+
+    payload=sample()
+    item=payload['rounds'][1]['items'][0]
+    item.update(status='skipped_duplicate',reused_candidate_id='r1_c1')
+    item.pop('result')
+    payload['stop_reason']='no_new_executable_hypothesis'
+    before=json.dumps(payload,sort_keys=True)
+    review=build_round_reviews(payload)[1]['experiments'][0]
+    assert review['mae'] is None
+    assert review['is_duplicate'] and review['reused_candidate_id']=='r1_c1'
+    assert '未新增' in review['change'] and '沿用' in review['comparison']
+    report=render_research_report(payload)
+    assert '重复提案' in report and '复用 r1_c1' in report
+    assert '不产生新的MAE' in report and 'MAE=未知' not in report
+    assert '没有新的可执行实验' in report and 'skipped_duplicate' not in report
+    assert '扩展窗口' in report and 'None' not in report
+    assert json.dumps(payload,sort_keys=True)==before
+
+
+def test_duplicate_without_saved_reuse_target_keeps_reference_unknown():
+    from finance_forecast_agent.focused_summary import build_round_reviews, render_research_report
+
+    payload=sample()
+    payload['rounds'][1]['items']=[{'candidate':{'candidate_id':'duplicate'},'status':'skipped_duplicate'}]
+    item=build_round_reviews(payload)[1]['experiments'][0]
+    assert item['is_duplicate'] and item['mae'] is None
+    assert item['reused_candidate_id'] is None
+    report=render_research_report(payload)
+    assert '不产生新的MAE' in report and '复用对象未记录' in report

@@ -147,3 +147,46 @@ def test_repeated_program_metadata_is_reversible_and_names_remain_inline():
     assert restore_method_references(q)==p and project_method_references(q)==q
     q['method_context_refs']['program_headers']['h0']['capability_hash']='0'*64
     with pytest.raises(ValueError,match='not lossless'):restore_method_references(q)
+
+
+@pytest.mark.parametrize('nested', [False, True])
+def test_response_example_remains_executable_not_planning_references(nested):
+    from test_focused_feature_contract import program
+
+    from finance_forecast_agent.focused_feature_program import validate_feature_program
+    from finance_forecast_agent.focused_methods import project_method_references, restore_method_references
+
+    fp=program()
+    if nested:
+        fp['features'][0]['expression']={'op':'rolling_mean','window':20,
+            'arg':{'op':'abs','arg':{'op':'input','name':'return_1'}}}
+    p={'baseline_results':[{'candidate_id':'a','feature_program':deepcopy(fp)},
+        {'candidate_id':'b','feature_program':deepcopy(fp)}],
+        'response_schema':{'hypotheses':[{'feature_program':deepcopy(fp)}]}}
+    projected=project_method_references(p)
+    example=projected['response_schema']['hypotheses'][0]['feature_program']
+    assert validate_feature_program(example)==fp
+    assert example==p['response_schema']['hypotheses'][0]['feature_program']
+    assert restore_method_references(projected)==p
+    assert project_method_references(projected)==projected
+    # Input-side compression remains planning-only and cannot become legal DSL.
+    with pytest.raises(ValueError):
+        validate_feature_program(projected['baseline_results'][0]['feature_program'])
+
+
+def test_identical_prior_judgments_share_lossless_versioned_input_reference():
+    from finance_forecast_agent.focused_methods import project_method_references, restore_method_references
+
+    judgment={'experiment_question':'q'*160,'priority_reason':'r'*160,
+        'visible_basis':{'kind':'domain_hypothesis','description':'b'*160,'evidence_refs':[]},
+        'feedback_update':{'supports':'s'*160,'weakens':'w'*160}}
+    p={'prior_decision_designs':{'a':{'decision':deepcopy(judgment),'design_hash':'a'},
+        'b':{'decision':deepcopy(judgment),'design_hash':'b'}},
+        'response_schema':{'hypotheses':[{'research_design':{'decision':deepcopy(judgment)}}]}}
+    q=project_method_references(p)
+    assert q['method_context_refs']['schema_version']=='method_reference_projection_v4'
+    assert q['prior_decision_designs']['a']['decision']=={'method_decision_ref':'d0'}
+    assert q['response_schema']==p['response_schema']
+    assert restore_method_references(q)==p and project_method_references(q)==q
+    q['method_context_refs']['decisions']['d0']['priority_reason']='tampered'
+    with pytest.raises(ValueError,match='not lossless'):restore_method_references(q)
