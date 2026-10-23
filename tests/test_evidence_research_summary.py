@@ -70,6 +70,32 @@ def test_cached_pair_observation_shows_original_control_and_both_metrics_readabl
     assert values['相对MAE改善']==-1. and '缓存复用' in values['预测来源']
 
 
+def test_execution_and_fixed_group_diagnostics_have_named_numeric_display_rows():
+    from finance_forecast_agent.focused_summary import build_evidence_mainline
+    p=payload();facts=p['evidence_research']['evidence'];facts.clear()
+    for kind,result in [('DQ-01',{'object_id':'start','training_receipts':[{'fold_id':0,
+        'eligible_count':700,'selected_count':504,'calibration_rows_count':756,
+        'columns':['lag_1'],'actual_fit_calls':1,'actual_transformer_fit_calls':1}]}),
+        ('DQ-05',{'object_id':'start','values':[{'fold_id':0,'threshold':.02,'rows_count':3,'calibration_rows_count':756}]})]:
+        facts[kind]={'kind':'diagnostic_query','result':{'query':{'kind':kind},'results':[result]}}
+    v=build_evidence_mainline(p)
+    rows={e['query_kind']:e['details'][0]['values'] for e in v['evidence']}
+    assert rows['DQ-01']['实际训练行']==504 and rows['DQ-01']['实际列顺序']=='lag_1'
+    assert rows['DQ-05']['分组目标数']==3 and rows['DQ-05']['阈值']==.02
+
+
+def test_paired_query_names_each_object_scope_and_uses_original_delta_not_a_new_evaluation():
+    from finance_forecast_agent.focused_summary import build_evidence_mainline
+    p=payload();p['evidence_research']['evidence']={'pair':{'kind':'diagnostic_query','result':{
+        'query':{'kind':'DQ-02','scope':'development_oof','object_ids':['poor-child','actual-control']},
+        'results':[{'object_id':'poor-child','values':{'mae':.02}},
+            {'object_id':'actual-control','values':{'mae':.01}}],'paired_loss_delta':.01}}}
+    before=deepcopy(p);rows=build_evidence_mainline(p)['evidence'][0]['details']
+    assert p==before and [r['values'].get('对象') for r in rows[:2]]==['poor-child','actual-control']
+    assert rows[0]['values']['范围']=='开发OOF共同目标'
+    assert rows[-1]['values']['配对损失差（首对象减control，正值较差）']==.01
+
+
 def test_finite_policy_main_text_formats_saved_metrics_not_an_english_dictionary(monkeypatch):
     from finance_forecast_agent.research_state import engineering_advice, project_pending
     monkeypatch.setattr('finance_forecast_agent.focused_methods.method_advice',

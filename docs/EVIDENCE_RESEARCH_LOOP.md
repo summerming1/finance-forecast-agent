@@ -238,6 +238,25 @@ fresh-process一致；One-shot仍一次冻结4槽/原单元，不借同批未来
 分别保留规划/Provider/自动诊断/查询/显式refit成本，金额/CPU未知不写0。
 这些阶段证据不代替即将执行的最后源码完整验收，原失败仍保留。
 
+### 2026-10-23 六工具与最后冻结前复核
+
+本地实现提交8303e2a；格式提交1c35907/258cc2a只处理末尾空行，不改行为。
+final3因diff-check发现新增EOF空行中止，源身份重新冻结；final4交叉检查发现DQ01/05
+嵌套行范围投影遗漏而中止，ABORTED及原退出保留，二者都不作为最终回归通过。
+新增nested-scope-red精确复现2失败后，将所有具名嵌套scope ID列表投影为数量/哈希；
+完整列表仍在原accepted查询，原method-domain selected_train_hash保留，新query域另列
+projection_hash，不重签旧包。范围字段不是测量指标；阈值、MAE、Pearson等数值不删。
+新增evidence_query_projection_v2仅用于新请求投影；旧diagnostic枚举/原fixture不改。
+
+six-tools-capacity实际10通过/404.63秒/exit0，覆盖六类请求各自实际分发→第二更新→
+真实rolling504干预（DQ03另含查询回执后中断恢复）、OFF计算账本及加强ON/OFF容量。
+browser-nested-stage实际新协议Chromium1通过/272.16秒/exit0：原双入口worker/同Mission
+显式续接、父末批证据→子首轮、原推荐隔离、REPORT/成员hash/预测重算、两次显式refit、
+新进程/源篡改门禁、700px/1280px截图、刷新及三次重开零增量。原A/B未改/未训。
+最后只读数值显示补充每个对象/control/范围和原配对差，53项display-last通过/2.51秒；
+query范围中不可得不当反证。受改Ruff及diff-check均exit0。当前下一步为新目录完整
+冻结全仓/六模式浏览器/静态，现有阶段数不相加、不借旧失败掩盖未完成E5。
+
 # Finance Forecast Agent：证据驱动研究闭环与全周期路线——唯一实施方案
 
 版本：交接 v1.1（对抗复审修订）；日期：2026-10-23。

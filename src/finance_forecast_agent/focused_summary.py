@@ -66,10 +66,42 @@ def build_evidence_mainline(payload: dict) -> dict | None:
     for r in requests:r['status_label']=request_statuses.get(r['status'],r['status'])
     evidence=[]
     relevant={r[0] for r in state['pending']}
+    for h in hypotheses[:12]:relevant.update(h['support_refs']+h['counter_refs'])
     for eid,fact in sorted(facts.items(),key=lambda x:(x[0] not in relevant,x[0])):
         result=fact.get('result') or {}
         details=copy.deepcopy(result.get('results',[]))
-        if fact['kind']=='controlled_observation':
+        query_kind=(result.get('query') or {}).get('kind')
+        if fact['kind']=='diagnostic_query':
+            scope_labels={'selected_train':'实际训练行','calibration':'比较/校准范围','development_oof':'开发OOF共同目标'}
+            for d in details:
+                if isinstance(d.get('values'),dict):
+                    d['values']={'对象':d.get('object_id'),
+                        '范围':scope_labels.get(d.get('scope',result['query'].get('scope')),'见冻结请求'),**d['values']}
+                    d.setdefault('fold_id','完整共同目标')
+            if result.get('status')=='unavailable':
+                details.append({'fold_id':'查询状态','values':{'状态':'不可得，不是科学反证',
+                    '原因（原记录）':result.get('reason','未记录；不推断原因')}})
+            if 'paired_loss_delta' in result:
+                details.append({'fold_id':'完整共同目标','values':{'配对损失差（首对象减control，正值较差）':
+                    result['paired_loss_delta'],'首对象':result['query']['object_ids'][0],
+                    '实际control':result['query']['object_ids'][-1]}})
+        if fact['kind']=='diagnostic_query' and query_kind=='DQ-01':
+            details=[{'fold_id':r['fold_id'],'values':{'对象':d['object_id'],
+                '合格训练行':r.get('eligible_count',r.get('eligible_train_count')),
+                '实际训练行':r.get('selected_count',r.get('selected_train_count')),
+                '比较校准行':r.get('calibration_rows_count'),
+                '模型fit':r.get('actual_fit_calls'),'处理fit':r.get('actual_transformer_fit_calls'),
+                '实际列顺序':'、'.join(r.get('feature_columns',r.get('columns',[]))),
+                '训练截止':r.get('training_asof')}} for d in details for r in d.get('training_receipts',[])]
+        elif fact['kind']=='diagnostic_query' and query_kind=='DQ-05':
+            details=[{'fold_id':g.get('fold_id'),'values':{'对象':d['object_id'],
+                '固定分组':g.get('name','高波动分组'),'阈值':g.get('threshold'),
+                '分组目标数':g.get('rows_count',g.get('n')),'MAE':g.get('mae'),
+                '校准行':g.get('calibration_rows_count'),'来源（原记录）':g.get('source')}}
+                for d in details for g in (d.get('values') if isinstance(d.get('values'),list) else [])]
+        elif fact['kind']=='diagnostic_query' and query_kind in {'DQ-03','DQ-06'}:
+            for d in details:d['values']={'变量对':' ↔ '.join(d.get('variables',[])),**d.get('values',{})}
+        elif fact['kind']=='controlled_observation':
             info=result['information']
             details=[{'fold_id':'共同目标汇总','values':{'候选MAE':info['child_mae'],
                 '实际对照MAE':info['control_mae'],'相对MAE改善':info['relative_mae_improvement'],

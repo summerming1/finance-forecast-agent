@@ -244,18 +244,31 @@ def dispatch_diagnostic_query(query, objects, *, campaign_id):
 
 
 def query_projection(body):
-    """Keep all numerical entries; full scope lists stay in accepted audit."""
+    """Keep measured metrics; all nested scope-ID lists stay in accepted audit."""
     original={k:v for k,v in body.items() if k not in {'compute_wall_seconds','result_hash'}}
     if identity(original,domain='evidence-diagnostic-result-v1')!=body['result_hash']:
         raise ValueError('accepted diagnostic query result hash mismatch')
     out=deepcopy({k:v for k,v in body.items() if k!='compute_wall_seconds'})
-    for result in out['results']:
-        for key in ('row_ids','evaluation_row_ids','threshold_row_ids'):
-            if key in result:
-                ids=result.pop(key)
-                result[key+'_hash']=identity(ids,domain='evidence-query-scope-v1')
-                result[key+'_count']=len(ids)
-    out['projection_version']='evidence_query_projection_v1'
+    scope_keys={'row_ids','evaluation_row_ids','threshold_row_ids','eligible_train','selected_train',
+        'calibration_rows','raw_training_rows','raw_rows','rows','test_row_ids','actual_training_rows'}
+    def scopes(value):
+        if isinstance(value,dict):
+            for key in list(value):
+                ids=value[key]
+                if key in scope_keys and isinstance(ids,list) and all(type(i) is int for i in ids):
+                    value.pop(key)
+                    # Existing method-domain hashes are immutable, not renamed
+                    # into the new query-scope hash domain.
+                    hash_key=key+('_projection_hash' if key+'_hash' in value else '_hash')
+                    count_key=key+('_projection_count' if key+'_count' in value else '_count')
+                    value[hash_key]=identity(ids,domain='evidence-query-scope-v1')
+                    value[count_key]=len(ids)
+                else:scopes(ids)
+        elif isinstance(value,list):
+            for item in value:scopes(item)
+    scopes(out['results'])
+    if 'paired_group_losses' in out:scopes(out['paired_group_losses'])
+    out['projection_version']='evidence_query_projection_v2'
     return out
 RECIPES = {"RCP-01": "overall", "RCP-02": "contribution", "RCP-03": "simplification",
            "RCP-04": "diagnose", "RCP-05": "diagnose"}

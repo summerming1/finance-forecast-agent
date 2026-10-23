@@ -179,3 +179,25 @@ def test_dispatch_rejects_incomplete_targets_and_missing_training_is_unknown():
     q['object_ids'].append('other')
     with pytest.raises(ValueError,match='contract'):
         dispatch_diagnostic_query(q,objects,campaign_id='simulation')
+
+
+@pytest.mark.parametrize('kind',['DQ-01','DQ-05'])
+def test_nested_scope_arrays_stay_in_full_audit_not_the_planning_payload(kind):
+    from test_focused_v24_diagnostics import artifact
+
+    from finance_forecast_agent.focused_diagnostics import dispatch_diagnostic_query, query_projection
+    q=query();q.update(kind=kind,scope='selected_train' if kind=='DQ-01' else 'development_oof',variable_pairs=[])
+    objects={'start':{'artifact':artifact([1,2,3,4]),'method_identity':'method','variables':{},
+        'training_receipts':[{'fold_id':0,'eligible_train':list(range(1000)),
+            'selected_train':list(range(500,1000)),'selected_train_hash':'original-method-domain-hash'}],
+        'diagnostic':{'volatility_groups':[{'fold_id':0,'threshold':.2,'rows':[101,103],
+            'raw_rows':[201,203],'calibration_rows':list(range(1000))}]}}}
+    body=dispatch_diagnostic_query(q,objects,campaign_id='simulation');before=deepcopy(body)
+    view=query_projection(body)
+    item=(view['results'][0]['training_receipts'][0] if kind=='DQ-01' else view['results'][0]['values'][0])
+    assert not any(k in item for k in ['eligible_train','selected_train','rows','raw_rows','calibration_rows'])
+    assert body==before
+    if kind=='DQ-01':
+        assert item['selected_train_count']==500 and item['selected_train_hash']=='original-method-domain-hash'
+        assert item['selected_train_projection_hash']
+    else:assert item['rows_count']==2 and item['threshold']==.2

@@ -6,7 +6,7 @@ from test_evidence_research_state import initial
 from test_focused_v25_execution import controller
 
 
-@pytest.mark.parametrize('kind',['DQ-02','DQ-03','DQ-04','DQ-06'])
+@pytest.mark.parametrize('kind',['DQ-01','DQ-02','DQ-03','DQ-04','DQ-05','DQ-06'])
 def test_diagnosis_only_result_reaches_second_update_then_actual_window_intervention(tmp_path,kind,monkeypatch):
     from finance_forecast_agent.focused_methods import method_advice
 
@@ -33,7 +33,7 @@ def test_diagnosis_only_result_reaches_second_update_then_actual_window_interven
                     'branches':{'supports':'consider intervention','weakens':'revise local hypothesis',
                         'insufficient':'remain unresolved','next_step':'use remaining original decision'},
                     'query':{'schema_version':'evidence_diagnostic_query_v1','kind':kind,
-                        'object_ids':[start],'scope':'selected_train' if kind=='DQ-03' else 'development_oof',
+                        'object_ids':[start],'scope':'selected_train' if kind in {'DQ-01','DQ-03'} else 'development_oof',
                         'variable_pairs':[['return_1','return_1']] if kind=='DQ-03' else
                             [['prediction','target']] if kind=='DQ-06' else [],
                         'factor':'return_1' if kind=='DQ-04' else None,'parameters':{}}}}
