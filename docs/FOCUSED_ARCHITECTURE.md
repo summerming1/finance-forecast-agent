@@ -1,6 +1,6 @@
 # Focused / Mission Research Architecture
 
-## Evidence-research extension approved 2026-10-23 (implementation in progress)
+## Evidence-research extension 2026-10-23 (bounded engineering implemented)
 
 [ADR008](ADR_MISSION_PRODUCT_008.md) and [the sole contract](EVIDENCE_RESEARCH_LOOP.md)
 define bounded diagnostic dispatch → accepted evidence → same-response hypothesis
@@ -17,8 +17,10 @@ projections. Full histories remain in original accepted plans; bounded work view
 retain mandatory current support/counterevidence plus explicit deferred archives.
 New live sends require a distinct frozen evidence-send declaration and current
 consent; inherited state cannot bypass diagnostic visibility/literature permission.
-Synthetic integrated paths have stage evidence; final regression is in progress,
-not a scientific, Live-quality, independent-prediction or human acceptance claim.
+Frozen source384102d has 94 new non-browser tests and independent six-mode browser
+passing; 1118 applicable nodes reconcile (1108 pass/2 historical fail/8 skip, exit1).
+Full-src lint and concurrent-load timeout boundaries remain. See Current and the
+ER receipt; this is not scientific, Live-quality, independent-prediction or human acceptance.
 
 ## V2.5.0 extension (2026-10-19; bounded engineering verified)
 

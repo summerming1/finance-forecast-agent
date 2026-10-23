@@ -6,9 +6,175 @@
 真实行情研究、外发、封存标签、生产迁移、全局权限、推送或远端CI。
 本文件是本轮唯一施工合同；下面完整纳入交接v1.1的01要求，不重开V2.5 N0—N5。
 原稿“待批准/拟批准”是形成时的历史语境，已由上述可信用户指令批准工程范围，
-并不表示任何实现/验收通过。E0结构/容量已收敛并有联合构造；E1—E4有整链阶段证据，
-E5仍待最后源码下的完整冻结回归/浏览器/静态与逐条映射，不能提前全面验收。
+并不表示任何科学/真人验收通过。E0—E4工程已实现并完成整链验证，E5已执行冻结验收；
+结果为新增关键路径通过、全仓仍有既有资产/权限失败，工程限定交付而非全面PASS。
 原A/B、旧fixture/hash/47负确认不改。实际状态只见CURRENT_IMPLEMENTATION。
+
+## 最终工程交付收据（2026-10-23；非全仓/科学/真人全面验收）
+
+实际起点e361b0ef3418b09f7c5168caf5a381870634b9e3；最终测试源码
+`384102d6c21e06f756b619af996b71e716d311f6`，原分支feat/mission-research-v2。
+后续只有本收据/Current/索引/指南等文档提交；包含本收据的提交由
+`git log -1 -- docs/validation/evidence_research_acceptance.json`解析，最终回复给出实际HEAD。
+tracked起点干净，原未跟踪证据保留；运行证据/数据库/输入/模型仅本地，未推送/远端CI。
+下面工作日志保留各阶段当时的未完成/失败，不覆盖本段最终事实。
+
+### E0—E5结果及ER口径
+
+| 批次 | 已实际交付/验证 | 结果边界 |
+|---|---|---|
+| E0 | 唯一合同、ADR008、新旧分发、联合容量及原资源口径冻结 | 工程完成；旧schema/fixture/hash不迁移 |
+| E1 | 六类真实诊断、具名相关/共同尾掩码、实际scope/内容缓存/计算回执 | 合成算术/原制品/6种诊断→更新→干预通过 |
+| E2 | 稳定问题、不可变假设版本、关系级评估/暂缓、同响应更新/原子恢复 | 结构和执行工程通过，不证明LLM理解 |
+| E3 | goal/provided_start原worker、父末批完整请求到子首轮、完整双轴继承/可信交付 | 实际fit/predict/refit与新进程一致通过 |
+| E4 | 原三臂公平流程/简单策略、双比较/成本、六对语义材料及人工rubric | 合成工程通过；真实B/C无本轮授权，NOT_RUN |
+| E5 | 最后功能源下完整适用回归、六模式浏览器、静态/身份/条款/文档收口 | 已完成验收执行；整体partial，不给全仓/负载全面PASS |
+
+[ER01—ER40实际索引](validation/evidence_research_acceptance.json)逐条给真实node、运行命令引用、
+实际exit、制品SHA、范围及未覆盖原因。237个不重复映射node均通过；它们与全仓及阶段
+运行有重叠，绝不相加为独立测试数。ER29（原A/B匹配运行时只读）、ER32（真实语义判断）、
+ER35（并行负载风险）和ER39（完整回归/静态非全绿）为partial，其余36条仅在各自
+工程声明范围passed。ER37/38/39/40含文档/收据审阅，不伪造pytest用例。
+
+### 最终精确运行与身份
+
+仓库根、现有.venv，Python3.13.3、Windows11 build26200；Node24.0.0、Chromium
+153.0.8010.12。75项实际安装分发版本、265个源码/测试文件逐文件SHA及全部1118个
+精确node已冻结在`.evidence-loop/final6/preregistration.json`及分发索引；不是只列依赖约束。
+运行前、各组运行后、最终当前再次核对：源码/测试无缺失或额外文件，75项依赖一致。
+`pyproject.toml` SHA256 `ce40d239b9681568c6eb56d32f32920054ca4c36f6fe50566217c848c84aaebd`；
+runner `15f6532945ec212f035a50ce9c4bd92718afca57addf617b83e10544eea4896f`。
+source identity（evidence-final-source-v1）
+`514a73f0dc65c7c49b791a78be89b6e977834fc19508754130ab536605230c14`。
+静态输入/生成合成输入的配方由冻结源码绑定；各案例的运行生成数据另由原合同/制品身份
+绑定，展示案例raw SHA见下方轨迹。不把负例故意篡改的临时输入说成始终未变化，亦未重新
+计算或声明所有者原A/B的真实预测/数据科学结果。
+
+```powershell
+.venv/Scripts/python.exe scripts/run_evidence_regression.py --out .evidence-loop/final6 --temp-prefix .erfinal6 --shards 3
+```
+
+runner先精确collect，再串行交付组及3个文件组；每组完整Python argv（含全部文件、两条
+deselect、独立basetemp/JUnit）、开始/结束source/deps/input、实际exit和stdout均保留。
+OMP/MKL/OPENBLAS=1，PYTHONPATH=src/apps/scripts的绝对路径，移除真实API Key、
+真实数据admission和浏览器gate环境变量；不复用旧额度。不是以合成替换两个真实行情研究
+节点：`test_models_and_harness.py::test_harness_runs_real_data`及
+`test_methodcard_p0_pipeline.py::test_methodcard_derived_paperspec_runs_p0_harness`
+明确因本轮不授权新真实行情研究而排除，其原测试/断言不改。
+
+| 最终run | 实际结果 | pytest报告耗时 | 实际exit |
+|---|---|---|---|
+| final6 part0 | 9通过 | 441.66秒 | 0 |
+| final6 part1 | 355通过/1失败/6跳过 | 4838.09秒 | 1 |
+| final6 part2 | 349通过/2跳过/1原真实行情节点deselected | 4838.74秒 | 0 |
+| final6 part3 | 395通过/1失败/1原真实行情节点deselected | 5283.35秒 | 1 |
+| aggregate | 1108通过/2失败/8跳过；1118/1118精确node，无missing/extra/duplicates | 并行组不相加计墙钟 | 1 |
+
+94个本轮新增非浏览器node全部通过；新增browser参数与另5个模式在独立运行通过。
+`.evidence-loop/final6/aggregate.json` SHA
+`4e3c4255f63315185509101624bd2aa77d758f852ec67e63e4efe48d86cc10be`，
+preregistration SHA `a8774b69e856b0fbae4f23035d7fcc87baa985687cafb5ce8d74bcf38ed26136`。
+两处原始失败逐字堆栈保留：
+
+- `tests/test_focused_r4_trust.py::test_model_bundle_tamper_rejected_before_load[symlink]`：
+  第237行创建测试symlink时WinError1314，尚未到load门禁断言。无全局权限修改，不用
+  junction/mock或跳过替代安全验收。
+- `tests/test_p1_real_validation_artifacts.py::test_dlinear_strict_live_card_replays_without_an_api_call`：
+  缺`projects/finance_agent/llm_fixtures/method_card/2c05bfd22af27435.json`。
+  不手写新fixture、不换hash、不实际调用API填洞。该旧测试源及依赖实现未由本轮更改。
+
+8跳过中6个是显式浏览器gate（已另跑全部6个）；另外两个为Windows symlink权限和
+POSIX process-group kill探针。原JUnit警告亦保留。不能把这些跳过计成通过。
+之前final/final2/final3/final4/final5完整尝试因真实发现的接线/容量/格式/兼容回归中止，
+原ABORTED、原失败、复跑关系保留，不能拼接它们代替final6。阶段失败目录及SHA索引见
+`.evidence-loop/raw-failure-catalog-stage.json`；阶段green-JUnit但非零exit也未升级为通过。
+
+### 浏览器、容量、静态及未关闭的负载边界
+
+独立六模式命令：
+
+```powershell
+.venv/Scripts/python.exe -m pytest tests/browser/test_agent_workspace.py tests/browser/test_research_workspace.py -q --basetemp=.erbrowser6 --junitxml=.evidence-loop/browser-final6/browser.xml --tb=short
+```
+
+PYTHONPATH同上，三BLAS线程=1，FFA_BROWSER_E2E=1，真实admission环境清空，
+FFA_UI_BROWSER_ARTIFACTS指向`.evidence-loop/browser-final6/artifacts`。
+6通过/848.50秒（pytest报告时间）/exit0，start/end源/依赖/input一致；XML SHA
+`0f71c2b1383d6d54fe442a7eb69e09c334f9bde24f900ae56c1e14da043378bf`。
+原120秒等待断言未放宽。新协议实际截图700/1440及1280成果/推荐布局、三次额外新
+context重开、刷新/导航/只读、父末批到子首轮、推荐隔离和模型/研究包均通过。
+5个Agent模式报告page_errors=[]、page_crashes=[]；旧工作区第6节点亦实际通过。
+截图作助手视觉复核，不是所有者/独立用户签收。
+
+保留browser-final5：与三重回归并行时3通过/3个120秒完成等待超时，exit1；
+该源为230cf1e，之后只修了旧最小摘要可选字段兼容，不能将旧失败重签为384源。
+后台完成不等于界面通过；负载是观察条件而非已证明唯一根因。失败报告无page_errors
+字段且无FAIL截图，不能宣称那次零页面错误。后续独立完整6模式通过不消除高负载
+稳定性风险，不承诺并行负载SLO已通过。
+
+最后源联合容量原制品：`.erfinal63/test_joint_actual_two_slot_con0/` ON两次
+47179/61653字符、56492/70966 UTF8字节；con1 OFF两次31076/39577字符、
+40389/48890字节。均完整新schema、两槽/三活跃假设/父末批/4000中文备注/继承两公式；
+受64000实际wire字符及结构上限共同准入，字节另记、token未知。不是任意字段所有最大
+值的笛卡尔积或科学小样本保证。完整历史保留，工作视图明确归档为deferred，必要当前
+反证不静默丢弃，超限HTTP前拒绝。
+
+最后源静态实际执行：修改Python的`ruff check --output-format json` exit0；
+`python -m compileall -q src apps scripts tests` exit0；`node --check`分别检查
+actions.js/core.js/forms.js/views.js均exit0；`git diff --check e361b0e` exit0。
+完整`python -m ruff check src --output-format json`仍74项/32文件/exit1，全部与
+e361b0e对应Git blob相同，不是新增/受影响文件；原JSON和实际命令/退出保留在
+`.evidence-loop/final-static-all.json`、`final6-static-results.json`。不称全仓lint全绿。
+
+### 实际代码、报告与可信模型交付
+
+关键源：`focused_diagnostics.py`为纯诊断；`research_state.py`为纯状态归约/新协议边界/
+工作视图；`focused_research.py`复用原计划接受/结果接线/执行；`research_mission.py`
+复用原Mission/Queue/显式续接及成本；`focused_summary.py`原报告/中文主线；原
+workspace_ui_service和workspace_frontend为原界面集成。无第二Controller/事实库/evaluator。
+测试位于16个`tests/test_evidence_research_*.py`及原browser新增参数，详见ER索引。
+原数学候选v4/FeatureProgram/TrainingPolicy/旧诊断枚举和原推荐政策未迁移。
+
+下方final6真实轨迹给出alpha10父两批→差父候选显式子两批，52总charged fit；两方向
+完整单轴继承另由交付测试验证。父末批DQ04→子首轮完整请求/判断轨迹为44fit、4次
+loopback HTTP；最终对应node均通过，不只绑定candidate或round_index。
+新模型包回执候选r2_c1_aa2c45a1、Ridge(alpha=1)、rolling504、6列及一条gen_mean，
+实际504训练行、明确额外1fit；model SHA
+`b146ac6bac4760a621a94ecc295a3f76ebff4fb1d6ac63989aaeab3cc969442f`与当前文件一致。
+新进程原`predict_model_bundle(bundle,state,unlabeled)`退出0且数组rtol=1e-8/
+atol=1e-12一致的最终测试通过；这是可加载/一致性，不是D独立预测有效性。
+原用户A/B没有重训，匹配旧runtime只读验证本轮BLOCKED，不重签源码hash绕过。
+
+浏览器研究包真实重新审计9份预测/47个索引成员，package SHA
+`7817254459faf3fac77f66cd9c82c62bfbe9bd0a5340b2a6eaca15ee3bbdb456`；REPORT为
+中文实验报告，派生叙述沿原资料权限裁减。查看候选不改冻结推荐，已有包下载/重开只读
+0增量；新模型包须明确额外refit。展示的合成研究可以no_improvement并保留起点。
+实际操作命令和新协议三步入口见下方“本轮工程复核的实际操作入口”及操作指南。
+
+### 五证据轴、剩余事项与提交
+
+| 轴 | 本轮结论 |
+|---|---|
+| A 工程 | 新增/受影响关键路径实测通过；全仓/完整lint/负载全面状态partial，不能整体PASS |
+| B 真实研究行为 | NOT_RUN；12份语义挑战/原字段/人工rubric已准备，无新Provider授权，不拿fixture/Replay签LLM理解 |
+| C 研究选择价值 | NOT_RUN；同域三臂信息/资源公平工程通过，不证明更新更好或小MAE改善有价值 |
+| D 独立预测 | NOT_RUN；可信新进程一致性不等于未暴露未来数据的独立效果；原47负确认保留 |
+| E 真人价值 | NOT_RUN；助手截图/自动浏览器不代表本人理解、省时、错误率或客户价值 |
+
+只留给真人：所有者对原A/B及新报告作只读G6理解复核（控制/单轴/正负结果/未决/
+冻结推荐/研究报告与模型包/额外refit），不代签；独立用户正常使用记录主动时间、求助
+次数和错误，不能由助手扮用户。B/C/D是另需新数据/发送/资源/评价授权的自动试验，
+不是必须手工点击的测试；六对语义挑战要保留原回答并按冻结rubric人工判定，不预设换轴。
+旧runtime/fixture及Windows权限边界单列；若要求高并行稳定性，需单独明确负载与延迟
+准入并继续定位，当前不承诺通过。不得为补这些边界擅自安装/外发/读封存标签或改全局权限。
+
+实现本地提交：8303e2a5849154e6349c4e6b54bf2bb273bc550c；
+1c359079bd5133f41a50fb42c2fe21e501a2823c；
+258cc2a3f74f146964f55981894e95502e360496；
+230cf1e06c0abe6ce51f4b4eaf60746d61fc3bc7；
+384102d6c21e06f756b619af996b71e716d311f6。
+后续仅文档/收据提交，最终HEAD见本轮最终回复或上述git log命令；无推送/远端CI，
+无新真实Provider/真实行情计算/外发/封存标签/生产或全局权限变更。
 
 ## 实施工作日志（不是最终验收）
 
@@ -293,6 +459,94 @@ final5已按真实回归中止，ABORTED、part0原9通过/464.10秒、分组2�
 不再把重型回归和界面120秒就绪同时施压；并行失效仍报告，不放宽原断言。
 230cf1e来源的离线材料保留为阶段证据；最后冻结后须从新上下文重新生成/核验，
 不得改写旧source/hash冒充当前。E5仍未完成，B/C/D/E无新授权仍NOT_RUN。
+
+### 2026-10-23 修复源的独立六模式验收
+
+修复提交384102d；browser-final6实际完整六模式6通过/848.50秒/exit0，原断言和
+120秒门槛不改。start/end源码265文件、依赖、pyproject输入一致；五个Agent模式
+report均包含完整page_errors=[]/page_crashes=[]及截图/动作/计数，另一个旧工作区
+原节点也通过。正常隔离调度验证通过不抹掉前次并行1156.62秒的3失败，不能据此
+宣称已验证满并行负载下的120秒就绪SLO。现在同源final6全仓冻结正在执行，尚未
+结束不得给E5 PASS，也不把59项或单独浏览器结果当全仓退出。
+
+当前384102d冻结源的离线材料已另存，不重签230cf1e阶段材料：
+`.evidence-loop/live-context-final2.json`来自final6串行provided_start子研究的原始
+`prompt:1`，原Prompt hash `fbbc929467b32fa914a5`，父末批pending关系2条。
+`.evidence-loop/live-context-final2.source.json`保存源DB/namespace/commit；
+`.evidence-loop/live-preparation-final2/PREPARATION.json`及12份载荷的输入与逐成员SHA256
+全部核对相等，最大43958字符/44327 UTF8字节，Provider token仍未知。
+命令仅离线构造，0发送/fit，`NOT_RUN_NEW_AUTHORIZATION_REQUIRED`。
+六模式当前截图已人工视觉查看700/1440主线与REPORT：中文问题/主张/竞争解释/原判断/
+未决/pending具名显示，长来源ID可换行；这只是助手视觉工程复核，不是用户理解验收。
+
+### final6串行实际轨迹（完整回归仍在运行）
+
+`tests/test_evidence_research_workspace.py::test_original_queue_worker_executes_new_protocol_for_both_entries`
+两入口已在final6 part0真实通过；以下只读该批provided_start原campaign.json，不额外执行研究。
+源目录`.erfinal60/test_original_queue_worker_exe1/project/focused_campaigns/`，合成输入
+SHA256 `cb063f4b608912b32e4ac2ea905a1d542389bbae80a6c974c51f97e129bc457b`。
+父`persistent-77cbfeaf6bbc6beb5de8f077`，子`persistent-99ccf896745d0001f5b1cfec`。
+
+| 阶段/实际对象 | 实际control/改动 | 原MAE |
+|---|---|---|
+| 父起点user_start | StandardScaler+Ridge(alpha=10)，base_lags，expanding | 0.007345684420938911 |
+| 父R1 r1_c1_ecea3511 | user_start→features；窗口仍expanding | 0.007331065989772755 |
+| 父R1 r1_c2_b978aae9 | user_start→training_window rolling504；原特征不变 | 0.007377579351201807 |
+| 父R2 r2_c1_de043b5a | 从R1C1完整继承特征，只改rolling504 | 0.0073987905201885985 |
+| 子起点user_start | 显式选择较差且未推荐的父R1C2；重算rolling504起点 | 0.007377579351201807 |
+| 子R1 r1_c1_ecea3511 | 从子起点加特征，保留rolling504 | 0.0073987905201885985 |
+| 子R2 r2_c1_111d85cf | 从子R1完整继承特征，只改rolling756 | 0.007349605954063493 |
+
+父总charged fit28，子24，合计52≤64，已包括各自对照/起点，不免费复制父预测；
+各两次逻辑规划、Provider HTTP0，无模型包refit。问题forecast_quality稳定，有限规则
+method_effect v1保留；父两次update判断数0/4，子2/2；两末批均保留2条pending关系。
+这些规则判断明确not_distinguished，不是Live提出新机制或假设版本演进的证据；
+多假设/版本/相反结果/关系暂缓由单独结构和整链fixture覆盖，不能混成科学理解PASS。
+两研究均`no_improvement`，冻结推荐均各自user_start，原选择原因
+`research_candidate_did_not_qualify_to_replace_start`、推荐相对起点增益0。
+筛选仍相对`best_fixed_control_or_user_start`且0.0025，不能只看R1C1比起点小降就称通过。
+最佳研究候选与冻结推荐是两个原字段：父最佳研究R1C1，子最佳研究R2C1；未改推荐器。
+这条轨迹展示正常“不替换起点”的闭环，不证明规则/Agent有增量选择价值。
+原父payload不变、诊断可见性/续接binding篡改拒绝亦由原测试断言；其余三组仍需完整退出。
+
+final6 part1运行中已生成完整父末批诊断续接和新模型回执；此处只列实际产物，完整
+JUnit/退出仍须part1结束后绑定，不先把该组判为通过：
+
+- `.erfinal61/test_parent_last_query_and_ful0/project/focused_campaigns/`：父
+  `persistent-0b19c6e7255cb94b998707dc`两批/20fit，末批请求last_tail为DQ04，
+  结果`query:154d25801bb1f76d0ed633758336e4e71287ffeef378fad9f0f655926d0b7134`。
+  显式子`persistent-dd52e6deb23427834beae45f`两批/24fit；其首批计划对该父query
+  以method_effect v1作not_distinguished/evaluated，理由“规则不作机制归因”，
+  未决仍为机制及独立预测增益未确立。父请求完整branches和原owner保留，子末批再有
+  自己的DQ04请求/结果。父/子各完成1查询，新增fit/Provider请求均0，墙钟分别
+  0.11142080000718124/0.11452040000585839秒，CPU未知；当前成本与祖先成本分列。
+  两个研究各2次loopback规划HTTP，合计4；这是本地assistant_authored_fixture，
+  绝非4次真实Provider或LLM质量证据。父/子末批各1条pending关系。
+- `.erfinal61/test_both_directions_keep_full0/explicit-bundle/bundle.json`：
+  实际候选r2_c1_aa2c45a1，Ridge(alpha=1)、rolling504、base_lags＋
+  gen_mean=rolling_mean(return_1,5)，6列，实际504训练行，额外reserved_fit_calls=1，
+  refit-8bcddaedbdb3438eb636d819485e2ba8。原model_sha256
+  `b146ac6bac4760a621a94ecc295a3f76ebff4fb1d6ac63989aaeab3cc969442f`。
+  这是独立合成方法交付测试，不是上述alpha10 A起点或所有者原模型重训。
+  测试原子进程命令以该bundle/原state/unlabeled.json调用predict_model_bundle，
+  断言子进程exit0与当前数组rtol=1e-8/atol=1e-12一致，最终case状态待整组JUnit核对。
+
+### 本轮工程复核的实际操作入口
+
+若需查看本轮隔离合成轨迹，可在空闲端口用已有启动脚本打开该测试库（不要替换原A/B库，
+不要从本命令推断任何新真实数据/Provider授权）：
+
+```powershell
+& 'D:/AI Agent/finance_forecast_agent_v1/scripts/start_workspace.ps1' -StateDb 'D:/AI Agent/finance_forecast_agent_v1/.erfinal60/test_original_queue_worker_exe1/state.sqlite3' -ProjectDir 'D:/AI Agent/finance_forecast_agent_v1/.erfinal60/test_original_queue_worker_exe1/project' -Port 8516
+```
+
+此为操作说明，非本轮另一次已执行启动。原浏览器实测由pytest在独立临时库/端口启动。
+查看父/子研究的“研究”页可对照上述轨迹；“事实来源与诊断数值”显示原数值及范围，
+技术原文仍可展开。成果页推荐对象独立于当前查看候选。导出研究包先读REPORT.html，
+不要拿它做新预测。已有受信模型包下载只读；生成新模型包必须看到并确认额外1次refit。
+旧包若源/环境不匹配，保留拒绝，不以新签hash或重训原B绕过。
+新建流程第一步选V2.5特征＋窗口，第三步显式选证据驱动协议；未选仍旧协议。
+真实数据/Live的点击提交仍须新的适用授权；本说明只给产品操作路径，不执行它们。
 
 ### 离线试验材料与下一次授权边界（未运行，不追加本轮权限）
 

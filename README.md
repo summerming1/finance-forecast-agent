@@ -1,20 +1,28 @@
 # Finance Forecast Agent
 
-## Evidence-driven loop — implementation started 2026-10-23
+## Evidence-driven loop — bounded engineering delivery 2026-10-23
 
-User-approved E0–E5 work is governed only by
-[EVIDENCE_RESEARCH_LOOP.md](docs/EVIDENCE_RESEARCH_LOOP.md), with actual progress in
-[Current](docs/CURRENT_IMPLEMENTATION.md). Reuses the existing two-axis mathematics,
-Controller, runtime and workspace; does not restart V2.5 N0–N5. New evidence/hypothesis
-relations, six diagnostic tools, explicit parent-evidence continuation and readable
-workspace/report projections have synthetic integrated evidence. Final frozen
-regression is in progress, not a completed product acceptance. New workflows must
-explicitly select the evidence protocol on wizard step three; legacy defaults stay.
-This batch authorizes isolated synthetic engineering/local commits only, not new
-real Provider/market experiments, external sends, sealed labels, push or remote CI.
+User-approved E0–E5 is implemented under the sole
+[EVIDENCE_RESEARCH_LOOP.md](docs/EVIDENCE_RESEARCH_LOOP.md); actual status is only in
+[Current](docs/CURRENT_IMPLEMENTATION.md) and the [ER receipt](docs/validation/evidence_research_acceptance.json).
+Reuses the original Controller, runtime, queue, evaluator and two-axis methods:
+six real diagnostic dispatches, stable question/hypothesis versions, per-relation
+assessments/pending, same-response atomic updates, explicit parent-evidence continuation,
+readable workspace/report and complete trusted model delivery.
+Frozen source 384102d: 1118 exact applicable nodes, **1108 passed / 2 historical failures /
+8 skipped, exit 1**; all 94 new non-browser tests pass. Independent six-mode browser
+passes without weakening its original timeout. Source/tests (265), installed dependencies
+(75) and registered inputs remain bound. This is not whole-repository green or a load SLO:
+Windows symlink permission, missing old DLinear Replay, historical full-src lint and
+earlier concurrent-load browser timeouts remain recorded.
+Select feature-window scope and the evidence protocol explicitly on wizard step three;
+legacy defaults/formats/hashes and original A/B stay. REPORT.html is an experiment report,
+not a predictive model; a new trusted bundle requires one explicit additional refit.
+B real-model behavior, C selection value, D independent prediction and E human value are
+NOT_RUN this batch. Only isolated synthetic engineering/local commits were authorized:
+no new real Provider/market computation, external sends, sealed labels, push or remote CI.
 Conditional clipping/weights/RF/interaction/knowledge/Shadow are not implemented here.
-Latest verified base is the 2026-10-22 closure receipt (1014 pass/2 historical fail/
-7 skip; browser 4+1 pass); the older dated delivery sections below remain historical.
+Dated sections below retain historical evidence rather than replacing current status.
 
 ## V2.5.0 bounded engineering delivery (implementation 2026-10-19; docs synced 2026-10-20)
 

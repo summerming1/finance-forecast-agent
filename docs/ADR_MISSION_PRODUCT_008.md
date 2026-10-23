@@ -24,3 +24,8 @@ old packages remain gated, not re-signed or retrained for compatibility.
 Engineering approval is not implementation or acceptance. No real Provider, market
 research, external sends, sealed labels, production/global-policy changes, push or
 remote CI. Conditional clipping/weights/RF/interaction/knowledge/Shadow remain future.
+
+Implementation receipt: source384102d, original architecture reused, 94 new tests
+and independent six-mode browser pass. Full applicable regression remains exit1
+(1108 pass/2 historical fail/8 skip); asset/permission/lint/load boundaries persist.
+Actual clause/axis status is in Current and the ER receipt, not implied by this ADR's acceptance.

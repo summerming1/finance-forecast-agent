@@ -11,9 +11,14 @@ Only isolated synthetic engineering, worker/fit/predict/refit, local HTTP, stric
 Replay, browser/static/regression and scoped local commits are authorized here.
 No new real Provider, fees, market research, sends, sealed labels, production
 migration, global permissions, push or remote CI. Existing keys/old quotas confer
-no permission. E0 implementation has started; approval is not acceptance.
-Current remains the sole actual-status authority. No clipping/weights/RF research
-replacement/HPO/knowledge learning/Shadow or other conditional follow-up execution.
+no permission. E0–E5 is implemented; the frozen engineering receipt is bounded,
+not whole-repository/scientific/human acceptance. Read Current and ER actual results.
+Tested source384102d: 1108 pass/2 historical fail/8 skip, 94 new pass, browser6 pass.
+Historical asset/permission/lint failures and concurrent-load timeout risks remain.
+Next is owner read-only G6/independent user review and separately authorized B/C/D
+trials, not a rerun of old B training or a new implementation of completed N0–N5.
+No clipping/weights/RF research replacement/HPO/knowledge learning/Shadow or other
+conditional follow-up execution.
 
 ## Current delivery and next action (2026-10-20)
 
