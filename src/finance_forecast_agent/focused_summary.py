@@ -16,6 +16,121 @@ def _number(value):
     return value
 
 
+def build_evidence_mainline(payload: dict) -> dict | None:
+    """Bounded display of original accepted relations; never a second state store.
+
+    Text is quoted as saved, not translated/invented. Historical omissions have
+    counts and a source pointer; neither a hidden hypothesis nor pending item is
+    marked finished by this display bound. Numeric diagnostic values are copied.
+    """
+    context=payload.get('evidence_research')
+    if not context:return None
+    state=context['state'];facts=context['evidence']
+    arrangements={'pending':'待研究','active':'活跃','deferred':'暂缓','blocked':'受阻','closed':'结束'}
+    assessments={'local_support':'局部支持','weakened':'被削弱','conflicting':'存在冲突',
+        'not_distinguished':'尚未区分','insufficient_evidence':'证据不足','unchanged':'认识不变',
+        'execution_incomplete':'执行不完整（不是科学反证）'}
+    kinds={'training':'实际训练结果','diagnostic':'起点/候选画像（非独立样本）',
+        'diagnostic_query':'定向诊断','execution_failure':'获准执行失败','reviewed_literature':'已审核文献',
+        'controlled_observation':'提案配对观察（含缓存；非独立样本）'}
+    hypotheses=[{**copy.deepcopy(h[-1]),'status_label':arrangements.get(h[-1]['status'],h[-1]['status']),
+        'history_versions':[v['version'] for v in h]} for h in state['hypotheses'].values() if h]
+    hypotheses.sort(key=lambda h:(h['status']!='active',h['id']))
+    questions=[{**copy.deepcopy(q),'status_label':arrangements.get(q['status'],q['status'])}
+        for q in state['questions'].values()]
+    requests=[];updates=[]
+    for batch in payload.get('rounds',[]):
+        u=batch.get('research_update')
+        if isinstance(u,dict) and u.get('schema_version')=='evidence_research_update_v1':
+            updates.append({'round_index':batch['round_index'],'choice_reason':u['choice_reason'],
+                'assessments':[{**copy.deepcopy(a),'assessment_label':assessments.get(a['assessment'],a['assessment']),
+                    'disposition_label':'暂缓，仍待处理' if a['disposition']=='deferred' else '已评估该版本关系'}
+                    for a in u['evidence_assessments']]})
+        for item in batch.get('items',[]):
+            h=item.get('hypothesis') or {};r=h.get('evidence_request')
+            if r:
+                requests.append({**copy.deepcopy(r),'round_index':batch['round_index'],
+                    'owner_campaign_id':(payload.get('campaign') or {}).get('campaign_id'),
+                    'operation_id':h.get('hypothesis_id'),'hypothesis_refs':copy.deepcopy(h.get('hypothesis_refs',[])),
+                    'status':item.get('status'),'result_ref':(item.get('diagnostic_result') or {}).get('result_hash'),
+                    'action_type':h.get('action_type')})
+    if 'requests' in context:
+        requests=[{**copy.deepcopy(r['request']),'ref':r['ref'],'owner_campaign_id':r['owner_campaign_id'],
+            'round_index':r['round_index'],'operation_id':r['operation_id'],'hypothesis_refs':copy.deepcopy(r['hypothesis_refs']),
+            'status':r['status'],'result_ref':'；'.join(r['result_ids']),'action_type':r['action_type']}
+            for r in context['requests']]
+    request_statuses={'available':'已取得描述结果','unavailable':'不可得（不等于科学反证）',
+        'diagnosed':'已取证','planned':'已冻结待执行','completed':'已完成（不等于通过筛选）',
+        'execution_failed':'执行失败（不是科学反证）','skipped_duplicate':'复用原结果，不是新样本',
+        'result_not_visible_in_this_arm':'本臂规划不接收诊断结果'}
+    for r in requests:r['status_label']=request_statuses.get(r['status'],r['status'])
+    evidence=[]
+    relevant={r[0] for r in state['pending']}
+    for eid,fact in sorted(facts.items(),key=lambda x:(x[0] not in relevant,x[0])):
+        result=fact.get('result') or {}
+        details=copy.deepcopy(result.get('results',[]))
+        if fact['kind']=='controlled_observation':
+            info=result['information']
+            details=[{'fold_id':'共同目标汇总','values':{'候选MAE':info['child_mae'],
+                '实际对照MAE':info['control_mae'],'相对MAE改善':info['relative_mae_improvement'],
+                '预测来源':'缓存复用，不是新训练' if info['prediction_provenance']=='cache_reuse' else '原执行结果',
+                '观察状态（原记录）':result['observation_status'],
+                '实际对照':result['rule']['control_candidate_id']}}]
+        elif fact['kind']=='training':
+            labels={'mae':'MAE','rmse':'均方根误差','directional_accuracy':'方向命中比例（非盈利）'}
+            details=[{'fold_id':'共同目标汇总','values':{labels.get(k,k):v for k,v in (result.get('metrics') or {}).items()}}]
+        evidence.append({'id':eid,'kind':fact['kind'],'kind_label':kinds.get(fact['kind'],fact['kind']),
+            'owner_campaign_id':fact.get('owner_campaign_id'),'hypothesis_refs':copy.deepcopy(fact.get('hypothesis_refs',[])),
+            'query_kind':(result.get('query') or {}).get('kind'),'status':result.get('status'),
+            'metrics':copy.deepcopy(result.get('metrics')),'details':details,
+            'source_hash':result.get('result_hash') or result.get('source_artifact_hash'),
+            'failure':copy.deepcopy(result) if fact['kind']=='execution_failure' else None})
+    return {'schema_version':'evidence_mainline_view_v1','state_hash':state['state_hash'],
+        'questions':questions[:12],'hypotheses':hypotheses[:12],
+        'updates':updates,'requests':requests[-16:],'evidence':evidence[:24],
+        'pending':copy.deepcopy(state['pending'][:24]),'pending_count':len(state['pending']),
+        'unassigned_count':len(state.get('unassigned_evidence',[])),
+        'omitted':{'questions':max(0,len(questions)-12),'hypotheses':max(0,len(hypotheses)-12),
+            'evidence':max(0,len(evidence)-24),'pending':max(0,len(state['pending'])-24),
+            'requests':max(0,len(requests)-16)},
+        'audit_source':'campaign.json:evidence_research; batch_plans/; diagnostics/',
+        'reference_policy':context.get('reference',False),
+        'query_compute_wall_seconds':context.get('query_compute_wall_seconds'),
+        'query_cpu_seconds':context.get('query_cpu_seconds'),
+        'recommendation_source':'diagnostic_research.recommendation',
+        'limitation':'已保存认识不等于机制已证实；待处理关系不自动变成支持。浏览不训练、不调用LLM。'}
+
+
+def _evidence_report(payload,esc):
+    v=build_evidence_mainline(payload)
+    if v is None:return ''
+    out='<h2>问题、假设与证据主线</h2><p>'+esc(v['limitation'])+'</p>'
+    out+='<p>待处理关系：'+str(v['pending_count'])+'；待分配证据：'+str(v['unassigned_count'])+'</p>'
+    for q in v['questions']:
+        out+='<h3>问题 '+esc(q['id'])+' · '+esc(q['status_label'])+'</h3><p>'+esc(q['goal'])+'</p><p>范围：'+esc(q['scope'])+'；依据：'+esc(q['basis_refs'])+'</p>'
+    for h in v['hypotheses']:
+        out+='<h3>假设 '+esc(h['id'])+' v'+str(h['version'])+' · '+esc(h['status_label'])+'</h3>'
+        out+='<p>主张（原记录）：'+esc(h['claim'])+'</p><p>条件：'+esc(h['conditions'])+'；竞争解释：'+esc(h['alternatives'])+'</p>'
+        out+='<p>支持引用：'+esc(h['support_refs'])+'；反证引用：'+esc(h['counter_refs'])+'；历史版本：'+esc(h['history_versions'])+'</p>'
+    for r in v['requests']:
+        out+='<h3>取证请求 '+esc(r['id'])+'</h3><p>'+esc(r['question'])+'；预期：'+esc(r['expected'])+'；执行状态：'+esc(r['status_label'])+'；来源Campaign：'+esc(r.get('owner_campaign_id'))+'</p>'
+        branches='；'.join(label+'：'+str(r['branches'][key]) for key,label in
+            [('supports','支持时'),('weakens','削弱时'),('insufficient','证据不足时'),('next_step','下一步')])
+        out+='<p>关联假设版本：'+esc(r['hypothesis_refs'])+'；'+esc(branches)+'</p>'
+    for u in v['updates']:
+        out+='<h3>第 '+str(u['round_index'])+' 轮已接受认识更新</h3><p>原选择理由：'+esc(u['choice_reason'])+'</p>'
+        for a in u['assessments']:
+            out+='<p>'+esc(a['hypothesis_id'])+' v'+str(a['hypothesis_version'])+' ← '+esc(a['evidence_id'])+'：'+esc(a['assessment_label'])+'，'+esc(a['disposition_label'])+'。'+esc(a['finding'])+'；未决：'+esc(a['open_question'])+'</p>'
+    for e in v['evidence']:
+        out+='<details><summary>'+esc(e['kind_label'])+' · '+esc(e['id'])+'</summary><p>来源Campaign：'+esc(e['owner_campaign_id'])+'；查询：'+esc(e['query_kind'])+'</p>'
+        for d in e['details']:
+            out+='<p>fold '+esc(d.get('fold_id'))+'；保存数值：'+esc(d.get('values'))+'</p>'
+            if (d.get('values') or {}).get('low_support'):out+='<p>证据薄弱提醒；数值可计算不代表科学支持。</p>'
+        out+='</details>'
+    out+='<p>诊断计算墙钟秒：'+esc(v['query_compute_wall_seconds'])+'；CPU秒：'+esc(v['query_cpu_seconds'])+'。界面省略数量：'+esc(v['omitted'])+'；完整历史及pending：'+esc(v['audit_source'])+'</p>'
+    return out
+
+
 def build_round_reviews(payload: dict) -> list[dict]:
     """Chinese read-only facts, not a regenerated Advisor explanation or selection."""
     rounds = payload.get('rounds') or []
@@ -42,6 +157,8 @@ def build_round_reviews(payload: dict) -> list[dict]:
         else:
             change = ('控制动作：'+str(hypothesis.get('action_type'))+'；未生成新候选' if not candidate else
                       '旧记录未保存声明轴；实际配置差异见原实验记录，不补造单轴结论')
+        request=hypothesis.get('evidence_request') if not candidate and hypothesis.get('action_type')=='diagnose' else None
+        if request:change='定向诊断 '+str((request.get('query') or {}).get('kind'))+'：'+request['question']+'；未新增候选或训练，完整结果见证据主线'
         duplicate = item.get('status') == 'skipped_duplicate'
         reused = item.get('reused_candidate_id')
         if duplicate:
@@ -51,10 +168,11 @@ def build_round_reviews(payload: dict) -> list[dict]:
                 'control': hypothesis.get('control_candidate_id') or candidate.get('parent_candidate_id') or '未记录',
                 'status': item.get('status', 'unknown'), 'is_duplicate': duplicate, 'reused_candidate_id': reused,
                 'mae': None if duplicate else _number((item.get('result') or {}).get('metrics', {}).get('mae')),
-                'comparison': comparison, 'change': change}
+                'comparison': comparison, 'change': change,
+                **({'diagnostic_request':copy.deepcopy(request)} if request else {})}
     for position, batch in enumerate(rounds):
         source = batch.get('advisor_source', '')
-        rule = source == 'deterministic_method_policy'
+        rule = source in {'deterministic_method_policy','deterministic_evidence_engineering_policy'}
         update = batch.get('research_update')
         reviews.append({'round_index': batch.get('round_index'),
             'prior_results': [experiment(i) for i in rounds[position-1].get('items', [])] if position else [],
@@ -89,6 +207,7 @@ def render_research_report(payload: dict, *, restricted: bool = False) -> str:
         options = campaign.get('research_options') or {}
         body += '<h2>研究目标与数据</h2><p>'+esc(options.get('notes') or options.get('research_notes') or '原任务与输入身份见contract.json')+'</p>'
         body += '<p>数据范围：'+esc((campaign.get('dataset') or {}).get('start_date'))+' → '+esc((campaign.get('dataset') or {}).get('end_date'))+'</p>'
+        body += _evidence_report(payload,esc)
         incumbent = (payload.get('incumbent_result') or {}).get('candidate') or {}
         recommendation = (payload.get('diagnostic_research') or {}).get('recommendation') or {}
         start = incumbent or (recommendation.get('research_start') or {}).get('candidate') or next(
@@ -110,6 +229,9 @@ def render_research_report(payload: dict, *, restricted: bool = False) -> str:
                     body += '<p>'+esc(item['candidate_id'])+'，相对 '+esc(item['control'])+'：'+esc(item['comparison'])+'</p>'
             body += '<h3>本轮实际实验</h3>'
             for item in review['experiments']:
+                if item.get('diagnostic_request'):
+                    body+='<p>定向取证：'+esc(item['candidate_id'])+'；从 '+esc(item['control'])+'；'+esc(item['change'])+'；不生成候选或新的模型MAE；状态='+label(item['status'])+'</p>'
+                    continue
                 score = '本项未新增训练/预测，不产生新的MAE' if item['is_duplicate'] else 'MAE='+esc(item['mae'])
                 body += '<p>'+esc(item['candidate_id'])+'；从 '+esc(item['control'])+' 开始；'+esc(item['change'])+'；'+score+'；'+esc(item['comparison'])+'；状态='+label(item['status'])+'</p>'
             body += '<p>'+esc(review['limitation'])+'</p>'
@@ -129,7 +251,7 @@ def render_research_report(payload: dict, *, restricted: bool = False) -> str:
         provider = (payload.get('resource_usage') or {}).get('provider') or {}
         body += '</table><h2>成本、限制与证据入口</h2><p>研究fit='+esc(payload.get('fit_calls'))+'；HTTP请求='+esc(provider.get('http_requests'))+'；Provider活动秒数='+esc(provider.get('charged_provider_seconds'))+'；金额='+esc(provider.get('currency_cost'))+'。</p>'
         body += '<p>研究计费/HTTP/失败见campaign.json的resource_usage及events.jsonl；金额未知不是零。缺训练预测时不能评估训练—开发差距。本报告不是独立确认、显著性或盈利证明。</p><p>原始证据：campaign.json、batch_plans/、observations/、predictions/、manifests/。每个导出文件的SHA256见research_package.json；报告是只读投影，不是新的运行状态权威。</p>'
-    return '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>研究实验报告</title><style>body{max-width:960px;margin:32px auto;padding:0 20px;font:16px/1.7 sans-serif;color:#18362c}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px;text-align:left}pre{white-space:pre-wrap;overflow-wrap:anywhere}h2{margin-top:32px}</style>'+body+'</html>'
+    return '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>研究实验报告</title><style>body{max-width:960px;margin:32px auto;padding:0 20px;font:16px/1.7 sans-serif;color:#18362c;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px;text-align:left;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere}h2{margin-top:32px}</style>'+body+'</html>'
 
 
 def _report_formula(node, depth=0):
@@ -268,10 +390,14 @@ def build_research_summary(payload: dict) -> dict:
         'evidence_claim': payload.get('scientific_claim', 'development_only_no_profitability_claim'),
         'evidence_status': copy.deepcopy(payload.get('evidence_status') or {}),
         'literature': literature,
+        **({'evidence_mainline':build_evidence_mainline(payload)} if payload.get('evidence_research') else {}),
         'continuation_from': copy.deepcopy((campaign.get('research_options') or {}).get('continuation_from')),
         'cost': {'current_research_fit_calls': _number(payload.get('fit_calls')),
                  'prior_research_fit_calls': None, 'prediction_reuse_from_parent': False,
                  'provider': copy.deepcopy(usage.get('provider')), 'known_fee': None,
+                 'feature_planning':copy.deepcopy(usage.get('feature_planning')),
+                 'automatic_diagnostics':copy.deepcopy(usage.get('automatic_diagnostics')),
+                 'diagnostic_queries':copy.deepcopy(usage.get('diagnostic_queries')),
                  'human_minutes': None, 'literature_preparation_fee': None,
                  'note': 'Prior work is historical cost, not charged again. New campaign training is charged independently.'},
         'limitations': list(payload.get('limitations') or []) + [

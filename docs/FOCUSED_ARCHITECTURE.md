@@ -1,5 +1,25 @@
 # Focused / Mission Research Architecture
 
+## Evidence-research extension approved 2026-10-23 (implementation in progress)
+
+[ADR008](ADR_MISSION_PRODUCT_008.md) and [the sole contract](EVIDENCE_RESEARCH_LOOP.md)
+define bounded diagnostic dispatch → accepted evidence → same-response hypothesis
+version assessments → existing atomic plan → actual intervention → pending evidence
+→ explicit same-Mission child Campaign. Pure research_state folds accepted plans;
+it is not a database, Memory, scheduler, evaluator or new Controller. Mathematical
+candidate v4 identity stays separate from research protocol/execution identity.
+Original runtime acceptance and permission checks must precede projection. Legacy
+contracts/fixtures/hashes and trusted package source checks remain unchanged.
+Implemented in focused_diagnostics (pure queries), research_state (bounded
+versioned fold/working projection), focused_research (existing atomic acceptance),
+research_mission (original explicit continuation) and focused_summary/workspace
+projections. Full histories remain in original accepted plans; bounded work views
+retain mandatory current support/counterevidence plus explicit deferred archives.
+New live sends require a distinct frozen evidence-send declaration and current
+consent; inherited state cannot bypass diagnostic visibility/literature permission.
+Synthetic integrated paths have stage evidence; final regression is in progress,
+not a scientific, Live-quality, independent-prediction or human acceptance claim.
+
 ## V2.5.0 extension (2026-10-19; bounded engineering verified)
 
 ADR007 and V2_5_METHOD_RESEARCH.md authorize one feature_window profile in the existing Controller. Full methods inherit from accepted controls; one axis changes per experiment. Three scopes separate comparison/calibration, eligible and selected training. Same-response research_update remains advice, never numeric authority. Actual fit receipts and versioned window-consistent refit reuse existing runtime/trust. Old contracts are historical and remain compatible; no second service or state store.

@@ -1,5 +1,22 @@
 # 当前版本功能与技术实现说明
 
+## 2026-10-23 证据驱动研究闭环：integration_verified_final_regression_pending
+
+用户明确批准v1.1的01/02实施E0—E5。实际HEAD e361b0e、原分支、tracked clean；
+保留未跟踪运行证据。唯一新合同[EVIDENCE_RESEARCH_LOOP.md](EVIDENCE_RESEARCH_LOOP.md)，
+条款索引[ER01—ER40](validation/evidence_research_acceptance.json)仍为planned。
+新协议已接入原Controller/Queue/worker和两入口；DQ01—06真实分发，稳定问题/假设版本、
+取证分支、同次更新、关系级pending及显式父末批→子首轮均有隔离合成验证。
+ON/OFF联合容量、三参考臂、loopback/严格Replay/中断、完整双轴继承、One-shot和
+显式模型包refit/fresh-process已阶段通过；原工作区/REPORT增加中文关系主线。
+新浏览器阶段190.07秒通过，扩展pending窄屏182.77秒通过。随后发现并修复完整请求
+续接容量/易变审计字段/缓存观察投影缺口：三种严格Replay3通过；父末批诊断父子worker
+1通过；强化容量和可信交付5通过；四类纯诊断及消融变量6通过。定向查询/祖先成本分列。
+两次旧最终冻结已中止并保留原始记录；当前未完成最后源码的适用全仓/六模式浏览器/
+静态及ER映射，不宣称E5 PASS。
+本轮仅隔离合成工程/本地提交，无新Provider/真实行情/封存标签/推送或远端CI授权。
+下面2026-10-22为已验证底座与历史收据，不以新方案覆盖；B/C/D/E本轮NOT_RUN。
+
 ## 2026-10-22 续批：限定工程复核完成，Live研究选择质量及真人复核仍开放
 
 基线3117b79；用户要求按顺序修补并测试，最后只交还必须真人的项目。

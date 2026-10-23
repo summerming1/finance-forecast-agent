@@ -1,4 +1,5 @@
 """V24 pure projections of accepted evidence; no fit, network or runtime authority."""
+import hashlib
 import time
 from copy import deepcopy
 
@@ -8,6 +9,254 @@ from .focused_feature_program import _expression_values, compute_price_features
 from .focused_identity import identity
 
 VERSION = "diagnostic_research_v4"
+
+
+def validate_diagnostic_query(query, accepted_ids, variable_names):
+    """New protocol only. Resolve permissions before supplying these allowlists."""
+    keys={'schema_version','kind','object_ids','scope','variable_pairs','factor','parameters'}
+    if not isinstance(query,dict) or set(query)!=keys:
+        raise ValueError('diagnostic query requires exact versioned fields')
+    if query['schema_version']!='evidence_diagnostic_query_v1' or query['kind'] not in {
+            'DQ-01','DQ-02','DQ-03','DQ-04','DQ-05','DQ-06'}:
+        raise ValueError('unknown diagnostic query type/version')
+    objects=query['object_ids'];pairs=query['variable_pairs']
+    if (not isinstance(objects,list) or not 1<=len(objects)<=2
+            or any(not isinstance(x,str) or x not in accepted_ids for x in objects)
+            or len(set(objects))!=len(objects)):
+        raise ValueError('diagnostic objects must be distinct accepted visible objects')
+    if query['scope'] not in {'selected_train','calibration','development_oof'} or query['parameters']!={}:
+        raise ValueError('unknown diagnostic scope or parameters')
+    scopes={'DQ-01':{'selected_train'},'DQ-02':{'development_oof'},
+        'DQ-03':{'selected_train','calibration'},'DQ-04':{'development_oof'},
+        'DQ-05':{'development_oof'},'DQ-06':{'selected_train','development_oof'}}
+    if query['scope'] not in scopes[query['kind']]:raise ValueError('diagnostic kind/scope mismatch')
+    if not isinstance(pairs,list) or len(pairs)*len(objects)>8:
+        raise ValueError('at most eight declared pairs total per query')
+    for pair in pairs:
+        if (not isinstance(pair,list) or len(pair)!=2
+                or any(not isinstance(x,str) or x not in variable_names for x in pair)):
+            raise ValueError('unknown named diagnostic variable')
+    if query['kind'] in {'DQ-03','DQ-06'}:
+        if not pairs or query['factor'] is not None:
+            raise ValueError('relationship query requires named pairs only')
+        if query['kind']=='DQ-03' and any(v in {'target','prediction'} for pair in pairs for v in pair):
+            raise ValueError('factor relationships require factors; use DQ-06 for target relations')
+        if query['kind']=='DQ-06' and any(pair.count('target')!=1 for pair in pairs):
+            raise ValueError('DQ-06 requires exactly one corresponding target per declared pair')
+    elif pairs:
+        raise ValueError('this diagnostic type does not accept pair scanning')
+    if query['kind']=='DQ-04':
+        if (not isinstance(query['factor'],str) or query['factor'] not in variable_names
+                or query['factor'] in {'target','prediction'}):
+            raise ValueError('tail query requires one permitted named factor')
+    elif query['factor'] is not None:
+        raise ValueError('unexpected factor for diagnostic type')
+    return deepcopy(query)
+
+
+def correlation_summary(left, right):
+    """Descriptive paired coefficients; average tied ranks, no IID inference."""
+    import pandas as pd
+
+    a,b=np.asarray(left,dtype=float),np.asarray(right,dtype=float)
+    if a.ndim!=1 or a.shape!=b.shape:
+        raise ValueError('correlation requires aligned one-dimensional pairs')
+    valid=np.isfinite(a)&np.isfinite(b);x,y=a[valid],b[valid];n=len(x)
+    result={'original_n':len(a),'valid_n':n,'excluded_n':int(len(a)-n),
+        'missing_policy':'finite_paired_subset_diagnostic_only','low_support':n<20,
+        'rank_method':'average','near_constant_rtol':1e-13,'pearson':None,'spearman':None,
+        'scientific_support':'not_established','reason':None}
+    if n<2:
+        result['reason']='insufficient_pairs'
+    elif any(np.ptp(v)<=1e-13*max(1.,float(np.max(abs(v)))) for v in (x,y)):
+        result['reason']='near_constant'
+    else:
+        result['pearson']=float(np.corrcoef(x,y)[0,1])
+        result['spearman']=float(np.corrcoef(pd.Series(x).rank(method='average'),
+                                            pd.Series(y).rank(method='average'))[0,1])
+    return result
+
+
+def tail_error_summary(control_train_factor, evaluation_factor, actual, predicted, *, control_pred=None):
+    """One named variable, control-selected linear q01/q99, shared evaluation mask.
+
+    Inputs must already be identity/time/permission aligned by the dispatcher.
+    This diagnostic never changes evaluation targets or the primary MAE.
+    """
+    train=np.asarray(control_train_factor,dtype=float)
+    x,y,p=(np.asarray(v,dtype=float) for v in (evaluation_factor,actual,predicted))
+    if (train.ndim!=1 or not len(train) or not np.isfinite(train).all()
+            or x.ndim!=1 or x.shape!=y.shape or x.shape!=p.shape):
+        raise ValueError('tail query requires finite selected thresholds and aligned arrays')
+    c=None if control_pred is None else np.asarray(control_pred,dtype=float)
+    if c is not None and c.shape!=x.shape:raise ValueError('unaligned paired predictions')
+    lower,upper=np.quantile(train,[.01,.99],method='linear')
+    valid=np.isfinite(x)&np.isfinite(y)&np.isfinite(p)
+    if c is not None:valid &= np.isfinite(c)
+    tail=valid&((x<lower)|(x>upper));other=valid&~tail
+    error=abs(p-y)
+    mean=lambda v,m:float(np.mean(v[m])) if np.any(m) else None
+    result={'thresholds':[float(lower),float(upper)],'quantile_method':'linear',
+        'threshold_source':'control_selected_train','mask_definition':'strict_below_q01_or_above_q99',
+        'original_n':len(x),'valid_pair_n':int(valid.sum()),'excluded_n':int((~valid).sum()),
+        'n_tail':int(tail.sum()),'n_other':int(other.sum()),'tail_fraction':float(tail.sum()/len(x)) if len(x) else None,
+        'tail_mae':mean(error,tail),'other_mae':mean(error,other),'low_support':int(tail.sum())<10,
+        'scientific_support':'not_established','primary_targets_changed':False}
+    if c is not None:
+        delta=error-abs(c-y)
+        result.update(tail_loss_delta=mean(delta,tail),other_loss_delta=mean(delta,other),
+            direction='candidate_minus_control_positive_is_worse')
+    return result
+
+
+def dispatch_diagnostic_query(query, objects, *, campaign_id):
+    """Execute one bounded query over accepted, permission-filtered input views.
+
+    ``variables`` are approved deterministic arrays in research row order, never
+    supplied executable formulas. The Controller owns artifact/receipt acceptance.
+    This function has no fitting, filesystem, Provider or persistence capability.
+    """
+    started=time.perf_counter()
+    ids=query.get('object_ids',[]) if isinstance(query,dict) else []
+    names=set.intersection(*(set(objects[x]['variables']) for x in ids if x in objects)) if ids and all(x in objects for x in ids) else set()
+    names |= {'prediction','target'}
+    q=validate_diagnostic_query(query,set(objects),names)
+    selected=[objects[x] for x in q['object_ids']]
+    rows=[_validated_rows(o['artifact']) for o in selected]
+    if len(selected)==2:aligned_predictions(selected[0]['artifact'],selected[1]['artifact'])
+    requested={v for pair in q['variable_pairs'] for v in pair}
+    if q['factor']:requested.add(q['factor'])
+    bound=[]
+    for o in selected:
+        variable_hashes={}
+        for name in sorted(requested-{'prediction','target'}):
+            array=np.ascontiguousarray(o['variables'][name],dtype='<f8')
+            if array.ndim!=1:raise ValueError('named diagnostic variable must be one-dimensional')
+            variable_hashes[name]={'dtype':'float64_le','shape':list(array.shape),
+                'sha256':hashlib.sha256(array.tobytes()).hexdigest()}
+        if 'target' in requested and q['scope']=='selected_train' and o.get('targets') is not None:
+            array=np.ascontiguousarray(o['targets'],dtype='<f8')
+            if array.ndim!=1:raise ValueError('mature training targets must be one-dimensional')
+            variable_hashes['target']={'dtype':'float64_le','shape':list(array.shape),
+                'sha256':hashlib.sha256(array.tobytes()).hexdigest()}
+        bound.append({'artifact':o['artifact'],'method_identity':o['method_identity'],
+            'training_receipts':o['training_receipts'],
+            'variables':variable_hashes,
+            'variable_origins':{k:v for k,v in o.get('variable_origins',{}).items() if k in requested},
+            'diagnostic':o['diagnostic'] if q['kind'] in {'DQ-01','DQ-05'} else None})
+    key=identity({'namespace':campaign_id,'query':q,'objects':bound,
+        'implementation':'bounded-evidence-diagnostics-v1'},domain='evidence-query-v1')
+    tools={'DQ-01':'execution_conformance','DQ-02':'prediction_performance',
+        'DQ-03':'named_relationships','DQ-04':'tail_errors',
+        'DQ-05':'fixed_period_state','DQ-06':'contemporaneous_relationships'}
+    out={'schema_version':'evidence_diagnostic_result_v1','query':q,'query_identity':key,
+        'diagnostic_id':campaign_id+':query:'+key,
+        'owner_campaign_id':campaign_id,'tool':tools[q['kind']],'status':'available','results':[],
+        'fit_calls':0,'provider_requests':0,'cpu_seconds':None,'scientific_support':'not_established'}
+    functions={'DQ-01':['accepted_execution_receipts'],'DQ-02':['saved_residual_diagnostic','paired_absolute_loss'],
+        'DQ-03':['pearson','spearman_average_rank'],'DQ-04':['quantile_linear_q01_q99','strict_shared_mask','mean_absolute_loss'],
+        'DQ-05':['frozen_volatility_groups','paired_absolute_loss'],'DQ-06':['pearson','spearman_average_rank']}
+    out['read_receipts']=[{'object_id':cid,'method_identity':o['method_identity'],
+        'prediction_artifact_hash':identity(o['artifact'],domain='diagnostic-prediction-v1'),
+        'scope':q['scope'],'functions':functions[q['kind']],
+        'variables':{name:deepcopy(o.get('variable_origins',{}).get(name,{
+            'kind':'accepted_prediction_row' if name in {'prediction','target'} else 'caller_bound_variable',
+            'name':name})) for name in sorted(requested)},
+        'row_source':'results.*.row_ids/evaluation_row_ids/threshold_row_ids; DQ01 original training receipts; DQ02/05 accepted artifact fixed folds',
+        'input_identity':key} for cid,o in zip(q['object_ids'],selected,strict=True)]
+    def finish():
+        out['result_hash']=identity(out,domain='evidence-diagnostic-result-v1')
+        out['compute_wall_seconds']=time.perf_counter()-started
+        return out
+    if q['kind']=='DQ-01':
+        out['results']=[{'object_id':cid,'artifact_hash':identity(o['artifact'],domain='diagnostic-prediction-v1'),
+            'training_receipts':deepcopy(o['training_receipts'])} for cid,o in zip(q['object_ids'],selected,strict=True)]
+        return finish()
+    if q['kind']=='DQ-02':
+        out['results']=[{'object_id':cid,'values':residual_diagnostic(o['artifact']),
+            'folds':[{'fold_id':fold,'values':residual_diagnostic({**o['artifact'],
+                'rows':[r for r in o['artifact']['rows'] if r['fold_id']==fold]})}
+                for fold in sorted({r['fold_id'] for r in o['artifact']['rows']})]}
+            for cid,o in zip(q['object_ids'],selected,strict=True)]
+        if len(selected)==2:
+            out['paired_loss_delta']=float(np.mean([abs(a['y_pred']-a['y_true'])-abs(b['y_pred']-b['y_true'])
+                for a,b in zip(rows[0],rows[1],strict=True)]))
+            out['direction']='first_minus_control_positive_is_worse'
+            out['paired_fold_losses']=[{'fold_id':a['fold_id'],'n':a['values']['rows'],
+                'first_mae':a['values']['mae'],'control_mae':b['values']['mae'],
+                'loss_delta':a['values']['mae']-b['values']['mae']}
+                for a,b in zip(out['results'][0]['folds'],out['results'][1]['folds'],strict=True)]
+        return finish()
+    if q['kind']=='DQ-05':
+        out['results']=[{'object_id':cid,'values':deepcopy(o['diagnostic'].get('volatility_groups','unavailable'))}
+            for cid,o in zip(q['object_ids'],selected,strict=True)]
+        if any(x['values']=='unavailable' for x in out['results']):out['status']='unavailable'
+        if len(selected)==2 and isinstance(selected[-1]['diagnostic'].get('volatility_groups'),list):
+            out['paired_group_losses']=relative_group_losses(selected[0]['artifact'],selected[-1]['artifact'],
+                selected[-1]['diagnostic']['volatility_groups'])
+        return finish()
+    if q['kind']=='DQ-04' and q['scope']!='development_oof':
+        raise ValueError('tail errors require common development OOF scope')
+    for cid,o,predictions in zip(q['object_ids'],selected,rows,strict=True):
+        if q['scope']=='selected_train' and any(v=='prediction' for pair in q['variable_pairs'] for v in pair):
+            out.update(status='unavailable',reason='no_saved_train_predictions');continue
+        for fold in sorted({r['fold_id'] for r in predictions}):
+            test=[r for r in predictions if r['fold_id']==fold]
+            test_ids=np.array([r['row_id'] for r in test],dtype=int)
+            receipts=[r for r in o['training_receipts'] if r['fold_id']==fold]
+            control=selected[-1];control_receipts=[r for r in control['training_receipts'] if r['fold_id']==fold]
+            if ((q['scope']!='development_oof' or q['kind']=='DQ-04') and
+                    (not receipts or (q['kind']=='DQ-04' and not control_receipts))):
+                out.update(status='unavailable',reason='missing_actual_training_scope');continue
+            if q['kind']=='DQ-04':
+                if cid!=q['object_ids'][0]:continue  # One shared query, not two separate tail searches.
+                train=np.asarray(control_receipts[0]['selected_train'],dtype=int)
+                factor=q['factor'];control_values=np.asarray(control['variables'][factor],dtype=float)
+                current_values=np.asarray(o['variables'][factor],dtype=float)
+                left_origin=o.get('variable_origins',{}).get(factor,{})
+                right_origin=control.get('variable_origins',{}).get(factor,{})
+                if left_origin.get('formula_hash')!=right_origin.get('formula_hash'):
+                    raise ValueError('tail objects require the same approved formula identity')
+                if not np.array_equal(current_values[test_ids],control_values[test_ids],equal_nan=True):
+                    raise ValueError('tail query requires the exact same formula/mask for both objects')
+                cp=[r['y_pred'] for r in rows[-1] if r['fold_id']==fold] if len(selected)==2 else None
+                values=tail_error_summary(control_values[train],control_values[test_ids],
+                    [r['y_true'] for r in test],[r['y_pred'] for r in test],control_pred=cp)
+                out['results'].append({'fold_id':fold,'object_id':cid,'control_id':q['object_ids'][-1],
+                    'evaluation_row_ids':test_ids.tolist(),'threshold_row_ids':train.tolist(),'values':values})
+                continue
+            scope_ids=(test_ids if q['scope']=='development_oof' else
+                np.asarray(receipts[0]['selected_train' if q['scope']=='selected_train' else 'calibration_rows'],dtype=int))
+            def values(name, test=test, o=o, scope_ids=scope_ids):
+                if name in {'prediction','target'}:
+                    if name=='target' and q['scope']=='selected_train' and o.get('targets') is not None:
+                        return np.asarray(o['targets'],dtype=float)[scope_ids]
+                    if q['scope']!='development_oof':return None
+                    return np.array([r['y_pred' if name=='prediction' else 'y_true'] for r in test])
+                return np.asarray(o['variables'][name],dtype=float)[scope_ids]
+            for left,right in q['variable_pairs']:
+                a,b=values(left),values(right)
+                if a is None or b is None:
+                    out.update(status='unavailable',reason='no_verified_training_target_or_predictions');continue
+                out['results'].append({'fold_id':fold,'object_id':cid,'variables':[left,right],
+                    'scope':q['scope'],'row_ids':scope_ids.tolist(),'values':correlation_summary(a,b)})
+    return finish()
+
+
+def query_projection(body):
+    """Keep all numerical entries; full scope lists stay in accepted audit."""
+    original={k:v for k,v in body.items() if k not in {'compute_wall_seconds','result_hash'}}
+    if identity(original,domain='evidence-diagnostic-result-v1')!=body['result_hash']:
+        raise ValueError('accepted diagnostic query result hash mismatch')
+    out=deepcopy({k:v for k,v in body.items() if k!='compute_wall_seconds'})
+    for result in out['results']:
+        for key in ('row_ids','evaluation_row_ids','threshold_row_ids'):
+            if key in result:
+                ids=result.pop(key)
+                result[key+'_hash']=identity(ids,domain='evidence-query-scope-v1')
+                result[key+'_count']=len(ids)
+    out['projection_version']='evidence_query_projection_v1'
+    return out
 RECIPES = {"RCP-01": "overall", "RCP-02": "contribution", "RCP-03": "simplification",
            "RCP-04": "diagnose", "RCP-05": "diagnose"}
 

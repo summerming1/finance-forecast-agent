@@ -304,6 +304,9 @@ def compact_research_context(prompt: dict, *, max_chars: int = 64000) -> dict:
         body['context_manifest'].update(schema_version='compact_method_context_v3',serialization='compact_json_v1')
         from .focused_methods import project_method_references
         body=project_method_references(body)
+        if body.get('research_protocol_id')=='evidence_research_v1':
+            from .research_state import project_evidence_references
+            body=project_evidence_references(body)
         from .llm_adapters import serialize_prompt_payload
         actual_chars=len(serialize_prompt_payload(body))
     else:

@@ -297,6 +297,9 @@ def project_method_references(prompt):
 
 def restore_method_references(prompt):
     """Inspectable inverse for audit/tests; no new numeric/state authority."""
+    if prompt.get('evidence_context_refs'):
+        from .research_state import restore_evidence_references
+        prompt=restore_evidence_references(prompt)
     body=deepcopy(prompt);refs=body.pop('method_context_refs',None)
     if not refs:return body
     methods={r['candidate_id']:r for r in [*body.get('baseline_results',[]),*body.get('prior_research_results',[])]}

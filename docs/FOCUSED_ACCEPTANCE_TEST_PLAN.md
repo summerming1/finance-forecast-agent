@@ -1,5 +1,16 @@
 # Focused / Mission Research Acceptance Plan
 
+## Evidence loop E0–E5 (2026-10-23 approved; not accepted yet)
+
+Use [EVIDENCE_RESEARCH_LOOP.md](EVIDENCE_RESEARCH_LOOP.md) and
+[ER01–ER40](validation/evidence_research_acceptance.json). New diagnostic arithmetic,
+per-evidence/per-hypothesis-version pending, atomic invalid-plan/recovery, parent
+last-batch → child first plan, actual worker/fit/refit/fresh-process and a new-protocol
+browser case are required alongside affected original regressions. Final source,
+test/node/input/dependency binding and actual exits are mandatory. Engineering,
+real behavior, selection value, independent prediction and human value are separate.
+Existing historical A/L, failed assets/permissions and 47-target negative stay intact.
+
 ## V2.5.0 N0–N5 (2026-10-19 bounded engineering result recorded)
 
 Use the unique V2_5_METHOD_RESEARCH.md contract and ADR007. Verify same-response updates including stop, full method inheritance both ways, mature selected training versus fixed calibration, real fit receipts, cache/observation identity, trusted window refit, recovery/continuation and original UI. Synthetic worker/HTTP/replay/browser allowed; no new real Provider or market experiments. Final source/tests/dependencies/inputs freeze and exact exit required; existing A/L/47-negative records stay historical.

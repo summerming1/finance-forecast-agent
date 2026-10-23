@@ -28,6 +28,7 @@ FORM_FIELDS = {
     'mode', 'entry_mode', 'starting_config', 'change_scope', 'allowed_feature_groups', 'research_notes',
     'preset', 'budget', 'fixture_dir', 'replay_call_ids', 'literature_project', 'literature_review_ids',
     'data_consent', 'live_consent', 'feature_strategy', 'diagnostic_mode',
+    'research_protocol_id', 'evidence_send_consent',
 }
 BUDGET_FIELDS = {'max_rounds', 'max_new_candidates_per_round', 'max_fit_calls', 'max_advisor_calls',
                  'max_http_requests', 'max_provider_seconds'}
@@ -92,6 +93,15 @@ class WorkspaceUI:
         price_mode = options['change_scope'] in {'price_features','feature_window'}
         if method_mode:
             options['diagnostic_mode'] = 'on'
+        if form.get('research_protocol_id') is not None:
+            if not method_mode or form['research_protocol_id']!='evidence_research_v1':
+                raise ValueError('Unsupported research protocol/profile pair')
+            options['research_protocol_id']=form['research_protocol_id']
+            if mode=='live':
+                if form.get('evidence_send_consent') is not True:
+                    raise PermissionError('New evidence protocol requires explicit consent for question/history/parent evidence sends')
+                from finance_forecast_agent.research_state import evidence_send_manifest
+                options['evidence_send_authorization']=evidence_send_manifest()
         if form.get('diagnostic_mode') is not None:
             options['diagnostic_mode'] = form['diagnostic_mode']
         if 'feature_strategy' in form:
@@ -166,6 +176,8 @@ class WorkspaceUI:
             literature_project=options['literature_project'], literature_review_ids=review_ids,
             context_mode='compact_v1', replay_call_ids=options.get('replay_call_ids'),
             raw_history=raw_history, feature_strategy=options.get('feature_strategy'),
+            research_protocol_id=options.get('research_protocol_id'),
+        evidence_send_authorization=options.get('evidence_send_authorization'),
             diagnostic_mode=options.get('diagnostic_mode'), use_memory_prior=not bool(options.get('diagnostic_mode')))
         controller.split_spec.build_splits(len(frame))
         if budget.max_fit_calls < controller.required_initial_fit_calls():
@@ -197,6 +209,7 @@ class WorkspaceUI:
         if method_mode:
             from finance_forecast_agent.focused_methods import method_capability
             preview['method_capability'] = method_capability()
+            if controller.research_protocol_id:preview['research_protocol_id']=controller.research_protocol_id
         return request, preview
 
     def preflight(self, form: dict) -> dict:
@@ -391,6 +404,10 @@ class WorkspaceUI:
                 raise ValueError('Frozen recommendation does not match requested delivery candidate')
         if action in {'continue', 'resume'} and current['request']['advisor_mode'] == 'live' and args.get('live_consent') is not True:
             raise PermissionError('Live continuation/resume requires explicit additional cost consent')
+        evidence_live=(current['request']['advisor_mode']=='live' and
+            current['request']['options'].get('research_protocol_id')=='evidence_research_v1')
+        if action in {'continue','resume'} and evidence_live and args.get('evidence_send_consent') is not True:
+            raise PermissionError('New history/parent evidence send scope needs current explicit consent')
         if action == 'preview_continue':
             return mission.preview_workspace_continuation(self.state_path, pid, cid, candidate, tenant_id=self.tenant_id)
         if action == 'download_model':
@@ -406,8 +423,10 @@ class WorkspaceUI:
                 meta = json.loads((root/'bundle.json').read_text(encoding='utf-8'))
                 return {'refit_id': meta['bundle_id'], 'candidate_id': candidate}
             if action == 'continue':
+                from finance_forecast_agent.research_state import evidence_send_manifest
                 _, task = mission.continue_workspace_campaign(self.state_path, pid, cid, candidate,
-                            tenant_id=self.tenant_id, operation_id=operation_id)
+                            tenant_id=self.tenant_id, operation_id=operation_id,
+                            evidence_send_authorization=evidence_send_manifest() if evidence_live else None)
                 return {'project_id': pid, 'campaign_id': task.research_context['campaign_id'], 'task_id': task.task_id}
             if action == 'resume':
                 task = mission.resume_workspace_campaign(self.state_path, pid, cid, tenant_id=self.tenant_id)

@@ -583,7 +583,16 @@ def run_benchmark_arm(
     raw_history=None,
     method_profile: str | None = None,
     feedback_support: str = 'update',
+    research_protocol_id: str | None = None,
+    evidence_send_authorization: dict | None = None,
 ) -> dict:
+    if research_protocol_id is not None and (research_protocol_id!='evidence_research_v1' or method_profile is None):
+        raise ValueError('evidence benchmark requires explicit supported method profile/protocol')
+    if research_protocol_id:
+        from .research_state import validate_send_authorization
+        validate_send_authorization(evidence_send_authorization,required=llm_mode=='live')
+    elif evidence_send_authorization is not None:
+        raise ValueError('evidence send authorization requires the new benchmark protocol')
     if method_profile not in {None,'spy_feature_window_v1'} or feedback_support not in {'reference','update'}:
         raise ValueError('unsupported method benchmark profile/support')
     if method_profile is None and feedback_support != 'update':
@@ -600,7 +609,8 @@ def run_benchmark_arm(
             replay_call_ids=replay_call_ids, reviewed_evidence=reviewed_evidence,
             resume_existing=resume_existing, state_path=state_path, literature_project=literature_project,
             literature_review_ids=literature_review_ids, context_mode=context_mode,
-            method_profile=method_profile, feedback_support=feedback_support)
+            method_profile=method_profile, feedback_support=feedback_support,research_protocol_id=research_protocol_id,
+            evidence_send_authorization=evidence_send_authorization)
     split = split_spec or FocusedSplitSpec()
     catalog = validate_catalog(catalog or default_catalog())
     budget = ResearchBudget(
@@ -692,7 +702,8 @@ def run_benchmark_arm(
 
 def _run_price_benchmark_arm(frame, dataset, *, raw_history, project_dir, arm, spec, split_spec,
         llm_mode, fixture_dir, replay_call_ids, reviewed_evidence, resume_existing, state_path,
-        literature_project, literature_review_ids, context_mode, method_profile=None, feedback_support='update'):
+        literature_project, literature_review_ids, context_mode, method_profile=None, feedback_support='update',research_protocol_id=None,
+        evidence_send_authorization=None):
     """Report adapter to native C3 planning; no second planner/compiler/evaluator.
 
     The legacy BenchmarkAdvisor remains a finite model-catalog adapter. Price
@@ -739,6 +750,11 @@ def _run_price_benchmark_arm(frame, dataset, *, raw_history, project_dir, arm, s
         algorithm.update(arm='method_simple' if arm=='random' else 'method_'+feedback_support,
             search_representation='bounded_feature_window_v1',
             sampler_policy='predeclared_seeded_four_methods_no_outcome_ranking' if arm=='random' else 'native_bounded_method_advisor')
+    if research_protocol_id:
+        comparison.update(research_protocol_id=research_protocol_id,
+            semantic_contract='same-response evidence update vs frozen reference/null; no extra reflection call',
+            diagnostic_tool_permissions='DQ01..06 identical; same original accepted objects and bounds')
+        algorithm['research_protocol_id']=research_protocol_id
     campaign_id = "price-benchmark-" + identity({"strategy": algorithm, "comparison": comparison,
         "mode": llm_mode, "project": str(Path(project_dir).resolve())}, domain="price-benchmark-arm-v1")[:20]
     controller = FocusedResearchController(project_dir=project_dir, frame=frame, dataset=dataset, task=task,
@@ -748,6 +764,8 @@ def _run_price_benchmark_arm(frame, dataset, *, raw_history, project_dir, arm, s
         replay_call_ids=replay_call_ids, reviewed_evidence=reviewed_evidence, use_memory_prior=False,
         literature_project=literature_project, literature_review_ids=literature_review_ids, context_mode=context_mode,
         campaign_id=campaign_id, resume_existing=resume_existing, state_path=state_path,
+        research_protocol_id=research_protocol_id,
+        evidence_send_authorization=evidence_send_authorization,
         input_provenance={"provenance_type": dataset.exposure})
     # Persist the bounded comparison before any fit or model request.
     from .focused_delivery import _environment, _source

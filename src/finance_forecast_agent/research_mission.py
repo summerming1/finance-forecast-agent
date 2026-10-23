@@ -282,7 +282,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     from .focused_research import DEFAULT_BASELINES, FocusedResearchController, ResearchBudget
     store, project = _workspace_project(state_path, project_id, tenant_id)
     options = json.loads(json.dumps(options or {}))
-    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode','continuation_from','feature_strategy','diagnostic_mode'}
+    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode','continuation_from','feature_strategy','diagnostic_mode','research_protocol_id','evidence_send_authorization'}
     if not isinstance(options,dict) or set(options)-allowed_options:
         raise ValueError('unsupported workspace options')
     if options.get('change_scope') == 'feature_window':
@@ -310,6 +310,8 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     preflight = FocusedResearchController(project_dir=project['root'], frame=frame, dataset=snapshot,
         task=FocusedTaskSpec(exposure=snapshot.exposure) if snapshot.feature_protocol else FocusedTaskSpec(),
         raw_history=raw_history, feature_strategy=options.get('feature_strategy'),
+        research_protocol_id=options.get('research_protocol_id'),
+        evidence_send_authorization=options.get('evidence_send_authorization'),
         diagnostic_mode=options.get('diagnostic_mode'), use_memory_prior=not bool(options.get('diagnostic_mode')),
         budget=budget, advisor_mode=advisor_mode, feature_specs=specs, input_provenance=provenance,
         starting_baseline=options.get('starting_baseline'), entry_mode=options.get('entry_mode'), change_scope=options.get('change_scope','explore'), allowed_feature_groups=options.get('allowed_feature_groups'),
@@ -625,6 +627,23 @@ def _continuation_snapshot(state_path, project_id, campaign_id, candidate_id, *,
         'final_hash':identity(current['payload'], domain='continuation-parent-final-v1'),
         'dataset_fingerprint':current['payload']['campaign']['dataset']['semantic_fingerprint'],
         'seed':cfg.seed, 'prediction_reuse':False}
+    if body.get('research_options',{}).get('research_protocol_id')=='evidence_research_v1':
+        import platform
+        from importlib.metadata import version
+
+        package=Path(__file__).resolve().parent
+        source={p.name:file_sha256(p) for p in sorted(package.glob('*.py'))}
+        environment={'python':platform.python_version(),**{name:version(name) for name in
+            ('numpy','pandas','scikit-learn','exchange-calendars')}}
+        if body['source']!=identity(source,domain='research-execution-source-v1') or body['environment']!=environment:
+            raise ValueError('evidence continuation requires the parent source/environment, not rewritten hashes')
+        state=current['payload'].get('evidence_research')
+        if not isinstance(state,dict):raise ValueError('parent evidence state snapshot is missing')
+        binding.update(schema_version='evidence_continuation_v1',research_protocol_id='evidence_research_v1',
+            parent_diagnostic_visibility=body['research_options']['diagnostic_policy']['diagnostic_visibility'],
+            parent_literature_snapshot_hash=body['research_options']['literature_snapshot_hash'],
+            research_state_snapshot=state,
+            research_state_snapshot_hash=identity(state,domain='continuation-evidence-state-v1'))
     return current, cfg, binding
 
 
@@ -649,7 +668,7 @@ def validate_continuation(state_path, project_dir, binding, *, tenant_id, datase
 
 
 def continue_workspace_campaign(state_path, project_id, campaign_id, candidate_id, *, tenant_id='default',
-                                budget=None, operation_id=None, start_immediately=True):
+                                budget=None, operation_id=None, start_immediately=True,evidence_send_authorization=None):
     """An explicit new Campaign, not a resume, and never a copy of old predictions."""
     current, cfg, binding = _continuation_snapshot(state_path, project_id, campaign_id, candidate_id, tenant_id=tenant_id)
     request = current['request']
@@ -659,6 +678,11 @@ def continue_workspace_campaign(state_path, project_id, campaign_id, candidate_i
         raise ValueError('new replay research needs a new explicit prompt/call map; it cannot reuse the parent replay plan')
     from .focused_research import ResearchBudget
     options = json.loads(json.dumps(request['options']))
+    if options.get('research_protocol_id')=='evidence_research_v1':
+        from .research_state import validate_send_authorization
+        options.pop('evidence_send_authorization',None)  # Old consent never licenses new parent-history sends.
+        authorization=validate_send_authorization(evidence_send_authorization,required=request['advisor_mode']=='live')
+        if authorization is not None:options['evidence_send_authorization']=authorization
     options.update(entry_mode='provided_start', starting_baseline={k:getattr(cfg,k)
                    for k in ('model_family','model_params','feature_groups')}, continuation_from=binding)
     if cfg.feature_program is not None:
@@ -690,7 +714,10 @@ def workspace_research_summary(state_path, project_id, campaign_id, *, tenant_id
             raise ValueError('historical research binding changed')
         visited.add(binding['campaign_id'])
         ancestors.append({'campaign_id':binding['campaign_id'], 'fit_calls':parent['payload'].get('fit_calls'),
-                          'provider':(parent['payload'].get('resource_usage') or {}).get('provider')})
+                          'provider':(parent['payload'].get('resource_usage') or {}).get('provider'),
+                          'feature_planning':(parent['payload'].get('resource_usage') or {}).get('feature_planning'),
+                          'automatic_diagnostics':(parent['payload'].get('resource_usage') or {}).get('automatic_diagnostics'),
+                          'diagnostic_queries':(parent['payload'].get('resource_usage') or {}).get('diagnostic_queries')})
         binding = (parent['payload']['campaign'].get('research_options') or {}).get('continuation_from')
     summary['cost']['prior_research'] = ancestors
     summary['cost']['prior_research_fit_calls'] = (sum(a['fit_calls'] for a in ancestors)
@@ -698,13 +725,17 @@ def workspace_research_summary(state_path, project_id, campaign_id, *, tenant_id
     with RuntimeDB(state_path).transaction() as db:
         refits = [json.loads(r[0]) for r in db.execute("SELECT payload FROM objects WHERE ns='workspace-refits'").fetchall()]
         attempts = [json.loads(r[0]) for r in db.execute("SELECT payload FROM objects WHERE ns='model-refit-attempts'").fetchall()]
-    current_attempts = [r for r in attempts if r['tenant_id']==tenant_id
-        and r.get('workspace_context') == {'project_id':project_id, 'campaign_id':campaign_id}]
-    registered_ids = {r.get('bundle_id') for r in current_attempts}
     # Old completed refits have no attempt receipt. Preserve them, but do not
     # double count new successes; failed/unknown new fits remain charged.
-    summary['cost']['current_explicit_refit_calls'] = sum(r['reserved_fit_calls'] for r in current_attempts) + sum(
-        r['fit_calls'] for r in refits if r['tenant_id']==tenant_id and r['project_id']==project_id
-        and r['campaign_id']==campaign_id and r['refit_id'] not in registered_ids)
+    def refit_accounting(cid):
+        selected=[r for r in attempts if r['tenant_id']==tenant_id
+            and r.get('workspace_context')=={'project_id':project_id,'campaign_id':cid}]
+        registered={r.get('bundle_id') for r in selected}
+        charged=sum(r['reserved_fit_calls'] for r in selected)+sum(r['fit_calls'] for r in refits
+            if r['tenant_id']==tenant_id and r['project_id']==project_id and r['campaign_id']==cid
+            and r['refit_id'] not in registered)
+        return charged,selected
+    summary['cost']['current_explicit_refit_calls'],current_attempts=refit_accounting(campaign_id)
     summary['cost']['current_explicit_refit_attempts'] = current_attempts
+    for ancestor in ancestors:ancestor['explicit_refit_calls']=refit_accounting(ancestor['campaign_id'])[0]
     return summary

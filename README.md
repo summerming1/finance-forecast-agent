@@ -1,5 +1,21 @@
 # Finance Forecast Agent
 
+## Evidence-driven loop — implementation started 2026-10-23
+
+User-approved E0–E5 work is governed only by
+[EVIDENCE_RESEARCH_LOOP.md](docs/EVIDENCE_RESEARCH_LOOP.md), with actual progress in
+[Current](docs/CURRENT_IMPLEMENTATION.md). Reuses the existing two-axis mathematics,
+Controller, runtime and workspace; does not restart V2.5 N0–N5. New evidence/hypothesis
+relations, six diagnostic tools, explicit parent-evidence continuation and readable
+workspace/report projections have synthetic integrated evidence. Final frozen
+regression is in progress, not a completed product acceptance. New workflows must
+explicitly select the evidence protocol on wizard step three; legacy defaults stay.
+This batch authorizes isolated synthetic engineering/local commits only, not new
+real Provider/market experiments, external sends, sealed labels, push or remote CI.
+Conditional clipping/weights/RF/interaction/knowledge/Shadow are not implemented here.
+Latest verified base is the 2026-10-22 closure receipt (1014 pass/2 historical fail/
+7 skip; browser 4+1 pass); the older dated delivery sections below remain historical.
+
 ## V2.5.0 bounded engineering delivery (implementation 2026-10-19; docs synced 2026-10-20)
 
 One Campaign can choose feature or training-window changes, one axis per experiment relative to an accepted complete control. Same-response research updates, actual selected training, recovery, original workspace and window-consistent model delivery are connected. The latest bounded repairs cover provider pipes, One-shot defaults, scope selection, refit disclosure and frozen-recommendation reporting. All 40 repair tests and 59 original V2.5 tests pass; the full applicable regression is **979 passed / 2 historical failures / 7 skipped (exit 1)**, not all green. Four Agent browser modes pass; the legacy workspace passed a same-gate rerun after an initial cold-start readiness failure, which remains recorded. Actual status is only in [CURRENT_IMPLEMENTATION.md](docs/CURRENT_IMPLEMENTATION.md); the sole contract and exact evidence are in [V2_5_METHOD_RESEARCH.md](docs/V2_5_METHOD_RESEARCH.md). No new live-Provider quality, market effect or human acceptance is established. The user subsequently authorized normal push of repair code `517b2cc` and evidence docs `5d3f576`; the remote branch was verified at `5d3f57687592b46693e687cc0611bd492adac065`. This is branch delivery, not a fully accepted product release. No release tag or GitHub Release was created in this batch, and remote CI has not been verified; local raw inputs/state/models/evidence directories were not uploaded.

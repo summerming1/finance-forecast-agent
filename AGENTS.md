@@ -1,5 +1,20 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+## Current approved increment (2026-10-23)
+
+User explicitly approved handoff v1.1 01/02 for E0–E5 engineering. The sole new
+milestone contract is `docs/EVIDENCE_RESEARCH_LOOP.md`; read it after Current and
+the reused V2.5 contract in the mandatory order below. V2.5 mathematics and legacy
+contracts remain authoritative for reused/old paths, not a competing new scope.
+Use actual HEAD/worktree, preserve all original A/B, fixtures, hashes and evidence.
+Only isolated synthetic engineering, worker/fit/predict/refit, local HTTP, strict
+Replay, browser/static/regression and scoped local commits are authorized here.
+No new real Provider, fees, market research, sends, sealed labels, production
+migration, global permissions, push or remote CI. Existing keys/old quotas confer
+no permission. E0 implementation has started; approval is not acceptance.
+Current remains the sole actual-status authority. No clipping/weights/RF research
+replacement/HPO/knowledge learning/Shadow or other conditional follow-up execution.
+
 ## Current delivery and next action (2026-10-20)
 
 V2.5.0 N0–N5 bounded engineering is implemented; do not restart those batches from an old handoff. `docs/CURRENT_IMPLEMENTATION.md` is the only current status authority; `docs/V2_5_METHOD_RESEARCH.md` is the sole V2.5 implementation contract and evidence log. Current direction is one Campaign choosing features or training windows, with one declared axis changed per experiment from an actual accepted complete control. Historical approvals and their then-current instructions below do not override this scope or the mandatory read order.

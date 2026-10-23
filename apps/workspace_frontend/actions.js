@@ -23,7 +23,7 @@ async function act(action,el){
  case 'register':openModal('打开已有本地项目',`<p>登记项目目录到启动环境指定的原状态库。不会读取其他数据库替换当前权威，也不会启动研究。</p><div class="field"><label for="register-root">项目目录</label><input class="input" id="register-root" value="${esc(S.snapshot.config.default_project)}"></div>`,`${btn('close-modal','取消')}${btn('confirm-register','确认打开','folder','primary')}`);return;
  case 'confirm-register':{const root=document.getElementById('register-root').value;const r=await rpc('register_project',{project_dir:root,confirmed:true});S.draft.project_id=r.project_id;S.draft.project_dir=root;closeModal();saveDraft();render(true);return}
  case 'draft-entry':S.draft.entry_mode=el.dataset.value;break;
- case 'draft-mode':S.draft.mode=el.dataset.value;S.draft.live_consent=false;break;
+ case 'draft-mode':S.draft.mode=el.dataset.value;S.draft.live_consent=false;S.draft.evidence_send_consent=false;break;
  case 'draft-preset':S.draft.preset=el.dataset.value;break;
  case 'wizard-back':S.draft.step=Math.max(1,S.draft.step-1);S.preview=null;S.error='';render();saveDraft();return;
  case 'wizard-step':{const target=Number(el.dataset.step);if(!Number.isInteger(target)||target<1||target>3)throw new Error('无效步骤');if(target<S.draft.step){S.draft.step=target;S.preview=null;S.error='';render();saveDraft();return}while(S.draft.step<target)await act('wizard-next',el);return;}
@@ -44,10 +44,10 @@ async function act(action,el){
  case 'download-model':{const scope=el.dataset.scope,target=deliveryTarget(curr(),scope,el.dataset.candidate);if(!target||!['recommended','other'].includes(scope))throw new Error('缺少明确交付对象');const r=await rpc('download_model',{...currentArgs(),candidate_id:target.id,delivery_scope:scope,refit_id:el.dataset.refit});download(r.download);return}
  case 'export':confirmation('export','导出本批研究包','<p>导出实际已记录的研究过程与证据。文献权限受限时，原后端会省略不允许再分发的内容；不会因为导出而调用模型或训练。</p>');return;
  case 'confirm-export':{const r=await rpc('export_research',{...confirmedContext,confirmed:true});closeModal();download(r.download);return}
- case 'continue':{const r=await rpc('preview_continue',currentArgs());confirmation('continue','从当前候选开始新批次',`<p>不是恢复旧任务。父研究与历史费用保留，新训练独立计入。</p>${kv('父候选',r.parent.candidate_id)}${kv('数据',r.dataset.semantic_fingerprint)}${kv('方式',MODE_NAMES[r.advisor_mode])}${kv('原批次训练',r.prior_fit_calls)}<details class="event-details"><summary>继承范围</summary>${jsonView(r.inherited_options)}</details>${jsonView(r.new_budget)}`,{live:r.advisor_mode==='live'});return}
- case 'confirm-continue':{const live=el.dataset.live==='true';if(live&&!document.getElementById('operation-live')?.checked)throw new Error('请明确确认新增真实调用费用与资料发送。');await rpc('continue',{...confirmedContext,confirmed:true,live_consent:live});closeModal();S.view='research';S.drawer=null;render();schedulePoll();return}
- case 'resume':confirmation('resume','检查原合同并恢复',`<p>保留原计划、已接受实验和历史费用。源码或资料变化、记录缺失、未知响应等仍由原恢复保护拒绝，不自动当成免费重试。</p>${kv('当前状态',curr().task.status)}`,{live:curr().request.advisor_mode==='live'});return;
- case 'confirm-resume':{const live=el.dataset.live==='true';if(live&&!document.getElementById('operation-live')?.checked)throw new Error('请明确确认可能新增的真实调用。');await rpc('resume',{...confirmedContext,confirmed:true,live_consent:live});closeModal();return}
+ case 'continue':{const r=await rpc('preview_continue',currentArgs());confirmation('continue','从当前候选开始新批次',`<p>不是恢复旧任务。父研究与历史费用保留，新训练独立计入。</p>${kv('父候选',r.parent.candidate_id)}${kv('数据',r.dataset.semantic_fingerprint)}${kv('方式',MODE_NAMES[r.advisor_mode])}${kv('原批次训练',r.prior_fit_calls)}<details class="event-details"><summary>继承范围</summary>${jsonView(r.inherited_options)}</details>${jsonView(r.new_budget)}${evidenceOperationConsent()}`,{live:r.advisor_mode==='live'});return}
+ case 'confirm-continue':{const live=el.dataset.live==='true';if(live&&!document.getElementById('operation-live')?.checked)throw new Error('请明确确认新增真实调用费用与资料发送。');await rpc('continue',{...confirmedContext,confirmed:true,live_consent:live,evidence_send_consent:document.getElementById('operation-evidence')?.checked===true});closeModal();S.view='research';S.drawer=null;render();schedulePoll();return}
+ case 'resume':confirmation('resume','检查原合同并恢复',`<p>保留原计划、已接受实验和历史费用。源码或资料变化、记录缺失、未知响应等仍由原恢复保护拒绝，不自动当成免费重试。</p>${kv('当前状态',curr().task.status)}${evidenceOperationConsent()}`,{live:curr().request.advisor_mode==='live'});return;
+ case 'confirm-resume':{const live=el.dataset.live==='true';if(live&&!document.getElementById('operation-live')?.checked)throw new Error('请明确确认可能新增的真实调用。');await rpc('resume',{...confirmedContext,confirmed:true,live_consent:live,evidence_send_consent:document.getElementById('operation-evidence')?.checked===true});closeModal();return}
  case 'cancel':confirmation('cancel','取消当前研究','<p>将调用原队列的取消操作，阻止后续接受结果并结束受管理进程。已发生训练和请求不会清零。</p>');return;
  case 'confirm-cancel':await rpc('cancel',{...confirmedContext,confirmed:true});closeModal();return;
  case 'review-approve':case 'review-reject':confirmation(action==='review-approve'?'review-approve':'review-reject',action==='review-approve'?'批准研究继续请求':'拒绝研究继续请求',`<p>审核已记录的请求，不自动修改模型或预算。决定登记后，需另行明确恢复执行。</p>${jsonView(curr().review?.hypothesis||curr().review)}`,{review:true});return;
@@ -68,6 +68,7 @@ document.addEventListener('change',event=>{
  // remove the next button between mousedown and click and swallow that action.
  if(el.dataset.draft){if(el.tagName!=='SELECT')return;const key=el.dataset.draft;S.draft[key]=el.value;S.preview=null;
  if(key==='change_scope'&&['price_features','feature_window'].includes(el.value)){S.draft.groups=['base_lags','momentum','volatility'];S.draft.starting_groups=['base_lags'];S.draft.input_kind='yahoo';S.draft.max_rounds=2;S.draft.max_new_candidates_per_round=2;S.draft.max_fit_calls=32;if(el.value==='feature_window')S.draft.diagnostic_mode='on';toast('已切换价格专用范围：固定价格组、Yahoo输入、最多32次研究fit；请重新核对。')}
+ if(['research_protocol_id','change_scope'].includes(key))S.draft.evidence_send_consent=false;
  if(key==='feature_arm'&&el.value==='one_shot')S.draft.max_rounds=1;
  if(key==='family')S.draft.params=S.draft.family==='ridge_regression'?' {"alpha":1}':S.draft.family==='random_forest_regressor'?' {"n_estimators":80,"max_depth":4,"min_samples_leaf":5}':' {"n_estimators":80,"learning_rate":0.03,"max_depth":2}';
  if(key==='project_id'){rpc('select',{project_id:el.value}).catch(showError)}

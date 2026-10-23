@@ -220,6 +220,8 @@ class HypothesisSpec:
     literature_uses: list[dict[str, str]] = field(default_factory=list)
     research_design: dict[str, Any] | None = None
     declared_axis: str | None = None
+    hypothesis_refs: list | None = None
+    evidence_request: dict | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out = asdict(self)
@@ -227,6 +229,8 @@ class HypothesisSpec:
             out.pop("research_design")
         if self.declared_axis is None:
             out.pop("declared_axis")
+        for key in ('hypothesis_refs','evidence_request'):
+            if out[key] is None:out.pop(key)
         return out
 
 
@@ -815,6 +819,10 @@ class FocusedResearchAdvisor:
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         self.last_record, self.last_fixture_path = None, None
         if self.mode == "deterministic":
+            if prompt.get('research_protocol_id')=='evidence_research_v1':
+                from .research_state import engineering_advice
+                self.last_telemetry={'policy':'finite_evidence_engineering_v1'}
+                return engineering_advice(prompt,telemetry=self.last_telemetry),'deterministic_evidence_engineering_policy'
             if prompt.get('method_policy'):
                 from .focused_methods import method_advice
                 self.last_telemetry = {'policy':'finite_method_reference_v1'}
@@ -1201,6 +1209,8 @@ class FocusedResearchController:
         raw_history: pd.DataFrame | None = None,
         feature_strategy: dict[str, Any] | None = None,
         diagnostic_mode: str | None = None,
+        research_protocol_id: str | None = None,
+        evidence_send_authorization: dict | None = None,
     ):
         self.project_dir = Path(project_dir).resolve()
         self.state_path = Path(state_path or os.getenv("FFA_STATE_DB") or self.project_dir / "runtime.sqlite3")
@@ -1211,6 +1221,14 @@ class FocusedResearchController:
         self.dataset = dataset
         self.frame = frame
         self.method_mode = change_scope == "feature_window"
+        if research_protocol_id is not None and (research_protocol_id!='evidence_research_v1' or not self.method_mode):
+            raise ValueError('unsupported research protocol or mathematical profile')
+        self.research_protocol_id=research_protocol_id
+        if evidence_send_authorization is not None and not research_protocol_id:
+            raise ValueError('evidence send scope requires the explicit new protocol')
+        from .research_state import validate_send_authorization
+        self.evidence_send_authorization=validate_send_authorization(evidence_send_authorization,
+            required=bool(research_protocol_id and advisor_mode=='live'))
         self.feature_mode = change_scope in {"price_features", "feature_window"}
         if self.method_mode and diagnostic_mode is None:
             diagnostic_mode = 'on'
@@ -1342,6 +1360,15 @@ class FocusedResearchController:
         self.estimator_seed = self.advisor.spec.estimator_seed if benchmark_strategy else 42
         self.continuation_from = json.loads(json.dumps(continuation_from)) if continuation_from is not None else None
         if self.continuation_from is not None:
+            if self.research_protocol_id:
+                if (self.continuation_from.get('schema_version')!='evidence_continuation_v1'
+                        or self.continuation_from.get('research_protocol_id')!=self.research_protocol_id
+                        or self.continuation_from.get('parent_diagnostic_visibility')!=self.diagnostic_policy['diagnostic_visibility']):
+                    raise ValueError('unverified cross-protocol/visibility evidence continuation is not supported')
+                if self.continuation_from.get('parent_literature_snapshot_hash')!=identity(self.literature_snapshot,domain='literature-snapshot-v1'):
+                    raise PermissionError('parent-derived evidence requires the same currently permitted literature snapshot')
+            elif self.continuation_from.get('schema_version')=='evidence_continuation_v1':
+                raise ValueError('evidence state cannot silently downgrade into an old protocol')
             if benchmark_strategy is not None or campaign_id == self.continuation_from.get("campaign_id"):
                 raise ValueError("continuation is a new non-benchmark research campaign")
             from .research_mission import validate_continuation
@@ -1370,6 +1397,10 @@ class FocusedResearchController:
         )
         if self.feature_mode:
             self.spec.research_options["feature_strategy"] = self.feature_strategy
+            if self.research_protocol_id:
+                self.spec.research_options['research_protocol_id']=self.research_protocol_id
+                if self.evidence_send_authorization is not None:
+                    self.spec.research_options['evidence_send_authorization']=self.evidence_send_authorization
             self.spec.research_options["feature_capability"] = feature_capability()
             if self.method_mode:
                 self.spec.research_options['method_profile'] = method_capability()
@@ -1432,7 +1463,7 @@ class FocusedResearchController:
                         if identity({k: v for k, v in design.items() if k != "design_hash"}, domain="research-design-v1") != design["design_hash"]:
                             raise ValueError("frozen research design changed")
                 continue
-            if not key.startswith(("diagnostic:", "observation:", "diagnostic_context:", "pair_diagnostic:")) and key != "recommendation":
+            if not key.startswith(("diagnostic:", "diagnostic_query:", "observation:", "diagnostic_context:", "pair_diagnostic:")) and key != "recommendation":
                 continue
             stored = json.loads(row["payload"])
             for ref in stored["artifacts"]:
@@ -1622,7 +1653,198 @@ class FocusedResearchController:
         if self.method_mode:
             from .focused_methods import project_method_prompt
             project_method_prompt(prompt, self.feature_strategy['feedback_support'])
+        if self.research_protocol_id:
+            self._prepare_evidence_prompt(prompt,result_lookup)
         return prompt
+
+    def _evidence_context(self,results):
+        """Read accepted facts/plans; do not create a mutable research state store."""
+        from .research_state import empty_state, project_pending, reduce_update
+        inherited=(self.continuation_from or {}).get('research_state_snapshot')
+        facts=json.loads(json.dumps(inherited['evidence'])) if inherited else {}
+        requests=json.loads(json.dumps(inherited.get('requests',[]))) if inherited else []
+        plans=[];relations={};request_relations={};query_seconds=0.
+        def add_fact(eid,fact):
+            if eid in facts:
+                existing=facts[eid]
+                fact['hypothesis_refs']=[list(t) for t in sorted({tuple(r) for r in
+                    [*existing.get('hypothesis_refs',[]),*fact.get('hypothesis_refs',[])]})]
+                fact['request_refs']=sorted(set(existing.get('request_refs',[])+fact.get('request_refs',[])))
+            facts[eid]=fact
+        for paper in self.literature_snapshot:
+            eid=self.spec.campaign_id+':literature:'+identity(paper,domain='evidence-reviewed-literature-v1')
+            facts[eid]={'kind':'reviewed_literature','owner_campaign_id':self.spec.campaign_id,
+                'hypothesis_refs':[],'result':{'projection_ref':paper['evidence_id'],
+                    'revision':paper['revision'],'source_hashes':paper['literature_binding']['source_hashes'],
+                    'source':'original permission-filtered evidence_projection, author claim not a local result'}}
+        for number in range(1,self.budget.max_rounds+1):
+            stored=self._runtime.get(f'plan:{number}')
+            if not stored:continue
+            self._runtime.verify_artifacts(stored['artifacts'])
+            plan=stored['plan'];plans.append(plan)
+            for item in plan['items']:
+                hypothesis=item['hypothesis'];request=hypothesis.get('evidence_request');request_row=None
+                if request:
+                    reference=self.spec.campaign_id+':request:'+identity({'round_index':plan['round_index'],
+                        'operation_id':hypothesis['hypothesis_id'],'request':request},domain='evidence-request-ref-v1')
+                    request_row={'ref':reference,'owner_campaign_id':self.spec.campaign_id,
+                        'operation_id':hypothesis['hypothesis_id'],'round_index':plan['round_index'],
+                        'plan_hash':plan['plan_hash'],'action_type':hypothesis['action_type'],
+                        'hypothesis_refs':hypothesis.get('hypothesis_refs',[]),'request':request,
+                        'status':'planned','result_ids':[]}
+                    completed_round=self._runtime.get('round:'+str(plan['round_index']))
+                    completed_item=next((r for r in (completed_round or {}).get('items',[])
+                        if r['hypothesis']['hypothesis_id']==hypothesis['hypothesis_id']),None)
+                    if completed_item:request_row['status']=completed_item['status']
+                    requests.append(request_row)
+                candidate=item.get('candidate')
+                if candidate:
+                    relations.setdefault(candidate['candidate_fingerprint'],[]).extend(item['hypothesis'].get('hypothesis_refs',[]))
+                    if request_row is not None:request_relations.setdefault(candidate['candidate_fingerprint'],[]).append(request_row)
+                    failed=self._runtime.get('failure:'+candidate['candidate_id'])
+                    if failed:
+                        safe={'error_type':failed['error_type'],'reserved_fit_calls':failed['reserved_fit_calls'],
+                            'method_identity':candidate['config_identity'],'proposal_candidate_id':candidate['candidate_id']}
+                        eid=self.spec.campaign_id+':failure:'+identity(safe,domain='evidence-failure-v1')
+                        add_fact(eid,{'kind':'execution_failure','owner_campaign_id':self.spec.campaign_id,
+                            'hypothesis_refs':item['hypothesis'].get('hypothesis_refs',[]),
+                            'request_refs':[request_row['ref']] if request_row else [],'result':safe})
+                        if request_row is not None:request_row.update(status='execution_failed',result_ids=[eid])
+                    if self.diagnostic_policy['diagnostic_visibility']=='on':
+                        observed=self._runtime.get('observation:'+candidate['candidate_id'])
+                        if observed:
+                            self._runtime.verify_artifacts(observed['artifacts'])
+                            body=observed['body']
+                            # Reuse the original evaluator's accepted observation, including
+                            # cached proposals; do not count it as new independent training.
+                            info=body['information']
+                            comparison={k:v for k,v in body.items() if k not in {'information','actual_feedback_update'}}
+                            comparison['information']={k:v for k,v in info.items() if k!='formation'}
+                            comparison['formation']={k:v for k,v in info.get('formation',{}).items()
+                                if k not in {'plan_hash','prompt_hash'}}
+                            comparison['source_ref']=self.spec.campaign_id+':observation:'+candidate['candidate_id']
+                            comparison['independence']='same_accepted_predictions_not_an_independent_sample'
+                            eid=self.spec.campaign_id+':observation:'+identity(comparison,domain='evidence-observation-v1')
+                            add_fact(eid,{'kind':'controlled_observation','owner_campaign_id':self.spec.campaign_id,
+                                'hypothesis_refs':hypothesis.get('hypothesis_refs',[]),
+                                'request_refs':[request_row['ref']] if request_row else [],'result':comparison})
+                            if request_row is not None:request_row['result_ids'].append(eid)
+                saved=self._runtime.get('decision:'+item['hypothesis']['hypothesis_id'])
+                query_result=(saved or {}).get('diagnostic_result')
+                query_receipt=self._runtime.get('diagnostic_query:'+hypothesis['hypothesis_id'])
+                if query_receipt:
+                    self._runtime.verify_artifacts(query_receipt['artifacts'])
+                    if query_result is None:query_result=query_receipt['body']
+                if query_result and query_result.get('schema_version')=='evidence_diagnostic_result_v1':
+                    if saved:self._runtime.verify_artifacts(saved['diagnostic_artifacts'])
+                    query_seconds+=query_result['compute_wall_seconds']
+                if (self.diagnostic_policy['diagnostic_visibility']=='on' and query_result
+                        and query_result.get('schema_version')=='evidence_diagnostic_result_v1'):
+                    from .focused_diagnostics import query_projection
+                    eid=self.spec.campaign_id+':query:'+query_result['result_hash']
+                    add_fact(eid,{'kind':'diagnostic_query','owner_campaign_id':self.spec.campaign_id,
+                        'hypothesis_refs':item['hypothesis'].get('hypothesis_refs',[]),
+                        'request_refs':[request_row['ref']] if request_row else [],
+                        'result':query_projection(query_result)})
+                    if request_row is not None:request_row.update(status=query_result['status'],result_ids=[eid])
+                elif request_row is not None and hypothesis['action_type']=='diagnose':
+                    request_row.update(status='result_not_visible_in_this_arm',result_ids=[])
+        for result in results.values():
+            accepted=self._runtime.accepted(result.candidate.candidate_id)
+            if not accepted:continue
+            self._runtime.verify_artifacts(accepted['artifacts'])
+            summary={'candidate_id':result.candidate.candidate_id,'method_identity':result.candidate.config_identity,
+                'metrics':result.metrics,'fold_metrics_ref':{
+                    'owner_campaign_id':self.spec.campaign_id,'candidate_id':result.candidate.candidate_id,
+                    'source':'accepted_result.fold_metrics','sha256':identity(result.fold_metrics,domain='evidence-fold-metrics-v1')},
+                'prediction_identity':identity(result.prediction_rows,domain='evidence-prediction-rows-v1')}
+            eid=self.spec.campaign_id+':result:'+identity(summary,domain='evidence-result-v1')
+            refs=relations.get(result.candidate.fingerprint,[])
+            linked_requests=request_relations.get(result.candidate.fingerprint,[])
+            facts[eid]={'kind':'training','owner_campaign_id':self.spec.campaign_id,
+                'hypothesis_refs':[list(t) for t in sorted({tuple(r) for r in refs})],
+                'request_refs':[r['ref'] for r in linked_requests],'result':summary}
+            for request_row in linked_requests:
+                request_row['result_ids'].append(eid)
+                if request_row['status']=='planned':request_row['status']='completed'
+            if self.diagnostic_policy['diagnostic_visibility']=='on':
+                diagnostic=self._diagnostic(result,self.split_spec.build_splits(len(self.frame)))
+                eid=self.spec.campaign_id+':diagnostic:'+diagnostic['diagnostic_hash']
+                facts[eid]={'kind':'diagnostic','owner_campaign_id':self.spec.campaign_id,
+                    'hypothesis_refs':[],'result':{'projection_ref':'diagnostic:'+diagnostic['diagnostic_hash'],
+                        'source_artifact_hash':diagnostic['diagnostic_hash'],
+                        'independence':'derived_from_same_accepted_predictions_not_a_new_sample'}}
+        state=json.loads(json.dumps(inherited['state'])) if inherited else empty_state()
+        for plan in plans:
+            context=plan.get('evidence_context')
+            if context is None:continue
+            state=project_pending(state,context['evidence'])
+            if plan['research_update'] is not None:
+                state=reduce_update(state,plan['research_update'],context['evidence'],
+                    self.spec.campaign_id+':plan:'+str(plan['round_index']))
+        return {'owner_campaign_id':self.spec.campaign_id,'state':project_pending(state,facts),'evidence':facts,'requests':requests,
+            'query_compute_wall_seconds':query_seconds,'query_cpu_seconds':None,
+            'reference':self.feature_strategy['feedback_support']=='reference' or self.diagnostic_policy['decision_support']!='J'}
+
+    def _prepare_evidence_prompt(self,prompt,results):
+        from .focused_diagnostics import query_projection
+        from .research_state import (
+            planning_evidence_context,
+            protocol_contract,
+            response_contract,
+            working_evidence_context,
+        )
+        prompt['diagnostics']=[query_projection(d) if d.get('schema_version')=='evidence_diagnostic_result_v1' else d
+            for d in prompt.get('diagnostics',[])]
+        if self.diagnostic_policy['diagnostic_visibility']=='off':
+            hidden={d['diagnostic_id'] for d in prompt.get('diagnostics',[])
+                if d.get('schema_version')=='evidence_diagnostic_result_v1'}
+            prompt['diagnostics']=[d for d in prompt.get('diagnostics',[]) if d['diagnostic_id'] not in hidden]
+            prompt['evidence_projection']=[e for e in prompt['evidence_projection'] if e['evidence_id'] not in hidden]
+            prompt['available_evidence_ids']=[e['evidence_id'] for e in prompt['evidence_projection']]
+            prompt['evidence_projection_hash']=identity(prompt['evidence_projection'],domain='evidence-projection-v1')
+        prompt['research_protocol_id']=self.research_protocol_id
+        prompt['proposal_contract_version']='evidence_research_advice_v1'
+        prompt['evidence_research']=working_evidence_context(planning_evidence_context(self._evidence_context(results)))
+        prompt['available_objects']=list(results)
+        variables=self._diagnostic_variable_catalog(results)
+        prompt['available_variable_definitions']=variables
+        prompt['available_variables']=sorted({'prediction','target',*variables})
+        prompt['response_schema']=response_contract()
+        prompt['evidence_protocol_contract']=protocol_contract()
+        prompt.setdefault('action_contracts',{})['diagnose']='diagnose: control_candidate_id plus evidence_request with one full evidence_diagnostic_query_v1; no legacy diagnostic enum, model fields or new formula. Query kind and parameters are actually dispatched; one original slot, zero fit/HTTP.'
+        prompt['rules']=[r for r in prompt['rules'] if 'research_update' not in r and 'method_research_advice_v1' not in r]
+        prompt['rules']=[r.replace('Return only {"hypotheses":[...]};',
+            'Return only the complete evidence_research_advice_v1 envelope described in response_schema;')
+            .replace('diagnose has control and residual_summary|fold_summary, no model/program.',
+                'diagnose has control and the complete evidence_request/query in evidence_protocol_contract, no model/program.')
+            for r in prompt['rules']]
+        prompt['rules'].append('Reply root has EXACTLY schema_version/research_update/hypotheses. evidence_protocol_contract is INPUT guidance, never extra response fields or an executable example. Output full original keys and legal AST/query, not planning aliases.')
+        prompt['rules'] += ['New evidence protocol: one research_update initializes/revises hypothesis versions and assesses actual evidence in this same response. No reflection call. Describe facts and uncertainty, never copy an example formula or invent a result. Pending relations are evidence × hypothesis version; deferred remains pending. All original action/compiler/resource gates apply. Diagnostic projection_ref resolves by diagnostic_hash in automatic_diagnostics/diagnostic_common_sources. fold_metrics_ref binds complete accepted audit, not hidden numerical access: use visible existing fold losses or an explicit DQ-02 request when more fold detail is needed.']
+        if prompt['evidence_research']['reference']:
+            prompt['response_schema']['research_update']=None
+            prompt['rules']=[r for r in prompt['rules'] if not r.startswith('New evidence protocol:')]
+            prompt['rules'].append('Frozen reference policy: research_update MUST be null, not an invented semantic object. Hypothesis links may be absent. Use the same permitted tools, accepted objects, visibility, single-axis and resource gates; no reflection call. This reference status cannot be selected by the response.')
+
+    def _diagnostic_variable_catalog(self,results):
+        """Only original columns and already accepted ASTs; no new formula search."""
+        catalog={'return_1':{'kind':'return_1','formula_hash':identity('raw_adjusted_return_1',domain='diagnostic-variable-v1')}}
+        generated={}
+        for cid,r in sorted(results.items()):
+            for column in r.actual_features:
+                if not column.startswith('gen_'):
+                    catalog.setdefault(column,{'kind':'column','column':column,
+                        'formula_hash':identity(column,domain='diagnostic-builtin-variable-v1')})
+            if r.candidate.feature_program is None:continue
+            for feature in r.candidate.feature_program.to_dict()['features']:
+                digest=identity(feature['expression'],domain='accepted-diagnostic-expression-v1')
+                definition={'kind':'accepted_expression','source_candidate_id':cid,'column':feature['name'],
+                    'formula_hash':digest,'expression':feature['expression']}
+                catalog.setdefault('variable:'+digest,definition)
+                generated.setdefault(feature['name'],{})[digest]=definition
+        for name,versions in generated.items():
+            if len(versions)==1:catalog[name]=next(iter(versions.values()))
+        return catalog
 
     def _project_prior_decisions(self, prompt):
         """Lossless bounded links from original plans; OFF never reads observations."""
@@ -1715,7 +1937,15 @@ class FocusedResearchController:
 
     def _bind_research_design(self, advice, prompt, result_lookup, round_index, max_count, source):
         from .focused_diagnostics import bind_design
-        if prompt.get("method_policy"):
+        relations=None
+        if self.research_protocol_id:
+            from .focused_methods import restore_method_references
+            from .research_state import normalize_evidence_advice
+            prompt=restore_method_references(prompt)
+            from .research_state import planning_evidence_context
+            advice,relations=normalize_evidence_advice(advice,prompt,
+                accepted_context=planning_evidence_context(self._evidence_context(result_lookup)))
+        elif prompt.get("method_policy"):
             from .focused_methods import normalize_method_advice, restore_method_references
             prompt=restore_method_references(prompt)
             advice = normalize_method_advice(advice, prompt)
@@ -1734,7 +1964,8 @@ class FocusedResearchController:
                 bound['method_contract']['training_plan'] = training_scopes(self.frame, candidate.training_policy,
                     self.split_spec.build_splits(len(self.frame)))
                 bound['design_hash'] = identity({k:v for k,v in bound.items() if k != 'design_hash'}, domain='research-design-v1')
-            out.append((replace(hypothesis, research_design=bound), candidate))
+            relation=relations[len(out)] if relations is not None else {}
+            out.append((replace(hypothesis, research_design=bound,**relation), candidate))
         return out
 
     def _observe_research(self, hypothesis, result, result_lookup, splits, *, proposal_id=None):
@@ -1786,6 +2017,9 @@ class FocusedResearchController:
             context = self._runtime.get(f"prompt:{number}")
             if context is None or _hash(context) != stored["plan"]["prompt_hash"]:
                 raise ValueError("observation timing frozen context mismatch")
+            if self.research_protocol_id:
+                from .focused_methods import restore_method_references
+                context=restore_method_references(context)
             visible_ids = {r["candidate_id"] for section in ("baseline_results", "prior_research_results")
                            for r in context[section]}
             both = {result.candidate.candidate_id, control.candidate.candidate_id} <= visible_ids
@@ -2071,6 +2305,7 @@ class FocusedResearchController:
         prompt_hash: str,
         compiled: list[tuple[HypothesisSpec, CandidateConfig | None]],
         research_update: dict | None = None,
+        evidence_context: dict | None = None,
     ) -> tuple[str, str]:
         plan = {
             "schema_version": "focused_batch_plan_v2",
@@ -2092,6 +2327,10 @@ class FocusedResearchController:
         if getattr(self, "method_mode", False):
             plan["schema_version"] = "focused_batch_plan_v4"
             plan["research_update"] = research_update
+        if self.research_protocol_id:
+            plan['schema_version']='evidence_batch_plan_v1'
+            plan['research_protocol_id']=self.research_protocol_id
+            plan['evidence_context']=evidence_context
         plan_hash = _hash(plan)
         plan["plan_hash"] = plan_hash
         rel = Path("batch_plans") / f"round_{round_index}.json"
@@ -2368,6 +2607,9 @@ class FocusedResearchController:
                     if self.context_mode == "compact_v1" or self.diagnostic_policy:
                         from .focused_literature import compact_research_context
                         prompt = compact_research_context(prompt)
+                    if self.research_protocol_id:
+                        from .research_state import measure_prompt
+                        measure_prompt(prompt)
                     frozen_prompt = runtime.get(f"prompt:{round_index}")
                     if frozen_prompt is not None:
                         prompt=frozen_prompt
@@ -2466,8 +2708,12 @@ class FocusedResearchController:
                             research_results, rounds, failed_attempts, exc)
                     raise
                 prompt_hash = _hash(prompt)
+                evidence_context=None
+                if self.research_protocol_id:
+                    evidence_context=self._evidence_context(result_lookup)
                 plan_hash, plan_ref = self._freeze_batch_plan(round_index=round_index, source=source,
                     prompt_hash=prompt_hash, compiled=compiled,
+                    evidence_context=evidence_context,
                     research_update=advice.get("research_update") if getattr(self, "method_mode", False) else None)
                 plan = json.loads((self._campaign_root / plan_ref).read_text())
                 frozen = {"plan": plan, "plan_ref": plan_ref, "artifacts": [{"path": plan_ref, "sha256": file_sha256(self._campaign_root / plan_ref)}]}
@@ -2593,6 +2839,66 @@ class FocusedResearchController:
         elif action == "stop":
             row["status"] = "stopped"
         elif action == "diagnose":
+            if self.research_protocol_id:
+                from .focused_diagnostics import dispatch_diagnostic_query
+                from .focused_feature_program import _expression_values
+                query_key='diagnostic_query:'+hypothesis.hypothesis_id
+                def accept_query(original):
+                    runtime.verify_artifacts(original['artifacts'])
+                    row.update(status='diagnosed',diagnostic_result=original['body'],diagnostic_artifacts=original['artifacts'])
+                    runtime.put(key,row,immutable=True)
+                    self._append_event('decision.executed',hypothesis_id=hypothesis.hypothesis_id,action_type=action,status='diagnosed',fit_calls=0)
+                    return row
+                original=runtime.get(query_key)
+                if original is not None:return accept_query(original)
+                preparation_started=time.perf_counter()
+                query=hypothesis.evidence_request['query'];objects={}
+                catalog=self._diagnostic_variable_catalog(results)
+                requested={x for pair in query['variable_pairs'] for x in pair}-{'prediction','target'}
+                if query['factor']:requested.add(query['factor'])
+                splits=self.split_spec.build_splits(len(self.frame))
+                for cid in query['object_ids']:
+                    result=results[cid];stored=runtime.accepted(cid)
+                    runtime.verify_artifacts(stored['artifacts'])
+                    saved=stored['row'].get('result') or stored['row']
+                    artifact=json.loads((self._campaign_root/saved['prediction_artifact_ref']).read_text(encoding='utf-8'))
+                    columns=result.actual_features
+                    variables={}  # Evaluate only explicitly requested variables, never scan all columns.
+                    prices=self.raw_history['spy_adj_close'].to_numpy(dtype=float)
+                    returns=np.r_[np.nan,prices[1:]/prices[:-1]-1]
+                    raw_ids=self.frame['raw_row_id'].to_numpy(dtype=int)
+                    origins={}
+                    for name in requested:
+                        definition=catalog[name]
+                        if definition['kind']=='return_1':values=returns[raw_ids]
+                        elif definition['kind']=='column':values=self.frame[definition['column']].to_numpy(dtype=float)
+                        else:values=_expression_values(definition['expression'],returns)[0][raw_ids]
+                        variables[name]=values
+                        used=definition.get('column',name) in columns
+                        if definition['kind']=='accepted_expression':
+                            used=any(f['expression']==definition['expression'] for f in
+                                (result.candidate.feature_program.to_dict()['features'] if result.candidate.feature_program else []))
+                        origins[name]={**definition,'role':'actual_training_column' if used else 'research_variable_not_control_training_column'}
+                    receipts=[]
+                    if saved.get('training_execution')!=result.training_execution:
+                        raise ValueError('diagnostic training receipts differ from original accepted result')
+                    if result.training_execution and result.candidate.training_policy is not None:
+                        from .focused_methods import training_scopes
+                        planned=training_scopes(self.frame,result.candidate.training_policy,splits)
+                        if (len(planned)!=len(result.training_execution) or any(
+                            any(actual[k]!=expected[k] for k in expected)
+                            for actual,expected in zip(result.training_execution,planned,strict=True))):
+                            raise ValueError('diagnostic selected scope differs from mature frozen training plan')
+                    for receipt,(calibration,_) in zip(result.training_execution or [],splits,strict=False):
+                        receipts.append({**receipt,'calibration_rows':np.asarray(calibration,dtype=int).tolist()})
+                    objects[cid]={'artifact':artifact,'method_identity':result.candidate.config_identity,
+                        'variables':variables,'targets':self.frame['label'].to_numpy(dtype=float),
+                        'variable_origins':origins,
+                        'training_receipts':receipts,'diagnostic':self._diagnostic(result,splits)}
+                diagnostic=dispatch_diagnostic_query(query,objects,campaign_id=self.spec.campaign_id)
+                diagnostic['compute_wall_seconds']=time.perf_counter()-preparation_started
+                self._store_diagnostic_object(query_key,'diagnostics/'+hypothesis.hypothesis_id+'.json',diagnostic)
+                return accept_query(runtime.get(query_key))
             control = results.get(hypothesis.control_candidate_id)
             if control is None:
                 raise ValueError("diagnosis control has no completed predictions")
@@ -2700,6 +3006,15 @@ class FocusedResearchController:
                 "compute_wall_seconds": sum(d["compute_wall_seconds"] for d in payload["diagnostic_research"]["diagnostics"])
                     + sum(d["compute_wall_seconds"] for d in payload["diagnostic_research"]["pair_diagnostics"] if d),
                 "accounting_scope": "persisted projections; CPU seconds unavailable, not zero"}
+        if self.research_protocol_id:
+            payload['evidence_research']=self._evidence_context({r.candidate.candidate_id:r for r in valid_results})
+            context=payload['evidence_research']
+            queries=[r for r in context['requests'] if r['owner_campaign_id']==self.spec.campaign_id and r['action_type']=='diagnose']
+            payload['resource_usage']['diagnostic_queries']={'logical_requests':len(queries),
+                'completed_queries':sum(self._runtime.get('diagnostic_query:'+r['operation_id']) is not None for r in queries),
+                'compute_wall_seconds':context['query_compute_wall_seconds'],'cpu_seconds':None,
+                'new_fit_calls':0,'provider_requests':0,
+                'accounting_scope':'original persisted query receipts once per accepted operation; repeats are not independent evidence'}
         return payload
 
     def _persist(self, payload: dict[str, Any]) -> None:
