@@ -117,6 +117,7 @@ S.draft.change_scope='feature_window';S.draft.research_protocol_id='';assert(!('
     r=subprocess.run(['node','-e',script,str(root)],capture_output=True,text=True,check=False)
     assert r.returncode==0,r.stderr
 
+
 def test_diagnosis_timeline_displays_real_control_and_query_not_unknown_training_fields():
     path=Path(__file__).resolve().parents[1]/'apps/workspace_frontend/views.js'
     script=r'''
@@ -135,4 +136,3 @@ assert(html.includes('不生成候选')&&html.includes('尾部配对差如何'))
 '''
     r=subprocess.run(['node','-e',script,str(path)],capture_output=True,text=True,check=False)
     assert r.returncode==0,r.stderr
-
