@@ -3006,7 +3006,7 @@ class FocusedResearchController:
                 "compute_wall_seconds": sum(d["compute_wall_seconds"] for d in payload["diagnostic_research"]["diagnostics"])
                     + sum(d["compute_wall_seconds"] for d in payload["diagnostic_research"]["pair_diagnostics"] if d),
                 "accounting_scope": "persisted projections; CPU seconds unavailable, not zero"}
-        if self.research_protocol_id:
+        if getattr(self,'research_protocol_id',None):
             payload['evidence_research']=self._evidence_context({r.candidate.candidate_id:r for r in valid_results})
             context=payload['evidence_research']
             queries=[r for r in context['requests'] if r['owner_campaign_id']==self.spec.campaign_id and r['action_type']=='diagnose']
