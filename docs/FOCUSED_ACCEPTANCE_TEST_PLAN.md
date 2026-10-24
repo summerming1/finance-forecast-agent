@@ -1,6 +1,6 @@
 # Focused / Mission Research Acceptance Plan
 
-## 2026-10-24 R1–R6 repair gates (in progress, not final PASS)
+## 2026-10-24 R1–R6 repair gates (actual receipts in Current, no blanket PASS)
 
 Retain the original final6/1118 receipt. Add no-request/empty-dependency/new-version
 positive and counter-basis/feedback mapping negatives; original Controller atomic

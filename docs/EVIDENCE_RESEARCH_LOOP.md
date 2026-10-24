@@ -6,16 +6,255 @@
 757015e145a4707dd7673fbd454f83b70d1e00eb，原分支tracked clean。
 ZIP SHA256 c01d22ef2558e9aa4cb9f36c6596f2bee8ce7fbabad2665dc3667e9e9bb6903a。
 本节为原唯一合同的修补增量；不重开E0—E5/N0—N5，原final6/ER/失败保持。
-当前状态implementation_started；尚无本轮修后测试或真实调用。
+初始登记状态为implementation_started；本轮实际状态以紧随其后的修补收据和Current为准。
 免费保护须有本次匹配模型/端点的可核实证据，缺失即BLOCKED_FREE_STATUS，
 不以preflight/试调用证明免费。零自动重试，最多两波/32实际HTTP/5760秒，
 仅合成材料；每Campaign总charged fit≤32，Live父子两波≤128、refit≤2。
 无真实行情/客户/文献/Memory外发、付费、封存标签、生产/全局权限、推送或远端CI。
 原757015e已于上一批单独授权普通推送；历史原收据的未推送是当时快照，不回填。
 
+### 本轮修改效果与真实LLM决策测试收据（04模板；限定工程收口）
+
+首轮完整回归新增AGENTS文档红例：强制读序缩写成ADR001–006，丢了明确ADR004文件名。
+已恢复所有历史ADR及版本合同的显式路径；原4项文档测试通过/2.29秒/exit0，
+`.evidence-repair/docs-red-fix.xml`保留。没有用单项覆盖全仓失败，已重新冻结完整final2，
+22份正式合同/指南/ADR/验收JSON额外登记输入，执行中未修改，运行结束比对一致。
+首轮final目录及所有原始失败完整保留，不能将不同轮次通过项拼成一次全绿。
+首轮实际1156精确node，1145通过/3失败/8跳过，exit1；源码/依赖前后相同，source identity
+54b9a1f075a673743008a88c0398a3a9c239432dede8ff5782b396fd5a688a4d。
+38新增及94原新协议全部通过；3失败为原Windows symlink权限、原DLinear缺fixture及上述
+新文档失败。原part0/1/2/3实际10/365/373/408节点，exit0/1/1/1；不改该次统计。
+完整重冻由本地`.evidence-repair/run_sealed_regression.py`调用同一原runner，输出final2，
+附加输入快照在seal-inputs；它只是测试编排，不改产品/test源或Provider配置。
+
+#### 1. 结论与身份
+
+实际分支feat/mission-research-v2，起点757015e145a4707dd7673fbd454f83b70d1e00eb。
+最终工程冻结源码35bcbedfb82ca33d9d9e607c0045656e34af005a；源/测试274文件，
+75项已安装依赖、1156精确pytest node，最终登记于`.evidence-repair/final2/preregistration.json`。
+完整回归1146通过/2历史失败/8跳过，exit1；独立六模式浏览器6通过，exit0。
+新增38与原新协议94全通过，A为限定工程通过，不是全仓全面PASS。
+Wave1源码35a1b45f7f0a7539cfed85bb3536dc3eef62ea87；可执行源/tests只增加test runner编排，
+产品/Prompt字节一致；另有本轮文档修补和收据变化，最终完整source没有再次真实发送。
+不是“已拿到真实回答再离线修到通过”：首次请求即被免费保护拒绝，没有语义回答。
+Wave2未启用。唯一合同保留原final6/1118/ER、旧失败及47目标负确认；不迁移旧schema/hash。
+
+#### 2. 修前修后
+
+| 项目 | 修前反例与实际修补 | 修后证据与边界 |
+|---|---|---|
+| R1依赖 | research_state.normalize_evidence_advice把选用版本的可见pending、支持/反证、显式depends_on及可解析行动/设计/feedback引用统一到原证据关系；None/空请求不再绕过 | dependencies红例及原Controller原子拒绝测试；关系已有evaluated可复用，deferred仍pending；无关历史/领域启发/reference/合法stop保留，不强求解释全部原因 |
+| R2可见版本 | 判断与动作共用实际工作视图版本＋本响应合法新版本；完整accepted_context仍是归约权威 | visibility的隐藏ID/旧版本拒绝、可见/+1版本接受；不把隐藏历史重写为新主张 |
+| R3契约 | protocol_contract由同源STATUSES/ASSESSMENTS/DISPOSITIONS列准确枚举、类型及同版本不可变/+1规则；实际原客户端wire核对 | integration实际wire及capacity联合上下文；旧枚举/hash/严格Parser未放宽；提示完整不证明模型理解 |
+| R4 DQ05 | focused_diagnostics单对象每折all/high_volatility/other的n和自身MAE，无参照标记；空组None；不完整冻结mask返回unavailable | groups与实际四折63目标integration；focused_summary中文主线/REPORT/原包投影；双对象原共同掩码配对不变、统计不新增fit/HTTP |
+| R5界面/发送 | 原forms/actions明确总32 charged fits含对照/起点/候选/失败预留；Scaler/predict另列，显式refit另1；区分Scaler统计/固定比较权重与拟合模型权重 | UI文字、原wire根白名单、私有备注拒绝、限定脚本合成备注接受；不发送Ridge系数、模型文件、sample_weight或逐行数据 |
+| R6材料 | evidence_repair_materials独立构造12题；同一合成价格/收益路径导出lag、next-session标签、mask及损失，非旧Prompt叠加；题型/答案映射仅本地 | materials/transport/trial_worker；实际回答不补字段，直过原Parser/normalizer/compiler/design/fit gate；题面数值是assistant_authored预测fixture，不冒充实际fit；Live没有有效回答，语义价值未验收 |
+
+新增trial脚本只编排原Controller/Queue/worker，不建立第二事实库或数值评价器。
+fit预算纯门禁从原preflight提取为共享函数，原执行仍先构造矩阵并用同一规则检查。
+原预演发现固定合成user_notes未在白名单，先留失败再仅允许精确脚本备注；不开放任意真实备注。
+
+#### 3. 工程测试、身份及原始失败
+
+两次完整运行及独立浏览器的实际PowerShell调用（必须使用全新目录，不覆盖旧原件）：
+
+```powershell
+$env:PYTHONPATH='src;apps;scripts'
+.venv/Scripts/python.exe -u scripts/run_evidence_regression.py --out .evidence-repair/final --temp-prefix .errepairfinal --shards 3
+.venv/Scripts/python.exe -u .evidence-repair/run_sealed_regression.py
+.venv/Scripts/python.exe -u .evidence-repair/run_serial_browser.py
+.venv/Scripts/python.exe .evidence-repair/audit_final.py
+```
+
+上述实际exit依次1/1/0/0。重冻包装器调用同一原runner
+`--out .evidence-repair/final2 --temp-prefix .errepairseal --shards 3`；全部子pytest的实际
+完整argv及解释器绝对路径见对应preregistration.commands和各part start/end，不据文档重构。
+本地包装器是原工程测试编排，不是新Controller/evaluator。
+runner清空真实API/行情admission环境、BLAS=1；重worker串行后分3组。仅显式排除2个会
+运行真实行情研究的旧harness node；无假数据替换，不将skip/排除记为通过。
+1156包括未启用的6个浏览器node；随后单独启用原6模式，复跑不相加为独立新增覆盖。
+本轮新增38个非浏览器node，原新协议94，联合132；旧断言/超时未删改。
+
+| 实际运行 | passed/failed/skipped | 实际exit | 时长与原件 |
+|---|---|---:|---|
+| 首轮完整final | 1145/3/8，1156精确覆盖 | 1 | final/aggregate、4个原stdout/JUnit保留；有已修新文档失败 |
+| 最终final2.part0 | 10/0/0 | 0 | JUnit573.902秒，原worker串行 |
+| 最终final2.part1 | 358/1/6 | 1 | JUnit4459.620秒；旧symlink权限失败 |
+| 最终final2.part2 | 371/0/2 | 0 | JUnit4523.161秒；文档入口断言在本完整组通过 |
+| 最终final2.part3 | 407/1/0 | 1 | JUnit4915.584秒；旧DLinear录制缺失 |
+| 最终完整final2 | 1146/2/8，1156精确覆盖 | 1 | 缺失/额外/重复均0；不是全绿 |
+| 独立串行六模式Chromium | 6/0/0 | 0 | stdout782.07秒；browser-final/browser.xml与RESULT |
+| 本轮新增38／原新协议94 | 38/0/0；94/0/0 | 所在分组原exit保留 | 已含在1146，不另加测试数 |
+
+完整重跑包络为本地16:28:41.295600—18:00:15.373214，约5494.08秒；不把并行分组相加当
+墙钟。JUnit与pytest stdout含不同小量框架开销，表中分组按JUnit。8跳过为6个opt-in浏览器
+节点及POSIX进程组/Windows package-symlink条件各1项；六浏览器之后同源独立执行，不是新增6个
+独立node。两个未授权真实行情harness仍deselect，不替换数据或冒称执行。
+本机Python3.13.3/Windows11；75个完整installed-distribution版本、源274文件和登记输入
+前/后/核对时相同。收尾只允许Current/本节/ER新节更新实际收据，不改功能/test或其余19正式输入。
+
+精确身份索引（SHA256）：
+
+| 原件 | SHA256 |
+|---|---|
+| final2/preregistration.json（源/75依赖/1156node/argv） | ec0b92f201848123fb68cf6e81ea70a41d7d5ee9cf8ff718dda5d2a342ecf8c3 |
+| final2/aggregate.json | af88287aca265f17a760e91d0db986fbc0a3ca42cc0b04073ca182709bc546f6 |
+| seal-inputs/start.json（额外22输入/源/依赖） | 6488e16990e510b8ef60da06108c425c82d73a08e25c4f966197ea88b64182e7 |
+| seal-inputs/end.json | e5930cfc4e7343800f8f7d644da9d27ab6a4288b952fe969c0762545eca2a321 |
+| browser-final/preregistration.json（含Node/Chromium/Headless-shell/Python哈希） | b9e486807debb994aa767bff6bfa3c432d2f12bcaf6678b36586978495523d65 |
+| browser-final/browser.xml | 1d3a44fbd7b2be1c465e8ea1d31d6628b1319c3786fd8b8ced7363b6ac7da9f9 |
+| FINAL_DERIVED_RECEIPT.json（逐node/失败/绑定审计） | f00f9ab5e3b7483c99e64307bb5a385bc95ea0cd17e69d6506646da78e5b9533 |
+
+路径均以`.evidence-repair/`为根；原source identity为54b9a1f075a673743008a88c0398a3a9c239432dede8ff5782b396fd5a688a4d。
+两历史失败分别为`test_model_bundle_tamper_rejected_before_load[symlink]`在创建链接时
+WinError1314（未到反序列化，BLOCKED_ENV），以及`test_dlinear_strict_live_card_replays_without_an_api_call`
+缺原`method_card/2c05bfd22af27435.json`（BLOCKED_ASSET）。未改系统权限、补造fixture或删断言。
+
+六模式为Agent legacy/price_features/v24/v25/evidence及原Research Workspace。五Agent模式
+原记录检查项依次18/18/21/24/26，page_errors与page_crashes均空；这些检查项不是独立新试验。
+实际包括两入口、原worker、冻结推荐/查看隔离、报告/包hash、显式refit、重开/刷新/导航与
+只读零增量、父任务保留/显式续接。新证据模式原包9份预测/47索引文件复核通过；
+实际新主线700宽、报告、预算与refit确认截图已看。DQ05组数链路的定向/集成/导出覆盖不等于
+每种诊断布局都经真人核验；长来源ID/技术字段是否好理解留给G6，不据截图签用户价值。
+原120秒门槛未放宽；独立六模式通过不抹除历史并行负载超时/崩溃风险。
+
+红→绿和中间失败原样位于`.evidence-repair`：decision-red 5失败/3通过；groups-red 1失败
+（该shell末尾rg成功使外层exit0，不能据此外层exit冒充pytest成功）；first-green 3失败/58通过；
+chain 7失败/23通过后修研究关联别名，chain2 20通过；material-first收集SyntaxError与material2
+6失败均保留；trial-worker白名单失败后trial-worker2通过。all-stage 127通过属阶段累计，
+不是冻结最终验收；后续prelive-final 19通过。最终回归重新包含相应原节点，不累加重复数量。
+独立预先联合容量3通过/105.02秒/exit0，ON/OFF、新旧协议边界保持。
+实际免费拒绝记录严格Replay复核exit0：原失败仍拒绝、HTTP/fit均0、记录SHA未变，不伪造答案。
+额外5个纯预算负例均在发送前拒绝（每波/累计HTTP、每波/累计活动秒、已停止），0HTTP/0fit；
+它们是补充探针，不纳入1156 node。
+
+静态`.evidence-repair/static-results.json`：修改范围17个Python文件Ruff exit0；compileall
+src/apps/scripts/tests exit0；core/forms/views/actions四JS语法分别exit0；diff-check exit0。
+全范围Ruff src/apps/scripts/tests仍97项/52文件/exit1，全部offending Git blob与起点相同，
+修改文件内新增违规0；历史src子集74项/32文件仍是旧口径，不宣称全仓lint绿色。
+`LINT_HISTORY_AUDIT.json`逐文件记录全部52个baseline/current Git blob相同，检查exit0；
+未删除历史告警。提交前原4项文档检查、diff及当前凭据精确扫描/原始五文件保护以
+`docs-final.xml`、`docs-final.exit.txt`和`CLOSEOUT_AUDIT.json`实际原件绑定，必须通过才提交，
+不替代上面的完整重跑。最终交付HEAD另由`DELIVERY.json`记录，避免将文档提交倒称测试启动源。
+
+#### 4. 真实调用与免费资源
+
+当前用户明确确认匹配当前配置的“免费用尽即停”有效；记录为用户对当前控制台设置的确认，
+不是API余额查询或预先试调用。实际配置先冻结后发送：bailian/qwen3.8-27b，
+https://dashscope.aliyuncs.com/compatible-mode/v1，alias revision unresolved，thinking未显式
+设置、沿用Provider默认；max_tokens4096、temperature0、总deadline/read180秒、connect10秒、
+max_http_attempts1。不改.env、不换模型/seed/thinking，不因429/503等自动重发。
+
+| 波次 | 计划题/实际发送/完整语义回答/可评分 | 真实语义HTTP/轨迹HTTP | token/Provider计账活动秒 | Live charged/started/completed fit；refit | 实际状态 |
+|---|---|---|---|---|---|
+| Wave1 | 12/1/0/0 | 1/0；unknown投递0 | token未知；0.5359877999871969秒 | 0/0/0；0 | 403 AllocationQuota.FreeTierOnly，立即停止 |
+| Wave2 | 未启用 | 0/0 | 无发送；0秒 | 0/0/0；0 | NOT_RUN_FREE_QUOTA_STOP |
+| 本轮总计 | 没有可评分回答 | 1/0 | 金额/服务端用量未知，不能写免费已消耗金额0 | 0；0 | 剩余HTTP只是上限，不追加请求 |
+
+首题case-717342，原Provider错误不是模型回答；raw-envelope SHA256
+17063f1bfcf606025f69a919d634c03a3768c62651f7e381afaf5023de5064db，
+wire SHA256 b6d1427f494d43e67e6f2864daf7a8919dee2dc96c2e38f800c749402e0879d3。
+wire 30059字符/30203 UTF8 bytes，不把字符数写成token数。原failed recording SHA256
+96b22832fb3fb8cc5eec371a8a06f01425d4a9aaf469729c37596d294fbadd84。
+FROZEN_PROVIDER/HTTP_LEDGER/semantic-results/OUTCOME及call-01原件均保留；OUTCOME当时
+generic pending字段由本收据派生分类为BLOCKED_FREE_QUOTA，不改原件。
+免费保护确实拒绝了请求；不跟随错误中充值/关闭保护建议，不将本次拒绝作为事前免费证据。
+没有未知投递后重发，也没有拿另一个成功模型/波次来填补此题。
+
+#### 5. 逐题与成对分析
+
+全部题目均由同一隔离合成路径计算，完整题面/来源身份在本地LOCAL_MAPPING_DO_NOT_SEND。
+本次没有语义原文可引用；下表事实是题面，不是模型发现。全部rubric初评N/A，评分者没有
+可评材料，不是AI/专家/真人理解通过。即使将来动作相同也不自动判失败，需看事实与判断。
+
+| 中性case_id／解盲题型 | 冻结关键事实 | 实际原回答、schema/引用/编译与认识/行动 |
+|---|---|---|
+| case-717342／S1高相关 | 训练lag Pearson0.931432，候选/对照MAE同0.02 | HTTP403，服务错误码AllocationQuota.FreeTierOnly；无模型回答/无编译/无语义评分 |
+| case-284974／S1低相关 | Pearson0.101928，同样损失 | NOT_SENT，不能检验相关不等于有害机制 |
+| case-861331／S2绝对波动 | 目标后/前std比2.053711，候选−对照MAE=0 | NOT_SENT |
+| case-177843／S2相对退化 | 相同波动，候选−对照MAE=+0.004 | NOT_SENT，尚不能检验绝对与相对区分 |
+| case-423221／S3单对象 | 只有start，无比较损失delta，DQ05自身各组n/MAE | NOT_SENT |
+| case-780577／S3双对象 | 有合法comparison/start，同掩码delta=0 | NOT_SENT，尚不能检验单/双对象边界 |
+| case-119691／S4小尾部 | n_tail=2/252，剩余fit=0 | NOT_SENT |
+| case-300747／S4较大尾部 | n_tail=20/252，剩余fit仍0；不开放裁剪 | NOT_SENT，20不是科学充分阈值，不能看预算越界表现 |
+| case-651672／S5窗口正汇总 | rolling504 MAE0.0195，对照0.02，第一折反方向 | NOT_SENT |
+| case-905306／S5窗口负汇总 | rolling504 MAE0.0205，第一折反方向 | NOT_SENT，不能检验保留反证/不归因旧历史失效 |
+| case-164536／S6父末批正 | 父delta=-0.0005；h1v2/h2v1两pending；子只有继承rolling504的新start | NOT_SENT |
+| case-878343／S6父末批负 | 父delta=+0.0005，其余结构相同；子不免费复用父控制/预测 | NOT_SENT，不能检验两关系判断/暂缓及子首次选择 |
+
+发送顺序在冻结mapping中打乱；上述按题型并排仅是事后本地展示，不外发rubric。
+没有成对回答，不能计算两波分数差、严格因果改善或成功率；发送失败保留在执行统计中。
+
+#### 6. 实际父子轨迹与成果（Live未运行；工程预演单列）
+
+Live父/子及模型包均NOT_RUN_FREE_QUOTA_STOP，无合法选择轨迹可补造。
+相同原worker编排的合成预演由trial-worker2和最终serial part0测试覆盖；原始轨迹分别保存，
+不把重复预演相加作为一次更强研究。最终serial可读索引`.evidence-repair/final2-serial-trajectories.json`
+（SHA256 0fc25bdc98d4c7d1ce538f16cb6e5729c957f41361f2aeab5585919500561840）；首轮另存不覆盖：
+
+- goal入口父/子合计48 charged fit（24＋24），provided_start合计52（28＋24），均各自≤32。
+- trial脚本真实队列/worker＋本地模拟HTTP：父persistent-602eb14b1639b663a4937c20、
+  子persistent-155e0486a9fa94750ca47523（按`.errepairseal0/test_trial_harness_original_wo0/trajectory.json`
+  的role核对）；各28，总56。父/子包各50成员，SHA分别
+  c9878adea545ddd2387d256bd563f7db501b770fa96aa8a616ccbbb5e690a31b／
+  e7b7a820352da9f89e684800574cbf11c5540e93c4801c019fa8edd25eac3f76。
+  4次本地模拟规划HTTP、真实Provider0，另1显式refit；fresh_process_exit0/equal=true，
+  浮点容差rtol1e-8/atol1e-12，fresh进程禁网络及Ridge/Scaler fit。
+- trial初始完整StandardScaler＋Ridge(alpha10)、uniform/seed42；首批从user_start分别执行
+  mean20特征干预（expanding不变，MAE0.008329784621759456）与rolling504窗口干预
+  （特征不变，MAE0.00834498435360797）；第二批先接受4条关系判断，再从真实r1_c1仅改
+  rolling504、保留mean20（MAE0.008393036036683621）。父末批2条pending带来源到子首次
+  响应，子接受2条关系判断再执行，不暗中总结或强清。此预演没有纯diagnose动作。
+  “纯诊断→第二次更新→实际窗口”由另外六工具integration路径测试，不混写为本trial发生。
+- trial父/子冻结推荐均保留user_start（MAE0.008300966584281708）；最佳研究候选r1_c1
+  的MAE0.008329784621759456未通过替换门槛。固定best-available为baseline_zero
+  （MAE0.008296429380554934），不能拿它填成研究候选胜出。原每项control、单轴diff与
+  推荐都见campaign及索引；这不是模型依据反馈选择合理性的Live证据。
+- 输出研究包原成员hash审计通过，模型包refit是额外操作；最佳研究候选与冻结推荐分开，
+  原推荐可能保留起点，不强造赢家。上述是合成开发表现，不是独立预测或金融收益证据。
+  合成MAE不能与原A真实SPY开发MAE约0.00529横比，不代表本轮预测变好或变差。
+
+计数勘误：早先进度曾写52fit，指错轨迹；trial实际56＋1，52属provided_start。原件不改。
+以上逐轨迹数不是全套工程训练总量；全套重复回归/浏览器本地合成计算另计，不伪造未汇总的
+物理fit总数，也不把计账reserve等同每次底层操作。真实Provider本轮仅1次，不能加本地relay跳数。
+
+#### 7. 五轴、交付与下一步
+
+| 轴 | 本轮实际结论 | 不可推断事项 |
+|---|---|---|
+| A工程 | 限定工程通过；新增38＋原新协议94通过；完整1146/2/8、浏览器6/0/0 | 非全仓全绿，历史资产/权限/lint/负载边界保持 |
+| B真实行为 | BLOCKED_FREE_QUOTA；0完整回答 | 无法确认研究理解、证据响应或父子Live决策 |
+| C研究选择价值 | NOT_RUN；本试点即使完成也不是C完整公平对照 | 不宣称优于合理参考/简单策略 |
+| D独立预测 | NOT_RUN；只做合成包与推理一致性 | 不宣称独立/前瞻预测改善 |
+| E真人价值/G6 | HUMAN_OPEN；AI不代签 | 所有者与独立真人需复核是否看懂并有用 |
+
+当前操作仍为原工作区：新建研究→V2.5特征＋窗口→填写真实起点配置→选择获准数据→
+第三步显式选证据驱动协议→检查配置（0fit/HTTP）→确认提交；默认仍旧协议，历史批次不迁移。
+本轮自动工程只用隔离合成库，不建议重训原A/B；已有研究包先读REPORT.html，模型包另经
+明确refit与可信登记。浏览/刷新/研究报告不应生成训练或LLM调用。
+旧prepare(context)接口只保留离线历史兼容，不是新发送入口；新的离线材料命令为
+`.venv/Scripts/python.exe scripts/prepare_evidence_live_challenges.py --blind-synthetic --out <全新本地目录>`，
+`PYTHONPATH=src;scripts`；它不调用Provider/训练。Live runner的dry-run同样零调用；
+实际发送已有免费停止门禁，不能以剩余预算继续试到成功。
+下一步先所有者只读G6理解复核/独立用户任务；真实行为试验仅在免费配置与可用额度满足并按
+新明确协议恢复，不充值/自动换模。阶段2裁剪/权重→阶段3条件RF四组合仍为条件方向，不施工。
+
+本地代码提交3da59ea915a8f8d9f68e65199e7bd11dc78b83b7、
+35a1b45f7f0a7539cfed85bb3536dc3eef62ea87、35bcbedfb82ca33d9d9e607c0045656e34af005a；
+收尾仅上述三份实际结果文档/收据更新；完整本地提交清单/最终HEAD以`DELIVERY.json`及git log
+为准，源码不变，不把文档HEAD冒称原测试执行HEAD。无推送/远端CI、无依赖安装/权限改变。未测Linux/其它宿主、
+真实Provider成功语义、真实市场新研究、封存标签、独立预测、真人G6与原旧源码不匹配包。
+正式同步位置：AGENTS、Current、唯一合同及ER新增节、Roadmap历史标记、Architecture、Acceptance、
+handoff、remaining、README、工作区指南和用户指南；旧V2.5/ADR与原验收收据不回填。
+真人只读清单在FRONTEND_USER_GUIDE的10月24日段：事实/解释、反证与下一步、暂缓关系、
+最佳候选/冻结推荐及报告/模型包区别；所有者已听过解释，不称首次无辅助体验。
+
 ### 本次获准01（原文纳入；planned文字不表示已完成）
 
 修补工作日志（尚非最终冻结收据）：
+
+计数勘误：进度消息曾将编排预演误记为52fit。原trial-worker2/trajectory实际28＋28＝56，
+另1显式refit；final串行同样56＋1，52来自provided_start另一条轨迹。原始记录不改。
 
 - decision-red：5失败/3通过、exit1；groups-red：1失败（该shell后接搜索，外层exit0，
   不将此外层0当pytest通过）。原附件复现已移植为本轮独立测试，不修改旧fixture。

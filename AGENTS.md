@@ -1,6 +1,6 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
-## Approved 2026-10-24 decision repairs (in progress)
+## Approved 2026-10-24 decision repairs (actual results in Current)
 
 User approved R1–R6 in the existing `docs/EVIDENCE_RESEARCH_LOOP.md`, not a new
 milestone. Preserve old receipts/fixtures/hashes/A/B/untracked evidence. Isolated
@@ -12,6 +12,9 @@ waves, 32 actual HTTP total, one attempt/request, 4096 tokens, 180s/call,
 Campaign total charged fits<=32, two-wave parent/child<=128 plus <=2 refits.
 Synthetic whitelist only; no real market/customer/literature/Memory sends.
 Freeze actual config before first call. Current is actual status, not approval.
+Wave1's first request was refused with AllocationQuota.FreeTierOnly; 1 HTTP,
+0 semantic answers/Live fits/refits. No retry, model switch or second wave.
+Unused budgets do not authorize continuing after this free-quota stop.
 
 ## Current approved increment (2026-10-23)
 
@@ -65,8 +68,8 @@ Read, in this order:
 1. `AGENTS.md`
 2. `docs/PROJECT_ROADMAP.md`
 3. `docs/CURRENT_IMPLEMENTATION.md`
-4. reused `docs/V2_5_METHOD_RESEARCH.md`, then sole current `docs/EVIDENCE_RESEARCH_LOOP.md` including R1–R6; relevant V2.4/V2.3/B0–B5 evidence remains historical, not competing scope
-5. accepted ADRs relevant to the work: `docs/ADR_MISSION_PRODUCT_008.md`, then `docs/ADR_MISSION_PRODUCT_007.md` and relevant ADR001–006; approval is not implementation or acceptance
+4. reused `docs/V2_5_METHOD_RESEARCH.md`, then sole current `docs/EVIDENCE_RESEARCH_LOOP.md` including R1–R6; `docs/V2_4_DIAGNOSTIC_RESEARCH.md`, `docs/V2_3_FEATURE_RESEARCH.md`, and `docs/V2_MISSION_RESEARCH.md` retain relevant V2.4/V2.3/B0–B5 history, not competing scope
+5. accepted ADRs relevant to the work: `docs/ADR_MISSION_PRODUCT_008.md`, then `docs/ADR_MISSION_PRODUCT_007.md`, `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, `docs/ADR_MISSION_PRODUCT_003.md`, `docs/ADR_MISSION_PRODUCT_004.md`, `docs/ADR_MISSION_PRODUCT_005.md`, and `docs/ADR_MISSION_PRODUCT_006.md`; approval is not implementation or acceptance
 6. `docs/FOCUSED_ARCHITECTURE.md`
 7. `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`
 8. `docs/CODEX_FOCUSED_HANDOFF.md`

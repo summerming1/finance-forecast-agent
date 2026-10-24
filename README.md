@@ -1,6 +1,6 @@
 # Finance Forecast Agent
 
-## 2026-10-24 decision repairs and bounded synthetic Live pilot — in progress
+## 2026-10-24 decision repairs and bounded synthetic Live pilot
 
 R1–R6 is an increment of the [same contract](docs/EVIDENCE_RESEARCH_LOOP.md), not
 a new roadmap. Relevant evidence dependencies, actual visible hypothesis versions,
@@ -11,6 +11,13 @@ Only current-provider free-only synthetic trials are authorized (two waves, <=32
 actual HTTP, no retries/model switches). No market/customer/literature/Memory sends,
 paid fallback, push or remote CI. The pilot targets behavior, not selection superiority,
 independent prediction, human acceptance or automatically approved future tools.
+
+The first authorized request on qwen3.8-27b returned HTTP403
+`AllocationQuota.FreeTierOnly`: one actual HTTP, no semantic answer, no Live
+trajectory fit/refit. Sends stopped without retry/model switch/paid fallback.
+Final engineering regression/browser results are recorded in
+[Current](docs/CURRENT_IMPLEMENTATION.md) and the ER index; this quota block is
+not evidence for or against the model's research understanding.
 
 ## Evidence-driven loop — bounded engineering delivery 2026-10-23
 
