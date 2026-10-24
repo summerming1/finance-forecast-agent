@@ -61,8 +61,10 @@ def inspect_send(prompt):
 
 class Guard:
     """Trial-only durable reservation; an unknown send stops ALL later sends."""
-    def __init__(self,root,upstream,contract,wave):
+    def __init__(self,root,upstream,contract,wave,prior=None):
         self.root=root;self.upstream=upstream;self.contract=contract;self.wave=wave
+        self.prior_http=len((prior or {}).get('calls',[]))
+        self.prior_seconds=(prior or {}).get('provider_seconds',0.)
         self.lock=threading.Lock();self.calls=[];self.stopped=False
         self.source=source_files(Path.cwd())
         self.inputs=(json.loads((root/'trial-inputs.json').read_text())
@@ -73,6 +75,8 @@ class Guard:
     def save(self):
         atomic_json(self.root/'HTTP_LEDGER.json',{'wave':self.wave,'calls':self.calls,
             'actual_upstream_http':len(self.calls),'provider_seconds':sum(c.get('elapsed_seconds',180.) for c in self.calls),
+            'cumulative_upstream_http':self.prior_http+len(self.calls),
+            'cumulative_provider_seconds':self.prior_seconds+sum(c.get('elapsed_seconds',180.) for c in self.calls),
             'stopped':self.stopped,'cost':None,'worker_loopback_http_separate':True})
 
     def exchange(self,wire):
@@ -81,9 +85,11 @@ class Guard:
             if self.source!=source_files(Path.cwd()):raise PermissionError('frozen source changed')
             if any(file_sha256(path)!=digest for path,digest in self.inputs.items()):
                 raise PermissionError('frozen input changed')
-            if len(self.calls)>=16:raise PermissionError('per-wave upstream HTTP cap')
+            if len(self.calls)>=16 or self.prior_http+len(self.calls)>=32:
+                raise PermissionError('per-wave/cumulative upstream HTTP cap')
             used=sum(c.get('elapsed_seconds',180.) for c in self.calls)
-            if used+180.>2880.:raise PermissionError('per-wave activity reserve exhausted')
+            if used+180.>2880. or self.prior_seconds+used+180.>5760.:
+                raise PermissionError('per-wave/cumulative activity reserve exhausted')
             packet=json.loads(wire);messages=packet.get('messages',[])
             content=next(m['content'] for m in messages if m['role']=='user')
             if content.startswith('You are extracting schema ') and '\n\n' in content:
@@ -259,7 +265,7 @@ def main():
     if args.wave==2:
         if args.previous is None:raise ValueError('second wave requires first-wave ledger and repair evidence')
         previous=json.loads((args.previous/'HTTP_LEDGER.json').read_text())
-        if (previous['stopped'] or len(previous['calls'])>16
+        if (previous.get('wave')!=1 or previous['stopped'] or len(previous['calls'])>16
                 or any(c['state']!='response_received' for c in previous['calls'])):
             raise PermissionError('stopped/unknown first wave cannot authorize a new send')
     elif args.previous:raise ValueError('unexpected previous ledger')
@@ -299,10 +305,13 @@ def main():
     inputs.update({str(root/(i['case_id']+'.json')):file_sha256(root/(i['case_id']+'.json')) for i in plan['entries']})
     atomic_json(root/'trial-inputs.json',inputs)
     atomic_json(root/'FROZEN_PROVIDER.json',{'actual_upstream':contract,'source':before,
+        'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+        'source_worktree_status':subprocess.check_output(['git','status','--short','--untracked-files=no'],text=True),
+        'command':[sys.executable,*sys.argv],
         'authorization_sha256':file_sha256(args.authorization),'wave':args.wave,'dependencies':dependencies,'inputs':inputs,
         'thinking':contract.get('enable_thinking','provider_default_unspecified'),
         'alias':'unresolved','cost':None,'free_balance':'not_queried_not_proof'})
-    guard=Guard(root,upstream,contract,args.wave);server=relay(guard)
+    guard=Guard(root,upstream,contract,args.wave,previous if args.wave==2 else None);server=relay(guard)
     os.environ['OPENAI_BASE_URL']=f'http://127.0.0.1:{server.server_port}/v1'
     client=OpenAIJsonClient(policy=policy);recorder=FixtureRecordingLLM(client,root/'semantic-recordings')
     results=[]

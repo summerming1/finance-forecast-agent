@@ -57,10 +57,10 @@ def _candidate(cid, rolling=False):
         training_policy=TrainingPolicy('rolling', 504) if rolling else TrainingPolicy())
 
 
-def _artifact(candidate, errors, returns):
+def _artifact(candidate, errors, returns, data_id):
     import exchange_calendars as xcals
     sessions=xcals.get_calendar('XNYS').sessions_in_range('2019-01-02','2024-12-31')[:1100]
-    return {'task_id':'spy','task_version':'1','dataset_fingerprint':'synthetic-fixed-v1',
+    return {'task_id':'spy','task_version':'1','dataset_fingerprint':data_id,
         'split_spec':{'folds':4,'targets_per_fold':63},'evaluation_policy':{'mae':.0025},
         'candidate_id':candidate.candidate_id,'candidate_fingerprint':candidate.fingerprint,
         'rows':[{'row_id':757+i,'raw_row_id':821+i,'fold_id':i//63,
@@ -80,6 +80,7 @@ def _result(candidate, art):
 
 def build_case(topic: int, variant: int, case_id: str):
     """Only the problem dimension and its derived identities differ in a pair."""
+    owner='synthetic-parent' if topic==5 else 'synthetic-current'
     start=_candidate('start');other=_candidate('comparison',rolling=True)
     control_errors=np.full(252,.02);errors=np.full(252,.02)
     if topic==1:errors[:]=.02 if variant==0 else .024
@@ -99,7 +100,8 @@ def build_case(topic: int, variant: int, case_id: str):
     returns[821:821+n_tail]=.2
     prices=250*np.cumprod(1+returns)
     returns=np.r_[np.nan,prices[1:]/prices[:-1]-1]
-    start_art=_artifact(start,control_errors,returns);other_art=_artifact(other,errors,returns)
+    data_id=identity(prices.tolist(),domain='synthetic-semantic-prices-v1')
+    start_art=_artifact(start,control_errors,returns,data_id);other_art=_artifact(other,errors,returns,data_id)
     objects={'start':start,'comparison':other}
     if topic==2 and variant==0:objects={'start':start}
     facts={};base=_result(start,start_art);prior=[]
@@ -116,7 +118,7 @@ def build_case(topic: int, variant: int, case_id: str):
         'object_ids':['start'],'scope':'development_oof','variable_pairs':[], 'factor':None,'parameters':{}}
     group=query_projection(dispatch_diagnostic_query(group_query,{'start':{'artifact':start_art,
         'method_identity':start.config_identity,'variables':{},'training_receipts':[],
-        'diagnostic':{'volatility_groups':groups}}},campaign_id='synthetic-local'))
+        'diagnostic':{'volatility_groups':groups}}},campaign_id=owner))
     group.pop('compute_wall_seconds',None)
     query_objects={cid:{'artifact':art,'method_identity':objects[cid].config_identity,
         'variables':{'return_1':returns[64:]},
@@ -127,7 +129,7 @@ def build_case(topic: int, variant: int, case_id: str):
     tail_query={'schema_version':'evidence_diagnostic_query_v1','kind':'DQ-04',
         'object_ids':['comparison','start'] if 'comparison' in objects else ['start'],
         'scope':'development_oof','variable_pairs':[],'factor':'return_1','parameters':{}}
-    tail_result=query_projection(dispatch_diagnostic_query(tail_query,query_objects,campaign_id='synthetic-local'))
+    tail_result=query_projection(dispatch_diagnostic_query(tail_query,query_objects,campaign_id=owner))
     values=[r['values'] for r in tail_result['results']]
     total_tail=sum(v['n_tail'] for v in values);total_other=sum(v['n_other'] for v in values)
     tail={'n_tail':total_tail,'n_other':total_other,'original_n':252,'low_support':total_tail<10,
@@ -140,7 +142,7 @@ def build_case(topic: int, variant: int, case_id: str):
         tail['direction']='candidate_minus_control_positive_is_worse'
     target=np.array([r['y_true'] for r in start_art['rows']])
     body={'correlation':corr,'tail':tail,'groups':group,
-        'synthetic_input_identity':identity(prices.tolist(),domain='synthetic-semantic-prices-v1'),
+        'synthetic_input_identity':data_id,
         'label_source':'next_session_return_from_same_synthetic_adjusted_close_path',
         'target_volatility_change':float(np.std(target[126:])/np.std(target[:126])),
         'target_volatility_periods':{'first_n':126,'last_n':126,
@@ -149,7 +151,6 @@ def build_case(topic: int, variant: int, case_id: str):
         'candidate':({'candidate_id':'comparison','mae':prior[0].metrics['mae'],
             'folds':prior[0].fold_metrics,'loss_delta':prior[0].metrics['mae']-base.metrics['mae']}
             if prior else None)}
-    owner='synthetic-parent' if topic==5 else 'synthetic-current'
     eid=owner+':fact:'+identity(body,domain='synthetic-semantic-fact-v1')
     hrefs=[['h1',2],['h2',1]] if topic==5 else [['h1',1]]
     facts[eid]={'kind':'diagnostic','owner_campaign_id':owner,'hypothesis_refs':hrefs,
@@ -176,7 +177,7 @@ def build_case(topic: int, variant: int, case_id: str):
         # freshly represented complete inherited rolling method and own start
         # predictions; identical method/data/seed gives the same numeric result.
         planning_start=_candidate('start',rolling=True)
-        planning_base=_result(planning_start,_artifact(planning_start,errors,returns))
+        planning_base=_result(planning_start,_artifact(planning_start,errors,returns,data_id))
         planning_prior=[];planning_objects={'start':planning_start}
     charged=16+(4 if planning_prior else 0)
     p=advisor_prompt(round_index=1 if topic==5 else 2,task=FocusedTaskSpec(exposure='simulation_only'),
