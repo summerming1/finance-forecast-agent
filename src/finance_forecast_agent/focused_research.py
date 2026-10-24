@@ -1158,6 +1158,16 @@ def compile_hypotheses(
     return compiled
 
 
+def validate_feature_fit_budget(compiled, seen, fold_count, remaining):
+    """One pure resource gate shared by actual preflight and nonexecuting trials."""
+    unseen={candidate.fingerprint for _,candidate in compiled
+        if candidate is not None and candidate.fingerprint not in seen}
+    required=len(unseen)*fold_count
+    if required>remaining:
+        raise ValueError('whole feature plan exceeds remaining fit budget')
+    return required
+
+
 def validate_fixed_model(candidate: CandidateConfig, anchor: CandidateConfig,
                          parent: CandidateConfig | None = None) -> None:
     """Feature experiments cannot silently change the model or their control."""
@@ -2141,16 +2151,12 @@ class FocusedResearchController:
     def _preflight_feature_plan(self, compiled, seen, splits):
         if self.literature_review_ids and self._project_literature() != self.literature_snapshot:
             raise ValueError("literature permission or reviewed recipe changed before feature planning")
-        unseen = set()
         for _, candidate in compiled:
             if candidate is None:
                 continue
             self._feature_matrix(candidate)  # Every item is computable before any fit.
-            if candidate.fingerprint not in seen:
-                unseen.add(candidate.fingerprint)
         remaining = self.budget.max_fit_calls - self._runtime.resource_usage()["charged_fit_calls"]
-        if len(unseen) * len(splits) > remaining:
-            raise ValueError("whole feature plan exceeds remaining fit budget")
+        validate_feature_fit_budget(compiled,seen,len(splits),remaining)
 
     def _invalid_feature_plan(self, round_index, baseline_results, baseline_payloads, research_results, rounds, failed_attempts, exc):
         self._runtime.settle_feature_decision(round_index, count=0, invalid=True)

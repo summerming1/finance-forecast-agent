@@ -1,5 +1,21 @@
 # Focused / Mission Research Architecture
 
+## 2026-10-24 bounded repair responsibilities
+
+The existing normalizer derives required evidence×chosen-version relations from
+visible new pending facts, selected declared bases and explicit dependencies;
+missing requests/empty dependencies cannot bypass them. Unrelated historical
+control references and domain-inspired first steps remain legal. Full accepted
+state still owns reduction; assessments and action links share the actual visible
+version set plus legally created versions. No archived-claim inference or new store.
+DQ05 adds own per-fold all/high/other n and MAE with explicit no-reference status;
+paired control masks and numeric selection remain unchanged. A pure fit-budget
+gate is shared by original execution preflight and nonexecuting semantic checks.
+Trial-only serial transport relay preserves original client/recorder/queue worker,
+records actual upstream versus loopback route, and never repairs raw responses.
+Free-only authorization, synthetic whitelist, budgets and immutable receipts are
+trial admission, not a new product Controller, permission platform or billing service.
+
 ## Evidence-research extension 2026-10-23 (bounded engineering implemented)
 
 [ADR008](ADR_MISSION_PRODUCT_008.md) and [the sole contract](EVIDENCE_RESEARCH_LOOP.md)

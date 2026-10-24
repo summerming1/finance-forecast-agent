@@ -1,5 +1,17 @@
 # Finance Forecast Agent
 
+## 2026-10-24 decision repairs and bounded synthetic Live pilot — in progress
+
+R1–R6 is an increment of the [same contract](docs/EVIDENCE_RESEARCH_LOOP.md), not
+a new roadmap. Relevant evidence dependencies, actual visible hypothesis versions,
+literal wire rules, single-object group losses, truthful budget/send wording and
+blind self-consistent semantic fixtures are under validation. See Current/ER for
+actual results; historical final6 is not a passing receipt for the new source.
+Only current-provider free-only synthetic trials are authorized (two waves, <=32
+actual HTTP, no retries/model switches). No market/customer/literature/Memory sends,
+paid fallback, push or remote CI. The pilot targets behavior, not selection superiority,
+independent prediction, human acceptance or automatically approved future tools.
+
 ## Evidence-driven loop — bounded engineering delivery 2026-10-23
 
 User-approved E0–E5 is implemented under the sole

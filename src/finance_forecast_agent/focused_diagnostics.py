@@ -191,6 +191,27 @@ def dispatch_diagnostic_query(query, objects, *, campaign_id):
         out['results']=[{'object_id':cid,'values':deepcopy(o['diagnostic'].get('volatility_groups','unavailable'))}
             for cid,o in zip(q['object_ids'],selected,strict=True)]
         if any(x['values']=='unavailable' for x in out['results']):out['status']='unavailable'
+        if len(selected)==1 and isinstance(out['results'][0]['values'],list):
+            groups=out['results'][0]['values'];predictions=rows[0]
+            if ([g.get('fold_id') for g in groups]!=sorted({r['fold_id'] for r in predictions})
+                    or any(not isinstance(g.get('rows'),list) for g in groups)):
+                out.update(status='unavailable',reason='missing_complete_frozen_group_masks')
+                return finish()
+            losses=[]
+            for group in groups:
+                fold=[r for r in predictions if r['fold_id']==group['fold_id']]
+                selected_ids=set(group['rows'])
+                if len(selected_ids)!=len(group['rows']) or not selected_ids<={r['row_id'] for r in fold}:
+                    out.update(status='unavailable',reason='frozen_group_target_mismatch')
+                    return finish()
+                summary={'fold_id':group['fold_id'],
+                    'relative':{'status':'unavailable','loss_delta':None,'reason':'no_reference_object'}}
+                for name in ('all','high_volatility','other'):
+                    errors=[abs(r['y_pred']-r['y_true']) for r in fold if name=='all'
+                        or (r['row_id'] in selected_ids)==(name=='high_volatility')]
+                    summary[name]={'n':len(errors),'mae':float(np.mean(errors)) if errors else None}
+                losses.append(summary)
+            out['results'][0]['group_losses']=losses
         if len(selected)==2 and isinstance(selected[-1]['diagnostic'].get('volatility_groups'),list):
             out['paired_group_losses']=relative_group_losses(selected[0]['artifact'],selected[-1]['artifact'],
                 selected[-1]['diagnostic']['volatility_groups'])

@@ -1,5 +1,21 @@
 # Focused / Mission Research Acceptance Plan
 
+## 2026-10-24 R1–R6 repair gates (in progress, not final PASS)
+
+Retain the original final6/1118 receipt. Add no-request/empty-dependency/new-version
+positive and counter-basis/feedback mapping negatives; original Controller atomic
+rejection; hidden ID/old version and same-response visible version checks. Actual
+wire must carry validator enums/types/version rules and keep original joint capacity.
+DQ05 arithmetic, empty groups, paired compatibility, next-update intervention and
+Chinese REPORT/package projections are required. UI total charged-fit and permitted
+Scaler/fixed comparator statistics must agree with the synthetic send whitelist.
+Twelve independent blind cases use neutral IDs; topic/variant/rubric stay local.
+Raw response JSON/schema/relations/compiler/resource gates run without field repair.
+Free-only evidence and no retries/unknown-send stopping are tested locally first.
+Final source/tests/deps/input/node freeze, applicable whole regression and separate
+serial six-mode browser are still required. Live AI semantic review is B only,
+not C strategy superiority, D independent forecasting, E human value or owner G6.
+
 ## Evidence loop E0–E5 (2026-10-23 bounded execution recorded; no blanket PASS)
 
 Use [EVIDENCE_RESEARCH_LOOP.md](EVIDENCE_RESEARCH_LOOP.md) and

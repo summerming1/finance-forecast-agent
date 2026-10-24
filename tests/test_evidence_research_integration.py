@@ -20,6 +20,11 @@ def test_diagnosis_only_result_reaches_second_update_then_actual_window_interven
     monkeypatch.setattr('finance_forecast_agent.focused_diagnostics.dispatch_diagnostic_query',limited_query)
     prompts=[]
     def propose(p):
+        import json
+
+        from finance_forecast_agent.research_state import ASSESSMENTS, DISPOSITIONS, STATUSES
+        wire=json.dumps(p,ensure_ascii=False)
+        assert all('"'+value+'"' in wire for value in ASSESSMENTS|DISPOSITIONS|STATUSES)
         from finance_forecast_agent.focused_methods import restore_method_references
         p=restore_method_references(p)
         prompts.append(deepcopy(p));context=p['evidence_research'];state=context['state']
@@ -42,6 +47,10 @@ def test_diagnosis_only_result_reaches_second_update_then_actual_window_interven
             assert len(diagnostics)==1
             eid,fact=diagnostics[0]
             assert fact['result']['query']['kind']==kind
+            if kind=='DQ-05':
+                losses=fact['result']['results'][0]['group_losses']
+                assert len(losses)==4 and all(g['all']['n']==63 for g in losses)
+                assert all(g['relative']['loss_delta'] is None for g in losses)
             assert fact['result']['read_receipts'][0]['functions']
             recorded_request=context['requests'][0]
             assert recorded_request['request']['id']=='describe'

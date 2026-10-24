@@ -94,11 +94,21 @@ def build_evidence_mainline(payload: dict) -> dict | None:
                 '实际列顺序':'、'.join(r.get('feature_columns',r.get('columns',[]))),
                 '训练截止':r.get('training_asof')}} for d in details for r in d.get('training_receipts',[])]
         elif fact['kind']=='diagnostic_query' and query_kind=='DQ-05':
+            group_rows=[{'fold_id':g['fold_id'],'values':{'对象':d['object_id'],
+                '固定分组':{'all':'全部目标','high_volatility':'高波动','other':'其它'}[name],
+                '分组目标数':g[name]['n'],'MAE':g[name]['mae'],
+                '相对比较':'无参照对象，仅描述自身误差','配对损失差':None}}
+                for d in details for g in d.get('group_losses',[]) for name in ('all','high_volatility','other')]
             details=[{'fold_id':g.get('fold_id'),'values':{'对象':d['object_id'],
                 '固定分组':g.get('name','高波动分组'),'阈值':g.get('threshold'),
                 '分组目标数':g.get('rows_count',g.get('n')),'MAE':g.get('mae'),
                 '校准行':g.get('calibration_rows_count'),'来源（原记录）':g.get('source')}}
                 for d in details for g in (d.get('values') if isinstance(d.get('values'),list) else [])]
+            details.extend(group_rows)
+            for g in result.get('paired_group_losses',{}).get('folds',[]):
+                details.append({'fold_id':g['fold_id'],'values':{'固定分组':g['group'],
+                    '分组目标数':g['rows'],'候选MAE':g['candidate_mae'],'对照MAE':g['reference_mae'],
+                    '配对损失差（候选减control，正值较差）':g['loss_delta']}})
         elif fact['kind']=='diagnostic_query' and query_kind in {'DQ-03','DQ-06'}:
             for d in details:d['values']={'变量对':' ↔ '.join(d.get('variables',[])),**d.get('values',{})}
         elif fact['kind']=='controlled_observation':

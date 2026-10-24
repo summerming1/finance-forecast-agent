@@ -16,6 +16,7 @@ UPDATE='evidence_research_update_v1'
 STATUSES={'pending','active','deferred','blocked','closed'}
 ASSESSMENTS={'local_support','weakened','conflicting','not_distinguished',
     'insufficient_evidence','unchanged','execution_incomplete'}
+DISPOSITIONS={'evaluated','deferred'}
 SEND_SCOPES=['task_and_starting_configuration','permission_filtered_diagnostics_and_metrics',
     'accepted_feedback_and_failures','question_hypothesis_and_request_history',
     'explicit_same_mission_parent_evidence','separately_approved_reviewed_literature']
@@ -50,6 +51,15 @@ def response_contract():
 def protocol_contract():
     """INPUT-only field guide; not extra keys to copy into the reply envelope."""
     return {'reply_root_fields':['schema_version','research_update','hypotheses'],
+        'semantic_types':{'status':sorted(STATUSES),'assessment':sorted(ASSESSMENTS),
+            'disposition':sorted(DISPOSITIONS),
+            'strings':'New update/request text fields: nonempty strings; IDs <=96, evidence refs <=160, other text <=320. Original action/design fields keep their separate compiler limits.',
+            'lists':'questions/hypotheses/evidence_assessments and refs are arrays; each action hypothesis_refs is <=3 [string ID, integer version] pairs.',
+            'versions':'Positive integer, not bool. First version=1; revision=latest+1. Same version may change status only; claim, conditions, question, support/counter refs and alternatives immutable. Question content immutable except status.',
+            'visibility':'Assessments AND action hypothesis_refs use only actually visible versions or legally created versions in this response. Hidden archived IDs/versions cannot be judged or rewritten.',
+            'dependencies':'Selected hypothesis visible new pending results, its declared support/counter refs, resolvable action/design feedback/evidence refs, and request.depends_on need an existing evaluated relation or same-response assessment/explicit deferral. Omitting request or empty depends_on does not bypass. Unrelated history need not be assessed; resource stop/review only declared dependencies.',
+            'failure':'execution_failure requires execution_incomplete, never scientific counterevidence.',
+            'reference':'Only frozen reference=true permits research_update=null; otherwise exact update object required.'},
         'reference_namespaces':'questions/hypotheses/assessments and request.depends_on use evidence_research.evidence keys. Original action.evidence_refs/research_design refs still use evidence_projection/available_evidence_ids. projection_ref links these sources, not interchangeable permissions.',
         'evidence_request':{'schema_version':'evidence_request_v1','id':'stable request ID',
             'question':'specific missing information','expected':'predeclared expectation or unknown',
@@ -101,7 +111,8 @@ def engineering_advice(prompt, *, telemetry=None):
                 'conditions':'冻结任务、数据与估计器，从真实已接受完整control只改一轴。',
                 'support_refs':[],'counter_refs':[],'alternatives':'噪声、训练分布与其它竞争原因仍未区分。',
                 'status':'active'}]
-        for eid,hid,v in state['pending'][:12]:
+        visible_versions={(hid,h['version']) for hid,hs in state['hypotheses'].items() for h in hs}
+        for eid,hid,v in [r for r in state['pending'] if (r[1],r[2]) in visible_versions][:12]:
             fact=context['evidence'][eid]
             metrics=fact.get('result',{}).get('metrics') or {}
             labels={'mae':'MAE','rmse':'均方根误差','directional_accuracy':'方向命中比例（非盈利）'}
@@ -446,6 +457,43 @@ def normalize_evidence_advice(advice,prompt,*,accepted_context=None):
         prospective=state
     else:
         prospective=reduce_update(state,update,facts,'validate-only-not-an-accepted-plan')
+    # Full history owns reduction; only the actual model view owns permission
+    # to make a new claim about a version. Both assessments and actions share it.
+    visible_versions={(hid,h['version']) for hid,hs in context['state']['hypotheses'].items() for h in hs}
+    visible_versions.update((h['id'],h['version']) for h in (update or {}).get('hypotheses',[]))
+    for a in (update or {}).get('evidence_assessments',[]):
+        if (a['hypothesis_id'],a['hypothesis_version']) not in visible_versions:
+            raise ValueError('archived hypothesis version is not visible for assessment')
+    latest={(a['evidence_id'],a['hypothesis_id'],a['hypothesis_version']):a['disposition']
+        for a in state['assessments']}
+    now={(a['evidence_id'],a['hypothesis_id'],a['hypothesis_version'])
+        for a in (update or {}).get('evidence_assessments',[])}
+    # Map old compiler namespaces to the SAME visible fact, never broaden access.
+    aliases={eid:{eid} for eid in facts}
+    for eid,fact in facts.items():
+        result=fact.get('result',{})
+        for name in ('projection_ref','source_ref','candidate_id'):
+            # A generic accepted control ID is also a method reference. Only
+            # map it to new research evidence when an accepted prior operation
+            # actually linked that result to hypotheses; do not make domain-
+            # inspired first steps assess every unrelated baseline.
+            if name=='candidate_id' and not fact.get('hypothesis_refs'):continue
+            ref=result.get(name)
+            if isinstance(ref,str):aliases.setdefault(ref,set()).add(eid)
+    for feedback in prompt.get('structured_feedback',[]):
+        cid=feedback.get('candidate_id');ref=feedback.get('feedback_id')
+        if isinstance(ref,str) and cid in aliases:aliases.setdefault(ref,set()).update(aliases[cid])
+    def declared_refs(value):
+        found=set()
+        if isinstance(value,dict):
+            for key,item in value.items():
+                if key in {'evidence_refs','based_on_feedback_ids','symptom_refs'} and isinstance(item,list):
+                    for ref in item:
+                        if isinstance(ref,str):found.update(aliases.get(ref,()))
+                else:found.update(declared_refs(item))
+        elif isinstance(value,list):
+            for item in value:found.update(declared_refs(item))
+        return found
     rows=advice['hypotheses']
     if not isinstance(rows,list) or not 1<=len(rows)<=prompt['max_hypotheses']:
         raise ValueError('evidence advice exceeds original action slots')
@@ -462,10 +510,8 @@ def normalize_evidence_advice(advice,prompt,*,accepted_context=None):
                 raise ValueError('action requires exact hypothesis/version pairs')
             if not any(h['version']==ref[1] for h in prospective['hypotheses'].get(ref[0],[])):
                 raise ValueError('action references unknown hypothesis version')
-            if context.get('working_archive'):
-                visible=[(hid,h['version']) for hid,hs in context['state']['hypotheses'].items() for h in hs]
-                visible.extend((h['id'],h['version']) for h in (update or {}).get('hypotheses',[]))
-                if tuple(ref) not in visible:raise ValueError('archived hypothesis version is not a visible action basis')
+            if tuple(ref) not in visible_versions:
+                raise ValueError('archived hypothesis version is not a visible action basis')
         if request is not None:
             _exact(request,'schema_version id question expected branches depends_on query')
             if request['schema_version']!='evidence_request_v1':raise ValueError('unknown evidence request version')
@@ -477,16 +523,6 @@ def normalize_evidence_advice(advice,prompt,*,accepted_context=None):
             if (not isinstance(request['depends_on'],list) or len(request['depends_on'])>8
                     or any(r not in facts for r in request['depends_on'])):
                 raise ValueError('request dependencies must be accepted visible evidence, never same-batch future')
-            if not context['reference']:
-                latest={(a['evidence_id'],a['hypothesis_id'],a['hypothesis_version']):a['disposition']
-                    for a in state['assessments']}
-                now={(a['evidence_id'],a['hypothesis_id'],a['hypothesis_version'])
-                    for a in update['evidence_assessments']}
-                for eid in request['depends_on']:
-                    for hid,v in hrefs:
-                        relation=(eid,hid,v)
-                        if latest.get(relation)!='evaluated' and relation not in now:
-                            raise ValueError('dependent evidence requires an assessment or explicit deferral for its hypothesis version')
             if row.get('action_type')=='diagnose':
                 from .focused_diagnostics import validate_diagnostic_query
                 validate_diagnostic_query(request['query'],set(prompt['available_objects']),
@@ -502,6 +538,21 @@ def normalize_evidence_advice(advice,prompt,*,accepted_context=None):
             raise ValueError('new diagnose requires an executable evidence request')
         if not context['reference'] and row.get('action_type') not in {'stop','request_review'} and not hrefs:
             raise ValueError('new research action must link its hypothesis versions')
+        if not context['reference']:
+            required=declared_refs(row)|set((request or {}).get('depends_on',[]))
+            if required and not hrefs:
+                raise ValueError('dependent evidence requires explicit hypothesis versions for assessment')
+            for hid,v in hrefs:
+                own=set(required)
+                selected=next(h for h in prospective['hypotheses'][hid] if h['version']==v)
+                if row.get('action_type') not in {'stop','request_review'}:
+                    own.update(selected['support_refs']+selected['counter_refs'])
+                    own.update(eid for eid,ph,pv in context['state']['pending']
+                        if (ph,pv)==(hid,v) and eid in facts)
+                for eid in own:
+                    relation=(eid,hid,v)
+                    if latest.get(relation)!='evaluated' and relation not in now:
+                        raise ValueError('dependent evidence requires an assessment or explicit deferral for its hypothesis version')
         cleaned.append(row);relations.append({'hypothesis_refs':deepcopy(hrefs),'evidence_request':deepcopy(request)})
     return {'hypotheses':cleaned},relations
 
@@ -573,7 +624,7 @@ def reduce_update(state,update,visible_evidence,plan_key):
         key=(a['evidence_id'],a['hypothesis_id'],a['hypothesis_version'])
         if key in assessed:raise ValueError('duplicate evidence/version assessment')
         assessed.add(key)
-        if a['assessment'] not in ASSESSMENTS or a['disposition'] not in {'evaluated','deferred'}:
+        if a['assessment'] not in ASSESSMENTS or a['disposition'] not in DISPOSITIONS:
             raise ValueError('unknown bounded assessment/disposition')
         if visible_evidence[a['evidence_id']]['kind']=='execution_failure' and a['assessment']!='execution_incomplete':
             raise ValueError('execution failure is not scientific counter-evidence')

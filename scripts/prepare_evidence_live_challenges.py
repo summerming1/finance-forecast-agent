@@ -74,9 +74,27 @@ def prepare(context):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--context',type=Path,required=True)
+    parser.add_argument('--context',type=Path)
+    parser.add_argument('--blind-synthetic',action='store_true',help='R6 self-contained blind fixtures; no old context is loaded')
     parser.add_argument('--out',type=Path,required=True)
     args=parser.parse_args()
+    if args.blind_synthetic:
+        if args.context is not None or args.out.exists():raise ValueError('blind preparation requires no source context and a fresh directory')
+        from evidence_repair_materials import prepare_blind
+
+        from finance_forecast_agent.focused_state import atomic_json
+        from finance_forecast_agent.llm_adapters import serialize_prompt_payload
+        from finance_forecast_agent.research_state import measure_prompt
+        plan=prepare_blind();args.out.mkdir(parents=True)
+        for item in plan['entries']:
+            item['measurement']=measure_prompt(item['payload'])
+            data=serialize_prompt_payload(item['payload']).encode('utf-8')
+            path=args.out/(item['case_id']+'.json');path.write_bytes(data)
+            item['sha256']=hashlib.sha256(data).hexdigest()
+        atomic_json(args.out/'LOCAL_MAPPING_DO_NOT_SEND.json',plan)
+        print(json.dumps({'prepared':12,'actual_http':0,'fit_calls':0,'schema':plan['schema_version']}))
+        return 0
+    if args.context is None:raise ValueError('choose --blind-synthetic; --context is historical preparation only, never Live admission')
     if args.context.is_symlink() or args.out.exists():raise ValueError('regular source and fresh output directory required')
     raw=args.context.read_bytes();plan=prepare(json.loads(raw))
     plan['input_sha256']=hashlib.sha256(raw).hexdigest()

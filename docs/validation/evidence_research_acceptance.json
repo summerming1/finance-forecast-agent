@@ -1,5 +1,26 @@
 {
   "schema_version": "evidence_research_acceptance_v1",
+  "decision_repair_20261024": {
+    "status": "implementation_and_validation_in_progress",
+    "base_head": "757015e145a4707dd7673fbd454f83b70d1e00eb",
+    "sole_contract": "docs/EVIDENCE_RESEARCH_LOOP.md:2026-10-24",
+    "historical_receipt_unchanged": "All original clauses, final6 source/node/exit records below remain historical; new findings do not rewrite them.",
+    "findings": [
+      {"id":"R1","ER":["ER09","ER12","ER13","ER14","ER16"],"finding":"optional request dependencies could bypass relevant new evidence assessments","status":"repair_under_test"},
+      {"id":"R2","ER":["ER10","ER18"],"finding":"assessments could judge archived IDs/versions absent from actual model view","status":"repair_under_test"},
+      {"id":"R3","ER":["ER17","ER18","ER32"],"finding":"actual wire omitted exact semantic enums/types/version rules","status":"repair_under_test"},
+      {"id":"R4","ER":["ER01","ER07","ER09","ER26"],"finding":"single-object DQ05 lacked own group n/MAE and no-reference marker","status":"repair_under_test"},
+      {"id":"R5","ER":["ER20","ER35","ER36"],"finding":"UI total-fit and fitted-versus-fixed-comparison-weight wording inaccurate","status":"repair_under_test"},
+      {"id":"R6","ER":["ER31","ER32","ER33"],"finding":"legacy semantic preparation exposed topic labels and overlaid inconsistent facts","status":"new_blind_synthetic_materials_under_test"}
+    ],
+    "raw_red_runs": [".evidence-repair/decision-red.xml", ".evidence-repair/groups-red.xml"],
+    "raw_intermediate_failures": [".evidence-repair/first-green.xml", ".evidence-repair/chain.xml", ".evidence-repair/material-first.xml", ".evidence-repair/material2.xml"],
+    "live_authorization": "current Provider/model; synthetic whitelist only; free-only current console setting confirmed by user in this chat; two waves/32 HTTP total, no retry/model switch/paid fallback",
+    "live_actual_http": 0,
+    "final_source": null,
+    "final_regression": null,
+    "axes": {"A":"in_progress","B":"not_yet_run","C":"NOT_RUN_not_established_by_pilot","D":"NOT_RUN","E":"human_G6_open"}
+  },
   "status": "partial",
   "authoritative_plan": "docs/EVIDENCE_RESEARCH_LOOP.md",
   "baseline_branch": "feat/mission-research-v2",

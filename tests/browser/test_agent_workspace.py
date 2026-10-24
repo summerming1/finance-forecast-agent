@@ -226,6 +226,9 @@ def test_agent_workspace_real_backend(tmp_path, price_features):
             click("wizard-next")
             if price_features in {'v25', 'evidence'}:
                 # Exercise the default quick path, not a custom-budget bypass.
+                expect(frame.locator('[data-testid="price-policy"]')).to_contain_text('本Campaign总计费训练上限32')
+                expect(frame.locator('[data-testid="price-policy"]')).to_contain_text('含对照/起点/候选及失败预留')
+                expect(frame.locator('[data-testid="price-policy"]')).to_contain_text('Scaler拟合、predict、统计另列操作')
                 frame.locator('#draft-feature_arm').select_option('one_shot')
                 click('preflight')
                 expect(frame.locator('.contract-summary')).to_contain_text('服务器预检通过')

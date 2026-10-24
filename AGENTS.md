@@ -1,5 +1,18 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+## Approved 2026-10-24 decision repairs (in progress)
+
+User approved R1–R6 in the existing `docs/EVIDENCE_RESEARCH_LOOP.md`, not a new
+milestone. Preserve old receipts/fixtures/hashes/A/B/untracked evidence. Isolated
+synthetic engineering and scoped local commits allowed; no push/remote CI/fees.
+Current Provider/model only, free-only protection must be currently evidenced;
+user confirmed current console settings effective in this chat. At most two
+waves, 32 actual HTTP total, one attempt/request, 4096 tokens, 180s/call,
+5760s Provider total; no model/seed switches or answer repair. Live trace each
+Campaign total charged fits<=32, two-wave parent/child<=128 plus <=2 refits.
+Synthetic whitelist only; no real market/customer/literature/Memory sends.
+Freeze actual config before first call. Current is actual status, not approval.
+
 ## Current approved increment (2026-10-23)
 
 User explicitly approved handoff v1.1 01/02 for E0–E5 engineering. The sole new
@@ -52,8 +65,8 @@ Read, in this order:
 1. `AGENTS.md`
 2. `docs/PROJECT_ROADMAP.md`
 3. `docs/CURRENT_IMPLEMENTATION.md`
-4. the current approved contract and incremental log: `docs/V2_5_METHOD_RESEARCH.md`; `docs/V2_4_DIAGNOSTIC_RESEARCH.md` retains the previous V2.4 contract and evidence; `docs/V2_3_FEATURE_RESEARCH.md` and `docs/V2_MISSION_RESEARCH.md` retain V2.3 and B0–B5 history (older `docs/P1_FOCUS_F0_F1.md` is historical)
-5. accepted ADRs relevant to the work, especially current `docs/ADR_MISSION_PRODUCT_007.md`, then `docs/ADR_FOCUS_001.md`, `docs/ADR_MISSION_RESEARCH_002.md`, `docs/ADR_MISSION_PRODUCT_003.md`, `docs/ADR_MISSION_PRODUCT_004.md`, `docs/ADR_MISSION_PRODUCT_005.md`, and `docs/ADR_MISSION_PRODUCT_006.md`; approval is not an implementation or acceptance claim
+4. reused `docs/V2_5_METHOD_RESEARCH.md`, then sole current `docs/EVIDENCE_RESEARCH_LOOP.md` including R1–R6; relevant V2.4/V2.3/B0–B5 evidence remains historical, not competing scope
+5. accepted ADRs relevant to the work: `docs/ADR_MISSION_PRODUCT_008.md`, then `docs/ADR_MISSION_PRODUCT_007.md` and relevant ADR001–006; approval is not implementation or acceptance
 6. `docs/FOCUSED_ARCHITECTURE.md`
 7. `docs/FOCUSED_ACCEPTANCE_TEST_PLAN.md`
 8. `docs/CODEX_FOCUSED_HANDOFF.md`
