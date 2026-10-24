@@ -45,7 +45,8 @@ def main():
     nodes=[n.split('::',1)[0].replace('\\','/')+'::'+n.split('::',1)[1]
         for n in result.stdout.splitlines() if n.startswith('tests/') and '::' in n]
     assert len(nodes)==len(set(nodes)) and len(nodes)>1000
-    serial=['tests/test_focused_v25_delivery.py','tests/test_evidence_research_workspace.py']
+    serial=['tests/test_focused_v25_delivery.py','tests/test_evidence_research_workspace.py',
+        'tests/test_evidence_repair_trial_worker.py']
     files=sorted({n.split('::',1)[0] for n in nodes}-set(serial));weights={f:1. for f in files}
     timing=[*sorted((repo/'.v250/final3').glob('shard-*.xml')),*sorted((repo/'.evidence-loop').glob('*.xml'))]
     for report in timing:
