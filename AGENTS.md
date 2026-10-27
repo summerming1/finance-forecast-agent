@@ -1,5 +1,27 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+## Approved 2026-10-27 quota-only Live continuation
+
+User explicitly renewed synthetic Live testing and current free-only console
+protection for their exact six-model ordered list; quota exhaustion alone permits
+advancing to the next model. Nonquota errors/unknown delivery stop, no paid fallback,
+same-model retry, answer repair or model shopping. Preserve Oct24's stopped receipt.
+Cumulative original-plus-continuation HTTP<=32 (1 already used), Provider<=5760s;
+at most 12 semantic cases and parent/child <=2 planning calls each in this renewed
+batch, Campaign charged fits<=32, parent/child<=64 plus <=1 explicit refit.
+The trial-only --quota-continuation route accounts every actual upstream attempt;
+it is not product automatic routing or a same-model benchmark. No .env change,
+real-market/customer/Memory sends, original A/B mutation, push or remote CI.
+Actual results belong only in Current and the original EVIDENCE_RESEARCH_LOOP.
+Actual Oct27: first model's 12 replies truncated to reasoning, then unknown SSL
+parent send stopped. User separately approved second-model thinking=false fresh
+retest and acknowledged that unknown charged send; no old-parent resend. Both
+models returned HTTP200, but zero of 12 advice objects accepted per batch; each
+parent charged16 start/control fits, no research candidate/child/refit. Cumulative
+including Oct24=27HTTP. Remaining5 is NOT a third trial authorization. Preserve
+raw failures, final config identities and separate observed/reserved time. New
+same-source targeted55 passed; no new full-suite/browser/product acceptance.
+
 ## Approved 2026-10-24 decision repairs (actual results in Current)
 
 User approved R1–R6 in the existing `docs/EVIDENCE_RESEARCH_LOOP.md`, not a new

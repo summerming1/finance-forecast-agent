@@ -3,7 +3,9 @@
 The local transport relay guards the original client/recorder and original queue
 worker without changing product planning or repairing an answer. It records the
 actual upstream endpoint separately from the worker's loopback route. No retry,
-model switch, arbitrary payload file or interrupted-ledger resume is supported.
+model switch, arbitrary payload file or interrupted-ledger resume is supported
+by the historical entry. --quota-continuation is a separately authorized,
+synthetic-only trial route, not product automatic model fallback.
 """
 from __future__ import annotations
 
@@ -36,6 +38,8 @@ DENIED={'y_true','y_pred','raw_prices','spy_adj_close','adjclose','timestamp','m
     'paper_full_text','raw_path','source_metadata','train_predictions','per_row_predictions'}
 TRIAL_NOTES='使用隔离合成数据，评估合法输入公式或训练窗口改动是否有可信开发依据；保留反证、不足和竞争解释。无新数据、无盈利或独立确认主张。'
 ROOTS.add('user_notes')
+QUOTA_MODELS=('deepseek-v4.1-flash-1017','deepseek-v4.1-flash','glm-5.3',
+    'deepseek-v4-pro-0813','qwen3.8-max','qwen3.7-flash')
 
 
 def inspect_send(prompt):
@@ -63,8 +67,11 @@ class Guard:
     """Trial-only durable reservation; an unknown send stops ALL later sends."""
     def __init__(self,root,upstream,contract,wave,prior=None):
         self.root=root;self.upstream=upstream;self.contract=contract;self.wave=wave
-        self.prior_http=len((prior or {}).get('calls',[]))
-        self.prior_seconds=(prior or {}).get('provider_seconds',0.)
+        prior=prior or {}
+        self.prior_http=prior.get('cumulative_upstream_http',len(prior.get('calls',[])))
+        self.prior_seconds=prior.get('cumulative_provider_seconds',prior.get('provider_seconds',0.))
+        self.http_limit=16;self.seconds_limit=2880.
+        self.request_deadline=180.
         self.lock=threading.Lock();self.calls=[];self.stopped=False
         self.source=source_files(Path.cwd())
         self.inputs=(json.loads((root/'trial-inputs.json').read_text())
@@ -85,10 +92,10 @@ class Guard:
             if self.source!=source_files(Path.cwd()):raise PermissionError('frozen source changed')
             if any(file_sha256(path)!=digest for path,digest in self.inputs.items()):
                 raise PermissionError('frozen input changed')
-            if len(self.calls)>=16 or self.prior_http+len(self.calls)>=32:
+            if len(self.calls)>=self.http_limit or self.prior_http+len(self.calls)>=32:
                 raise PermissionError('per-wave/cumulative upstream HTTP cap')
             used=sum(c.get('elapsed_seconds',180.) for c in self.calls)
-            if used+180.>2880. or self.prior_seconds+used+180.>5760.:
+            if used+180.>self.seconds_limit or self.prior_seconds+used+180.>5760.:
                 raise PermissionError('per-wave/cumulative activity reserve exhausted')
             packet=json.loads(wire);messages=packet.get('messages',[])
             content=next(m['content'] for m in messages if m['role']=='user')
@@ -103,13 +110,17 @@ class Guard:
                 raise PermissionError('thinking changed')
             number=len(self.calls)+1
             call={'number':number,'case':self.label,'state':'started_unknown','audit':audit,
+                'model':self.contract['model'],'provider':self.contract.get('provider'),
+                'base_url':self.contract.get('base_url'),
                 'wire_sha256':hashlib.sha256(wire.encode()).hexdigest(),'characters':len(wire),
                 'utf8_bytes':len(wire.encode()),'free_evidence_ref':'AUTHORIZATION.json:user_current_console_confirmation'}
+            if hasattr(self,'incoming_wire_hash'):
+                call.update(incoming_wire_sha256=self.incoming_wire_hash,routing_only_model_override=True)
             self.calls.append(call);self.save()  # Charge BEFORE any upstream activity.
             atomic_json(self.root/f'call-{number:02d}.prompt.json',payload)
             start=time.monotonic()
             try:
-                result=self.upstream._one_request(wire,180.)
+                result=self.upstream._one_request(wire,self.request_deadline)
                 atomic_json(self.root/f'call-{number:02d}.raw-envelope.json',result)
                 call.update(state='response_received',http_status=result.get('status'),
                     raw_envelope_sha256=file_sha256(self.root/f'call-{number:02d}.raw-envelope.json'))
@@ -127,6 +138,80 @@ class Guard:
                 self.stopped=True;call['state']='unknown';raise
             finally:
                 call['elapsed_seconds']=time.monotonic()-start;self.save()
+
+
+def is_free_quota(result):
+    """A server/rate/configuration error is not authority to switch models."""
+    return (result.get('status') in {400,403,429}
+        and ((result.get('body') or {}).get('error') or {}).get('code')=='AllocationQuota.FreeTierOnly'
+        and not result.get('transport_error'))
+
+
+class QuotaContinuationGuard(Guard):
+    """User-approved ordered routing; no retry of an exhausted model or answer repair.
+
+    Each actual request is durably charged by the original Guard. A logical
+    worker/recorder response may follow quota failures; ALL failed upstream
+    envelopes remain separately recorded. This is not a same-model benchmark.
+    """
+    def __init__(self,root,clients,*,prior,authorization):
+        if authorization.get('quota_model_switch') is not True or not clients:
+            raise PermissionError('new explicit quota-switch authorization required')
+        self.clients=clients;self.index=0;self.switches=[];self.routing_lock=threading.Lock()
+        super().__init__(root,clients[0],clients[0].contract(),2,prior)
+        # Renewed 2026-10-27 continuation, not a reset of historical wave1.
+        # At most 16 substantive decisions plus quota-only routing, all within
+        # the user-reconfirmed cumulative 32 HTTP / 5760 second ceiling.
+        self.http_limit=32-self.prior_http;self.seconds_limit=5760-self.prior_seconds
+        self.save()
+
+    def save(self):
+        super().save()
+        path=self.root/'HTTP_LEDGER.json'
+        data=json.loads(path.read_text())
+        data.update(continuation='2026-10-27_explicit_quota_routing',switches=self.switches,
+            model_contracts=[c.contract() for c in self.clients],
+            same_model_benchmark=False,worker_model=self.clients[0].contract()['model'])
+        atomic_json(path,data)
+
+    def exchange(self,wire):
+        with self.routing_lock:
+            packet=json.loads(wire)
+            if packet.get('model')!=self.clients[0].contract()['model']:
+                raise PermissionError('unexpected logical worker model')
+            incoming_hash=hashlib.sha256(wire.encode()).hexdigest()
+            self.incoming_wire_hash=incoming_hash
+            started=time.monotonic()
+            while True:
+                if self.stopped:raise PermissionError('trial stopped; no resend')
+                if time.monotonic()-started>=170:
+                    self.stopped=True;self.save()
+                    raise PermissionError('logical deadline reserve exhausted; no next request')
+                packet['model']=self.clients[self.index].contract()['model']
+                self.upstream=self.clients[self.index];self.contract=self.upstream.contract()
+                self.request_deadline=175.-(time.monotonic()-started)
+                effective=json.dumps(packet,ensure_ascii=False)
+                try:
+                    result=super().exchange(effective)
+                except BaseException:
+                    self.stopped=True;self.save();raise
+                self.calls[-1]['incoming_wire_sha256']=incoming_hash
+                self.calls[-1]['routing_only_model_override']=True
+                self.save()
+                if not is_free_quota(result) or self.index+1==len(self.clients):
+                    return result
+                self.switches.append({'after_http':self.prior_http+len(self.calls),
+                    'from':self.contract['model'],'to':self.clients[self.index+1].contract()['model'],
+                    'reason':'AllocationQuota.FreeTierOnly','logical_case':self.label})
+                self.index+=1;self.stopped=False;self.save()
+
+
+def claim_quota_authorization(path,root):
+    """Consume this new authorization once, even if the process later crashes."""
+    claim=path.with_suffix('.consumed.json')
+    with claim.open('x',encoding='utf-8') as handle:
+        json.dump({'out':str(root.resolve()),'authorization_sha256':file_sha256(path),
+            'resume':'forbidden; reconcile all durable attempts before new user approval'},handle)
 
 
 def relay(guard):
@@ -260,9 +345,22 @@ def main():
     parser.add_argument('--authorization',type=Path)
     parser.add_argument('--wave',type=int,choices=[1,2],default=1)
     parser.add_argument('--previous',type=Path)
+    parser.add_argument('--quota-continuation',action='store_true',
+        help='new user-authorized model list after preserved historical free-quota stop')
     args=parser.parse_args();root=args.out.resolve()
     if root.exists():raise ValueError('fresh evidence directory required; no interrupted-send resume')
-    if args.wave==2:
+    if args.quota_continuation:
+        if args.previous is None or args.wave!=1:
+            raise ValueError('quota continuation requires historical ledger, not repair-wave flags')
+        previous=json.loads((args.previous/'HTTP_LEDGER.json').read_text())
+        if not previous.get('stopped') or not previous.get('calls'):
+            raise PermissionError('only the evidenced historical free-quota stop may be continued')
+        for call in previous['calls']:
+            raw=args.previous/f"call-{call['number']:02d}.raw-envelope.json"
+            if (call['state']!='response_received' or file_sha256(raw)!=call['raw_envelope_sha256']
+                    or not is_free_quota(json.loads(raw.read_text()))):
+                raise PermissionError('unknown/nonquota/tampered historical record cannot resume')
+    elif args.wave==2:
         if args.previous is None:raise ValueError('second wave requires first-wave ledger and repair evidence')
         previous=json.loads((args.previous/'HTTP_LEDGER.json').read_text())
         if (previous.get('wave')!=1 or previous['stopped'] or len(previous['calls'])>16
@@ -288,13 +386,22 @@ def main():
     os.environ.update(LLM_HTTP_ATTEMPTS='1',LLM_MAX_TOKENS='4096',LLM_CALL_DEADLINE='180',
         LLM_READ_TIMEOUT='180',LLM_CONNECT_TIMEOUT='10')
     policy=ProviderPolicy(deadline_seconds=180,read_timeout=180,max_http_attempts=1)
-    upstream=OpenAIJsonClient(policy=policy);contract=upstream.contract()
+    if args.quota_continuation:
+        if (auth.get('date')!='2026-10-27' or auth.get('quota_model_switch') is not True
+                or auth.get('models')!=list(QUOTA_MODELS)):
+            raise PermissionError('current exact ordered-model approval required')
+        pool=[OpenAIJsonClient(model=model,policy=policy) for model in QUOTA_MODELS]
+        upstream=pool[0]
+        os.environ['OPENAI_MODEL']=QUOTA_MODELS[0]  # Trial child process only, no .env write.
+    else:upstream=OpenAIJsonClient(policy=policy)
+    contract=upstream.contract()
     if args.wave==2:
         frozen=json.loads((args.previous/'FROZEN_PROVIDER.json').read_text())
         if frozen['actual_upstream']!=contract or frozen['source']==before:
             raise PermissionError('second wave requires an actual repair, with identical Provider/model/thinking/resources')
     if (auth.get('free_protection')!='user_confirmed_current_free_only'
-            or auth.get('model')!=contract['model'] or auth.get('base_url')!=contract['base_url']
+            or (not args.quota_continuation and auth.get('model')!=contract['model'])
+            or auth.get('base_url')!=contract['base_url']
             or auth.get('provider')!=contract['provider'] or auth.get('http_total_max')!=32):
         raise PermissionError('BLOCKED_FREE_STATUS: missing/mismatched current account evidence')
     atomic_json(root/'AUTHORIZATION.json',auth)
@@ -303,6 +410,10 @@ def main():
         str(args.authorization.resolve()):file_sha256(args.authorization),
         str(Path('pyproject.toml').resolve()):file_sha256('pyproject.toml')}
     inputs.update({str(root/(i['case_id']+'.json')):file_sha256(root/(i['case_id']+'.json')) for i in plan['entries']})
+    if args.quota_continuation:
+        for path in [args.previous/'HTTP_LEDGER.json',args.previous/'FROZEN_PROVIDER.json',
+                *args.previous.glob('call-*.raw-envelope.json')]:
+            inputs[str(path.resolve())]=file_sha256(path)
     atomic_json(root/'trial-inputs.json',inputs)
     atomic_json(root/'FROZEN_PROVIDER.json',{'actual_upstream':contract,'source':before,
         'source_head':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
@@ -310,14 +421,19 @@ def main():
         'command':[sys.executable,*sys.argv],
         'authorization_sha256':file_sha256(args.authorization),'wave':args.wave,'dependencies':dependencies,'inputs':inputs,
         'thinking':contract.get('enable_thinking','provider_default_unspecified'),
+        'quota_model_contracts':[c.contract() for c in pool] if args.quota_continuation else None,
         'alias':'unresolved','cost':None,'free_balance':'not_queried_not_proof'})
-    guard=Guard(root,upstream,contract,args.wave,previous if args.wave==2 else None);server=relay(guard)
+    if args.quota_continuation:claim_quota_authorization(args.authorization,root)
+    guard=(QuotaContinuationGuard(root,pool,prior=previous,authorization=auth) if args.quota_continuation
+        else Guard(root,upstream,contract,args.wave,previous if args.wave==2 else None))
+    server=relay(guard)
     os.environ['OPENAI_BASE_URL']=f'http://127.0.0.1:{server.server_port}/v1'
     client=OpenAIJsonClient(policy=policy);recorder=FixtureRecordingLLM(client,root/'semantic-recordings')
     results=[]
     try:
         for item in plan['entries']:
             if guard.stopped:break
+            first_http=len(guard.calls)
             guard.label=item['case_id'];row={'case_id':item['case_id'],'status':'not_sent'}
             try:
                 recorder.complete_json(prompt_payload=item['payload'],schema_name='evidence_repair_semantic')
@@ -329,6 +445,8 @@ def main():
                 if getattr(exc,'details',{}).get('delivery_status')=='unknown':
                     guard.stopped=True;guard.save()
             row['recording']=str(recorder.last_fixture_path);results.append(row)
+            row['actual_models']=[c.get('model') for c in guard.calls[first_http:]]
+            row['upstream_http_numbers']=[c['number'] for c in guard.calls[first_http:]]
             atomic_json(root/'semantic-results.json',results)
             print(json.dumps(row,ensure_ascii=False),flush=True)
         if not guard.stopped:trajectory(root,guard)
@@ -339,6 +457,9 @@ def main():
         atomic_json(root/'dependencies.after.json',deps_after)
         atomic_json(root/'OUTCOME.json',{'source_unchanged':before==after,'dependencies_unchanged':dependencies==deps_after,
             'inputs_unchanged':all(file_sha256(p)==h for p,h in inputs.items()),'actual_http':len(guard.calls),
+            'cumulative_http':guard.prior_http+len(guard.calls),
+            'cumulative_provider_seconds':guard.prior_seconds+sum(c.get('elapsed_seconds',180.) for c in guard.calls),
+            'same_model_benchmark':not args.quota_continuation,
             'planned_semantic':12,'attempted_semantic':len(results),
             'sent_semantic':sum(c['case'].startswith('case-') for c in guard.calls),
             'structurally_valid':sum(r['status']=='returned_valid_structure' for r in results),

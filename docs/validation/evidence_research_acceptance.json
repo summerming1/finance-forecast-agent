@@ -1,5 +1,36 @@
 {
   "schema_version": "evidence_research_acceptance_v1",
+  "quota_continuation_20261027": {
+    "status": "bounded_trial_engineering_pass_live_no_accepted_advice",
+    "base_head": "30b74089a138284ad2b4b0d43639a152f7129e01",
+    "source_identity": "1c0a5207964e4177bec0a1ee98e998a3ac8dbad7ed9ff3129a2401fda0c9ca39",
+    "source_files": 275,
+    "dependencies_count": 75,
+    "sole_contract": "docs/EVIDENCE_RESEARCH_LOOP.md:2026-10-27",
+    "scope": "trial-only quota routing and synthetic real-model retest; no src/apps implementation or original A/B change",
+    "authorization": "current free-only console protection confirmed; exact list quota-only; separately approved second model thinking=false and fresh retest after acknowledging one unknown SSL request",
+    "targeted": {"passed":55,"failed":0,"skipped":0,"actual_exit":0,"seconds":164.93,"identity_unchanged":true,"junit":".evidence-quota-20261027/targeted.xml","new_guard_cases_included":10},
+    "no_new_full_repository_or_browser_acceptance": true,
+    "historical_failures_unchanged": true,
+    "live_batches": [
+      {"model":"deepseek-v4.1-flash-1017","thinking":"provider_default_unspecified","http":13,"semantic_sent":12,"complete_final_json":0,"strictly_valid":0,"reason":"all 12 final contents empty, finish_reason length, 4096 reasoning tokens each","unknown_delivery":1,"unknown":"parent SSLError retained, never resent","charged_fit":16,"research_fit":0,"refit":0,"child":"NOT_CREATED","status":"waiting_provider","exit":1},
+      {"model":"deepseek-v4.1-flash","thinking":false,"http":13,"semantic_sent":12,"complete_final_json":12,"strictly_valid":0,"first_rejections":{"over_320_chars":7,"missing_schema_version":5},"unknown_delivery":0,"charged_fit":16,"research_fit":0,"refit":0,"child":"NOT_CREATED","status":"partial_proposal_invalid","exit":0,"exit_does_not_mean_behavior_pass":true}
+    ],
+    "cumulative_http_including_oct24": 27,
+    "actual_client_observed_seconds_including_oct24": 528.7386049001943,
+    "conservative_cumulative_seconds_with_unknown_full_180s_reserve": 703.4632035001414,
+    "cost": null,
+    "provider_usage_note": "raw second-batch text_tokens=10896 vs completion_tokens=10893 retained; old quota and unknown SSL usage unknown",
+    "actual_quota_switch_this_continuation": "NOT_OBSERVED_no_quota_error",
+    "models_3_to_6": "NOT_RUN_no_quota_trigger_or_third_repair_authorization",
+    "remaining_http_does_not_authorize_third_batch": true,
+    "axes": {"A":"bounded_trial_guard_regression_pass","B":"NO_GO_zero_accepted_advice","C":"NOT_RUN","D":"NOT_RUN","E":"HUMAN_OPEN"},
+    "review": "assistant_reviewed_initial_not_independent_expert_or_G6; no passing semantic score for rejected advice",
+    "original_AB_data_package_5_hashes_unchanged": true,
+    "evidence": ".evidence-quota-20261027/RESULTS.json",
+    "readable_report": ".evidence-quota-20261027/REPORT.html",
+    "push_remote_ci": "NOT_RUN_not_authorized"
+  },
   "decision_repair_20261024": {
     "status": "bounded_engineering_complete_live_free_quota_blocked_not_global_pass",
     "base_head": "757015e145a4707dd7673fbd454f83b70d1e00eb",

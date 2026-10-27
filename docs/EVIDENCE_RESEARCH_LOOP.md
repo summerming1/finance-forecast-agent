@@ -1,5 +1,121 @@
 # 证据驱动研究闭环：唯一里程碑合同
 
+## 2026-10-27 免费额度换模补测（执行结束，Live验收未通过）
+
+起点30b74089a138284ad2b4b0d43639a152f7129e01，原分支tracked clean。
+用户明确要求额度耗尽按原六模型列表继续，并于今天确认这些模型在当前百炼端点
+“免费额度用尽即停、不转付费”仍有效。此为用户确认当前控制台保护，不是API余额证明。
+新授权允许续接此前免费停止及仅额度错误换模，覆盖10月24日的禁止续跑/换模；
+原失败、源/输入/fixture/hash/原A/B不动，其它数据与资源边界不扩大。
+
+模型顺序冻结为deepseek-v4.1-flash-1017、deepseek-v4.1-flash、glm-5.3、
+deepseek-v4-pro-0813、qwen3.8-max、qwen3.7-flash。仅明确AllocationQuota.FreeTierOnly
+且HTTP400/403/429可向下切换；404/权限/503/一般429/未知投递均停止，不自动重试。
+不探测余额、不改.env、Provider/端点/thinking保持当前有效配置，4096token、temperature0、
+单次总deadline<=180秒，max_http_attempts=1。每次实际请求含失败都计累计账。
+
+本次是重新获准的一批最多12语义题＋父2/子2规划，不是偷偷复活旧进程或另开额度。
+原1HTTP/0.5359878秒计入总32HTTP/5760秒，最多再31HTTP，额度路由也占此余额。
+每Campaign总charged fit<=32，父子<=64，至多1次显式refit；不反复建研究找赢家。
+不再在本批另开修复Live波；后续如需超出或出现未知投递，停止相应外部工作。
+可评回答按实际模型分层，跨模型的部分回答不得拼成某个模型12题全过或公平同底模比较。
+原独立语义材料、rubric、seed、严格原回答校验与真正原worker父子轨迹不变。
+
+本地最小实现仅延伸原试验脚本的显式--quota-continuation入口；默认旧入口仍拒绝换模。
+guard-red记录缺新入口的ImportError/exit1，修后先回归原Transport/材料/预算与原worker；
+没有新产品Controller、队列、评价器或默认自动路由。实际命令/结果/边界在本节追加。
+
+### 实际结果、追加授权及五轴判断
+
+原始材料/seed/rubric未换，当前Provider为bailian、端点仍dashscope兼容v1。
+第一批先冻结全六模型、默认thinking，source identity为
+`1c0a5207964e4177bec0a1ee98e998a3ac8dbad7ed9ff3129a2401fda0c9ca39`，275源/测试、75依赖。
+源码与下面相关回归相同；两批发送前后source/deps/input相同，之后只写文档/派生收据。
+
+| 批次 | 真实模型/配置 | 语义计划/发送/完整JSON/严格通过 | 实际HTTP/unknown | 实际轨迹 |
+|---|---|---|---|---|
+| 原续批 | deepseek-v4.1-flash-1017，thinking未显式设置 | 12/12/0/0，均200/length，正文0 | 13/1，父首规划SSLError | waiting_provider；16起点/对照fit，无候选/子/refit |
+| 用户另批一次修复复测 | deepseek-v4.1-flash，thinking=false | 12/12/12/0，均200/stop | 13/0 | partial/proposal_invalid；16起点/对照fit，无候选/子/refit |
+| 含10月24日历史 | 两配置分开，不拼题 | 不合成某模型通过分数 | 27累计，其中旧1 | 本次总32fit全是对照/起点，研究fit/refit0 |
+
+首批未知SSL实际envelope SHA256
+`b7c6302289742c4903e5da183942856926dda456ea8e9ead8da769ca88cdc5c9`。
+用户先批准第二模型关闭thinking，再对新出现的unknown明确回复
+“确认，新建独立复测，不重发未知请求”；这是新独立研究，不是技术续跑/重发。
+原未知账及首批失败保持，第二批继承累计14HTTP，并将该未知活动保守预留完整180秒。
+本次没有额度拒绝，不把用户显式切第二模型称为quota自动fallback实测成功；模型3—6未发。
+没有付费、关闭TLS、429/503自动重试、资料扩发或成功题拼接。免费设置证据为用户当前
+控制台确认，不是API余额/账单证明。金额、旧错误/未知请求token保持unknown。
+
+逐请求原用量：首批12已知HTTP输入109624、输出49152（reasoning49152/text0）、
+total158776；另SSL未知。第二批13HTTP输入125242、completion10893、total136135，
+reasoning0；原text_tokens合计10896与completion差3，原值保留，不编造原因或抹平。
+观测活动首批433.112608秒、第二批95.090010秒；含旧0.535988秒约528.738605秒。
+带未知180秒reserve的累计延续账703.463204秒；不把保守预留冒称实际服务端用时。
+
+### 严格失败定位与语义初评
+
+第二批7题首个失败为文本字段>320（choice_reason：417/516/494；finding：449/441/368/349）；
+5题首个失败为schema_version缺失（update层4，request层1）。这些都是现行wire已经
+声明的要求，不能通过放宽验证器/补字段/截断原文改绿。首个错误后未人为修回答继续编译。
+原JSON另可见2题空动作，2题DQ03 development_oof非法scope，及问题与实际工具输出
+不匹配；这些是事后诊断，不冒称已通过前面门禁或实际执行。
+
+| 成对主题 | 实际读到的内容与不足（assistant_reviewed，非独立盲评） |
+|---|---|
+| S1相关/机制 | 低相关变体读出0.10，能保留不足；但拟把非零相关支持方法有效性，缺少干预区分；高相关变体以泛化不足停止 |
+| S2绝对/相对 | 负变体读出.024对.020，却将窗口失败扩大为削弱宽泛机制；绝对波动变体未直接讨论波动升高但相对差0 |
+| S3单/配对 | 单对象没有捏造delta，配对正确复述delta0；但单对象提出非法DQ03 scope，配对返回空动作 |
+| S4样本/预算 | 未提出新训练或裁剪；n20选择review合法方向，n2诊断本身零fit不越预算，但请求问题需regime分组而实际query不分组 |
+| S5正反/竞争 | 正变体提整体改善，负变体泛化低tail；两者均未具体处理反方向折，正变体空动作，不能据不同动作认定理解 |
+| S6父证据/多版本 | 两版本h1v2/h2v1及来源引用可见，未一刀清pending；但忽略关键父方向，把2动作容量说成最多2假设，正变体非法DQ03 scope |
+
+无一个完整响应可原子接受，因此正式语义rubric不具备通过评分资格（不是用平均分掩盖
+严重错误）；中文逐题诊断、原最终回答与具体首拒绝路径在REPORT/ERROR_LOCALIZATION。
+不用思考内容当最终回答/科学结论，也不把AI初评冒充专家/真人G6。
+真实父第二配置的choice_reason同样>320，原Controller在proposal_validation拒绝；
+其把“基线成绩不错”当新特征/窗口假设local_support也不足以证明干预有效，且空动作。
+未接受新问题/认识/诊断或候选；没有第二轮、末批到子首轮Live链可补造。
+两个实际研究包31/32成员的原hash索引均核对；是失败/部分研究包，不是新预测模型包。
+
+### 本批工程、命令、源/输入与交付
+
+命令在本机原.venv、PowerShell，环境PYTHONPATH=src;apps;scripts;tests，BLAS=1：
+
+```powershell
+.venv/Scripts/python.exe -m pytest -q tests/test_evidence_quota_continuation.py --tb=short --junitxml=.evidence-quota-20261027/guard-red.xml
+.venv/Scripts/python.exe -u .evidence-quota-20261027/run_targeted.py
+.venv/Scripts/python.exe -u scripts/run_evidence_repair_live.py --dry-run --quota-continuation --previous .evidence-repair/wave1 --authorization .evidence-quota-20261027/AUTHORIZATION.json --out .evidence-quota-20261027/dry-run
+.venv/Scripts/python.exe -u .evidence-quota-20261027/run_live.py
+.venv/Scripts/python.exe -u .evidence-quota-20261027/check_thinking_off.py
+.venv/Scripts/python.exe -u .evidence-quota-20261027/run_repair_live.py --dry-run
+.venv/Scripts/python.exe -u .evidence-quota-20261027/run_repair_live.py
+.venv/Scripts/python.exe .evidence-quota-20261027/audit_answers.py
+.venv/Scripts/python.exe .evidence-quota-20261027/inspect_errors.py
+.venv/Scripts/python.exe .evidence-quota-20261027/build_report.py
+```
+
+上述实际exit依次1/0/0/1/0/0/0/0/0/0。红例缺新Guard导入（1collection error），
+第一阶段26通过/37.69秒；随后误写不存在test_evidence_research_capacity.py的命令exit1、
+0tests保留为错误命令，改用实际preparation/envelope文件，不改断言。最终相关冻结
+55通过/164.93秒/exit0，targeted.start/end有完整argv、275源、75依赖、输入及实际退出。
+10个新守卫节点均包含在55内，不相加。原模拟worker父子各28=56fit＋1显式refit，
+新进程0exit/一致，外部HTTP0；thinking=false实际client→loopback→原校验探针也0外部/fit。
+两次dry-run均0HTTP/fit。修改范围Ruff、compile、diff检查通过；初次Ruff的import排序
+失败已保留并修正，没把后续git命令exit0冒作Ruff成功。
+
+只改原trial脚本和新试验守卫测试、当前文档；src/apps产品字节不动，因此不将旧全仓/
+浏览器收据搬到新source下，也没有伪造一次新全仓验收。旧2历史失败/8skip/静态负债保持。
+真实响应和失败录制严格Replay复核外部HTTP/fit0、原件hash不变；完整但合同非法的录制
+原样返回后仍被原验证器拒绝，空正文录制继续拒绝，不修答案。两批所有发送输入绑定一致；
+原A/B/原数据和包5项保护hash均不变。.env未改，无push/远端CI。当前本地提交见git log，
+不将之后文档提交倒称Live启动HEAD（启动30b7408＋已登记工作区）。
+
+最终A为试验守卫限定工程通过；B当前两配置NO-GO，仍无可接受的证据驱动提案；
+C研究选择价值/D独立预测NOT_RUN，E/G6真人仍开放。剩余5HTTP不自动启第三批。
+下一项是通用精确输出合同与事实→判断边界的离线修补/负例，再另批Live，不换模型凑赢家。
+本批不扩为阶段2裁剪/权重或阶段3RF。REPORT.html为可读中文入口，不再只交英文JSON。
+
 ## 2026-10-24 R1—R6 批准与实施登记
 
 用户在当前对话明确批准以下01全部工程及有条件免费合成Live；实际起点

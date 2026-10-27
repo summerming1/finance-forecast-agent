@@ -1,5 +1,22 @@
 # Finance Forecast Agent
 
+## 2026-10-27 real-model retest: reachable, not accepted
+
+See [Current](docs/CURRENT_IMPLEMENTATION.md) and the existing
+[contract receipt](docs/EVIDENCE_RESEARCH_LOOP.md). User-authorized quota-only
+routing preserves all previous attempts. The first listed model returned 12
+reasoning-only truncated responses; a separately approved second-model retest
+with thinking=false returned 12 complete JSON objects, all rejected by the strict
+contract. The two parent attempts stopped on unknown SSL delivery and an invalid
+proposal respectively; no research candidate, child or refit was produced.
+Cumulative including Oct24 is 27 HTTP, not a new 32-request pool. No more calls,
+paid fallback, A/B mutation, push or remote CI. Models 3–6 were not tested.
+The trial-harness targeted55 pass does not establish Live behavior, selection
+superiority, independent prediction, human G6 or a new whole-repository PASS.
+The local Chinese reading entry is `.evidence-quota-20261027/REPORT.html`;
+next is generic output-contract/decision grounding work, not repeated calls until
+a passing answer or automatic execution of the conditional next capabilities.
+
 ## 2026-10-24 decision repairs and bounded synthetic Live pilot
 
 R1–R6 is an increment of the [same contract](docs/EVIDENCE_RESEARCH_LOOP.md), not
