@@ -1,5 +1,17 @@
 # Focused / Mission Research Acceptance Plan
 
+## 2026-10-27 output-contract repair acceptance
+
+Require literal nested versions, original 320/321 character boundary, type/enum/scope,
+nonempty actions, reference-only null, unchanged raw answers and original atomic refusal.
+Input schema deduplication must expand exactly to its full constraints; joint ON/OFF
+capacity retains evidence and the original 64000 bound. Legacy extraction wire stays
+byte-identical. Safe multiple errors must traverse original Controller/worker/local HTTP,
+UI and REPORT with no automatic repair/resend/refit. Reload/navigation/new context and
+700/1280 layouts are checked. Freeze final source/tests/deps/inputs/node set, applicable
+whole regression and separate serial browsers. Current/ER record actual exits; no Live
+or scientific/human pass follows from structural fixtures or old raw-answer replay.
+
 ## 2026-10-24 R1–R6 repair gates (actual receipts in Current, no blanket PASS)
 
 Retain the original final6/1118 receipt. Add no-request/empty-dependency/new-version

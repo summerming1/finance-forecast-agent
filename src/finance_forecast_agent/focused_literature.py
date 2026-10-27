@@ -313,5 +313,6 @@ def compact_research_context(prompt: dict, *, max_chars: int = 64000) -> dict:
         actual_chars=len(json.dumps(body,ensure_ascii=False))
     if actual_chars > max_chars:
         sizes = {k:len(json.dumps(v,ensure_ascii=False)) for k,v in body.items()}
-        raise ValueError('research context exceeds frozen character budget; no silent truncation; field sizes='+str(sizes))
+        raise ValueError('research context exceeds frozen character budget; no silent truncation; '
+            f'actual_chars={actual_chars}, limit={max_chars}; field sizes='+str(sizes))
     return body

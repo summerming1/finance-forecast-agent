@@ -1,5 +1,73 @@
 # 证据驱动研究闭环：唯一里程碑合同
 
+## 2026-10-27 输出契约加固（限定工程验收完成；真实行为未验）
+
+用户在真实回答原因分析后明确要求按建议修改、测试和验收；实际起点6ff4ca3，
+原分支tracked clean。延续R3及原界面错误说明，不新建里程碑或重做E0—E5。
+从原验证规则共享必填字段、版本、320字符及诊断作用域，生成逐层输出结构说明；
+研究协议分支澄清“动作可选字段”不影响协议必填项，简明中文事实/未知/选择各司其职。
+只读、有限且不回显原文本的错误诊断进入原proposal_error、工作区和REPORT；
+原校验/引用/版本/原子性/fit/HTTP和旧响应保持，不自动补字段/截短回答或反思重试。
+不假定Provider支持strict schema，不改全局Provider参数或旧文献抽取wire。
+新协议清除继承的旧单键envelope/诊断规则歧义；生成特征消融和复杂度简化说明与
+原编译器一致，不转成内置组变更/调参。所有能力/数学/slot/fit权限原样。
+完整结构契约采用同文档标准$defs/$anchor及逻辑等价的必填数/互斥kind-scope约束
+去重；标准Draft202012解释器及展开一致性检查，不通过裁证据或放宽64000上限求绿。
+
+保留24份原始失败和SSL未知及原验收收据；“7超长/5缺版本”为首拒绝分类。
+只读完整扫描在相关字段发现11题超长、7题漏版本、6题重叠，不回填旧原始账。
+本轮先红例（320/321、各层版本、scope/空动作、原始坏回答及匿名错误）再最小修补；
+相关合同/原Controller、本地HTTP/严格Replay/原UI及包、容量/ON-OFF/旧路径回归，
+最后功能变化后冻结源/测试/依赖/输入并跑适用全仓和独立串行浏览器。
+没有新Live/行情/资料外发权限，旧剩5HTTP不构成本轮授权；B/C/D/E相应未验不伪造。
+只允许隔离合成工程及本地提交，不推送/远端CI/改变权限或重训原A/B。
+
+### 本增量实际验收收据
+
+最后功能变化后冻结278源/测试、75依赖版本和24额外登记输入；源集合身份
+`aa38d56b236ed45a2edc818ce800306e5336c002633a1e44cb8b13a34e56643e`。
+完整运行期间及后续串行浏览器期间全部相同；原生Python/Node/Chromium/headless-shell
+文件hash核对。收尾仅本段、Current和ER追加实际收据，随后文档检查，不倒推运行前身份。
+
+| 层次 | 实际执行与边界 |
+| --- | --- |
+| 原始红例 | red/ui-red为缺模块/缺summary；second保留新协议wire前缀断言；chain/capacity/capacity2/related1—4/probe保留联合容量中间失败。未删断言或改旧fixture求绿 |
+| 定向 | related5.xml：50通过，151.60秒，exit0；不与全仓相加。新增13非浏览器节点均包含于下项 |
+| 冻结适用全仓 | 1180精确节点，1169通过/2既有失败/9跳过，exit1；2真实行情harness节点未授权明确deselect，不替换成合成PASS |
+| 历史失败 | test_model_bundle_tamper_rejected_before_load[symlink]：WinError1314；test_dlinear_strict_live_card_replays_without_an_api_call：原2c05bfd22af27435资产缺失。原始异常/退出保留，不改权限/重造资产 |
+| 独立串行浏览器 | 七模式7通过、951.209秒、exit0、0skip；含新错误流程。全仓的7浏览器skip在此实跑，另2skip仍是symlink权限/POSIX进程组探针边界 |
+| 静态 | 修改范围Ruff/compile/四JS/diff/标准Draft202012解释器检查exit0；全范围Ruff仍97项/52起点未改文件、exit1 |
+| 容量/旧路径 | 完整联合ON=49362/63829字符，OFF=33268/41769；保留64000上限和全部输入事实，逐层版本/320/321及null/reference/空动作/scope/错误安全验证通过。旧抽取wire逐字节不变 |
+| 原worker/交付 | .oc1027final0/test_trial_harness_original_wo0：父28＋子28 charged fit，1显式refit，新进程禁fit/网络1094行推理一致；两个研究包成员hash通过。是合成工程，非Live/金融证据 |
+| 新拒绝流程 | 原队列worker＋本地模拟HTTP1；16起点/对照fit、0候选/子/refit，认识未被部分接受。中文缺版本及420>320字符提示；700/1280布局、报告、刷新/导航/新上下文零增量通过；界面live标签不是实际外部调用证明 |
+| 原始证据保护 | 24旧回答原字节未动：12失败Replay拒绝，12原JSON仍被原编译链拒绝；11超长/7缺版本/6交集。原7/5首拒绝分类不回填；原A/B、输入/包5hash及旧ER值不变 |
+| 后续材料 | prepared-live：12盲合成材料准备/白名单检查，exit0、HTTP0/fit0；未选择并冻结新的实际Provider配置，不是模型成功回答 |
+
+精确执行（PowerShell环境PYTHONPATH=src;apps;scripts;tests及BLAS线程各1；完整argv/原始stdout在seal）：
+
+```text
+.venv/Scripts/python.exe -u .output-contract-20261027/run_final.py
+  wrapper exit0仅表示限定编排与门禁结束；内部全仓exit1不变
+.venv/Scripts/python.exe -u scripts/run_evidence_regression.py --out .output-contract-20261027/final --temp-prefix .oc1027final --shards 3
+  exit1；完整分组命令见final/preregistration.json，part0/1/2/3 exit=0/1/0/1
+.venv/Scripts/python.exe -u -m pytest -q tests/browser/test_agent_workspace.py tests/browser/test_research_workspace.py tests/browser/test_evidence_output_errors.py --basetemp=.oc1027browser --tb=short --junitxml=.output-contract-20261027/browser-final/browser.xml
+  exit0；在完整回归结束且核对仅两历史失败后执行
+.venv/Scripts/python.exe scripts/run_evidence_repair_live.py --dry-run --out .output-contract-20261027/prepared-live
+  exit0；只准备材料，不是新的外部试验授权
+```
+
+原始收据：seal/start.json、seal/end.json、final/aggregate.json、browser-final/RESULT.json、
+seal/full-failures.json、original-answer-audit.json和prepared-live/DRY_RUN.json。
+关键代码是evidence_output_contract.py、research_state.py、focused_research.py、
+llm_adapters.py、focused_diagnostics.py、focused_summary.py及原views.js；测试是
+test_evidence_output_contract.py、新浏览器test_evidence_output_errors.py及原受影响回归。
+没有新依赖、数值评价器、Controller、状态库、模型数学或Provider参数修改。
+
+判定：A仅本增量新增/受影响关键工程路径通过，非全仓全绿；B新源码NOT_RUN，历史
+两模型失败/SSL未知不改；C研究选择价值、D独立金融预测未验，E/G6独立真人理解仍开放。
+本轮外部HTTP0；不因为字段fixture通过就说真实模型合格率上升。新Live须新明确批准，
+旧累计27次不清零、剩5次不自动第三批，不换模型/补答案/循环找赢家。原A/B仍只读。
+
 ## 2026-10-27 免费额度换模补测（执行结束，Live验收未通过）
 
 起点30b74089a138284ad2b4b0d43639a152f7129e01，原分支tracked clean。

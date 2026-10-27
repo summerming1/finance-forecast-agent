@@ -1799,6 +1799,7 @@ class FocusedResearchController:
     def _prepare_evidence_prompt(self,prompt,results):
         from .focused_diagnostics import query_projection
         from .research_state import (
+            apply_output_guidance,
             planning_evidence_context,
             protocol_contract,
             response_contract,
@@ -1835,6 +1836,7 @@ class FocusedResearchController:
             prompt['response_schema']['research_update']=None
             prompt['rules']=[r for r in prompt['rules'] if not r.startswith('New evidence protocol:')]
             prompt['rules'].append('Frozen reference policy: research_update MUST be null, not an invented semantic object. Hypothesis links may be absent. Use the same permitted tools, accepted objects, visibility, single-axis and resource gates; no reflection call. This reference status cannot be selected by the response.')
+        apply_output_guidance(prompt)
 
     def _diagnostic_variable_catalog(self,results):
         """Only original columns and already accepted ASTs; no new formula search."""

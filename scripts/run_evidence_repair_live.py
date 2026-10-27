@@ -99,7 +99,7 @@ class Guard:
                 raise PermissionError('per-wave/cumulative activity reserve exhausted')
             packet=json.loads(wire);messages=packet.get('messages',[])
             content=next(m['content'] for m in messages if m['role']=='user')
-            if content.startswith('You are extracting schema ') and '\n\n' in content:
+            if content.startswith(('You are extracting schema ', 'You are planning controlled evidence research; ')) and '\n\n' in content:
                 content=content.split('\n\n',1)[1]  # Exact original-client instruction prefix, not answer repair.
             payload=json.loads(content)
             audit=inspect_send(payload)

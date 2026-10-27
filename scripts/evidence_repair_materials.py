@@ -221,6 +221,8 @@ def build_case(topic: int, variant: int, case_id: str):
         ablate='declared_axis=features, parent=control, ablation_component=generated_feature:<actual inherited name>, research_design',
         simplify='declared_axis=features, parent=control, full smaller feature_program, simplification_dimension=feature_count|nodes|depth, research_design',
         diagnose='control_candidate_id plus evidence_request with full query, no legacy diagnostic/model fields')
+    from finance_forecast_agent.research_state import apply_output_guidance
+    apply_output_guidance(p)
     measure_prompt(p)
     return p
 

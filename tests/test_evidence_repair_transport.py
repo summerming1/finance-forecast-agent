@@ -61,7 +61,7 @@ def test_original_client_wire_reaches_guard_and_is_returned_without_a_repair(tmp
     from finance_forecast_agent.llm_adapters import OpenAIJsonClient, ProviderPolicy
     class Upstream:
         def _one_request(self,wire,remaining):
-            assert json.loads(wire)['messages'][0]['content'].startswith('You are extracting schema ')
+            assert json.loads(wire)['messages'][0]['content'].startswith('You are planning controlled evidence research; ')
             return {'status':200,'body':{'choices':[{'finish_reason':'stop','message':{'content':'{"raw":"unchanged"}'}}]}}
     g=Guard(tmp_path,Upstream(),{'model':'frozen'},1);server=relay(g)
     try:

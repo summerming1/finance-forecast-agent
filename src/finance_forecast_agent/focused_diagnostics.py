@@ -5,6 +5,7 @@ from copy import deepcopy
 
 import numpy as np
 
+from .evidence_output_contract import FIELDS, QUERY, SCOPES
 from .focused_feature_program import _expression_values, compute_price_features
 from .focused_identity import identity
 
@@ -13,11 +14,10 @@ VERSION = "diagnostic_research_v4"
 
 def validate_diagnostic_query(query, accepted_ids, variable_names):
     """New protocol only. Resolve permissions before supplying these allowlists."""
-    keys={'schema_version','kind','object_ids','scope','variable_pairs','factor','parameters'}
+    keys=set(FIELDS['query'].split())
     if not isinstance(query,dict) or set(query)!=keys:
         raise ValueError('diagnostic query requires exact versioned fields')
-    if query['schema_version']!='evidence_diagnostic_query_v1' or query['kind'] not in {
-            'DQ-01','DQ-02','DQ-03','DQ-04','DQ-05','DQ-06'}:
+    if query['schema_version']!=QUERY or query['kind'] not in SCOPES:
         raise ValueError('unknown diagnostic query type/version')
     objects=query['object_ids'];pairs=query['variable_pairs']
     if (not isinstance(objects,list) or not 1<=len(objects)<=2
@@ -26,10 +26,7 @@ def validate_diagnostic_query(query, accepted_ids, variable_names):
         raise ValueError('diagnostic objects must be distinct accepted visible objects')
     if query['scope'] not in {'selected_train','calibration','development_oof'} or query['parameters']!={}:
         raise ValueError('unknown diagnostic scope or parameters')
-    scopes={'DQ-01':{'selected_train'},'DQ-02':{'development_oof'},
-        'DQ-03':{'selected_train','calibration'},'DQ-04':{'development_oof'},
-        'DQ-05':{'development_oof'},'DQ-06':{'selected_train','development_oof'}}
-    if query['scope'] not in scopes[query['kind']]:raise ValueError('diagnostic kind/scope mismatch')
+    if query['scope'] not in SCOPES[query['kind']]:raise ValueError('diagnostic kind/scope mismatch')
     if not isinstance(pairs,list) or len(pairs)*len(objects)>8:
         raise ValueError('at most eight declared pairs total per query')
     for pair in pairs:

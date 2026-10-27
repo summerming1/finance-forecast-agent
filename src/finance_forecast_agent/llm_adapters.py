@@ -85,10 +85,13 @@ def safe_error_facts(exc: BaseException, *, phase: str, operation: str = '') -> 
                        'function':tb.tb_frame.f_code.co_name,'line':tb.tb_lineno})
         tb=tb.tb_next
     path=getattr(exc,'filename',None)
+    from .evidence_output_contract import EvidenceResponseError
+    structural=({'validation_issues':exc.validation_issues,'validation_issues_limit':24}
+        if isinstance(exc,EvidenceResponseError) else {})
     return {'phase':phase,'operation':operation,'error_category':'local_io' if isinstance(exc,OSError) else 'execution_error',
             'exception_type':type(exc).__name__,'errno':getattr(exc,'errno',None),'winerror':getattr(exc,'winerror',None),
             'path_alias':hashlib.sha256(str(path).encode()).hexdigest()[:16] if path else None,
-            'traceback_frames':frames,'retryable':False}
+            'traceback_frames':frames,'retryable':False,**structural}
 
 
 def _code(value, secret: str = ''):
@@ -234,6 +237,12 @@ class OpenAIJsonClient:
     def complete_json(self, *, prompt_payload: dict[str,Any], schema_name: str) -> dict[str,Any]:
         prompt=(f'You are extracting schema {schema_name}. Return only valid JSON. '
                 'Use unknowns instead of guessing. Preserve evidence spans.\n\n'+serialize_prompt_payload(prompt_payload))
+        if prompt_payload.get('research_protocol_id')=='evidence_research_v1' and (
+                prompt_payload.get('evidence_protocol_contract',{}).get('output_contract_version')=='evidence_output_contract_v1'):
+            prompt=('You are planning controlled evidence research; return only the complete JSON reply. '
+                'Follow the literal output_schema: protocol fields are mandatory, action fields are conditional. '
+                'Use concise Chinese for prose, preserve exact IDs/versions/enums and state uncertainty. '
+                'Do not invent results, fill every slot, or claim causes from correlation.\n\n'+serialize_prompt_payload(prompt_payload))
         payload={'model':self.model,'messages':[{'role':'user','content':prompt}],
                  'temperature':0,'max_tokens':self.max_tokens}
         generation={'temperature':0,'max_tokens':self.max_tokens}

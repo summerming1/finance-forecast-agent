@@ -227,6 +227,30 @@ def build_round_reviews(payload: dict) -> list[dict]:
     return reviews
 
 
+def proposal_validation_summary(payload):
+    """Read-only safe structural rejection facts, never regenerated model prose."""
+    issues=(payload.get('proposal_error') or {}).get('validation_issues') or []
+    if not issues:return None
+    labels={'missing_field':'缺少必填字段','wrong_version':'协议版本不匹配',
+        'wrong_constant':'固定字段值不匹配','invalid_type':'字段类型不正确',
+        'empty_text':'文本不能为空','invalid_enum':'不在允许值范围内',
+        'invalid_integer':'版本必须为正整数','unknown_fields':'存在不允许的额外字段',
+        'depth_limit':'嵌套层数超过上限','invalid_count':'数组数量不符合协议'}
+    rows=[]
+    for issue in issues[:24]:
+        code=issue.get('code');path=issue.get('path')
+        if not isinstance(path,str) or not path.startswith('$.') or len(path)>240:continue
+        if code=='text_too_long':
+            actual,limit=issue.get('actual'),issue.get('limit')
+            if type(actual) is not int or type(limit) is not int:continue
+            message=f'文本{actual}字符，超过{limit}字符上限（不是token）'
+        elif code in labels:message=labels[code]
+        else:continue
+        rows.append({'path':path,'code':code,'message':message})
+    return {'accepted':False,'issues':rows,'limit':24,
+        'note':'整个提案未被接受；未自动补字段、截短回答或再次调用模型。这里只展示结构问题，修正后仍须通过引用、语义和资源门禁。'}
+
+
 def render_research_report(payload: dict, *, restricted: bool = False) -> str:
     """Standalone escaped HTML projection; no scripts, remote assets, fits or LLM."""
     esc = lambda value: html.escape(str(value if value is not None else '未知'))
@@ -246,6 +270,10 @@ def render_research_report(payload: dict, *, restricted: bool = False) -> str:
         body = heading+'<h2>受限导出</h2><p>资料分发权限受限，不导出原文、派生研究叙述或完整方法。请查阅本包允许分发的数值制品与reference_summary.json。</p>'
     else:
         body = heading+f'<p>批次：{esc(campaign.get("campaign_id"))}；执行状态：{label(payload.get("execution_status"))}；研究fit：{esc(payload.get("fit_calls"))}</p>'
+        rejection=proposal_validation_summary(payload)
+        if rejection:
+            body += '<section><h2>提案未通过协议校验</h2><p>'+esc(rejection['note'])+'</p><ul>'
+            body += ''.join('<li>'+esc(i['path'])+'：'+esc(i['message'])+'</li>' for i in rejection['issues'])+'</ul></section>'
         options = campaign.get('research_options') or {}
         body += '<h2>研究目标与数据</h2><p>'+esc(options.get('notes') or options.get('research_notes') or '原任务与输入身份见contract.json')+'</p>'
         body += '<p>数据范围：'+esc((campaign.get('dataset') or {}).get('start_date'))+' → '+esc((campaign.get('dataset') or {}).get('end_date'))+'</p>'
@@ -423,6 +451,7 @@ def build_research_summary(payload: dict) -> dict:
                    'review_executed_scope_before_spending_more')
     return {'schema_version': 'focused_research_summary_v1', 'campaign_id': campaign.get('campaign_id'),
         'execution_status': status, 'research_outcome': outcome, 'stop_reason': payload.get('stop_reason'),
+        **({'proposal_validation':proposal_validation_summary(payload)} if proposal_validation_summary(payload) else {}),
         'conclusion_code': code, 'explanation': explanation, 'next_action': next_action,
         'research_candidates_completed': len(completed), 'experiments': experiments,
         'fixed_controls': controls, 'user_start': incumbent,

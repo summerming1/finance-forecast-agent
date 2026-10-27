@@ -1,5 +1,14 @@
 # Focused / Mission Research Architecture
 
+## 2026-10-27 research output boundary hardening
+
+The original compiler/reducer still decides acceptance. Pure evidence_output_contract
+shares field/version/enum/scope constants with original validation and emits a literal
+input guide (local $defs deduplication, not Provider strict schema). A separate bounded
+diagnostic view annotates original rejection with safe paths/counts only. No answer
+repair, reflection request, state store or second evaluator. Original workspace summary
+and REPORT project these facts; legacy extraction instructions and package/hash gates stay.
+
 ## 2026-10-24 bounded repair responsibilities
 
 The existing normalizer derives required evidence×chosen-version relations from

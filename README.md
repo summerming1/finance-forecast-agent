@@ -1,5 +1,14 @@
 # Finance Forecast Agent
 
+## 2026-10-27 output-contract and rejection UX hardening
+
+The new evidence protocol has field-local structural guidance and concise research
+instructions, separate from unchanged legacy extraction. Original rejection now exposes
+safe paths/counts in the existing workspace and readable REPORT, without answer repair,
+truncation, automatic retry or relaxed 320-character gates. Actual acceptance is recorded
+in [Current](docs/CURRENT_IMPLEMENTATION.md) and the [sole contract](docs/EVIDENCE_RESEARCH_LOOP.md).
+This is local synthetic engineering, not a new Live run or scientific/human acceptance.
+
 ## 2026-10-27 real-model retest: reachable, not accepted
 
 See [Current](docs/CURRENT_IMPLEMENTATION.md) and the existing

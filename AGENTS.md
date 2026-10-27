@@ -1,5 +1,18 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+## Approved 2026-10-27 output-contract hardening
+
+User approved the preceding diagnosis/recommendations for implementation and
+testing. Extend the existing EVIDENCE_RESEARCH_LOOP contract, not a new milestone:
+shared exact required/version/length guides, research-only instructions, concise
+Chinese descriptions and safe field-level rejection reporting in original UI/package.
+Keep original 320 character gates, semantic/compiler/resource authority, atomic
+rejection, legacy wire/fixtures/hashes and raw failed answers. No answer filling,
+truncation, extra reflection/retry, new Provider calls or automatic use of remaining5.
+Isolated synthetic/local HTTP/replay/worker/browser/static/regression and scoped
+local commits only; no push/remote CI, original A/B retraining or future tools.
+Current records actual results; engineering is not Live/human/scientific acceptance.
+
 ## Approved 2026-10-27 quota-only Live continuation
 
 User explicitly renewed synthetic Live testing and current free-only console
