@@ -1,5 +1,74 @@
 # 证据驱动研究闭环：唯一里程碑合同
 
+## 2026-10-28 单批真实验证及最小修补（限定工程通过；真实闭环NO-GO）
+
+起点4edbf91、原分支tracked clean。用户新增批准单批合成Live，并确认当天免费用尽即停有效；
+原bailian/deepseek-v4.1-flash、thinking=false、temperature=0、4096输出token、
+180秒/请求、1attempt；本批上限16HTTP/2880秒，非旧剩5次续跑，不自动第二批。
+先冻结现有提示实测12题：12HTTP200/stop，11完整JSON，2题严格通过且均request_review。
+首拒绝：同版本假设改写4、动作缺假设关联3、缺update版本1、改写稳定问题1、
+最终JSON不完整1。原样可解析11题无文本超长；重叠全扫描7题动作缺关联，不能与首拒绝相加。
+只读原始12回答在最终验证器下仍2接受/10拒绝，字节不变；未补字段、截短或放松门禁。
+已能承认部分相关非因果/低样本不足，但仍泛化暂缓、重发快照、缺关联；AI初评非独立专家。
+前置门槛未通过，因此未启动父/子Live研究：实际Live fit/refit=0，剩4HTTP未用。
+新增Provider活动65.1702688秒；历史27次保留，合计39HTTP；金额unknown、模型alias未解析。
+模型/thinking仅本批进程覆盖，.env未改，不表示产品默认模型已切换或支持自动fallback。
+Live源身份ab9adae89cee5479fada413f7e41c1ca492b33de25fcec44069c5421e0c2a4a1，
+Live期间源码/依赖/输入一致，原A/B及数据/模型包5项hash保持；无换模、重发或远端CI/推送。
+
+按实际失败最小修补原R3：输入schema为diagnose及训练动作明确非空hypothesis_refs；
+版本说明明确questions/hypotheses是增量，不变对象用[]，改主张/依据须latest+1；
+规则正文列出根/update/request/query四层字面版本。接受器、320字符、数学、工具和旧hash不改。
+两新红例先失败后转绿；中间QUERY缺导入的失败保留并已修。原48项预检有一次临时目录
+清理WinError5/exit1；另建隔离basetemp后48通过/exit0，不修改全局权限、不叠加计数。
+最后功能变化后冻结278源码/测试文件、75依赖及登记输入，
+最终源集合身份（domain=repair-source-v1）6ae959e693270fa65e1b57b0bc4f42a4e46c859c8b903f5aff0a8e28840a59bb。
+首轮同范围回归因新增说明触及ON联合容量出现1失败，原final.xml及源码身份保留；
+capacity2.xml另保留64025字符失败。只精简重复规则，不删证据、放宽上限或修改断言；
+capacity3容量通过但禁填字段名提示断言失败，已恢复原名称；原失败保留。
+capacity4联合ON=49518/63985字符，在原64000内但余量很小，非任意历史容量保证。
+再次冻结后，原worker文件先串行，
+其余两隔离分区跑完整同集合；精确节点无缺失/额外/重复。
+受影响证据子系统及Provider思考开关回归170通过/0失败/0跳过/exit0；
+随后串行两个Chromium流程2通过/0失败/0跳过/exit0，源码前后一致。
+拒绝路径使用本地模拟HTTP；界面“真实LLM”来源标签不是额外外部调用证明。
+含原worker、单轴干预、父末批续接、严格Replay、联合容量、包、显式refit及新进程推理；
+最终worker轨迹父28＋子28 charged fit，另1显式refit；新进程禁fit/网络1094行推理一致。
+均为合成工程，不是新金融预测证据。本次未重跑全仓，旧两历史失败与97项lint不冒称关闭。
+修改范围Ruff/compile/diff通过；收尾仅更新文档/收据，再跑文档检查，不倒推测试启动输入。
+详细实际argv/exit/身份、原失败、原回答和中文报告位于.evidence-loop-20261028；
+ER的live_loop_20261028只追加索引，旧值保持。最终修补源码未再次Live。
+A为本增量限定工程通过；B仍NO-GO，无真实干预/父子闭环；C选择价值、D独立金融预测
+未验；E/G6独立真人理解仍开放。不自动进入裁剪/权重/RF，不重训原B或代签所有者。
+使用流程不变：重启原工作区，新建证据研究使用新说明；旧失败保持只读，不自动续发。
+
+
+### 本批精确执行与原件
+
+PowerShell的PYTHONPATH=src;apps;scripts;tests，OMP/MKL/OPENBLAS线程各1。
+完整实际argv（含170节点所在文件集合）、源/依赖/登记输入逐文件hash在final2.start.json；
+final2.end.json记录实际exit及一致性，后续文档收据不冒充运行前输入。
+
+```text
+.venv/Scripts/python.exe .evidence-loop-20261028/run_trial.py --dry-run   # exit0, HTTP0/fit0
+.venv/Scripts/python.exe -u .evidence-loop-20261028/run_trial.py        # exit0仅编排结束，非行为通过
+.venv/Scripts/python.exe -u .evidence-loop-20261028/run_final.py        # exit1，ON容量回归保留
+.venv/Scripts/python.exe -u .evidence-loop-20261028/run_final2.py       # exit0，修补后同一完整受影响集合
+.venv/Scripts/python.exe -u .evidence-loop-20261028/run_browser.py      # exit0，独立串行两流程
+.venv/Scripts/python.exe .evidence-loop-20261028/recheck_raw.py --final # exit0，原回答2/10不变
+```
+
+原件：live/FROZEN_PROVIDER.json、HTTP_LEDGER.json、OUTCOME.json、call-*.raw-envelope.json、
+semantic-recordings；INITIAL_EXIT.json/preflight.xml保留清理失败，preflight-final.xml为48项复跑。
+red.xml/green.xml/green2.xml分别保留2红、QUERY导入中间失败、2绿；capacity2.xml保留
+17通过/1容量失败，capacity3.xml保留17通过/1必备禁填字段名提示失败；capacity4.xml为
+18项通过复验，不叠加为独立覆盖。原断言和64000阈值均未改。
+final.xml/final.stdout.txt保留首轮失败，final2.xml/final2p*.stdout.txt和browser.xml及截图
+为最终源码工程证据。两个分区可能承受并发负载，未放宽原超时或把失败重写通过。
+RAW_RECHECK.json及最终绑定源码的RAW_RECHECK_FINAL.json、ANSWER_AUDIT.json和REPORT.html
+区分原文、模型判断与工程结果。
+新源码真实行为未验，不能用本地正确fixture替代真实回答，不能以合法review证明干预能力。
+
 ## 2026-10-27 输出契约加固（限定工程验收完成；真实行为未验）
 
 用户在真实回答原因分析后明确要求按建议修改、测试和验收；实际起点6ff4ca3，

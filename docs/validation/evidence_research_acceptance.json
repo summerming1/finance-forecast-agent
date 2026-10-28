@@ -1,4 +1,62 @@
 {
+  "live_loop_20261028": {
+    "status": "bounded_engineering_pass_live_no_go",
+    "base_head": "4edbf91cabd25df9f6ed6bb99b33a23d850a25be",
+    "sole_contract": "docs/EVIDENCE_RESEARCH_LOOP.md:2026-10-28",
+    "artifact_root": ".evidence-loop-20261028",
+    "live": {
+      "http": 12,
+      "historical_http": 27,
+      "cumulative_http": 39,
+      "provider_seconds": 65.1702687998768,
+      "complete_json": 11,
+      "strict_accepted": 2,
+      "accepted_actions": "request_review_only",
+      "fit": 0,
+      "refit": 0,
+      "parent_child": "NOT_RUN_front_gate_failed",
+      "final_repaired_source_live": "NOT_RUN",
+      "cost": null
+    },
+    "regression": {
+      "tests": 170,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "actual_exit": 0,
+      "scope": "evidence subsystem plus Provider thinking contract; not whole repository"
+    },
+    "serial_browser": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "actual_exit": 0,
+      "scope": "two affected new-protocol/error flows"
+    },
+    "source_identity": "6ae959e693270fa65e1b57b0bc4f42a4e46c859c8b903f5aff0a8e28840a59bb",
+    "identity_domain": "repair-source-v1",
+    "source_files": 278,
+    "dependencies": 75,
+    "identity_unchanged": true,
+    "protected_originals_unchanged": true,
+    "raw_recheck": "12 raw answers unchanged; same2 accepted/10 rejected; no repair",
+    "raw_failures": [
+      "preflight.xml:WinError5 cleanup exit1",
+      "red.xml:2 failures",
+      "green.xml:QUERY import failure",
+      "final.xml:64077 ON joint capacity",
+      "capacity2.xml:64025 ON joint capacity",
+      "capacity3.xml:mandatory banned-field instruction names"
+    ],
+    "acceptance_axes": {
+      "engineering": "scoped_pass",
+      "real_behavior": "NO_GO",
+      "selection_value": "NOT_RUN",
+      "independent_financial_prediction": "NOT_RUN",
+      "human_G6": "OPEN"
+    }
+  },
   "schema_version": "evidence_research_acceptance_v1",
   "output_contract_20261027": {
     "status": "bounded_engineering_pass_not_whole_green_live_not_run",

@@ -90,11 +90,12 @@ def output_schema(*, reference=False, max_actions=2):
     defs['action'] = _object(action, ['action_type', 'statement'])
     defs['action']['allOf'] = [
         {'if': {'properties': {'action_type': {'const': 'diagnose'}}},
-         'then': {'required': ['control_candidate_id', 'evidence_request'],
-             'properties': {'evidence_request': {'allOf': [ref('request'),
+         'then': {'required': ['control_candidate_id', 'evidence_request', 'hypothesis_refs'],
+             'properties': {'hypothesis_refs': {'minItems': 1}, 'evidence_request': {'allOf': [ref('request'),
                  {'properties': {'query': ref('query')}}]}}}},
         {'if': {'properties': {'action_type': {'enum': ['improve', 'ablate', 'simplify']}}},
-         'then': {'required': ['parent_candidate_id', 'control_candidate_id', 'declared_axis', 'research_design']}}]
+         'then': {'required': ['parent_candidate_id', 'control_candidate_id', 'declared_axis', 'research_design', 'hypothesis_refs'],
+             'properties': {'hypothesis_refs': {'minItems': 1}}}}]
     for name in ('update', 'question', 'hypothesis', 'assessment', 'request', 'branches', 'query'):
         assert set(defs[name]['required']) == set(FIELDS[name].split())
     return {**_object({'schema_version': {'const': ADVICE},

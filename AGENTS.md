@@ -1,5 +1,19 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+## Approved 2026-10-28 single fixed-model Live and minimal repair
+
+User newly approved one isolated synthetic batch, original bailian endpoint,
+deepseek-v4.1-flash thinking=false, current confirmed free-only protection:
+new HTTP<=16/2880s, one attempt, 4096 tokens/180s, parent/child charged fit<=32
+each plus <=1 explicit refit. Historical27 remains, not old remaining5 reuse.
+Actual:12HTTP/65.1702688s, cumulative39; 11 complete JSON,2 strict request_review,
+no Live parent/child/fit/refit. No second batch/retry/model switch or unused4 reuse.
+Preserve raw failures. Minimal offline R3 repair aligns nonempty action links and
+delta/version guidance; original validator/320/hash/semantics unchanged. Final
+source has scoped regression and serial browser acceptance, NOT final-source Live.
+Current and EVIDENCE_RESEARCH_LOOP hold exact evidence. No push/remote CI, original
+A/B retraining, new external sends or future tools. G6/human/selection value open.
+
 ## Approved 2026-10-27 output-contract hardening
 
 User approved the preceding diagnosis/recommendations for implementation and

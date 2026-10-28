@@ -13,6 +13,7 @@ from .evidence_output_contract import (
     ASSESSMENTS,
     DISPOSITIONS,
     FIELDS,
+    QUERY,
     REQUEST,
     SCOPES,
     STATUSES,
@@ -57,9 +58,9 @@ def protocol_contract(*,reference=False,max_actions=2):
     return {'output_contract_version':'evidence_output_contract_v1',
         'output_schema':wire_output_schema(reference=reference,max_actions=max_actions),
         'semantic_types':{
-            'versions':'正整数非bool；首版1，修订latest+1。同版本及问题仅可改status，其余内容/依据不可覆盖。',
-            'visibility':'判断与动作仅引用实际可见或本响应合法新建版本；隐藏/归档ID和版本不可判断或改写。',
-            'dependencies':'选用假设的可见新增pending、support/counter_refs、可解析动作/design依据及request.depends_on，须有已evaluated关系或本响应评估/明确暂缓；省request/空depends_on不绕过。无关历史不用全评估，资源stop/review只处理显式依赖。',
+            'versions':'questions/hypotheses为增量而非快照，不变对象用[]；同版/问题仅改status。改主张/依据用latest+1，新问题新ID。版本正整数非bool，首版1。',
+            'visibility':'判断/动作仅引可见或本次合法新版本；隐藏/归档ID/版本不可判断或改写。',
+            'dependencies':'选用版本的可见新增pending及支持/反证、可解析动作/design依据、request.depends_on，须已evaluated或本次评估/暂缓；省request/空depends_on不绕过。无关历史不必全评；资源stop/review仅处理显式依赖。',
             'failure':'execution_failure只可execution_incomplete，不是科学反证。'},
         'reference_namespaces':'认识/请求依赖用evidence_research.evidence键；原动作/design依据用evidence_projection/available_evidence_ids。projection_ref关联来源，不互换权限。',
         'evidence_request':'id稳定；question写缺失信息，expected写事前预期/未知，branches预声明结果分支。非diagnose的query=null。',
@@ -111,11 +112,11 @@ def apply_output_guidance(prompt):
     prompt['rules']=[next((text for prefix,text in replacements.items() if r.startswith(prefix)),r)
         for r in prompt['rules']]
     prompt['rules'] += [
-        '逐动作遵守action_contracts及冻结方法；不得输出metrics/verdict/split/budget/未知字段。evidence_refs须available_evidence_ids原值；用真实前轮指标，非盈利/严格复现。',
-        '根/update/request/非空query的schema_version必填；仅省动作非适用字段。schema是约束非答案，$ref在同份schema查字面定义。',
-        '用简明中文，不翻译键/版本/ID/枚举/AST。finding=事实及边界，open_question=未知，choice_reason=下一步取舍；新文本各<=320字符非token，尽量一两句留余量。',
-        'hypotheses至少一个合法动作；结束用stop/request_review非空列表。诊断kind/scope匹配且能回答所问；完整JSON未必合格。',
-        '分开可见数值、机制解释和下一步：基线较好不支持尚未执行的改动；相关不是干预效果；汇总变化不抹去反向折。未能区分原因可明确暂缓或探索，不要求先解释所有历史，不强迫换轴或改善。']
+        '按action_contracts冻结方法；禁metrics/verdict/split/budget/未知字段。evidence_refs用available_evidence_ids原值；真实前轮指标非盈利/严格复现。',
+        f'schema_version必填：根={ADVICE}；research_update={UPDATE}；evidence_request={REQUEST}；非空query={QUERY}。仅省非适用动作字段。',
+        '简明中文；键/版本/ID/枚举/AST不译。finding=事实及边界，open_question=未知，choice_reason=取舍；新文本各<=320字符非token，一两句留余量。',
+        'hypotheses须非空合法动作，结束用stop/request_review；诊断kind/scope须匹配问题。',
+        '数值非机制：基线好不支持未做改动；相关非干预；汇总不抹反向折。原因未明可暂缓/探索；不用先解释所有历史，不强迫换轴/改善。']
     prompt['rules']=list(dict.fromkeys(prompt['rules']))
     contracts={
         'improve':'完整已接受control，声明features＋完整feature_program或training_window＋training_policy，继承另一轴。',

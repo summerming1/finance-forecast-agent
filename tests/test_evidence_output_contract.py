@@ -228,3 +228,20 @@ issues:[{path:'$.research_update.schema_version',message:'缺少必填字段'},
     assert 'proposal-validation' in text and 'schema_version' in text and '320字符' in text
     assert '<script>' not in text and '<img>' not in text
     assert 'data-action=' not in text
+
+
+def test_active_action_guide_requires_nonempty_exact_hypothesis_links():
+    branches = output_schema()['$defs']['action']['allOf']
+    for branch in branches:
+        assert 'hypothesis_refs' in branch['then']['required']
+        assert branch['then']['properties']['hypothesis_refs']['minItems'] == 1
+
+
+def test_instruction_explains_delta_updates_and_literal_version_placement():
+    p, _ = case()
+    rules = '\n'.join(p['rules'])
+    versions = p['evidence_protocol_contract']['semantic_types']['versions']
+    assert '增量而非快照' in versions and '不变对象用[]' in versions
+    assert 'evidence_research_advice_v1' in rules
+    assert 'research_update=evidence_research_update_v1' in rules
+    assert 'evidence_request=evidence_request_v1' in rules
