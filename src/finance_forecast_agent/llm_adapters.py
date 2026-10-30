@@ -25,6 +25,23 @@ BAILIAN_PROVIDERS = {'bailian', 'aliyun_bailian', 'aliyun_compatible', 'dashscop
 # Explicitly documented hybrid models only; do not infer support from a prefix.
 BAILIAN_THINKING_MODELS = {'deepseek-v4.1-flash', 'deepseek-v4-flash-0731',
                           'deepseek-v4-pro', 'deepseek-v4-pro-0813'}
+# JSON Object is a distinct, explicit capability, not JSON Schema support.
+# Keep legacy generation registration unchanged. These native-JSON tuples
+# freeze each model's actual thinking mode; GLM-5.3 cannot disable thinking.
+# Official model-studio/glm, qwen-structured-output, deep-thinking,
+# deepseek-api and deepseek-v4-pro references verified 2026-10-29.
+BAILIAN_JSON_OBJECT_CAPABILITIES = frozenset({
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','deepseek-v4.1-flash',False),
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','deepseek-v4.1-flash-1017',False),
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','glm-5.3',True),
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','deepseek-v4-pro-0813',False),
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','qwen3.8-max',False),
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','qwen3.7-flash',False),
+    # Oct30 official DeepSeek API + structured-output/Kimi/deep-thinking docs:
+    # flash-0731 is hybrid; Kimi-k3 is thinking-only. JSON Object is not Schema.
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','deepseek-v4-flash-0731',False),
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','kimi-k3',True),
+})
 
 
 def serialize_prompt_payload(payload: dict[str, Any]) -> str:
@@ -110,7 +127,7 @@ class OpenAIJsonClient:
     def __init__(self, *, model: str | None = None, api_key: str | None = None,
                  base_url: str | None = None, timeout: int | None = None,
                  policy: ProviderPolicy | None = None, observer=None, cancel_check=None,
-                 enable_thinking: bool | None = None):
+                 enable_thinking: bool | None = None, response_format: str | None = None):
         self.provider = _normalize_provider(os.getenv('LLM_PROVIDER') or os.getenv('TEACHER_PROVIDER') or 'openai_compatible')
         self.model=model or os.getenv('OPENAI_MODEL') or os.getenv('TEACHER_MODEL') or 'gpt-4.1-mini'
         self.base_url=_normalize_base_url(base_url or os.getenv('OPENAI_BASE_URL') or os.getenv('TEACHER_BASE_URL')
@@ -126,28 +143,47 @@ class OpenAIJsonClient:
         self.max_tokens=int(os.getenv('LLM_MAX_TOKENS') or os.getenv('TEACHER_MAX_TOKENS') or 4096)
         if not 1<=self.max_tokens<=65536:
             raise ValueError('max output tokens must be in [1,65536]')
+        if response_format is None and 'LLM_RESPONSE_FORMAT' in os.environ:
+            response_format=os.environ['LLM_RESPONSE_FORMAT'].strip().lower()
+        if response_format is not None and (not isinstance(response_format,str)
+                or response_format not in {'provider_default','json_object'}):
+            raise ValueError('response_format must be provider_default or registered json_object')
+        self._response_format_mode=response_format
         if enable_thinking is None and 'LLM_ENABLE_THINKING' in os.environ:
             setting=os.environ['LLM_ENABLE_THINKING'].strip().lower()
             if setting not in {'true','false'}:
                 raise ValueError('enable_thinking must be true or false')
             enable_thinking=setting=='true'
-        if enable_thinking is not None:
-            if not isinstance(enable_thinking,bool):
-                raise ValueError('enable_thinking must be a bool')
-            if self.provider not in BAILIAN_PROVIDERS or self.model not in BAILIAN_THINKING_MODELS:
-                raise ValueError('enable_thinking is not registered for this provider/model')
+        if enable_thinking is not None and not isinstance(enable_thinking,bool):
+            raise ValueError('enable_thinking must be a bool')
         self.enable_thinking=enable_thinking
+        selected_format=self._selected_response_format()
+        if (enable_thinking is not None
+                and (self.provider not in BAILIAN_PROVIDERS or self.model not in BAILIAN_THINKING_MODELS)
+                and not (self._response_format_mode=='json_object' and selected_format=='json_object')):
+            raise ValueError('enable_thinking is not registered for this provider/model')
         self.observer,self.cancel_check=observer,cancel_check
         self.last_call_metadata: dict[str,Any]={}
         if not self.api_key:
             raise RuntimeError('OPENAI_API_KEY or DASHSCOPE_API_KEY is required for OpenAIJsonClient')
+
+    def _selected_response_format(self):
+        if self._response_format_mode=='json_object':
+            capability=(_chat_completions_url(self.base_url),self.model,self.enable_thinking)
+            if (self.provider not in BAILIAN_PROVIDERS or type(self.enable_thinking) is not bool
+                    or capability not in BAILIAN_JSON_OBJECT_CAPABILITIES):
+                raise ValueError('response_format json_object is not registered for this endpoint/model/thinking')
+            return 'json_object'
+        if self._response_format_mode=='provider_default':return 'provider_default'
+        if self._response_format_mode is not None:raise ValueError('unknown response_format mode')
+        return 'provider_default' if self.provider in BAILIAN_PROVIDERS else 'json_object'
 
     def contract(self):
         from .replay_llm import sanitized_endpoint
         contract={'provider':self.provider,'model':self.model,'base_url':sanitized_endpoint(self.base_url),
                 'max_tokens':self.max_tokens,'temperature':0,'http_retries':self.retries,
                 'provider_policy':self.policy.to_dict(),'stream':False,
-                'response_format':'provider_default' if self.provider in BAILIAN_PROVIDERS else 'json_object',
+                'response_format':self._selected_response_format(),
                 'pricing_status':'unknown','model_revision':'alias_unresolved'}
         if self.enable_thinking is not None:
             contract['enable_thinking']=self.enable_thinking
@@ -235,9 +271,31 @@ class OpenAIJsonClient:
                     raise ProviderFailure('transport_cleanup_failed',delivery_status='unknown',usage_known=False)
 
     def complete_json(self, *, prompt_payload: dict[str,Any], schema_name: str) -> dict[str,Any]:
+        selected_format=self._selected_response_format()
         prompt=(f'You are extracting schema {schema_name}. Return only valid JSON. '
                 'Use unknowns instead of guessing. Preserve evidence spans.\n\n'+serialize_prompt_payload(prompt_payload))
-        if prompt_payload.get('research_protocol_id')=='evidence_research_v1' and (
+        if (prompt_payload.get('advisor_wire_version')=='evidence_decision_v3'
+                and prompt_payload.get('compact_decision_contract',{}).get('schema_version')=='grouped_decision_contract_v3'
+                and prompt_payload.get('compact_decision_contract',{}).get('schema_style') in {'full','shared'}):
+            prompt=('You are planning controlled evidence research; return only the JSON decision. '
+                'Do not optimize for winning this batch. The goal is an informative, falsifiable local test, not the strongest-looking candidate. '
+                'Do not summarize the context before choosing or rank every possible hypothesis. Choose one current or newly declared specific hypothesis worth distinguishing, then its answerable test. Put required evidence assessments directly in the JSON. '
+                'Use a brief feasibility check: selected question, distinguishing observable/action, actual control and budget. Once feasible, commit and write the JSON; do not reopen alternatives unless the choice is illegal. '
+                'Prefer the smallest intervention that distinguishes the selected hypothesis; add another component only when that hypothesis needs it. Code handles schema verification. '
+                'Choose the needed next action(s) within the frozen budget, then use the complete selected action branch in compact_decision_contract.output_schema. '
+                'Use concise Chinese for scientific text. New hypothesis versions declared in this reply can be selected immediately. '
+                'Only the defined fields are allowed; slots are ceilings, not a requirement to fill them. '
+                'Generated features do not replace inherited built-in groups: the supplied list is the complete generated-feature list; unchanged groups, model and other axis come from action.control. '
+                'A local intervention test compares with its single action.control; final recommendation follows the separate frozen benchmark policy. '
+                'Do not restate or reconstruct the schema, invent results, or claim causes from correlation.\n\n'+serialize_prompt_payload(prompt_payload))
+        elif (prompt_payload.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3'}
+                and prompt_payload.get('compact_decision_contract',{}).get('schema_version') in {
+                    'compact_decision_contract_v1','compact_decision_contract_v2','grouped_decision_contract_v1','grouped_decision_contract_v2','grouped_decision_contract_v3'}):
+            prompt=('You are planning controlled evidence research; return only the complete JSON reply. '
+                'Follow compact_decision_contract.output_schema; return the compact decision, never the input contract or expanded plan. '
+                'Use concise Chinese for prose, preserve exact IDs/versions/enums and state uncertainty. '
+                'Do not invent results, fill every slot, or claim causes from correlation.\n\n'+serialize_prompt_payload(prompt_payload))
+        elif prompt_payload.get('research_protocol_id')=='evidence_research_v1' and (
                 prompt_payload.get('evidence_protocol_contract',{}).get('output_contract_version')=='evidence_output_contract_v1'):
             prompt=('You are planning controlled evidence research; return only the complete JSON reply. '
                 'Follow the literal output_schema: protocol fields are mandatory, action fields are conditional. '
@@ -249,8 +307,10 @@ class OpenAIJsonClient:
         if self.enable_thinking is not None:
             payload['enable_thinking']=self.enable_thinking
             generation['enable_thinking']=self.enable_thinking
-        if self.provider not in BAILIAN_PROVIDERS:
+        if selected_format=='json_object':
             payload['response_format']={'type':'json_object'}
+            if self._response_format_mode is not None:
+                generation['response_format']={'type':'json_object'}
         wire=json.dumps(payload,ensure_ascii=False,sort_keys=True,allow_nan=False)
         started=time.monotonic()
         self.last_call_metadata={'generation_parameters':generation,

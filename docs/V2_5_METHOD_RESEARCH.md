@@ -1,5 +1,9 @@
 # V2.5.0 受控两轴方法研究与反馈更新 唯一实施合同
 
+## 2026-10-30 真实研究闭环收口：最终实际结果：复用边界
+
+本轮原ER的C3契约/测量/事实投影仍复用本合同的单轴完整继承、两规划四槽、MAE/0.0025、总32fit和窗口一致refit；不重做N0—N5或改旧schema/hash。真实闭环仍NO-GO，实际结果见Current。
+
 2026-10-19用户明确批准N0—N5及R1—R4全部修订与训练依赖扰动限定。
 批准不是完成；实际状态只见CURRENT_IMPLEMENTATION。分支
 feat/mission-research-v2，实施基线c6bdd282dd97952cab37cc64e8edb7f4549cb70f，

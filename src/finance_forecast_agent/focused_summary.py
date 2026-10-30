@@ -16,6 +16,47 @@ def _number(value):
     return value
 
 
+def diagnostic_query_display(query: dict) -> dict:
+    """Describe a saved canonical query, without executing or grading its prose."""
+    from .diagnostic_measurements import measurement_contract
+    query=copy.deepcopy(query or {})
+    objects=query.get('object_ids') or []
+    definitions=measurement_contract()['measurements'].values()
+    matches=[item for item in definitions if item['kind']==query.get('kind')
+        and len(objects) in item['object_counts']]
+    definition=matches[0] if len(matches)==1 else {}
+    role=definition.get('reference_role');reference=None
+    if len(objects)==2 and role in {'loss_reference','threshold_reference','frozen_group_reference'}:
+        mode='paired';reference=objects[1]
+        note='双对象配对；对象减参照为正表示误差较大；以冻结共同范围/掩码为准。'
+    elif len(objects)==1:
+        mode='single';note='单对象描述，无配对参照；不能据此编造相对误差或改善。'
+    elif len(objects)==2 and definition:
+        mode='multiple_descriptive';note='各对象分别描述；第二对象不是损失参照，不提供两对象相对误差。'
+    else:
+        mode='unknown';note='旧记录未记录完整工具对象；不从建议文字或control字段补造。'
+    return {'schema_version':'diagnostic_operation_view_v1','query':query,
+        'kind':query.get('kind'),'object_ids':copy.deepcopy(objects),
+        'subject':objects[0] if objects else None,'reference':reference,'mode':mode,
+        'object_note':note,'scope':query.get('scope'),
+        'variable_pairs':copy.deepcopy(query.get('variable_pairs') or []),'factor':query.get('factor'),
+        'returns_label':definition.get('label','旧记录未保存完整返回量说明，见原冻结查询'),
+        'returns':copy.deepcopy(definition.get('returns',[])),
+        'semantic_note':'原问题/预期与实际工具并列；未自动核验语义一致性，不改写原记录。',
+        'adoption_note':'局部诊断、总体采用、机制判断与额外子组问题分开；不改变冻结推荐。'}
+
+
+def _diagnostic_operation_report(view,esc):
+    variables=view['factor'] or '；'.join(' ↔ '.join(map(str,pair)) for pair in view['variable_pairs'])
+    fields=[('实际工具',view['kind']),('实际对象（按工具顺序）',' → '.join(map(str,view['object_ids'])) or '未记录'),
+        ('实际对象',view['subject']),('实际参照',view['reference'] or '无配对参照'),
+        ('实际范围',view['scope']),('指定变量',variables or '未指定变量；读取已接受执行/预测回执'),
+        ('返回量说明',view['returns_label'])]
+    return ('<section data-projection="actual-diagnostic-query">'+
+        ''.join('<p>'+label+'：'+esc(value)+'</p>' for label,value in fields)+
+        '<p>'+esc(view['object_note'])+'</p><p>'+esc(view['semantic_note'])+'</p><p>'+esc(view['adoption_note'])+'</p></section>')
+
+
 def build_evidence_mainline(payload: dict) -> dict | None:
     """Bounded display of original accepted relations; never a second state store.
 
@@ -63,7 +104,9 @@ def build_evidence_mainline(payload: dict) -> dict | None:
         'diagnosed':'已取证','planned':'已冻结待执行','completed':'已完成（不等于通过筛选）',
         'execution_failed':'执行失败（不是科学反证）','skipped_duplicate':'复用原结果，不是新样本',
         'result_not_visible_in_this_arm':'本臂规划不接收诊断结果'}
-    for r in requests:r['status_label']=request_statuses.get(r['status'],r['status'])
+    for r in requests:
+        r['status_label']=request_statuses.get(r['status'],r['status'])
+        r['diagnostic_operation']=diagnostic_query_display(r.get('query') or {})
     evidence=[]
     relevant={r[0] for r in state['pending']}
     for h in hypotheses[:12]:relevant.update(h['support_refs']+h['counter_refs'])
@@ -156,6 +199,7 @@ def _evidence_report(payload,esc):
         out+='<p>支持引用：'+esc(h['support_refs'])+'；反证引用：'+esc(h['counter_refs'])+'；历史版本：'+esc(h['history_versions'])+'</p>'
     for r in v['requests']:
         out+='<h3>取证请求 '+esc(r['id'])+'</h3><p>'+esc(r['question'])+'；预期：'+esc(r['expected'])+'；执行状态：'+esc(r['status_label'])+'；来源Campaign：'+esc(r.get('owner_campaign_id'))+'</p>'
+        out+=_diagnostic_operation_report(r['diagnostic_operation'],esc)
         branches='；'.join(label+'：'+str(r['branches'][key]) for key,label in
             [('supports','支持时'),('weakens','削弱时'),('insufficient','证据不足时'),('next_step','下一步')])
         out+='<p>关联假设版本：'+esc(r['hypothesis_refs'])+'；'+esc(branches)+'</p>'
@@ -211,7 +255,9 @@ def build_round_reviews(payload: dict) -> list[dict]:
                 'status': item.get('status', 'unknown'), 'is_duplicate': duplicate, 'reused_candidate_id': reused,
                 'mae': None if duplicate else _number((item.get('result') or {}).get('metrics', {}).get('mae')),
                 'comparison': comparison, 'change': change,
-                **({'diagnostic_request':copy.deepcopy(request)} if request else {})}
+                **({'diagnostic_request':copy.deepcopy(request),
+                    'diagnostic_operation':diagnostic_query_display(request.get('query') or {}),
+                    'diagnostic_statement':hypothesis.get('statement')} if request else {})}
     for position, batch in enumerate(rounds):
         source = batch.get('advisor_source', '')
         rule = source in {'deterministic_method_policy','deterministic_evidence_engineering_policy'}
@@ -301,6 +347,9 @@ def render_research_report(payload: dict, *, restricted: bool = False) -> str:
             for item in review['experiments']:
                 if item.get('diagnostic_request'):
                     body+='<p>定向取证：'+esc(item['candidate_id'])+'；从 '+esc(item['control'])+'；'+esc(item['change'])+'；不生成候选或新的模型MAE；状态='+label(item['status'])+'</p>'
+                    request=item['diagnostic_request']
+                    body+=_diagnostic_operation_report(item['diagnostic_operation'],esc)
+                    body+='<p>取证问题（原记录）：'+esc(request.get('question'))+'；取证预期（原记录）：'+esc(request.get('expected'))+'；建议说明（原记录）：'+esc(item['diagnostic_statement'])+'</p>'
                     continue
                 score = '本项未新增训练/预测，不产生新的MAE' if item['is_duplicate'] else 'MAE='+esc(item['mae'])
                 body += '<p>'+esc(item['candidate_id'])+'；从 '+esc(item['control'])+' 开始；'+esc(item['change'])+'；'+score+'；'+esc(item['comparison'])+'；状态='+label(item['status'])+'</p>'

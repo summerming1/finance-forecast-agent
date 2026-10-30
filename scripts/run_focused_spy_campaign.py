@@ -72,6 +72,7 @@ def main() -> None:
         raw_history=raw_history, feature_strategy=options.get("feature_strategy"),
         diagnostic_mode=options.get("diagnostic_mode"),
         research_protocol_id=options.get('research_protocol_id'),
+        advisor_wire_version=options.get('advisor_wire_version'),
         evidence_send_authorization=options.get('evidence_send_authorization'),
         budget=budget,
         advisor_mode=args.advisor_mode,

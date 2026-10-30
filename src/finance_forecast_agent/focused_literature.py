@@ -300,6 +300,8 @@ def compact_research_context(prompt: dict, *, max_chars: int = 64000) -> dict:
         'omitted': ['duplicate literature/memory bodies (retained in evidence_projection)',
                     'feedback explanation/narrative (numeric facts retained)'],
         'all_result_statuses_retained': True}
+    if body.get('research_protocol_id')=='evidence_research_v1':
+        body['context_manifest']['omitted']=['重复文献/记忆正文（evidence_projection保留）','反馈叙述（数值保留）']
     if body.get('method_policy'):
         body['context_manifest'].update(schema_version='compact_method_context_v3',serialization='compact_json_v1')
         from .focused_methods import project_method_references

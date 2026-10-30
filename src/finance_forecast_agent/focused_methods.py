@@ -289,9 +289,15 @@ def project_method_references(prompt):
                 'method_value_ref reads the exact candidate path in baseline_results/prior_research_results/fixed_model. '
                 'Resolve these planning-only references before submitting a full legal FeatureProgram; never submit references as DSL. '
                 'No numerical values omitted; component references grant no control permissions.')}
+        if body.get('research_protocol_id')=='evidence_research_v1':
+            body['method_context_refs']['contract']=('仅输入去重：method_rule_ref查rules；method_expression_ref查expressions还原AST，特征名保留。'
+                'method_program_header_ref补全除features外全部原字段；method_value_ref按candidate_id/path查baseline_results/prior_research_results/fixed_model。'
+                '提交完整FeatureProgram，禁引用作DSL；数值全保留，引用不增控制权限。')
         if decisions:
             body['method_context_refs']['decisions']=decisions
-            body['method_context_refs']['contract']+=' method_decision_ref resolves in decisions (original input judgment); output example remains inline.'
+            body['method_context_refs']['contract']+=(' method_decision_ref查decisions中的原输入判断；输出示例保持内联。'
+                if body.get('research_protocol_id')=='evidence_research_v1' else
+                ' method_decision_ref resolves in decisions (original input judgment); output example remains inline.')
     return body
 
 

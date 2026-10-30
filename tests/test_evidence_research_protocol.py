@@ -76,7 +76,12 @@ def test_joint_actual_two_slot_context_with_parent_pending_three_hypotheses_and_
                 'query':{'schema_version':'evidence_diagnostic_query_v1','kind':'DQ-04',
                     'object_ids':[p['research_start_candidate_id']],'scope':'development_oof',
                     'factor':'return_1','variable_pairs':[],'parameters':{}}}} for i in range(2)]
-        measurements.append(measure_prompt(compact_research_context(projected)))
+        (tmp_path/f'capacity-source-{len(measurements)+1}.json').write_text(
+            json.dumps(projected,ensure_ascii=False),encoding='utf-8')
+        compact=compact_research_context(projected)
+        (tmp_path/f'capacity-prompt-{len(measurements)+1}.json').write_text(
+            json.dumps(compact,ensure_ascii=False),encoding='utf-8')
+        measurements.append(measure_prompt(compact))
         advice,source=original(p)
         if p['round_index']==1:
             from finance_forecast_agent.focused_methods import text_size

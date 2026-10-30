@@ -1,5 +1,189 @@
 # 当前版本功能与技术实现说明
 
+## 2026-10-30 后续Git交付授权
+
+用户在上述验收后明确要求提交并上传最近未提交更新。本次正常提交/推送代码、测试、正式文档与分发验收索引；原始运行证据、数据、数据库和模型保留本地。下方“没有新提交/push”等描述属于验收冻结时状态。此交付不新增Live、训练、远端CI验收或科学通过。索引：`docs/validation/research_closeout_20261030_delivery.json`。
+
+
+## 2026-10-30 真实研究闭环收口：最终实际结果
+
+本轮继续原EVIDENCE_RESEARCH_LOOP。工程结论 **PASS_BOUNDED**；最终真实行为 **B NO-GO**；C研究选择优势、D金融独立预测未验，E/G6真人价值开放。不是整体产品/科学验收通过，也不把技术失败转交真人补JSON。
+
+实际基线仍为feat/mission-research-v2 / cdf61cb61c19a8abb7af007dcbaa090ef940339f加保留的dirty工作区；实际Live V6完整源码/测试快照身份为`139697cfecccb1bfb01b5afaf584ada494d064f95d68464b844abe7f5b4f29b1`；最终完整工作区身份为`3aba23d01a6f437a9e7d8daea6e96ce8310c44fa21216886cbc53f1860cb8f08`（不同身份域，均不是Git提交）。最终回归与浏览器共用343项source map；其中150项产品src/apps/scripts与实际Live V6逐字相同。唯一测试差异是新建浏览器流程严格要求C3绑定/合同v3，静态assert节点31增至32；24份预备wire payload重建逐字相同。适配证明在BROWSER_C3_TEST_ADAPTATION.json，不把最终全工作区误称与V6同hash。原A/B及5份受保护文件未变。本轮没有新提交、push、远端CI、真实行情研究、客户/文献/Memory外发或封存标签访问。
+
+最终冻结集合：回归1205节点，实际exit=0，状态PASS；独立串行Chromium6节点，实际exit=0，状态PASS；静态PASS_RECORDED。精确命令、逐node、source/tests/deps/input、原始exit与失败见`.research-closeout-20261030/final-report4/FINAL_REPORT.json`及`final-freeze2/COLLECTION.json`、`final-regression3/START.json/END.json`、`final-browser2/START.json/END.json`。分批测试有重叠，不能与最终节点数相加；旧1118节点的逐项实测/等价/未受影响/历史资产边界映射在`COVERAGE_PLAN.json`。
+
+首次完整回归`final-regression`实际1202通过/2跳过/1失败、exit1原件保留；失败是267字符Windows Replay探针路径，短路径同探针可创建且原用例通过。最终另以较短的隔离basetemp完整复跑同1205节点，源码/测试/断言未改；单项绿例不替代完整复跑，未修改全局长路径或符号链接权限。
+
+短目录完整复跑final-regression2为1203通过/2跳过、exit0；首轮串行浏览器final-browser为5通过/1失败、exit1，失败来自新建C3实际binding_v3而旧测试仍期待v2。只修正该新建测试并新增精确contract_v3断言，旧协议fixture/hash/decoder和产品代码/Prompt未改；随后再冻结完整回归与六条串行浏览器，原两轮及所有失败均保留，不相加重复运行冒充独立覆盖。
+
+真实调用6个冻结版本共7次HTTP（原历史169次另列，累计176）、Provider计账324.21953980007675秒；96 charged fit全部为起点/固定对照（原receipt为96 started/96 completed），研究候选、子研究、Live refit及正式24题发送均0。V1 Flash完整JSON因额外字段与空假设版本关联被原子拒绝；随后一次明确免费额度耗尽才推进至GLM。V2—V6的GLM均HTTP200/finish=length，4096输出token中4093或4094用于reasoning，最终正文精确为两字符`{"`，不是完整JSON，也不是空白。不能从reasoning补造/执行答案。达到6版本硬上限后停止真实调用；剩余HTTP不是第7版权限，没有因质量失败换模型或加token/thinking。旧20题和新4题全部NOT_RUN，不能拼旧成绩证明闭环。
+
+只读中文总报告：`.research-closeout-20261030/final-report4/REPORT.html`。逐次原文/AI初评、完整失败轨迹、六份source.zip、计账/白名单与原文件保护核验见`FINAL_LIVE_AUDIT.json`、`FINAL_B_INDEPENDENT_REVIEW.json`及V1—V6记录。AI初评不是独立专家/真人签收。历史权限、缺失native资产、平台skip、容量红例、并发时限与Temp清理失败均保留；最终限定集合通过也不表示全仓/native/真实行情重跑。
+
+**归档遗漏单列**：打包逐版本核验发现V1、V2当时的ER合同原文副本未保留，只有VERSION_START中的原hash，不能据此声称已核验这两份原件，也不重构/重签替代。六版AGENTS、V3—V6的ER合同可由DOC_BEFORE逐字验证；六版产品源码、七次实际请求/回包及最终V6合同原件保留。详`.research-closeout-20261030/HISTORICAL_INPUT_AUDIT.json`及中文报告“证据归档缺口”。这是历史合同材料的未关闭项；不改变最终代码/Prompt、工程测试计数或真实行为NO-GO。
+
+本轮修补：新鲜请求显式C3冷启动要求真实Q/H与非终止动作精确版本关联，原R1/R2及终止/reference边界保留；typed测量从原DQ注册/校验生成，单/双对象、scope/变量/返回量与真实分发同源；方法收据来自实际完整accepted control，生成表仅替换生成特征列表，内置组/模型/未改轴仍继承；数值辅助新增fold_id/facet/scope_ref定位但不删原事实；原UI/研究报告并列显示实际查询/控制与原科学文字，不自动改写或假称语义一致。完整Schema优先、容量超限时才等价共享；旧wire/decoder/fixture/hash不迁移。局部试验、总体冻结推荐与机制/子组判断分开，原MAE/0.0025、两规划四槽、总32fit和显式refit规则未改。
+
+本日下方“实施中”条目是保留的阶段记录，不覆盖上文最终状态。
+
+## 2026-10-30 真实研究闭环收口：实施中（尚未验收）
+
+用户已批准本轮A—D定向修补、独立合成会话≤6功能版本/72HTTP/12960秒、Live总charged fit≤195，以及七模型仅免费额度耗尽时顺序推进；本日免费用尽即停设置已由用户确认。实际HEAD为cdf61cb加dirty，保留原工作；详细权限仅见原ER本日条款，原169HTTP及所有失败另列，不恢复旧会话。
+
+当前已新增冷启动约束、typed测量到原DQ校验/真实工具的绑定、实际对象和完整control审计、fold/子视图数值辅助及原UI/REPORT并列投影。旧C1/C2请求按冻结契约恢复，不按回复键猜版本；新v3契约仍复用原Controller/编译器/资源/推荐权威。新增标准JSON-Schema表示共享保持同一合法域，64000门禁保留。
+
+本地红例和修复收据在`.research-closeout-20261030`。容量首两次ON构造超限、并行目标worker测试180秒超时、全局Temp清理权限错误和新测试自身错误均保留，不能用定向绿例覆盖。最终同源串行工程、真实冷启动/父子和逐题语义尚待完成；真实V1/V2已封存：新增3HTTP（历史169另列），32 charged起点/对照fit、0研究候选/子/refit；Provider64.05817480001133秒。V1完整JSON含额外键和空选用版本；V2明确免费耗尽后切GLM，4096 token几乎全用于Schema推理，无完整正文。正在离线修复通用Schema可读性再作新源Live，不补答、不因质量换模型。A/B/C/D/E各轴以本轮最终实际收据为准，以下10/29结果是历史状态。
+
+
+## 2026-10-29 关联决策修补与最终验收（保留此前历史）
+
+最终完整工作区（含测试）c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9；实际V3 Live完整工作区e3fd417cb4cef778d0d68ae175c0d0137167456a42666047bdf10861d338b528。生产src/apps/scripts及pyproject逐字相同；唯一后续修改是新测试临时目录d→gd、全部断言保留，当前test-fixed工作区已重生成20个packet，与实际V3保存的20个payload逐字相等，HTTP0/fit0；随后重跑完整final4/browser4/static8。独立TEST_ONLY_FIX_AUDIT确认327ZIP、145份src/apps/scripts文件及另核pyproject（共146个功能/配置条目）、30个assert AST。原完整final3失败exit1及12项定向通过均保留，不能互相替代。无新增Provider，这不是第四个功能Live版本。
+
+实际分支/HEAD为feat/mission-research-v2 / cdf61cb61c19a8abb7af007dcbaa090ef940339f（保留dirty工作区）；保留原dirty工作、A/B、旧包/fixture/hash与失败。最终工作区身份c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9，源码/测试/依赖/输入及节点收据见.evidence-grouped-20261029/FINAL_ACCEPTANCE.json（最终完整命令/exit见final4.start/end、browser4、static8；原final3失败及各版Live收据保留）。本轮提交/推送为No new commit/push/remote CI in this round; dirty work and untracked evidence preserved.。
+
+已实现：显式关联决策v3（冻结grouped contract_v2）。根层question_updates/hypothesis_updates与组内selected_versions、fact_dependencies分开；handling.fact对应精确证据×假设版本，新问题/假设的basis_facts/support_facts/counter_facts只用F，test.experiment_refs只用E。代码只做规定路径的机械映射，不填判断、截断、隐式暂缓或增加反思/重试。DQ的scope、变量对/变量名和factor按原验证器同源生成；subject/reference固定对象方向，单对象不编参照，DQ05原共同掩码不变。中文事实句明示MAE、比例/百分数、反向折、单/双对象与子视图范围；它是原F的阅读辅助，不是新的科学证据。
+
+既有完整control继承、单轴特征/窗口、StandardScaler+Ridge、uniform、MAE/0.0025、总32fit及缓存0fit不变。旧wire/冻结请求/原始回复不迁移；32条既有语义原答接受/拒绝和完整binding/canonical逐项原样复核，HTTP0/fit0。
+
+真实记录不能拼成一次成功：V1原题6/12、身份2/4、数值4/4严格接受；父首规划F/E混用而原子拒绝，16次起点/对照fit、无研究候选/子/refit，共21HTTP。V2原题10/12；另两题为DQ02变量对误用及metric_scope层级错误。第13请求返回明确free-only耗尽，旧trial识别范围过窄而保守停止；前两版累计34HTTP、327.88691419991665秒、16fit。旧停止原字节保留，新明确窄重分类仅进入新源V3、按额度顺序下一模型，不续发旧缺题或旧父。
+
+最终V3结果：生产代码与最终工作区逐字相同，实际Live全工作区hash另见等价收据（仅后续测试隔离修补），不是完整工作区同hash。第二模型deepseek-v4.1-flash/thinking=false/nativeJSON：原题10/12、身份4/4、新数值4/4严格接受，合计18/20；父首规划因空问题/假设/所用版本被原子拒绝，16起点/对照fit，0研究候选，子/refit未运行；部分严格通过原答仍有工具范围/参照/总体子组语义错误，B为NO-GO。最终新HTTP/时间/fit/refit：55实际HTTP（21/13/21），Provider实测425.000279秒/计账425.000279秒；Live32fit均起点/对照，研究候选fit0/refit0；历史114另列，累计169；其余四模型未实调；金额unknown；历史114HTTP另存，不清零或相加冒充新额度。最终受影响回归：1033通过/0失败/2跳过，1035唯一节点，pytest/wrapper exit0，精确集合与source/deps/输入不变；不是全仓签收；原final3完整调用为1032通过/1失败/2跳过、实际exit1，12项定向通过不替代本次完整复跑；串行浏览器：4/4实际Chromium串行通过，exit0，最终完整工作区map一致，外部HTTP0；静态：64改动Python Ruff/compile、4JS语法及diff检查均exit0。较早各版和失败收据原样保留，不把重复运行相加。
+
+分轴结论：A限定工程回归通过；BNO-GO：真实LLM仍未完成研究闭环；CNOT_RUN：未验研究选择优于参考；DNOT_RUN：未验独立金融预测；E/G6OPEN：原A/B只读G6、独立解释及真人价值。有限合成Live和AI初评不证明研究选择优于参考、真实市场泛化、盈利或真人价值。完整材料.evidence-grouped-20261029/REPORT.html（中文报告）。
+额度推进的实测范围为本轮隔离驱动器；产品自动路由及其余四模型未作Live验证。四份额外数值材料在各版复用，不作盲测或独立泛化证明。
+本节是本轮最新状态；下方同日或较早的“当前/收尾”均为此前会话历史快照，不能替代本节。
+
+
+
+## 2026-10-29 实际收尾：限定工程通过，真实闭环 NO-GO
+
+同源补充One-shot本地原worker：1规划/4槽全部完成、28计费fit、HTTP0/refit0，
+features与training_window均实际执行；不加到328唯一节点或52次Live fit。
+
+实际分支 `feat/mission-research-v2`、基线HEAD `cdf61cb61c19a8abb7af007dcbaa090ef940339f`；
+保留原dirty修改、原A/B、旧包/fixture/hash及历史失败。最终306个功能/测试文件的工作区身份
+`701da0700f4d6a47f10767435f8ac12e825649c3ae7ce65a840397e2f78a39b0`，已存精确源码 `.evidence-compact-20261029/FINAL_SOURCE.zip`。
+本轮未创建新commit、未push或远端CI。Current为实际状态入口，原ER仍是唯一合同。
+
+最终同源验收：328个受影响节点通过，0失败/0跳过、pytest及wrapper exit0；串行Chromium
+4条流程通过（4个无关节点deselect）；35个改动Python文件Ruff/compile、4个JS语法和diff检查
+通过。Source/deps/登记输入在各运行内不变。较广529节点原并行运行保留exit1：527通过、
+1次120秒等待超时、1项Windows/POSIX跳过；父worker实测133.430秒完成。整个失败分区298项
+随后同源串行通过，原集合528通过/1跳过；不是原并行全绿，也不与最终328相加。
+中间310/324、开发红例及515中止均保留，不签给最终源码。
+
+实现：新批次显式 `advisor_wire_version=evidence_decision_v2`，原默认完整wire不迁移。
+最终contract_v2支持旧问题/最新可见假设的显式status操作；不可变正文取该请求冻结记录，
+新/修订科学声明仍模型完整提供。v9令科学字段、逐折数组、条件/来源明文，只压缩机械身份、
+相同辅助视图及精确周期重复备注；逐字恢复和源hash校验保留全部事实。C卡标起点和保存MAE，
+缺值仍未知。资源卡区分新方法4fit与核实缓存0fit；最终零预算缓存正例、未缓存拒绝负例均过。
+原Controller/Queue/归约、320/1000字符门禁、单轴完整继承、MAE/0.0025及32fit总预算不变。
+
+真实结果（原答未修、各版独立）：
+
+| 版本/源码 | 12原题严格接受 | 4身份扰动 | 实际父子轨迹 |
+|---|---:|---:|---|
+| V1 `7a63fc44e5c1` | 5/12 | 3/4 | 父两诊断→更新→实际改动，20fit；子16fit，首规划9条E超过8上限拒绝；refit0 |
+| V2 最终 `701da0700f4d` | 10/12 | 2/4 | 父16次起点/对照fit，首规划依赖F10/F14但未评估/暂缓，被R1原子拒绝；无研究候选；子/Live refit未运行 |
+
+V1预选4题旧wire+native JSON为0/4，同四题compact为1/4；V2同四题4/4。不能拿0/4对5/12
+宣称研究优势。身份题复用数值条件，不是独立数值泛化。原题合法率提高、命名扰动和实际轨迹
+没有同步通过，不能拼两版结果当闭环稳定。
+
+新增40实际HTTP（V1 23、V2 17），全为 `deepseek-v4.1-flash-1017`/thinking=false/native
+json_object/temperature0；未遇额度拒绝，无换模/重发/未知投递。Provider实测与计账均
+318.902119秒；历史74单列保留，累计114不是新额度。Live计费研究fit合计52（含起点/对照），
+每Campaign≤32，Live refit0；本地合成工程计算另记于各worker收据。金额未知、余额未查询，
+免费保护为用户当日确认；其余五模型仅登记、未实调。事前执行端自选两版上限已完成，余8HTTP
+不自动变成第三版授权；该数字不是冒充用户原话。
+
+最终源码有自己的新鲜Live证据，但B仍NO-GO：4份语义探针结构拒绝（漏公共动作字段或query
+放错层），部分严格通过回答仍错读坏折/父证据/测量范围；保留题把0.02→0.0195的2.5%误称
+未达0.25%，并把实际坏折说成持平。`FINAL_FACT_CHECKS.json`纯校验复现父拒绝和算术，HTTP/fit0。
+AI初评不代独立专家/G6。A=限定工程PASS；B=真实闭环NO-GO；C研究选择优势/D独立金融预测
+NOT_RUN；E/G6真人理解仍OPEN。源码在最终Live后未追加未测功能补丁。
+
+可读报告/完整账/原答/逐题评分见 `.evidence-compact-20261029/REPORT.html`、`RESULTS.json`、
+`FINAL_ACCEPTANCE.json`及原ER。下一步仍有技术项：动作字段完整展平、证据评估与动作依赖
+同一记录、明确测量对象/参照和确定性数值事实；不能让真人补JSON或签掉技术失败。
+真正真人项目是原A/B与已有包只读G6、任务有用性与独立科学解释复核，不重训旧B、不读封存标签。
+裁剪/权重、RF四组合、自动交易等未来能力未执行。
+
+## 2026-10-28 连续三版实际结果：限定回归通过，真实闭环 NO-GO（会话已停止）
+
+实际基线cdf61cb、feat/mission-research-v2；保留工作区。最终286个功能/测试源文件身份
+`d2b57a68185e57082f88e49ccc1293fb6f8d235218207be5f77b553f958ec706`。
+最终源码已真实调用，调用前350独立节点回归全部通过（0失败/0跳过，各exit0），
+随后串行Chromium两个流程通过；scope为证据子系统及受影响原诊断/J/特征/方法编译器，
+不是全仓、原生论文或独立科学验收。保留1条record_property/xunit2兼容性warning。
+源/依赖/登记输入在各冻结运行期间一致，原A/B及数据/包5项hash保持。未推送/远端CI。
+
+本次改动承接原R3/R6：实际wire使用同源精确训练设计/J嵌套类型与配方/问题枚举、
+query条件及当前可执行对象，update必填列表明确；特征字段/名称取原编译器常量，
+内置组提示与冻结起点一致。新输入V8保留可复制身份/状态hash，缩短已有引用编码，
+不编码数值标量、不丢事实；V1—V7及已有V8投影不迁移。原320、权限、数学、预算、
+原子拒绝及全部原始失败不变。完整联合构造ON两轮50640/63865、OFF34936/42694字符，
+在原64000以内；只证明该冻结完整构造，不保证任意历史/文本都可容纳。
+
+真实结果逐版独立，不拼接成功题：
+
+|版本|实际HTTP|语义题严格接受|真实worker|
+|---|---:|---|---|
+|V1|13|7/12|父16起点/对照fit，首次规划非法；零候选/子/refit|
+|V2|13|6/12|父16起点/对照fit，首次规划非法；零候选/子/refit|
+|V3最终源|9|0/8已返回；第9投递未知，余3未发|父/子/新refit NOT_RUN|
+
+本轮35新增HTTP，历史39保留，累计74；均主模型deepseek-v4.1-flash、thinking=false。
+V3已返回8份均HTTP200/stop，5份原JSON闭合错误、2份配对control不匹配、1份复核漏关联；
+不是4096 token耗尽。第9是ProxyError、response_received=false，不能算格式失败或免费额度错误。
+按本次明确批准的“未知投递停止整个会话”，未重发、未换模型、未继续剩余题目/父研究。
+活动实测400.018766799秒；计账560.303206299秒，含未知请求完整180秒保留额；费用未知。
+Live总charged fit32、refit0，全部为前两版起点/对照；无研究候选、无实际干预、无子研究。
+最终源码有新鲜Live收据，但未通过；不得再写成“修后未测”，也不得写成“稳定闭环已证明”。
+
+A仅为350+2限定工程回归通过；整体目标及B真实行为NO-GO。C研究选择价值、D独立金融预测
+NOT_RUN，E/G6独立真人理解开放。AI初评不是专家/真人签收。当前不交给真人做正式研究验收。
+尚未关闭JSON生成、相关证据关联/配对和事实理解问题；更完整提示没有证明真实质量改善。
+下一工程建议为缩小按动作所需输出负担并核查Provider原生结构化输出支持，仍沿原路线；
+本条不是新调用或新能力授权，不执行裁剪/权重/RF。剩13HTTP不是第四版或未知投递续跑权限。
+
+操作方式仍是原工作区两入口、原诊断/完整control单轴改动及显式同Mission续接；
+认识更新和下一动作同一次响应，非法提案原子拒绝、未决证据保留，不自动修答/重试。
+本次模型设置仅隔离试验进程覆盖，.env未改，产品没有新增自动换模。旧失败保持只读，
+不得重训旧B或重签旧包。研究包用于实验审计，预测模型包仍需独立显式refit。
+中文逐题报告及精确argv/exit/源/依赖/输入/原失败/HTTP账位于
+`.evidence-iteration-20261028/REPORT.html`、`RESULTS.json`和各冻结版本目录。
+
+### 以下是同日过程记录（历史，不是剩余执行授权）
+
+### 本次逐版过程记录（历史）
+
+实际起点cdf61cb，原分支；用户新增一次整体授权，允许最多3个冻结版本、48新增
+实际HTTP/8640秒，历史39次不清零；原免费保护和仅额度错误顺序换模已明确批准。
+每版父子各<=32 charged fit、另<=1显式refit，Live总fit<=195。准确协议在原唯一
+EVIDENCE_RESEARCH_LOOP本日连续节；不是阶段2/3或真实资料研究授权。
+先消除顶层hypotheses动作列表与research_update内假设增量同名歧义，红例已保留，
+最小修补定向通过；完整联合容量/会话守卫及实际Live尚在准备，不把上批收据签新源码。
+本会话将分别测试12语义挑战及原worker父子轨迹；格式/语义失败可在总额度内修复
+后自动新版本复测，不逐版询问。最终源码须有自己的Live证据，原始失败全部保留。
+V1已真实执行并封存：13新增HTTP（12语义＋父首规划），累计52；12题7严格通过，
+5题拒绝；未再出现同版本覆盖，但仍有依赖关联、配对control、版本缺项、终止混批及
+多余分支键问题。父首规划复制压缩的状态hash/对象ID，首拒绝为状态hash不匹配；
+另引用未声明假设、混合diagnose/stop、配对control顺序错误。父16起点/对照fit，
+无候选/子/refit；无额度换模或未知投递，源/依赖/输入不变。AI语义初评还发现
+相对改善单位、父子对象及诊断能力误读，不能把7严格通过当7科学判断通过。
+V2已封存：116项同源预检通过，随后13实际HTTP，12题6严格通过；9份可解析JSON、
+3份原始语法错误，均HTTP200/stop且未耗尽输出token。父16起点/对照fit，首拒绝为
+缺research_update.choice_reason；状态hash/对象ID及初始化已正确，但特征项用ast代替
+expression、名称无gen_前缀，训练设计误用basis列表、自由question及decision字符串。
+零研究候选/子/refit；累计本会话26新增HTTP、历史合计65，原始失败及源身份14d45369保留。
+V2新输入投影v8已保留语义证据及可见问题/假设身份原文，旧v1—v7/旧hash语义不变。
+联合ON最大63931/64000字符；只是此完整冻结构造通过，不是任意历史容量保证。
+V3继续在同一授权内补准确训练/特征字段契约、明确update必填及引用作用域，并将先做
+完整受影响回归/浏览器，再真实复测最终源码；不以离线结果冒称真实闭环通过。
+原A/B未改；当前仍没有实际研究干预、父子闭环或科学价值通过结论。
+
 ## 2026-10-28 单批真实验证及最小修补（限定工程通过；真实闭环NO-GO）
 
 起点4edbf91、原分支tracked clean。用户新增批准单批合成Live，并确认当天免费用尽即停有效；

@@ -28,22 +28,47 @@ def test_schema_has_literal_nested_versions_required_fields_and_character_limits
     assert schema['$defs']['query']['properties']['schema_version']['const'] == 'evidence_diagnostic_query_v1'
     wire = protocol_contract()['output_schema']
     anchors = {v['$anchor']:k for k,v in wire['$defs'].items()}
-    def expand(v):
+    def expand(v, *, property_map=False):
         if isinstance(v, dict):
             if '$ref' in v:
                 key = anchors[v['$ref'][1:]]
                 if key.startswith('bound'): return expand(wire['$defs'][key])
                 return {'$ref':'#/$defs/'+key}
-            out = {k:expand(x) for k,x in v.items() if not k.startswith('bound') and k not in {'$anchor','description'}}
+            out = {k:expand(x, property_map=k == 'properties') for k,x in v.items()
+                   if not k.startswith('bound') and k != '$anchor' and (k != 'description' or property_map)}
             if 'minProperties' in out:
                 assert out.pop('minProperties')==len(out['properties'])
                 out['required']=list(out['properties'])
             if 'oneOf' in out:
                 choices = out.pop('oneOf')
-                out['properties']['kind']={'enum':sorted(row['properties']['kind']['const'] for row in choices)}
-                out['properties']['scope']={'enum':sorted({v for row in choices for v in row['properties']['scope']['enum']})}
-                out['allOf']=[{'if':{'properties':{'kind':row['properties']['kind']}},
-                    'then':{'properties':{'scope':row['properties']['scope']}}} for row in choices]
+                if all('kind' in row['properties'] for row in choices):
+                    out['properties']['kind']={'enum':sorted(row['properties']['kind']['const'] for row in choices)}
+                    out['properties']['scope']={'enum':sorted({v for row in choices for v in row['properties']['scope']['enum']})}
+                    out['properties']['factor']={'type':['string','null']}
+                    for row in choices:
+                        props=row['properties'];kind=props['kind']['const']
+                        if kind in {'DQ-03','DQ-06'}:
+                            pair=copy.deepcopy(out['properties']['variable_pairs']['items'])
+                            extra=props['variable_pairs']['items']
+                            pair.update({k:v for k,v in extra.items() if k!='items'})
+                            if 'items' in extra:pair['items'].update(extra['items'])
+                            if kind=='DQ-06':pair['minContains']=1
+                            props['variable_pairs']['items']=pair
+                    out['allOf']=[{'if':{'properties':{'kind':row['properties']['kind']}},
+                        'then':{'properties':{k:v for k,v in row['properties'].items() if k!='kind'}}} for row in choices]
+                elif all('recipe_id' in row['properties'] for row in choices):
+                    out['properties']['recipe_id']={'enum':sorted({r for row in choices
+                        for r in row['properties']['recipe_id']['enum']})}
+                    out['properties']['question']={'enum':sorted({q for row in choices
+                        for q in row['properties']['question']['enum']})}
+                    out['allOf']=[{'if':{'properties':{'recipe_id':{'const':recipe}}},
+                        'then':{'properties':{'question':row['properties']['question']}}}
+                        for row in choices for recipe in row['properties']['recipe_id']['enum']]
+                else:
+                    assert all('action_type' in row['properties'] for row in choices)
+                    out['allOf']=[{'if':{'properties':{'action_type':row['properties']['action_type']}},
+                        'then':{'properties':{k:v for k,v in row['properties'].items() if k!='action_type'}}}
+                        for row in choices]
             return out
         if isinstance(v, list): return [expand(x) for x in v]
         return v
@@ -245,3 +270,38 @@ def test_instruction_explains_delta_updates_and_literal_version_placement():
     assert 'evidence_research_advice_v1' in rules
     assert 'research_update=evidence_research_update_v1' in rules
     assert 'evidence_request=evidence_request_v1' in rules
+
+
+def test_actual_compact_wire_distinguishes_action_list_from_ledger_deltas(monkeypatch):
+    from finance_forecast_agent.focused_literature import compact_research_context
+    from finance_forecast_agent.llm_adapters import OpenAIJsonClient, ProviderPolicy
+
+    prompt, answer = case()
+    sent = []
+    client = OpenAIJsonClient(model='local-fixture', api_key='LOCAL_TEST_NOT_A_SECRET',
+        base_url='http://127.0.0.1:1/v1', policy=ProviderPolicy(max_http_attempts=1))
+    def fake(wire, _remaining):
+        sent.append(json.loads(wire))
+        return {'status':200, 'body':{'choices':[{'finish_reason':'stop',
+            'message':{'content':json.dumps(answer,ensure_ascii=False)}}]}}
+    monkeypatch.setattr(client, '_one_request', fake)
+    returned = client.complete_json(prompt_payload=compact_research_context(prompt), schema_name='research')
+    assert len(sent) == 1 and returned == answer
+    wire_prompt = json.loads(sent[0]['messages'][0]['content'].split('\n\n',1)[1])
+    assert wire_prompt['response_schema']['hypotheses'].startswith('动作列表')
+    assert wire_prompt['response_schema']['research_update'].startswith('认识增量')
+    assert wire_prompt['evidence_protocol_contract']['semantic_types']['versions'].startswith(
+        'research_update.questions/hypotheses为增量而非快照')
+    normalize_evidence_advice(returned, prompt)  # Empty ledger deltas remain legal.
+    empty_actions = copy.deepcopy(returned)
+    empty_actions['hypotheses'] = []
+    with pytest.raises(ValueError):
+        normalize_evidence_advice(empty_actions, prompt)
+    rewritten_snapshot = copy.deepcopy(returned)
+    original = copy.deepcopy(prompt['evidence_research']['state']['hypotheses']['h1'][-1])
+    original['claim'] += '，改写旧版本。'
+    rewritten_snapshot['research_update']['hypotheses'] = [original]
+    before = copy.deepcopy(prompt['evidence_research']['state'])
+    with pytest.raises(ValueError, match='hypothesis version cannot overwrite'):
+        normalize_evidence_advice(rewritten_snapshot, prompt)
+    assert prompt['evidence_research']['state'] == before

@@ -28,7 +28,7 @@ FORM_FIELDS = {
     'mode', 'entry_mode', 'starting_config', 'change_scope', 'allowed_feature_groups', 'research_notes',
     'preset', 'budget', 'fixture_dir', 'replay_call_ids', 'literature_project', 'literature_review_ids',
     'data_consent', 'live_consent', 'feature_strategy', 'diagnostic_mode',
-    'research_protocol_id', 'evidence_send_consent',
+    'research_protocol_id', 'evidence_send_consent', 'advisor_wire_version',
 }
 BUDGET_FIELDS = {'max_rounds', 'max_new_candidates_per_round', 'max_fit_calls', 'max_advisor_calls',
                  'max_http_requests', 'max_provider_seconds'}
@@ -102,6 +102,10 @@ class WorkspaceUI:
                     raise PermissionError('New evidence protocol requires explicit consent for question/history/parent evidence sends')
                 from finance_forecast_agent.research_state import evidence_send_manifest
                 options['evidence_send_authorization']=evidence_send_manifest()
+        if form.get('advisor_wire_version') is not None:
+            from finance_forecast_agent.focused_persistence import validate_advisor_wire_options
+            options['advisor_wire_version'] = form['advisor_wire_version']
+            validate_advisor_wire_options(options)
         if form.get('diagnostic_mode') is not None:
             options['diagnostic_mode'] = form['diagnostic_mode']
         if 'feature_strategy' in form:
@@ -177,7 +181,8 @@ class WorkspaceUI:
             context_mode='compact_v1', replay_call_ids=options.get('replay_call_ids'),
             raw_history=raw_history, feature_strategy=options.get('feature_strategy'),
             research_protocol_id=options.get('research_protocol_id'),
-        evidence_send_authorization=options.get('evidence_send_authorization'),
+            advisor_wire_version=options.get('advisor_wire_version'),
+            evidence_send_authorization=options.get('evidence_send_authorization'),
             diagnostic_mode=options.get('diagnostic_mode'), use_memory_prior=not bool(options.get('diagnostic_mode')))
         controller.split_spec.build_splits(len(frame))
         if budget.max_fit_calls < controller.required_initial_fit_calls():
@@ -210,6 +215,8 @@ class WorkspaceUI:
             from finance_forecast_agent.focused_methods import method_capability
             preview['method_capability'] = method_capability()
             if controller.research_protocol_id:preview['research_protocol_id']=controller.research_protocol_id
+            if options.get('advisor_wire_version') is not None:
+                preview['advisor_wire_version'] = options['advisor_wire_version']
         return request, preview
 
     def preflight(self, form: dict) -> dict:

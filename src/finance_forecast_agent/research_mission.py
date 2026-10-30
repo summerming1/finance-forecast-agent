@@ -277,14 +277,15 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
                              start_immediately=True):
     """Validate without fitting, hold task, persist Mission link, then dispatch."""
     from .focused_adaptive import EvidenceIndex
-    from .focused_persistence import submit_focused_campaign
+    from .focused_persistence import submit_focused_campaign, validate_advisor_wire_options
     from .focused_protocol import FocusedSplitSpec
     from .focused_research import DEFAULT_BASELINES, FocusedResearchController, ResearchBudget
     store, project = _workspace_project(state_path, project_id, tenant_id)
     options = json.loads(json.dumps(options or {}))
-    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode','continuation_from','feature_strategy','diagnostic_mode','research_protocol_id','evidence_send_authorization'}
+    allowed_options = {'input_contract','starting_baseline','entry_mode','change_scope','allowed_feature_groups','research_notes','reviewed_evidence','replay_call_ids','literature_review_ids','literature_project','context_mode','continuation_from','feature_strategy','diagnostic_mode','research_protocol_id','evidence_send_authorization','advisor_wire_version'}
     if not isinstance(options,dict) or set(options)-allowed_options:
         raise ValueError('unsupported workspace options')
+    validate_advisor_wire_options(options)
     if options.get('change_scope') == 'feature_window':
         options.setdefault('diagnostic_mode', 'on')
     evidence_input = options.get('reviewed_evidence') or []
@@ -311,6 +312,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
         task=FocusedTaskSpec(exposure=snapshot.exposure) if snapshot.feature_protocol else FocusedTaskSpec(),
         raw_history=raw_history, feature_strategy=options.get('feature_strategy'),
         research_protocol_id=options.get('research_protocol_id'),
+        advisor_wire_version=options.get('advisor_wire_version'),
         evidence_send_authorization=options.get('evidence_send_authorization'),
         diagnostic_mode=options.get('diagnostic_mode'), use_memory_prior=not bool(options.get('diagnostic_mode')),
         budget=budget, advisor_mode=advisor_mode, feature_specs=specs, input_provenance=provenance,

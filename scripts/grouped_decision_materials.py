@@ -1,0 +1,210 @@
+"""Four new frozen numerical probes, synthesized before any Live answer.
+
+These use fresh deterministic price/prediction paths and recompute ALL diagnostic
+subviews through the original dispatcher. Local expectations are never sent.
+They are not market observations, actual fits, or independent human evaluation.
+Original twelve exercises and their bytes remain unchanged.
+"""
+import copy
+
+import numpy as np
+from evidence_repair_materials import _artifact, _candidate, _result
+
+from finance_forecast_agent.focused_data import FocusedTaskSpec
+from finance_forecast_agent.focused_diagnostics import (
+    correlation_summary,
+    dispatch_diagnostic_query,
+    query_projection,
+    research_policy,
+    volatility_groups,
+)
+from finance_forecast_agent.focused_feature_program import feature_capability
+from finance_forecast_agent.focused_identity import identity
+from finance_forecast_agent.focused_methods import method_capability
+from finance_forecast_agent.focused_research import (
+    ResearchBudget,
+    advisor_prompt,
+)
+from finance_forecast_agent.research_state import (
+    empty_state,
+    measure_prompt,
+    project_pending,
+    protocol_contract,
+    reduce_update,
+    response_contract,
+)
+
+
+def build_numeric_case(index: int, control_mae: float, fold_errors: tuple[float, ...], seed: int):
+    """Recompute every synthetic numerical view from one new prediction path."""
+    topic, variant, case_id = 4, 0, f'numeric-{510000+index}'
+    owner='synthetic-parent' if topic==5 else 'synthetic-current'
+    start=_candidate('start');other=_candidate('comparison',rolling=True)
+    if len(fold_errors) != 4 or not control_mae > 0 or any(v < 0 for v in fold_errors):
+        raise ValueError('four nonnegative fold errors and positive control MAE required')
+    control_errors=np.full(252,control_mae)
+    errors=np.repeat(np.asarray(fold_errors,dtype=float),63)
+    # A single synthetic return path owns prices, lagged factors, next-session
+    # labels and frozen volatility masks. No overlay contradicts another view.
+    rng=np.random.default_rng(seed);returns=rng.normal(0.,.01,1100)
+    rho=(.95 if variant==0 else .15) if topic==0 else .5
+    for i in range(1,821):returns[i]=rho*returns[i-1]+returns[i]
+    evaluation=np.sin(np.arange(252)*.5)
+    evaluation[:126]/=np.std(evaluation[:126]);evaluation[126:]/=np.std(evaluation[126:])
+    evaluation[:126]*=.003;evaluation[126:]*=.006
+    returns[821:1073]=evaluation
+    n_tail=((2 if variant==0 else 20) if topic==3 else 0 if topic==1 else 5)
+    returns[821:821+n_tail]=.2
+    prices=250*np.cumprod(1+returns)
+    returns=np.r_[np.nan,prices[1:]/prices[:-1]-1]
+    data_id=identity(prices.tolist(),domain='synthetic-semantic-prices-v1')
+    start_art=_artifact(start,control_errors,returns,data_id);other_art=_artifact(other,errors,returns,data_id)
+    objects={'start':start,'comparison':other}
+    if topic==2 and variant==0:objects={'start':start}
+    facts={};base=_result(start,start_art);prior=[]
+    if 'comparison' in objects:prior=[_result(other,other_art)]
+    corr={**correlation_summary(returns[64:820],returns[63:819]),
+        'variables':['return_1','return_lag_1'],'scope':'first_fold_selected_train'}
+    # Derive frozen group n/MAE using the real dispatcher; synthetic masks are
+    # explicitly not actual fit receipts. No source row array goes into payload.
+    raw_splits=[(np.arange(64,820+i*63),np.arange(821+i*63,884+i*63)) for i in range(4)]
+    groups=volatility_groups(prices,raw_splits)
+    for g in groups:
+        g['raw_rows']=g['rows'];g['rows']=[i-64 for i in g['rows']]
+    group_query={'schema_version':'evidence_diagnostic_query_v1','kind':'DQ-05',
+        'object_ids':['start'],'scope':'development_oof','variable_pairs':[], 'factor':None,'parameters':{}}
+    group=query_projection(dispatch_diagnostic_query(group_query,{'start':{'artifact':start_art,
+        'method_identity':start.config_identity,'variables':{},'training_receipts':[],
+        'diagnostic':{'volatility_groups':groups}}},campaign_id=owner))
+    group.pop('compute_wall_seconds',None)
+    query_objects={cid:{'artifact':art,'method_identity':objects[cid].config_identity,
+        'variables':{'return_1':returns[64:]},
+        'training_receipts':[{'fold_id':i,'selected_train':
+            list(range(0 if cid=='start' else 756+i*63-504,756+i*63)),
+            'provenance':'assistant_authored_scope_fixture_NOT_actual_fit_receipt'} for i in range(4)],
+        'diagnostic':{}} for cid,art in [('start',start_art),('comparison',other_art)] if cid in objects}
+    tail_query={'schema_version':'evidence_diagnostic_query_v1','kind':'DQ-04',
+        'object_ids':['comparison','start'] if 'comparison' in objects else ['start'],
+        'scope':'development_oof','variable_pairs':[],'factor':'return_1','parameters':{}}
+    tail_result=query_projection(dispatch_diagnostic_query(tail_query,query_objects,campaign_id=owner))
+    values=[r['values'] for r in tail_result['results']]
+    total_tail=sum(v['n_tail'] for v in values);total_other=sum(v['n_other'] for v in values)
+    tail={'n_tail':total_tail,'n_other':total_other,'original_n':252,'low_support':total_tail<10,
+        'scientific_support':'not_established','folds':tail_result['results']}
+    for field,n in [('tail_mae',total_tail),('other_mae',total_other)]:
+        group_name='n_tail' if field=='tail_mae' else 'n_other'
+        tail[field]=sum(v[field]*v[group_name] for v in values if v[field] is not None)/n if n else None
+    if 'comparison' in objects:
+        tail['tail_loss_delta']=sum(v['tail_loss_delta']*v['n_tail'] for v in values if v['tail_loss_delta'] is not None)/total_tail if total_tail else None
+        tail['direction']='candidate_minus_control_positive_is_worse'
+    target=np.array([r['y_true'] for r in start_art['rows']])
+    body={'correlation':corr,'tail':tail,'groups':group,
+        'synthetic_input_identity':data_id,
+        'label_source':'next_session_return_from_same_synthetic_adjusted_close_path',
+        'target_volatility_change':float(np.std(target[126:])/np.std(target[:126])),
+        'target_volatility_periods':{'first_n':126,'last_n':126,
+            'first_std':float(np.std(target[:126])),'last_std':float(np.std(target[126:]))},
+        'control':{'candidate_id':'start','mae':base.metrics['mae'],'folds':base.fold_metrics},
+        'candidate':({'candidate_id':'comparison','mae':prior[0].metrics['mae'],
+            'folds':prior[0].fold_metrics,'loss_delta':prior[0].metrics['mae']-base.metrics['mae']}
+            if prior else None)}
+    eid=owner+':fact:'+identity(body,domain='synthetic-semantic-fact-v1')
+    hrefs=[['h1',2],['h2',1]] if topic==5 else [['h1',1]]
+    facts[eid]={'kind':'diagnostic','owner_campaign_id':owner,'hypothesis_refs':hrefs,
+        'result':body,'provenance':'simulation_only/assistant_authored_prediction_fixture_no_fits'}
+    state=empty_state()
+    update={'schema_version':'evidence_research_update_v1','base_state_hash':state['state_hash'],
+        'questions':[{'id': 'q','goal': '改进冻结日收益预测方法','scope': 'development_only',
+            'basis_refs': [],'importance': '有限预算内可检验研究','status': 'active'}],
+        'hypotheses':[{'id': h,'version': 1,'question_id': 'q','claim': claim,
+            'conditions': '相同任务、共同目标和已接受完整控制','support_refs': [],'counter_refs': [],
+            'alternatives': '噪声和未检验条件仍可能解释结果','status': 'active'}
+            for h,claim in [('h1','输入关系或误差分布可能影响局部方法效果')]
+            +([('h2','训练历史的适用性可能影响局部方法效果')] if topic==5 else [])],
+        'evidence_assessments':[],'choice_reason':'隔离合成研究起点，不是已证明原因'}
+    state=reduce_update(state,update,{},owner+':plan:0')
+    if topic==5:
+        h=copy.deepcopy(state['hypotheses']['h1'][-1]);h.update(version=2,claim='先前认识仍待父末批结果区分')
+        update.update(base_state_hash=state['state_hash'],questions=[],hypotheses=[h])
+        state=reduce_update(state,update,{},owner+':plan:1')
+    state=project_pending(state,facts)
+    planning_base=base;planning_prior=prior;planning_objects=objects;planning_start=start
+    if topic==5:
+        # Parent evidence is not a free child control. The child has only its
+        # freshly represented complete inherited rolling method and own start
+        # predictions; identical method/data/seed gives the same numeric result.
+        planning_start=_candidate('start',rolling=True)
+        planning_base=_result(planning_start,_artifact(planning_start,errors,returns,data_id))
+        planning_prior=[];planning_objects={'start':planning_start}
+    charged=16+(4 if planning_prior else 0)
+    p=advisor_prompt(round_index=1 if topic==5 else 2,task=FocusedTaskSpec(exposure='simulation_only'),
+        baseline_results=[planning_base],prior_results=planning_prior,budget=ResearchBudget(max_rounds=2,
+            max_fit_calls=20 if topic==3 else 32,
+            max_advisor_calls=2,max_http_requests=2,max_provider_seconds=360),
+        resource_usage={'charged_fit_calls':charged},advisor_calls_used=0 if topic==5 else 1)
+    p.update(case_id=case_id,provenance='simulation_only/assistant_authored_semantic_fixture',
+        fixture_note='All numeric evidence is synthesized and computed, not market observations or actual model fit receipts. Choose an allowed next step; no tools are executed for this exercise.',
+        research_protocol_id='evidence_research_v1',proposal_contract_version='evidence_research_advice_v1',
+        change_scope='feature_window',research_start_candidate_id='start',fixed_model=planning_start.to_dict(),
+        available_objects=list(planning_objects),available_variables=['return_1','return_lag_1','prediction','target'],
+        accepted_methods={k:v.to_dict() for k,v in planning_objects.items()},
+        feature_capability=feature_capability(),method_policy=method_capability(),
+        feature_policy={'arm':'adaptive_batch','search_seed':42,'max_decisions':2,
+            'slots_per_decision':2,'max_proposal_slots':4,'execution_unit_size':2},
+        diagnostic_research_policy=research_policy(),
+        response_schema=response_contract(),evidence_protocol_contract=protocol_contract(),
+        evidence_research={'owner_campaign_id':'synthetic-child' if topic==5 else owner,
+            'state':state,'evidence':facts,'reference':False},
+        research_design_contract={
+            'fields':['recipe_id','question','basis','competing_explanation','falsification_condition','symptom_refs','decision_version','decision'],
+            'recipe_action':{'improve':'RCP-01: overall|high_volatility','ablate':'RCP-02: contribution',
+                'simplify':'RCP-03: simplification','diagnose':'RCP-04|RCP-05: diagnose'},
+            'basis':['domain_hypothesis','visible_evidence'],
+            'decision_version':'research_decision_v1',
+            'decision':{'visible_basis':'{kind:domain_hypothesis|visible_evidence,evidence_refs:[],description:nonempty string}',
+                'experiment_question':'nonempty string','priority_reason':'nonempty string',
+                'feedback_update':'{supports,weakens,not_distinguished,next_step}: nonempty strings'},
+            'limits':'All design strings total<=1000, per text<=2000, refs<=8. Stop/review needs no design.'})
+    p['rules']=[r for r in p['rules'] if not r.startswith(('Return exactly','diagnose uses','ablate declares','simplify must','A simpler'))]
+    p['allowed_models']=['ridge_regression']
+    p['rules'] += [
+        'Return EXACTLY schema_version/research_update/hypotheses using response_schema and evidence_protocol_contract. No extra top-level fields.',
+        'Fixed StandardScaler+Ridge alpha=10, seed42, base_lags, uniform fit weights. No clipping, new model, HPO, time weights or arbitrary code.',
+        'improve/ablate/simplify starts from an accepted complete method; parent=control. Change only declared_axis features (full FeatureProgram) OR training_window (expanding/rolling504/756). Maximum 2 generated features including inherited.',
+        'FeatureProgram exact keys schema_version,capability_id,capability_hash,features. Each feature {name:gen_<name>,expression:AST}. Input AST {op:input,name:return_1}; lag {op,arg,periods}; rolling_mean/rolling_std {op,arg,window}; abs {op,arg}; binary {op,left,right}. Full original keys, no executable placeholders.',
+        'Training requires research_design_contract; diagnose uses a complete evidence_request/query with no model fields. stop/review sole action, no model/design fields. Every action requires nonempty statement.',
+        'Use visible evidence with scope and uncertainty; assessed does not mean proven. Related pending must be assessed or explicitly deferred under the exact hypothesis/version. No extra reflection call. Do not fabricate results or use future same-batch objects.']
+    p['action_contracts'].update(improve='parent=control, one declared_axis, complete inherited other axis, research_design',
+        ablate='declared_axis=features, parent=control, ablation_component=generated_feature:<actual inherited name>, research_design',
+        simplify='declared_axis=features, parent=control, full smaller feature_program, simplification_dimension=feature_count|nodes|depth, research_design',
+        diagnose='control_candidate_id plus evidence_request with full query, no legacy diagnostic/model fields')
+    from finance_forecast_agent.research_state import apply_output_guidance
+    apply_output_guidance(p)
+    measure_prompt(p)
+    return p
+
+
+
+def prepare_numeric_cases():
+    specs = [
+        (1, .03, (.0315, .0285, .0285, .0285), 2026102901),
+        (2, .025, (.02494,) * 4, 2026102902),
+        (3, .025, (.024935,) * 4, 2026102903),
+        (4, .018, (.0162, .0189, .0189, .0189), 2026102904),
+    ]
+    entries=[]
+    for index,control,folds,seed in specs:
+        payload=build_numeric_case(index,control,folds,seed)
+        body=next(iter(payload['evidence_research']['evidence'].values()))['result']
+        actual_control=body['control']['mae'];actual_candidate=body['candidate']['mae']
+        ratio=(actual_control-actual_candidate)/actual_control
+        deltas=[c['mae']-b['mae'] for c,b in zip(body['candidate']['folds'],body['control']['folds'],strict=True)]
+        entries.append({'case_id':payload['case_id'],'payload':payload,
+            'local_expected_NOT_SENT':{'control_mae':actual_control,'candidate_mae':actual_candidate,
+                'relative_improvement_ratio':ratio,'relative_improvement_percent':100*ratio,
+                'threshold_ratio':.0025,'threshold_percent':.25,'meets_relative_threshold':ratio>=.0025,
+                'fold_deltas':deltas,'improved':sum(d<0 for d in deltas),
+                'worsened':sum(d>0 for d in deltas),'flat':sum(d==0 for d in deltas),
+                'scientific_support':'not_established'},
+            'provenance':'simulation_only_fresh_numeric_material_original_dispatch_no_actual_fits'})
+    return entries

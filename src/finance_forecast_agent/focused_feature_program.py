@@ -9,6 +9,7 @@ import json
 import random
 import re
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Any
 
 import numpy as np
@@ -20,6 +21,30 @@ PRICE_GROUPS = ("base_lags", "momentum", "volatility")
 PROGRAM_SCHEMA = "feature_program_v1"
 CANDIDATE_SCHEMA = "focused_candidate_v3"
 FEATURE_PROTOCOL = "feature_research_dev_v1"
+PROGRAM_FIELDS = {"schema_version", "capability_id", "capability_hash", "features"}
+GENERATED_FEATURE_FIELDS = {"name", "expression"}
+GENERATED_FEATURE_NAME = r"gen_[a-z][a-z0-9_]{0,47}"
+AST_NODE_FIELDS = MappingProxyType({
+    "input": frozenset({"op", "name"}), "abs": frozenset({"op", "arg"}),
+    "lag": frozenset({"op", "arg", "periods"}),
+    **{op:frozenset({"op", "arg", "window"}) for op in ("rolling_mean", "rolling_std")},
+    **{op:frozenset({"op", "left", "right"}) for op in ("add", "subtract", "multiply", "safe_divide")},
+})
+
+
+def ast_field_contract() -> dict:
+    """New-wire syntax guide from the original exact validator field sets."""
+    groups = {}
+    for op, fields in AST_NODE_FIELDS.items():
+        groups.setdefault(tuple(sorted(fields)), []).append(op)
+    return {"|".join(ops):list(fields) for fields,ops in groups.items()}
+
+
+def program_field_contract() -> dict:
+    """Input-only shape from the same field/name constants as the compiler."""
+    return {"program": sorted(PROGRAM_FIELDS), "feature": sorted(GENERATED_FEATURE_FIELDS),
+            "name_pattern": GENERATED_FEATURE_NAME,
+            "binding": "schema_version=feature_capability.program_schema；capability_id/hash复制原值；expression为合法AST，禁ast键。"}
 
 
 def feature_capability() -> dict:
@@ -63,13 +88,13 @@ def expression_complexity(expression: dict) -> dict[str, int]:
             raise ValueError("feature expression needs a declared operator")  # noqa: TRY004 - JSON schema violation
         op = node["op"]
         if op == "input":
-            _fields(node, {"op", "name"}, "input")
+            _fields(node, AST_NODE_FIELDS[op], "input")
             if node["name"] != "return_1":
                 raise ValueError("feature input must be return_1; labels/external code are forbidden")
             return 1, depth
         if op in {"abs", "lag", "rolling_mean", "rolling_std"}:
             parameter = "periods" if op == "lag" else "window"
-            _fields(node, {"op", "arg"} if op == "abs" else {"op", "arg", parameter}, op)
+            _fields(node, AST_NODE_FIELDS[op], op)
             extra = 0
             if op != "abs":
                 value = node[parameter]
@@ -80,7 +105,7 @@ def expression_complexity(expression: dict) -> dict[str, int]:
             lookback, deepest = walk(node["arg"], depth + 1)
             lookback += extra
         elif op in {"add", "subtract", "multiply", "safe_divide"}:
-            _fields(node, {"op", "left", "right"}, op)
+            _fields(node, AST_NODE_FIELDS[op], op)
             left, left_depth = walk(node["left"], depth + 1)
             right, right_depth = walk(node["right"], depth + 1)
             lookback, deepest = max(left, right), max(left_depth, right_depth)
@@ -95,7 +120,7 @@ def expression_complexity(expression: dict) -> dict[str, int]:
 
 
 def validate_feature_program(payload: dict) -> dict:
-    _fields(payload, {"schema_version", "capability_id", "capability_hash", "features"}, "feature program")
+    _fields(payload, PROGRAM_FIELDS, "feature program")
     cap = feature_capability()
     if payload["schema_version"] != PROGRAM_SCHEMA:
         raise ValueError("unknown feature program schema")
@@ -106,9 +131,9 @@ def validate_feature_program(payload: dict) -> dict:
         raise ValueError("feature program exceeds feature count capability")
     names = set()
     for feature in features:
-        _fields(feature, {"name", "expression"}, "generated feature")
+        _fields(feature, GENERATED_FEATURE_FIELDS, "generated feature")
         name = feature["name"]
-        if not isinstance(name, str) or not re.fullmatch(r"gen_[a-z][a-z0-9_]{0,47}", name):
+        if not isinstance(name, str) or not re.fullmatch(GENERATED_FEATURE_NAME, name):
             raise ValueError("generated feature name must be a bounded gen_ identifier")
         if name in names:
             raise ValueError("duplicate generated feature name")

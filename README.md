@@ -1,5 +1,46 @@
 # Finance Forecast Agent
 
+## 2026-10-30 真实研究闭环收口：最终实际结果
+
+实际状态唯一入口为[Current](docs/CURRENT_IMPLEMENTATION.md)与原[ER](docs/EVIDENCE_RESEARCH_LOOP.md)：A=PASS_BOUNDED，B=NO-GO，C/D未验，E/G6开放。本批已到6版本硬上限，真实调用封存；不能凭旧余额继续。精确源码/命令/exit、1205回归节点与6条独立串行浏览器、原始失败及7次HTTP账见`.research-closeout-20261030/final-report4/REPORT.html`及同目录FINAL_REPORT.json。工程限定通过不代表真实研究闭环、金融或真人验收通过；下方旧日期状态保留为历史。
+
+本轮修补：新鲜请求显式C3冷启动要求真实Q/H与非终止动作精确版本关联，原R1/R2及终止/reference边界保留；typed测量从原DQ注册/校验生成，单/双对象、scope/变量/返回量与真实分发同源；方法收据来自实际完整accepted control，生成表仅替换生成特征列表，内置组/模型/未改轴仍继承；数值辅助新增fold_id/facet/scope_ref定位但不删原事实；原UI/研究报告并列显示实际查询/控制与原科学文字，不自动改写或假称语义一致。完整Schema优先、容量超限时才等价共享；旧wire/decoder/fixture/hash不迁移。局部试验、总体冻结推荐与机制/子组判断分开，原MAE/0.0025、两规划四槽、总32fit和显式refit规则未改。
+
+实际操作见docs/FRONTEND_USER_GUIDE.md；本次没有推送或远端CI。
+
+## 2026-10-29 关联决策修补与最终验收（保留此前历史）
+
+最终完整工作区（含测试）c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9；实际V3 Live完整工作区e3fd417cb4cef778d0d68ae175c0d0137167456a42666047bdf10861d338b528。生产src/apps/scripts及pyproject逐字相同；唯一后续修改是新测试临时目录d→gd、全部断言保留，当前test-fixed工作区已重生成20个packet，与实际V3保存的20个payload逐字相等，HTTP0/fit0；随后重跑完整final4/browser4/static8。独立TEST_ONLY_FIX_AUDIT确认327ZIP、145份src/apps/scripts文件及另核pyproject（共146个功能/配置条目）、30个assert AST。原完整final3失败exit1及12项定向通过均保留，不能互相替代。无新增Provider，这不是第四个功能Live版本。
+
+新研究可在原三步工作区显式选择“关联决策 v3：证据处理与下一步”；默认完整接口和旧批次保持原格式。它将假设版本、事实处理与动作放在同一决策组，提供有来源的中文数值阅读辅助，仍由确定性代码裁决是否合法、是否执行及是否推荐。
+
+使用顺序：确定目标/受支持起点→确认数据与权限→选V2.5两轴、证据协议及v3接口→核对运行模式/总32fit与发送范围→预检→确认运行→查看事实、解释、未决关系与逐轮动作。研究包先读REPORT.html；模型包要另行明确refit，研究包本身不是预测模型。
+
+本轮最终工程限定工程回归通过，真实LLMNO-GO：真实LLM仍未完成研究闭环；研究选择优势、独立预测、真人价值分别C/D未验、E/G6开放；不是用真人接手JSON或技术排错。具体源码、测试/Live失败和实际操作以[Current](docs/CURRENT_IMPLEMENTATION.md)及[唯一合同](docs/EVIDENCE_RESEARCH_LOOP.md)为准。
+额度推进的实测范围为本轮隔离驱动器；产品自动路由及其余四模型未作Live验证。四份额外数值材料在各版复用，不作盲测或独立泛化证明。
+本节是本轮最新状态；下方同日或较早的“当前/收尾”均为此前会话历史快照，不能替代本节。
+
+
+
+## 2026-10-29 实际收尾入口
+
+最新实际状态见 [Current](docs/CURRENT_IMPLEMENTATION.md) 与原唯一 [ER合同](docs/EVIDENCE_RESEARCH_LOOP.md)。最终源 `701da0700f4d`
+有328项限定回归、4条串行浏览器和自身真实调用；工程通过，真实闭环仍NO-GO。
+原题严格率5/12→10/12，身份3/4→2/4；最终父因未处理所用证据被拒，不能拼旧版父成功。
+新增40HTTP，全同1017/false/nativeJSON，历史74保留；C/D未验、真人G6开放。
+以下较早“当前/latest”均是对应日期历史快照，不替代本日Current。不重训旧B或改旧hash。
+
+## 2026-10-28 continuous repair and real-model result
+
+The final source was tested with350 scoped regressions and2 serial browser
+flows passing, then real `deepseek-v4.1-flash` calls with thinking disabled.
+Real research remains **NO-GO**: final8 known replies were rejected and a9th
+ProxyError/unknown delivery stopped the session. No research candidate or
+parent/child loop was completed by any Live version; no paid/model fallback
+or original A/B retraining occurred. See [Current](docs/CURRENT_IMPLEMENTATION.md)
+and [the sole contract](docs/EVIDENCE_RESEARCH_LOOP.md) for source-bound evidence.
+The new precise input contracts and lossless references do not prove research value.
+
 ## 2026-10-27 output-contract and rejection UX hardening
 
 The new evidence protocol has field-local structural guidance and concise research

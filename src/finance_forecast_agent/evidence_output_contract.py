@@ -31,6 +31,26 @@ FIELDS = {
 SCOPES = {'DQ-01': ['selected_train'], 'DQ-02': ['development_oof'],
     'DQ-03': ['selected_train', 'calibration'], 'DQ-04': ['development_oof'],
     'DQ-05': ['development_oof'], 'DQ-06': ['selected_train', 'development_oof']}
+RELATION_QUERY_KINDS = frozenset({'DQ-03', 'DQ-06'})
+NON_FACTOR_VARIABLES = frozenset({'target', 'prediction'})
+TARGET_VARIABLE = 'target'
+QUERY_PAIR_LIMIT = 8
+RESEARCH_RECIPES = {'RCP-01':'overall','RCP-02':'contribution','RCP-03':'simplification',
+                    'RCP-04':'diagnose','RCP-05':'diagnose'}
+DESIGN_ACTION_RECIPES = {'improve':frozenset({'RCP-01'}),'ablate':frozenset({'RCP-02'}),
+                       'simplify':frozenset({'RCP-03'}),'diagnose':frozenset({'RCP-04','RCP-05'})}
+DESIGN_RECIPE_QUESTIONS = {recipe:frozenset({'overall','high_volatility'}) if recipe=='RCP-01'
+                         else frozenset({question}) for recipe,question in RESEARCH_RECIPES.items()}
+DESIGN_FIELDS = ('recipe_id','question','basis','competing_explanation','falsification_condition')
+DESIGN_OPTIONAL_FIELDS = ('symptom_refs','decision_version','decision')
+BASIS_KINDS = frozenset({'domain_hypothesis','visible_evidence'})
+DECISION_VERSION = 'research_decision_v1'
+DECISION_FIELDS = ('visible_basis','experiment_question','priority_reason','feedback_update')
+VISIBLE_BASIS_FIELDS = ('kind','evidence_refs','description')
+DECISION_FEEDBACK_FIELDS = ('supports','weakens','not_distinguished','next_step')
+DESIGN_TEXT_LIMIT = 2000
+DESIGN_TOTAL_LIMIT = 1000
+DECISION_REF_LIMIT = 8
 
 
 def _text(limit=TEXT_LIMIT):
@@ -46,7 +66,7 @@ def _object(properties, required=None):
         'required': list(properties) if required is None else required, 'additionalProperties': False}
 
 
-def output_schema(*, reference=False, max_actions=2):
+def output_schema(*, reference=False, max_actions=2, require_j=False):
     """Literal versions and field-local bounds; semantic links remain original gates."""
     ref = lambda key: {'$ref': '#/$defs/'+key}
     enum = lambda values: {'enum': sorted(values)}
@@ -68,13 +88,39 @@ def output_schema(*, reference=False, max_actions=2):
     defs['query'] = _object({'schema_version': {'const': QUERY}, 'kind': enum(SCOPES),
         'object_ids': {**_array({'type': 'string'}, 2, 1), 'uniqueItems': True},
         'scope': enum({s for values in SCOPES.values() for s in values}),
-        'variable_pairs': _array(_array({'type': 'string'}, 2, 2), 8),
+        'variable_pairs': _array(_array({'type': 'string'}, 2, 2), QUERY_PAIR_LIMIT),
         'factor': {'type': ['string', 'null']}, 'parameters': {'const': {}}})
     defs['query']['allOf'] = [{'if': {'properties': {'kind': {'const': kind}}},
         'then': {'properties': {'scope': {'enum': scopes}}}} for kind, scopes in SCOPES.items()]
+    for rule in defs['query']['allOf']:
+        kind=rule['if']['properties']['kind']['const'];props=rule['then']['properties']
+        props['factor'] = ({'type':'string','minLength':1,'not':enum(NON_FACTOR_VARIABLES)}
+                           if kind=='DQ-04' else {'const':None})
+        if kind in RELATION_QUERY_KINDS:
+            pair = _array({'type':'string'},2,2)
+            if kind=='DQ-03':pair['items']['not']=enum(NON_FACTOR_VARIABLES)
+            else:pair.update(contains={'const':TARGET_VARIABLE},minContains=1,maxContains=1)
+            props['variable_pairs'] = {'minItems':1,'items':pair}
+        else:props['variable_pairs']={'const':[]}
     defs['request'] = _object({'schema_version': {'const': REQUEST}, 'id': _text(ID_LIMIT), 'question': _text(),
         'expected': _text(), 'branches': ref('branches'), 'depends_on': refs,
         'query': {'anyOf': [{'type': 'null'}, ref('query')]}})
+    # Same nested shapes and limits as bind_design/validate_decision. Aggregate
+    # design text remains the original compiler's policy-bound 1000-char gate.
+    text = _text(DESIGN_TEXT_LIMIT)
+    defs['design_basis'] = _object({'kind':enum(BASIS_KINDS),
+        'evidence_refs':_array({'type':'string'},DECISION_REF_LIMIT),'description':text})
+    defs['design_feedback'] = _object({key:text for key in DECISION_FEEDBACK_FIELDS})
+    defs['design_decision'] = _object({'visible_basis':ref('design_basis'),
+        'experiment_question':text,'priority_reason':text,'feedback_update':ref('design_feedback')})
+    defs['research_design'] = _object({'recipe_id':enum(RESEARCH_RECIPES),
+        'question':enum({q for qs in DESIGN_RECIPE_QUESTIONS.values() for q in qs}),
+        'basis':enum(BASIS_KINDS),'competing_explanation':text,'falsification_condition':text,
+        'symptom_refs':{'type':'array','items':{'type':'string'}},
+        'decision_version':{'const':DECISION_VERSION},'decision':ref('design_decision')},list(DESIGN_FIELDS))
+    defs['research_design']['dependentRequired']={'decision':['decision_version'],'decision_version':['decision']}
+    defs['research_design']['allOf']=[{'if':{'properties':{'recipe_id':{'const':recipe}}},
+        'then':{'properties':{'question':enum(questions)}}} for recipe,questions in DESIGN_RECIPE_QUESTIONS.items()]
     # Original action/program/design compiler owns its existing mathematical DSL
     # and field-specific limits. Do not invent a new 320 limit for those fields.
     originals = ('mechanism parent_candidate_id control_candidate_id model_family model_params feature_groups seed '
@@ -86,7 +132,7 @@ def output_schema(*, reference=False, max_actions=2):
         declared_axis=enum({'features', 'training_window'}),
         hypothesis_refs=_array({'type': 'array', 'prefixItems': [_text(ID_LIMIT), integer],
             'minItems': 2, 'maxItems': 2}, 3),
-        evidence_request={'anyOf': [{'type': 'null'}, ref('request')]})
+        evidence_request={'anyOf': [{'type': 'null'}, ref('request')]},research_design=ref('research_design'))
     defs['action'] = _object(action, ['action_type', 'statement'])
     defs['action']['allOf'] = [
         {'if': {'properties': {'action_type': {'const': 'diagnose'}}},
@@ -96,20 +142,32 @@ def output_schema(*, reference=False, max_actions=2):
         {'if': {'properties': {'action_type': {'enum': ['improve', 'ablate', 'simplify']}}},
          'then': {'required': ['parent_candidate_id', 'control_candidate_id', 'declared_axis', 'research_design', 'hypothesis_refs'],
              'properties': {'hypothesis_refs': {'minItems': 1}}}}]
+    if require_j:
+        defs['action']['allOf'][1]['then']['properties']['research_design']={'required':['decision_version','decision']}
+    defs['action']['allOf'][0]['then']['properties']['research_design']={
+        'properties':{'recipe_id':enum(DESIGN_ACTION_RECIPES['diagnose'])}}
+    defs['action']['allOf'][1]['then']['allOf']=[
+        {'if':{'properties':{'action_type':{'const':action_type}}},
+         'then':{'properties':{'research_design':{'properties':{'recipe_id':enum(recipes)}}}}}
+        for action_type,recipes in DESIGN_ACTION_RECIPES.items() if action_type!='diagnose']
     for name in ('update', 'question', 'hypothesis', 'assessment', 'request', 'branches', 'query'):
         assert set(defs[name]['required']) == set(FIELDS[name].split())
+    actions = _array(ref('action'), max_actions, 1)
+    # Existing compiler gate: a terminal decision occupies the whole batch.
+    actions['not'] = {'minItems': 2, 'contains': {'properties': {
+        'action_type': enum({'stop', 'request_review'})}}}
     return {**_object({'schema_version': {'const': ADVICE},
         'research_update': {'type': 'null'} if reference else ref('update'),
-        'hypotheses': _array(ref('action'), max_actions, 1)}), '$defs': defs}
+        'hypotheses': actions}), '$defs': defs}
 
 
-def wire_output_schema(*, reference=False, max_actions=2):
+def wire_output_schema(*, reference=False, max_actions=2, require_j=False):
     """Standard local $defs deduplication, not evidence/answer compression.
 
     Repeated scalar/array rules remain literal in this same schema. No opaque
     context IDs, missing constraints, changed versions or provider capability.
     """
-    schema = output_schema(reference=reference, max_actions=max_actions)
+    schema = output_schema(reference=reference, max_actions=max_actions, require_j=require_j)
     encode = lambda v: json.dumps(v, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
     counts = Counter()
     def scan(v):
@@ -150,11 +208,37 @@ def wire_output_schema(*, reference=False, max_actions=2):
     # The oneOf const/enum pairs already enforce these two global enums.
     query['properties']['kind'] = {}
     query['properties']['scope'] = {}
+    # Every branch constrains factor completely. Pair branches only add to the
+    # global array/pair/string shape; repeated type/length constraints are equal.
+    query['properties']['factor'] = {}
+    for branch in query['oneOf']:
+        props=branch['properties'];kind=props['kind']['const']
+        if kind=='DQ-03':
+            props['variable_pairs']['items']={'items':{'not':{'enum':sorted(NON_FACTOR_VARIABLES)}}}
+        elif kind=='DQ-06':
+            props['variable_pairs']['items']={'contains':{'const':TARGET_VARIABLE},'maxContains':1}
+    # Both fields are required: disjoint recipe cases enforce their enum and
+    # question relation together. Merge only recipes with identical questions.
+    design=out['$defs']['research_design'];groups={}
+    for rule in design.pop('allOf'):
+        recipe=rule['if']['properties']['recipe_id']['const']
+        questions=tuple(rule['then']['properties']['question']['enum'])
+        groups.setdefault(questions,[]).append(recipe)
+    design['oneOf']=[{'properties':{'recipe_id':{'enum':recipes},'question':{'enum':list(questions)}}}
+        for questions,recipes in groups.items()]
+    design['properties']['recipe_id']={}
+    design['properties']['question']={}
+    # The training group already requires one of these three action types, so
+    # exactly one branch holds. This is the same implication set, with no retry
+    # or extra response semantics.
+    training=out['$defs']['action']['allOf'][1]['then']
+    training['oneOf']=[{'properties':{**rule['if']['properties'],**rule['then']['properties']}}
+        for rule in training.pop('allOf')]
     def require_all(v):
         if isinstance(v, dict):
             # With unknown keys forbidden, N distinct properties is exactly the
             # full required set. Standard schema, no constraint is weakened.
-            if (v.get('additionalProperties') is False and 'properties' in v
+            if (v is not out['$defs']['update'] and v.get('additionalProperties') is False and 'properties' in v
                     and set(v.get('required',[])) == set(v['properties'])):
                 v['minProperties'] = len(v.pop('required'))
             for x in v.values():require_all(x)

@@ -1,5 +1,59 @@
 # Focused / Mission Research Acceptance Plan
 
+## 2026-10-30 真实研究闭环收口：最终实际结果
+
+实际状态唯一入口为[Current](CURRENT_IMPLEMENTATION.md)与原[ER](EVIDENCE_RESEARCH_LOOP.md)：A=PASS_BOUNDED，B=NO-GO，C/D未验，E/G6开放。本批已到6版本硬上限，真实调用封存；不能凭旧余额继续。精确源码/命令/exit、1205回归节点与6条独立串行浏览器、原始失败及7次HTTP账见`.research-closeout-20261030/final-report4/REPORT.html`及同目录FINAL_REPORT.json。工程限定通过不代表真实研究闭环、金融或真人验收通过；下方旧日期状态保留为历史。
+
+新增及受影响关键节点见精确COLLECTION及逐node结果；模型正文不完整属于真实行为未通过，不由结构fixture、Replay或工程绿例替代。
+
+## 2026-10-29 关联决策修补与最终验收（保留此前历史）
+
+最终完整工作区（含测试）c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9；实际V3 Live完整工作区e3fd417cb4cef778d0d68ae175c0d0137167456a42666047bdf10861d338b528。生产src/apps/scripts及pyproject逐字相同；唯一后续修改是新测试临时目录d→gd、全部断言保留，当前test-fixed工作区已重生成20个packet，与实际V3保存的20个payload逐字相等，HTTP0/fit0；随后重跑完整final4/browser4/static8。独立TEST_ONLY_FIX_AUDIT确认327ZIP、145份src/apps/scripts文件及另核pyproject（共146个功能/配置条目）、30个assert AST。原完整final3失败exit1及12项定向通过均保留，不能互相替代。无新增Provider，这不是第四个功能Live版本。
+
+本轮冻结节点/源码/依赖/输入并记录真实exit；定向重复、不同版本与全集合不相加。最终受影响集合1033通过/0失败/2跳过，1035唯一节点，pytest/wrapper exit0，精确集合与source/deps/输入不变；不是全仓签收；原final3完整调用为1032通过/1失败/2跳过、实际exit1，12项定向通过不替代本次完整复跑，串行浏览器4/4实际Chromium串行通过，exit0，最终完整工作区map一致，外部HTTP0，静态64改动Python Ruff/compile、4JS语法及diff检查均exit0。这是限定工程范围，不覆盖旧native资产/权限或全仓全部路径。
+
+重点负例：状态操作对象误填版本对、F/E跨角色、根/组同名污染、非法scope/变量对/factor、自比较、320字符/完整schema/容量、空依赖绕过pending、隐藏或不可见版本、已评估关系复用与暂缓、原子拒绝/恢复、缓存0fit与新方法预算、单对象无配对与总体/子组混淆、反向折和百分数边界、旧真实回复binding保持。原UI验证显式v3、推荐隔离、报告/安全拒绝、刷新导航重开0增量；原worker/父子/refit/新进程按真实receipt分别报告。
+
+Live：每版原12题、身份4题、新数值4题与独立父子worker按预冻上限；合法停止不算干预成功，全停止也不证明研究改进。V1/V2失败与窄quota停止均保留，相同生产功能代码的V3生产代码与最终工作区逐字相同，实际Live全工作区hash另见等价收据（仅后续测试隔离修补），不是完整工作区同hash。第二模型deepseek-v4.1-flash/thinking=false/nativeJSON：原题10/12、身份4/4、新数值4/4严格接受，合计18/20；父首规划因空问题/假设/所用版本被原子拒绝，16起点/对照fit，0研究候选，子/refit未运行；部分严格通过原答仍有工具范围/参照/总体子组语义错误，B为NO-GO，成本55实际HTTP（21/13/21），Provider实测425.000279秒/计账425.000279秒；Live32fit均起点/对照，研究候选fit0/refit0；历史114另列，累计169；其余四模型未实调；金额unknown。B有限真实行为不代签C公平研究选择、D独立预测、E/G6真人。原始失败及未测原因B真实初始化→取证/干预→更新→父子闭环仍未过；C参考选择优势、真实行情/独立预测、原生论文/旧包匹配运行时、真人G6未由本轮关闭；Windows上POSIX进程组kill和symlink权限两项为SKIP（见final4原XML）；历史全仓资产/权限/lint/超时失败保留。实际Live全工作区e3fd417cb4cef778d0d68ae175c0d0137167456a42666047bdf10861d338b528与最终测试工作区c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9不同，仅d→gd测试隔离修补，生产代码逐字相同；这不是第四个功能Live版本。
+
+
+## 2026-10-29 实际收尾与分层验收
+
+Current/原ER记录最终source701da070…：328受影响节点、35Python静态、4串行Chromium通过，
+新鲜Live源身份一致。覆盖status新旧边界、明文事实还原/锚/备注、两入口/双轴/父子、原子拒绝/
+恢复、资源与0fit缓存、报告与显式refit/新进程推理。529旧源完整并行exit1及串行整分区复验
+另列，重复节点不相加。Live原题10/12、身份2/4且父16fit拒，B失败；科学/真人不由测试数签收。
+后续技术需独立反例与新鲜授权/冻结试验，不能让真人补JSON当闭环通过。详见本轮追加索引。
+
+## 2026-10-29 compact/native boundary acceptance
+
+Freeze the complete affected source/tests/dependencies/inputs and exact node set.
+Check legacy default bytes, native capability and actual projected role prefix;
+compact missing-science/320/version/pending/hidden-ID/explicit dependency and
+paired-control negatives; full ON/OFF joint capacity without evidence removal;
+both original worker entries, pure diagnose→update→actual intervention, complete
+single-axis inheritance, explicit continuation, source-bound packages/refit and
+fresh-process inference. Interrupt after frozen plan: tampered/missing receipt or
+raw trace refuses, missing export restores original DB bytes with zero replanning.
+Run serial actual Chromium separately and verify read-only zero increment and
+recommended/browsed isolation. Native JSON-only controls and compact cases use
+unchanged raw replies; identity/order held-outs are not numeric generalization.
+Real semantic behavior, actual worker trajectory, scientific selection value,
+independent financial prediction and human value remain distinct acceptance axes.
+Current/ER contain actual outcomes; passing this plan is not assumed here.
+
+## 2026-10-28 final bounded evidence-loop repair receipt
+
+A:350 distinct affected regression nodes and2 serial Chromium nodes passed,
+real exits0, final source d2b57a68;1 preserved JUnit compatibility warning.
+This includes original shared diagnostic/J/feature/method gates, not the whole
+repository or native paper training. B:final8 returned semantic answers0 accepted,
+9th ProxyError unknown stopped the session; no final parent/child trajectory.
+V1/V2 each only16 start/control fits; no research intervention anywhere in Live.
+C/D NOT_RUN; E/G6 remains independent-owner open. No test success is spliced
+across the three versions; raw failures and old historical gaps stay unchanged.
+See Current, ER continuous_iteration_20261028 and .evidence-iteration-20261028.
+
 ## 2026-10-27 output-contract repair acceptance
 
 Require literal nested versions, original 320/321 character boundary, type/enum/scope,

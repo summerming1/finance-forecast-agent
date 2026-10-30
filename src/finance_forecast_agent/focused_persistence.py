@@ -12,6 +12,19 @@ from .focused_state import atomic_json
 from .task_queue import LocalTaskQueue, TaskRecord
 
 
+def validate_advisor_wire_options(options: dict) -> None:
+    """Admission only; mathematical and evidence validation stay in Controller.
+
+    Missing/None retains the historical wire and never changes a frozen request.
+    A new wire cannot silently opt an old profile into new response semantics.
+    """
+    wire = options.get('advisor_wire_version')
+    if wire is not None and (wire not in {'evidence_decision_v2', 'evidence_decision_v3'}
+            or options.get('research_protocol_id') != 'evidence_research_v1'
+            or options.get('change_scope') != 'feature_window'):
+        raise ValueError('Unsupported advisor wire/protocol/profile pair')
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -82,8 +95,9 @@ def submit_focused_campaign(
                     "memory": use_memory_prior, "source": source, "max_advisor_calls": int(max_advisor_calls), "max_http_requests":int(max_http_requests), "max_provider_seconds":float(max_provider_seconds),
                     "fixture_dir": str(Path(fixture_dir).resolve()), "operation_id": operation_id}, domain="focused-submit-v2")
     options = json.loads(canonical_json(research_options or {}))
-    if set(options) - {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids", "literature_review_ids", "literature_project", "context_mode", "continuation_from", "feature_strategy", "diagnostic_mode", "research_protocol_id", "evidence_send_authorization"}:
+    if set(options) - {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids", "literature_review_ids", "literature_project", "context_mode", "continuation_from", "feature_strategy", "diagnostic_mode", "research_protocol_id", "evidence_send_authorization", "advisor_wire_version"}:
         raise ValueError("unsupported frozen research options")
+    validate_advisor_wire_options(options)
     if options:
         key = identity({"request": key, "options": options}, domain="focused-submit-options-v1")
     campaign_id = f"persistent-{key[:24]}"
@@ -246,7 +260,8 @@ def load_research_request(path: str | Path | None, expected_hash: str | None) ->
     payload = json.loads(target.read_bytes())
     if identity(payload, domain="focused-options-v1") != expected_hash:
         raise ValueError("frozen research request hash mismatch")
-    allowed = {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids", "literature_review_ids", "literature_project", "context_mode", "continuation_from", "feature_strategy", "diagnostic_mode", "research_protocol_id", "evidence_send_authorization"}
+    allowed = {"input_contract", "starting_baseline", "entry_mode", "change_scope", "allowed_feature_groups", "research_notes", "reviewed_evidence", "replay_call_ids", "literature_review_ids", "literature_project", "context_mode", "continuation_from", "feature_strategy", "diagnostic_mode", "research_protocol_id", "evidence_send_authorization", "advisor_wire_version"}
     if not isinstance(payload, dict) or set(payload) - allowed:
         raise ValueError("unsupported research request fields")
+    validate_advisor_wire_options(payload)
     return payload

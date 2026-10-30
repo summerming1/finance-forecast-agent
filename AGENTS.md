@@ -1,5 +1,155 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+## 2026-10-30 真实研究闭环收口：最终实际结果
+
+实际状态唯一入口为[Current](docs/CURRENT_IMPLEMENTATION.md)与原[ER](docs/EVIDENCE_RESEARCH_LOOP.md)：A=PASS_BOUNDED，B=NO-GO，C/D未验，E/G6开放。本批已到6版本硬上限，真实调用封存；不能凭旧余额继续。精确源码/命令/exit、1205回归节点与6条独立串行浏览器、原始失败及7次HTTP账见`.research-closeout-20261030/final-report4/REPORT.html`及同目录FINAL_REPORT.json。工程限定通过不代表真实研究闭环、金融或真人验收通过；下方旧日期状态保留为历史。
+
+本日授权条款及mandatory read order继续适用；本批6版本会话已封存，没有残余额度自动续跑权限。
+
+本日下方“实施中”条目是保留的阶段记录，不覆盖上文最终状态。
+
+## 2026-10-30 真实研究闭环收口：本轮明确批准（实施中，非验收）
+
+用户实施指令及本日名单确认是本轮权限来源；两份评审只作问题依据。
+实际起点为 feat/mission-research-v2 / cdf61cb61c19a8abb7af007dcbaa090ef940339f
+加 dirty 工作区，不把内容hash当Git提交。保留原A/B、所有旧源码/包/fixture/hash、
+失败和未跟踪证据；新证据目录 `.research-closeout-20261030`，旧封存会话不恢复。
+
+继续原唯一ER合同，修A空账本/分组原约束、B可回答测量/实际control和采用政策分离、
+C数值子视图身份与旧门禁映射、D共享契约与新冷启动/连续场景。复用原Controller、
+Queue、Evaluator、状态归约、工作区和可信交付；旧协议解码/hash语义不迁移。
+科学claim/依据/竞争解释/判断/暂缓由模型原答提供，程序不得补答、修JSON、截断或改参照。
+
+本轮独立合成会话共同上限：6冻结功能版本、72实际HTTP、12960秒Provider计账活动；
+每请求1attempt、4096输出token、180秒总deadline；每Campaign总charged fit<=32，
+每版本<=1显式refit，全会话Live fit含refit<=195。本地工程计算另计。
+七候选按用户本日确认顺序：deepseek-v4.1-flash → glm-5.3 → deepseek-v4-pro-0813 →
+qwen3.8-max → qwen3.7-flash → deepseek-v4-flash-0731 → kimi-k3。
+用户确认2026-10-30各候选免费用尽即停、不转付费有效；只确认免费额度耗尽才换下一个。
+首模型、各模型有效thinking/nativeJSON/端点在调用前冻结；未登记组合不得试发探测或降级。
+免费保护不明、可能付费、未知投递、非额度传输错误或身份漂移停止真实调用。
+
+仅原白名单隔离合成任务/配置/诊断与汇总、认识和安全成本；无真实行情/客户/文献/
+Memory、逐行标签预测、拟合权重或凭据外发。无付费、封存标签、原A/B重训、生产权限、
+push或远端CI。允许必要本地工程和仅本轮增量的本地提交，不混原dirty。
+
+先保留红例并离线修；冻结后先原真实空账本worker，再实际结果更新/干预/显式父子，
+随后旧20开发回归/身份扰动/新数值。普通失败留原答成本、修后新版本继续，不逐批问。
+无隐藏纠正调用/第三规划/抽seed找赢家；最后功能版本须有自己的Live及最终适用旧门禁、
+默认路径和串行浏览器收据。硬边界停止则BLOCKED/NO-GO，不拼跨版本成功。
+A工程、B真实行为、C选择价值、D独立金融预测、E/G6真人各自结论；不以格式率代替研究。
+路线仍阶段1收口→条件裁剪/权重→条件RF四组合，未来能力不随本轮执行。
+
+
+## 2026-10-29 关联决策修补与最终验收（保留此前历史）
+
+最终完整工作区（含测试）c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9；实际V3 Live完整工作区e3fd417cb4cef778d0d68ae175c0d0137167456a42666047bdf10861d338b528。生产src/apps/scripts及pyproject逐字相同；唯一后续修改是新测试临时目录d→gd、全部断言保留，当前test-fixed工作区已重生成20个packet，与实际V3保存的20个payload逐字相等，HTTP0/fit0；随后重跑完整final4/browser4/static8。独立TEST_ONLY_FIX_AUDIT确认327ZIP、145份src/apps/scripts文件及另核pyproject（共146个功能/配置条目）、30个assert AST。原完整final3失败exit1及12项定向通过均保留，不能互相替代。无新增Provider，这不是第四个功能Live版本。
+
+本轮在原EVIDENCE_RESEARCH_LOOP内实施，不建立新里程碑。用户批准按前述方案修改和测试，并允许当前免费保护下的真实LLM；隔离试验冻结的agent-chosen执行上限为3个源码版本、72实际HTTP/12960秒、4096输出token/180秒/单次请求一次；每Campaign总charged fit≤32，每版最多1次显式refit、会话最多195fit。这些上限不是用户逐字给出的数值，不授权付费、原A/B重训、真实行情/客户/文献/Memory外发、封存标签、push或远端CI。
+
+新批次显式选择evidence_decision_v3，默认原完整wire保留。当前grouped_decision_contract_v2将认识更新、选用版本、F事实处理和E实验依据分开命名，仍机械投影到原canonical/Controller/Queue/验证与预算权威。旧grouped contract_v1、compact v1/v2、旧fixture/hash及历史失败保持各自冻结语义；不得按回复键名迁移或补答。
+
+最终完整工作区c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9的受影响回归1033通过/0失败/2跳过，1035唯一节点，pytest/wrapper exit0，精确集合与source/deps/输入不变；不是全仓签收；原final3完整调用为1032通过/1失败/2跳过、实际exit1，12项定向通过不替代本次完整复跑、浏览器4/4实际Chromium串行通过，exit0，最终完整工作区map一致，外部HTTP0、静态64改动Python Ruff/compile、4JS语法及diff检查均exit0；相同生产功能代码的Live为生产代码与最终工作区逐字相同，实际Live全工作区hash另见等价收据（仅后续测试隔离修补），不是完整工作区同hash。第二模型deepseek-v4.1-flash/thinking=false/nativeJSON：原题10/12、身份4/4、新数值4/4严格接受，合计18/20；父首规划因空问题/假设/所用版本被原子拒绝，16起点/对照fit，0研究候选，子/refit未运行；部分严格通过原答仍有工具范围/参照/总体子组语义错误，B为NO-GO。V1/V2失败、免费错误及原停止ledger/seal保留；一次明确重分类仅将已证实free-only错误用于新源V3的下一模型，旧缺题/旧父不续发。工程、B真实行为、C研究选择、D独立预测、E/G6真人分别见Current/ER，不以JSON合法或拟合次数替代其它轴。
+
+
+## 2026-10-29 approved grouped decision repair (in progress, not acceptance)
+
+User newly authorized the preceding repair and tests, including fresh real LLM
+use. This extends the sole EVIDENCE_RESEARCH_LOOP, not a new milestone. Preserve
+actual cdf61cb dirty work, original A/B, old schemas/fixtures/hashes/raw failures.
+New explicit evidence_decision_v3 groups exact hypothesis versions, their authored
+evidence handling and next actions; code projects plumbing only into original
+atomic R1/R2/compiler/resource gates. Complete action shapes and deterministic
+source-bound numeric aids do not fill scientific judgments or broaden tools.
+Old default/v1/v2 wires and source-bound packages remain unchanged.
+
+Fresh isolated synthetic session .evidence-grouped-20261029 uses an agent-chosen
+conservative ceiling (not user-supplied numbers): <=3 frozen functional versions,
+<=72 actual HTTP/12960 charged Provider seconds; <=24 logical/version including
+12 original+4 identity+4 numerical cases and parent/child<=2 plans each. Every
+request one attempt,4096output,180seconds. Each Campaign charged fits<=32, <=1
+explicit refit/version, total Live fit<=195. Historical114HTTP stays separate.
+Current same-day free-only protection and original six-model order persist;
+quota exhaustion alone advances models, no quality switch/retry/paid fallback.
+Unknown delivery/nonquota transport errors or identity drift stop the session.
+No original real market/customer/literature/Memory/row labels/predictions/weights
+send, sealed labels, original A/B mutation, push/remote CI or future tools.
+Final source needs its own Live receipt; unresolved failures remain NO-GO, never
+manufacture acceptance or loop indefinitely until a winner. A/B/C/D/E separate.
+
+## 2026-10-29 actual compact closeout (receipt, not new authority)
+
+Final worktree source `701da0700f4d6a47f10767435f8ac12e825649c3ae7ce65a840397e2f78a39b0` (306 files, base HEAD cdf61cb) has its OWN
+328-node scoped regression, 4 serial Chromium paths, 35-file static checks and fresh V2 Live.
+A bounded engineering PASS; B NO-GO. V1 23HTTP: compact5/12, identity3/4, matched old0/new1
+of4, parent20fit then child16fit rejected; V2 17HTTP: compact10/12, identity2/4, parent16fit
+and rejected unassessed F10/F14 dependencies, no research candidate/child/Live refit.
+40newHTTP +74history=114, 318.902119seconds, 52Live charged research fits, zero Live refits.
+All actual calls used first model1017/thinking=false/nativeJSON; no quota switch/retry/unknown.
+Two pre-frozen agent-chosen versions are complete; remaining8 is not a third trial authority.
+Final source is Live-tested; no untested functional patch follows it. C/D NOT_RUN, E/G6 OPEN.
+Current and original ER hold actual failures, sources and scopes; never add repeated test counts.
+Preserve original A/B/hash/fixtures/raw. No push/CI, future tools or new sends follow from this receipt.
+
+## Approved 2026-10-29 compact decision implementation and fresh Live test
+
+The user explicitly approved the preceding compact-wire/native-JSON proposal and
+its implementation/acceptance, with fresh real LLM use and the original six-model
+order, quota-only switching and currently effective free-only protection. Extend
+EVIDENCE_RESEARCH_LOOP; do not resume Oct28's stopped/unknown session or spend its
+remaining13. Preserve existing dirty work, original A/B, legacy schemas/hashes,
+raw failures and independent-label boundaries; no push/remote CI or paid fallback.
+New isolated synthetic session is bounded by the agent's conservative execution
+cap: <=2 frozen functional versions, <=48 actual HTTP /8640 charged seconds,
+4096 output tokens,180s,one attempt/request; <=24 logical requests/version,
+including first-version4 preselected old-wire/native-JSON controls,12 compact
+semantic cases,4 identity/order held-outs and parent/child <=2 plans each. Each Campaign charged fit<=32,
+<=1 explicit refit/version, total Live fit<=130. Quota attempts all count; unknown
+delivery/nonquota transport errors globally stop. No answer filling/truncation,
+extra reflection, same-model retry or model shopping. These chosen ceilings are
+not a quotation of numerical approval or a renewal of old receipts. Exact native
+JSON capability must be registered; unsupported combos block before HTTP.
+New advisor_wire_version is explicit and request-bound; old research protocol,
+math, semantic/compiler/resource authority and default old wire remain unchanged.
+Current and the original ER contract record actual engineering/Live/C/D/E results.
+
+## 2026-10-28 continuous session actual closeout (not new authority)
+
+Final functional source d2b57a68 had its OWN Live attempts after 350 scoped
+regressions and 2 serial browser passes, source/deps/inputs unchanged. V1/V2
+accepted7/12 and6/12 semantic replies; both parents charged16 start/control fits
+and produced no research candidate. Final V3:9HTTP,8 known replies/0 accepted,
+then ProxyError unknown delivery stopped the ENTIRE session. No retry/model
+switch/parent/child/refit followed. New35 + historical39 =74HTTP; live charged
+fits32/refits0. Observed400.0188s; charged560.3032s includes180s unknown reserve.
+No post-Live functional repair: final code is tested but B/overall remains NO-GO.
+Scoped engineering pass is not whole-repo, scientific or human acceptance;
+Current/ER carry exact receipts. Preserve all raw failures/A/B and unknown send.
+Remaining13HTTP is NOT another version/resume authorization. No more Provider,
+push/CI, future tools or original B retraining follows from this closeout.
+
+## Approved 2026-10-28 continuous repair and Live verification session
+
+User explicitly approved one continuous session: at most3 frozen source versions
+(initial plus2 actual repairs/retests), new actual HTTP<=48 / Provider<=8640s;
+historical39 remains visible (total ceiling87). Each request one attempt,4096
+output tokens/180s. Primary deepseek-v4.1-flash thinking=false; ONLY confirmed
+free-quota exhaustion advances glm-5.3, deepseek-v4-pro-0813, qwen3.8-max,
+qwen3.7-flash. User confirmed all candidate free-only protections current.
+Each version parent/child charged fit<=32 each plus<=1 refit; session<=195 Live
+fits. Original synthetic whitelist only; no original A/B changes, paid fallback,
+real market/customer/literature/Memory sends, push/remote CI or future tools.
+Format/semantic rejection may trigger offline reproduction, minimal repair and
+the next authorized fresh-source Live version without another approval. Unknown
+delivery or nonquota transport failure stops the ENTIRE session. All failed
+attempts/raw answers/costs remain. Do not splice successes across versions,
+repair answers, relax gates, force intervention/winners or repeat losing draws
+without a real repair. Semantic challenge and original-worker trace are separate
+arms; no12/12 prerequisite for attempting the independently guarded trace.
+The latest functional source must have its OWN fresh Live receipt before B can
+be accepted. Budget exhaustion with unresolved issues is NO-GO; do not call an
+untested last patch a completed Live repair. Actual status only in Current/ER.
+
 ## Approved 2026-10-28 single fixed-model Live and minimal repair
 
 User newly approved one isolated synthetic batch, original bailian endpoint,

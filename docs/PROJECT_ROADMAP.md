@@ -1,5 +1,33 @@
 # Finance Forecast Agent 项目迭代路线图
 
+## 2026-10-30 真实研究闭环收口：最终实际结果：状态指针，路线不变
+
+实际状态以Current/原ER及本日收据为准：A=PASS_BOUNDED，B=NO-GO，C/D未验，E/G6开放。方向仍阶段1闭环收口→条件裁剪/权重→条件RF四组合；后两阶段未施工，没有通过扩大工具掩盖当前正文交付阻断。下方旧日期状态为历史。
+
+## 2026-10-29 关联决策修补与最终验收（保留此前历史）：实际状态指针（不改变路线）
+
+最终完整工作区（含测试）c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9；实际V3 Live完整工作区e3fd417cb4cef778d0d68ae175c0d0137167456a42666047bdf10861d338b528。生产src/apps/scripts及pyproject逐字相同；唯一后续修改是新测试临时目录d→gd、全部断言保留，当前test-fixed工作区已重生成20个packet，与实际V3保存的20个payload逐字相等，HTTP0/fit0；随后重跑完整final4/browser4/static8。独立TEST_ONLY_FIX_AUDIT确认327ZIP、145份src/apps/scripts文件及另核pyproject（共146个功能/配置条目）、30个assert AST。原完整final3失败exit1及12项定向通过均保留，不能互相替代。无新增Provider，这不是第四个功能Live版本。
+
+阶段1关联决策与事实可读性修补的最终实际结果见Current/原ER：源c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9，工程限定工程回归通过、真实LLMNO-GO：真实LLM仍未完成研究闭环，C/D/E/G6分别C/D未验、E/G6开放；不是用真人接手JSON或技术排错。以下旧日期段保持历史，不重做已关闭问题或将阶段2/3写成已实现。方向仍阶段1修补验证→条件裁剪/权重→条件RF四组合；本轮没有执行后两阶段、知识学习、Shadow或交易。
+本段仅同步实际状态入口，未改变既有阶段顺序、研究范围或未来能力权限。
+
+
+
+## 2026-10-29 实际收尾指针（不改变路线）
+
+阶段1精简接口/证据可读性修补的工程验证完成，最终源`701da0700f4d`已真实复测，B仍NO-GO。
+完整事实与剩余在Current和原EVIDENCE_RESEARCH_LOOP；未以结构通过替代研究价值。
+路线仍阶段1修补验证→条件裁剪/权重→条件RF四组合，未执行后两阶段或自动交易。
+
+## 2026-10-28 dated receipt pointer (direction unchanged)
+
+This is an actual-result index inside stage1, not a new milestone or authority.
+The continuous three-version repair received final scoped350+2 engineering
+passes but no real-model closed-loop acceptance; an unknown delivery stopped
+Live. Current/ER contain the exact results and remaining boundaries. Stage1
+repair/verification → conditional clipping/weights → conditional RF/four-combo
+ordering remains unchanged; later capabilities were not implemented here.
+
 ## 2026-10-24 阶段1修补与有限语义试点（不改变路线）
 
 用户批准原唯一合同中的R1—R6、必要工程及有条件免费合成Live，实际结果只见Current。

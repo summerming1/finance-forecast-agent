@@ -1,0 +1,70 @@
+{
+  "schema_version": "closeout_git_delivery_index_v1",
+  "tested_git_base": "cdf61cb61c19a8abb7af007dcbaa090ef940339f",
+  "axes": {
+    "A_engineering": "PASS_BOUNDED",
+    "B_live_behavior": "NO_GO",
+    "C_research_selection_advantage": "NOT_RUN",
+    "D_financial_independent_prediction": "NOT_RUN",
+    "E_human_value_G6": "OPEN"
+  },
+  "accounting": {
+    "actual_new_http": 7,
+    "historical_http_separate": 169,
+    "historical_plus_new_http": 176,
+    "charged_provider_seconds": 324.21953980007675,
+    "observed_provider_seconds": 324.21953980007675,
+    "charged_live_fit_calls": 96,
+    "actual_research_candidates": 0,
+    "child_campaigns": 0,
+    "explicit_refits": 0,
+    "recorded_cost": null,
+    "cost_is_not_assumed_zero": true,
+    "unique_http_call_rows": 7,
+    "all_raw_and_prompt_hashes_match": true,
+    "ledger": {
+      "path": ".research-closeout-20261030/SESSION_LEDGER.json",
+      "exists": true,
+      "sha256": "e5a664174ac38dfdd2670e86909dd26ef728c535c0c680589af5028a67bd59a4"
+    },
+    "seal": {
+      "path": ".research-closeout-20261030/SESSION_SEAL.json",
+      "exists": true,
+      "sha256": "da14e7422dd117c94312090dbb9d079bbc7fe89ea62345fdf5270c2d91de589d"
+    }
+  },
+  "source_relation": {
+    "all_frozen_file_bytes_match": false,
+    "product_src_apps_scripts_pyproject_bytes_match": true,
+    "pyproject_separate_frozen_input_match": true,
+    "different_paths": [
+      "tests/browser/test_grouped_decision_workspace.py"
+    ],
+    "functional_different_paths": [],
+    "test_only_adaptation": {
+      "path": ".research-closeout-20261030/BROWSER_C3_TEST_ADAPTATION.json",
+      "exists": true,
+      "sha256": "276852b937e83cf39b36cb7aef68f2c843d13a274a08546c1c832411e3c81d1f"
+    },
+    "different_hash_domains_are_not_equal_identities": true
+  },
+  "regression": {
+    "passed": 1203,
+    "skipped": 2,
+    "actual_exit": 0
+  },
+  "browser": {
+    "passed": 6,
+    "actual_exit": 0
+  },
+  "static_changed_files": 26,
+  "local_report": ".research-closeout-20261030/final-report4/REPORT.html",
+  "local_package_sha256": "600ac36a636b1a217d41d27dd20f5740f1f424ce72f3458645df2d3bdbb48947",
+  "historical_contract_originals_missing": [
+    1,
+    2
+  ],
+  "raw_evidence_data_models_not_uploaded": true,
+  "push_not_ci_or_scientific_acceptance": true,
+  "whitespace_check": "5 existing new blank lines at EOF retained to preserve tested bytes"
+}

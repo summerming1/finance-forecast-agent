@@ -1,5 +1,63 @@
 # Focused / Mission Research Architecture
 
+## 2026-10-30 真实研究闭环收口：最终实际结果
+
+实际状态唯一入口为[Current](CURRENT_IMPLEMENTATION.md)与原[ER](EVIDENCE_RESEARCH_LOOP.md)：A=PASS_BOUNDED，B=NO-GO，C/D未验，E/G6开放。本批已到6版本硬上限，真实调用封存；不能凭旧余额继续。精确源码/命令/exit、1205回归节点与6条独立串行浏览器、原始失败及7次HTTP账见`.research-closeout-20261030/final-report4/REPORT.html`及同目录FINAL_REPORT.json。工程限定通过不代表真实研究闭环、金融或真人验收通过；下方旧日期状态保留为历史。
+
+本轮修补：新鲜请求显式C3冷启动要求真实Q/H与非终止动作精确版本关联，原R1/R2及终止/reference边界保留；typed测量从原DQ注册/校验生成，单/双对象、scope/变量/返回量与真实分发同源；方法收据来自实际完整accepted control，生成表仅替换生成特征列表，内置组/模型/未改轴仍继承；数值辅助新增fold_id/facet/scope_ref定位但不删原事实；原UI/研究报告并列显示实际查询/控制与原科学文字，不自动改写或假称语义一致。完整Schema优先、容量超限时才等价共享；旧wire/decoder/fixture/hash不迁移。局部试验、总体冻结推荐与机制/子组判断分开，原MAE/0.0025、两规划四槽、总32fit和显式refit规则未改。
+
+没有增加Controller/Queue/Evaluator/Memory/反思Agent；只有原路径的版本化契约、有限工具适配与只读投影。
+
+## 2026-10-29 关联决策修补与最终验收（保留此前历史）
+
+最终完整工作区（含测试）c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9；实际V3 Live完整工作区e3fd417cb4cef778d0d68ae175c0d0137167456a42666047bdf10861d338b528。生产src/apps/scripts及pyproject逐字相同；唯一后续修改是新测试临时目录d→gd、全部断言保留，当前test-fixed工作区已重生成20个packet，与实际V3保存的20个payload逐字相等，HTTP0/fit0；随后重跑完整final4/browser4/static8。独立TEST_ONLY_FIX_AUDIT确认327ZIP、145份src/apps/scripts文件及另核pyproject（共146个功能/配置条目）、30个assert AST。原完整final3失败exit1及12项定向通过均保留，不能互相替代。无新增Provider，这不是第四个功能Live版本。
+
+新增grouped_decision/grouped_projection/decision_facts是原Advisor边界的协议适配与只读投影，不是第二Controller、事实库、队列或数值评价器。新请求冻结v3及contract_v2；只在规定结构路径将显式版本/F处理/E依据机械映射到原canonical，再走原规范化、compiler、R1/R2归约与资源门禁。原请求/raw/展开binding/实际工具/反馈各自留收据；非法回复整批拒绝。
+
+事实句由原F结果、诊断及汇总的确定性数值/范围生成；同一F的总体、分组、尾部、相关子视图保持区分，科学判断与最终推荐仍分离。工具描述与scope/pairs/factor枚举同源，旧工具ID与数学不变。原UI显式opt-in、原worker/持久化/恢复/研究包/可信模型链路复用；历史wire/包/hash不迁移。
+
+容量在完整schema、事实和状态联合构造上冻结；本次边界构造完整联合构造ON/OFF实测通过原64000门禁；新同源诊断schema与全部原事实/3假设/父末批/长备注同测。此冻结构造余量很小，不保证任意历史；超限仍HTTP0拒绝，余量有限且不保证任意历史。超限HTTP前拒绝，不删反证。最终同源技术/Live边界见Current：c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9，A=限定工程回归通过；B=NO-GO：真实LLM仍未完成研究闭环；C=NOT_RUN：未验研究选择优于参考；D=NOT_RUN：未验独立金融预测；E=OPEN：原A/B只读G6、独立解释及真人价值。
+
+
+## 2026-10-29 实际收尾：显式精简接口边界
+
+新批次opt-in evidence_decision_v2；canonical状态/Controller/Queue/evaluator均复用原实现。
+contract_v2的status-only绑定精确冻结旧正文，其余科学声明/处置/动作不补值。v9是原事实的
+可逆输入投影，科学字段明文，身份/锚点/周期备注仅无损去重，不是新事实库。旧contract_v1/
+投影v1—v8/hash保持。资源卡不授予免费新fit；缓存由原fingerprint与预算权威核实。
+最终源328/浏览器4及Live已验；实际模型仍可能漏评证据、误解数字，B NO-GO见Current。
+
+## 2026-10-29 explicit compact Advisor boundary
+
+`advisor_wire_version=evidence_decision_v2` is a frozen optional execution wire,
+not a new Controller or mathematical profile. Old options omit it and old wire/
+hashes remain. `compact_decision` binds an immutable request and exact visible
+C/F/E maps; the model chooses science/version/evidence/disposition/action once.
+Only literals, operation IDs, explicit control/query order and untouched method
+headers are mechanical. The original reducer, action compiler, diagnostic design
+and resource gates own acceptance. Expanded provenance is saved independently of
+raw replies and linked by new batch-plan schema. Recovery verifies raw/request/
+expansion/preaccept state/plan; it never replans or repairs scientific choices.
+Input relations use readable source/version cards; original numeric diagnostic
+facts remain lossless projections. Standard JSON-Schema sharing removes duplicate
+instructions, never facts. Explicit native JSON Object is registered by exact
+endpoint/model/thinking tuple; it does not enforce scientific/schema correctness.
+The isolated quota router accounts actual external attempts separately from its
+declared local worker relay. This is trial infrastructure, not product fallback.
+
+## 2026-10-28 input contract and bounded trial iteration
+
+The original design/query validators and literal input schema share field,
+recipe/question/basis/version and relationship constants. J requirements come
+from the actual frozen policy. The original compiler remains the acceptance
+owner. Fresh V8 inputs retain copyable identity menus; shorter collision-safe
+key/value references and profitable containers are lossless, with no numeric
+scalar encoding or new fact store. Existing projected V8 and legacy bytes stay.
+The isolated iteration-session guard records every actual upstream attempt,
+requires source-changing sealed versions and stops globally on unknown delivery.
+It is trial accounting, not another Controller or product automatic model router.
+Final exact-source engineering passed; real behavior remains NO-GO (Current/ER).
+
 ## 2026-10-27 research output boundary hardening
 
 The original compiler/reducer still decides acceptance. Pure evidence_output_contract

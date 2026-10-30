@@ -1,5 +1,44 @@
 # Codex handoff：证据驱动闭环与V2.5历史
 
+## 2026-10-30 真实研究闭环收口：最终实际结果
+
+实际状态唯一入口为[Current](CURRENT_IMPLEMENTATION.md)与原[ER](EVIDENCE_RESEARCH_LOOP.md)：A=PASS_BOUNDED，B=NO-GO，C/D未验，E/G6开放。本批已到6版本硬上限，真实调用封存；不能凭旧余额继续。精确源码/命令/exit、1205回归节点与6条独立串行浏览器、原始失败及7次HTTP账见`.research-closeout-20261030/final-report4/REPORT.html`及同目录FINAL_REPORT.json。工程限定通过不代表真实研究闭环、金融或真人验收通过；下方旧日期状态保留为历史。
+
+下一步不是重做已关闭R1/R2或交给真人补格式；B尚未取得有效正文/实际研究候选。任何后续Live须新的明确会话/模型与正文预算权限，不能从本批剩余HTTP恢复。获准工程独立维护可继续，路线未来工具仍有条件。
+
+## 2026-10-29 关联决策修补与最终验收（保留此前历史）
+
+最终完整工作区（含测试）c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9；实际V3 Live完整工作区e3fd417cb4cef778d0d68ae175c0d0137167456a42666047bdf10861d338b528。生产src/apps/scripts及pyproject逐字相同；唯一后续修改是新测试临时目录d→gd、全部断言保留，当前test-fixed工作区已重生成20个packet，与实际V3保存的20个payload逐字相等，HTTP0/fit0；随后重跑完整final4/browser4/static8。独立TEST_ONLY_FIX_AUDIT确认327ZIP、145份src/apps/scripts文件及另核pyproject（共146个功能/配置条目）、30个assert AST。原完整final3失败exit1及12项定向通过均保留，不能互相替代。无新增Provider，这不是第四个功能Live版本。
+
+先读Current，再读原唯一ER及AGENTS必读顺序；不要把下方旧“下一步”当现状。最终源c8080c1b10a899f0ab0b7c2411864360fe3692a73dae6fa899e4bd5e3d43a0a9，收据.evidence-grouped-20261029/FINAL_ACCEPTANCE.json（最终完整命令/exit见final4.start/end、browser4、static8；原final3失败及各版Live收据保留）；实际工程/Live/其余轴A=限定工程回归通过；B=NO-GO：真实LLM仍未完成研究闭环；C=NOT_RUN：未验研究选择优于参考；D=NOT_RUN：未验独立金融预测；E=OPEN：原A/B只读G6、独立解释及真人价值。
+
+本轮完成关联决策v3、contract_v2角色分名、同源诊断输入和中文事实句；旧wire与32条既有语义原答接受/拒绝/binding逐项不变。V1父16起点/对照fit后拒绝，V2累计34HTTP后free-only错误原停止保留；显式一次重分类仅新源V3与下一模型。禁止续发旧缺题/旧父、篡改历史或把旧版成功拼给最终源。
+
+下一步只按真实剩余项技术NO-GO仍需修：空账本声明和假设/候选身份、test层级、可回答测量与实际control一致性。不是再修原答或让真人补字段。当前三版会话封存，剩17HTTP不自动成为第四版；后续新试验先冻结新的完整方案与边界。推进。C/D/E/G6未完成须保留开放，不重训旧B或代签真人。路线仍阶段1修补验证→条件裁剪/权重→条件RF四组合，后续能力未随本轮执行；无push/远端CI/生产迁移授权。
+
+
+## 2026-10-29 实际收尾入口
+
+最新实际状态见 [Current](CURRENT_IMPLEMENTATION.md) 与原唯一 [ER合同](EVIDENCE_RESEARCH_LOOP.md)。最终源 `701da0700f4d`
+有328项限定回归、4条串行浏览器和自身真实调用；工程通过，真实闭环仍NO-GO。
+原题严格率5/12→10/12，身份3/4→2/4；最终父因未处理所用证据被拒，不能拼旧版父成功。
+新增40HTTP，全同1017/false/nativeJSON，历史74保留；C/D未验、真人G6开放。
+以下较早“当前/latest”均是对应日期历史快照，不替代本日Current。不重训旧B或改旧hash。
+
+## 2026-10-28 continuous-session terminal status (latest actual receipt)
+
+350 scoped regression and2 serial browser nodes pass on final source d2b57a68;
+final source was actually Live-tested. V1/V2=7/12 and6/12 accepted, parents only
+16 start/control fits each. V3=0/8 known replies, then9th ProxyError unknown;
+whole session stopped, no resend/model switch/remaining3/parent/child/refit.
+New35/historical39/total74HTTP, Live charged fit32/refit0. Overall/B NO-GO;
+C/D NOT_RUN, independent E/G6 open. All raw failures/A/B/legacy evidence stay.
+Next engineering proposal: reduce action-specific response burden and verify
+native structured-output support; no new functional patch or external trial
+is authorized by this receipt. Remaining13HTTP cannot resume an unknown send.
+Current/ER and .evidence-iteration-20261028 are the authoritative actual index.
+Older dated “next/new Live” paragraphs below are historical, not current authority.
+
 ## 2026-10-27 输出契约工程加固
 
 用户本次批准通用契约/提示/错误说明修补及本地验收，施工与精确结果看Current、

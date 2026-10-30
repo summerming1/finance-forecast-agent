@@ -5,7 +5,28 @@ from copy import deepcopy
 
 import numpy as np
 
-from .evidence_output_contract import FIELDS, QUERY, SCOPES
+from .evidence_output_contract import (
+    BASIS_KINDS,
+    DECISION_FEEDBACK_FIELDS,
+    DECISION_FIELDS,
+    DECISION_REF_LIMIT,
+    DECISION_VERSION,
+    DESIGN_ACTION_RECIPES,
+    DESIGN_FIELDS,
+    DESIGN_OPTIONAL_FIELDS,
+    DESIGN_RECIPE_QUESTIONS,
+    DESIGN_TEXT_LIMIT,
+    DESIGN_TOTAL_LIMIT,
+    FIELDS,
+    NON_FACTOR_VARIABLES,
+    QUERY,
+    QUERY_PAIR_LIMIT,
+    RELATION_QUERY_KINDS,
+    RESEARCH_RECIPES,
+    SCOPES,
+    TARGET_VARIABLE,
+    VISIBLE_BASIS_FIELDS,
+)
 from .focused_feature_program import _expression_values, compute_price_features
 from .focused_identity import identity
 
@@ -27,24 +48,24 @@ def validate_diagnostic_query(query, accepted_ids, variable_names):
     if query['scope'] not in {'selected_train','calibration','development_oof'} or query['parameters']!={}:
         raise ValueError('unknown diagnostic scope or parameters')
     if query['scope'] not in SCOPES[query['kind']]:raise ValueError('diagnostic kind/scope mismatch')
-    if not isinstance(pairs,list) or len(pairs)*len(objects)>8:
+    if not isinstance(pairs,list) or len(pairs)*len(objects)>QUERY_PAIR_LIMIT:
         raise ValueError('at most eight declared pairs total per query')
     for pair in pairs:
         if (not isinstance(pair,list) or len(pair)!=2
                 or any(not isinstance(x,str) or x not in variable_names for x in pair)):
             raise ValueError('unknown named diagnostic variable')
-    if query['kind'] in {'DQ-03','DQ-06'}:
+    if query['kind'] in RELATION_QUERY_KINDS:
         if not pairs or query['factor'] is not None:
             raise ValueError('relationship query requires named pairs only')
-        if query['kind']=='DQ-03' and any(v in {'target','prediction'} for pair in pairs for v in pair):
+        if query['kind']=='DQ-03' and any(v in NON_FACTOR_VARIABLES for pair in pairs for v in pair):
             raise ValueError('factor relationships require factors; use DQ-06 for target relations')
-        if query['kind']=='DQ-06' and any(pair.count('target')!=1 for pair in pairs):
+        if query['kind']=='DQ-06' and any(pair.count(TARGET_VARIABLE)!=1 for pair in pairs):
             raise ValueError('DQ-06 requires exactly one corresponding target per declared pair')
     elif pairs:
         raise ValueError('this diagnostic type does not accept pair scanning')
     if query['kind']=='DQ-04':
         if (not isinstance(query['factor'],str) or query['factor'] not in variable_names
-                or query['factor'] in {'target','prediction'}):
+                or query['factor'] in NON_FACTOR_VARIABLES):
             raise ValueError('tail query requires one permitted named factor')
     elif query['factor'] is not None:
         raise ValueError('unexpected factor for diagnostic type')
@@ -288,8 +309,7 @@ def query_projection(body):
     if 'paired_group_losses' in out:scopes(out['paired_group_losses'])
     out['projection_version']='evidence_query_projection_v2'
     return out
-RECIPES = {"RCP-01": "overall", "RCP-02": "contribution", "RCP-03": "simplification",
-           "RCP-04": "diagnose", "RCP-05": "diagnose"}
+RECIPES = RESEARCH_RECIPES
 
 
 def selection_policy():
@@ -316,12 +336,12 @@ def research_policy(visibility="on", *, support="J"):
             "planning_projection": "diagnostic_planning_projection_v2",
             "diagnostic_reference": "baseline_ridge",
             "predeclared_pair": ["baseline_ridge", "baseline_rf"],
-            "decision_support":support, "decision_contract":"research_decision_v1",
+            "decision_support":support, "decision_contract":DECISION_VERSION,
             "legacy_design_policy":"old_policy_or_R_D_Random_reference_only",
             "require_j_decision": support == "J",
             "decision_link_projection":"frozen_decision_links_v1",
             "shared_field_encoding":"diagnostic_shared_fields_v3",
-            "design_text_budget": 1000,
+            "design_text_budget": DESIGN_TOTAL_LIMIT,
             "formation_policy":"frozen_context_timing_v2"}
 
 
@@ -728,14 +748,14 @@ def bind_design(design, hypothesis, candidate, results, prompt):
             return None
         if hypothesis.action_type != "diagnose":
             raise ValueError("control action cannot smuggle a training design")
-    required = {"recipe_id", "question", "basis", "competing_explanation", "falsification_condition"}
-    if not isinstance(design, dict) or not required <= set(design) or set(design)-required-{"symptom_refs", "decision_version", "decision"}:
+    required = set(DESIGN_FIELDS)
+    if not isinstance(design, dict) or not required <= set(design) or set(design)-required-set(DESIGN_OPTIONAL_FIELDS):
         raise ValueError("training requires bounded research_design")
     policy = prompt.get("diagnostic_research_policy", {})
     if candidate is not None and policy.get("require_j_decision") and not {"decision", "decision_version"} <= set(design):
         raise ValueError("current J training requires four-part research decision")
     if "decision" in design or "decision_version" in design:
-        if design.get("decision_version") != "research_decision_v1":
+        if design.get("decision_version") != DECISION_VERSION:
             raise ValueError("unknown research decision version")
         validate_decision(design.get("decision"), prompt["evidence_projection"])
     if policy.get("design_text_budget"):
@@ -750,13 +770,13 @@ def bind_design(design, hypothesis, candidate, results, prompt):
         if text_size(design) > policy["design_text_budget"]:
             raise ValueError("research design exceeds frozen aggregate text budget")
     recipe = design["recipe_id"]
-    expected = {"improve": {"RCP-01"}, "ablate": {"RCP-02"}, "simplify": {"RCP-03"}, "diagnose": {"RCP-04", "RCP-05"}}[hypothesis.action_type]
-    if recipe not in expected or design["question"] not in ({"overall", "high_volatility"} if recipe == "RCP-01" else {RECIPES[recipe]}):
+    expected = DESIGN_ACTION_RECIPES[hypothesis.action_type]
+    if recipe not in expected or design["question"] not in DESIGN_RECIPE_QUESTIONS[recipe]:
         raise ValueError("recipe/action/question mismatch")
-    if design["basis"] not in {"domain_hypothesis", "visible_evidence"}:
+    if design["basis"] not in BASIS_KINDS:
         raise ValueError("unapproved proposal basis")
     for key in ("competing_explanation", "falsification_condition"):
-        if not isinstance(design[key], str) or not design[key].strip() or len(design[key]) > 2000:
+        if not isinstance(design[key], str) or not design[key].strip() or len(design[key]) > DESIGN_TEXT_LIMIT:
             raise ValueError("missing bounded research explanation")
     refs = design.get("symptom_refs", [])
     if not isinstance(refs, list) or any(not isinstance(r, str) for r in refs):
@@ -895,13 +915,13 @@ def _reference_advice(prompt):
 def validate_decision(decision, evidence):
     """Bounded pre-execution judgment fields, not a semantic/causal oracle."""
     from .focused_adaptive import EvidenceIndex
-    if not isinstance(decision, dict) or set(decision) != {"visible_basis", "experiment_question", "priority_reason", "feedback_update"}:
+    if not isinstance(decision, dict) or set(decision) != set(DECISION_FIELDS):
         raise ValueError("four bounded research decision parts required")
     basis = decision["visible_basis"]
-    if not isinstance(basis, dict) or set(basis) != {"kind", "evidence_refs", "description"} or basis["kind"] not in {"visible_evidence", "domain_hypothesis"}:
+    if not isinstance(basis, dict) or set(basis) != set(VISIBLE_BASIS_FIELDS) or basis["kind"] not in BASIS_KINDS:
         raise ValueError("invalid visible research basis")
     refs = basis["evidence_refs"]
-    if not isinstance(refs, list) or len(refs) > 8 or any(not isinstance(r, str) for r in refs):
+    if not isinstance(refs, list) or len(refs) > DECISION_REF_LIMIT or any(not isinstance(r, str) for r in refs):
         raise ValueError("invalid decision evidence refs")
     index = EvidenceIndex(evidence)
     for ref in refs:
@@ -909,10 +929,10 @@ def validate_decision(decision, evidence):
     if basis["kind"] == "visible_evidence" and not refs:
         raise ValueError("visible decision basis requires real refs")
     update = decision["feedback_update"]
-    if not isinstance(update, dict) or set(update) != {"supports", "weakens", "not_distinguished", "next_step"}:
+    if not isinstance(update, dict) or set(update) != set(DECISION_FEEDBACK_FIELDS):
         raise ValueError("bounded feedback branches required")
     for text in [basis["description"], decision["experiment_question"], decision["priority_reason"], *update.values()]:
-        if not isinstance(text, str) or not text.strip() or len(text) > 2000:
+        if not isinstance(text, str) or not text.strip() or len(text) > DESIGN_TEXT_LIMIT:
             raise ValueError("missing or overlong research judgment")
     return deepcopy(decision)
 

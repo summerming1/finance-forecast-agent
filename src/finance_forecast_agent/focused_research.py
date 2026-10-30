@@ -819,6 +819,10 @@ class FocusedResearchAdvisor:
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         self.last_record, self.last_fixture_path = None, None
         if self.mode == "deterministic":
+            if prompt.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3'}:
+                from .compact_decision import engineering_decision
+                self.last_telemetry={'policy':'finite_compact_engineering_v1','simulation_only':True}
+                return engineering_decision(prompt),'deterministic_compact_engineering_policy'
             if prompt.get('research_protocol_id')=='evidence_research_v1':
                 from .research_state import engineering_advice
                 self.last_telemetry={'policy':'finite_evidence_engineering_v1'}
@@ -1221,6 +1225,7 @@ class FocusedResearchController:
         diagnostic_mode: str | None = None,
         research_protocol_id: str | None = None,
         evidence_send_authorization: dict | None = None,
+        advisor_wire_version: str | None = None,
     ):
         self.project_dir = Path(project_dir).resolve()
         self.state_path = Path(state_path or os.getenv("FFA_STATE_DB") or self.project_dir / "runtime.sqlite3")
@@ -1234,6 +1239,10 @@ class FocusedResearchController:
         if research_protocol_id is not None and (research_protocol_id!='evidence_research_v1' or not self.method_mode):
             raise ValueError('unsupported research protocol or mathematical profile')
         self.research_protocol_id=research_protocol_id
+        if advisor_wire_version is not None and (advisor_wire_version not in {'evidence_decision_v2','evidence_decision_v3'}
+                or research_protocol_id!='evidence_research_v1' or not self.method_mode):
+            raise ValueError('unsupported Advisor wire or research profile')
+        self.advisor_wire_version=advisor_wire_version
         if evidence_send_authorization is not None and not research_protocol_id:
             raise ValueError('evidence send scope requires the explicit new protocol')
         from .research_state import validate_send_authorization
@@ -1409,6 +1418,8 @@ class FocusedResearchController:
             self.spec.research_options["feature_strategy"] = self.feature_strategy
             if self.research_protocol_id:
                 self.spec.research_options['research_protocol_id']=self.research_protocol_id
+                if self.advisor_wire_version is not None:
+                    self.spec.research_options['advisor_wire_version']=self.advisor_wire_version
                 if self.evidence_send_authorization is not None:
                     self.spec.research_options['evidence_send_authorization']=self.evidence_send_authorization
             self.spec.research_options["feature_capability"] = feature_capability()
@@ -1464,6 +1475,9 @@ class FocusedResearchController:
                 runtime.verify_artifacts(stored["artifacts"])
                 if stored["plan"] != json.loads((self._campaign_root / stored["plan_ref"]).read_text(encoding="utf-8")):
                     raise ValueError("frozen diagnostic plan differs from accepted export")
+                if (stored['plan'].get('advisor_wire_version') is not None
+                        or getattr(self, 'advisor_wire_version', None) is not None):
+                    self._verify_feature_record(int(key.split(':', 1)[1]), stored, compact_only=True)
                 from .focused_diagnostics import verify_rule
                 for item in stored["plan"]["items"]:
                     design = item["hypothesis"].get("research_design")
@@ -1473,7 +1487,7 @@ class FocusedResearchController:
                         if identity({k: v for k, v in design.items() if k != "design_hash"}, domain="research-design-v1") != design["design_hash"]:
                             raise ValueError("frozen research design changed")
                 continue
-            if not key.startswith(("diagnostic:", "diagnostic_query:", "observation:", "diagnostic_context:", "pair_diagnostic:")) and key != "recommendation":
+            if not key.startswith(("diagnostic:", "diagnostic_query:", "observation:", "diagnostic_context:", "pair_diagnostic:", "wire_expansion:")) and key != "recommendation":
                 continue
             stored = json.loads(row["payload"])
             for ref in stored["artifacts"]:
@@ -1947,7 +1961,7 @@ class FocusedResearchController:
         self._store_diagnostic_object(key, "diagnostics/fixed_pair.json", body)
         return body
 
-    def _bind_research_design(self, advice, prompt, result_lookup, round_index, max_count, source):
+    def _bind_research_design(self, advice, prompt, result_lookup, round_index, max_count, source, wire_binding=None):
         from .focused_diagnostics import bind_design
         relations=None
         if self.research_protocol_id:
@@ -1956,7 +1970,8 @@ class FocusedResearchController:
             prompt=restore_method_references(prompt)
             from .research_state import planning_evidence_context
             advice,relations=normalize_evidence_advice(advice,prompt,
-                accepted_context=planning_evidence_context(self._evidence_context(result_lookup)))
+                accepted_context=planning_evidence_context(self._evidence_context(result_lookup)),
+                action_dependencies=None if wire_binding is None else wire_binding['action_dependencies'])
         elif prompt.get("method_policy"):
             from .focused_methods import normalize_method_advice, restore_method_references
             prompt=restore_method_references(prompt)
@@ -2176,15 +2191,50 @@ class FocusedResearchController:
         self._append_event("campaign.proposal_invalid", round_index=round_index, candidate_fits=0)
         return payload
 
-    def _verify_feature_record(self, round_index, frozen):
+    def _verify_feature_record(self, round_index, frozen, *, compact_only=False):
         """A durable plan is not permission to discard its provider evidence.
 
         Completed Campaign results remain readable as accepted DB facts; this
         gate runs before resuming any unfinished provider-derived feature plan.
         """
-        if not self.feature_mode or self.advisor.mode not in {"live", "replay"}:
+        compact_record = frozen is not None and (frozen['plan'].get('advisor_wire_version') is not None
+            or getattr(self, 'advisor_wire_version', None) is not None)
+        if not compact_record and (not self.feature_mode or self.advisor.mode not in {'live', 'replay'}):
             return
         trace = self._runtime.get(f"advice:{round_index}") or self._runtime.get(f"returned_advice:{round_index}")
+        # A compact plan has an explicit, deterministic expansion in addition to
+        # the original raw trace. Check it even for completed/local-mode reads;
+        # scientific choices remain the original answer, never reconstructed.
+        if compact_record:
+            from .compact_decision import expand_decision
+            from .research_state import planning_evidence_context
+
+            plan = frozen['plan']
+            if (plan.get('advisor_wire_version') not in {'evidence_decision_v2','evidence_decision_v3'} or trace is None
+                    or trace['prompt'].get('advisor_wire_version') != plan.get('advisor_wire_version')):
+                raise ValueError('compact frozen plan is missing its original request/response')
+            receipt = self._runtime.get(f'wire_expansion:{round_index}')
+            if receipt is None:
+                raise ValueError('compact frozen plan is missing its accepted expansion receipt')
+            expanded, binding = expand_decision(trace['advice'], trace['prompt'],
+                accepted_context=planning_evidence_context(plan['evidence_context']))
+            expected = {'expanded_advice': expanded, 'binding': binding}
+            if (receipt['body'] != expected or plan.get('advisor_wire_binding') != binding
+                    or plan.get('research_update') != expanded['research_update']):
+                raise ValueError('compact raw/expansion/accepted-plan binding mismatch')
+            expected_ref = {'path': f'contexts/expansion-{round_index}.json',
+                'sha256': hashlib.sha256((canonical_json(expected)+'\n').encode('utf-8')).hexdigest()}
+            if receipt.get('artifacts') != [expected_ref]:
+                raise ValueError('compact expansion artifact binding mismatch')
+            # Missing exports may be recreated from the original immutable DB
+            # body, exactly as with existing diagnostic receipts. Changed bytes
+            # are refused; no new answer, interpretation, fit or HTTP is issued.
+            for ref in receipt['artifacts']:
+                if not (self._campaign_root / ref['path']).exists():
+                    self._runtime.artifact(ref['path'], expected)
+            self._runtime.verify_artifacts(receipt['artifacts'])
+        if compact_only or not self.feature_mode or self.advisor.mode not in {"live", "replay"}:
+            return
         if trace is None:
             if frozen is not None:
                 raise ValueError("accepted feature plan is missing its recorded provider decision")
@@ -2314,6 +2364,7 @@ class FocusedResearchController:
         compiled: list[tuple[HypothesisSpec, CandidateConfig | None]],
         research_update: dict | None = None,
         evidence_context: dict | None = None,
+        wire_binding: dict | None = None,
     ) -> tuple[str, str]:
         plan = {
             "schema_version": "focused_batch_plan_v2",
@@ -2339,6 +2390,10 @@ class FocusedResearchController:
             plan['schema_version']='evidence_batch_plan_v1'
             plan['research_protocol_id']=self.research_protocol_id
             plan['evidence_context']=evidence_context
+            if wire_binding is not None:
+                plan['schema_version']='evidence_batch_plan_v2'
+                plan['advisor_wire_version']=self.advisor_wire_version
+                plan['advisor_wire_binding']=wire_binding
         plan_hash = _hash(plan)
         plan["plan_hash"] = plan_hash
         rel = Path("batch_plans") / f"round_{round_index}.json"
@@ -2617,6 +2672,9 @@ class FocusedResearchController:
                         prompt = compact_research_context(prompt)
                     if self.research_protocol_id:
                         from .research_state import measure_prompt
+                        if self.advisor_wire_version is not None:
+                            from .compact_decision import prepare_prompt
+                            prompt=prepare_prompt(prompt, wire_version=self.advisor_wire_version)
                         measure_prompt(prompt)
                     frozen_prompt = runtime.get(f"prompt:{round_index}")
                     if frozen_prompt is not None:
@@ -2696,9 +2754,18 @@ class FocusedResearchController:
                     runtime.reserve_feature_decision(round_index, prompt)
                 if self.benchmark_strategy:
                     advice = self.advisor.normalize_advice(advice)
+                wire_binding=None
                 try:
+                    if prompt.get('advisor_wire_version') is not None:
+                        from .compact_decision import expand_decision
+                        from .research_state import planning_evidence_context
+                        advice,wire_binding=expand_decision(advice,prompt,
+                            accepted_context=planning_evidence_context(self._evidence_context(result_lookup)))
+                        self._store_diagnostic_object(f'wire_expansion:{round_index}',
+                            f'contexts/expansion-{round_index}.json',
+                            {'expanded_advice':advice,'binding':wire_binding})
                     compiled = self._bind_research_design(advice, prompt, result_lookup, round_index,
-                        self._feature_policy()["slots_per_decision"], source) if self.diagnostic_policy else compile_hypotheses(advice, round_index=round_index, source=source,
+                        self._feature_policy()["slots_per_decision"], source,wire_binding) if self.diagnostic_policy else compile_hypotheses(advice, round_index=round_index, source=source,
                         max_count=(self._feature_policy()["slots_per_decision"] if self.feature_mode else
                                    min(self.budget.max_new_candidates_per_round, int(prompt["max_hypotheses"]))), visible_evidence=prompt["evidence_projection"],
                         candidate_lookup={key: value.candidate for key, value in result_lookup.items()},
@@ -2722,6 +2789,7 @@ class FocusedResearchController:
                 plan_hash, plan_ref = self._freeze_batch_plan(round_index=round_index, source=source,
                     prompt_hash=prompt_hash, compiled=compiled,
                     evidence_context=evidence_context,
+                    wire_binding=wire_binding,
                     research_update=advice.get("research_update") if getattr(self, "method_mode", False) else None)
                 plan = json.loads((self._campaign_root / plan_ref).read_text())
                 frozen = {"plan": plan, "plan_ref": plan_ref, "artifacts": [{"path": plan_ref, "sha256": file_sha256(self._campaign_root / plan_ref)}]}

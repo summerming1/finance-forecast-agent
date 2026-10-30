@@ -49,27 +49,29 @@ def validate_send_authorization(value,*,required=False):
 def response_contract():
     """Field descriptions only: no successful formula or fabricated finding."""
     return {'schema_version':ADVICE,
-        'research_update':'见schema update；base_state_hash=可见state_hash',
-        'hypotheses':'见schema action及action_contracts，完整AST'}
+        'research_update':'认识增量；base_state_hash复制契约const原文',
+        'hypotheses':'动作列表，见action_contracts'}
 
 
-def protocol_contract(*,reference=False,max_actions=2):
+def protocol_contract(*,reference=False,max_actions=2,require_j=False):
     """INPUT-only field guide; not extra keys to copy into the reply envelope."""
+    from .focused_feature_program import program_field_contract
     return {'output_contract_version':'evidence_output_contract_v1',
-        'output_schema':wire_output_schema(reference=reference,max_actions=max_actions),
+        'output_schema':wire_output_schema(reference=reference,max_actions=max_actions,require_j=require_j),
+        'program_fields':program_field_contract(),
         'semantic_types':{
-            'versions':'questions/hypotheses为增量而非快照，不变对象用[]；同版/问题仅改status。改主张/依据用latest+1，新问题新ID。版本正整数非bool，首版1。',
-            'visibility':'判断/动作仅引可见或本次合法新版本；隐藏/归档ID/版本不可判断或改写。',
-            'dependencies':'选用版本的可见新增pending及支持/反证、可解析动作/design依据、request.depends_on，须已evaluated或本次评估/暂缓；省request/空depends_on不绕过。无关历史不必全评；资源stop/review仅处理显式依赖。',
-            'failure':'execution_failure只可execution_incomplete，不是科学反证。'},
-        'reference_namespaces':'认识/请求依赖用evidence_research.evidence键；原动作/design依据用evidence_projection/available_evidence_ids。projection_ref关联来源，不互换权限。',
-        'evidence_request':'id稳定；question写缺失信息，expected写事前预期/未知，branches预声明结果分支。非diagnose的query=null。',
+            'versions':'research_update.questions/hypotheses为增量而非快照，不变对象用[]；无假设时诊断/训练须同响应建问题/假设。已有版只改status，改主张/依据用latest+1；版本正整数非bool、首版1，新问题新ID。',
+            'visibility':'判断/动作仅引可见或本次新版本；隐藏/归档不得判断/改写。',
+            'dependencies':'选用版pending/支持/反证/可解析依据须已evaluated或本次评估/暂缓；省request/空depends_on不绕过，无关历史免评。stop/review显式依赖也须hypothesis_refs及处理。',
+            'failure':'execution_failure只可execution_incomplete，非科学反证。'},
+        'reference_namespaces':'判断/depends_on用evidence_research.evidence键非candidate_id；动作/design用available_evidence_ids/evidence_projection；symptom_refs只取其中diagnostic，非语义fact；来源不扩权限。',
+        'evidence_request':'id稳定；question问缺口，expected写预期/未知；非diagnose的query=null。',
         'diagnostic_query':{
-            'kind':'DQ-01执行画像；02已保存预测误差；03因子关系；04尾部；05固定分组；06对齐目标关系。',
-            'object_ids':'1..2个不同available_objects；最后为control_candidate_id，不得同批未来引用。',
+            'kind':'DQ-01执行；DQ-02整体/逐折残差分布，非分组/分箱/相关；DQ-03因子关系；DQ-04尾部；DQ-05固定组n/MAE；DQ-06因子或预测-target，非残差相关。',
+            'object_ids':'[对象,control]或[control]，末项=control_candidate_id；可用且不同的对象已在schema枚举。',
             'scopes_by_kind':deepcopy(SCOPES),
-            'variable_pairs':'仅DQ-03/06用available_variables命名对，数量×对象数<=8；03只因子，06每对恰一目标且无lag/shift；其它[]。',
-            'factor':'仅DQ-04用一个可用因子，禁目标/预测；其它null。',
+            'variable_pairs':'取available_variables，对数×对象数<=8；不造lag/shift，其余条件见schema。',
+            'factor':'04须可用因子，其余条件见schema。',
             'parameters':{},'fixed_statistics':'Pearson/Spearman平均秩；有限对n>=2且非常量。DQ04按control线性q01/q99严格共同掩码。n<20/tail<10仅警告，非p值/科学保证；无已保存训练预测即不可得。'},
         'limits':{'string_values_total':8000,'active_hypotheses':3,'nesting':12,
             'update_json_chars':30000,'response_string_values_total':16000,
@@ -80,7 +82,25 @@ def apply_output_guidance(prompt):
     """Same research-only guidance for production and synthetic preparation."""
     reference=prompt.get('evidence_research',{}).get('reference',False)
     prompt['evidence_protocol_contract']=protocol_contract(reference=reference,
-        max_actions=prompt.get('max_hypotheses',2))
+        max_actions=prompt.get('max_hypotheses',2),
+        require_j=bool(prompt.get('diagnostic_research_policy',{}).get('require_j_decision')))
+    objects=prompt.get('available_objects')
+    if isinstance(objects,list):
+        prompt['evidence_protocol_contract']['output_schema']['$defs']['query']['properties']['object_ids']['items']['enum']=deepcopy(objects)
+    groups=prompt.get('fixed_model',{}).get('feature_groups')
+    if isinstance(groups,list):prompt['allowed_feature_groups']=deepcopy(groups)
+    if 'research_design_contract' in prompt:
+        prompt['research_design_contract']={'input_schema':'evidence_protocol_contract.output_schema.$defs.research_design',
+            'contract':'只供输入；训练question/basis为枚举，decision为对象，按完整schema而非字段范例提交。'}
+    if 'research_decision_contract' in prompt:
+        prompt['research_decision_contract']={'schema_version':prompt['research_decision_contract']['schema_version'],
+            'input_schema':'evidence_protocol_contract.output_schema.$defs.design_decision'}
+    if isinstance(prompt.get('decision_link_contract'),str):
+        prompt['decision_link_contract']='原提案按完整设计hash索引；父/参照见links，配置/diff见prior结果/feedback；完整规则/不变量留原批计划，不重写叙事。'
+    if not reference:
+        state_hash=prompt.get('evidence_research',{}).get('state',{}).get('state_hash')
+        if isinstance(state_hash,str) and re.fullmatch(r'[0-9a-f]{64}',state_hash):
+            prompt['evidence_protocol_contract']['output_schema']['$defs']['update']['properties']['base_state_hash']['const']=state_hash
     # These inherited legacy rules contradict the new envelope/frozen estimator,
     # or duplicate its action contracts. Replace instructions, never input facts.
     obsolete=('Return exactly one top-level JSON object with only the key hypotheses;',
@@ -98,33 +118,34 @@ def apply_output_guidance(prompt):
         'response_schema lists conditional fields,')
     prompt['rules']=[r for r in prompt.get('rules',[]) if not r.startswith(obsolete)]
     replacements={
-        'AST:':'AST只用input(op,name=return_1)、lag(op,arg,periods)、rolling_mean/rolling_std(op,arg,window)、abs(op,arg)、binary(op,left,right)。依据/parent/control/feedback必须是已接受可见原ID，禁同批未来。',
-        'ablate removes one generated_feature:':'ablate仅移除generated_feature:<实际名称>；simplify减少feature_count|nodes|depth且其它复杂度/lookback不增。stop/review独占且无模型/program/design；diagnose只control和完整请求，无模型/program。',
-        'Validate whole plan before fits;':'训练前整批校验；无效/重复占槽，不修补/替换。One-shot一次冻结<=4槽；Adaptive最多2次×2槽，执行单元<=2；用真实前轮反馈，禁批内重规划/第三次调用及修改指标/预算/评价。',
-        'Training needs research_design':'训练须research_design含recipe/question/basis/竞争解释/证伪条件；symptom_refs为可见诊断ID。J须decision_version=research_decision_v1和四项research_decision_contract；R/D/Random仅reference。设计总字符串<=1000、各文本<=2000、decision refs<=8；拒绝不截短。',
-        'RCP-01:':'RCP-01支持overall|high_volatility及合法AST；02贡献、03简化；04/05仅取证非窗口/集成。禁自定义阈值/运算符；OFF可domain_hypothesis但适用性未知，症状不扩AST权限。',
-        'diagnostic_common_limitations_v1:':'diagnostic_common_limitations_v1：仅开发描述，非因果/显著/盈利/严格复现；不自动修正、选集成、refit/下载。观察非推荐。*_ref在diagnostic_common_sources递归展开；constants_ref合并共享字段；values/fold_values按columns_ref/fold_columns；rule_templates按shared与columns/values合并。无数值丢弃，完整产物保留审计。',
-        'RCP-01 also permits':'RCP-01亦支持获准training_window/overall|high_volatility；RCP-04/05仍仅取证。',
-        'METHOD:':'从完整已接受control复制；parent_candidate_id=control_candidate_id。只改features或training_window：前者继承窗口，后者继承完整特征。模型/参数/seed/内置组/Scaler算法/均匀权重冻结。窗口仅expanding/null或rolling/504|756，每折拟合一次非逐目标；禁同批未来、联合/无效改动，生成特征含继承最多2条。',
+        'AST:':'AST含op：input(name=return_1)、lag(arg,periods)、rolling_mean/rolling_std(arg,window)、abs(arg)、二元(left,right)；值域见feature_capability。依据/parent/control/feedback只取可见已接受原ID，禁同批未来。',
+        'ablate removes one generated_feature:':'消融/简化/终止/诊断按action_contracts；禁不适用的模型/program/design字段。',
+        'Validate whole plan before fits;':'fit前整批校验，无效/重复占槽不补换。One-shot<=4槽；Adaptive<=2次×2槽、单元<=2。用真实前轮反馈，禁批内重规划/第三次调用/改指标预算评价。',
+        'Training needs research_design':'训练设计按output_schema，字符串总计<=1000，不截短。',
+        'RCP-01:':'RCP配方/问题见schema；禁自定义阈值/运算符/集成。OFF可domain_hypothesis但适用性未知；症状不扩权限。',
+        'diagnostic_common_limitations_v1:':'diagnostic_common_limitations_v1：开发描述非因果/显著/盈利/严格复现/推荐；不自动修正/集成/refit/下载。*_ref递归查diagnostic_common_sources；合并constants_ref；values/fold_values按columns_ref/fold_columns；rule_templates=shared＋columns/values。数值不丢。',
+        'RCP-01 also permits':'RCP配方/问题见schema；禁自定义阈值/运算符/集成。OFF可domain_hypothesis但适用性未知；症状不扩权限。',
+        'METHOD:':'parent_candidate_id=control_candidate_id，继承完整已接受control；只改features或training_window，另一轴不变。模型/参数/seed/内置组/Scaler/uniform冻结；expanding/null或rolling/504|756，每折一次fit非逐目标；禁同批未来/联合/no-op，生成含继承<=2。',
         'Current v4 J training MUST':'J训练须decision_version及四项完整research_design；R/D/Random用reference设计。stop/review省设计；diagnose仅显式取证。design所有字符串总计<=1000字符，各文本<=2000；拒绝不截短/修补。',
-        'Reply root has EXACTLY':'根只含schema_version/research_update/hypotheses；evidence_protocol_contract只作输入说明。输出完整键和合法AST/query，禁规划别名/范例。',
-        'New evidence protocol:':'同次research_update维护假设版本与实际证据判断，无反思调用。pending按证据×版本，deferred仍待处理；原编译/资源门禁保持。projection_ref按diagnostic_hash查automatic_diagnostics/diagnostic_common_sources；fold_metrics_ref仅审计绑定，缺细节用显式DQ-02，不授予隐藏数值。'}
+        'Reply root has EXACTLY':'契约仅输入；按schema输出原键/ID/hash/合法AST/query，禁内部引用。',
+        'New evidence protocol:':'同响应research_update无反思；pending=证据×版本，deferred未完成，原门禁保持。projection_ref按diagnostic_hash查automatic_diagnostics/diagnostic_common_sources；fold_metrics_ref仅审计，缺细节用DQ-02，禁隐藏数值。'}
+    replacements['Current v4 J training MUST']=replacements['Training needs research_design']
     prompt['rules']=[next((text for prefix,text in replacements.items() if r.startswith(prefix)),r)
         for r in prompt['rules']]
     prompt['rules'] += [
-        '按action_contracts冻结方法；禁metrics/verdict/split/budget/未知字段。evidence_refs用available_evidence_ids原值；真实前轮指标非盈利/严格复现。',
-        f'schema_version必填：根={ADVICE}；research_update={UPDATE}；evidence_request={REQUEST}；非空query={QUERY}。仅省非适用动作字段。',
-        '简明中文；键/版本/ID/枚举/AST不译。finding=事实及边界，open_question=未知，choice_reason=取舍；新文本各<=320字符非token，一两句留余量。',
-        'hypotheses须非空合法动作，结束用stop/request_review；诊断kind/scope须匹配问题。',
-        '数值非机制：基线好不支持未做改动；相关非干预；汇总不抹反向折。原因未明可暂缓/探索；不用先解释所有历史，不强迫换轴/改善。']
+        '字段按action_contracts/schema，禁metrics/verdict/split/budget。evidence_refs取available_evidence_ids；核对owner/对象，禁混父子同名值。',
+        f'必填schema_version：根={ADVICE}；research_update={UPDATE}；evidence_request={REQUEST}；非空query={QUERY}。空增量也必填版本。',
+        '简明中文；勿译键/版本/ID/枚举/AST。finding=事实/边界，open_question=未知，choice_reason=取舍；新文本各<=320字符非token。',
+        '动作非空、statement必填；只列当前必要动作，不为填满槽附带动作。stop/review独占；diagnose不附stop，只问工具可返统计。输出完整JSON，闭合各对象/数组；不补充说明。',
+        '单对象分布/零均值不证明两模型等价，低相关不证明独立增量。核对逐折对象/方向，汇总不抹反向折。相对改善=(controlMAE-candidateMAE)/controlMAE；0.0025=0.25%。原因未明可探索/暂缓，不先解释所有历史，不强迫换轴/改善。']
     prompt['rules']=list(dict.fromkeys(prompt['rules']))
     contracts={
         'improve':'完整已接受control，声明features＋完整feature_program或training_window＋training_policy，继承另一轴。',
-        'ablate':'statement、已接受匹配parent/control、ablation_component=generated_feature:<实际名称>；派生完整程序，只删除此特征，不能联合改动。',
-        'simplify':'statement、完整feature_program、已接受匹配parent/control、simplification_dimension=feature_count|nodes|depth；严格减少该复杂度，其它复杂度/lookback不增。',
+        'ablate':'匹配已接受parent/control；ablation_component=generated_feature:<名称>，完整程序仅删该特征。',
+        'simplify':'匹配已接受parent/control，完整feature_program；simplification_dimension=feature_count|nodes|depth，严格减少该项，其它复杂度/lookback不增。',
         'diagnose':'control_candidate_id＋完整evidence_request/query；占一槽，零fit/HTTP；禁旧diagnostic枚举/模型/新公式。',
         'stop':'独占决定，statement与可选依据；无模型字段。',
-        'request_review':'独占决定，statement与可选依据；无模型字段；保存暂停。'}
+        'request_review':'独占保存暂停，字段同stop。'}
     for key in prompt.get('action_contracts',{}):
         if key in contracts:prompt['action_contracts'][key]=contracts[key]
     return prompt
@@ -182,9 +203,32 @@ def project_evidence_references(prompt):
         restore_evidence_references(prompt)
         return deepcopy(prompt)
     body=deepcopy(prompt);values={};original_keys=set();original_strings=[]
+    reply_identities=body.get('research_protocol_id')=='evidence_research_v1'
+    readable_context=((body.get('advisor_wire_version'),body.get('compact_decision_contract',{}).get('schema_version')) in {('evidence_decision_v2','compact_decision_contract_v2'),('evidence_decision_v3','grouped_decision_contract_v1'),('evidence_decision_v3','grouped_decision_contract_v2'),('evidence_decision_v3','grouped_decision_contract_v3')})
     literal={'response_schema','context_manifest'}
+    if body.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3'}:
+        literal.update({'compact_decision_contract','advisor_wire_version',
+            'research_protocol_id','proposal_contract_version'})
+    if readable_context:literal.add('evidence_research')
     if isinstance(body.get('evidence_protocol_contract'),dict) and body['evidence_protocol_contract'].get('output_contract_version')=='evidence_output_contract_v1':
         literal.add('evidence_protocol_contract')
+    if reply_identities:
+        literal.update({'available_objects','available_variables','available_evidence_ids',
+                        'research_start_candidate_id','feature_capability'})
+    context=body.get('evidence_research') or {}
+    state=context.get('state') or {} if isinstance(context,dict) else {}
+    def id_keys(value):return set(value) if isinstance(value,dict) else set()
+    stable_ids=(id_keys(state.get('questions'))|id_keys(state.get('hypotheses'))
+                if reply_identities and isinstance(state,dict) else set())
+    copy_keys=(id_keys(context.get('evidence'))|stable_ids
+               if reply_identities and isinstance(context,dict) else set())
+    structure_keys={'evidence','state','questions','hypotheses'} if reply_identities else set()
+    readable_stats={'n','mae','delta','mean','count','fold','fold_id','std','min','max',
+                    'low','high','all','other','n_tail','median','pearson','spearman'}
+    def has_copy_keys(value):
+        if isinstance(value,dict):return bool(copy_keys.intersection(value)) or value.get('id') in stable_ids or any(has_copy_keys(x) for x in value.values())
+        if isinstance(value,list):return any(has_copy_keys(x) for x in value)
+        return False
     contracts=literal-{'context_manifest'}
     def scan_keys(v):
         if isinstance(v,dict):
@@ -205,16 +249,56 @@ def project_evidence_references(prompt):
     for p,n in sorted(prefix_counts.items(),key=lambda x:(-len(x[0]),x[0])):
         key=str(len(prefixes))
         if (len(p)-len(key)-3)*n>len(p)+len(key)+16:prefixes[key]=p
-    value_prefix='~V'
+    value_prefix='~' if reply_identities else '~V'
     while any(value_prefix in s for s in original_strings):value_prefix+='_'  # No literal source string can be a reference.
     def is_marker(v):return isinstance(v,str) and v.startswith(value_prefix) and v.endswith('~') and v[len(value_prefix):-1].isdigit()
     encode=lambda v:json.dumps(v,sort_keys=True,ensure_ascii=False,separators=(',',':'),allow_nan=False)
+    literal_anchors={};text_runs={}
+    if readable_context:
+        # Literal scientific ledger, with identical auxiliary views pointing
+        # into it. Never summarize, drop conditions, or fill scientific values.
+        candidates={};anchor_refs={}
+        def anchor_nodes(v,path):
+            if isinstance(v,(dict,list,str)):
+                serial=encode(v)
+                if len(serial)>64 and (serial not in candidates or len(encode(path))<len(encode(candidates[serial]))):
+                    candidates[serial]=path
+            if isinstance(v,dict):
+                for k,x in v.items():anchor_nodes(x,[*path,k])
+            elif isinstance(v,list):
+                for i,x in enumerate(v):anchor_nodes(x,[*path,i])
+        anchor_nodes(body['evidence_research'],[])
+        def anchor_external(v):
+            serial=encode(v)
+            if serial in candidates:
+                path=candidates[serial];ref=anchor_refs.get(serial)
+                key=ref if ref is not None else str(len(values));marker=value_prefix+key+'~'
+                if ref is not None or len(serial)>len(encode(marker))+len(encode(path))+len(key)+16:
+                    if ref is None:
+                        anchor_refs[serial]=ref=key;values[ref]=None;literal_anchors[ref]=path
+                    return value_prefix+ref+'~'
+            if isinstance(v,dict):return {k:anchor_external(x) for k,x in v.items()}
+            if isinstance(v,list):return [anchor_external(x) for x in v]
+            return v
+        for key,v in list(body.items()):
+            if key not in contracts:body[key]=anchor_external(v)
+        def periodic_notes(v):
+            if isinstance(v,str) and len(v)>=512:
+                period=(v+v).find(v,1)
+                if 0<period<=512 and len(v)%period==0 and len(v)//period>=4:
+                    ref=str(len(values));values[ref]=None
+                    text_runs[ref]={'text':v[:period],'count':len(v)//period}
+                    return value_prefix+ref+'~'
+            if isinstance(v,dict):return {k:periodic_notes(x) for k,x in v.items()}
+            if isinstance(v,list):return [periodic_notes(x) for x in v]
+            return v
+        if 'user_notes' in body:body['user_notes']=periodic_notes(body['user_notes'])
     for scalar in (True,False):
         counts={}
         def collect(v, scalar=scalar, counts=counts):
             if (isinstance(v,str) if scalar else isinstance(v,(list,dict))):
                 serial=encode(v)
-                if len(serial)>=(8 if scalar else 32):counts[serial]=counts.get(serial,0)+1
+                if len(serial)>=(8 if scalar else (0 if reply_identities else 32)) and not (scalar and v in stable_ids):counts[serial]=counts.get(serial,0)+1
             if isinstance(v,dict):
                 if is_marker(v):return
                 for item in v.values():collect(item)
@@ -223,9 +307,10 @@ def project_evidence_references(prompt):
         for key,v in body.items():
             if key not in contracts:collect(v)
         refs={}
-        def replace(v, counts=counts, refs=refs):
+        def replace(v, counts=counts, refs=refs, scalar=scalar):
+            if isinstance(v,str) and v in stable_ids:return v
             serial=encode(v)
-            if counts.get(serial,0)>1:
+            if counts.get(serial,0)>1 and not (reply_identities and not scalar and has_copy_keys(v)):
                 ref=refs.get(serial)
                 if ref is None:
                     key=str(len(values))
@@ -245,7 +330,9 @@ def project_evidence_references(prompt):
     def count_keys(v):
         if isinstance(v,dict):
             for k,x in v.items():
-                if len(k)>=9:counts[k]=counts.get(k,0)+1
+                if (len(k)>=(4 if reply_identities else 9) and k not in copy_keys|structure_keys
+                        and not (reply_identities and len(k)<9 and k in readable_stats)):
+                    counts[k]=counts.get(k,0)+1
                 count_keys(x)
         elif isinstance(v,list):
             for x in v:count_keys(x)
@@ -253,10 +340,30 @@ def project_evidence_references(prompt):
         if k not in literal:count_keys(v)
     count_keys(values)
     keys={}
-    for key,n in sorted(counts.items()):
-        alias='@'+str(len(keys))
-        while alias in original_keys or alias in keys:alias+='_'  # Alias keys also cannot shadow literal source keys.
-        if n*(len(key)-len(alias))>len(key)+len(alias)+20:keys[alias]=key
+    if reply_identities:
+        import itertools
+        import string
+        alphabet=string.ascii_letters+''.join(c for c in string.punctuation if c not in '"\\')
+        def shortest_aliases():
+            length=1
+            while True:
+                for chars in itertools.product(alphabet,repeat=length):yield ''.join(chars)
+                length+=1
+        short_names=shortest_aliases();available_alias=None
+    ordered=sorted(counts.items(),key=lambda item:(-item[1],item[0]) if reply_identities else (item[0],))
+    for key,n in ordered:
+        if reply_identities:
+            if available_alias is None:
+                available_alias=next(a for a in short_names if a not in original_keys and a not in keys)
+            alias=available_alias
+        else:
+            alias='@'+str(len(keys))
+            while alias in original_keys or alias in keys:alias+='_'  # No alias may shadow a literal source key.
+        # Six characters cover the quotes, colon and separator of one map
+        # entry. Old encodings retain their original conservative threshold.
+        if n*(len(key)-len(alias))>len(key)+len(alias)+(6 if reply_identities else 20):
+            keys[alias]=key
+            if reply_identities:available_alias=None
     aliases={v:k for k,v in keys.items()}
     def rename(v):
         if isinstance(v,dict):return {aliases.get(k,k):rename(x) for k,x in v.items()}
@@ -265,42 +372,84 @@ def project_evidence_references(prompt):
     if keys:
         body={k:rename(v) if k not in literal else v for k,v in body.items()}
         values=rename(values)
-    def hash_text(text):
+    def hash_text(text,*,key=False):
+        if text in stable_ids or key and text in copy_keys and not readable_context:return text
         text=text.replace('~','~~')
         for k,p in prefixes.items():text=text.replace(p,'~P'+k+'~')
         return re.sub(r'(?<![0-9a-f])[0-9a-f]{64}(?![0-9a-f])',lambda m:'~H'+
             base64.urlsafe_b64encode(bytes.fromhex(m[0])).decode().rstrip('=')+'~',text)
     def encode_hashes(v):
         if isinstance(v,str):return v if is_marker(v) else hash_text(v)
-        if isinstance(v,dict):return {hash_text(k):encode_hashes(x) for k,x in v.items()}
+        if isinstance(v,dict):return {hash_text(k,key=True):encode_hashes(x) for k,x in v.items()}
         if isinstance(v,list):return [encode_hashes(x) for x in v]
         return v
     body={k:encode_hashes(v) if k not in literal else v for k,v in body.items()}
     values=encode_hashes(values)
+    if readable_context:
+        # Identity strings alone use the existing reversible hash/prefix codec;
+        # scientific field names, arrays, numbers and text stay inline.
+        body['evidence_research']=encode_hashes(body['evidence_research'])
+        if 'bindings' in body['compact_decision_contract']:
+            body['compact_decision_contract']['bindings']=encode_hashes(body['compact_decision_contract']['bindings'])
+        literal_anchors={k:[hash_text(v,key=True) if isinstance(v,str) else v for v in path]
+            for k,path in literal_anchors.items()}
     if values or keys or body!=prompt:
-        body['evidence_context_refs']={'schema_version':'evidence_reference_projection_v7','prefixes':prefixes,
+        body['evidence_context_refs']={'schema_version':'evidence_reference_projection_v9' if readable_context else ('evidence_reference_projection_v8' if reply_identities else 'evidence_reference_projection_v7'),'prefixes':prefixes,
             'values':values,'keys':keys,'value_encoding':'string_reference_v1','value_prefix':value_prefix,
             'source_hash':identity(prompt,domain='evidence-context-original-v1'),
             'hash_encoding':'hex64_base64url_v1',
-            'contract':'INPUT ONLY: ~P<integer>~ restores exact namespace from prefixes; ~H<base64url43>~ restores hex64; ~~ restores ~. Restore alias keys from keys; strings <value_prefix><integer>~ resolve recursively in values. Source literals never use this reserved prefix. Output full original keys and legal DSL/query, never references.'}
+            'contract':('仅去重区：~P<整数>~查prefixes；~H<43位base64url>~还原hex64；~~为~；keys还原键，<value_prefix><整数>~递归查values。源字面不占保留前缀。输出原键/ID/DSL/query，禁内部引用；不增权限。'
+                if reply_identities else 'INPUT ONLY: ~P<integer>~ restores exact namespace from prefixes; ~H<base64url43>~ restores hex64; ~~ restores ~. Restore alias keys from keys; strings <value_prefix><integer>~ resolve recursively in values. Source literals never use this reserved prefix. Output full original keys and legal DSL/query, never references.')}
+        if readable_context:
+            body['evidence_context_refs']['literal_anchors']=literal_anchors
+            body['evidence_context_refs']['text_runs']=text_runs
+            body['evidence_context_refs']['contract']+=' v9: evidence_research科学字段明文，仅身份用原hash编码；literal_anchors从此根取值；text_runs原样重复text×count还原备注。不选事实/条件，不增权限。'
         if restore_evidence_references(body)!=prompt:raise ValueError('evidence projection is not lossless')
+    if (body.get('advisor_wire_version') == 'evidence_decision_v3'
+            and body.get('evidence_context_refs', {}).get('schema_version') == 'evidence_reference_projection_v9'):
+        from .grouped_projection import pack_projection
+        body = pack_projection(body)
+        if restore_evidence_references(body) != prompt:
+            raise ValueError('grouped evidence projection is not lossless')
     return body
 
 
 def restore_evidence_references(prompt):
     refs=prompt.get('evidence_context_refs')
+    if refs is not None and refs.get('schema_version') == 'evidence_reference_projection_v10':
+        from .grouped_projection import unpack_projection
+        return restore_evidence_references(unpack_projection(prompt))
+    readable_context=((prompt.get('advisor_wire_version'),prompt.get('compact_decision_contract',{}).get('schema_version')) in {('evidence_decision_v2','compact_decision_contract_v2'),('evidence_decision_v3','grouped_decision_contract_v1'),('evidence_decision_v3','grouped_decision_contract_v2'),('evidence_decision_v3','grouped_decision_contract_v3')})
     literal={'response_schema','context_manifest'}
+    if prompt.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3'}:
+        literal.update({'compact_decision_contract','advisor_wire_version',
+            'research_protocol_id','proposal_contract_version'})
+    if readable_context:literal.add('evidence_research')
     if isinstance(prompt.get('evidence_protocol_contract'),dict) and prompt['evidence_protocol_contract'].get('output_contract_version')=='evidence_output_contract_v1':
         literal.add('evidence_protocol_contract')
     if refs is None:return deepcopy(prompt)
-    if refs.get('schema_version') not in {'evidence_reference_projection_v1','evidence_reference_projection_v2','evidence_reference_projection_v3','evidence_reference_projection_v4','evidence_reference_projection_v5','evidence_reference_projection_v6','evidence_reference_projection_v7'}:
+    if refs.get('schema_version') not in {'evidence_reference_projection_v1','evidence_reference_projection_v2','evidence_reference_projection_v3','evidence_reference_projection_v4','evidence_reference_projection_v5','evidence_reference_projection_v6','evidence_reference_projection_v7','evidence_reference_projection_v8','evidence_reference_projection_v9'}:
         raise ValueError('unknown evidence projection')
+    if refs['schema_version']=='evidence_reference_projection_v9' and not readable_context:
+        raise ValueError('readable evidence projection requires its explicit v2 contract')
+    reply_identities=refs['schema_version'] in {'evidence_reference_projection_v8','evidence_reference_projection_v9'}
+    if reply_identities:
+        literal.update({'available_objects','available_variables','available_evidence_ids',
+                        'research_start_candidate_id','feature_capability'})
+    context=prompt.get('evidence_research') or {}
+    state=context.get('state') or {} if isinstance(context,dict) else {}
+    def id_keys(value):return set(value) if isinstance(value,dict) else set()
+    stable_ids=(id_keys(state.get('questions'))|id_keys(state.get('hypotheses'))
+                if reply_identities and isinstance(state,dict) else set())
+    copy_keys=(id_keys(context.get('evidence'))|stable_ids
+               if reply_identities and isinstance(context,dict) else set())
     def decode_hashes(v):
-        def text(s):
+        def text(s,*,key=False):
+            if s in stable_ids or key and s in copy_keys and not readable_context:return s
             return re.sub(r'~~|~H([A-Za-z0-9_-]{43})~|~P([0-9]+)~',lambda m:'~' if m[0]=='~~' else
                 refs['prefixes'][m[2]] if m[2] is not None else base64.urlsafe_b64decode(m[1]+'=').hex(),s)
         if isinstance(v,str):return text(v)
-        if isinstance(v,dict):return {text(k):decode_hashes(x) for k,x in v.items()}
+        if isinstance(v,dict):return {text(k,key=True):decode_hashes(x) for k,x in v.items()}
         if isinstance(v,list):return [decode_hashes(x) for x in v]
         return v
     codec=refs.get('hash_encoding')=='hex64_base64url_v1'
@@ -308,7 +457,7 @@ def restore_evidence_references(prompt):
         if isinstance(v,dict):
             out={}
             for k,x in v.items():
-                original=refs.get('keys',{}).get(k,k)
+                original=k if k in copy_keys else refs.get('keys',{}).get(k,k)
                 if original in out:raise ValueError('duplicate decoded evidence key')
                 out[original]=names(x)
             return out
@@ -317,10 +466,30 @@ def restore_evidence_references(prompt):
     decoded_values=names(decode_hashes(refs['values']) if codec else refs['values'])
     prefix=refs.get('value_prefix') if refs.get('value_encoding')=='string_reference_v1' else None
     markers={refs['value_marker']} if 'value_marker' in refs else {'evidence_value_ref','$v'}
+    def literal_value(ref):
+        path=refs.get('literal_anchors',{}).get(ref)
+        if not readable_context or not isinstance(path,list):raise ValueError('invalid literal evidence anchor')
+        value=prompt['evidence_research']
+        try:
+            for key in path:
+                if (isinstance(value,dict) and isinstance(key,str)
+                        or isinstance(value,list) and type(key) is int and 0<=key<len(value)):value=value[key]
+                else:raise ValueError('invalid literal evidence path')
+        except (KeyError,IndexError,TypeError) as exc:raise ValueError('missing literal evidence path') from exc
+        return decode_hashes(deepcopy(value)) if codec else deepcopy(value)
+    def repeated_text(ref):
+        item=refs.get('text_runs',{}).get(ref)
+        if (not readable_context or not isinstance(item,dict) or set(item)!={'text','count'}
+                or not isinstance(item['text'],str) or not item['text']
+                or type(item['count']) is not int or item['count']<1
+                or len(item['text'])*item['count']>64000):raise ValueError('invalid periodic note')
+        return item['text']*item['count']
     def expand(v,seen=frozenset()):
         if prefix and isinstance(v,str) and v.startswith(prefix) and v.endswith('~') and v[len(prefix):-1].isdigit():
             ref=v[len(prefix):-1]
             if ref in seen or ref not in decoded_values:raise ValueError('invalid recursive evidence string reference')
+            if ref in refs.get('literal_anchors',{}):return literal_value(ref)
+            if ref in refs.get('text_runs',{}):return repeated_text(ref)
             return expand(deepcopy(decoded_values[ref]),seen|{ref})
         if isinstance(v,dict):
             if not prefix and len(v)==1 and next(iter(v)) in markers and isinstance(next(iter(v.values())),str):
@@ -332,6 +501,10 @@ def restore_evidence_references(prompt):
         return v
     body={k:expand(names(decode_hashes(v) if codec else v)) if k not in literal else deepcopy(v)
         for k,v in prompt.items() if k!='evidence_context_refs'}
+    if readable_context and codec:
+        body['evidence_research']=decode_hashes(body['evidence_research'])
+        if 'bindings' in body['compact_decision_contract']:
+            body['compact_decision_contract']['bindings']=decode_hashes(body['compact_decision_contract']['bindings'])
     if identity(body,domain='evidence-context-original-v1')!=refs['source_hash']:
         raise ValueError('evidence projection is not lossless or was tampered')
     return body
@@ -483,9 +656,10 @@ def validate_update_shape(update):
         raise ValueError('bounded update joint text/serialized limit exceeded')
 
 
-def normalize_evidence_advice(advice,prompt,*,accepted_context=None):
+def normalize_evidence_advice(advice,prompt,*,accepted_context=None,action_dependencies=None):
     try:
-        return _normalize_evidence_advice(advice,prompt,accepted_context=accepted_context)
+        return _normalize_evidence_advice(advice,prompt,accepted_context=accepted_context,
+            action_dependencies=action_dependencies)
     except ValueError as exc:
         issues=collect_structure_issues(advice,
             reference=prompt.get('evidence_research',{}).get('reference',False),
@@ -494,7 +668,7 @@ def normalize_evidence_advice(advice,prompt,*,accepted_context=None):
         raise
 
 
-def _normalize_evidence_advice(advice,prompt,*,accepted_context=None):
+def _normalize_evidence_advice(advice,prompt,*,accepted_context=None,action_dependencies=None):
     """Validate the new semantics; caller still compiles/preflights all actions.
 
     The returned prospective state is deliberately not persisted or applied here.
@@ -563,7 +737,10 @@ def _normalize_evidence_advice(advice,prompt,*,accepted_context=None):
     if not isinstance(rows,list) or not 1<=len(rows)<=prompt['max_hypotheses']:
         raise ValueError('evidence advice exceeds original action slots')
     cleaned=[];relations=[];requests=set()
-    for row in rows:
+    if action_dependencies is not None and (not isinstance(action_dependencies,list)
+            or len(action_dependencies)!=len(rows)):
+        raise ValueError('request-bound action dependencies must align with actual actions')
+    for ordinal,row in enumerate(rows):
         if not isinstance(row,dict):raise TypeError('action must be an object')
         row=deepcopy(row)
         hrefs=row.pop('hypothesis_refs',[])
@@ -604,7 +781,11 @@ def _normalize_evidence_advice(advice,prompt,*,accepted_context=None):
         if not context['reference'] and row.get('action_type') not in {'stop','request_review'} and not hrefs:
             raise ValueError('new research action must link its hypothesis versions')
         if not context['reference']:
-            required=declared_refs(row)|set((request or {}).get('depends_on',[]))
+            explicit=[] if action_dependencies is None else action_dependencies[ordinal]
+            if (not isinstance(explicit,list) or len(explicit)>8
+                    or any(not isinstance(ref,str) or ref not in facts for ref in explicit)):
+                raise ValueError('action dependencies must be visible accepted evidence')
+            required=declared_refs(row)|set((request or {}).get('depends_on',[]))|set(explicit)
             if required and not hrefs:
                 raise ValueError('dependent evidence requires explicit hypothesis versions for assessment')
             for hid,v in hrefs:

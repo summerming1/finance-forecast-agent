@@ -44,7 +44,12 @@ QUOTA_MODELS=('deepseek-v4.1-flash-1017','deepseek-v4.1-flash','glm-5.3',
 
 def inspect_send(prompt):
     p=restore_method_references(prompt)
-    if set(p)-ROOTS:raise PermissionError('unregistered outbound root fields')
+    allowed=ROOTS
+    if p.get('advisor_wire_version')=='evidence_decision_v2':
+        from finance_forecast_agent.compact_decision import verify_prompt
+        verify_prompt(prompt)
+        allowed=ROOTS|{'advisor_wire_version','compact_decision_contract'}
+    if set(p)-allowed:raise PermissionError('unregistered outbound root fields')
     if p.get('research_protocol_id')!='evidence_research_v1':raise PermissionError('wrong research protocol')
     if p.get('reviewed_evidence') or p.get('compatible_memory'):raise PermissionError('literature/Memory not authorized')
     if 'user_notes' in p and p['user_notes']!={'authority':'untrusted_non_executable_notes','text':TRIAL_NOTES}:
@@ -247,7 +252,7 @@ def write_synthetic(path):
             'adjclose':[{'adjclose':prices.tolist()}]}}],'error':None}})
 
 
-def trajectory(root,guard):
+def trajectory(root,guard,*,advisor_wire_version=None):
     from workspace_ui_service import WorkspaceUI
 
     from finance_forecast_agent import research_mission as mission
@@ -267,6 +272,8 @@ def trajectory(root,guard):
         'fixture_dir':str(root/'fixtures'),'feature_strategy':{'arm':'adaptive_batch','search_seed':42},
         'budget':{'max_rounds':2,'max_new_candidates_per_round':2,'max_fit_calls':32,
             'max_advisor_calls':2,'max_http_requests':2,'max_provider_seconds':360}}
+    if advisor_wire_version is not None:
+        form['advisor_wire_version']=advisor_wire_version
     preview=ui.preflight(form);atomic_json(root/'preflight.json',preview)
     guard.label='parent'
     ids=ui.execute('create',{'form':form,'preflight_hash':preview['preflight_hash'],'confirmed':True},'repair-live-parent')
