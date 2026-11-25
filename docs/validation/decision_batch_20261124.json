@@ -1,0 +1,221 @@
+{
+  "date": "2026-11-24",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source": "e64818b9d082fcecd5cef5f4b083229e2d56d08c3dc1baa460eeef23cf03c48c",
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1625,
+        "skipped": 2
+      },
+      "path": ".decision-batch-20261124\\bat1\\regression\\END.json",
+      "sha256": "3703a7504dd4fd3df0921f0dd904b1a41be82dc4caff7c2e2f46dff81863b4bd",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-batch-20261124\\bat1\\browser\\END.json",
+      "sha256": "ae4ca984972f42bdd45fcc043ac974a1b5e37ef37900b8473450759d581c4ab3",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "calls": [
+    {
+      "number": 1,
+      "case": "parent",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 32.40579190000426,
+      "raw_envelope_sha256": "9bc96028a719c6deb700651fb52e75ee89f49860a54bd4fbf74d4064374d342d"
+    },
+    {
+      "number": 2,
+      "case": "case-2026112300",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 17.71573279995937,
+      "raw_envelope_sha256": "4b7fb1e6dfa00451e5ca752f3a3cbab68ebb51465546d7e8ea1118a1cd72b8a0"
+    },
+    {
+      "number": 3,
+      "case": "case-593024",
+      "model": "qwen4-max",
+      "http_status": null,
+      "finish_reason": null,
+      "state": "unknown",
+      "elapsed_seconds": 20.140259800013155,
+      "raw_envelope_sha256": "cf69cdbadcdeba5601e7054be5c5abd7913c2921e330d0980e2991feaaa98a0b"
+    }
+  ],
+  "new_http": 3,
+  "historical_http": 369,
+  "charged_fit": 32,
+  "trajectory": [
+    {
+      "role": "parent",
+      "campaign_id": "persistent-4874880b2dbb8acb8dfcf022",
+      "execution_status": "partial",
+      "fit_calls": 24,
+      "stop_reason": "configuration_required",
+      "task_status": "waiting_provider",
+      "research": [
+        {
+          "candidate_id": "r1_c1_72009ed8",
+          "attempt_id": "1c17d8ee63b2486fa9b05908b331b451",
+          "status": "completed",
+          "actual_candidate_fit_calls": 4
+        },
+        {
+          "candidate_id": "r1_c2_067f3bf7",
+          "attempt_id": "8d505f8ebc39434da3875a828a065cd4",
+          "status": "completed",
+          "actual_candidate_fit_calls": 4
+        }
+      ]
+    }
+  ],
+  "verdict": {
+    "scope": "2026-11-24 isolated synthetic worker and preregistered challenges on bat1",
+    "engineering": "PASS_BOUNDED",
+    "real_decision_behavior": "NO_GO_INCOMPLETE",
+    "observations": [
+      "首规划提出并实际执行两条分别从 C7/user_start 继承的单轴研究，加入 gen_vol20 和改用 rolling756，各完成四折。前者开发 MAE 比共同父方案高约 0.2791%，后者低约 0.0505%。均未达到 0.25% 的改善门槛。父研究随后 partial，无法交付冻结推荐。",
+      "首答将两个干预称为可分离归因。数据允许比较指定配置下各项改动的效果，尚不足以证明两种机制互斥或独立。test.question 两处只给问题句柄，具体问题可由原问题声明查到。",
+      "首个独立题正确区分了训练内高相关与删除后的损失变化，选择了合法消融。新假设定义为删后不显著变差，但预测分支将支持条件写为删后显著改善；近零变化的解释与原命题不完全一致，不能记为完整科学通过。四次拟合是此答提案的估计，未在该语义题执行。",
+      "父任务第二轮已形成含实际结果的请求，本地百炼严格格式转换在生成 HTTP 前触发 KeyError('required')。封存后用其原请求复现并离线验证修补。",
+      "独立题第二项上游 ProxyError，服务端收件未知；其余四项及配对两侧未投递。本版共三次上游尝试、两个完整原答。无免费额度拒绝或换模。"
+    ],
+    "real_result_informed_replanning": "NOT_OBSERVED",
+    "real_child_refit_inference": "NOT_RUN",
+    "opposite_pair": "0/2",
+    "selection_value": "NOT_RUN",
+    "independent_financial_effect": "NOT_RUN",
+    "G6": "既有试用已尝试，待所有者复核",
+    "postseal_check": "postseal-envelope.json 单独核验两份原始请求。修补源码没有新的 Live。"
+  },
+  "cases": [
+    {
+      "case_id": "case-2026112300",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-593024",
+      "status": "failed_or_invalid",
+      "error": "transport_unavailable",
+      "delivery": "delivery_unknown"
+    }
+  ],
+  "post_seal_local_repair": {
+    "source": "8a82fe7cdb147a3b935d151162acc18bc7972d3b36b433c6168eba38a5c81aa2",
+    "engineering": {
+      "regression": {
+        "counts": {
+          "passed": 1626,
+          "skipped": 2
+        },
+        "path": ".decision-batch-20261124\\post1\\regression\\END.json",
+        "sha256": "baef625c4670c7ba92bbb995f9c86064683f04315bd13231916dda88cd88df68",
+        "pytest_exit": 0,
+        "wrapper_exit": 0
+      },
+      "browser": {
+        "counts": {
+          "passed": 7
+        },
+        "path": ".decision-batch-20261124\\post1\\browser\\END.json",
+        "sha256": "17dd98f29efb414ef5170cb534b1b83bcfcc0235a0ff3d4a52150db92e7c7be3",
+        "pytest_exit": 0,
+        "wrapper_exit": 0
+      }
+    },
+    "original_requests": {
+      "upstream_http": 0,
+      "fit": 0,
+      "old_adapter": "c18afb813fe2bdd64d97cd7579b222ba08e612ae5664d3b8d5c90726620cd3b4",
+      "repaired_adapter": "591790755adff5a1df62cc312c34eb93aeb693dbeb3aa2d5b7884949fd948adb",
+      "observations": [
+        {
+          "key": "prompt:1",
+          "request_sha256": "49d548de55686084736e31c8b41b621f9b232239c2ffc49f6d04155fb6928238",
+          "bytes": 52844,
+          "original": "passed",
+          "repaired": "strict envelope produced",
+          "required": [
+            "schema_version",
+            "question_updates",
+            "hypothesis_updates",
+            "assessments",
+            "choice_reason",
+            "actions"
+          ]
+        },
+        {
+          "key": "prompt:2",
+          "request_sha256": "efbcc8865785489c28b7e9b4ccd11d6e6c7580b5f3045608623e70b4d969b2ea",
+          "bytes": 69328,
+          "original": "KeyError('required')",
+          "repaired": "strict envelope produced",
+          "required": [
+            "actions",
+            "assessments",
+            "choice_reason",
+            "hypothesis_updates",
+            "question_updates",
+            "schema_version"
+          ]
+        }
+      ]
+    },
+    "real_http": 0
+  },
+  "unattempted": [
+    "case-862751",
+    "case-2026112303",
+    "case-2026112304",
+    "case-2026112305",
+    "case-c98d2236ecee10d4cdf8",
+    "case-96a6c367d7ef18d92f0e"
+  ],
+  "stop": "unknown_delivery",
+  "process_exit": {
+    "exit": 0,
+    "seconds": 109.73078860004898
+  },
+  "references": {
+    ".decision-batch-20261124\\OWNER.json": "e5accd634aa5d6ce998299a43ce03276e5eb3453df5a096f99e141d757049ae0",
+    ".decision-batch-20261124\\AUTHORIZATION.json": "d21554063c55eef801f9eeb08391f48d815fc51da8ff5a63a3a5d3718b802061",
+    ".decision-batch-20261124\\PREFLIGHT-v1.json": "683d1a2735973551f2e6c9d304841f5d452fd15a469447e284f61a6a20c59e9a",
+    ".decision-batch-20261124\\PAIR-v1.json": "247653ecb048138116760c72ceba64d65f67683810d19671dbbc50e0173fed45",
+    ".decision-batch-20261124\\SESSION_LEDGER.json": "6453933c950dd9697498021f1f242f028993ba4ce85f3742408729af65001606",
+    ".decision-batch-20261124\\SESSION_SEAL.json": "7895f253fc8bc3e514baf25f0f1517cda4a7105d67264bc47bb4f671efa2c1d7",
+    ".decision-batch-20261124\\bat1\\END.json": "538cf471474dfc45042bd2abec5c4787c1f9ad84d5260102f70497ad12afcf17",
+    ".decision-batch-20261124\\bat1\\static.json": "32abe278ee51010facb26d1bce3f67a816c0b13a64c2033c68ea8a859a5e449a",
+    ".decision-batch-20261124\\bat1\\regression\\END.json": "3703a7504dd4fd3df0921f0dd904b1a41be82dc4caff7c2e2f46dff81863b4bd",
+    ".decision-batch-20261124\\bat1\\browser\\END.json": "ae4ca984972f42bdd45fcc043ac974a1b5e37ef37900b8473450759d581c4ab3",
+    ".decision-batch-20261124\\replay.json": "ab961ed018952d8fa44aeadbca8bcaa103227d72d2d1c22a8ae90de990002714",
+    ".decision-batch-20261124\\replay-last.json": "6ccccf2e07bd576cd91536e7dd514aa61ccd5f09a2ba3959104923de33d1083c",
+    ".decision-batch-20261124\\authored-fixtures.json": "24a6a345294305590fa5937007d6192ff2c6587913574903f3d3b195aa142e58",
+    ".decision-batch-20261124\\invalid-fixtures.json": "f08ab87f6576a6d6a841aafd29b5fedc397d308d4c038792472d0a39f8f1465f",
+    ".decision-batch-20261124\\behavior-review.json": "dbb24f0a15ddd935b7c7e4afdbca56dd438f9f910bf9e767f443b4d146658e25",
+    ".decision-batch-20261124\\live.exit.json": "d9cd160cce645448a99137d239fce372c0083b6fcf8f7e0e9d1d84a78fc692c3",
+    ".decision-batch-20261124\\v1\\OUTCOME.json": "5be67c979db434e93af29da8b7e56a585116c873765cfee77e1a1310b7c80369",
+    ".decision-batch-20261124\\v1\\MATCHED_PAIR.json": "a07fb3e7611b3753d1705ceaf4745ee8187023e4a9543aaa39efcaccfb806794",
+    ".decision-batch-20261124\\post1\\END.json": "f6ac62a97456cd6679e16aa99744b06d09f5b74a9e7a6a9f3be51bb4b682bffd",
+    ".decision-batch-20261124\\post1\\static.json": "1a9e1e1b19a2a56be3782bac6a9741977f4c9fe5381ab89223f833c53119178e",
+    ".decision-batch-20261124\\post1\\regression\\END.json": "baef625c4670c7ba92bbb995f9c86064683f04315bd13231916dda88cd88df68",
+    ".decision-batch-20261124\\post1\\browser\\END.json": "17dd98f29efb414ef5170cb534b1b83bcfcc0235a0ff3d4a52150db92e7c7be3",
+    ".decision-batch-20261124\\postseal_replay.py": "a595bfd83d9cc27d99b2fced9db7b2bcdc1cdc8e2dea36733ee6743ab0847317",
+    ".decision-batch-20261124\\postseal-envelope.json": "c79667722e313f60383f74d31dbba93ed1400df62981c0811889621cd74fddb3",
+    ".decision-batch-20261124\\postseal-prompt2.json": "efbcc8865785489c28b7e9b4ccd11d6e6c7580b5f3045608623e70b4d969b2ea"
+  }
+}

@@ -89,8 +89,8 @@ class WorkspaceUI:
                                   'change_scope': form.get('change_scope', 'explore'),
                                   'context_mode': 'compact_v1',
                                   'research_notes': _text(form.get('research_notes', ''), maximum=4000)}
-        method_mode = options['change_scope'] == 'feature_window'
-        price_mode = options['change_scope'] in {'price_features','feature_window'}
+        method_mode = options['change_scope'] in {'feature_window','feature_window_model'}
+        price_mode = options['change_scope'] in {'price_features','feature_window','feature_window_model'}
         if method_mode:
             options['diagnostic_mode'] = 'on'
         if form.get('research_protocol_id') is not None:
@@ -126,6 +126,13 @@ class WorkspaceUI:
             raise ValueError('Yahoo input cannot silently carry a different external contract')
         if options['entry_mode'] == 'provided_start':
             options['starting_baseline'] = copy.deepcopy(form.get('starting_config'))
+            if options['change_scope']=='feature_window_model' and isinstance(options['starting_baseline'],dict):
+                # Empty parameters explicitly select the named registered pack;
+                # supplied nonempty parameters are validated, never overwritten.
+                start=options['starting_baseline']
+                if start.get('model_params') == {}:
+                    from finance_forecast_agent.focused_methods import registered_model_params
+                    start['model_params']=registered_model_params(start.get('model_family'))
         elif form.get('starting_config'):
             raise ValueError('Goal entry cannot carry a hidden user model')
         if form.get('allowed_feature_groups') is not None:
@@ -212,8 +219,9 @@ class WorkspaceUI:
                         'local_executable': row['applicability']['executable'], 'audit_package_exportable': True,
                         'full_model_bundle_exportable': None})} for row in controller.literature_snapshot])
         if method_mode:
-            from finance_forecast_agent.focused_methods import method_capability
-            preview['method_capability'] = method_capability()
+            from finance_forecast_agent.focused_methods import method_capability, model_method_capability
+            preview['method_capability'] = (model_method_capability()
+                if options['change_scope']=='feature_window_model' else method_capability())
             if controller.research_protocol_id:preview['research_protocol_id']=controller.research_protocol_id
             if options.get('advisor_wire_version') is not None:
                 preview['advisor_wire_version'] = options['advisor_wire_version']

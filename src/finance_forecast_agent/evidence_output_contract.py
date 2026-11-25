@@ -14,6 +14,57 @@ QUERY = 'evidence_diagnostic_query_v1'
 TEXT_LIMIT = 320
 ID_LIMIT = 96
 REF_LIMIT = 160
+DIRECT_BASIS_SELECTOR = 'evidence_decision_v7_direct'
+SOURCE_CHOICE_SELECTOR = 'evidence_decision_v7_sources'
+OPERATION_SELECTOR = 'evidence_decision_v7_operations'
+INTENT_SELECTOR = 'evidence_decision_v7_intent'
+SLOTS_SELECTOR = 'evidence_decision_v7_slots'
+COMPARISON_SELECTOR = 'evidence_decision_v7_comparison'
+JUDGMENT_SELECTOR = 'evidence_decision_v7_judgments'
+DIRECT_TEST_SELECTOR = 'evidence_decision_v7_direct_tests'
+BATCH_SELECTOR = 'evidence_decision_v7_batch'
+EVIDENCE_USE_SELECTOR = 'evidence_decision_v7_evidence_use'
+SUMMARY_SELECTOR = 'evidence_decision_v7_summary'
+SELECTED_V7_FORMS = {COMPARISON_SELECTOR: 12, JUDGMENT_SELECTOR: 11, DIRECT_TEST_SELECTOR: 10, BATCH_SELECTOR: 9, EVIDENCE_USE_SELECTOR: 8, SUMMARY_SELECTOR: 7, SLOTS_SELECTOR: 6, INTENT_SELECTOR: 5, OPERATION_SELECTOR: 4, DIRECT_BASIS_SELECTOR: 2, SOURCE_CHOICE_SELECTOR: 3}
+
+
+def advisor_response_wire(selector):
+    """A persisted authoring-form choice can share the same response version."""
+    return 'evidence_decision_v7' if selector in SELECTED_V7_FORMS else selector
+
+
+def check_selected_authoring_form(selector, prompt):
+    """An explicit new campaign may only send or restore its selected form."""
+    contract = prompt.get('compact_decision_contract', {})
+    if contract.get('authoring_form_version') == 12 and selector != COMPARISON_SELECTOR:
+        raise ValueError('comparison form requires its persisted selection')
+    if contract.get('authoring_form_version') == 11 and selector != JUDGMENT_SELECTOR:
+        raise ValueError('judgment form requires its persisted selection')
+    if contract.get('authoring_form_version') == 10 and selector != DIRECT_TEST_SELECTOR:
+        raise ValueError('direct test form requires its persisted selection')
+    if contract.get('authoring_form_version') == 9 and selector != BATCH_SELECTOR:
+        raise ValueError('batch form requires its persisted selection')
+    if contract.get('authoring_form_version') == 8 and selector != EVIDENCE_USE_SELECTOR:
+        raise ValueError('evidence use requires its persisted selection')
+    if contract.get('authoring_form_version') == 7 and selector != SUMMARY_SELECTOR:
+        raise ValueError('summary form requires its persisted selection')
+    if contract.get('authoring_form_version') == 6 and selector != SLOTS_SELECTOR:
+        raise ValueError('slot form requires its persisted selection')
+    if contract.get('authoring_form_version') == 5 and selector != INTENT_SELECTOR:
+        raise ValueError('intent form requires its persisted selection')
+    if contract.get('authoring_form_version') == 4 and selector != OPERATION_SELECTOR:
+        raise ValueError('operation form requires its persisted selection')
+    if contract.get('authoring_form_version') == 3 and selector != SOURCE_CHOICE_SELECTOR:
+        raise ValueError('source choice authoring form requires its persisted campaign selection')
+    if selector in SELECTED_V7_FORMS and (
+            prompt.get('advisor_wire_version') != advisor_response_wire(selector)
+            or contract.get('schema_version') != 'grouped_decision_contract_v7'
+            or contract.get('decision_guidance_version') != 2
+            or type(contract.get('authoring_form_version')) is not int
+            or contract['authoring_form_version'] != SELECTED_V7_FORMS[selector]):
+        raise ValueError('frozen request differs from selected direct evidence authoring form')
+
+
 STATUSES = {'pending', 'active', 'deferred', 'blocked', 'closed'}
 ASSESSMENTS = {'local_support', 'weakened', 'conflicting', 'not_distinguished',
     'insufficient_evidence', 'unchanged', 'execution_incomplete'}
@@ -66,7 +117,7 @@ def _object(properties, required=None):
         'required': list(properties) if required is None else required, 'additionalProperties': False}
 
 
-def output_schema(*, reference=False, max_actions=2, require_j=False):
+def output_schema(*, reference=False, max_actions=2, require_j=False, model_research=False):
     """Literal versions and field-local bounds; semantic links remain original gates."""
     ref = lambda key: {'$ref': '#/$defs/'+key}
     enum = lambda values: {'enum': sorted(values)}
@@ -129,7 +180,7 @@ def output_schema(*, reference=False, max_actions=2, require_j=False):
     action = {k: {} for k in originals.split()}
     action.update(action_type=enum({'improve', 'ablate', 'simplify', 'diagnose', 'stop', 'request_review'}),
         statement={'type': 'string', 'minLength': 1, 'pattern': r'\S'},
-        declared_axis=enum({'features', 'training_window'}),
+        declared_axis=enum({'features', 'training_window', 'model'} if model_research else {'features', 'training_window'}),
         hypothesis_refs=_array({'type': 'array', 'prefixItems': [_text(ID_LIMIT), integer],
             'minItems': 2, 'maxItems': 2}, 3),
         evidence_request={'anyOf': [{'type': 'null'}, ref('request')]},research_design=ref('research_design'))
@@ -161,13 +212,13 @@ def output_schema(*, reference=False, max_actions=2, require_j=False):
         'hypotheses': actions}), '$defs': defs}
 
 
-def wire_output_schema(*, reference=False, max_actions=2, require_j=False):
+def wire_output_schema(*, reference=False, max_actions=2, require_j=False, model_research=False):
     """Standard local $defs deduplication, not evidence/answer compression.
 
     Repeated scalar/array rules remain literal in this same schema. No opaque
     context IDs, missing constraints, changed versions or provider capability.
     """
-    schema = output_schema(reference=reference, max_actions=max_actions, require_j=require_j)
+    schema = output_schema(reference=reference, max_actions=max_actions, require_j=require_j, model_research=model_research)
     encode = lambda v: json.dumps(v, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
     counts = Counter()
     def scan(v):
@@ -249,12 +300,12 @@ def wire_output_schema(*, reference=False, max_actions=2, require_j=False):
     return out
 
 
-def collect_structure_issues(value, *, reference=False, max_actions=2):
+def collect_structure_issues(value, *, reference=False, max_actions=2, model_research=False):
     """At most 24 safe field/count issues, no raw values or untrusted key names.
 
     Diagnostic-only: never used as an acceptance shortcut or to fill an answer.
     """
-    schema = output_schema(reference=reference, max_actions=max_actions)
+    schema = output_schema(reference=reference, max_actions=max_actions, model_research=model_research)
     issues = []
 
     def add(path, code, **numbers):

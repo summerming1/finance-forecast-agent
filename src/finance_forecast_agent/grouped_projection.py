@@ -30,7 +30,46 @@ _METHOD_GUIDES={'m4':
     ' method_decision_ref查decisions中的原输入判断；输出示例保持内联。'}
 
 
+def project_bound_order(body, *, restore=False):
+    """Share only mechanical ID lists using the same request's literal binding table.
+
+    A permutation, repeated element or empty list round-trips exactly. Any
+    unbound ID leaves the original list literal. Run on decoded bindings before
+    packing / after unpacking so Campaign IDs never need a second hash codec.
+    """
+    from .research_state import RESEARCH_ACTION_CONTEXT
+
+    contract = body.get('compact_decision_contract', {})
+    if contract.get('research_view_version') != RESEARCH_ACTION_CONTEXT:
+        return
+    bindings = contract['bindings']
+    for field, namespace in [('available_evidence_ids', 'evidence'), ('available_objects', 'controls')]:
+        value = body.get(field)
+        if value is None:
+            continue
+        handles = bindings[namespace]
+        if restore:
+            if isinstance(value, list):
+                continue
+            if not isinstance(value, dict) or set(value) != {'handles'} or not isinstance(value['handles'], list):
+                raise ValueError('invalid request-local handle order')
+            if not all(isinstance(key, str) and key in handles for key in value['handles']):
+                raise ValueError('unknown ID in request-local handle order')
+            body[field] = [handles[key] for key in value['handles']]
+        else:
+            if not isinstance(value, list) or not all(isinstance(ref, str) for ref in value):
+                raise ValueError('invalid original available ID list')
+            lookup = {ref: key for key, ref in handles.items()}
+            if len(lookup) == len(handles) and value and all(ref in lookup for ref in value):
+                body[field] = {'handles': [lookup[ref] for ref in value]}
+
+
 def _new_wire(prompt):
+    if (prompt.get('advisor_wire_version'),prompt.get('compact_decision_contract',{}).get('schema_version')) in {
+            ('evidence_decision_v4', 'grouped_decision_contract_v4'),
+            ('evidence_decision_v5', 'grouped_decision_contract_v5'),
+            ('evidence_decision_v6', 'grouped_decision_contract_v6'), ('evidence_decision_v7', 'grouped_decision_contract_v7')}:
+        return
     if (prompt.get('advisor_wire_version')!='evidence_decision_v3'
             or prompt.get('compact_decision_contract',{}).get('schema_version') not in
                 {'grouped_decision_contract_v1','grouped_decision_contract_v2','grouped_decision_contract_v3'}):
@@ -38,7 +77,7 @@ def _new_wire(prompt):
 
 
 def _version2(prompt):
-    return prompt['compact_decision_contract']['schema_version'] in {'grouped_decision_contract_v2','grouped_decision_contract_v3'}
+    return prompt['compact_decision_contract']['schema_version'] in {'grouped_decision_contract_v2','grouped_decision_contract_v3','grouped_decision_contract_v4','grouped_decision_contract_v5','grouped_decision_contract_v6','grouped_decision_contract_v7'}
 
 
 def _method_contract_key(prompt,keys):

@@ -1,0 +1,233 @@
+{
+  "date": "2026-11-23",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source": "95a97434febc17e45ecb782904de36310b370605caa4883904258b55f499eb78",
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1608,
+        "skipped": 2
+      },
+      "path": ".decision-linked-20261123\\gate5\\regression\\END.json",
+      "sha256": "123dce686c6c1e710ce80a8eee284b7bbb45cd464d8c780a43068011918fdc42",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-linked-20261123\\gate5\\browser\\END.json",
+      "sha256": "10b300a290c2a563b1392c604552e598116f5f3bf68c26e20bf86c2b1b4c2269",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "calls": [
+    {
+      "number": 1,
+      "case": "parent",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 31.306853399961255,
+      "raw_envelope_sha256": "1e74ba35fb321d9e1cc0154eb81341f49774a28c9566b4f65c2baa1b5196e801"
+    },
+    {
+      "number": 2,
+      "case": "case-2026112100",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 44.86422129999846,
+      "raw_envelope_sha256": "2d2a218e045b9c46a02a68114cc58b434d4d3f37155997576c48935b540a8e88"
+    },
+    {
+      "number": 3,
+      "case": "case-593024",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 36.45608929998707,
+      "raw_envelope_sha256": "df471cb60f385be0192fb9430a15531399259fc27a19560532d4defd1752a14a"
+    },
+    {
+      "number": 4,
+      "case": "case-862751",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 33.47245899995323,
+      "raw_envelope_sha256": "477054f2ca623e8364ee21ba25e343903d1ec54a50b3913d50ccb372d59a96c1"
+    },
+    {
+      "number": 5,
+      "case": "case-318406",
+      "model": "qwen4-max",
+      "http_status": null,
+      "finish_reason": null,
+      "state": "unknown",
+      "elapsed_seconds": 19.899404900032096,
+      "raw_envelope_sha256": "cf69cdbadcdeba5601e7054be5c5abd7913c2921e330d0980e2991feaaa98a0b"
+    }
+  ],
+  "new_http": 5,
+  "historical_http": 348,
+  "charged_fit": 16,
+  "trajectory": {
+    "actual_research_candidates": 0,
+    "records": [
+      {
+        "actual_research_training": [],
+        "campaign_id": "persistent-60d57b5f4407cf74c8f21508",
+        "execution_status": "partial",
+        "fit_calls": 16,
+        "package": {
+          "additional_fit": 0,
+          "additional_http": 0,
+          "members": 32,
+          "path": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-9dcv69v6\\project\\focused_campaigns\\persistent-60d57b5f4407cf74c8f21508\\research_package\\persistent-60d57b5f4407cf74c8f21508.research-package.zip",
+          "read_only_campaign_unchanged": true,
+          "sha256": "3e8736e5e04786c9d8549935e1f3bb0263805a4d56ce90005e46c9b2e42bc81a"
+        },
+        "proposal_error": {
+          "errno": null,
+          "error_category": "execution_error",
+          "exception_type": "ValueError",
+          "operation": "",
+          "path_alias": null,
+          "phase": "proposal_validation",
+          "retryable": false,
+          "traceback_frames": [
+            {
+              "function": "_run_resumable",
+              "line": 2833,
+              "module": "focused_research.py"
+            },
+            {
+              "function": "expand_decision",
+              "line": 359,
+              "module": "compact_decision.py"
+            },
+            {
+              "function": "expand_decision",
+              "line": 1049,
+              "module": "grouped_decision.py"
+            },
+            {
+              "function": "translate_intent",
+              "line": 105,
+              "module": "decision_intent.py"
+            }
+          ],
+          "winerror": null
+        },
+        "role": "parent",
+        "root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-9dcv69v6\\project\\focused_campaigns\\persistent-60d57b5f4407cf74c8f21508",
+        "stop_reason": "proposal_invalid",
+        "task_status": "completed"
+      }
+    ],
+    "viable_not_semantic_pass": false
+  },
+  "verdict": {
+    "A_engineering": "PASS_BOUNDED",
+    "B_real_decision": "NO_GO",
+    "model": "qwen4-max",
+    "responses": 4,
+    "strict_accepts": 0,
+    "parent": "Same @h1/F5:0 appears twice: overall improvement as local_support and split fold directions as conflicting. The atomic plan was rejected. Diagnostic action additionally supplied a feature description for purpose measurement. No planned rolling504 candidate executed.",
+    "semantic_cases": [
+      {
+        "case": "case-2026112100",
+        "status": "failed_or_invalid",
+        "first_error": "research design exceeds frozen aggregate text budget"
+      },
+      {
+        "case": "case-593024",
+        "status": "failed_or_invalid",
+        "first_error": "grouped response field $.actions.0.feature: pattern"
+      },
+      {
+        "case": "case-862751",
+        "status": "failed_or_invalid",
+        "first_error": "a feature contribution needs the specific generated feature"
+      },
+      {
+        "case": "case-318406",
+        "status": "failed_or_invalid",
+        "first_error": "transport_unavailable"
+      }
+    ],
+    "science_observations": [
+      "First scenario distinguished training correlation from causal harm and selected a single-feature ablation. An ablation tests conditional contribution; it alone cannot distinguish correlation from regularization as cause. Aggregate design text budget exceeded.",
+      "Second scenario read the adverse four-fold result, then requested feature contribution with an empty feature name.",
+      "Third scenario chose feature contribution without specifying the required generated feature."
+    ],
+    "unknown": "fifth billed attempt: ProxyError, remote delivery unknown, no answer available; sealed without retry",
+    "C_selection_value": "NOT_TESTED",
+    "D_independent_financial_effect": "NOT_TESTED",
+    "human": "NO_NEW_SIGNOFF"
+  },
+  "cases": [
+    {
+      "case_id": "case-2026112100",
+      "status": "failed_or_invalid",
+      "error": "research design exceeds frozen aggregate text budget",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-593024",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.actions.0.feature: pattern",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-862751",
+      "status": "failed_or_invalid",
+      "error": "a feature contribution needs the specific generated feature",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-318406",
+      "status": "failed_or_invalid",
+      "error": "transport_unavailable",
+      "delivery": "delivery_unknown"
+    }
+  ],
+  "unattempted": [
+    "case-2026112104",
+    "case-2026112105",
+    "case-5b9e60bde511641ab6fd",
+    "case-bad99aae483cb9fa5c3e"
+  ],
+  "stop": "unknown_delivery",
+  "process_exit": {
+    "exit": 0,
+    "seconds": 195.1906913999701
+  },
+  "references": {
+    ".decision-linked-20261123\\OWNER.json": "b5cc1ed07077889fb07a4c3aec15569a37b66a15e144bded55565d46edd7fb07",
+    ".decision-linked-20261123\\AUTHORIZATION.json": "bc8ecea2c230e8fecb2672016b9c967f8d211c4b3b59e45871afdf39db6e3945",
+    ".decision-linked-20261123\\PREFLIGHT-v1.json": "e2382a34c78f7004f9e2b3ff51c8fa82a0972fbe21cdbd31b40e3bd6bf934667",
+    ".decision-linked-20261123\\PAIR-v1.json": "5c994aaa241c40035ed47ff59efb72dc0f1391b1716a795c6abf539e5db8d0c1",
+    ".decision-linked-20261123\\SESSION_LEDGER.json": "dfb09c3c5013ec11d33ac7473f815e830b0d2a4a46234aabdb79fce8ca2243a9",
+    ".decision-linked-20261123\\SESSION_SEAL.json": "09622fa365cd450bea47ef54405e002a969cee8d32aa82055757b3161d89c009",
+    ".decision-linked-20261123\\gate5\\END.json": "2bded7b9f162a0c42bd0775cd3ef135157e6d38012729f97e5eb9533cef26dc1",
+    ".decision-linked-20261123\\gate5\\static.json": "7828b80cdcbee448608db4f99e407a44984e83ca6364b5b02c6676f8e0597224",
+    ".decision-linked-20261123\\gate5\\regression\\END.json": "123dce686c6c1e710ce80a8eee284b7bbb45cd464d8c780a43068011918fdc42",
+    ".decision-linked-20261123\\gate5\\browser\\END.json": "10b300a290c2a563b1392c604552e598116f5f3bf68c26e20bf86c2b1b4c2269",
+    ".decision-linked-20261123\\replay.json": "ddaa928a1ebe2ce0b5c538ca1a6bab41ed7c70dd8c5a14960ba2774a6855b38f",
+    ".decision-linked-20261123\\replay-last.json": "8fcfdf262d6cae06b9dbeb96eb2ae9502feb35e1134a8a6d4d83d6954147ee39",
+    ".decision-linked-20261123\\worker5.log": "5555a200b3bef3795c9d6971b358b0522715a0311839244ea0ab0b8d873934c3",
+    ".decision-linked-20261123\\slots.log": "87339eedfabf7ebc80f3c45b2e95b9105662bac6f924e0fcb5a053e8feef7b28",
+    ".decision-linked-20261123\\behavior-review.json": "460b933326675c2f60dab8f2e2097dd7f65fd8f2e238f02ef24911497327c8e9",
+    ".decision-linked-20261123\\live.exit.json": "0920be082649378ba5a7df2fe8a25ac26aa855f59d2edadd22bd29aa1a754dbd",
+    ".decision-linked-20261123\\v1\\OUTCOME.json": "293f7dd9ead293d018d043fd47c17aaa52a519a0f956b53ed90b4ac5bca047e4",
+    ".decision-linked-20261123\\v1\\MATCHED_PAIR.json": "a07fb3e7611b3753d1705ceaf4745ee8187023e4a9543aaa39efcaccfb806794"
+  }
+}

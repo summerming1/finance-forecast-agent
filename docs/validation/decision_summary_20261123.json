@@ -1,0 +1,290 @@
+{
+  "date": "2026-11-23",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source": "7c4f0ee8be715e51a3fda9e00fe7176d4c34e454b17145c22aea2819cab70eda",
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1612,
+        "skipped": 2
+      },
+      "path": ".decision-summary-20261123\\gate6\\regression\\END.json",
+      "sha256": "88afeeb567adb241c1411c47ba93764bb3e7635140a014e1bb252bb38bf948de",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-summary-20261123\\gate6\\browser\\END.json",
+      "sha256": "e383da0c7a5e85eede5bbf7a643349aaf284aa47cd59493cb0ac2ab165d7deaa",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "calls": [
+    {
+      "number": 1,
+      "case": "parent",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 25.481610500020906,
+      "raw_envelope_sha256": "042969b543668b7ab92dba950c7fb170b06c89e5f5d2e2171247123612157980"
+    },
+    {
+      "number": 2,
+      "case": "case-2026112300",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 27.195089500048198,
+      "raw_envelope_sha256": "5331e9a3ab7dc5e261e39db11b2bada4ca9cb541d51a25c879c82a96d1f0472a"
+    },
+    {
+      "number": 3,
+      "case": "case-593024",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 24.582080999971367,
+      "raw_envelope_sha256": "db64deb2c8c33cc8539cf70bdc9be6cba8e64092f76e7f45f5cb5a64d6ac9ea1"
+    },
+    {
+      "number": 4,
+      "case": "case-862751",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 19.807926399982534,
+      "raw_envelope_sha256": "b1a96697aea062b5e688d7c51ea5da940b1cc8dfbd09ab350f7945185b5cff4b"
+    },
+    {
+      "number": 5,
+      "case": "case-2026112303",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 17.184221500065178,
+      "raw_envelope_sha256": "bee6aa05d7490fc42b9e0574625596d0542e3b1ec0adeee6394666d386ab5911"
+    },
+    {
+      "number": 6,
+      "case": "case-2026112304",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 29.823625899967737,
+      "raw_envelope_sha256": "a9e69f3caaef3b0954651a736e6367d7108fbcf18b64214dd2aa4b02a9d5b3a9"
+    },
+    {
+      "number": 7,
+      "case": "case-2026112305",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 26.4533522001002,
+      "raw_envelope_sha256": "0e72fec889dabc7ee99f08d37453b196cbc485c5dda39e41e341f5f8a91ecac2"
+    },
+    {
+      "number": 8,
+      "case": "case-372bad906fa6680f645f",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 27.875593399978243,
+      "raw_envelope_sha256": "4d49afa3f13363c05d37ef9a6036c85907bcc7cda753473b588deded4dd21d06"
+    },
+    {
+      "number": 9,
+      "case": "case-8d80d5c21633ee8f1556",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 32.41947189997882,
+      "raw_envelope_sha256": "3d2c13beea5e79f4f852febfc317914039c32396bff59665845c9f654ba717c1"
+    }
+  ],
+  "new_http": 9,
+  "historical_http": 357,
+  "charged_fit": 16,
+  "trajectory": {
+    "actual_research_candidates": 0,
+    "records": [
+      {
+        "actual_research_training": [],
+        "campaign_id": "persistent-b3fc6cb9ce8f72c4160f6392",
+        "execution_status": "partial",
+        "fit_calls": 16,
+        "package": {
+          "additional_fit": 0,
+          "additional_http": 0,
+          "members": 32,
+          "path": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-aiyvdvd3\\project\\focused_campaigns\\persistent-b3fc6cb9ce8f72c4160f6392\\research_package\\persistent-b3fc6cb9ce8f72c4160f6392.research-package.zip",
+          "read_only_campaign_unchanged": true,
+          "sha256": "c716ac7f2a2a51c3f824b785d27068e1029b481b23449e55edc5e8bd875dddc0"
+        },
+        "proposal_error": {
+          "errno": null,
+          "error_category": "execution_error",
+          "exception_type": "ValueError",
+          "operation": "",
+          "path_alias": null,
+          "phase": "proposal_validation",
+          "retryable": false,
+          "traceback_frames": [
+            {
+              "function": "_run_resumable",
+              "line": 2833,
+              "module": "focused_research.py"
+            },
+            {
+              "function": "expand_decision",
+              "line": 365,
+              "module": "compact_decision.py"
+            },
+            {
+              "function": "expand_decision",
+              "line": 1158,
+              "module": "grouped_decision.py"
+            },
+            {
+              "function": "expand_decision",
+              "line": 472,
+              "module": "compact_decision.py"
+            },
+            {
+              "function": "normalize_evidence_advice",
+              "line": 780,
+              "module": "research_state.py"
+            },
+            {
+              "function": "_normalize_evidence_advice",
+              "line": 950,
+              "module": "research_state.py"
+            }
+          ],
+          "winerror": null
+        },
+        "role": "parent",
+        "root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-aiyvdvd3\\project\\focused_campaigns\\persistent-b3fc6cb9ce8f72c4160f6392",
+        "stop_reason": "proposal_invalid",
+        "task_status": "completed"
+      }
+    ],
+    "viable_not_semantic_pass": false
+  },
+  "verdict": {
+    "engineering": "PASS_BOUNDED",
+    "behavior": "NO_GO",
+    "semantic_tests_strict": "5/6",
+    "opposite_pair_strict": "1/2",
+    "parent": "A1 rolling504 named E8, whose frozen fact dependency is F2. Its tested @h1 assessed F3 and F8 only. F2 was neither assessed nor deferred. Both proposals were atomically rejected; 16 initial/control fits, 0 research candidates.",
+    "raw_behavior": [
+      "Cold parent distinguished two axes and froze scopes. Extra subgroup conditions or loss limits in authored branches do not change adoption policy.",
+      "High correlation case chose a legal controlled ablation. A local ablation effect alone cannot establish collinearity caused poor model performance.",
+      "Adverse removal case preserved the four worsening folds, selected paired group loss, and projected the selected generated feature from actual methods. Group concentrations alone cannot identify denoising.",
+      "Favorable removal case retained 1 percent improvement as a conditional loss effect and deferred further conditional research.",
+      "Low Pearson was correctly distinguished from independence; an accepted design does not prove no nonlinear joint signal.",
+      "Partial-fold case acknowledged limited scope but prediction.create_for referenced @h1 rather than a question.",
+      "Fixed builtins case used an existing diagnostic. Its claim about near-zero marginal correlations and lack of usable signal is too strong; proposed later removal must respect immutable builtin features.",
+      "Both matched arms read opposite window effects and preserved the contrary fold. The adverse arm omitted request.question, preventing pair acceptance."
+    ],
+    "unreached": [
+      "actual second planning after candidate training",
+      "explicit child campaign",
+      "frozen recommendation refit and fresh-process inference"
+    ],
+    "source_frozen": "7c4f0ee8be715e51a3fda9e00fe7176d4c34e454b17145c22aea2819cab70eda",
+    "selection_value": "NOT_RUN",
+    "independent_financial_effect": "NOT_RUN",
+    "human": "no additional signoff"
+  },
+  "cases": [
+    {
+      "case_id": "case-2026112300",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-593024",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-862751",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112303",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112304",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.actions.0.prediction: oneOf",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112305",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-372bad906fa6680f645f",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.actions.0.request.question: required",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-8d80d5c21633ee8f1556",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    }
+  ],
+  "unattempted": [],
+  "stop": null,
+  "process_exit": {
+    "exit": 0,
+    "seconds": 291.40730630001053
+  },
+  "references": {
+    ".decision-summary-20261123\\OWNER.json": "9ea7542efade95cfa4f4c3f424698a4c8cbc9ae4f1389feee4b718770c496a86",
+    ".decision-summary-20261123\\AUTHORIZATION.json": "87e5f87fca82841ea376e818b2bef97d07ea32f77bd4e02f7a9eeb0ee1d5ab05",
+    ".decision-summary-20261123\\PREFLIGHT-v1.json": "bf6f37d13bcdc3ef03590ff339c6ccb1b0687c5a1de2c08390f945d5a22a18eb",
+    ".decision-summary-20261123\\PAIR-v1.json": "8f947b5112c7d529a4adbba22defd219d922eb319c24ba4a521e87bb1dd4d8d7",
+    ".decision-summary-20261123\\SESSION_LEDGER.json": "0d009cd15ef8bfe3ef205903a1c99ef38bca77bdf20b5f0a46815fec81be2e78",
+    ".decision-summary-20261123\\SESSION_SEAL.json": "cd1b85d6a968837cb3265d3555772e04e44b446d28e48980221c3046cbf4942b",
+    ".decision-summary-20261123\\gate6\\END.json": "a48733758d2635f93b1d31594cea97d84a3d6fb72fc18cf51f7096e81f498f4f",
+    ".decision-summary-20261123\\gate6\\static.json": "529c0217b7cca2568cf9c54748941a687ededdee5092854e6ba0679485850cb9",
+    ".decision-summary-20261123\\gate6\\regression\\END.json": "88afeeb567adb241c1411c47ba93764bb3e7635140a014e1bb252bb38bf948de",
+    ".decision-summary-20261123\\gate6\\browser\\END.json": "e383da0c7a5e85eede5bbf7a643349aaf284aa47cd59493cb0ac2ab165d7deaa",
+    ".decision-summary-20261123\\replay.json": "b9a31e4b67894ba9117121f2a81d1bb6138a74e20ba4b7ace920b42042321df4",
+    ".decision-summary-20261123\\replay-last.json": "2efa56f4bf0578f27ce63b0a4c6d3d04064d35fdee65e057f841bd31b4111e8f",
+    ".decision-summary-20261123\\target2.log": "5a4a9d0992337d06be83118f501bb34aca1ae552d618afa29237d21bba98691c",
+    ".decision-summary-20261123\\historical-scenarios.json": "5a05adba04f26de8b3ff50213e931b2ee0811acb2b134558ea3533a791145f96",
+    ".decision-summary-20261123\\summary.log": "3c3fdd29d94c2195f9cb63d5a18d0cb85ae04fd50a64bde9cdd7b629a73e615a",
+    ".decision-summary-20261123\\behavior-review.json": "7201d8e399ef0db503b12f4e56de01f311dfec14c1dd3e298065953b1ec0afe1",
+    ".decision-summary-20261123\\live.exit.json": "45f2042f2d9bfcd0a5b57e12d5247bd2417dab8cd8a4fe2ecc8d654065ea0a9b",
+    ".decision-summary-20261123\\v1\\OUTCOME.json": "89c0ddd6138e364593dd585641eea89b46bd0ee6ab3097e2ab3eee3f2d9d92d4",
+    ".decision-summary-20261123\\v1\\MATCHED_PAIR.json": "6c8fdee08a2487b5ac6c979b8833254af487ed964a3a205f61ad7636b2fc47d5"
+  }
+}

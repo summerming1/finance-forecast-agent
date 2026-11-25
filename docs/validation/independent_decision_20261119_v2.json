@@ -1,0 +1,110 @@
+{
+  "schema": "independent_decision_source_review_v1",
+  "trial": ".decision-next-20261119",
+  "version": 2,
+  "branch": "feat/mission-research-v2",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source_map_identity": "268dab55d8a742d42c3476e4069c2b08480591923753473a827ee9d02fd1e128",
+  "source_entries": 384,
+  "snapshot_sources_unchanged": true,
+  "synthetic_raw_sha256": "75e55a5fb4c7c8b27152b9114bef99ed09b9f1fc8b40fe2daf1eb671567a7779",
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1476,
+        "skipped": 2
+      },
+      "pytest_exit": 0,
+      "wrapper_exit": 0,
+      "receipt": ".decision-next-20261119/engineering-f81/regression/END.json"
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "pytest_exit": 0,
+      "wrapper_exit": 0,
+      "receipt": ".decision-next-20261119/engineering-f81/browser/END.json"
+    }
+  },
+  "verdict": {
+    "B": "NO_GO",
+    "source_version": 2,
+    "analysis_sha256": {
+      "SEMANTICS.md": "30ed841ec1e3e12c9c73f81e570ef1cf883ccdcd6bdbc4b9a50ac0f25102754e",
+      "TRACE.md": "2282c1bd1f7cdd4754581dbe0e5c8dbc2d07086c0e20233f9ac6db8189d16f27",
+      "PAIR_REVIEW.md": "64876df0cb4e471db33677ca5d8547d87363839338d75b534e8ffb1b2e6a6962"
+    },
+    "outcome_sha256": "9a345e3101028bc0d3181c06c5f91528926b71d03433520d9664e0a2034844d4",
+    "http": 9,
+    "logical_requests": 9,
+    "unknown_deliveries": 0,
+    "parent_charged_fits": 16,
+    "parent_observed_fits": 16,
+    "research_candidate_fits": 0,
+    "refits": 0,
+    "global_stop": false,
+    "development_strict": [
+      1,
+      6
+    ],
+    "development_scientific": [
+      1,
+      6
+    ],
+    "pair_strict": [
+      1,
+      2
+    ],
+    "pair_behavior": "NO_GO",
+    "finding": "The original cold proposal referenced but did not assess F6 for the window prediction or F1 for the feature prediction. It was rejected before candidate training. The new inline declaration and the array for existing predictions were mixed in development and paired responses. Another answer applied a volatility-group fold threshold to a comparison without a bound group rule."
+  },
+  "standalone_trajectory_and_challenges": true,
+  "independent_financial_and_selection_value": "NOT_RUN",
+  "owner_recheck": "OPEN",
+  "evidence": {
+    ".decision-next-20261119/PREFLIGHT-v2.json": "c69c7cd1a0d1e4fe20f9fd99c74ec269374fa6064d20db046e7c20ebecf3c437",
+    ".decision-next-20261119/PAIR-v2.json": "77c72eef99a6a878a9328563405b9f71938415c796d051c3c0919cefd878164b",
+    ".decision-next-20261119/live-v2.argv.json": "d0c5f13fb8c9789f84167f2b10963ab31ccbc30eda8d6a0b46c23f437fd5b11d",
+    ".decision-next-20261119/live-v2.exit.json": "f0fe5c6912e92dae5de703213dffd5259e8386dc730da0ce548aec1af6920b13",
+    ".decision-next-20261119/OWNER_AUTHORIZATION.json": "9ee15f4de5fb1c819f1ec498094ab8e7c380ee6a32829a024096fac813a0e0d4",
+    ".decision-next-20261119/B_RUBRIC_PRELIVE.json": "3287eea2db48a0343651ca5fda040a2d6b7e9075807cba4a9d6c9019a71af3b8",
+    ".decision-next-20261119/v2/B_VERDICT.json": "bd923dd2594873e7699e0679645511791b4345d25dfae1dafa74dc2a906b80fe",
+    ".decision-next-20261119/v2/SEMANTICS.md": "30ed841ec1e3e12c9c73f81e570ef1cf883ccdcd6bdbc4b9a50ac0f25102754e",
+    ".decision-next-20261119/v2/TRACE.md": "2282c1bd1f7cdd4754581dbe0e5c8dbc2d07086c0e20233f9ac6db8189d16f27",
+    ".decision-next-20261119/v2/PAIR_REVIEW.md": "64876df0cb4e471db33677ca5d8547d87363839338d75b534e8ffb1b2e6a6962",
+    ".decision-next-20261119/v2/OUTCOME.json": "9a345e3101028bc0d3181c06c5f91528926b71d03433520d9664e0a2034844d4",
+    ".decision-next-20261119/v2/VERSION_START.json": "300cd6c44f03c0bf27d49ccd13c7b27c1e67808dee26f8c5343a12df2940fb96",
+    ".decision-next-20261119/v2/VERSION_END.json": "a33595fbf7a8052a8bdc8ecb99ea519059f10df470e8e31ea857b0ef482b76d5",
+    ".decision-next-20261119/v2/MATCHED_PAIR.json": "f7976be468e2d1acf8cc7c214c057f68229197464373e0a0de1cceca2364cae6",
+    ".decision-next-20261119/v2/DELIVERIES.json": "6e537947b2fc326a494d23a0b9de8ca8e11efe2ea887eb366ee635593b3e8e39",
+    ".decision-next-20261119/v2/trajectory.json": "4999523ea62df228aef96b38815c036cd043fe28cb74dd9b57b8a5de6fbb309a",
+    ".decision-next-20261119/v2/source.zip": "b257858e39959902e1aea63600205712d339998a2fc6c7b833c54a250306c382",
+    ".decision-next-20261119/v2/HTTP_LEDGER.json": "613fcd9cbae1bd6832ff93236057538219dbd2ef05f551c4d46ad2ee60dc46ec",
+    ".decision-next-20261119/v2/FROZEN_PROVIDER.json": "c634b44d9dc47c7cc23f25509e34c5b5c8756e3b5a5985fa0913a03cea0f831c",
+    ".decision-next-20261119/v2/synthetic-source.json": "52f838be9e4fa0ca04d297b5f02fe32b55b567c5d0e37a43a101061a92f1b528",
+    ".decision-next-20261119/v2/semantic-results.json": "6346f70ab14692abe51431c55eb5e9a9991014bb42b595b85e6820dc81ad3742",
+    ".decision-next-20261119/v2/worker-terminal-check.json": "3eee8febf68ef8e863726c934ac05439eccd3dd146abd77cffe3fc127d63c18c",
+    ".decision-next-20261119/engineering-f81/regression/END.json": "5f92c82c78df9e9ec38db2acacf36d254d4578af464bbab2b52e5dee64e399c3",
+    ".decision-next-20261119/engineering-f81/browser/END.json": "46d2487e0bc1e5b3c5a0c665fc9e6ef8048270421c2e42879026aa65ee047d60",
+    ".decision-next-20261119/v2/call-01.prompt.json": "ed6b81ca3b0e2802800cca560a371243e70ef3b92865c017cfbf96e50c2e7448",
+    ".decision-next-20261119/v2/call-01.raw-envelope.json": "ee79bad51fdb4234eaad2f38825f890b5cc266e99d044cbdc4ea158a752cf7e9",
+    ".decision-next-20261119/v2/call-02.prompt.json": "cac322f04233bdf4c33540573e9d1b50494da0a2f639b1ffbe6dd9d2b2e5dc9b",
+    ".decision-next-20261119/v2/call-02.raw-envelope.json": "0286853f07f3438f68f6ee850c4a1628f56b0392625385718a331a5c0cece319",
+    ".decision-next-20261119/v2/call-03.prompt.json": "74b5b69cceae57c3d6675035fc4b7da369ec684b0a1f057f60d57f65f185644f",
+    ".decision-next-20261119/v2/call-03.raw-envelope.json": "46801a15fa4d14d86beb9da5abd12ea03113cb41627754c2b8640bc4dc59c4ff",
+    ".decision-next-20261119/v2/call-04.prompt.json": "150c965c9389334aa05663d3a0d1494bcc6c1bf1999e3ae352093bc72e333876",
+    ".decision-next-20261119/v2/call-04.raw-envelope.json": "958a71325728874800157ca7453425f11608f9e22f064814388cbadeeaeef0b2",
+    ".decision-next-20261119/v2/call-05.prompt.json": "dc2fc71f02a10fba5586a64204310986b9bd93427f86febab56d89fbf48ddd3b",
+    ".decision-next-20261119/v2/call-05.raw-envelope.json": "0ada084aa0a38b5e00747225e28de3fd260a9d8bf7eeaed7e0185e79052ac0bb",
+    ".decision-next-20261119/v2/call-06.prompt.json": "ec3d2c3148e745e82988d4c3e7d768f5588b96cc9f76d0c199c9712328250380",
+    ".decision-next-20261119/v2/call-06.raw-envelope.json": "4c0da74660f753429c8693bc09802602a58e69e7ead203478c7150b1e52e2910",
+    ".decision-next-20261119/v2/call-07.prompt.json": "9f375155346b853f941a1f223437fb55c1e656fd84530dceb1a95518d180d9f7",
+    ".decision-next-20261119/v2/call-07.raw-envelope.json": "b6f67b7b9b211b249bfff8595bc7af3a8522e21e076462c400dcd07898ac2d85",
+    ".decision-next-20261119/v2/call-08.prompt.json": "6a64dad1830531d34899e5538395244786710a2527b0e7173cec78b480c05d35",
+    ".decision-next-20261119/v2/call-08.raw-envelope.json": "815f9fbb3559e226474af1ab7b0adb8f999bca765290ff1930b5aaf4b4d5bd82",
+    ".decision-next-20261119/v2/call-09.prompt.json": "e7c6f7f64ff4967e33c4b8eceee7ee352bddf83af07c4ce71909c214dc868c63",
+    ".decision-next-20261119/v2/call-09.raw-envelope.json": "47b2370b20b7ec3fba7a4d44ed26b217b74cb51738ec66c2dcc63ec5a6578361",
+    ".decision-next-20261119/v2/parent-actual-campaign.json": "7327b03687ed08391c62cad7005af73efc07b57ad191e1bba9bf3fe65643bc3d"
+  }
+}

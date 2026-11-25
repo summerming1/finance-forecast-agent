@@ -1,0 +1,155 @@
+{
+  "trial": ".decision-resume-20261120",
+  "version": 3,
+  "source_identity": "5affa26f4d902774305d850ac3049c9e2a6ddb3e2cd9d7b6e97d4fe930eca522",
+  "source_entries": 396,
+  "git_head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "dataset": "synthetic_only",
+  "local_task_sha256": "8f005654d1cef72c0e0c4b371a9f2032a8a9e6396de5e9dd6430c412dfb949b4",
+  "verdict": {
+    "B": "NO_GO",
+    "finding": "父研究依据反证合法停止；重复读取已见分组，显式续接计划被拒。无新研究候选或真实推荐模型交付。六题中唯一可执行原答误读采用幅度，新配对仅恶化侧可执行。",
+    "original_case_counts": {
+      "development": {
+        "upstream_cases": 6,
+        "model_text_received": 6,
+        "strictly_valid": 1
+      },
+      "matched": {
+        "upstream_cases": 2,
+        "model_text_received": 2,
+        "strictly_valid": 1
+      }
+    },
+    "development_strict_and_scientific": 0,
+    "analysis_sha256": {
+      "TRACE.md": "ffc3c011b9b878316541dc59952b1c29a90abae7d905c675b38ae8460af5897c",
+      "SEMANTICS.md": "85ebeb9c4035b0f2f9fb5a2d58ef63a79829ecaf5021c159b4da9eb575c6ae3d",
+      "PAIR_REVIEW.md": "64b596eb09326b0e91a3e357641760b9dd47bcf6a101468388597fc9d043a256"
+    },
+    "outcome_sha256": "dfd72c2e782d166f723708724f38fc835f156b9d9c9414d680cae9e60d2febad"
+  },
+  "actual_exit": {
+    "actual_exit": 0,
+    "seconds": 479.53048090002267
+  },
+  "engineering": {
+    "regression": {
+      "passed": 1559,
+      "skipped": 2
+    },
+    "browser": {
+      "passed": 7
+    }
+  },
+  "engineering_same_source_reused": false,
+  "actual_http": 11,
+  "logical": 11,
+  "compute": [
+    {
+      "actual_fit_calls": 16,
+      "id": "compute-003",
+      "kind": "campaign",
+      "label": "parent",
+      "receipt_path": "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-resume-20261120\\v3\\parent-actual-campaign.json",
+      "receipt_sha256": "f70bce8af0ae2413c9ffef72aa4529bbeae79e5a29f43e74b9ea51a23349f496",
+      "reserved_fit_calls": 32,
+      "state": "settled",
+      "version": 3
+    },
+    {
+      "actual_fit_calls": 16,
+      "id": "compute-004",
+      "kind": "campaign",
+      "label": "child",
+      "receipt_path": "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-resume-20261120\\v3\\child-actual-campaign.json",
+      "receipt_sha256": "7ac1b5d9194fd4d4fa64120391e482b7464af9c2249d50d71cdf2d08882ed392",
+      "reserved_fit_calls": 32,
+      "state": "settled",
+      "version": 3
+    }
+  ],
+  "cumulative_at_version_close": {
+    "charged_fits_since_first_loop": 228,
+    "charged_seconds_since_first_loop": 2706.880017899908,
+    "current_ledger_sha256": "4124885eb9509ef77eabd5b5f93a9d10f65ec7f528e10246fbd0e69f03001207",
+    "gateway_anonymous_non_generation_checks_separate": 1,
+    "http_including_old": 303,
+    "observed_seconds_since_first_loop": 2298.0650715999072,
+    "previous": {
+      "historical_http": 271,
+      "prior_charged_fits_since_first_loop": 160,
+      "prior_charged_seconds_since_first_loop": 1621.1057402999722,
+      "prior_observed_fits_since_first_loop": 104,
+      "prior_observed_seconds_since_first_loop": 1212.2907939999714,
+      "prior_unknown_deliveries": 3
+    },
+    "schema": "research_after_gateway_cumulative_v1",
+    "stop_reason": null,
+    "stopped": false,
+    "this_charged_fits": 68,
+    "this_charged_provider_seconds": 1085.7742775999359,
+    "this_http": 32,
+    "this_observed_provider_seconds": 1085.7742775999359
+  },
+  "later_axes": {
+    "selection_value": "NOT_RUN",
+    "independent_financial": "NOT_RUN",
+    "G6": "attempted; owner recheck open"
+  },
+  "files": {
+    ".decision-resume-20261120/OWNER_AUTHORIZATION.json": "53fe0ce9cc93bbfd189ecdb419390ef64bddf9a60031083be839fc87cf6c256e",
+    ".decision-resume-20261120/B_RUBRIC_PRELIVE.json": "3287eea2db48a0343651ca5fda040a2d6b7e9075807cba4a9d6c9019a71af3b8",
+    ".decision-resume-20261120/AUTHORIZATION.json": "4adeb8148ceb7edf659f18c52afba001533cfd580724f36d22696a179fbe37c0",
+    ".decision-resume-20261120/gateway.json": "b6fe02f48013574f76efdcead0b6a0b8446ffce5114fca89bfcb6131d810aa6e",
+    ".decision-resume-20261120/PAIR-v3.json": "439a7d73ba4fd56e79241ae790ea9ed3853c4cb8d37e621738be84edddbc68b1",
+    ".decision-resume-20261120/PREFLIGHT-v3.json": "30f0f48aead15f83ec7a8358eacdc2c6a6ab89858eef6bc8454e4b874d18a5f6",
+    ".decision-resume-20261120/live-v3.argv.json": "23b3155c8483c3950a665ca71854e5f8496fe29666129f3e90b22c55366fc64f",
+    ".decision-resume-20261120/live-v3.exit.json": "994777827b9b86b63057d5fcd86b26ceb7e35ac16fabdd2cd2d9006305660fb7",
+    ".decision-renew-20261120/FREE_PROTECTION_CONFIRMED_20261120.json": "c4654ab883e2f524792ec3a7ca891536e5c22bc885095273f423eff46bc3bbbb",
+    ".decision-resume-20261120/v3/TRACE.md": "ffc3c011b9b878316541dc59952b1c29a90abae7d905c675b38ae8460af5897c",
+    ".decision-resume-20261120/v3/SEMANTICS.md": "85ebeb9c4035b0f2f9fb5a2d58ef63a79829ecaf5021c159b4da9eb575c6ae3d",
+    ".decision-resume-20261120/v3/PAIR_REVIEW.md": "64b596eb09326b0e91a3e357641760b9dd47bcf6a101468388597fc9d043a256",
+    ".decision-resume-20261120/v3/OUTCOME.json": "dfd72c2e782d166f723708724f38fc835f156b9d9c9414d680cae9e60d2febad",
+    ".decision-resume-20261120/v3/B_VERDICT.json": "85cc7194b66d7211b3d542d146469aa04cf13851d1e9a781f5430436b9775097",
+    ".decision-resume-20261120/v3/FROZEN_PROVIDER.json": "5270f4dfb51fc67d7616d306402cd6b0300fccc7375238b1649c737187af99bf",
+    ".decision-resume-20261120/v3/HTTP_LEDGER.json": "ea9c987adf496606e7de24fcd6e0fbb70df4367946ab0e4ce618910ec95a827f",
+    ".decision-resume-20261120/v3/VERSION_START.json": "c6108004e63a8f26e75fd9f6c588feea387c7f53130bde5a4cc8ca5b6469aaf4",
+    ".decision-resume-20261120/v3/VERSION_END.json": "f64bebeba3a4cba157370c2a030483c3bc3757c0959e6c8461a42d1f136529cb",
+    ".decision-resume-20261120/v3/synthetic-source.json": "ac4cdfc20c3fcd71d5cd3918f1b29fe547c65a3139d5bc5ae6c11fbcff1733d9",
+    ".decision-resume-20261120/v3/source.zip": "941fe8bbdf1f1bdb37e47bf4fff4f888f1c8e2e3c90c139e4008bc80edc3eb10",
+    ".decision-resume-20261120/v3/semantic-results.json": "8b4be5eceb009dd00258fa8c66ff395dbbab8a6607044d24975ffedae2c93930",
+    ".decision-resume-20261120/v3/MATCHED_PAIR.json": "852ef3d05458b3132ed408cad91c12887b0f20965fac27a3863f0d12ce52bc78",
+    ".decision-resume-20261120/v3/DELIVERIES.json": "2b4a79d8298f7228b93852791acb0967a2495fe30137ebfb18240d0ad2ff3f06",
+    ".decision-resume-20261120/v3/worker-terminal-check.json": "3eee8febf68ef8e863726c934ac05439eccd3dd146abd77cffe3fc127d63c18c",
+    ".decision-resume-20261120/v3/worker-relay-settlement.json": "cd039e0ba6e44c6530e9eb4af0dcd9de4ff4ca77ef1d22972eca09a5fb3ca972",
+    ".decision-resume-20261120/REPAIR-v3.json": "e120f9ccd5ac96d9c16f3834845f7984eceb53789f64535b839563759d60c0a5",
+    ".decision-resume-20261120/v3/call-01.prompt.json": "f870ffea19bdef7e04637e35a29dbae482966b350acc5ec65638eaecc0ecce87",
+    ".decision-resume-20261120/v3/call-01.raw-envelope.json": "ef16752f83e4d4c46729e2ab36ee5d340ed152bdc41edc63960d6576774bb0f3",
+    ".decision-resume-20261120/v3/call-02.prompt.json": "d2956af0224a8db3c6b796591b8d650ec35e998c58976ca228cd40ef2a051fbf",
+    ".decision-resume-20261120/v3/call-02.raw-envelope.json": "443730b404ee4766396cf192c064e7e9983eb1f306dd66d70484eab8a0f111d6",
+    ".decision-resume-20261120/v3/call-03.prompt.json": "2a754daf22c7fb00a1b52c3820592b30c0ca101f78719c4d5e62ed90ed41448b",
+    ".decision-resume-20261120/v3/call-03.raw-envelope.json": "b22a48f969bf8a7033f54b4b7bae9bbad69c8f6732e7e67ed10dbc5b7cfa7f06",
+    ".decision-resume-20261120/v3/call-04.prompt.json": "db1015936ae51eaeabd58ab0cd74345c26df8716c3ef002cc3f4fd48962b4c4e",
+    ".decision-resume-20261120/v3/call-04.raw-envelope.json": "ef71c75c0e3a12fdb736088ebbb0c0c64cef8c4820f099b0fd5130d4f43319ff",
+    ".decision-resume-20261120/v3/call-05.prompt.json": "c01c438981a238098a249d637518797fab40fec6e64a42c9f129ec10101c387b",
+    ".decision-resume-20261120/v3/call-05.raw-envelope.json": "3e8563d496a50084ae11a35b3fb485d3dcc67446f013cc4b8a93b4adf27f403c",
+    ".decision-resume-20261120/v3/call-06.prompt.json": "44b66df6484b165387bc9f4de194068e1b6cfa6bd1a90110d8d8e51a52507dad",
+    ".decision-resume-20261120/v3/call-06.raw-envelope.json": "3d76362a2aecc6fd569ab7188c56a379dbb00840c4368573780df15dda9f29df",
+    ".decision-resume-20261120/v3/call-07.prompt.json": "433a8245d593930651566e0b7d3dca3b5e807d0f5974a4229373b939b220f313",
+    ".decision-resume-20261120/v3/call-07.raw-envelope.json": "069d30073e934b50286c66c6aacf137a32feaf0997e306ed6261dddca4aad516",
+    ".decision-resume-20261120/v3/call-08.prompt.json": "a7b991b3538c96ffc96dc99d9fff05582cbded061eaa7002b830e709013db2e8",
+    ".decision-resume-20261120/v3/call-08.raw-envelope.json": "749231b667d36b137a720a62c1a0ce6f0c4ea61cca6d6d3cb39eb9adaccd681c",
+    ".decision-resume-20261120/v3/call-09.prompt.json": "cea265a90e8d96fe89d33a6cedd5a5061e44f34adf43c56f0a6d610f2a8ced5e",
+    ".decision-resume-20261120/v3/call-09.raw-envelope.json": "8aff6f96cad1b9aef7e8bc1fe7c4818d6390205479ba24369e2aadcad4587444",
+    ".decision-resume-20261120/v3/call-10.prompt.json": "56cb19300e5de5adfb522eba26e18d67ef7fbab6097fa4c4f7d05f366bc5711a",
+    ".decision-resume-20261120/v3/call-10.raw-envelope.json": "aab8dd1d06edda88d21f321eb78e8df5e04cf9427c7ce2f46af752d17ba09c59",
+    ".decision-resume-20261120/v3/call-11.prompt.json": "9419a7614be303bc83a4d78a4df7f5b6a0c86b7fc13cba03479f0c1ad0aec739",
+    ".decision-resume-20261120/v3/call-11.raw-envelope.json": "62811fd882a299454508499ae9c5a18098bc6cca9356ed904b1f2ecb9f023ff7",
+    ".decision-resume-20261120/v3/child-actual-campaign.json": "7ac1b5d9194fd4d4fa64120391e482b7464af9c2249d50d71cdf2d08882ed392",
+    ".decision-resume-20261120/v3/parent-actual-campaign.json": "f70bce8af0ae2413c9ffef72aa4529bbeae79e5a29f43e74b9ea51a23349f496",
+    ".decision-resume-20261120/v3/trajectory.json": "df4ccdcb739d84ce0589582c60b71c6553e2699f4300b4dc6e780722d5be8c9d",
+    ".decision-resume-20261120/e3opt/regression/END.json": "f86b0fe70a5207d0d3e98ceda76bdbb3de4a5baa1195f4bbc99cfaab756d3841",
+    ".decision-resume-20261120/e3opt/browser/END.json": "013d08e68c1eefa82de5b4252ab0b6e549034dd5e7579f9bf9e2982e88dd454d"
+  }
+}

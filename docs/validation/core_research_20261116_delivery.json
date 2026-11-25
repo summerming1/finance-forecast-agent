@@ -1,0 +1,153 @@
+{
+  "schema_version": "core_research_20261116_delivery_v1",
+  "contract": "docs/EVIDENCE_RESEARCH_LOOP.md",
+  "base_head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "branch": "feat/mission-research-v2",
+  "source_identity": "82f71f4fcf0c86c794adb21e264f4bb2f54dcaa9a6161b8ab676767ede91a847",
+  "source_identity_domain": "research-closeout-final-source-v1",
+  "archive_source_identity": "039b55387940431c2e15780087ac63ebced7922aeb4ea0c71c7fafc9a486e84e",
+  "archive_identity_domain": "core-final-source-v1",
+  "source_maps_equal": true,
+  "source_file_count": 358,
+  "source_identity_is_not_a_git_commit": true,
+  "A": {
+    "status": "PASS_BOUNDED",
+    "regression": {
+      "passed": 1305,
+      "skipped": 2
+    },
+    "unique_nodes": 1307,
+    "browser": {
+      "passed": 7
+    },
+    "browser_nodes": 7,
+    "actual_pytest_exit": [
+      0,
+      0
+    ],
+    "wrapper_exit": [
+      0,
+      0
+    ]
+  },
+  "B": {
+    "status": "NOT_RUN",
+    "blocker": "current free-only protection confirmation pending",
+    "actual_upstream_http": 0,
+    "live_source_versions_entered": 0,
+    "models": [
+      "qwen4-max",
+      "kimi-k3",
+      "kimi-k3.1-pro"
+    ],
+    "semantic_cases": 6,
+    "profile": "feature_window_model",
+    "no_authority_self_signed": true
+  },
+  "C": {
+    "status": "NOT_RUN",
+    "scope": "equal-budget research-selection value; simple reference has not been expanded to a full model-search domain"
+  },
+  "D": {
+    "status": "NOT_RUN",
+    "scope": "independent financial prediction; no real-market or sealed-label trial"
+  },
+  "E_G6": {
+    "status": "OPEN",
+    "scope": "owner previously attempted use and reported issues; owner recheck remains open"
+  },
+  "overall": "ENGINEERING_COMPLETE_JOINT_LIVE_ACCEPTANCE_NOT_COMPLETE",
+  "profile": {
+    "scope": "feature_window_model",
+    "candidate": "focused_candidate_v5",
+    "bundle": "focused_model_bundle_v5",
+    "models": {
+      "ridge_regression": {
+        "alpha": 1.0
+      },
+      "random_forest_regressor": {
+        "n_estimators": 80,
+        "max_depth": 4,
+        "min_samples_leaf": 5,
+        "max_features": 1.0,
+        "n_jobs": 1
+      }
+    },
+    "pipeline": "StandardScaler then registered estimator",
+    "seed": "inherited and frozen",
+    "window_domain": [
+      "expanding",
+      "rolling504",
+      "rolling756"
+    ],
+    "generated_features_max_including_inherited": 2,
+    "experiment": "one declared axis relative to a complete actual accepted control"
+  },
+  "receipts": {
+    "final-freeze5/COLLECTION.json": {
+      "path": ".core-research-20261116/final-freeze5/COLLECTION.json",
+      "sha256": "1ee5540763df250686e58e638e90b0c9a2213dd18fc923b737e74a8a6a9eba1c"
+    },
+    "final-regression4/START.json": {
+      "path": ".core-research-20261116/final-regression4/START.json",
+      "sha256": "9d9073a432fa9f76c95b4b65d659c16758fab02f4b07c9d527afa3d44787e756"
+    },
+    "final-regression4/END.json": {
+      "path": ".core-research-20261116/final-regression4/END.json",
+      "sha256": "76315404d5850c7eed365ebc85221fa76a6591924dbb9fdfc65162ef1570dbe2"
+    },
+    "final-regression4/regression.command.json": {
+      "path": ".core-research-20261116/final-regression4/regression.command.json",
+      "sha256": "537ca8bba83350b53e6882ae28c6d954617a200d7b3abcfb9baab2586962ca1f"
+    },
+    "final-regression4/regression.exit.json": {
+      "path": ".core-research-20261116/final-regression4/regression.exit.json",
+      "sha256": "675efc649dc5e66f3e09906aa3f34159baef4a03f359bc1116f0433ae601834f"
+    },
+    "final-browser1/START.json": {
+      "path": ".core-research-20261116/final-browser1/START.json",
+      "sha256": "5c4dcf164a36875d3ed5d8e77cc3ed676e2d846103f2a922ac85c948691c0ebe"
+    },
+    "final-browser1/END.json": {
+      "path": ".core-research-20261116/final-browser1/END.json",
+      "sha256": "0f693df00586af3885f399769c2598c5bcca7070c44d4da91610a115b5d1ca4f"
+    },
+    "final-browser1/browser.command.json": {
+      "path": ".core-research-20261116/final-browser1/browser.command.json",
+      "sha256": "441cdf046c1fb5df9fa1efd19c1a3b6446e3d6456d6f7ca1525e3593b8f0fb1f"
+    },
+    "FINAL_STATIC4.json": {
+      "path": ".core-research-20261116/FINAL_STATIC4.json",
+      "sha256": "29f3ca22a4cc26625966c4b36fb2dc8ccb051c30701c60b2b1e69726bc9aa7ec"
+    },
+    "FINAL_SOURCE_ARCHIVE2.json": {
+      "path": ".core-research-20261116/FINAL_SOURCE_ARCHIVE2.json",
+      "sha256": "c2d0fb0672dc4de9a158099b524091c3fda02238e398ce7ca724ff9b2f9e22c4"
+    },
+    "ENGINEERING_C3_FINAL.json": {
+      "path": ".core-research-20261116/ENGINEERING_C3_FINAL.json",
+      "sha256": "b697866e6658186e7fcce359103ed67fd6bcac2bf230e6aad656a321d33f8173"
+    },
+    "FINAL_SKIP_REASONS.json": {
+      "path": ".core-research-20261116/FINAL_SKIP_REASONS.json",
+      "sha256": "ffbc4c64836115e0a7fd1009a823d1f693147ff30da4714015306d1c5a62969a"
+    }
+  },
+  "source_archive": {
+    "path": ".core-research-20261116/FINAL_SOURCE2.zip",
+    "sha256": "c14db2c61da62782bc35d2eee09ab72010e42d4ed6f0a3c42bc98df041665d09",
+    "env_bytes_included": false
+  },
+  "known_boundaries": [
+    "bounded synthetic engineering, not whole repository/native/Linux acceptance",
+    "new-profile starting configs are the registered packs; alpha10 remains supported in the old profile",
+    "long contexts remain subject to the unchanged 64000-character gate; no promise of unbounded history",
+    "legacy trusted models still require their original matching source/dependencies; no re-sign or retraining substitute",
+    "six semantic materials are authored conditional scenarios; actual model behavior has not been exercised",
+    "deterministic demo/reference need not select RF; no research advantage claim"
+  ],
+  "commits": [],
+  "push": false,
+  "remote_ci": false,
+  "historical_records_preserved": true
+}

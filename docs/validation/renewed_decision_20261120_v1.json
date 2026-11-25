@@ -1,0 +1,117 @@
+{
+  "trial": ".decision-renew-20261120",
+  "source_version": 1,
+  "source_identity": "4bc349f9ea7f8252eee57d8611e2cb282b5f5cef9a90838a7e1ab6702d394acd",
+  "git_head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "dataset": "synthetic_only",
+  "local_task_sha256": "4b0a649567ada01dab60b0723a3f13bd8d5145d2575e2c3210e498c7676763e3",
+  "original_outcome": {
+    "B": "NO_GO",
+    "basis": "No real model answer was observed. The parent ended waiting_provider. The batch is sealed after unknown delivery.",
+    "source_version": 1,
+    "source_identity": "4bc349f9ea7f8252eee57d8611e2cb282b5f5cef9a90838a7e1ab6702d394acd",
+    "outcome_sha256": "f0a459b78a0f67df920a07c8c57470923d7583b81acfaf128f353aa8392dd281",
+    "analysis_sha256": {
+      "SEMANTICS.md": "bfa00480873f5826fb55a83d233b859338b02f8d7ed8eeb5e8e7b8da02f1a4e7",
+      "PAIR_REVIEW.md": "be8d855e6e1accc3e8208b1b2e8e5fe5e53855b99b1136dcf88c590792594590",
+      "TRACE.md": "b81d5ea437bf1859291d5aca16bcd4d1fdf185a6e38fcbfbfed9ae7a8239411c"
+    },
+    "fresh_http_attempts": 1,
+    "historical_plus_new_http": 271,
+    "unknown_deliveries_this_batch": 1,
+    "elapsed_seconds": 20.206192900019232,
+    "reserved_provider_seconds": 180.0,
+    "token_usage": null,
+    "parent_charged_fits": 32,
+    "parent_observed_fits": 16,
+    "research_candidate_fits": 0,
+    "final_refits": 0,
+    "parent_first_plan": "no response",
+    "later_plans": "NOT_RUN",
+    "child_and_delivery": "NOT_RUN",
+    "development": {
+      "planned": 6,
+      "upstream_attempts": 0,
+      "scorable": 0,
+      "pass_rate": null
+    },
+    "pair": {
+      "planned": 2,
+      "upstream_attempts": 0,
+      "comparable_pairs": 0,
+      "pass_rate": null
+    },
+    "global_stop": true,
+    "stop_reason": "unknown_delivery",
+    "session_seal_sha256": "b935feba1013b89513783d5d0580c15ae4fa71596dc023b417e3f97aa438962e"
+  },
+  "scope": "bounded engineering and live behavior",
+  "engineering": {
+    "regression": {
+      "passed": 1530,
+      "skipped": 2
+    },
+    "browser": {
+      "passed": 7
+    }
+  },
+  "cumulative_at_version_close": {
+    "charged_fits_since_first_loop": 160,
+    "charged_seconds_since_first_loop": 1621.1057402999722,
+    "current_ledger_sha256": "1318ce9cdfab071dea46f0f442ae05bd00035b6e230d3d49e37f496d528290c1",
+    "http_including_old": 271,
+    "observed_seconds_since_first_loop": 1212.2907939999714,
+    "previous": {
+      "historical_http": 270,
+      "prior_charged_fits_since_first_loop": 128,
+      "prior_charged_seconds_since_first_loop": 1441.1057402999722,
+      "prior_observed_fits_since_first_loop": 88,
+      "prior_observed_seconds_since_first_loop": 1192.0846010999521,
+      "prior_unknown_deliveries": 2
+    },
+    "schema": "renewed_research_cost_v1",
+    "stop_reason": "unknown_delivery",
+    "stopped": true,
+    "this_charged_fits": 32,
+    "this_charged_provider_seconds": 180.0,
+    "this_http": 1,
+    "this_observed_provider_seconds": 20.206192900019232
+  },
+  "later_axes": {
+    "selection_value": "NOT_RUN",
+    "independent_financial": "NOT_RUN",
+    "human": "attempted; owner recheck open"
+  },
+  "files": {
+    ".decision-renew-20261120/OWNER_AUTHORIZATION.json": "ad2410b462bb5d9b4f897884b21a2a4a88b07d8fb0a53d1833d9d3f6ea7bd021",
+    ".decision-renew-20261120/FREE_PROTECTION_CONFIRMED_20261120.json": "c4654ab883e2f524792ec3a7ca891536e5c22bc885095273f423eff46bc3bbbb",
+    ".decision-renew-20261120/AUTHORIZATION.json": "4c3049516678e2d798a150b5bc236cc23a42680633ca8c8ba885845631924daf",
+    ".decision-renew-20261120/B_RUBRIC_PRELIVE.json": "3287eea2db48a0343651ca5fda040a2d6b7e9075807cba4a9d6c9019a71af3b8",
+    ".decision-renew-20261120/PAIR-v1.json": "13587100a5b1b8855cd35ff7a6ea243810e619f3a02c4e76eeaffd148a8a8dac",
+    ".decision-renew-20261120/PREFLIGHT-v1.json": "f3d07b3e2b74f6a96b1d9c195771fd79c9ef72d6f631111ef4c6d2ef0a57808a",
+    ".decision-renew-20261120/live-v1.argv.json": "a185315a05cefa2f5d162e946bde9fab8abbca9b717c948ddbdade33c3c6c313",
+    ".decision-renew-20261120/live-v1.exit.json": "fbe1799d292b21cce12c3e4a82fce2ec4cb6195c367c5ec4349a917003b2224e",
+    ".decision-renew-20261120/v1/VERSION_START.json": "ac8c331e4c8db5d2b6917aea71cf59c66f57dae8de8446eec7af3587eaed0a20",
+    ".decision-renew-20261120/v1/VERSION_END.json": "ff59473c440355cfefa7f447c0fbd045d5bb611ea1694550aeb6a4c70efe7b6c",
+    ".decision-renew-20261120/v1/HTTP_LEDGER.json": "767f923a3d10189a4e1bc2a64f036b71a1812b81f15f43f13bd14568f598b2bb",
+    ".decision-renew-20261120/v1/FROZEN_PROVIDER.json": "af56f66d7984d6de330b68b7d0fd536589d2e49da83a24c5f805cc7722752011",
+    ".decision-renew-20261120/v1/B_VERDICT.json": "82d5e68d04cbcee35e95a0f905450ff5d72456dd25f68d84969de954ff162b88",
+    ".decision-renew-20261120/v1/OUTCOME.json": "f0a459b78a0f67df920a07c8c57470923d7583b81acfaf128f353aa8392dd281",
+    ".decision-renew-20261120/v1/DELIVERIES.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    ".decision-renew-20261120/v1/MATCHED_PAIR.json": "a07fb3e7611b3753d1705ceaf4745ee8187023e4a9543aaa39efcaccfb806794",
+    ".decision-renew-20261120/v1/worker-terminal-check.json": "bc1cf9dac4a944096cacf37d960a3107ed8be3df8d1e14255c5057060f8ebd44",
+    ".decision-renew-20261120/v1/worker-relay-settlement.json": "c03e3ff6ff85fb7a91ed3e4eb6802e3815190460254c77d9d81db1302a9f7c0c",
+    ".decision-renew-20261120/v1/semantic-results.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    ".decision-renew-20261120/v1/source.zip": "1a2039363bd14c764013d763a3a4a1603502b008fc432a09864ffabc86d27585",
+    ".decision-renew-20261120/v1/synthetic-source.json": "1a7a79df8f2e41686528b2d30f3c6bbe8f65663d497afe53ca3f72b6ff83ba24",
+    ".decision-renew-20261120/v1/SEMANTICS.md": "bfa00480873f5826fb55a83d233b859338b02f8d7ed8eeb5e8e7b8da02f1a4e7",
+    ".decision-renew-20261120/v1/PAIR_REVIEW.md": "be8d855e6e1accc3e8208b1b2e8e5fe5e53855b99b1136dcf88c590792594590",
+    ".decision-renew-20261120/v1/TRACE.md": "b81d5ea437bf1859291d5aca16bcd4d1fdf185a6e38fcbfbfed9ae7a8239411c",
+    ".decision-poststop-20261119/final1/regression/END.json": "bcfc5bcd4382990c3ca000976e1118806ebadbd44b4969f5c1570a7da806b022",
+    ".decision-poststop-20261119/final1/browser/END.json": "9f470cfead347c2d02e9d37bf362a20592b425e2e56c5bd900ffe58b6d3e435d",
+    ".decision-renew-20261120/v1/call-01.prompt.json": "f532ff57acf659552145e6d085ebf56525250a985732c77b465b46eceaaed3a9",
+    ".decision-renew-20261120/v1/call-01.raw-envelope.json": "cf69cdbadcdeba5601e7054be5c5abd7913c2921e330d0980e2991feaaa98a0b",
+    ".decision-renew-20261120/v1/parent-actual-partial.json": "b3018d423fff83552df4c9a20fdd8c6e466388173e415102aa9151894880919b",
+    ".decision-renew-20261120/v1/trajectory.json": "b22a4b7b3aef7a3b42823ca849f745f67394a1c48988f3981cb707f635f6a048"
+  }
+}

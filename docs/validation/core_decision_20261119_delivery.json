@@ -1,0 +1,231 @@
+{
+  "date": "2026-11-19",
+  "contract": "docs/EVIDENCE_RESEARCH_LOOP.md",
+  "branch": "feat/mission-research-v2",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source_identity": "06f5562b089fa379cf1fc5d1484919c0cab023cf5298d98cc51628a82f2ceae6",
+  "source_domain": "research-closeout-final-source-v1",
+  "A": "FAIL",
+  "regression": {
+    "passed": 1341,
+    "skipped": 2,
+    "failed": 1
+  },
+  "regression_exit": 1,
+  "regression_failures": [
+    "tests/test_core_rf_methods.py::test_current_grouped_model_choice_reaches_original_canonical_compiler_without_answer_repair"
+  ],
+  "chromium": {
+    "passed": 7
+  },
+  "chromium_exit": 0,
+  "chromium_scope": "independent_browser_after_failed_regression",
+  "B": "NO_GO",
+  "C": "NOT_RUN",
+  "D": "NOT_RUN",
+  "E_G6": "OPEN_owner_previously_attempted_recheck_pending",
+  "new_batch": {
+    "http": 21,
+    "charged_fit": 36,
+    "provider_seconds": 510.3734767999558,
+    "versions": [
+      {
+        "version": 1,
+        "http": 12,
+        "logical": 10,
+        "frozen_version_source": "33cf2560e08205e38ea8f1e2d752df42010351e8aa1b799cb7f29f01b002db7a",
+        "source_domain": "core-final-source-v1",
+        "final_source_equal": false,
+        "source_inputs_deps_stable": true,
+        "terminal": [
+          {
+            "role": "parent",
+            "execution_status": "partial",
+            "charged_fit": 20,
+            "new_candidate_fit": 4
+          }
+        ],
+        "explicit_refit": false,
+        "reviewed": 8,
+        "compiled_by_case": {
+          "case-741308": false,
+          "case-593024": false,
+          "case-862751": true,
+          "case-318406": true,
+          "case-926175": true,
+          "case-450692": false,
+          "case-107493": true,
+          "case-680352": false
+        },
+        "pair_transport_status": "INCOMPLETE_OR_UNMATCHED",
+        "live_verification": true
+      },
+      {
+        "version": 2,
+        "http": 9,
+        "logical": 9,
+        "frozen_version_source": "e3d4b95240804eefee215824d675ccc92b4bff80ecfba6a8db6e3c5472305978",
+        "source_domain": "core-final-source-v1",
+        "final_source_equal": true,
+        "source_inputs_deps_stable": true,
+        "terminal": [
+          {
+            "role": "parent",
+            "execution_status": "partial",
+            "charged_fit": 16,
+            "new_candidate_fit": 0
+          }
+        ],
+        "explicit_refit": false,
+        "reviewed": 8,
+        "compiled_by_case": {
+          "case-741308": true,
+          "case-593024": true,
+          "case-862751": false,
+          "case-318406": false,
+          "case-926175": true,
+          "case-450692": false,
+          "case-391675": true,
+          "case-842016": true
+        },
+        "pair_transport_status": "REQUIRES_RAW_SEMANTIC_REVIEW",
+        "live_verification": true
+      }
+    ],
+    "closure": "Both authorized source versions consumed; no new batch authorized."
+  },
+  "receipts": [
+    {
+      "path": ".core-decision-20261119/ENGINEERING-f2.json",
+      "sha256": "e322d4bb6326405ba09137329f08670f003bc5c456eb6635fd53aa471ed85020"
+    },
+    {
+      "path": ".core-decision-20261119/SESSION_LEDGER.json",
+      "sha256": "66d49aec830f5fc74d81c6cacff2d05ec6dbf0a2c9f4e3b93664ad51deef8d7b"
+    },
+    {
+      "path": ".core-decision-20261119/SESSION_SEAL.json",
+      "sha256": "ef797da736f21d488348f2bd840bca5bcaacd941f85831d9b3f993b4df9a5fd8"
+    },
+    {
+      "path": ".core-decision-20261119/B_RUBRIC_PRELIVE.json",
+      "sha256": "12f489a0f169d0217bc7b78701d9b995b22fa7d8b3f531bf8c4c9d71bdc18f53"
+    },
+    {
+      "path": ".core-decision-20261119/V1_B_REVIEW.md",
+      "sha256": "041a2667c9fc4b2db3726f73cfd66dcc7f08a41a22aaf034d5b3a2539157471d"
+    },
+    {
+      "path": ".core-decision-20261119/V2_B_REVIEW.md",
+      "sha256": "c597044f9d0831488e54a9d87a27627839a44ddb5e20f1526a681b47a53dd3be"
+    },
+    {
+      "path": ".core-decision-20261119/REPORT.md",
+      "sha256": "081484bd21e872e3d61ad3bcbac909555e1ee7695f81d8fd6b1975bc1b0943d3"
+    },
+    {
+      "path": ".core-decision-20261119/OLD_EXAMPLES_BEFORE.json",
+      "sha256": "de2f2fb73cbf9d908be62af33f8ae019770ae2e7112c7ba69c8005b8d3379711"
+    },
+    {
+      "path": ".core-decision-20261119/OLD_EXAMPLES_F2.json",
+      "sha256": "c3cda7df59739418b5317026c0719d05b12c1df1edaa7dd171b240e92669bd5d"
+    },
+    {
+      "path": ".core-decision-20261119/V1_REPAIR.json",
+      "sha256": "5fbb066a25f209f4495c0dbaacf463c3a3a13ce13dee1e36d70bf395c784df7d"
+    },
+    {
+      "path": ".core-decision-20261119/projection-capacity-v2.json",
+      "sha256": "1b36bc0a43da66dcc254a0026430818ef58f02e2aa29186a83c3ca57b1543bae"
+    },
+    {
+      "path": ".core-decision-20261119/live-1.exit.json",
+      "sha256": "f0328aa0284cb3d409c294ab344af8fedfcc3caefb3813326a98947bc1df7a14"
+    },
+    {
+      "path": ".core-decision-20261119/liveF1.exit.json",
+      "sha256": "5b5f902c69257fa1a05799f0bf659e309767265555e8aab94131834db6ffad5a"
+    },
+    {
+      "path": ".core-decision-20261119/liveF2.exit.json",
+      "sha256": "80e13df7bf8a13bea5fa6c30c81307869086cc075351a7bca5f726e8ae936388"
+    },
+    {
+      "path": ".core-decision-20261119/preflight-f2.exit.json",
+      "sha256": "46c238fcd630d9c172be9543a46dc9ea4429537d86e37cc06475cc2ce67a2310"
+    },
+    {
+      "path": ".core-decision-20261119/regression-f2/END.json",
+      "sha256": "d47d3902b4ba63fa81758cbc3f3f2b7da5dcb9be91904af6591937d92dd2fe1e"
+    },
+    {
+      "path": ".core-decision-20261119/browser-independent-f2/END.json",
+      "sha256": "c0fe626239b0877d8bfcd4df905bb5b750dad74825df8dc6d5eeedb481852dfa"
+    },
+    {
+      "path": ".core-decision-20261119/static-f2.json",
+      "sha256": "c391d6e6c5832ac40653c070d98944ba817ff041a595bbb9c9ca2a415dfd00c6"
+    },
+    {
+      "path": ".core-decision-20261119/collect-f2/COLLECTION.json",
+      "sha256": "2a753228168805ba5c3455ec09130e2f7db03b7935b754bedb29ab7d24da2575"
+    },
+    {
+      "path": ".core-decision-20261119/v1/OUTCOME.json",
+      "sha256": "4f578049ccc828ccd75a2956f6c75617808a3ea91416a8457d1955e831bcfba8"
+    },
+    {
+      "path": ".core-decision-20261119/v1/VERSION_END.json",
+      "sha256": "7ebc8293fcbba2b4b8d377d14e97ade03edbc5f314eb13f6b3cf74f2d9a91cc6"
+    },
+    {
+      "path": ".core-decision-20261119/v1/trajectory.json",
+      "sha256": "20bbf72762f11957a1b62d47800823c5e4a7dce724ab1a41d6f77b3a43393165"
+    },
+    {
+      "path": ".core-decision-20261119/v1/semantic-results.json",
+      "sha256": "3b1afb8a3cefa981e91d7e20e409674eb73a3bf3bd3afa3cdfb5f537f99e87be"
+    },
+    {
+      "path": ".core-decision-20261119/v1/MATCHED_PAIR.json",
+      "sha256": "7a36de8e0a13e3b3b98ea7e8e0acd167b8d9eafdb7390da91c328b58a6031ab8"
+    },
+    {
+      "path": ".core-decision-20261119/v1/HTTP_LEDGER.json",
+      "sha256": "09abf8d8f6b902a021cefbd245dec751017f5b5140c3f4aebe08656e7a3fd400"
+    },
+    {
+      "path": ".core-decision-20261119/v1/FROZEN_PROVIDER.json",
+      "sha256": "c7a81f84ca5858eec1278111541a7a7d332e159825e50927708b4c74f3ef0919"
+    },
+    {
+      "path": ".core-decision-20261119/v2/OUTCOME.json",
+      "sha256": "923f035c61860aa9d0877655ef4c061f370c6fee8c51e4f8059cddb34f5b50be"
+    },
+    {
+      "path": ".core-decision-20261119/v2/VERSION_END.json",
+      "sha256": "88fae640b2ca2d160a6e6bdc5e0a16eacb5d8c7cf938502bb911ce6d32195665"
+    },
+    {
+      "path": ".core-decision-20261119/v2/trajectory.json",
+      "sha256": "3ea75f8099791711631eae4fe43fbc57fd26d788546744f40c64f97ada65ed5f"
+    },
+    {
+      "path": ".core-decision-20261119/v2/semantic-results.json",
+      "sha256": "311a38fca205b43ce14e62304b07740ca6546ec885708f0168effa65e5d9160e"
+    },
+    {
+      "path": ".core-decision-20261119/v2/MATCHED_PAIR.json",
+      "sha256": "088ea212f376360a825fc7ee39eb43a2fddb70ff0a7fe8ea11e313c6564042c8"
+    },
+    {
+      "path": ".core-decision-20261119/v2/HTTP_LEDGER.json",
+      "sha256": "5ab3c9d71b952c732c707ecc75e7a665f57c523e1391844b10c8868d3c4cc239"
+    },
+    {
+      "path": ".core-decision-20261119/v2/FROZEN_PROVIDER.json",
+      "sha256": "19c50589f91a7e20b0d8818d54a9971a05eb6a0b04f302057467f6cc40ac0610"
+    }
+  ]
+}

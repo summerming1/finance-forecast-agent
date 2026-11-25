@@ -1,0 +1,294 @@
+{
+  "date": "2026-11-23",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source": "86a52446e8eeeda602c75eb0656f9147e4546e7f73c5638a9e962a7c26728da6",
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1600,
+        "skipped": 2
+      },
+      "path": ".decision-wire-20261123\\gate4\\regression\\END.json",
+      "sha256": "fb01a1d9aa646e46c368b1ee51f7b07ad3f60b4ceba9f9d526f05f0275e92fe2",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-wire-20261123\\gate4\\browser\\END.json",
+      "sha256": "5719b3c0310329ea44b81bcadffb8c001927cd54b36c3aff973e1c33881cea33",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "paired_probe_http": [
+    200,
+    400
+  ],
+  "formal_calls": [
+    {
+      "number": 1,
+      "case": "parent",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 59.48856179998256,
+      "raw_envelope_sha256": "08d356028dad763880ba20ee37d8498554eb7a1fa6fbaa5ef3e65516e55ba041"
+    },
+    {
+      "number": 2,
+      "case": "case-2026112100",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 34.401739299995825,
+      "raw_envelope_sha256": "e5b3fba9817b2302d26a1bd1f2ffb6c4f82c60b907d63caa33decb1b2624c712"
+    },
+    {
+      "number": 3,
+      "case": "case-593024",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 26.304777300043497,
+      "raw_envelope_sha256": "7bdb87e4112fd33c26bda9ee47e4c531276924a75e8af05e35e3a7a26bf213bd"
+    },
+    {
+      "number": 4,
+      "case": "case-862751",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 23.108378300035838,
+      "raw_envelope_sha256": "b864742e2a3f9a2227653bc3123c56ad4e4058b35820ac652ddd02e62e205d8a"
+    },
+    {
+      "number": 5,
+      "case": "case-318406",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 39.712082499987446,
+      "raw_envelope_sha256": "5c006500308c8c1f5fa8e3f820537eddb1bb2d8e24aa18f2590203122ba21dc1"
+    },
+    {
+      "number": 6,
+      "case": "case-2026112104",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 34.52568640001118,
+      "raw_envelope_sha256": "383f982e4d19956b74129b728c9c1a464298c4f6b09ad8689cfbe88906728bad"
+    },
+    {
+      "number": 7,
+      "case": "case-2026112105",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 38.82159960002173,
+      "raw_envelope_sha256": "5a6fe01b4f6fe0434fbb77b57190c68c7bd03f8fa5caab8aa8d4e81f37e3a04c"
+    },
+    {
+      "number": 8,
+      "case": "case-04a632ab7d896b76d022",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 37.51934820000315,
+      "raw_envelope_sha256": "ff8b9d010b308f95aa55d920e86f0af5deabc5364c7f0c46f568f99ba9378da2"
+    },
+    {
+      "number": 9,
+      "case": "case-4a0c2485fef493cce32c",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 36.64799420000054,
+      "raw_envelope_sha256": "c1395d10693f70ab3cb2588408207381926c6a163260adfedb0698a603a7ef20"
+    }
+  ],
+  "new_http_including_comparison": 11,
+  "cumulative_http": 343,
+  "actual_formal_http": 9,
+  "logical_requests": 9,
+  "charged_fits": 16,
+  "process_exit": {
+    "exit": 0,
+    "seconds": 390.1192821000004
+  },
+  "trajectory": {
+    "actual_research_candidates": 0,
+    "records": [
+      {
+        "actual_research_training": [],
+        "campaign_id": "persistent-7b60b317f1c4d11f25633279",
+        "execution_status": "partial",
+        "fit_calls": 16,
+        "package": {
+          "additional_fit": 0,
+          "additional_http": 0,
+          "members": 32,
+          "path": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-ygg6skoj\\project\\focused_campaigns\\persistent-7b60b317f1c4d11f25633279\\research_package\\persistent-7b60b317f1c4d11f25633279.research-package.zip",
+          "read_only_campaign_unchanged": true,
+          "sha256": "d416b2e0d10539e2a75c8d7dd5b2f15524f524d7fe1e423caa085bc291ddae0c"
+        },
+        "proposal_error": {
+          "errno": null,
+          "error_category": "execution_error",
+          "exception_type": "ValueError",
+          "operation": "",
+          "path_alias": null,
+          "phase": "proposal_validation",
+          "retryable": false,
+          "traceback_frames": [
+            {
+              "function": "_run_resumable",
+              "line": 2833,
+              "module": "focused_research.py"
+            },
+            {
+              "function": "expand_decision",
+              "line": 353,
+              "module": "compact_decision.py"
+            },
+            {
+              "function": "expand_decision",
+              "line": 1036,
+              "module": "grouped_decision.py"
+            },
+            {
+              "function": "translate_intent",
+              "line": 115,
+              "module": "decision_intent.py"
+            }
+          ],
+          "winerror": null
+        },
+        "role": "parent",
+        "root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-ygg6skoj\\project\\focused_campaigns\\persistent-7b60b317f1c4d11f25633279",
+        "stop_reason": "proposal_invalid",
+        "task_status": "completed"
+      }
+    ],
+    "viable_not_semantic_pass": false
+  },
+  "cases": [
+    {
+      "case_id": "case-2026112100",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-593024",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.hypothesis_updates.0: oneOf",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-862751",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-318406",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.hypothesis_updates.0: oneOf",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112104",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.hypothesis_updates.0: oneOf",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112105",
+      "status": "failed_or_invalid",
+      "error": "claim_from_action already binds that prediction to its source action",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-04a632ab7d896b76d022",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-4a0c2485fef493cce32c",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.hypothesis_updates.0: oneOf",
+      "delivery": "model_text_received"
+    }
+  ],
+  "unattempted": [],
+  "verdict": {
+    "transport": "PASS_BOUNDED",
+    "engineering": "PASS_BOUNDED",
+    "behavior": "NO_GO",
+    "model": "qwen4-max",
+    "parent": "The diagnose motive cites @h2/F8; only @h1/F8 was assessed. The grouped proposal was rejected atomically.",
+    "six_cases": {
+      "strictly_valid": 2,
+      "total": 6,
+      "accepted_observations": [
+        "case-2026112100 distinguishes high correlation from harm and proposes a controlled feature ablation.",
+        "case-862751 recognizes local ablation benefit and competing explanations; subgroup loss can locate heterogeneity but cannot uniquely identify lag or regularization as cause."
+      ],
+      "failed": {
+        "case-593024": "revise missing from",
+        "case-318406": "revise missing from",
+        "case-2026112104": "revise missing from",
+        "case-2026112105": "new prediction specified twice on its source action"
+      }
+    },
+    "pair": {
+      "strictly_valid": 1,
+      "total": 2,
+      "comparable_pair": false,
+      "notes": "Both read opposite pooled loss directions; the unfavorable arm omitted from for revise. The favorable arm treats grouped error as a lead for a mechanism which that tool alone cannot identify."
+    },
+    "not_reached": [
+      "second planning using actual candidate feedback",
+      "explicit child",
+      "recommended-model refit and fresh inference"
+    ],
+    "selection_value": "NOT_TESTED",
+    "independent_financial_effect": "NOT_TESTED",
+    "human": "NO_NEW_SIGNOFF"
+  },
+  "references": {
+    ".decision-wire-20261123/probe-design.json": "996c7c217831e8d1e7a648f59d2d21fd55f7e37c9d04cbfc8eefeab9c8f9f9d6",
+    ".decision-wire-20261123/probe-1-result.json": "a800dff6576ae0526a02f853326e22447e129288ace096ffb0bc8c3489ed82a7",
+    ".decision-wire-20261123/probe-2-result.json": "1dd31c35e128cf9d50bb672bd669cb2b141ce8cc1e7db1b1e6c4bc3040aecb37",
+    ".decision-wire-20261123/nine-forms.json": "7f2ad2d85b495d592b4b59ead997808640a02e9a1c92f54135a40e35c2fc6aac",
+    ".decision-wire-20261123/gate4/END.json": "af64ef7b31e227a07428fbec16e952283af387b54684cd9c677bb1434c3b8569",
+    ".decision-wire-20261123/gate4/static.json": "b2ca01e436590eb7405739d35c812b4ec4ea440313eb07e12043f90a80ff3729",
+    ".decision-wire-20261123/gate4/regression/END.json": "fb01a1d9aa646e46c368b1ee51f7b07ad3f60b4ceba9f9d526f05f0275e92fe2",
+    ".decision-wire-20261123/gate4/browser/END.json": "5719b3c0310329ea44b81bcadffb8c001927cd54b36c3aff973e1c33881cea33",
+    ".decision-wire-20261123/PAIR-v1.json": "1dc81adbb140cf7ee19cd37c5f44deebd68c0383c5fc1b2fca854bdf6d7371c2",
+    ".decision-wire-20261123/OWNER.json": "d8c2b00b17bbec7d6273785f18bfc2ce5d724aad0399035bc478368ce5a26bd7",
+    ".decision-wire-20261123/AUTHORIZATION.json": "4ed24873006c891d1de24056b22e823d01a2327899d0ec13e245090339a648da",
+    ".decision-wire-20261123/PREFLIGHT-v1.json": "57474bdd8c7faf23f4056d8034c2f309fc585854ae68c32e7c2d5b853f2013a7",
+    ".decision-wire-20261123/SESSION_LEDGER.json": "08bf1f7fa1645f4ca37423acd074876d07a0481fc2ec158021d965db86ea2ada",
+    ".decision-wire-20261123/SESSION_SEAL.json": "9e2e035f47885f953a68b123e573a97e4db7106172dd468fbc4874e8be8d14c9",
+    ".decision-wire-20261123/v1/OUTCOME.json": "dd088f10b0d8cf377ab631a489c4cfa1537c921bb8c3b61309f6d4e6f9ae0991",
+    ".decision-wire-20261123/v1/MATCHED_PAIR.json": "32d9c1d8914367a22e51f850bc00790cb8be462843adb56714d2ed3591d20ce7",
+    ".decision-wire-20261123/behavior-review.json": "f758f385834d3a6d168c2ee6fc69d1afafed642c88e1feb2207e52cce7ef586c",
+    ".decision-wire-20261123/live.argv.json": "774362ed3891f4de2153799129c4ff5e5517e78f49965b00c77c35e2eaf4e533",
+    ".decision-wire-20261123/live.exit.json": "5f39a299a632eda2190e224edeec139b09095cbd0293730d7456883f261470b7"
+  }
+}

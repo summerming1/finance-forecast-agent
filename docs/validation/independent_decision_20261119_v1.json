@@ -1,0 +1,110 @@
+{
+  "schema": "independent_decision_source_review_v1",
+  "trial": ".decision-next-20261119",
+  "version": 1,
+  "branch": "feat/mission-research-v2",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source_map_identity": "2e186e96471479f622f77624abc87f70c7d8bf2cbe0042ba70748feee6e4c560",
+  "source_entries": 380,
+  "snapshot_sources_unchanged": true,
+  "synthetic_raw_sha256": "75e55a5fb4c7c8b27152b9114bef99ed09b9f1fc8b40fe2daf1eb671567a7779",
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1458,
+        "skipped": 2
+      },
+      "pytest_exit": 0,
+      "wrapper_exit": 0,
+      "receipt": ".decision-followup-20261119/engineering-e72/regression/END.json"
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "pytest_exit": 0,
+      "wrapper_exit": 0,
+      "receipt": ".decision-followup-20261119/engineering-e72/browser/END.json"
+    }
+  },
+  "verdict": {
+    "source_version": 1,
+    "B": "NO_GO",
+    "outcome_sha256": "4b377fd0959fb92689e05339c2e20407163842d8de7832be4660744a91fcc673",
+    "analysis_sha256": {
+      "TRACE.md": "498a5c919f0e58c2f0df354d7c0bd8b47d40cdb1086b2ae46a9739c45582cae1",
+      "SEMANTICS.md": "8b7d70dcac7aaa3c7465059baad87b0e2bf056192c297c13f91ede906c33b4eb",
+      "PAIR_REVIEW.md": "b3ae490cb26c83973acf73c8682d629f4eae7f05427f2b59cc53d3a11bfcc639"
+    },
+    "http": 9,
+    "unknown_deliveries": 0,
+    "logical_requests": 9,
+    "parent_observed_fits": 20,
+    "parent_charged_fits": 32,
+    "child_charged_fits": 0,
+    "refits": 0,
+    "development_strict": [
+      4,
+      6
+    ],
+    "development_scientific": [
+      1,
+      6
+    ],
+    "pair_strict": [
+      2,
+      2
+    ],
+    "pair_behavior": "NO_GO",
+    "global_stop": false,
+    "finding": "Cold parent trained a real candidate but its next actual evidence exceeded the request limit. Only one of six development proposals fulfilled the full rubric. Both new paired responses read the opposing evidence; the action linkage, interpretation of available comparisons and/or costs failed."
+  },
+  "standalone_trajectory_and_challenges": true,
+  "independent_financial_and_selection_value": "NOT_RUN",
+  "owner_recheck": "OPEN",
+  "evidence": {
+    ".decision-next-20261119/PREFLIGHT-v1-rebound.json": "78861bef7ea7285186b22d6946971da30c6ca7bcde7e110146c088b82931f767",
+    ".decision-next-20261119/PAIR-v1-rebound.json": "10368a3f77276a28a3054118306ad99bd17875b203b6df0fce69801ff4dd5613",
+    ".decision-next-20261119/live-v1-rebound.argv.json": "a2cfffe668ef44e08fee5ee23f445ad82fbeca1b73dc5065cacc277bf27c3632",
+    ".decision-next-20261119/live-v1-rebound.exit.json": "3c40fd57c2d84662dfaac526e665c24ed430ae33a8190ec9c71cacc4fff0561c",
+    ".decision-next-20261119/OWNER_AUTHORIZATION.json": "9ee15f4de5fb1c819f1ec498094ab8e7c380ee6a32829a024096fac813a0e0d4",
+    ".decision-next-20261119/B_RUBRIC_PRELIVE.json": "3287eea2db48a0343651ca5fda040a2d6b7e9075807cba4a9d6c9019a71af3b8",
+    ".decision-next-20261119/v1/B_VERDICT.json": "a827ef71369352ecf63d9d8af4564a42def3a70b52bfca3d6c0c718a278cdebb",
+    ".decision-next-20261119/v1/TRACE.md": "498a5c919f0e58c2f0df354d7c0bd8b47d40cdb1086b2ae46a9739c45582cae1",
+    ".decision-next-20261119/v1/SEMANTICS.md": "8b7d70dcac7aaa3c7465059baad87b0e2bf056192c297c13f91ede906c33b4eb",
+    ".decision-next-20261119/v1/PAIR_REVIEW.md": "b3ae490cb26c83973acf73c8682d629f4eae7f05427f2b59cc53d3a11bfcc639",
+    ".decision-next-20261119/v1/OUTCOME.json": "4b377fd0959fb92689e05339c2e20407163842d8de7832be4660744a91fcc673",
+    ".decision-next-20261119/v1/VERSION_START.json": "e8653facb48a2a76d87a106c2596eee690d632bf7c39ecae3f29df85dd5d6881",
+    ".decision-next-20261119/v1/VERSION_END.json": "8cc8eaea3f779ce52a1b1d8df70684636763f20988fd814dd580954c1ed5615b",
+    ".decision-next-20261119/v1/MATCHED_PAIR.json": "c557d274599f2bfb473282aad55ba81be04a8fd66a158f9dc63956742927e076",
+    ".decision-next-20261119/v1/DELIVERIES.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    ".decision-next-20261119/v1/trajectory.json": "64da65881114fb6635ebb041a271967af1651aeccd30ab585d57ac593c875092",
+    ".decision-next-20261119/v1/source.zip": "860fa61c41b8dffa1dd04746dfa9824c896c2173f1ae8bdf50de409ab7f0fc0e",
+    ".decision-next-20261119/v1/HTTP_LEDGER.json": "18eea3459feba150ad80051a1b7d87ba3283f5c64098aaedf88b383a2e84c009",
+    ".decision-next-20261119/v1/FROZEN_PROVIDER.json": "1e4f474c4c4d042f0ad1d8a2bc7e4f9be9d128bba22d3c1ee64749bb7b9d49f4",
+    ".decision-next-20261119/v1/synthetic-source.json": "52f838be9e4fa0ca04d297b5f02fe32b55b567c5d0e37a43a101061a92f1b528",
+    ".decision-next-20261119/v1/semantic-results.json": "ef1af8129fd69d47b67763e4d9b74afbd20a7e1fd0c3be70576ae0a0c4d7b27b",
+    ".decision-next-20261119/v1/worker-terminal-check.json": "3eee8febf68ef8e863726c934ac05439eccd3dd146abd77cffe3fc127d63c18c",
+    ".decision-followup-20261119/engineering-e72/regression/END.json": "02b1fd864aa75f9fed5975dbac47033bfa9921703466745e6277324045b32042",
+    ".decision-followup-20261119/engineering-e72/browser/END.json": "8b7c77343b29f5b93cd4a53f4c0459644b5a4a9a30a54abeecc16ac563909281",
+    ".decision-next-20261119/v1/call-01.prompt.json": "2ebcc36c212b38c664495a019115e2f51b75d565ca81c5039d4e264c181fb726",
+    ".decision-next-20261119/v1/call-01.raw-envelope.json": "7f20de6a375864510d5cddc4a107c229569d26a8345ade7dad2ade8ed582fcbc",
+    ".decision-next-20261119/v1/call-02.prompt.json": "13bd91529d77be5fdd3742df52c35491762c95db92dcfccd690c006c09acfcaf",
+    ".decision-next-20261119/v1/call-02.raw-envelope.json": "8b0b509ffc93540c08d539d9e559cb2bdce3fa8d3e3d154dc3d91d43873dd9f3",
+    ".decision-next-20261119/v1/call-03.prompt.json": "570496322aaedba3e26a06710abe57520bcd49807a97b71a91609ca6c2e53281",
+    ".decision-next-20261119/v1/call-03.raw-envelope.json": "11701935a2858e326036a57d15303b3b61cf4764622f26c4f7e3d5c9f143e793",
+    ".decision-next-20261119/v1/call-04.prompt.json": "606e0d83cb3659d6151f4b60f2698b3319becb1ea3c801c02f163caca12e58d0",
+    ".decision-next-20261119/v1/call-04.raw-envelope.json": "142af415f6f0830a6c09088c79f961b4bf0790380269f14bd44f65cd9e63457b",
+    ".decision-next-20261119/v1/call-05.prompt.json": "57efba69a7a556c53c1e3caba0c506aadc5f6ea3ce0bedca290d1f6fc1cea1b4",
+    ".decision-next-20261119/v1/call-05.raw-envelope.json": "1431c839c4a922f9c922236e73417bbbc0f15599e9be11354af3e06d02d42257",
+    ".decision-next-20261119/v1/call-06.prompt.json": "d756e6d743176e8f538386d3b74650c629ff7c5bd56459fd2dc14fcffaf6269e",
+    ".decision-next-20261119/v1/call-06.raw-envelope.json": "3095830af2859eabf2eb11ce7b574dbbe4b50637bf801cd5025a650253737e51",
+    ".decision-next-20261119/v1/call-07.prompt.json": "a5f008cd88a3461d4cce61d3c399de120ed0dd3b507755408f547150dad53067",
+    ".decision-next-20261119/v1/call-07.raw-envelope.json": "c374fc82d0ff05e5ef6bb22355b861673109f2a7b6a697e45d4d1f2237731037",
+    ".decision-next-20261119/v1/call-08.prompt.json": "f4a0eef9d0518cd581f38c6a6cb30266e6c819cb2d506361cbfdfd4b2bdf5adc",
+    ".decision-next-20261119/v1/call-08.raw-envelope.json": "1bc3abc5ccd8c8c52f8fb9d7a1186c12bcf4497f8d65f378a5a95583aba862c9",
+    ".decision-next-20261119/v1/call-09.prompt.json": "1e074b98ea56d83becf7b1dc149e61a026c2b1a872aa7aa02d44f61bf36b6e59",
+    ".decision-next-20261119/v1/call-09.raw-envelope.json": "f26f2f7ebe4d9d5076496f3233fd54d999136a58c916fce886b9050bb5f58e7c",
+    ".decision-next-20261119/v1/parent-actual-partial.json": "71b10e1331a54123793159852d8bbbe57987a3453b3ca3a42b03ba784f397597"
+  }
+}

@@ -207,6 +207,13 @@ class FeatureProgram:
     def to_dict(self) -> dict:
         return json.loads(self.canonical)
 
+    def without_feature(self, name: str) -> FeatureProgram:
+        program = self.to_dict()
+        if name not in {f["name"] for f in program["features"]}:
+            raise ValueError("ablation component is not an actual parent feature")
+        program["features"] = [f for f in program["features"] if f["name"] != name]
+        return FeatureProgram.from_dict(program)
+
     @property
     def complexity(self) -> dict[str, int]:
         values = [expression_complexity(row["expression"]) for row in self.to_dict()["features"]]

@@ -19,6 +19,7 @@ from sklearn.linear_model import Ridge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
+from .evidence_output_contract import SELECTED_V7_FORMS, advisor_response_wire, check_selected_authoring_form
 from .focused_data import FocusedDatasetSnapshot, FocusedTaskSpec, validate_feature_research_binding
 from .focused_evidence import (
     build_execution_manifest,
@@ -39,7 +40,17 @@ from .focused_feature_program import (
     feature_capability,
 )
 from .focused_identity import canonical_json, data_identity, file_sha256, identity
-from .focused_methods import METHOD_SCHEMA, TrainingPolicy, method_capability
+from .focused_methods import (
+    METHOD_SCHEMA,
+    MODEL_METHOD_SCHEMA,
+    MODEL_METHOD_SCOPE,
+    TrainingPolicy,
+    candidate_method_capability,
+    method_capability,
+    model_method_capability,
+    registered_model_params,
+    validate_registered_model,
+)
 from .focused_protocol import (
     FEATURE_GROUPS,
     EvaluationPolicy,
@@ -116,9 +127,9 @@ class CandidateConfig:
     def __post_init__(self):
         if self.schema_version is None and self.feature_program is None and self.training_policy is None:
             return  # Legacy objects retain exactly their existing bytes/identity.
-        if self.schema_version not in {CANDIDATE_SCHEMA, METHOD_SCHEMA} or self.feature_program is None:
+        if self.schema_version not in {CANDIDATE_SCHEMA, METHOD_SCHEMA, MODEL_METHOD_SCHEMA} or self.feature_program is None:
             raise ValueError("feature program requires the explicit focused_candidate_v3 schema")
-        if self.schema_version == METHOD_SCHEMA:
+        if self.schema_version in {METHOD_SCHEMA, MODEL_METHOD_SCHEMA}:
             policy = self.training_policy
             if not isinstance(policy, TrainingPolicy):
                 policy = TrainingPolicy.from_dict(policy)
@@ -130,6 +141,8 @@ class CandidateConfig:
                 or len(set(self.feature_groups)) != len(self.feature_groups)):
             raise ValueError("feature program supports unique price-only builtin groups")
         validate_model_params(self.model_family, self.model_params)
+        if self.schema_version == MODEL_METHOD_SCHEMA:
+            validate_registered_model(self.model_family,self.model_params)
         program = self.feature_program
         if not isinstance(program, FeatureProgram):
             program = FeatureProgram.from_dict(program)
@@ -143,9 +156,9 @@ class CandidateConfig:
         if not isinstance(payload, dict) or set(payload) - allowed or not required <= set(payload):
             raise ValueError("unknown or missing candidate fields")
         if ({"schema_version", "feature_program"} & set(payload)
-                and (payload.get("schema_version") not in {CANDIDATE_SCHEMA, METHOD_SCHEMA} or payload.get("feature_program") is None)):
+                and (payload.get("schema_version") not in {CANDIDATE_SCHEMA, METHOD_SCHEMA, MODEL_METHOD_SCHEMA} or payload.get("feature_program") is None)):
             raise ValueError("new candidate semantics cannot downgrade to legacy schema")
-        if "training_policy" in payload and (payload.get("schema_version") != METHOD_SCHEMA or payload["training_policy"] is None):
+        if "training_policy" in payload and (payload.get("schema_version") not in {METHOD_SCHEMA, MODEL_METHOD_SCHEMA} or payload["training_policy"] is None):
             raise ValueError("training semantics cannot downgrade to an old candidate")
         if (not isinstance(payload["candidate_id"], str) or not payload["candidate_id"]
                 or not isinstance(payload["model_family"], str)
@@ -171,7 +184,8 @@ class CandidateConfig:
                 return identity({"schema_version":self.schema_version,"model_family":self.model_family,
                     "effective_params":params,"feature_groups":self.feature_groups,
                     "feature_program":self.feature_program.to_dict(),"training_policy":self.training_policy.to_dict(),
-                    "method_capability":method_capability()},domain="focused-method-config-v1")
+                    "method_capability":candidate_method_capability(self)},
+                    domain="focused-model-method-config-v1" if self.schema_version==MODEL_METHOD_SCHEMA else "focused-method-config-v1")
             return identity({"schema_version": self.schema_version, "model_family": self.model_family,
                 "effective_params": params, "feature_groups": self.feature_groups,
                 "feature_program": self.feature_program.to_dict(), "capability": feature_capability()},
@@ -331,7 +345,8 @@ def _make_model(candidate: CandidateConfig):
         unknown = set(params) - allowed
         if unknown:
             raise ValueError(f"unsupported random forest params: {sorted(unknown)}")
-        return RandomForestRegressor(random_state=candidate.seed, n_jobs=1, **params)
+        model = RandomForestRegressor(random_state=candidate.seed, n_jobs=1, **params)
+        return make_pipeline(StandardScaler(), model) if candidate.schema_version==MODEL_METHOD_SCHEMA else model
     allowed = {"n_estimators", "learning_rate", "max_depth", "min_samples_leaf"}
     unknown = set(params) - allowed
     if unknown:
@@ -430,7 +445,8 @@ def evaluate_candidate(
             model.fit(x[train_idx], y[train_idx])
         else:
             from .focused_methods import fit_method
-            receipt = fit_method(model, x, y, planned_training[fold_id], features, expected_family=candidate.model_family)
+            receipt = fit_method(model, x, y, planned_training[fold_id], features, expected_family=candidate.model_family,
+                model_research=candidate.schema_version==MODEL_METHOD_SCHEMA,expected_seed=candidate.seed)
             training_execution.append(receipt)
             train_idx = np.asarray(receipt['selected_train'], dtype=int)
         if fit_observer:
@@ -819,7 +835,7 @@ class FocusedResearchAdvisor:
     def propose(self, prompt: dict[str, Any]) -> tuple[dict[str, Any], str]:
         self.last_record, self.last_fixture_path = None, None
         if self.mode == "deterministic":
-            if prompt.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3'}:
+            if prompt.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3','evidence_decision_v4','evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}:
                 from .compact_decision import engineering_decision
                 self.last_telemetry={'policy':'finite_compact_engineering_v1','simulation_only':True}
                 return engineering_decision(prompt),'deterministic_compact_engineering_policy'
@@ -928,6 +944,7 @@ class FocusedResearchAdvisor:
         if self.provider_context:
             runtime, call_number = self.provider_context
             live.observer = lambda event: runtime.observe_http(call_number,event)
+            live.retry_budget_available = runtime.can_retry_http
             def check_send():
                 runtime.check_provider_owner()
                 if self.permission_check:
@@ -1001,6 +1018,7 @@ def compile_hypotheses(
         "simplification_dimension", "diagnostic", "literature_uses"}
     feature_mode = fixed_model is not None and fixed_model.feature_program is not None
     method_mode = fixed_model is not None and fixed_model.training_policy is not None
+    model_mode = method_mode and fixed_model.schema_version==MODEL_METHOD_SCHEMA
     if feature_mode:
         allowed.add("feature_program")
     if method_mode:
@@ -1044,7 +1062,7 @@ def compile_hypotheses(
         if training and method_mode:
             parent = candidates.get(parent_id)
             if (parent is None or parent.training_policy is None or parent_id != control_id
-                    or row.get("declared_axis") not in {"features", "training_window"}):
+                    or row.get("declared_axis") not in ({"features", "training_window", "model"} if model_mode else {"features", "training_window"})):
                 raise ValueError("method change requires one declared axis and its accepted parent/control")
             if (row["declared_axis"] == "features" and "training_policy" in row
                     and TrainingPolicy.from_dict(row["training_policy"]) != parent.training_policy):
@@ -1058,6 +1076,22 @@ def compile_hypotheses(
                     raise ValueError("diagnosis requires a completed control candidate")
                 if row.get("diagnostic", "residual_summary") not in {"residual_summary", "fold_summary"}:
                     raise ValueError("unsupported deterministic diagnostic")
+        elif model_mode and row['declared_axis']=='model':
+            if action!='improve' or set(row)&{'ablation_component','simplification_dimension'}:
+                raise ValueError('model replacement requires one improvement experiment')
+            parent=candidates[parent_id]
+            family=row.get('model_family')
+            params=registered_model_params(family)
+            if 'model_params' in row and effective_model_params(family,row['model_params'])!=params:
+                raise ValueError('model replacement cannot search registered parameters')
+            for key in ('feature_groups','seed'):
+                if key in row and row[key]!=getattr(parent,key):
+                    raise ValueError('model replacement changes an inherited setting')
+            if ('feature_program' in row and FeatureProgram.from_dict(row['feature_program'])!=parent.feature_program
+                    or 'training_policy' in row and TrainingPolicy.from_dict(row['training_policy'])!=parent.training_policy):
+                raise ValueError('model replacement cannot change features or training window')
+            candidate=replace(parent,candidate_id=cid,parent_candidate_id=parent_id,hypothesis_id=hid,
+                model_family=family,model_params=params)
         elif method_mode and row["declared_axis"] == "training_window":
             if action != "improve" or set(row) & {"ablation_component", "simplification_dimension"}:
                 raise ValueError("window change is an overall/conditional improvement experiment")
@@ -1080,12 +1114,7 @@ def compile_hypotheses(
                 component = row.get("ablation_component")
                 if parent_id != control_id or not isinstance(component, str) or not component.startswith("generated_feature:"):
                     raise ValueError("feature ablation requires a matching parent/control and generated_feature:<name>")
-                value = parent.feature_program.to_dict()
-                name = component.split(":", 1)[1]
-                if name not in {f["name"] for f in value["features"]}:
-                    raise ValueError("ablation component is not an actual parent feature")
-                value["features"] = [f for f in value["features"] if f["name"] != name]
-                program = FeatureProgram.from_dict(value)
+                program = parent.feature_program.without_feature(component.split(":", 1)[1])
                 if "feature_program" in row and FeatureProgram.from_dict(row["feature_program"]) != program:
                     raise ValueError("ablation contains a joint/contradictory program change")
             else:
@@ -1175,6 +1204,14 @@ def validate_feature_fit_budget(compiled, seen, fold_count, remaining):
 def validate_fixed_model(candidate: CandidateConfig, anchor: CandidateConfig,
                          parent: CandidateConfig | None = None) -> None:
     """Feature experiments cannot silently change the model or their control."""
+    if anchor.schema_version==MODEL_METHOD_SCHEMA:
+        for value in (candidate,parent):
+            if (value is None or value.schema_version!=MODEL_METHOD_SCHEMA or value.seed!=anchor.seed
+                    or value.feature_program is None or value.training_policy is None
+                    or value.feature_groups!=anchor.feature_groups):
+                raise ValueError('registered model control must preserve the complete profile, seed and builtin groups')
+            validate_registered_model(value.model_family,value.model_params)
+        return
     expected = (anchor.model_family, effective_model_params(anchor.model_family, anchor.model_params), anchor.seed)
     for value in (candidate, parent):
         if value is None or (value.model_family, effective_model_params(value.model_family, value.model_params), value.seed) != expected:
@@ -1235,20 +1272,26 @@ class FocusedResearchController:
         self.task = task
         self.dataset = dataset
         self.frame = frame
-        self.method_mode = change_scope == "feature_window"
+        self.model_mode = change_scope == MODEL_METHOD_SCOPE
+        self.method_mode = change_scope in {"feature_window", MODEL_METHOD_SCOPE}
         if research_protocol_id is not None and (research_protocol_id!='evidence_research_v1' or not self.method_mode):
             raise ValueError('unsupported research protocol or mathematical profile')
         self.research_protocol_id=research_protocol_id
-        if advisor_wire_version is not None and (advisor_wire_version not in {'evidence_decision_v2','evidence_decision_v3'}
+        response_wire = advisor_response_wire(advisor_wire_version)
+        if advisor_wire_version is not None and (response_wire not in {'evidence_decision_v2','evidence_decision_v3','evidence_decision_v4','evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}
                 or research_protocol_id!='evidence_research_v1' or not self.method_mode):
             raise ValueError('unsupported Advisor wire or research profile')
+        if response_wire in {'evidence_decision_v4', 'evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}:
+            from .focused_persistence import validate_advisor_wire_options
+            validate_advisor_wire_options({'advisor_wire_version': advisor_wire_version, 'research_protocol_id': research_protocol_id,
+                                           'change_scope': change_scope, 'feature_strategy': feature_strategy})
         self.advisor_wire_version=advisor_wire_version
         if evidence_send_authorization is not None and not research_protocol_id:
             raise ValueError('evidence send scope requires the explicit new protocol')
         from .research_state import validate_send_authorization
         self.evidence_send_authorization=validate_send_authorization(evidence_send_authorization,
             required=bool(research_protocol_id and advisor_mode=='live'))
-        self.feature_mode = change_scope in {"price_features", "feature_window"}
+        self.feature_mode = change_scope in {"price_features", "feature_window", MODEL_METHOD_SCOPE}
         if self.method_mode and diagnostic_mode is None:
             diagnostic_mode = 'on'
         from .focused_diagnostics import research_policy
@@ -1312,7 +1355,9 @@ class FocusedResearchController:
                 raise ValueError("starting feature program requires explicit schema")
             if self.starting_baseline["model_family"] not in ALLOWED_MODELS:
                 raise ValueError("unsupported starting baseline model")
-            if self.method_mode and self.starting_baseline['model_family'] != 'ridge_regression':
+            if self.model_mode:
+                validate_registered_model(self.starting_baseline['model_family'],self.starting_baseline['model_params'])
+            if self.method_mode and not self.model_mode and self.starting_baseline['model_family'] != 'ridge_regression':
                 raise ValueError('new method profile only supports a Ridge research start')
             validate_model_params(self.starting_baseline["model_family"], self.starting_baseline["model_params"])
             if not set(self.starting_baseline["feature_groups"]) <= set(allowed_groups):
@@ -1325,7 +1370,7 @@ class FocusedResearchController:
             raise ValueError("goal entry cannot silently carry a provided starting model")
         if self.entry_mode == "provided_start" and not self.starting_baseline:
             raise ValueError("provided_start entry requires an explicit supported model")
-        if change_scope not in {"explore", "features_only", "price_features", "feature_window"}:
+        if change_scope not in {"explore", "features_only", "price_features", "feature_window", MODEL_METHOD_SCOPE}:
             raise ValueError("unsupported change_scope")
         self.change_scope = change_scope
         self._incumbent_result = self._incumbent_payload = None
@@ -1424,7 +1469,7 @@ class FocusedResearchController:
                     self.spec.research_options['evidence_send_authorization']=self.evidence_send_authorization
             self.spec.research_options["feature_capability"] = feature_capability()
             if self.method_mode:
-                self.spec.research_options['method_profile'] = method_capability()
+                self.spec.research_options['method_profile'] = model_method_capability() if getattr(self,'model_mode',False) else method_capability()
             if self.budget.max_fit_calls < self.required_initial_fit_calls():
                 raise ValueError("fit budget is too small for frozen controls and starting model")
         if self.diagnostic_policy:
@@ -1526,6 +1571,13 @@ class FocusedResearchController:
         prompt["automatic_diagnostics"] = []
         prompt["observation_feedback"] = []
         prompt["known_comparisons"] = []
+        research_action_view = (self.model_mode and advisor_response_wire(self.advisor_wire_version) in {"evidence_decision_v3", "evidence_decision_v4", "evidence_decision_v5", "evidence_decision_v6", "evidence_decision_v7"}
+            and self.research_protocol_id == "evidence_research_v1"
+            and self.feature_strategy["feedback_support"] != "reference"
+            and self.diagnostic_policy["decision_support"] == "J")
+        if research_action_view:
+            # The compiler reserves one fit per actual split for an unseen method.
+            prompt["planning_fold_count"] = len(splits)
         prompt["research_decision_contract"] = {"schema_version":"research_decision_v1",
             "support":self.diagnostic_policy["decision_support"],
             "legacy_v1":"R/D/Random reference only; current J training requires all four parts",
@@ -1557,9 +1609,12 @@ class FocusedResearchController:
                 if body["evaluated_candidate_id"] not in result_lookup:
                     raise ValueError("observation refers to an unaccepted candidate")
                 prompt["observation_feedback"].append(body)
-            prompt["known_comparisons"] = [{k:r[k] for k in ("base_comparison_id", "observation_identity",
-                "analysis_novelty", "prediction_provenance", "formation_status")}
-                for r in comparison_projection(prompt["observation_feedback"])]
+            comparison_fields = ("base_comparison_id", "observation_identity", "analysis_novelty",
+                                 "prediction_provenance", "formation_status")
+            if research_action_view:
+                comparison_fields += ("observation_feedback_index",)
+            prompt["known_comparisons"] = [{k: row[k] for k in comparison_fields}
+                for row in comparison_projection(prompt["observation_feedback"], include_event_index=research_action_view)]
             # Explicit v3 audit/visibility split. Numerical observations stay in
             # planning; detailed provenance is immutable audit, not duplicated
             # into every decision. R retains its original feedback, not D support.
@@ -1813,6 +1868,8 @@ class FocusedResearchController:
     def _prepare_evidence_prompt(self,prompt,results):
         from .focused_diagnostics import query_projection
         from .research_state import (
+            ACTIVE_WORKING_VIEW,
+            LEGACY_WORKING_VIEW,
             apply_output_guidance,
             planning_evidence_context,
             protocol_contract,
@@ -1830,7 +1887,10 @@ class FocusedResearchController:
             prompt['evidence_projection_hash']=identity(prompt['evidence_projection'],domain='evidence-projection-v1')
         prompt['research_protocol_id']=self.research_protocol_id
         prompt['proposal_contract_version']='evidence_research_advice_v1'
-        prompt['evidence_research']=working_evidence_context(planning_evidence_context(self._evidence_context(results)))
+        context = planning_evidence_context(self._evidence_context(results))
+        use_active_view = self.model_mode and advisor_response_wire(self.advisor_wire_version) in {'evidence_decision_v3', 'evidence_decision_v4', 'evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'} and not context['reference']
+        prompt['evidence_research'] = working_evidence_context(
+            context, version=ACTIVE_WORKING_VIEW if use_active_view else LEGACY_WORKING_VIEW)
         prompt['available_objects']=list(results)
         variables=self._diagnostic_variable_catalog(results)
         prompt['available_variable_definitions']=variables
@@ -2097,7 +2157,7 @@ class FocusedResearchController:
         if self.feature_mode and "feature_program" not in values:
             values = {**values, "schema_version": CANDIDATE_SCHEMA, "feature_program": empty_feature_program()}
         if self.method_mode:
-            values = {**values, 'schema_version':METHOD_SCHEMA,
+            values = {**values, 'schema_version':MODEL_METHOD_SCHEMA if getattr(self,'model_mode',False) else METHOD_SCHEMA,
                 'training_policy':values.get('training_policy', TrainingPolicy().to_dict())}
         proposed = CandidateConfig("user_start", **values, seed=self.estimator_seed)
         for cid, family, params, groups in DEFAULT_BASELINES:
@@ -2206,20 +2266,21 @@ class FocusedResearchController:
         # the original raw trace. Check it even for completed/local-mode reads;
         # scientific choices remain the original answer, never reconstructed.
         if compact_record:
-            from .compact_decision import expand_decision
+            from .compact_decision import expand_persisted_decision
             from .research_state import planning_evidence_context
 
             plan = frozen['plan']
-            if (plan.get('advisor_wire_version') not in {'evidence_decision_v2','evidence_decision_v3'} or trace is None
+            if (plan.get('advisor_wire_version') not in {'evidence_decision_v2','evidence_decision_v3','evidence_decision_v4','evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'} or trace is None
                     or trace['prompt'].get('advisor_wire_version') != plan.get('advisor_wire_version')):
                 raise ValueError('compact frozen plan is missing its original request/response')
+            check_selected_authoring_form(getattr(self, 'advisor_wire_version', None), trace['prompt'])
             receipt = self._runtime.get(f'wire_expansion:{round_index}')
             if receipt is None:
                 raise ValueError('compact frozen plan is missing its accepted expansion receipt')
-            expanded, binding = expand_decision(trace['advice'], trace['prompt'],
-                accepted_context=planning_evidence_context(plan['evidence_context']))
+            expanded, binding = expand_persisted_decision(trace['advice'], trace['prompt'],
+                accepted_context=planning_evidence_context(plan['evidence_context']), recorded=receipt['body'])
             expected = {'expanded_advice': expanded, 'binding': binding}
-            if (receipt['body'] != expected or plan.get('advisor_wire_binding') != binding
+            if (plan.get('advisor_wire_binding') != binding
                     or plan.get('research_update') != expanded['research_update']):
                 raise ValueError('compact raw/expansion/accepted-plan binding mismatch')
             expected_ref = {'path': f'contexts/expansion-{round_index}.json',
@@ -2392,7 +2453,7 @@ class FocusedResearchController:
             plan['evidence_context']=evidence_context
             if wire_binding is not None:
                 plan['schema_version']='evidence_batch_plan_v2'
-                plan['advisor_wire_version']=self.advisor_wire_version
+                plan['advisor_wire_version']=advisor_response_wire(self.advisor_wire_version)
                 plan['advisor_wire_binding']=wire_binding
         plan_hash = _hash(plan)
         plan["plan_hash"] = plan_hash
@@ -2459,7 +2520,7 @@ class FocusedResearchController:
         assert runtime is not None
         if self.feature_mode and self.literature_review_ids and self._project_literature() != self.literature_snapshot:
             raise ValueError("literature permission or reviewed recipe changed before feature execution")
-        if role == "research_candidate" and self.change_scope in {"features_only", "price_features", "feature_window"}:
+        if role == "research_candidate" and self.change_scope in {"features_only", "price_features", "feature_window", MODEL_METHOD_SCOPE}:
             validate_fixed_model(candidate, self.research_start, parent_result.candidate if parent_result else None)
         cached = runtime.accepted(candidate.candidate_id)
         if cached:
@@ -2592,7 +2653,7 @@ class FocusedResearchController:
             baseline_payloads.append(saved)
         best_baseline = min(baseline_results, key=lambda r: r.metrics["mae"])
         result_lookup = {r.candidate.candidate_id: r for r in baseline_results}
-        if self.entry_mode == "provided_start":
+        if self.entry_mode == "provided_start" or self.model_mode:
             if self.research_start.candidate_id in result_lookup:
                 self._incumbent_result = result_lookup[self.research_start.candidate_id]
                 self._incumbent_payload = next(row for row in baseline_payloads if row["candidate"]["candidate_id"] == self.research_start.candidate_id)
@@ -2633,6 +2694,8 @@ class FocusedResearchController:
                     prompt["candidate_roles"] = {r.candidate.candidate_id: ["fixed_control"] for r in baseline_results}
                     if self.entry_mode == "provided_start":
                         prompt["candidate_roles"].setdefault(self.research_start.candidate_id, []).append("user_start")
+                    if self.model_mode:
+                        prompt['candidate_roles'].setdefault(self.research_start.candidate_id,[]).append('research_start')
                     prompt["change_scope"] = self.change_scope
                     if self.change_scope == "features_only":
                         prompt["fixed_model"] = self.research_start.to_dict()
@@ -2667,9 +2730,15 @@ class FocusedResearchController:
                         prompt = self._prepare_feature_prompt(prompt, result_lookup)
                     if self.diagnostic_policy:
                         prompt = self._prepare_diagnostic_prompt(prompt, result_lookup, splits)
+                    if self.advisor_wire_version in SELECTED_V7_FORMS and 'planning_fold_count' in prompt:
+                        from .decision_method_facts import attach_window_fit_counts
+                        attach_window_fit_counts(prompt, result_lookup, splits)
                     if self.context_mode == "compact_v1" or self.diagnostic_policy:
                         from .focused_literature import compact_research_context
-                        prompt = compact_research_context(prompt)
+                        if advisor_response_wire(self.advisor_wire_version) in {"evidence_decision_v3", "evidence_decision_v4", "evidence_decision_v5", "evidence_decision_v6", "evidence_decision_v7"} and "planning_fold_count" in prompt:
+                            prompt = compact_research_context(prompt, advisor_wire_version=self.advisor_wire_version)
+                        else:
+                            prompt = compact_research_context(prompt)
                     if self.research_protocol_id:
                         from .research_state import measure_prompt
                         if self.advisor_wire_version is not None:
@@ -2679,6 +2748,7 @@ class FocusedResearchController:
                     frozen_prompt = runtime.get(f"prompt:{round_index}")
                     if frozen_prompt is not None:
                         prompt=frozen_prompt
+                        check_selected_authoring_form(self.advisor_wire_version, prompt)
                     else:
                         runtime.put(f"prompt:{round_index}",prompt,immutable=True)
                     if self.diagnostic_policy:
@@ -2750,6 +2820,7 @@ class FocusedResearchController:
                         self._append_event("advisor.call_recorded", round_index=round_index,
                             call_id=self.advisor.last_record.get("call_id"), record_hash=self.advisor.last_record.get("record_hash"))
                 prompt, advice, source = recorded["prompt"], recorded["advice"], recorded["source"]
+                check_selected_authoring_form(self.advisor_wire_version, prompt)
                 if self.feature_mode:
                     runtime.reserve_feature_decision(round_index, prompt)
                 if self.benchmark_strategy:
@@ -2770,7 +2841,7 @@ class FocusedResearchController:
                                    min(self.budget.max_new_candidates_per_round, int(prompt["max_hypotheses"]))), visible_evidence=prompt["evidence_projection"],
                         candidate_lookup={key: value.candidate for key, value in result_lookup.items()},
                         default_seed=self.estimator_seed, feature_registry={g: self.feature_registry[g] for g in self.allowed_feature_groups},
-                        fixed_model=self.research_start if self.change_scope in {"features_only", "price_features", "feature_window"} else None)
+                        fixed_model=self.research_start if self.change_scope in {"features_only", "price_features", "feature_window", MODEL_METHOD_SCOPE} else None)
                     if self.feature_mode:
                         self._preflight_feature_plan(compiled, seen, splits)
                         runtime.settle_feature_decision(round_index, count=len(compiled))
@@ -3026,6 +3097,7 @@ class FocusedResearchController:
             "selection_reference_mae": reference_mae,
             "candidate_roles": {r.candidate.candidate_id: (["fixed_control"] if r.candidate.candidate_id in {b.candidate.candidate_id for b in baseline_results} else []) +
                 (["user_start"] if self.entry_mode == "provided_start" and r.candidate.candidate_id == self.research_start.candidate_id else [])
+                + (["research_start"] if getattr(self, "model_mode", False) and r.candidate.candidate_id == self.research_start.candidate_id else [])
                 for r in [*baseline_results, *incumbent]},
             "literature_snapshot": self.literature_snapshot,
             "literature_usage": [{"review_id": paper["evidence_id"],

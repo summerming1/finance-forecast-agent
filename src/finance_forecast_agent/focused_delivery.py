@@ -994,10 +994,12 @@ def _price_bundle_pipeline(candidate: CandidateConfig, data_revision: str) -> di
         "focused_feature_program.py", "focused_data.py", "focused_protocol.py", "focused_identity.py", "focused_delivery.py")}
     method_fields = {}
     if candidate.training_policy is not None:
-        from .focused_methods import method_capability
+        from .focused_methods import MODEL_METHOD_SCHEMA, candidate_method_capability
         compiler_source['focused_methods.py'] = file_sha256(root / 'focused_methods.py')
+        if candidate.schema_version == MODEL_METHOD_SCHEMA:
+            compiler_source['focused_research.py'] = file_sha256(root / 'focused_research.py')
         method_fields = {'training_policy': candidate.training_policy.to_dict(),
-            'method_profile': method_capability(), 'refit_semantics': 'focused_method_snapshot_refit_v1'}
+            'method_profile': candidate_method_capability(candidate), 'refit_semantics': 'focused_method_snapshot_refit_v1'}
     return {"schema_version": "price_bundle_pipeline_v1", **method_fields, "program": program.to_dict(),
         "capability_hash": cap["capability_hash"], "compiler_version": cap["compiler_version"],
         "builtin_recipe_version": cap["builtin_recipe_version"], "compiler_source": compiler_source,
@@ -1026,7 +1028,9 @@ def refit_model_bundle(
     literature_review_ids: list[str] | None = None,
     workspace_context: dict | None = None,
 ) -> Path:
+    from .focused_methods import MODEL_METHOD_SCHEMA
     method_mode = candidate.training_policy is not None
+    model_method_mode = candidate.schema_version == MODEL_METHOD_SCHEMA
     active_policy = policy or (RefitPolicy('focused_method_snapshot_refit_v1', False) if method_mode else RefitPolicy())
     if workspace_context is not None:
         legacy_fields = {"project_id", "campaign_id"}
@@ -1112,7 +1116,7 @@ def refit_model_bundle(
         if method_mode:
             from .focused_methods import fit_method
             training_execution = fit_method(model, x, frame['label'].to_numpy(dtype=float), training_execution, features,
-                expected_family=candidate.model_family)
+                expected_family=candidate.model_family, **({'model_research': True, 'expected_seed': candidate.seed} if model_method_mode else {}))
         else:
             model.fit(x, frame["label"].to_numpy(dtype=float))
     except BaseException as exc:
@@ -1123,7 +1127,7 @@ def refit_model_bundle(
     model_path = root / "model.joblib"
     joblib.dump(model, model_path)
     metadata = {
-        "schema_version": "focused_model_bundle_v4" if method_mode else "focused_model_bundle_v3" if pipeline else "focused_model_bundle_v2",
+        "schema_version": "focused_model_bundle_v5" if model_method_mode else "focused_model_bundle_v4" if method_mode else "focused_model_bundle_v3" if pipeline else "focused_model_bundle_v2",
         "bundle_id": "bundle-" + uuid.uuid4().hex,
         "candidate": candidate.to_dict(),
         "feature_columns": features,
@@ -1188,10 +1192,13 @@ def verified_model_bundle_bytes(
         raise ValueError("model environment version mismatch; rebuild in the registered environment")
     metadata_bytes = _read_bytes(root / "bundle.json", record["metadata"])
     metadata = json.loads(metadata_bytes)
-    if metadata.get("schema_version") not in {"focused_model_bundle_v2", "focused_model_bundle_v3", "focused_model_bundle_v4"} or metadata.get("model_file") != "model.joblib":
+    if metadata.get("schema_version") not in {"focused_model_bundle_v2", "focused_model_bundle_v3", "focused_model_bundle_v4", "focused_model_bundle_v5"} or metadata.get("model_file") != "model.joblib":
         raise ValueError("invalid registered model schema/path")
     parsed_candidate = CandidateConfig.from_dict(metadata["candidate"])
-    if (metadata['schema_version'] == 'focused_model_bundle_v4') != (parsed_candidate.training_policy is not None):
+    from .focused_methods import MODEL_METHOD_SCHEMA
+    if (metadata['schema_version'] == 'focused_model_bundle_v5') != (parsed_candidate.schema_version == MODEL_METHOD_SCHEMA):
+        raise ValueError('registered model profile requires its matching bundle version')
+    if (metadata['schema_version'] in {'focused_model_bundle_v4', 'focused_model_bundle_v5'}) != (parsed_candidate.training_policy is not None):
         raise ValueError('method bundle cannot downgrade window/refit semantics')
     if parsed_candidate.training_policy is not None:
         receipt = metadata.get('training_execution') or {}
@@ -1237,7 +1244,7 @@ def predict_model_bundle(
     bundle_dir: str | Path, frame: pd.DataFrame, *, state_path: str | Path | None = None, tenant_id: str = "default"
 ) -> np.ndarray:
     metadata, model = load_model_bundle(bundle_dir, state_path=state_path, tenant_id=tenant_id)
-    if metadata["schema_version"] in {"focused_model_bundle_v3", "focused_model_bundle_v4"}:
+    if metadata["schema_version"] in {"focused_model_bundle_v3", "focused_model_bundle_v4", "focused_model_bundle_v5"}:
         from .focused_data import validate_price_history
         from .focused_feature_program import compute_price_features
         raw = validate_price_history(frame)

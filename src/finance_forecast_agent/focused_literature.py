@@ -282,7 +282,7 @@ def validate_literature_uses(proposal: dict, projected: list[dict]) -> list[dict
     return copy.deepcopy(uses)
 
 
-def compact_research_context(prompt: dict, *, max_chars: int = 64000) -> dict:
+def compact_research_context(prompt: dict, *, max_chars: int = 64000, advisor_wire_version=None) -> dict:
     """Deterministic de-duplication, not LLM summarization or best-result filtering."""
     body = copy.deepcopy(prompt)
     original = json.dumps(body, sort_keys=True, ensure_ascii=False)
@@ -302,7 +302,58 @@ def compact_research_context(prompt: dict, *, max_chars: int = 64000) -> dict:
         'all_result_statuses_retained': True}
     if body.get('research_protocol_id')=='evidence_research_v1':
         body['context_manifest']['omitted']=['重复文献/记忆正文（evidence_projection保留）','反馈叙述（数值保留）']
-    if body.get('method_policy'):
+    if advisor_wire_version is not None:
+        from .evidence_output_contract import (
+            BATCH_SELECTOR,
+            COMPARISON_SELECTOR,
+            DIRECT_BASIS_SELECTOR,
+            DIRECT_TEST_SELECTOR,
+            EVIDENCE_USE_SELECTOR,
+            INTENT_SELECTOR,
+            JUDGMENT_SELECTOR,
+            OPERATION_SELECTOR,
+            SLOTS_SELECTOR,
+            SOURCE_CHOICE_SELECTOR,
+            SUMMARY_SELECTOR,
+        )
+        from .grouped_decision import (
+            DELTA_WIRE,
+            GLOBAL_WIRE,
+            LINKED_WIRE,
+            REVISION_WIRE,
+            WIRE,
+            prepare_batch_prompt,
+            prepare_comparison_prompt,
+            prepare_current_prompt,
+            prepare_delta_prompt,
+            prepare_direct_basis_prompt,
+            prepare_direct_tests_prompt,
+            prepare_evidence_use_prompt,
+            prepare_global_prompt,
+            prepare_intent_prompt,
+            prepare_judgments_prompt,
+            prepare_linked_prompt,
+            prepare_operation_prompt,
+            prepare_revision_prompt,
+            prepare_slots_prompt,
+            prepare_source_choice_prompt,
+            prepare_summary_prompt,
+        )
+        from .llm_adapters import serialize_prompt_payload
+
+        builders = {COMPARISON_SELECTOR: prepare_comparison_prompt, JUDGMENT_SELECTOR: prepare_judgments_prompt, DIRECT_TEST_SELECTOR: prepare_direct_tests_prompt, BATCH_SELECTOR: prepare_batch_prompt, EVIDENCE_USE_SELECTOR: prepare_evidence_use_prompt, SUMMARY_SELECTOR: prepare_summary_prompt, SLOTS_SELECTOR: prepare_slots_prompt, INTENT_SELECTOR: prepare_intent_prompt, OPERATION_SELECTOR: prepare_operation_prompt, WIRE: prepare_current_prompt, REVISION_WIRE: prepare_revision_prompt, GLOBAL_WIRE: prepare_global_prompt,
+                    DELTA_WIRE: prepare_delta_prompt, LINKED_WIRE: prepare_linked_prompt,
+                    DIRECT_BASIS_SELECTOR: prepare_direct_basis_prompt, SOURCE_CHOICE_SELECTOR: prepare_source_choice_prompt}
+        if (advisor_wire_version not in builders or body.get('research_protocol_id') != 'evidence_research_v1'
+                or body.get('method_policy', {}).get('profile_id') != 'spy_feature_window_model_v1'
+                or body['evidence_research'].get('reference', False)):
+            raise ValueError('unregistered direct research context projection')
+        # The outgoing schema already replaces the older response instructions.
+        # Preserve the full manifest and apply both limits to the actual wire.
+        body['context_manifest'].update(schema_version='compact_method_context_v3', serialization='compact_json_v1')
+        body = builders[advisor_wire_version](body)
+        actual_chars = len(serialize_prompt_payload(body))
+    elif body.get('method_policy'):
         body['context_manifest'].update(schema_version='compact_method_context_v3',serialization='compact_json_v1')
         from .focused_methods import project_method_references
         body=project_method_references(body)

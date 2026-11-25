@@ -298,11 +298,24 @@ def candidate_config_diff(parent: Any | None, child: Any) -> dict[str, Any]:
     for path, (old_value, new_value) in fields.items():
         if old_value != new_value:
             changes.append({"path": path, "old_value": old_value, "new_value": new_value})
-    return {
+    result = {
         "change_type": "single_component_change" if len(changes) == 1 else "joint_change" if len(changes) > 1 else "no_change",
         "parent_candidate_id": parent.candidate_id,
         "changes": changes,
     }
+    from .focused_methods import MODEL_METHOD_SCHEMA
+    if (getattr(parent, "schema_version", None) == MODEL_METHOD_SCHEMA
+            and getattr(child, "schema_version", None) == MODEL_METHOD_SCHEMA):
+        # Group actual fields only. This grants no permission and establishes no
+        # causal explanation; the original compiler owns legal single-axis edits.
+        axes = {"model_family": "model", "model_params": "model",
+                "feature_program": "features", "training_policy": "training_window",
+                "feature_groups": "builtin_groups", "seed": "seed"}
+        changed = sorted({axes[row["path"]] for row in changes})
+        result["actual_changed_axes"] = changed
+        result["axis_change_type"] = ("single_axis_change" if len(changed) == 1 else
+                                      "joint_axis_change" if changed else "no_change")
+    return result
 
 
 def build_feedback(

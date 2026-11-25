@@ -1,0 +1,141 @@
+{
+  "trial": ".decision-resume-20261120",
+  "version": 2,
+  "source_identity": "2bc66d1f73afc631e20accf46a80766b5a037dd27def5466d49fa51c0ef9c0be",
+  "source_entries": 392,
+  "git_head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "dataset": "synthetic_only",
+  "local_task_sha256": "8f005654d1cef72c0e0c4b371a9f2032a8a9e6396de5e9dd6430c412dfb949b4",
+  "verdict": {
+    "B": "NO_GO",
+    "finding": "父研究真实接受一项仅加20日收益滚动均值的实验并完成4折。第二轮正确识别MAE反证，旧命题的证据却被绑定到另一项窗口试验，原计划被拒。候选窗口相对实际起点一折等长三折缩短，原答称延长。六题严格0/6、新配对严格0/2。未有真实子研究及模型包refit。",
+    "original_case_counts": {
+      "development": {
+        "upstream_cases": 6,
+        "model_text_received": 6,
+        "strictly_valid": 0
+      },
+      "matched": {
+        "upstream_cases": 2,
+        "model_text_received": 2,
+        "strictly_valid": 0
+      }
+    },
+    "development_strict_and_scientific": 0,
+    "analysis_sha256": {
+      "TRACE.md": "e6fefc9d98dec29514490c3cb69b483630225b6a034f86f3913ea743b877d427",
+      "SEMANTICS.md": "ad40f3499817c2b720929ad18aea2eb3c53099916ee1f40394891f333e4bce80",
+      "PAIR_REVIEW.md": "a326ca6ce9dd8304086534b126d7dbee347992e41fc3d57eece98b06cd9d5ae3"
+    },
+    "outcome_sha256": "55375fc324f9bee799d33b33b0a73754a49bd867da513e23af0fd01f791eaab2"
+  },
+  "actual_exit": {
+    "actual_exit": 0,
+    "seconds": 440.2429093000246
+  },
+  "engineering": {
+    "regression": {
+      "passed": 1537,
+      "skipped": 2
+    },
+    "browser": {
+      "passed": 7
+    }
+  },
+  "engineering_same_source_reused": false,
+  "actual_http": 10,
+  "logical": 10,
+  "compute": [
+    {
+      "actual_fit_calls": 20,
+      "id": "compute-002",
+      "kind": "campaign",
+      "label": "parent",
+      "receipt_path": "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-resume-20261120\\v2\\parent-actual-campaign.json",
+      "receipt_sha256": "23ad75aeffaa6bcbb5dca6d43cfbabe9302dea6da01f3dc581a47eb18cb0f5d1",
+      "reserved_fit_calls": 32,
+      "state": "settled",
+      "version": 2
+    }
+  ],
+  "cumulative_at_version_close": {
+    "charged_fits_since_first_loop": 196,
+    "charged_seconds_since_first_loop": 2304.0086552998982,
+    "current_ledger_sha256": "a71e839b52dae63eafb4fe653c45ed4694029b30dd2c6a61cd9a634dc27028c8",
+    "gateway_anonymous_non_generation_checks_separate": 1,
+    "http_including_old": 292,
+    "observed_seconds_since_first_loop": 1895.1937089998974,
+    "previous": {
+      "historical_http": 271,
+      "prior_charged_fits_since_first_loop": 160,
+      "prior_charged_seconds_since_first_loop": 1621.1057402999722,
+      "prior_observed_fits_since_first_loop": 104,
+      "prior_observed_seconds_since_first_loop": 1212.2907939999714,
+      "prior_unknown_deliveries": 3
+    },
+    "schema": "research_after_gateway_cumulative_v1",
+    "stop_reason": null,
+    "stopped": false,
+    "this_charged_fits": 36,
+    "this_charged_provider_seconds": 682.902914999926,
+    "this_http": 21,
+    "this_observed_provider_seconds": 682.902914999926
+  },
+  "later_axes": {
+    "selection_value": "NOT_RUN",
+    "independent_financial": "NOT_RUN",
+    "G6": "attempted; owner recheck open"
+  },
+  "files": {
+    ".decision-resume-20261120/OWNER_AUTHORIZATION.json": "53fe0ce9cc93bbfd189ecdb419390ef64bddf9a60031083be839fc87cf6c256e",
+    ".decision-resume-20261120/B_RUBRIC_PRELIVE.json": "3287eea2db48a0343651ca5fda040a2d6b7e9075807cba4a9d6c9019a71af3b8",
+    ".decision-resume-20261120/AUTHORIZATION.json": "4adeb8148ceb7edf659f18c52afba001533cfd580724f36d22696a179fbe37c0",
+    ".decision-resume-20261120/gateway.json": "b6fe02f48013574f76efdcead0b6a0b8446ffce5114fca89bfcb6131d810aa6e",
+    ".decision-resume-20261120/PAIR-v2.json": "f8174359031bf4b074c086b4d03cf9ad9a3920d5d6a21433dec005074ef6c837",
+    ".decision-resume-20261120/PREFLIGHT-v2.json": "f20b456bf76855dbe1e36ebbbc63b78a0d69143caaf681ceeb81645de9ebde94",
+    ".decision-resume-20261120/live-v2.argv.json": "4fc482eef77934da52fb47fdf2aeb0660a9ec04210af1ad9d54cc9b6feb70cf5",
+    ".decision-resume-20261120/live-v2.exit.json": "f40ad48acb2673c1239f9c89d6e80fa4300d567f3f273e9e1130191a26ad4e98",
+    ".decision-renew-20261120/FREE_PROTECTION_CONFIRMED_20261120.json": "c4654ab883e2f524792ec3a7ca891536e5c22bc885095273f423eff46bc3bbbb",
+    ".decision-resume-20261120/v2/TRACE.md": "e6fefc9d98dec29514490c3cb69b483630225b6a034f86f3913ea743b877d427",
+    ".decision-resume-20261120/v2/SEMANTICS.md": "ad40f3499817c2b720929ad18aea2eb3c53099916ee1f40394891f333e4bce80",
+    ".decision-resume-20261120/v2/PAIR_REVIEW.md": "a326ca6ce9dd8304086534b126d7dbee347992e41fc3d57eece98b06cd9d5ae3",
+    ".decision-resume-20261120/v2/OUTCOME.json": "55375fc324f9bee799d33b33b0a73754a49bd867da513e23af0fd01f791eaab2",
+    ".decision-resume-20261120/v2/B_VERDICT.json": "15999594ec1a3821e92ab7d8f393812831ddf32b91a92bf681e7e79ff88e0d6c",
+    ".decision-resume-20261120/v2/FROZEN_PROVIDER.json": "cecdd275f705a20b06f10d3d6b964ffef934c4b410759b38aa6cff6ce22b490b",
+    ".decision-resume-20261120/v2/HTTP_LEDGER.json": "3b91eafe91c228aa04724761c0c5233bd255d626f1311d9e09f39a303d9b9244",
+    ".decision-resume-20261120/v2/VERSION_START.json": "08c5fab4f862cd72d84f5edeff0a00d655b90d17fb19aa6eeb10a7893a231d80",
+    ".decision-resume-20261120/v2/VERSION_END.json": "d3da55a1baa6ca89f11b4e837f06c8e2081238fc0ce3589f7208c3f1a0a699b8",
+    ".decision-resume-20261120/v2/synthetic-source.json": "ac4cdfc20c3fcd71d5cd3918f1b29fe547c65a3139d5bc5ae6c11fbcff1733d9",
+    ".decision-resume-20261120/v2/source.zip": "751f23813902d22c4d561aee8070e83e592143e277f36e13b9b06d159a2a060c",
+    ".decision-resume-20261120/v2/semantic-results.json": "d6bd81185ce496ecd67fa870fe816234328bfdad843ace328fa080c62d34509c",
+    ".decision-resume-20261120/v2/MATCHED_PAIR.json": "a07fb3e7611b3753d1705ceaf4745ee8187023e4a9543aaa39efcaccfb806794",
+    ".decision-resume-20261120/v2/DELIVERIES.json": "4a6f2cb63530fdd737e750f8692b20a29bb7dafa7a7b30f21e8cce02a5283fdd",
+    ".decision-resume-20261120/v2/worker-terminal-check.json": "3eee8febf68ef8e863726c934ac05439eccd3dd146abd77cffe3fc127d63c18c",
+    ".decision-resume-20261120/v2/worker-relay-settlement.json": "cd039e0ba6e44c6530e9eb4af0dcd9de4ff4ca77ef1d22972eca09a5fb3ca972",
+    ".decision-resume-20261120/REPAIR-v2.json": "0bb2ffac3efef2616d5b59983f465b1b67c3cae2c65988f01ac8a15fcd1b84df",
+    ".decision-resume-20261120/v2/call-01.prompt.json": "51903c8cb10d5bef49adecf26fb0006838158ebb2e0a2a9ec2624db4f4e8138f",
+    ".decision-resume-20261120/v2/call-01.raw-envelope.json": "c7207f8bda03e4be360c6db1d15c7e7bae1ca6610037f2dd2b82f630b1c1b100",
+    ".decision-resume-20261120/v2/call-02.prompt.json": "3570b2ab05e715c6eb2f0da23e5d8ec8d8e126e6bd52ec0dce4d820d89189fac",
+    ".decision-resume-20261120/v2/call-02.raw-envelope.json": "ebb8e498002bd7da51309ad79fb6575381943102f7f349c8e4d40636107d7211",
+    ".decision-resume-20261120/v2/call-03.prompt.json": "def00dfd2ee19ab58ff76d24eae28c7da0b534d4b0d74c0483bf1f16e40f7ce3",
+    ".decision-resume-20261120/v2/call-03.raw-envelope.json": "3dbf849ca5ce847c40e510d098101270bc14c70c38049df0cf610317e6598f65",
+    ".decision-resume-20261120/v2/call-04.prompt.json": "b9fd56cbaf267003b395f23188175ce62c62a5c321a56c4e6696b54f58e5c6ba",
+    ".decision-resume-20261120/v2/call-04.raw-envelope.json": "8b2d85ff9dae4846d19e6adf56326fbc75ba9c30783e1ef9dab605dbdf574f7c",
+    ".decision-resume-20261120/v2/call-05.prompt.json": "cb8643a341f0f79da51b3c1e5c98c91ff5a31ba3cebfa06d5879c38862727ba1",
+    ".decision-resume-20261120/v2/call-05.raw-envelope.json": "6fbad90a33cf2e697c71161a3eecf485292664629d404bd7a65dadae6dff6891",
+    ".decision-resume-20261120/v2/call-06.prompt.json": "3752811d5bc9f6858e644d7c0894e28903dcfee0ebd2a3f402d7d0acb169d5f6",
+    ".decision-resume-20261120/v2/call-06.raw-envelope.json": "bc8d025b1ed717711b754b2446c8c50ac3f0131b0d2f03cc4909b76bfe4b53d6",
+    ".decision-resume-20261120/v2/call-07.prompt.json": "5b1ffe982746fd7716bac46235b3b49d72baa647b790bebe63226e8fa8988e83",
+    ".decision-resume-20261120/v2/call-07.raw-envelope.json": "bc9e8bdd03538084724f54283810ec598de051b749bacd5d63c7910abcb646af",
+    ".decision-resume-20261120/v2/call-08.prompt.json": "807031f129ebf46ac765f986a4d856da32806d6e9e51e375f3150b77ae76234f",
+    ".decision-resume-20261120/v2/call-08.raw-envelope.json": "cf3fa82138ccb6fa28c2c70c06046c5458c29f21f4af7720cdb3299d0dd860dd",
+    ".decision-resume-20261120/v2/call-09.prompt.json": "43fbe714eaf78146eff97b130c56576f79aab41c9edeae38e351cd9c2ac94f6a",
+    ".decision-resume-20261120/v2/call-09.raw-envelope.json": "daa40bdcc2b3ce76948bb05965211fef073babf57dfb9007dea4c13d0f732f3f",
+    ".decision-resume-20261120/v2/call-10.prompt.json": "fcfb2fe852dabb66da6f7c5053400249483bff544e016c0b5d4045a6485585e8",
+    ".decision-resume-20261120/v2/call-10.raw-envelope.json": "b45df657222c0092d955a5ee5704a14d656591771f0a7b8b5c8fa66d2187b8a2",
+    ".decision-resume-20261120/v2/parent-actual-campaign.json": "23ad75aeffaa6bcbb5dca6d43cfbabe9302dea6da01f3dc581a47eb18cb0f5d1",
+    ".decision-resume-20261120/v2/trajectory.json": "ba86d3bfb4625076dc8ea24fe591064b9d3b0887522c6af989e5c36ffcd9cb70",
+    ".decision-resume-20261120/e2fix/regression/END.json": "b90ebb09d81f263e83bee9566a966a293d04688638db218872c6d4552bb2e2b9",
+    ".decision-resume-20261120/e2fix/browser/END.json": "a2b231da04d561bbb4d1b8216ceb8d09078c9f0d890a7dd404308d735a9c83c4"
+  }
+}

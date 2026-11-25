@@ -1,0 +1,80 @@
+{
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source": "6658e76cb44c5fe39482368b2a124db4f33b9e934b7590e26b8d7ac3e711b01d",
+  "model": "glm-5.3",
+  "history": 317,
+  "probe_http": 1,
+  "research_http": 2,
+  "total_http": 320,
+  "stop_reason": "unknown_delivery",
+  "observed_seconds": 350.0972282999428,
+  "charged_fit": 16,
+  "trace": {
+    "actual_research_candidates": 0,
+    "records": [
+      {
+        "actual_research_training": [],
+        "campaign_id": "persistent-c9a33cf57f35081a85e0cbc6",
+        "execution_status": "partial",
+        "fit_calls": 16,
+        "package": {
+          "additional_fit": 0,
+          "additional_http": 0,
+          "members": 32,
+          "path": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-iosd91bm\\project\\focused_campaigns\\persistent-c9a33cf57f35081a85e0cbc6\\research_package\\persistent-c9a33cf57f35081a85e0cbc6.research-package.zip",
+          "read_only_campaign_unchanged": true,
+          "sha256": "c6ecb6ebb9cffa13d9d39dbe6a7596c89f3611135d99be10651f247e95b882eb"
+        },
+        "proposal_error": {
+          "error_category": "invalid_output",
+          "operation": "",
+          "phase": "proposal_validation",
+          "reason": "incomplete_or_invalid_json",
+          "retryable": false,
+          "usage_known": true
+        },
+        "role": "parent",
+        "root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-iosd91bm\\project\\focused_campaigns\\persistent-c9a33cf57f35081a85e0cbc6",
+        "stop_reason": "proposal_invalid",
+        "task_status": "completed"
+      }
+    ],
+    "viable_not_semantic_pass": false
+  },
+  "semantic": [
+    {
+      "id": "case-741308",
+      "status": "failed_or_invalid",
+      "error": "call_deadline"
+    }
+  ],
+  "not_run": [
+    "case-593024",
+    "case-862751",
+    "case-318406",
+    "case-926175",
+    "case-450692",
+    "case-3f2ee959a06cc1ada9eb",
+    "case-ac793cd1b2c0ab524597"
+  ],
+  "refs": {
+    ".glm-recheck-20261121/probe-response.json": "410b9f1136b7ab13beb7b59d4d46a1e8fef58fb2e21477287db31b4fdda36f08",
+    ".glm-recheck-20261121/probe-request.json": "9500d22fb1385eb2dff68f164771d7e322ca30b49e526078df0cf5bda4d76b68",
+    ".glm-recheck-20261121/OWNER.json": "9c8bd1aafd661abad3586be1868da28e00d7b01c4c73b17b307c8c09b8f645c2",
+    ".glm-recheck-20261121/PREFLIGHT-v1.json": "233ef4213744ce7bb02078784288dbca4e9bc1f489e5d2fbbc2c04f6c7248141",
+    ".glm-recheck-20261121/SESSION_LEDGER.json": "a52876bf5d6276e4bb7786775713c6f8ba700e276740a54cb23a70e5d7e5fcff",
+    ".glm-recheck-20261121/SESSION_SEAL.json": "1a6725f363ac3a8b1916934857a597ed8d6d67d7b0e8db18746f401938a2b915",
+    ".glm-recheck-20261121/PAIR-v1.json": "b835a43880aef94784a04c02926fbbb22d723db18d912963d6239acdfc9b5489",
+    ".glm-recheck-20261121/live.exit.json": "af105086f999b2e9bd873425df79bbf031101187fd7f11f2c1ec15612477f53d",
+    ".glm-recheck-20261121/live.argv.json": "d811363c414b928d1b7fff64291fa930b60359d2c566bb9c1e57655bede3c202",
+    ".glm-recheck-20261121/REVIEW.md": "65d2394b4485cd5c2253e1d0d40451ef772eccaecbe719041d6b014dfdcbc852",
+    ".glm-recheck-20261121/v1/OUTCOME.json": "1a9f9ca31e84c5254ce35f8d2853655773be8c6ec10c31726dcf342aaad89fe2",
+    ".glm-recheck-20261121/v1/HTTP_LEDGER.json": "35edd3e5bb7ab02bd956267d130dada55bed1ebad2f1340735da25c1ea2ae804",
+    ".glm-recheck-20261121/v1/VERSION_END.json": "831a279121945ed0e29c7d47c83b85ac57459eec81c736036d85613fafe549aa",
+    ".glm-recheck-20261121/v1/trajectory.json": "b3eb04dac36c8c8e5bf43d6c18e218ae8e39cbf9ddc86b4df3b0fe5805a67f85",
+    ".glm-recheck-20261121/v1/call-01.raw-envelope.json": "8fdc9ad57a19140b6788ada76a4864a7c35eb51c77e6b1b1b5780eeba0f1ce31",
+    ".glm-recheck-20261121/v1/call-01.prompt.json": "f9516d5e5fee1bae0cb690cfd4c16e545a8997ea41c09ea2f3c5c1b30e330ec9",
+    ".glm-recheck-20261121/v1/call-02.raw-envelope.json": "7cd250cb1ca85c0ab80ccd3bbb72b2e6744f91f38d66f705f3db211791f1ce6b",
+    ".glm-recheck-20261121/v1/call-02.prompt.json": "ce86179ebd3420a0f55aba4934a43c011e52f26ff9d42b8c979d4668967701ba"
+  }
+}

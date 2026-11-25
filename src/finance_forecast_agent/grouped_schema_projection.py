@@ -47,7 +47,10 @@ def factor_action_union(schema):
     """
     result = deepcopy(schema)
     try:
-        union = result['properties']['decisions']['items']['properties']['actions']['items']
+        fields = result['properties']
+        if 'decisions' in fields:
+            fields = fields['decisions']['items']['properties']
+        union = fields['actions']['items']
         branches = union['oneOf']
     except (KeyError, TypeError):
         return result

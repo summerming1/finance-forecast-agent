@@ -1,0 +1,256 @@
+{
+  "source": "87aa81f9a9d38b05fa5ba11da59d6e505e4f84550cd5eb53076b4c50c481212d",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "date": "2026-11-25",
+  "same_source_engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1646,
+        "skipped": 2
+      },
+      "path": ".decision-comparison-20261125\\cp1\\regression\\END.json",
+      "sha256": "c14eb08b6370cd67365db916d1d022d9a82c3f8c69c294ccb022301c5334edea",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-comparison-20261125\\cp1\\browser\\END.json",
+      "sha256": "5f37dfc25824cefb50abfd96e8841fbfcdbc447bff0223c80df8d8dd6d2c2fbb",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "calls": [
+    {
+      "number": 1,
+      "case": "parent",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 403,
+      "finish_reason": null,
+      "raw_envelope_sha256": "a0a2d1c29ce36c55643a863b909fe17efee938fea4d04626edb7c684a9550d18"
+    },
+    {
+      "number": 2,
+      "case": "parent",
+      "model": "qwen3.8-flash",
+      "state": "response_received",
+      "http_status": 403,
+      "finish_reason": null,
+      "raw_envelope_sha256": "c1d8f926c4d9f07904d39f1ec307236f6e642ddcca1c44f3e57a795df19fd678"
+    },
+    {
+      "number": 3,
+      "case": "parent",
+      "model": "kimi-k3.1-pro",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "bc71b205736666c259a01a0f6ac9d22d9b988446716568eb8651debfa7d8bec6"
+    },
+    {
+      "number": 4,
+      "case": "case-retest-2026112400",
+      "model": "kimi-k3.1-pro",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "e64be9edd8eb40a560233f1bc5e2f57adea5d829193153ec638578e45d05d9fc"
+    },
+    {
+      "number": 5,
+      "case": "case-retest-2026112401",
+      "model": "kimi-k3.1-pro",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "000499bb9fee210bc3faf8904e2a5d7b3949f60e86db834ca792a7b216360d6b"
+    },
+    {
+      "number": 6,
+      "case": "case-862751",
+      "model": "kimi-k3.1-pro",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "8d72a10bd4afc5ca5ad807eab6066a0997f32139c9a844a5ed562734e3072686"
+    },
+    {
+      "number": 7,
+      "case": "case-retest-2026112403",
+      "model": "kimi-k3.1-pro",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "527ec828af6481b0d7ad4c6a8e662d9074051002117b1b7e4e2646e3028f4250"
+    },
+    {
+      "number": 8,
+      "case": "case-retest-2026112404",
+      "model": "kimi-k3.1-pro",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "60699303682aebffbc6e7ee89a446470c94c22afc522b6cb6c5d76800a0107db"
+    },
+    {
+      "number": 9,
+      "case": "case-retest-2026112405",
+      "model": "kimi-k3.1-pro",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "3410e5bc42a7de5fec7acec2f7c5a9608bf35bc9e1ccbe6b57e744d6d3f98f34"
+    },
+    {
+      "number": 10,
+      "case": "case-188f01b3b1bb1516b070",
+      "model": "kimi-k3.1-pro",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "c99aba3b31f64c9a2dcd32c212a1b909af15b5730e1aa6d09ec59735d9159c72"
+    },
+    {
+      "number": 11,
+      "case": "case-c9716c922b86551ee81d",
+      "model": "kimi-k3.1-pro",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "2e8fced34d91f5d64aeabc4dc4252b919321d222e9dba834b6e9ea84069a6050"
+    }
+  ],
+  "prior_batch_http": 10,
+  "prior_sealed_cumulative": 397,
+  "this_batch_http": 11,
+  "cumulative_http": 408,
+  "logical_requests": 9,
+  "charged_fit": 16,
+  "stop_reason": null,
+  "unattempted": [],
+  "worker": [
+    {
+      "role": "parent",
+      "campaign_id": "persistent-3aa31cf8028ce0ce1ca76304",
+      "execution_status": "partial",
+      "fit_calls": 16,
+      "stop_reason": "proposal_invalid",
+      "task_status": "completed"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "case-retest-2026112400",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-retest-2026112401",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "A1: H1 requires assessment or explicit deferral for F1"
+    },
+    {
+      "case_id": "case-862751",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "A1: @h3 requires assessment or explicit deferral for F2"
+    },
+    {
+      "case_id": "case-retest-2026112403",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "hypothesis alias was not declared in this decision"
+    },
+    {
+      "case_id": "case-retest-2026112404",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "unknown reading or duplicate judgment for the same fact"
+    },
+    {
+      "case_id": "case-retest-2026112405",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "feature input must be return_1; labels/external code are forbidden"
+    },
+    {
+      "case_id": "case-188f01b3b1bb1516b070",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "duplicate assessment group"
+    },
+    {
+      "case_id": "case-c9716c922b86551ee81d",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    }
+  ],
+  "review": {
+    "engineering": "PASS_BOUNDED",
+    "real_decision": "NO_GO",
+    "strict_cases": "1/6",
+    "strict_pair": "1/2",
+    "calls": "2次明确免费额度拒绝；第三款kimi-k3.1-pro收到9份完整答复。不同模型及新父任务，不能单独归因于表单。",
+    "parent": "选择stop，有范围的反证与停止理由。引用9个直接事实，执行合同最多8个；该表单允许12个，初次拒绝depends_on实际9/上限8。存在多命题联合依赖未逐命题办理；只评自比较的分组，不足以说明其它模型都缺分组证据。未产生研究候选，16次均为起点与固定对照。",
+    "cases": [
+      "高相关题严格通过，区分描述性相关与删除的实际效应。",
+      "删除后变差，停止理由包含反证；公共依据F1缺H1判断。",
+      "删除后改善，提出按组定位；新命题@h3缺F2判断。",
+      "低相关题识别描述与效应边界，引用未声明别名。",
+      "单折题使用E1作为判断键，并将F1和F1:0拆成同一命题的两次判断。",
+      "固定内置列题提生成项return_lag_1作为输入且文字声称删除内置项；越出允许输入与变更边界。"
+    ],
+    "pair": "恶化侧读到窗口MAE恶化及反向折并提停止，但同一命题分成两组，编译拒绝；改善侧严格接受，按training_window沿F1:0继承对象与方向，提出分组取证，说明条件效果不能识别过时机制。两侧不能合判通过。",
+    "live_feedback_child_refit_inference": "NOT_REACHED",
+    "research_selection_value": "NOT_RUN",
+    "financial_prediction": "NOT_RUN",
+    "G6": "已尝试，待所有者复核",
+    "earlier_worker_failure": "定向测试首次退出1：正在修改源码时恢复父研究发生identity mismatch。源码冻结后原断言在cp1回归通过。"
+  },
+  "process_exit": {
+    "exit": 0,
+    "seconds": 306.4943140000105
+  },
+  "offline_replay": {
+    "historical_answers": 28,
+    "stress": [
+      {
+        "canonical": "8b45acffd3759b42686d02ee745ab29b97c4d09eb091443e7a5c5e23285d98d5",
+        "wire": "69f8069556d5a9f66b890e69e0e7ffbeb07d084834f7231a39617961d2e574aa",
+        "characters": 59071,
+        "stress320": 61121
+      },
+      {
+        "canonical": "a0c11bf0d6074b48e36a85b15e94d51df44789ce8f655f9e004b00cd92968d02",
+        "wire": "462c230789d5ac89242358f8e01df69542b3de51109325e34aa3e0c6954dbf16",
+        "characters": 61705,
+        "stress320": 63144
+      }
+    ]
+  },
+  "artifacts": {
+    ".decision-comparison-20261125\\cp1\\END.json": "0dc8b886a42155f8876be8e6b0b56a60930b8383a6949387e3b0b39f90ee434b",
+    ".decision-comparison-20261125\\bindings-check.json": "df123c1bb517f25982c5d433d8a1f4af705b1a7bf169d4e7f104931ce6953b68",
+    ".decision-comparison-20261125\\replay-last.json": "057accf2e7a48b1d4c9b3de2ffed42d0b11bf3cd0ecb12869645e9bfac57903d",
+    ".decision-comparison-20261125\\replay.json": "336a15e23867ef2145f78e0517a6a00aac606c617bd4ad59e870f068c398bb3c",
+    ".decision-comparison-20261125\\OWNER.json": "6a075442c37dd85c6a55d7052edaea70442ff3f5bfd9502fede31b5b996cf5a2",
+    ".decision-comparison-20261125\\trial.py": "439838d93ac6be61c25c391bd04ed01680bcb7c090b75968653c6d350b4e5f74",
+    ".decision-comparison-20261125\\renew_materials.py": "1e816e4824bd86d02327fe2c2cc95676630120295c293b1ae3cc8cf0aa196c1c",
+    ".decision-comparison-20261125\\AUTHORIZATION.json": "37a65d258bdcf11ababb2c725904597615395ca195ddbe72eb27ba84e63cf915",
+    ".decision-comparison-20261125\\PREFLIGHT-v1.json": "37a6aedd0ddb8c85b743ebdc2874f2950bdba1495c301eff5de0cc28caff8f44",
+    ".decision-comparison-20261125\\PAIR-v1.json": "84bdb74e76992a9fa881a237d36e6b3021c1d7517ed31df369e704403eb48d19",
+    ".decision-comparison-20261125\\v1\\OUTCOME.json": "5a46124084a33363a3d28598155ef8002ba3032194c097c5edfbfe86297231fe",
+    ".decision-comparison-20261125\\v1\\MATCHED_PAIR.json": "034c52a348603ac4a4ff72448f417bb1056b1cb9580cb61346b9c207245cc147",
+    ".decision-comparison-20261125\\SESSION_LEDGER.json": "d57227ee5b17715c4ded4665565d7318c11856d2d9415c65d05ba3e66175c243",
+    ".decision-comparison-20261125\\SESSION_SEAL.json": "7a4ecbf2561f0108ac9d04bc8efd8e210734dc6b2e3b572f4b531a1d9017ce4c",
+    ".decision-comparison-20261125\\live.exit.json": "585fe1dd32fc32bbe5f3c5a878a3e37064caa3891aad0511e67dacec9d265c9a",
+    ".decision-comparison-20261125\\behavior-review.json": "a75d37d4c75a86659a6686f4b676f8ee944024d74544d4b97493af6d78cc0642"
+  }
+}

@@ -54,10 +54,14 @@ def upstream_pool(models, policy):
     return clients
 
 
-def terminal_worker_check(root, session):
+def terminal_worker_check(root, session, *, state_path=None):
     """Read the original queue without dispatch; an active old worker blocks repairs."""
-    state = root/'runtime.sqlite3'
+    state = Path(state_path) if state_path is not None else root/'runtime.sqlite3'
     if not state.exists():
+        if state_path is not None:
+            session._stop('worker_terminal_state_unverifiable')
+            atomic_json(root/'worker-terminal-check.json', {'state_path':str(state),
+                'missing':True,'dispatch':False,'globally_stopped':True})
         return []
     from finance_forecast_agent.research_mission import workspace_queue
     try:

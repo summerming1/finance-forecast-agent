@@ -466,16 +466,19 @@ def classify_observation(rule, child, control, *, history=(), cached=False,
         "recommendation_authorized":False}
 
 
-def comparison_projection(observations):
+def comparison_projection(observations, *, include_event_index=False):
     """Rebuild from immutable first-event records, never reclassify against itself."""
     out, seen = [], set()
-    for observation in observations:
+    for index, observation in enumerate(observations):
         row = observation.get("information", observation)
         if row.get("schema_version") not in {"research_information_v1", "research_information_v2"}:
             continue  # Legacy facts remain legacy, not fabricated migrations.
         key = row["observation_identity"]
         if key not in seen:
-            out.append(deepcopy(row))
+            item = deepcopy(row)
+            if include_event_index:
+                item["observation_feedback_index"] = index
+            out.append(item)
             seen.add(key)
     return out
 

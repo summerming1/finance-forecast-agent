@@ -12,14 +12,26 @@ from .evidence_output_contract import (
     ADVICE,
     ASSESSMENTS,
     BASIS_KINDS,
+    BATCH_SELECTOR,
+    COMPARISON_SELECTOR,
     DECISION_VERSION,
+    DIRECT_BASIS_SELECTOR,
+    DIRECT_TEST_SELECTOR,
     DISPOSITIONS,
+    EVIDENCE_USE_SELECTOR,
+    INTENT_SELECTOR,
+    JUDGMENT_SELECTOR,
+    OPERATION_SELECTOR,
     QUERY,
     REQUEST,
     SCOPES,
+    SLOTS_SELECTOR,
+    SOURCE_CHOICE_SELECTOR,
     STATUSES,
+    SUMMARY_SELECTOR,
     UPDATE,
     EvidenceResponseError,
+    check_selected_authoring_form,
 )
 from .focused_feature_program import GENERATED_FEATURE_NAME, ast_field_contract
 from .focused_identity import identity
@@ -38,7 +50,10 @@ def _text(limit=320):
     return {'type':'string','pattern':r'\S','maxLength':limit}
 
 
-def _array(items, maximum=8, minimum=0):
+ACTION_REF_LIMIT = 8
+
+
+def _array(items, maximum=ACTION_REF_LIMIT, minimum=0):
     return {'type':'array','items':items,**({'minItems':minimum} if minimum else {}),
         'maxItems':maximum,'uniqueItems':True}
 
@@ -62,7 +77,7 @@ def _bindings(prompt):
 
 
 def output_schema(bindings, *, maximum=2, reference=False,training_controls=None,
-                  state=None,training_available=True):
+                  state=None,training_available=True,model_research=False):
     """Small discriminated action shapes; all semantic values remain explicit."""
     text=_text();refs=_array(_enum(bindings['facts']))
     href=_array({'type':'array','prefixItems':[_text(96),{'type':'integer','minimum':1}],
@@ -97,6 +112,9 @@ def output_schema(bindings, *, maximum=2, reference=False,training_controls=None
         _object({'axis':{'const':'training_window'},'policy':{'oneOf':[
             _object({'mode':{'const':'expanding'},'sessions':{'type':'null'}}),
             _object({'mode':{'const':'rolling'},'sessions':_enum(method_capability()['rolling_sessions'])})]}})]
+    if model_research:
+        from .focused_methods import model_method_capability
+        changes.append(_object({'axis':{'const':'model'},'family':_enum(model_method_capability()['models'])}))
     train=_object({**common,'action':{'const':'improve'},'control':train_control,
         'change':{'oneOf':changes},'test':test})
     contribution=deepcopy(test);contribution['properties']['metric_scope']={'const':'contribution'}
@@ -218,6 +236,72 @@ def _share_schema(schema, *, minimum=100, anchors=False):
 
 def prepare_prompt(prompt, *, wire_version=None):
     """Replace output instructions only. Preserve every permission-filtered fact."""
+    if wire_version == COMPARISON_SELECTOR:
+        from .grouped_decision import prepare_comparison_prompt
+        packet = prepare_comparison_prompt(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if wire_version == JUDGMENT_SELECTOR:
+        from .grouped_decision import prepare_judgments_prompt
+        packet = prepare_judgments_prompt(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if wire_version == DIRECT_TEST_SELECTOR:
+        from .grouped_decision import prepare_direct_tests_prompt
+        packet = prepare_direct_tests_prompt(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if wire_version == BATCH_SELECTOR:
+        from .grouped_decision import prepare_batch_prompt
+        packet = prepare_batch_prompt(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if wire_version == EVIDENCE_USE_SELECTOR:
+        from .grouped_decision import prepare_evidence_use_prompt
+        packet = prepare_evidence_use_prompt(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if wire_version == SUMMARY_SELECTOR:
+        from .grouped_decision import prepare_summary_prompt
+        packet = prepare_summary_prompt(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if wire_version == SLOTS_SELECTOR:
+        from .grouped_decision import prepare_slots_prompt
+        packet = prepare_slots_prompt(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if wire_version == INTENT_SELECTOR:
+        from .grouped_decision import prepare_intent_prompt
+        packet = prepare_intent_prompt(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if wire_version == OPERATION_SELECTOR:
+        from .grouped_decision import prepare_operation_prompt
+        packet = prepare_operation_prompt(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if wire_version in (DIRECT_BASIS_SELECTOR, SOURCE_CHOICE_SELECTOR):
+        from .grouped_decision import prepare_direct_basis_prompt, prepare_source_choice_prompt
+        renderer = prepare_source_choice_prompt if wire_version == SOURCE_CHOICE_SELECTOR else prepare_direct_basis_prompt
+        packet = renderer(prompt)
+        check_selected_authoring_form(wire_version, packet)
+        return packet
+    if (wire_version or prompt.get('advisor_wire_version')) == 'evidence_decision_v7':
+        from .grouped_decision import prepare_linked_prompt
+        packet = prepare_linked_prompt(prompt)
+        if wire_version is not None:
+            check_selected_authoring_form(wire_version, packet)
+        return packet
+    if (wire_version or prompt.get('advisor_wire_version')) == 'evidence_decision_v6':
+        from .grouped_decision import prepare_delta_prompt
+        return prepare_delta_prompt(prompt)
+    if (wire_version or prompt.get('advisor_wire_version')) == 'evidence_decision_v5':
+        from .grouped_decision import prepare_global_prompt
+        return prepare_global_prompt(prompt)
+    if (wire_version or prompt.get('advisor_wire_version')) == 'evidence_decision_v4':
+        from .grouped_decision import prepare_revision_prompt
+        return prepare_revision_prompt(prompt)
     if wire_version == 'evidence_decision_v3' or prompt.get('advisor_wire_version') == 'evidence_decision_v3':
         from .grouped_decision import prepare_current_prompt as grouped_prepare
         return grouped_prepare(prompt)
@@ -264,7 +348,8 @@ def prepare_prompt(prompt, *, wire_version=None):
         'output_schema':output_schema(bindings,maximum=original['max_hypotheses'],
             reference=original['evidence_research'].get('reference',False),training_controls=training_controls,
             state=original['evidence_research']['state'],
-            training_available=bool(training_controls)),
+            training_available=bool(training_controls),
+            model_research=original.get('method_policy',{}).get('profile_id')=='spy_feature_window_model_v1'),
         'diagnostics':{'scopes':SCOPES,
             'meaning':'DQ01范围；02整体/逐折残差；03因子-因子；04control因子严格q01/q99尾部；05固定组n/MAE；06因子或prediction-target。无残差相关/自定义分箱。',
             'query_rules':'03/06需pairs且对数×对象数<=8，03禁target/prediction，06每对恰一target；04须可用factor，其余factor=null；其它pairs=[]；无已存预测则不可得。'},
@@ -280,7 +365,7 @@ def prepare_prompt(prompt, *, wire_version=None):
 
 
 def verify_prompt(prompt):
-    if prompt.get('advisor_wire_version') == 'evidence_decision_v3':
+    if prompt.get('advisor_wire_version') in {'evidence_decision_v3', 'evidence_decision_v4', 'evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}:
         from .grouped_decision import verify_prompt as grouped_verify
         return grouped_verify(prompt)
     original=restore_method_references(prompt)
@@ -293,9 +378,22 @@ def verify_prompt(prompt):
     return original
 
 
-def expand_decision(response,prompt,*,accepted_context=None):
+def expand_persisted_decision(response, prompt, *, accepted_context, recorded):
+    """Recover the exact accepted expansion, including older in-memory enum ordering."""
+    expanded, binding = expand_decision(response, prompt, accepted_context=accepted_context)
+    if (prompt.get('advisor_wire_version') == 'evidence_decision_v6'
+            and 'measurement_reading_version' not in prompt.get('compact_decision_contract', {})
+            and recorded != {'expanded_advice': expanded, 'binding': binding}):
+        from .grouped_decision import expand_decision as grouped_expand
+        expanded, binding = grouped_expand(response, prompt, accepted_context=accepted_context, _producer_order=True)
+    if recorded != {'expanded_advice': expanded, 'binding': binding}:
+        raise ValueError('compact raw/expansion/accepted-plan binding mismatch')
+    return expanded, binding
+
+
+def expand_decision(response,prompt,*,accepted_context=None,_basis_handles=False):
     """Deterministically bind a NEW response; never reinterpret a legacy failure."""
-    if prompt.get('advisor_wire_version') == 'evidence_decision_v3':
+    if prompt.get('advisor_wire_version') in {'evidence_decision_v3', 'evidence_decision_v4', 'evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}:
         from .grouped_decision import expand_decision as grouped_expand
         return grouped_expand(response, prompt, accepted_context=accepted_context)
     from jsonschema import Draft202012Validator
@@ -303,8 +401,8 @@ def expand_decision(response,prompt,*,accepted_context=None):
     from .research_state import normalize_evidence_advice
     original=verify_prompt(prompt)
     if accepted_context is not None:
-        from .research_state import working_evidence_context
-        if working_evidence_context(accepted_context)!=original['evidence_research']:
+        from .research_state import matches_working_evidence_context
+        if not matches_working_evidence_context(accepted_context, original['evidence_research']):
             raise ValueError('compact request no longer matches actual accepted evidence state')
     c=original['compact_decision_contract'];bindings=c['bindings']
     errors=sorted(Draft202012Validator(c['output_schema']).iter_errors(response),
@@ -382,6 +480,7 @@ def expand_decision(response,prompt,*,accepted_context=None):
             if a['action']=='improve':
                 change=a['change'];row['declared_axis']=change['axis']
                 if change['axis']=='training_window':row['training_policy']=deepcopy(change['policy'])
+                elif change['axis']=='model':row['model_family']=change['family']
                 else:row['feature_program']=_program(original,control,change['features'])
                 recipe='RCP-01';question=t['metric_scope']
             elif a['action']=='ablate':
@@ -395,7 +494,7 @@ def expand_decision(response,prompt,*,accepted_context=None):
                 'competing_explanation':t['alternative'],'falsification_condition':t['falsifier'],
                 'decision_version':DECISION_VERSION,'decision':{
                     'visible_basis':{'kind':t['basis_kind'],'evidence_refs':row['evidence_refs'],
-                        'description':a['reason']},'experiment_question':t['question'],
+                        'description':(','.join(t['basis_refs']) or t['basis_kind']) if _basis_handles else a['reason']},'experiment_question':t['question'],
                     'priority_reason':a['reason'],'feedback_update':{
                         'supports':t['branches']['supports'],'weakens':t['branches']['weakens'],
                         'not_distinguished':t['branches']['insufficient'],'next_step':t['branches']['next_step']}}}
@@ -472,7 +571,7 @@ def engineering_decision(prompt):
     This constructs a fresh authored decision; it is never called on a Provider
     answer. The real Provider boundary only accepts expand_decision unchanged.
     """
-    if prompt.get('advisor_wire_version') == 'evidence_decision_v3':
+    if prompt.get('advisor_wire_version') in {'evidence_decision_v3', 'evidence_decision_v4', 'evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}:
         from .grouped_decision import engineering_decision as grouped_engineering
         return grouped_engineering(prompt)
     from .research_state import engineering_advice

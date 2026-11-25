@@ -1,0 +1,77 @@
+{
+  "scope": "bounded post-stop offline acceptance",
+  "branch": "feat/mission-research-v2",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source_entries": 391,
+  "core_source_identity": "4bc349f9ea7f8252eee57d8611e2cb282b5f5cef9a90838a7e1ab6702d394acd",
+  "source_map_domain": "core-final-source-v1",
+  "change_from_previous_live": {
+    "src/finance_forecast_agent/grouped_decision.py": "f7673862365ebcb95c48b38937eb870504844c186f699ea4f77b3c8178831520",
+    "scripts/run_core_research_live.py": "eae1252bc98ce783fa87dd0f6e97446e4e0bec5acb1622e0456d8858db0c032f",
+    "tests/test_linked_decision_guidance.py": "db4524b74bf7fcb49ebd03e8c73f5afa77b06a559d1ab11783301c8652fe0d36",
+    "tests/test_semantic_relay_settlement.py": "5d0e661cfe193319da583dc37be345a361ad7cdbe906f7bbff66968ab1f974d6"
+  },
+  "acceptance": {
+    "A": {
+      "regression": {
+        "counts": {
+          "passed": 1530,
+          "skipped": 2
+        },
+        "path": ".decision-poststop-20261119\\final1\\regression\\END.json",
+        "sha256": "bcfc5bcd4382990c3ca000976e1118806ebadbd44b4969f5c1570a7da806b022",
+        "pytest_exit": 0,
+        "wrapper_exit": 0
+      },
+      "browser": {
+        "counts": {
+          "passed": 7
+        },
+        "path": ".decision-poststop-20261119\\final1\\browser\\END.json",
+        "sha256": "9f470cfead347c2d02e9d37bf362a20592b425e2e56c5bd900ffe58b6d3e435d",
+        "pytest_exit": 0,
+        "wrapper_exit": 0
+      }
+    },
+    "B_this_revision": "NOT_RUN",
+    "B_previous_live": "NO_GO",
+    "C_selection_value": "NOT_RUN",
+    "D_financial_prediction": "NOT_RUN",
+    "E_G6": "attempted, awaiting owner recheck"
+  },
+  "authorized_synthetic_provider_http_after_stop": 0,
+  "historical_http_at_stop": 270,
+  "originals_status": "Previous independent batch sealed on unknown delivery at its 21st HTTP.",
+  "artifacts": {
+    ".decision-poststop-20261119/final1/START.json": "10097c7a8f04c5e9ef1be05b97bbe435f01cfda2716a28c21417b8511cead440",
+    ".decision-poststop-20261119/final1/END.json": "0f0bb4b11a5e303953ddfeb525cc8211dea2da75e6f1cd25f943c5025d0b4493",
+    ".decision-poststop-20261119/final1/static.json": "715333cb71d518548f0ce7755981babeb3a10933470d24bf36fee37e86da4e3b",
+    ".decision-poststop-20261119/final1/collect/COLLECTION.json": "e7cf2f4efa10ac909dc4e6188956f45c1c3f34c0e01c49de8d5f58c4579d317b",
+    ".decision-poststop-20261119/final1/V7-WORKER.json": "b5cc9376100073f379f5c3625fd98763acf48c40560fbe28f6ab614b5ab365fe",
+    ".decision-poststop-20261119/COLD_AUTHORED_REVIEW.md": "f9469a98636b338d3e7cafaf32360ae29d6ade3a222cb94c4f24540285799421",
+    ".decision-poststop-20261119/COLD_AUTHORED_CHECK.json": "994249cabb09d8181c584809077faabf54a6ed8288cc00c80e59f374cc24bd50",
+    ".decision-poststop-20261119/AUTHORED_EXAMPLES_NOT_FOR_PROVIDER.json": "6a3634548e7241861679774981ddab3391471a59fb0666861f0ecd48debbe1d3",
+    ".decision-poststop-20261119/guidance/compatibility.json": "4d655d5c2261f0c78edbe9f35d126aa7f666c31962f15a0819c15a7ef07e380a",
+    ".decision-poststop-20261119/guidance/targeted.xml": "59447e642c33220a6deb7ed71cb791d9517becd502283ffd9d96248479bba106",
+    ".decision-poststop-20261119/semantic-relay2.xml": "7e26f41a139d7eb0cc418aac48c38e3103d3e8fa1787523efcb46efb61ba9127",
+    ".decision-poststop-20261119/semantic-relay3.xml": "d3bf343ef2d00c2cd81392cbd6c6cabe11f41a2cd4ee2e61596f0ce3641c6792",
+    ".decision-poststop-20261119/SEALED_V3_DELIVERY_REPLAY.json": "8438a7e368760b2e14810a588a83ec03aa35cf068fb29daa44efbab86d9f4ee4",
+    ".decision-next-20261119/CUMULATIVE.json": "9f2f7f4812c76b1210b6180c87c27c59ec11cf553e748950b4ddb6049f020324",
+    ".decision-next-20261119/SESSION_SEAL.json": "eba0ebd37b60f557840beb1d26ac78bc16583c4ca08a6c8521056027032bd66d",
+    "docs/validation/independent_decision_20261119_v3.json": "d07945ea619ecb427a3e6e4ad5d228939e4c21074e9a3a5aaeac932f49cbca6d",
+    ".decision-poststop-20261119/final1/regression.argv.json": "9b6b2d540d877cfe852d6645c2a5471b922b97e0aa6595604d789b6296cd5516",
+    ".decision-poststop-20261119/final1/regression.exit.json": "b84b4f990e8fd2282bff1584cdbc7007f2e60cb40f0dae42139af5c4f4276dc1",
+    ".decision-poststop-20261119/final1/browser.argv.json": "495c6e60f0d14613c4cc79daeac8c259e50c3c6ee6d32dbeed6e38c971372b87",
+    ".decision-poststop-20261119/final1/browser.exit.json": "78be3088eb7cf8edabf46b17a1e1b19e7459373d186d0432e9928003a6c03ec4",
+    ".decision-poststop-20261119/final1/static.argv.json": "9cc6a484ad20bd97589c05326090ae3e112530444808748dd18870f7a4382f16",
+    ".decision-poststop-20261119/final1/static.exit.json": "f07a02de7bab86cd928064ba0e231a750128c751c49f10644b582b11434b783b",
+    ".decision-poststop-20261119/final1/collect.argv.json": "a73279bef2ba0723ecc5e6370a84745b52563fec774aeed8c22d337ca81c245e",
+    ".decision-poststop-20261119/final1/collect.exit.json": "1cab0a43d46e5bcbe2a7f62f81a38822b428e9676ea16d73023a56b1abceed5b",
+    ".decision-poststop-20261119/final1/regression/regression.command.json": "9c4c0cdad9d112dc3f97c201b6df78de86bb771ec557f355b4fe80345de98954",
+    ".decision-poststop-20261119/final1/regression/regression.xml": "7b15898f20a91351f0799446ca06f7fde0a7c8f6c55c59ee7fa0fa819741be73",
+    ".decision-poststop-20261119/final1/regression/END.json": "bcfc5bcd4382990c3ca000976e1118806ebadbd44b4969f5c1570a7da806b022",
+    ".decision-poststop-20261119/final1/browser/browser.command.json": "8398ce61bbf78c9e29dc9608c2075b9b18ef31c0be692ae00ef80633bfa2a584",
+    ".decision-poststop-20261119/final1/browser/browser.xml": "06a1b87408394f35be7fb0c201ba9bc516df004c7a15e32ff6441d6fd13cdf81",
+    ".decision-poststop-20261119/final1/browser/END.json": "9f470cfead347c2d02e9d37bf362a20592b425e2e56c5bd900ffe58b6d3e435d"
+  }
+}

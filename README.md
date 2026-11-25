@@ -1,5 +1,20 @@
 # Finance Forecast Agent
 
+当前核心决策支持跨轮反证、生成特征、训练窗口和登记模型。11 月 19 日的真实合成研究已训练出候选，后续规划和完整模型交付仍待真实验证。工程结果、模型原答、试用准入及兼容范围见 [当前实现](docs/CURRENT_IMPLEMENTATION.md)。
+
+
+## 2026-11-17 真实联合验收结果指针
+
+当前结果见Current/原ER及 `docs/validation/core_research_20261117_delivery.json`：工程1320通过/2平台跳过、7串行浏览器通过；B仍NO-GO。免费保护已获用户本日确认，不再写当前待确认；旧日期状态为历史。3版本23HTTP后SSLError未知投递，整批封存，不续剩余25HTTP/第4版本。未完成真实研究闭环，不能签研究试用准入。保持既有核心收口→真实行为验收→所有者复核/小范围试用方向；本指针不改变范围、里程碑或后续权限。
+
+## 2026-11-16 核心决策与三工具联合验收（实施中）
+
+本轮按用户批准继续原[证据研究闭环](docs/EVIDENCE_RESEARCH_LOOP.md)，并新增显式研究范围 `feature_window_model`：同一 Campaign 可选择特征、训练窗口或固定注册 Ridge／RF，每项相对一个实际已接受完整 control 只改一轴。复用原工作区、Controller、队列、数值评价、恢复和可信交付；旧 `feature_window` 及旧包不自动迁移。固定目录与兼容边界见[架构](docs/FOCUSED_ARCHITECTURE.md)，操作见[用户指南](docs/FRONTEND_USER_GUIDE.md)。
+
+决策修补保留“事实—局部预期—取证或干预—实际结果—认识更新”：高相关只确认所测关系，不自动证明预测受损；消融改善也不唯一证明致损机制。采用仍由原 MAE／0.0025 冻结政策裁决，不要求找到赢家。
+
+代码已进入联合验收，最终同源回归、浏览器及真实 LLM 行为尚未统一签收。截至本节写入时，当前免费保护待确认，本轮外部 HTTP=0；新名单为 `qwen4-max → kimi-k3 → kimi-k3.1-pro`，不是自动扣费或产品自动换模。旧 B=NO-GO 不由本轮工程进展关闭，研究选择价值、独立金融预测和真人验收分别开放。最终实际状态只读 [Current](docs/CURRENT_IMPLEMENTATION.md)；裁剪、时间权重等仍为条件性后续，不是已实现能力。
+
 ## 2026-10-30 真实研究闭环收口：最终实际结果
 
 实际状态唯一入口为[Current](docs/CURRENT_IMPLEMENTATION.md)与原[ER](docs/EVIDENCE_RESEARCH_LOOP.md)：A=PASS_BOUNDED，B=NO-GO，C/D未验，E/G6开放。本批已到6版本硬上限，真实调用封存；不能凭旧余额继续。精确源码/命令/exit、1205回归节点与6条独立串行浏览器、原始失败及7次HTTP账见`.research-closeout-20261030/final-report4/REPORT.html`及同目录FINAL_REPORT.json。工程限定通过不代表真实研究闭环、金融或真人验收通过；下方旧日期状态保留为历史。
@@ -121,7 +136,9 @@ A financial machine-learning research workbench with two compatible paths:
 
 The near-term product goal is **not** “support every financial paper or model”. It is to reliably automate a bounded research task and make every hypothesis, implementation, result and limitation auditable.
 
-## Current branch and status
+## Legacy V2.5 compatible path and historical handoff
+
+The current approved three-tool scope is defined in the 2026-11-16 section above. The following preserves the compatible `feature_window` contract and its historical handoff.
 
 Current feature line: **V2.5.0 controlled feature + training-window research** on the existing SPY daily next-session return task. Select `feature_window` explicitly in the original workspace; supported windows are expanding or the last 504/756 eligible mature training rows. Research candidates keep the starting Ridge/StandardScaler configuration fixed, inherit the complete accepted control and change only one declared axis. Generated features remain capped at two including inherited features; two planning decisions / four slots, MAE and the 0.0025 development screening policy remain unchanged. Existing profiles keep their own contracts.
 

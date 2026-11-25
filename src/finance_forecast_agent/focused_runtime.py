@@ -243,6 +243,16 @@ class CampaignRuntime:
                 self.db.write(db,self.ns,f'provider-time:{call_number}',
                     {**old,'status':'observed','charged_seconds':elapsed,'observed_seconds':elapsed})
 
+    def _http_usage_and_limit(self, db):
+        return self.db.read(db, self.ns, 'http_request_reservations', 0), self.contract['budget'].get('max_http_requests', 48)
+
+    def can_retry_http(self) -> bool:
+        """Read only. A subsequent send must still reserve an attempt in observe_http."""
+        with self.db.transaction() as db:
+            self.guard(db)
+            used, limit = self._http_usage_and_limit(db)
+            return used < limit
+
     def observe_http(self, call_number: int, event: dict) -> None:
         from .llm_adapters import ProviderFailure
         with self.db.transaction() as db:
@@ -251,8 +261,8 @@ class CampaignRuntime:
             key='http:'+attempt_id
             old=self.db.read(db,self.ns,key)
             if event['state']=='started':
-                used=self.db.read(db,self.ns,'http_request_reservations',0)
-                if used>=self.contract['budget'].get('max_http_requests',48):
+                used, limit = self._http_usage_and_limit(db)
+                if used >= limit:
                     raise ProviderFailure('http_budget_exhausted',usage_known=False)
                 if old:
                     raise ValueError('HTTP attempt already reserved')

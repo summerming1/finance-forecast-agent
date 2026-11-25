@@ -26,6 +26,26 @@ from .evidence_output_contract import (
 from .focused_identity import identity
 
 PROTOCOL='evidence_research_v1'
+REVISION_DECISION_CONTRACT = ('evidence_decision_v4', 'grouped_decision_contract_v4')
+GLOBAL_DECISION_CONTRACT = ('evidence_decision_v5', 'grouped_decision_contract_v5')
+DELTA_DECISION_CONTRACT = ('evidence_decision_v6', 'grouped_decision_contract_v6')
+LINKED_DECISION_CONTRACT = ('evidence_decision_v7', 'grouped_decision_contract_v7')
+_READABLE_CONTRACTS = {
+    LINKED_DECISION_CONTRACT,
+    DELTA_DECISION_CONTRACT,
+    ('evidence_decision_v2', 'compact_decision_contract_v2'),
+    ('evidence_decision_v3', 'grouped_decision_contract_v1'),
+    ('evidence_decision_v3', 'grouped_decision_contract_v2'),
+    ('evidence_decision_v3', 'grouped_decision_contract_v3'),
+    REVISION_DECISION_CONTRACT,
+    GLOBAL_DECISION_CONTRACT,
+}
+
+
+def _wire_contract(prompt):
+    return prompt.get('advisor_wire_version'), prompt.get('compact_decision_contract', {}).get('schema_version')
+
+
 SEND_SCOPES=['task_and_starting_configuration','permission_filtered_diagnostics_and_metrics',
     'accepted_feedback_and_failures','question_hypothesis_and_request_history',
     'explicit_same_mission_parent_evidence','separately_approved_reviewed_literature']
@@ -53,11 +73,11 @@ def response_contract():
         'hypotheses':'动作列表，见action_contracts'}
 
 
-def protocol_contract(*,reference=False,max_actions=2,require_j=False):
+def protocol_contract(*,reference=False,max_actions=2,require_j=False,model_research=False):
     """INPUT-only field guide; not extra keys to copy into the reply envelope."""
     from .focused_feature_program import program_field_contract
     return {'output_contract_version':'evidence_output_contract_v1',
-        'output_schema':wire_output_schema(reference=reference,max_actions=max_actions,require_j=require_j),
+        'output_schema':wire_output_schema(reference=reference,max_actions=max_actions,require_j=require_j,model_research=model_research),
         'program_fields':program_field_contract(),
         'semantic_types':{
             'versions':'research_update.questions/hypotheses为增量而非快照，不变对象用[]；无假设时诊断/训练须同响应建问题/假设。已有版只改status，改主张/依据用latest+1；版本正整数非bool、首版1，新问题新ID。',
@@ -81,9 +101,10 @@ def protocol_contract(*,reference=False,max_actions=2,require_j=False):
 def apply_output_guidance(prompt):
     """Same research-only guidance for production and synthetic preparation."""
     reference=prompt.get('evidence_research',{}).get('reference',False)
+    model_research=prompt.get('method_policy',{}).get('profile_id')=='spy_feature_window_model_v1'
     prompt['evidence_protocol_contract']=protocol_contract(reference=reference,
         max_actions=prompt.get('max_hypotheses',2),
-        require_j=bool(prompt.get('diagnostic_research_policy',{}).get('require_j_decision')))
+        require_j=bool(prompt.get('diagnostic_research_policy',{}).get('require_j_decision')),model_research=model_research)
     objects=prompt.get('available_objects')
     if isinstance(objects,list):
         prompt['evidence_protocol_contract']['output_schema']['$defs']['query']['properties']['object_ids']['items']['enum']=deepcopy(objects)
@@ -129,6 +150,10 @@ def apply_output_guidance(prompt):
         'Current v4 J training MUST':'J训练须decision_version及四项完整research_design；R/D/Random用reference设计。stop/review省设计；diagnose仅显式取证。design所有字符串总计<=1000字符，各文本<=2000；拒绝不截短/修补。',
         'Reply root has EXACTLY':'契约仅输入；按schema输出原键/ID/hash/合法AST/query，禁内部引用。',
         'New evidence protocol:':'同响应research_update无反思；pending=证据×版本，deferred未完成，原门禁保持。projection_ref按diagnostic_hash查automatic_diagnostics/diagnostic_common_sources；fold_metrics_ref仅审计，缺细节用DQ-02，禁隐藏数值。'}
+    if model_research:
+        replacements['METHOD:']=('parent_candidate_id=control_candidate_id；完整继承已接受control，单改features/training_window/model。'
+            'model仅登记family/固定参数；其它轴、seed/内置组/Scaler/uniform不变。'
+            'expanding/null或rolling/504|756，每折一fit；禁同批未来/联合/no-op/HPO，生成含继承<=2。')
     replacements['Current v4 J training MUST']=replacements['Training needs research_design']
     prompt['rules']=[next((text for prefix,text in replacements.items() if r.startswith(prefix)),r)
         for r in prompt['rules']]
@@ -146,8 +171,31 @@ def apply_output_guidance(prompt):
         'diagnose':'control_candidate_id＋完整evidence_request/query；占一槽，零fit/HTTP；禁旧diagnostic枚举/模型/新公式。',
         'stop':'独占决定，statement与可选依据；无模型字段。',
         'request_review':'独占保存暂停，字段同stop。'}
+    if model_research:
+        contracts['improve']=('按METHOD单轴：features＋完整feature_program／training_window＋training_policy／model＋登记model_family；'
+            '参数仅目录，余项继承。')
     for key in prompt.get('action_contracts',{}):
         if key in contracts:prompt['action_contracts'][key]=contracts[key]
+    if model_research:
+        # New-profile instructions only: repeated version/field constraints stay
+        # literal in the same complete output schema. Facts and legacy text stay.
+        redundant=('消融/简化/终止/诊断按action_contracts','契约仅输入；按schema',
+            '字段按action_contracts/schema','必填schema_version：根=')
+        brief={
+            'AST含op：':'AST均含op：input(name=return_1)、lag(arg,periods)、rolling_mean/rolling_std(arg,window)、abs(arg)、二元(left,right)；域见feature_capability。依据/父/控制/反馈限可见已接受原ID，禁批内未来。',
+            'fit前整批校验，':'fit前整批校验，无效/重复占槽不补换；One-shot<=4槽，Adaptive<=2×2且单元<=2。用实际反馈；禁批内重规划/第三调用/改指标预算评价。',
+            '训练设计按output_schema，':'design总字符串<=1000，按schema；不截短。',
+            'RCP配方/问题见schema；':'RCP配方/问题依schema；禁自定义阈值/运算符/集成。OFF可domain_hypothesis但适用未知；症状不扩权。',
+            'diagnostic_common_limitations_v1：':'diagnostic_common_limitations_v1：开发描述非因果/显著/盈利/严格复现/推荐，禁自动修正/集成/refit/下载。*_ref递归查diagnostic_common_sources，合并constants_ref；values/fold_values依columns_ref/fold_columns；rule_templates=shared＋columns/values。',
+            'parent_candidate_id=control_candidate_id':'parent_candidate_id=control_candidate_id；已接受完整control单改features/training_window/model。model限固定目录，余轴及seed/内置组/Scaler/uniform冻结；expanding/null或rolling/504|756，每折1fit；禁未来/联合/no-op/HPO，生成总<=2。',
+            '同响应research_update无反思；':'research_update同响应，无反思；pending=证据×版本，deferred未完成。projection_ref按diagnostic_hash查automatic_diagnostics/diagnostic_common_sources；fold_metrics_ref只审计，缺细节用DQ-02，禁隐藏数值。',
+            '简明中文；':'短中文；键/版本/ID/枚举/AST不译。finding=事实/边界，open_question=未知，choice_reason=取舍；新文本<=320字符非token。',
+            '动作非空、statement必填；':'动作非空且statement必填，只用必要槽；stop/review独占，diagnose不附stop且只问可返统计。闭合JSON，禁额外说明。',
+            '单对象分布/零均值':'单对象/零均值非等价、低相关非增量；逐折核对对象/方向并保留反向折；改善=(controlMAE-candidateMAE)/controlMAE；0.0025=0.25%。原因未明可探索/暂缓，不强迫解释全部历史/换轴/改善。'}
+        prompt['rules']=[next((text for prefix,text in brief.items() if r.startswith(prefix)),r)
+            for r in prompt['rules'] if not r.startswith(redundant)]
+        prompt['rules'].append('按schema出原键/ID/hash/合法AST/query（含必填版本）；契约仅输入，禁内部引用、metrics/verdict/split/budget及不适用字段。evidence_refs取available_evidence_ids；核对owner/对象，勿混父子同名值。')
+        prompt['rules']=list(dict.fromkeys(prompt['rules']))
     return prompt
 
 
@@ -204,9 +252,9 @@ def project_evidence_references(prompt):
         return deepcopy(prompt)
     body=deepcopy(prompt);values={};original_keys=set();original_strings=[]
     reply_identities=body.get('research_protocol_id')=='evidence_research_v1'
-    readable_context=((body.get('advisor_wire_version'),body.get('compact_decision_contract',{}).get('schema_version')) in {('evidence_decision_v2','compact_decision_contract_v2'),('evidence_decision_v3','grouped_decision_contract_v1'),('evidence_decision_v3','grouped_decision_contract_v2'),('evidence_decision_v3','grouped_decision_contract_v3')})
+    readable_context = _wire_contract(body) in _READABLE_CONTRACTS
     literal={'response_schema','context_manifest'}
-    if body.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3'}:
+    if body.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3','evidence_decision_v4','evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}:
         literal.update({'compact_decision_contract','advisor_wire_version',
             'research_protocol_id','proposal_contract_version'})
     if readable_context:literal.add('evidence_research')
@@ -386,6 +434,8 @@ def project_evidence_references(prompt):
     body={k:encode_hashes(v) if k not in literal else v for k,v in body.items()}
     values=encode_hashes(values)
     if readable_context:
+        from .grouped_projection import project_bound_order
+        project_bound_order(body)
         # Identity strings alone use the existing reversible hash/prefix codec;
         # scientific field names, arrays, numbers and text stay inline.
         body['evidence_research']=encode_hashes(body['evidence_research'])
@@ -405,7 +455,7 @@ def project_evidence_references(prompt):
             body['evidence_context_refs']['text_runs']=text_runs
             body['evidence_context_refs']['contract']+=' v9: evidence_research科学字段明文，仅身份用原hash编码；literal_anchors从此根取值；text_runs原样重复text×count还原备注。不选事实/条件，不增权限。'
         if restore_evidence_references(body)!=prompt:raise ValueError('evidence projection is not lossless')
-    if (body.get('advisor_wire_version') == 'evidence_decision_v3'
+    if (body.get('advisor_wire_version') in {'evidence_decision_v3', 'evidence_decision_v4', 'evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}
             and body.get('evidence_context_refs', {}).get('schema_version') == 'evidence_reference_projection_v9'):
         from .grouped_projection import pack_projection
         body = pack_projection(body)
@@ -415,13 +465,16 @@ def project_evidence_references(prompt):
 
 
 def restore_evidence_references(prompt):
+    if 'decision_context_tables' in prompt:
+        from .decision_context_tables import unpack
+        prompt = unpack(prompt)
     refs=prompt.get('evidence_context_refs')
     if refs is not None and refs.get('schema_version') == 'evidence_reference_projection_v10':
         from .grouped_projection import unpack_projection
         return restore_evidence_references(unpack_projection(prompt))
-    readable_context=((prompt.get('advisor_wire_version'),prompt.get('compact_decision_contract',{}).get('schema_version')) in {('evidence_decision_v2','compact_decision_contract_v2'),('evidence_decision_v3','grouped_decision_contract_v1'),('evidence_decision_v3','grouped_decision_contract_v2'),('evidence_decision_v3','grouped_decision_contract_v3')})
+    readable_context = _wire_contract(prompt) in _READABLE_CONTRACTS
     literal={'response_schema','context_manifest'}
-    if prompt.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3'}:
+    if prompt.get('advisor_wire_version') in {'evidence_decision_v2','evidence_decision_v3','evidence_decision_v4','evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}:
         literal.update({'compact_decision_contract','advisor_wire_version',
             'research_protocol_id','proposal_contract_version'})
     if readable_context:literal.add('evidence_research')
@@ -505,6 +558,8 @@ def restore_evidence_references(prompt):
         body['evidence_research']=decode_hashes(body['evidence_research'])
         if 'bindings' in body['compact_decision_contract']:
             body['compact_decision_contract']['bindings']=decode_hashes(body['compact_decision_contract']['bindings'])
+        from .grouped_projection import project_bound_order
+        project_bound_order(body, restore=True)
     if identity(body,domain='evidence-context-original-v1')!=refs['source_hash']:
         raise ValueError('evidence projection is not lossless or was tampered')
     return body
@@ -558,7 +613,12 @@ def planning_evidence_context(context):
     return out
 
 
-def working_evidence_context(context):
+LEGACY_WORKING_VIEW = 'evidence_working_view_v1'
+ACTIVE_WORKING_VIEW = 'evidence_working_view_v2'
+RESEARCH_ACTION_CONTEXT = 'research_action_context_v1'
+
+
+def working_evidence_context(context, *, version=LEGACY_WORKING_VIEW):
     """Bound only the work view, with archive hashes; never erase accepted history.
 
     Current support AND counter evidence remain mandatory. If their full legal
@@ -566,7 +626,20 @@ def working_evidence_context(context):
     than selecting a favorable subset. All archives remain in original plans and
     Campaign/continuation snapshots, not a new semantic database.
     """
+    if version not in {LEGACY_WORKING_VIEW, ACTIVE_WORKING_VIEW}:
+        raise ValueError('unknown evidence working view')
     state=context['state'];facts=context['evidence']
+    active_versions = {(hid, history[-1]['version']) for hid, history in state['hypotheses'].items()
+                       if history[-1]['status'] == 'active'}
+    if version == ACTIVE_WORKING_VIEW:
+        mandatory = {eid for eid, hid, v in state['pending'] if (hid, v) in active_versions}
+        for hid, _ in active_versions:
+            h = state['hypotheses'][hid][-1]
+            mandatory.update(h['support_refs'] + h['counter_refs'])
+        mandatory.update(a['evidence_id'] for a in state['assessments']
+                         if (a['hypothesis_id'], a['hypothesis_version']) in active_versions)
+        if not mandatory.issubset(facts):
+            raise ValueError('required research evidence unavailable in authorized context')
     if (len(state['hypotheses'])<=9 and sum(len(h) for h in state['hypotheses'].values())<=18
             and len(state['questions'])<=12 and len(state['assessments'])<=24 and len(facts)<=16
             and len(state['pending'])<=24 and len(state['applied_plans'])<=4
@@ -585,15 +658,25 @@ def working_evidence_context(context):
     for a in state['assessments']:
         latest[(a['evidence_id'],a['hypothesis_id'],a['hypothesis_version'])]=a
     judgments=list(latest.values())
-    relevant=[a for a in judgments if (a['hypothesis_id'],a['hypothesis_version']) in current
-        and a['assessment'] in {'local_support','weakened','conflicting'}]
-    view['assessments']=deepcopy([a for a in judgments if a in relevant or a in judgments[-3:]])
+    def retained_judgment(a):
+        exact = (a['hypothesis_id'], a['hypothesis_version'])
+        return ((version == ACTIVE_WORKING_VIEW and exact in active_versions)
+                or (exact in current and a['assessment'] in {'local_support','weakened','conflicting'}))
+
+    view['assessments']=deepcopy([a for a in judgments if retained_judgment(a) or a in judgments[-3:]])
     view['applied_plans']=dict(list(state['applied_plans'].items())[-4:])
     active={k for k in selected if state['hypotheses'][k][-1]['status']=='active'}
     pending=sorted(state['pending'],key=lambda r:(r[1] not in active,r))
     owner=context.get('owner_campaign_id')
     unassigned=[e for e in state['unassigned_evidence'] if not owner or facts[e].get('owner_campaign_id')==owner]
-    view['pending']=deepcopy(pending[:12]);view['unassigned_evidence']=unassigned[-2:]
+    if version == ACTIVE_WORKING_VIEW:
+        # All unhandled rows of active exact versions belong to the decision.
+        # If the union doesn't fit the wire, measure_prompt refuses before HTTP.
+        pending = sorted(pending, key=lambda r: ((r[1], r[2]) not in active_versions, r))
+        keep = max(12, sum((r[1], r[2]) in active_versions for r in pending))
+    else:
+        keep = 12
+    view['pending']=deepcopy(pending[:keep]);view['unassigned_evidence']=unassigned[-2:]
     needed={r[0] for r in view['pending']}|set(view['unassigned_evidence'])
     needed.update(a['evidence_id'] for a in view['assessments'])
     for hs in view['hypotheses'].values():
@@ -609,7 +692,7 @@ def working_evidence_context(context):
     records=context.get('requests',[])
     needed_requests.update(r['ref'] for r in records[-4:])
     out['requests']=[deepcopy(r) for r in records if r['ref'] in needed_requests]
-    out['working_archive']={'schema_version':'evidence_working_view_v1',
+    out['working_archive']={'schema_version':version,
         'source_context_hash':identity(context,domain='evidence-working-source-v1'),
         'source_state_hash':state['state_hash'],'source_evidence_count':len(facts),
         'omitted':{'hypothesis_ids':len(state['hypotheses'])-len(view['hypotheses']),
@@ -623,6 +706,42 @@ def working_evidence_context(context):
         'source':'original accepted batch_plans evidence_context and Campaign/explicit parent snapshot',
         'contract':'state_hash names the COMPLETE accepted state, not this work view. Hidden histories cannot be invented or cited; request review/explicit continuation if required. No new summary call.'}
     return out
+
+
+def matches_working_evidence_context(accepted, view):
+    """Rebuild with the original frozen view semantics, including legacy Replay."""
+    archive = view.get('working_archive') or {}
+    version = archive.get('schema_version', LEGACY_WORKING_VIEW)
+    return accepted is not None and working_evidence_context(accepted, version=version) == view
+
+
+def evidence_fact_aliases(facts, structured_feedback=(), *, owner_campaign_id=None):
+    """Resolve evidence/compiler IDs to actual facts in the supplied context.
+
+    New requests bind bare projection and candidate aliases to their Campaign.
+    Inherited evidence IDs and their original qualified sources remain usable.
+    Omitting the owner reproduces the original frozen alias semantics.
+    """
+    aliases = {eid: {eid} for eid in facts}
+    for eid, fact in facts.items():
+        result = fact.get('result', {})
+        fact_owner = fact.get('owner_campaign_id')
+        inherited = owner_campaign_id is not None and fact_owner != owner_campaign_id
+        for name in ('projection_ref', 'source_ref', 'candidate_id'):
+            ref = result.get(name)
+            if not isinstance(ref, str):
+                continue
+            if name == 'candidate_id' and not fact.get('hypothesis_refs'):
+                continue
+            if inherited and not (isinstance(fact_owner, str) and ref.startswith(fact_owner + ':')):
+                continue
+            aliases.setdefault(ref, set()).add(eid)
+    for feedback in structured_feedback:
+        candidate = feedback.get('candidate_id')
+        ref = feedback.get('feedback_id')
+        if isinstance(ref, str) and candidate in aliases:
+            aliases.setdefault(ref, set()).update(aliases[candidate])
+    return aliases
 
 
 def _exact(value,keys):
@@ -656,6 +775,14 @@ def validate_update_shape(update):
         raise ValueError('bounded update joint text/serialized limit exceeded')
 
 
+class MissingAssessment(ValueError):
+    def __init__(self, ordinal, version_index, fact):
+        super().__init__('dependent evidence requires an assessment or explicit deferral for its hypothesis version')
+        self.ordinal = ordinal
+        self.version_index = version_index
+        self.fact = fact
+
+
 def normalize_evidence_advice(advice,prompt,*,accepted_context=None,action_dependencies=None):
     try:
         return _normalize_evidence_advice(advice,prompt,accepted_context=accepted_context,
@@ -663,9 +790,42 @@ def normalize_evidence_advice(advice,prompt,*,accepted_context=None,action_depen
     except ValueError as exc:
         issues=collect_structure_issues(advice,
             reference=prompt.get('evidence_research',{}).get('reference',False),
-            max_actions=prompt.get('max_hypotheses',2))
+            max_actions=prompt.get('max_hypotheses',2),
+            model_research=prompt.get('method_policy',{}).get('profile_id')=='spy_feature_window_model_v1')
         if issues:raise EvidenceResponseError(exc,issues) from exc
         raise
+
+
+def check_revision_result_handling(update, context, *, accepted_context=None):
+    """Check a validated update against exact pre-experiment links on visible results.
+
+    Status-only operations expand to full historical hypotheses. Their copied
+    basis is not a new citation. A genuinely revised claim, or an assessment
+    authored for a successor, can explicitly cite a result of the prior claim.
+    """
+    if update is None:
+        return
+    state = (accepted_context if context.get('working_archive') else context)['state']
+    assessments = update['evidence_assessments']
+    current = {(a['evidence_id'], a['hypothesis_id'], a['hypothesis_version']) for a in assessments}
+    cited = set(current)
+    for hypothesis in update['hypotheses']:
+        hid, version = hypothesis['id'], hypothesis['version']
+        history = state['hypotheses'].get(hid)
+        if history and version == history[-1]['version'] + 1:
+            cited.update((eid, hid, version) for eid in hypothesis['support_refs'] + hypothesis['counter_refs'])
+
+    prior = {(a['evidence_id'], a['hypothesis_id'], a['hypothesis_version']): a['disposition']
+             for a in state['assessments']}
+    for eid, hid, version in sorted(cited):
+        # hypothesis_refs comes from the accepted operation that produced the
+        # result. A shared question, text, control or later citation cannot add
+        # a second originating hypothesis to that operation.
+        if version == 1 or [hid, version - 1] not in context['evidence'][eid].get('hypothesis_refs', []):
+            continue
+        original = (eid, hid, version - 1)
+        if original not in current and prior.get(original) != 'evaluated':
+            raise ValueError('cited result requires an assessment or explicit deferral for its original hypothesis version')
 
 
 def _normalize_evidence_advice(advice,prompt,*,accepted_context=None,action_dependencies=None):
@@ -680,7 +840,7 @@ def _normalize_evidence_advice(advice,prompt,*,accepted_context=None,action_depe
     if advice['schema_version']!=ADVICE:raise ValueError('explicit evidence advice version required')
     context=prompt['evidence_research'];facts=context['evidence']
     if context.get('working_archive'):
-        if accepted_context is None or working_evidence_context(accepted_context)!=context:
+        if not matches_working_evidence_context(accepted_context, context):
             raise ValueError('bounded working view requires its exact original accepted context')
         state=accepted_context['state']
     else:state=context['state']
@@ -703,25 +863,19 @@ def _normalize_evidence_advice(advice,prompt,*,accepted_context=None,action_depe
     for a in (update or {}).get('evidence_assessments',[]):
         if (a['hypothesis_id'],a['hypothesis_version']) not in visible_versions:
             raise ValueError('archived hypothesis version is not visible for assessment')
+    if _wire_contract(prompt) in {REVISION_DECISION_CONTRACT, GLOBAL_DECISION_CONTRACT, DELTA_DECISION_CONTRACT, LINKED_DECISION_CONTRACT}:
+        check_revision_result_handling(update, context, accepted_context=accepted_context)
     latest={(a['evidence_id'],a['hypothesis_id'],a['hypothesis_version']):a['disposition']
         for a in state['assessments']}
     now={(a['evidence_id'],a['hypothesis_id'],a['hypothesis_version'])
         for a in (update or {}).get('evidence_assessments',[])}
     # Map old compiler namespaces to the SAME visible fact, never broaden access.
-    aliases={eid:{eid} for eid in facts}
-    for eid,fact in facts.items():
-        result=fact.get('result',{})
-        for name in ('projection_ref','source_ref','candidate_id'):
-            # A generic accepted control ID is also a method reference. Only
-            # map it to new research evidence when an accepted prior operation
-            # actually linked that result to hypotheses; do not make domain-
-            # inspired first steps assess every unrelated baseline.
-            if name=='candidate_id' and not fact.get('hypothesis_refs'):continue
-            ref=result.get(name)
-            if isinstance(ref,str):aliases.setdefault(ref,set()).add(eid)
-    for feedback in prompt.get('structured_feedback',[]):
-        cid=feedback.get('candidate_id');ref=feedback.get('feedback_id')
-        if isinstance(ref,str) and cid in aliases:aliases.setdefault(ref,set()).update(aliases[cid])
+    decision_view = prompt.get('compact_decision_contract', {}).get('research_view_version') == RESEARCH_ACTION_CONTEXT
+    # A clipped dependency on an archived fact must block that particular action.
+    # The full context used here already passed the Campaign visibility policy.
+    alias_facts = accepted_context['evidence'] if decision_view and context.get('working_archive') else facts
+    aliases = evidence_fact_aliases(alias_facts, prompt.get('structured_feedback', ()),
+                                   owner_campaign_id=context.get('owner_campaign_id') if decision_view else None)
     def declared_refs(value):
         found=set()
         if isinstance(value,dict):
@@ -793,12 +947,15 @@ def _normalize_evidence_advice(advice,prompt,*,accepted_context=None,action_depe
                 selected=next(h for h in prospective['hypotheses'][hid] if h['version']==v)
                 if row.get('action_type') not in {'stop','request_review'}:
                     own.update(selected['support_refs']+selected['counter_refs'])
-                    own.update(eid for eid,ph,pv in context['state']['pending']
-                        if (ph,pv)==(hid,v) and eid in facts)
+                    pending_state = state if decision_view else context['state']
+                    own.update(eid for eid,ph,pv in pending_state['pending']
+                        if (ph,pv)==(hid,v) and (decision_view or eid in facts))
+                if decision_view and not own.issubset(facts):
+                    raise ValueError('action requires evidence unavailable in the visible working view')
                 for eid in own:
                     relation=(eid,hid,v)
                     if latest.get(relation)!='evaluated' and relation not in now:
-                        raise ValueError('dependent evidence requires an assessment or explicit deferral for its hypothesis version')
+                        raise MissingAssessment(ordinal, hrefs.index([hid,v]), eid)
         cleaned.append(row);relations.append({'hypothesis_refs':deepcopy(hrefs),'evidence_request':deepcopy(request)})
     return {'hypotheses':cleaned},relations
 

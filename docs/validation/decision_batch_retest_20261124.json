@@ -1,0 +1,212 @@
+{
+  "source": "8a82fe7cdb147a3b935d151162acc18bc7972d3b36b433c6168eba38a5c81aa2",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "date": "2026-11-24",
+  "same_source_engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1626,
+        "skipped": 2
+      },
+      "path": ".decision-batch-20261124\\post1\\regression\\END.json",
+      "sha256": "baef625c4670c7ba92bbb995f9c86064683f04315bd13231916dda88cd88df68",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-batch-20261124\\post1\\browser\\END.json",
+      "sha256": "17dd98f29efb414ef5170cb534b1b83bcfcc0235a0ff3d4a52150db92e7c7be3",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "calls": [
+    {
+      "number": 1,
+      "case": "parent",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "7cb6588a9c13e0138bcb4b8e3e25e6dbc5da944ccc1c0b1b086dfee04e35fa55"
+    },
+    {
+      "number": 2,
+      "case": "case-retest-2026112400",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "a5e7d672d977f83e10b22956ba52b78ec7f8659a7a3ebc250d63f89cd5c46a7c"
+    },
+    {
+      "number": 3,
+      "case": "case-retest-2026112401",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "591e89d3df209939875afa3e399d1d2138f83871a99d8ee3e8e77b7b20e37086"
+    },
+    {
+      "number": 4,
+      "case": "case-862751",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "fb187e71e22a24813ce6f9850b17be6c7e0d08818c871149e6bbd3c570e7bd28"
+    },
+    {
+      "number": 5,
+      "case": "case-retest-2026112403",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "46402084271b97e7be7072e7abd0356c72af41e63ab1a93e631141abd6faf464"
+    },
+    {
+      "number": 6,
+      "case": "case-retest-2026112404",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "3dc8b3235631b39082c076f3698f2aa765d220fde5f7b6b6c48c14651612ef84"
+    },
+    {
+      "number": 7,
+      "case": "case-retest-2026112405",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "96223cc668bfaa0f7557fb788e147cac58f44c9d7a738f3d3ef5c2965b53a3ba"
+    },
+    {
+      "number": 8,
+      "case": "case-f16880f97123086ee632",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "c6b138cd42a4a6a87a4130866e10ed647fd71ca450f4da4258cf53a41531e803"
+    },
+    {
+      "number": 9,
+      "case": "case-a9d9586b5300c778b75c",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "31646cf836998709287bd3da4be472ef78c3edbb0787e0ef372a907a4e7951d1"
+    }
+  ],
+  "prior_batch_http": 3,
+  "combined_http": 12,
+  "cumulative_http": 378,
+  "charged_fit": 16,
+  "stop_reason": null,
+  "unattempted": [],
+  "worker": [
+    {
+      "role": "parent",
+      "campaign_id": "persistent-7d4c3b5e06fd5be2c9d29e09",
+      "execution_status": "partial",
+      "fit_calls": 16,
+      "stop_reason": "proposal_invalid",
+      "task_status": "completed"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "case-retest-2026112400",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "grouped response field $.hypothesis_updates.0.alternatives: required"
+    },
+    {
+      "case_id": "case-retest-2026112401",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-862751",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-retest-2026112403",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-retest-2026112404",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-retest-2026112405",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-f16880f97123086ee632",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-a9d9586b5300c778b75c",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "grouped response field $.hypothesis_updates.0: oneOf"
+    }
+  ],
+  "review": {
+    "behavior": "NO_GO",
+    "provider": "9/9 HTTP 200, finish_reason=stop, qwen4-max, thinking disabled",
+    "development_challenges": "5/6 strictly valid",
+    "opposite_feedback_pair": "1/2 strictly valid; matched behavioral comparison incomplete",
+    "worker": "首规划 A1 同时选 @h1、@h2，E7 来源关联 F1，但 @h1 没有办理 F1；F14 为直接依据，也没有针对 @h2 的判断。原子拒绝，16 次起点和固定对照拟合，0 研究候选。无反馈规划、子研究、refit 或新进程推理。",
+    "case_review": [
+      "高相关题原答区分事实与因果并提出消融；新命题遗漏 alternatives，拒绝。",
+      "删后变差题正确读出总体变差3.02%、第三折方向相反。将这一数据写成足以否定主要原因，超出本次干预能区分的机制。",
+      "删后改善题正确读出总体改善1%、四折同向，保留竞争解释。",
+      "平方关系题避免把低 Pearson 当成独立，但微弱非零 Spearman 本身不足以支持非线性机制；应优先依据已知平方构造。",
+      "仅一折题保留其余三折未知，请求执行收据以补证。",
+      "内置特征固定题未越权删项；换模型可测固定条件下模型差异，不能据此单独识别共线性机制。",
+      "相反反馈两侧分别将窗口改善命题记为局部支持和被削弱，识别持平及反向折。变差侧 revise 缺 from，无法编译；两侧不可作为一对合法决策计分。"
+    ],
+    "selection_value": "NOT_RUN",
+    "independent_predictive_value": "NOT_RUN",
+    "human": "G6已尝试，待所有者复核"
+  },
+  "process_exit": {
+    "exit": 0,
+    "seconds": 294.62195149995387
+  },
+  "artifacts": {
+    ".decision-batch-retest-20261124\\OWNER.json": "80b103ada48423a63996b01f5c1239450f8f3546abe9b1b67c3fab905b914ae2",
+    ".decision-batch-retest-20261124\\trial.py": "b17ef644acc80400ca955a022afae6f4c81dde35f35a659f48253ab643161763",
+    ".decision-batch-retest-20261124\\renew_materials.py": "570e65da40807d1007b768f7cd5a16e4aae139d9f774c1478567a24377f3c543",
+    ".decision-batch-retest-20261124\\AUTHORIZATION.json": "1f01284cdce9f6abb41932c63ce693516f25bb8a86cfccac2db193f55f5021bc",
+    ".decision-batch-retest-20261124\\PREFLIGHT-v1.json": "4d15e247861af80b89cce2bfdfaf8c146da503d0a247ff2f1834c9867ba621be",
+    ".decision-batch-retest-20261124\\PAIR-v1.json": "52620f1d9e089eba68f10ee5b19e38207d3a6d89066db3952e59f66f009616c7",
+    ".decision-batch-retest-20261124\\v1\\OUTCOME.json": "93f039be017b56c6ec83400f175ba278496707d4e7f4b6a9ff8c3c30cbd9cfb4",
+    ".decision-batch-retest-20261124\\v1\\MATCHED_PAIR.json": "8805cd00c855d2daf8d4457e8838068a5d8537c03fd7f4e3f4fdd98d4e1984dd",
+    ".decision-batch-retest-20261124\\SESSION_LEDGER.json": "98c5794b1c6ff95f71f0dc39779540cdc6238262bd0f9360fe15ab0082d96910",
+    ".decision-batch-retest-20261124\\SESSION_SEAL.json": "c60ed3e96ce0d3d28e13b129fcbc8f3772812bb9029e38eab6af13e8a156a479",
+    ".decision-batch-retest-20261124\\live.exit.json": "d80d78dadf1e629fed354d3c54db19edc6e36217873d8af1645270d0b6e65a5b",
+    ".decision-batch-retest-20261124\\behavior-review.json": "a98d7dfc23f36aac474281dab88aa990ff20865aa6da2d3e82dec6a0faff3a54"
+  }
+}

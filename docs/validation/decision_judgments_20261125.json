@@ -1,0 +1,247 @@
+{
+  "source": "24fd3c76d0c599a648f2ccd26ed2214bb3cbc1335cb001333743ecbc8f1bbce7",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "date": "2026-11-25",
+  "same_source_engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1638,
+        "skipped": 2
+      },
+      "path": ".decision-judgments-20261124\\j1\\regression\\END.json",
+      "sha256": "9991168b2b0a5206f7d542fcfbc8537ea898d1d4831e85d2808190bcce4d9d91",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-judgments-20261124\\j1\\browser\\END.json",
+      "sha256": "9adf4b1fd2cccdd18e8c71601cae19329f98ef4f0ef73a35a49d99ccb6a9e3aa",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "calls": [
+    {
+      "number": 1,
+      "case": "parent",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "13d5494687949e02e7fc477f26ffdd09745c5cb011cfecb3eaffaea08c579a0c"
+    },
+    {
+      "number": 2,
+      "case": "parent",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "d65b82d492b0a2de147573274604bb8461f4d35265c4ddf21dbebc341447ada6"
+    },
+    {
+      "number": 3,
+      "case": "case-retest-2026112400",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "5791b4bbae7c1982e179db8584437e5a61c03cf22e5091e121a77f1acf4d6f1d"
+    },
+    {
+      "number": 4,
+      "case": "case-retest-2026112401",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "bc8f661875d61123c766854127e540c1afe7a0dc4ccf33e5643e8dc741f64485"
+    },
+    {
+      "number": 5,
+      "case": "case-862751",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "de1593988fb131499a5cfe5cf64d28da2893f9f6f2710d8e3d0dd2070d3003b6"
+    },
+    {
+      "number": 6,
+      "case": "case-retest-2026112403",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "ee6522350eea9e3a0d9445bdc2c64098ce6e6bd8bea0609155437eda89a7e379"
+    },
+    {
+      "number": 7,
+      "case": "case-retest-2026112404",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "646ca1a8409396ec45b77f1709430c6f30139e3cf01d930aed64b6d683ea3ac5"
+    },
+    {
+      "number": 8,
+      "case": "case-retest-2026112405",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "c8076698744f2bd0031d2358aea7418295a03bcc82aaf7d54a08e2fda48835d2"
+    },
+    {
+      "number": 9,
+      "case": "case-ab2657dd875f6bc5e537",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "62e61ba479be38645c3f164233635c220e868c32ed5011bde8d574af3c3f092a"
+    },
+    {
+      "number": 10,
+      "case": "case-02b71e3f3c6da412be18",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "242c189fc44aaf8f89f72fd6b3deb060814aa76fc4d8c646c8bc65aacb635f9c"
+    }
+  ],
+  "prior_batch_http": 9,
+  "prior_sealed_cumulative": 387,
+  "this_batch_http": 10,
+  "cumulative_http": 397,
+  "logical_requests": 10,
+  "charged_fit": 20,
+  "stop_reason": null,
+  "unattempted": [],
+  "worker": [
+    {
+      "role": "parent",
+      "campaign_id": "persistent-3ceb4daa0da1bd73f9241b64",
+      "execution_status": "partial",
+      "fit_calls": 20,
+      "stop_reason": "proposal_invalid",
+      "task_status": "completed"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "case-retest-2026112400",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-retest-2026112401",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "grouped response field $.question_updates.0: oneOf"
+    },
+    {
+      "case_id": "case-862751",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "at most three simultaneously active hypotheses"
+    },
+    {
+      "case_id": "case-retest-2026112403",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "grouped response field $.hypothesis_updates.0: oneOf"
+    },
+    {
+      "case_id": "case-retest-2026112404",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-retest-2026112405",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-ab2657dd875f6bc5e537",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "A1: @h1 requires assessment or explicit deferral for F1"
+    },
+    {
+      "case_id": "case-02b71e3f3c6da412be18",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "grouped response field $.actions.0.request.branches.after_batch: type"
+    }
+  ],
+  "review": {
+    "engineering": "PASS_BOUNDED",
+    "real_decision": "NO_GO",
+    "strict_cases": "3/6",
+    "strict_pair": "0/2",
+    "parent": "首轮接受，C7上增加5/20日均收益差及波动比的特征候选，4次实际候选拟合；另16次为起点和基线。MAE 0.007269626707272709→0.007079213332711198，相对改善2.6193%，折3变差。树模型分组假设的诊断却选了起点Ridge与固定Ridge。二者组内损失相同，没有测到树模型。",
+    "parent_round2": "原答评H3、保留反向折并提出单删波动比。首个实际拒绝是A2缺reason，整批原子拒绝，两项行动均未执行。另可从原答及冻结来源表查见：A1所引F8有两个来源E15、E17，未明确选择实验或纯事实。A2将只变特征的对照绑定树模型H2；把两岭回归对照的零差解释成树模型条件效应受反驳，并将机制澄清写作采用前提，均无依据。后两类为原答审阅，不冒称运行时的首次异常。",
+    "cases": [
+      "高相关题严格通过。限定训练范围，仅在受控消融中检验增量。",
+      "删除后变差题读对总体恶化和反向折，原问题创建缺op，未获接受。",
+      "删除后改善题读对方向，重复创建与原主张同内容的命题，越过三条活跃上限。分组误差无法唯一识别滞后或正则原因。",
+      "低相关题能区分低Pearson与独立。把op/question放进contrast，创建结构不合法。",
+      "单折题严格通过，保留其余折未知，提出单删；即使删除之后改善，机制仍须保留未决。",
+      "内置特征题严格通过，避开了未获准的内置列删除；建议的模型替换可以测模型差，却无法单独识别共线是否致害。科学判断存在实质限制。"
+    ],
+    "pair": "改善侧读对2.418%及反向折，但联合检验的新@h1缺F1评定。恶化侧读对方向和折差，把after_batch写成数组，合同要求文本。两侧都被拒，不能签配对行为通过。",
+    "live_feedback_child_refit_inference": "真实第二轮读到首轮结果，未进入第二轮执行、子研究、显式refit及新进程推理。",
+    "research_selection_value": "NOT_RUN",
+    "financial_prediction": "NOT_RUN",
+    "G6": "已尝试，待所有者复核",
+    "limits": "所有10份均为同一模型qwen4-max完整HTTP 200，thinking未观察到，历史387加本次10共397。预注册六题含开发回归，合成新父样本及配对与上一批不同；不可据此估计稳定成功率。"
+  },
+  "process_exit": {
+    "exit": 0,
+    "seconds": 235.39959980000276
+  },
+  "offline_replay": {
+    "historical_answers": 18,
+    "stress": [
+      {
+        "canonical": "8b45acffd3759b42686d02ee745ab29b97c4d09eb091443e7a5c5e23285d98d5",
+        "wire": "89685345d979fd9519d37adca680d801876c4c7683e3ad54fcd13b4e961be90f",
+        "characters": 59018,
+        "stress320": 61068
+      },
+      {
+        "canonical": "a0c11bf0d6074b48e36a85b15e94d51df44789ce8f655f9e004b00cd92968d02",
+        "wire": "77e94ef8717e6efa414a65d3ec58ec20069d8ccb4421e8cbc44a8c7d2f3b23b5",
+        "characters": 61622,
+        "stress320": 63061
+      }
+    ]
+  },
+  "artifacts": {
+    ".decision-judgments-20261124\\j1\\END.json": "684a02e1c6be5e0e4b36e55ffcda48b17d5164923fbee1e747ed963f41e7eb6a",
+    ".decision-judgments-20261124\\bindings-check.json": "f8b7c84e678c547ac566e06570f4f3618e2cd33230bc4d33f14b68931eb43559",
+    ".decision-judgments-20261124\\replay-last.json": "baab536722d93c1c0ce9ae32f462e9e776e5abee69ede0d03d7adea91b01721f",
+    ".decision-judgments-20261124\\replay.json": "eb59eefd8fcfd9739661427593d5f85774cc2f61e59f3ed6956709bac245f5f0",
+    ".decision-judgments-20261124\\OWNER.json": "6565a7e23fde80735d098d4537611c5cc623cecc9d61199c388a92b1ce714342",
+    ".decision-judgments-20261124\\trial.py": "81f234c2aff83e2e6943847ead04d9b3d22ff1d3d077bfa1454f6b5f21aafc87",
+    ".decision-judgments-20261124\\renew_materials.py": "c6ddc96ff87cf1195c3bea808412071eb2dd08123d895407a468fb589e270f7b",
+    ".decision-judgments-20261124\\AUTHORIZATION.json": "5b8add1665abb7bb20bdb9b5a24f5d06c2fe034ec96cbd5750e07241babbb162",
+    ".decision-judgments-20261124\\PREFLIGHT-v1.json": "c7a0fb38c006174c7ff2eb4825d1e60380ce6789af6152493216986a9c98a311",
+    ".decision-judgments-20261124\\PAIR-v1.json": "a1753daa15ac846f10e2a6c20b52e99a3a6e741eeea23b46bba959839b313ba5",
+    ".decision-judgments-20261124\\v1\\OUTCOME.json": "e3f7a3be2971100320ecba8a48438c0b84e6bf3b57845d55bc01e1f75171caab",
+    ".decision-judgments-20261124\\v1\\MATCHED_PAIR.json": "a07fb3e7611b3753d1705ceaf4745ee8187023e4a9543aaa39efcaccfb806794",
+    ".decision-judgments-20261124\\SESSION_LEDGER.json": "ff56704ad9fb4f2d5ce0d3f90b699f28d1835dc75ab3098860d83c2b381dfe82",
+    ".decision-judgments-20261124\\SESSION_SEAL.json": "311fba80724c96d920fdb59c89a2614240df84b2d10a8922e0d89d3d32ba177c",
+    ".decision-judgments-20261124\\live.exit.json": "51869cab786ece2db63007a1b6097633135e71aa6366885e31d71fbd78013fc9",
+    ".decision-judgments-20261124\\behavior-review.json": "2d756f3023a2ee053df35f6920859bb66785fb67cf7991d613de25d36da61789"
+  }
+}

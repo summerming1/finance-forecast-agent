@@ -1,0 +1,276 @@
+{
+  "date": "2026-11-23",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source": "48978daaf4ced0c6aeab004ab36d3ce74fa540739be5ffd02b3737ca494693bf",
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1617,
+        "skipped": 2
+      },
+      "path": ".decision-use-20261123\\use4\\regression\\END.json",
+      "sha256": "40cc57f71d1931dd34826e685b8dc5e7d38ef9a160c433970f6469dc40a13f6e",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-use-20261123\\use4\\browser\\END.json",
+      "sha256": "b0dc9efc36169e4180f71b0465668ff62c257c70e772dbfb50c6fb0fe1ec011d",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "calls": [
+    {
+      "number": 1,
+      "case": "parent",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 48.46263409999665,
+      "raw_envelope_sha256": "a324e243d509f78975b6164062f875891179580402bae1632e221166da595ebe"
+    },
+    {
+      "number": 2,
+      "case": "case-2026112300",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 25.111330899992026,
+      "raw_envelope_sha256": "4ae7e11e029211a4860a3afa3f019d6d616409d427df11d0aae274597fa1553c"
+    },
+    {
+      "number": 3,
+      "case": "case-593024",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 34.5156210999703,
+      "raw_envelope_sha256": "b9b8d63420996c02c9d85528bdff9349c69435cafd7041889e3d55c3b138f0a3"
+    },
+    {
+      "number": 4,
+      "case": "case-862751",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 29.498990799998865,
+      "raw_envelope_sha256": "60c7b84276a2600ed30da4830bd08e00c45a47b5774f8703fcbb579c996ff8e5"
+    },
+    {
+      "number": 5,
+      "case": "case-2026112303",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 25.371447299956344,
+      "raw_envelope_sha256": "b64605c3ea190694a3d5d44b34656e43555d0ea734f071fad2ccbc1b1d7a03e1"
+    },
+    {
+      "number": 6,
+      "case": "case-2026112304",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 19.54205719998572,
+      "raw_envelope_sha256": "a957ab5f81afd550912c34aaaf789f7487104cea09299e9b2a8a77081d1f23aa"
+    },
+    {
+      "number": 7,
+      "case": "case-2026112305",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 22.26710119994823,
+      "raw_envelope_sha256": "1d6d8f963357fce367e4cef20dcebf5dcc2edaf88655bef06e103be4eeaf3968"
+    },
+    {
+      "number": 8,
+      "case": "case-31d6217ce3dd02d1dc0b",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 23.52574489999097,
+      "raw_envelope_sha256": "44d3d478a5f70579b19b3908a2b874134a4d4a16d48021d318ff7bc0841a15ef"
+    },
+    {
+      "number": 9,
+      "case": "case-91405101de2d7085a693",
+      "model": "qwen4-max",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "state": "response_received",
+      "elapsed_seconds": 34.67205270007253,
+      "raw_envelope_sha256": "b7e7616584c419861a4c9d63960f65c7c2204e72dfa71e0c6baf78210da4b56e"
+    }
+  ],
+  "new_http": 9,
+  "historical_http": 366,
+  "charged_fit": 16,
+  "trajectory": {
+    "actual_research_candidates": 0,
+    "records": [
+      {
+        "actual_research_training": [],
+        "campaign_id": "persistent-fb395fa18926956216cc4496",
+        "execution_status": "partial",
+        "fit_calls": 16,
+        "package": {
+          "additional_fit": 0,
+          "additional_http": 0,
+          "members": 32,
+          "path": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-9p2ev6iq\\project\\focused_campaigns\\persistent-fb395fa18926956216cc4496\\research_package\\persistent-fb395fa18926956216cc4496.research-package.zip",
+          "read_only_campaign_unchanged": true,
+          "sha256": "6b784d0ae412005ae247923fbfc626359c92959416ddb6586ce1ff7c80006cae"
+        },
+        "proposal_error": {
+          "errno": null,
+          "error_category": "execution_error",
+          "exception_type": "ValueError",
+          "operation": "",
+          "path_alias": null,
+          "phase": "proposal_validation",
+          "retryable": false,
+          "traceback_frames": [
+            {
+              "function": "_run_resumable",
+              "line": 2833,
+              "module": "focused_research.py"
+            },
+            {
+              "function": "expand_decision",
+              "line": 371,
+              "module": "compact_decision.py"
+            },
+            {
+              "function": "expand_decision",
+              "line": 1072,
+              "module": "grouped_decision.py"
+            },
+            {
+              "function": "resolve",
+              "line": 58,
+              "module": "decision_evidence_use.py"
+            }
+          ],
+          "winerror": null
+        },
+        "role": "parent",
+        "root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-9p2ev6iq\\project\\focused_campaigns\\persistent-fb395fa18926956216cc4496",
+        "stop_reason": "proposal_invalid",
+        "task_status": "completed"
+      }
+    ],
+    "viable_not_semantic_pass": false
+  },
+  "verdict": {
+    "engineering": "PASS_BOUNDED",
+    "behavior": "NO_GO",
+    "semantic_tests_strict": "2/6",
+    "opposite_pair_strict": "1/2",
+    "parent": "父研究首答把训练来源绑给了诊断槽A2，原子拒绝。其分组问题清晰，但GBDT对Ridge的比较被写成单特征贡献。16次起点和对照拟合，研究候选为0。",
+    "raw_behavior": [
+      "高相关情形分开描述命题与消融效果，提出合法删除对照。",
+      "四折删除均变差时保留反证，选择配对分组诊断；结果对删除预测更直接，对共线机制仍有竞争解释。",
+      "有利删除情形识别1%下降，但把复用同一预测说成要再次确立实测效应；重复假设操作被拒。",
+      "低相关题识别平方关系；假设更新未满足操作形状。",
+      "局部折限制读取正确，行动重复引用自己隐含的预测。",
+      "单方法训练内目标相关诊断错选特征贡献。",
+      "正反配对识别相反总体效果及反向折，两侧都写了具体分组问题；不利侧超出最多三个同时活跃假设。"
+    ],
+    "unreached": [
+      "受真实候选结果驱动的二次规划",
+      "显式子研究",
+      "冻结推荐重拟合和新进程推理（真实轨迹）"
+    ],
+    "selection_value": "NOT_RUN",
+    "independent_financial_effect": "NOT_RUN",
+    "human": "未新增真人签收"
+  },
+  "cases": [
+    {
+      "case_id": "case-2026112300",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-593024",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-862751",
+      "status": "failed_or_invalid",
+      "error": "duplicate hypothesis operation",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112303",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.hypothesis_updates.0: oneOf",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112304",
+      "status": "failed_or_invalid",
+      "error": "own prediction is implicit",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112305",
+      "status": "failed_or_invalid",
+      "error": "feature contribution needs two accepted methods",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-31d6217ce3dd02d1dc0b",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-91405101de2d7085a693",
+      "status": "failed_or_invalid",
+      "error": "at most three simultaneously active hypotheses",
+      "delivery": "model_text_received"
+    }
+  ],
+  "unattempted": [],
+  "stop": null,
+  "process_exit": {
+    "exit": 0,
+    "seconds": 331.2279467000626
+  },
+  "references": {
+    ".decision-use-20261123\\OWNER.json": "001c881d7ffc99fa5a81ef6affddfd2a03a9e7f89c6bbce42f8eae99babcb887",
+    ".decision-use-20261123\\AUTHORIZATION.json": "bb33e6d2603e8ec9c1b93a1f1df0ab23ddd36ffc7ae83b9f9cb4a479156a9303",
+    ".decision-use-20261123\\PREFLIGHT-v1.json": "20be0437df54cdf58223350bb30202a9eafe2be1aab046ceb624ad747b60d977",
+    ".decision-use-20261123\\PAIR-v1.json": "6d4e3867f676c2fade917513eab4535d7ef4948c85a11fb4fdb47c5df9f75621",
+    ".decision-use-20261123\\SESSION_LEDGER.json": "497cb02386290f645fdab78064e4d3334d463b0ad81b23fe03ded671d37f16b7",
+    ".decision-use-20261123\\SESSION_SEAL.json": "0df980ab3b4b74ddbdf3bde6bcaae24a30a329f3afa34b8804509ac28988b299",
+    ".decision-use-20261123\\use4\\END.json": "1c745e5e9417dd0bb1ca4a374b44f88152fa69052eda9243c60f6c017ba19424",
+    ".decision-use-20261123\\use4\\static.json": "69b088d253b7a679a53b8d36fe80d05ce6dfce471445054823ac92fd38c4063b",
+    ".decision-use-20261123\\use4\\regression\\END.json": "40cc57f71d1931dd34826e685b8dc5e7d38ef9a160c433970f6469dc40a13f6e",
+    ".decision-use-20261123\\use4\\browser\\END.json": "b0dc9efc36169e4180f71b0465668ff62c257c70e772dbfb50c6fb0fe1ec011d",
+    ".decision-use-20261123\\replay.json": "84dc44f9f57b62f78c3f15fb6dabb16fa3c6ee19eced75703e293f1580f79353",
+    ".decision-use-20261123\\replay-last.json": "cdc9ba03d54b786319f0364de742f91df8d858d4d292f8699c7f76e69df3dd43",
+    ".decision-use-20261123\\authored-fixtures.json": "57436441fd590cac0837f866d51f1b71339dca90be4281c9a8149258ecb4a4df",
+    ".decision-use-20261123\\behavior-review.json": "9e7bd2f11300a879a0101ccca4cc2e2b5558144d452dd3a8124d2e403224bde6",
+    ".decision-use-20261123\\live.exit.json": "ec5af36fac27be68e0cd6198b594fce3cf2a664ef807902fba5f59366049aba2",
+    ".decision-use-20261123\\v1\\OUTCOME.json": "aed04e3833ef61d563438fb756c57637730dc22e47201777c0cd36005d37087b",
+    ".decision-use-20261123\\v1\\MATCHED_PAIR.json": "62066e82e6d38d1f17369d7a99da9020915ddfebdeb1d5a3eed75a2d7531608f"
+  }
+}

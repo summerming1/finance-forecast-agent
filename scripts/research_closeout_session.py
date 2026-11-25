@@ -133,16 +133,32 @@ def _functional(source):
 class ResearchCloseoutSession:
     """One consumed approval and monotonic actual-attempt ledger across repairs."""
 
+    # Subclasses declare a NEW authority; historical defaults stay exact.
+    model_order = MODELS
+    authority_schema = SCHEMA
+    claim_suffix = '.research-closeout-consumed.json'
+    historical_http = 169
+    root_and_authorization = staticmethod(_new_root)
+    read_authorization = staticmethod(_authorization)
+    validate_client_contract = staticmethod(_validate_client_contract)
+    model_generation_policy = staticmethod(model_generation_policy)
+    native_json_registered = staticmethod(native_json_registered)
+    inspect_send = staticmethod(lambda prompt: inspect_send(prompt))
+
+    def audit_version_send(self, version, prompt):
+        return self.inspect_send(prompt)
+    should_advance = staticmethod(is_grouped_free_quota)
+
     def __init__(self, root, authorization_path):
-        self.root, self.authorization_path = _new_root(root, authorization_path)
-        self.authorization = _authorization(self.authorization_path)
+        self.root, self.authorization_path = self.root_and_authorization(root, authorization_path)
+        self.authorization = self.read_authorization(self.authorization_path)
         self.authorization_sha256 = file_sha256(self.authorization_path)
         if (self.root / 'SESSION_LEDGER.json').exists():
             raise PermissionError('existing session requires sealed-version open_existing, never a reset')
         self.root.mkdir(parents=True, exist_ok=True)
-        claim = self.authorization_path.with_suffix('.research-closeout-consumed.json')
+        claim = self.authorization_path.with_suffix(self.claim_suffix)
         with claim.open('x', encoding='utf-8') as handle:
-            json.dump({'schema_version': SCHEMA, 'root': str(self.root),
+            json.dump({'schema_version': self.authority_schema, 'root': str(self.root),
                        'authorization_sha256': self.authorization_sha256}, handle)
         self.calls = []
         self.versions = []
@@ -158,10 +174,10 @@ class ResearchCloseoutSession:
     @classmethod
     def open_existing(cls, root, authorization_path):
         """Only continue a sealed repair sequence; never resume an active send."""
-        root, path = _new_root(root, authorization_path)
-        authorization = _authorization(path)
+        root, path = cls.root_and_authorization(root, authorization_path)
+        authorization = cls.read_authorization(path)
         digest = file_sha256(path)
-        claim = json.loads(path.with_suffix('.research-closeout-consumed.json').read_text(encoding='utf-8'))
+        claim = json.loads(path.with_suffix(cls.claim_suffix).read_text(encoding='utf-8'))
         ledger_path = root / 'SESSION_LEDGER.json'
         ledger = json.loads(ledger_path.read_text(encoding='utf-8'))
         try:
@@ -192,7 +208,7 @@ class ResearchCloseoutSession:
 
     @property
     def current_model(self):
-        return MODELS[self.model_index]
+        return self.model_order[self.model_index]
 
     @property
     def stopped(self):
@@ -207,6 +223,9 @@ class ResearchCloseoutSession:
         """Unsettled reservations remain charged, including interrupted workers."""
         return sum(row['actual_fit_calls'] if row['state'] in {'settled', 'overrun'}
                    else row['reserved_fit_calls'] for row in self.compute)
+
+    def fit_reserve_exceeds_limit(self, version, addition):
+        return self.charged_fit_calls + addition > self.authorization['session_fit_max']
 
     def _validate_compute(self):
         seen = set()
@@ -232,7 +251,7 @@ class ResearchCloseoutSession:
                 if (row['kind'] != 'refit' or row['actual_fit_calls'] is not None
                         or file_sha256(row['receipt_path']) != row['receipt_sha256']):
                     raise PermissionError('retained unknown refit receipt changed')
-        if (self.charged_fit_calls > self.authorization['session_fit_max']
+        if (any(self.fit_reserve_exceeds_limit(v['number'], 0) for v in self.versions)
                 or any(sum(row['kind'] == 'refit' and row['version'] == v['number']
                            for row in self.compute) > 1 for v in self.versions)):
             raise PermissionError('preserved compute exceeds frozen session limits')
@@ -255,14 +274,14 @@ class ResearchCloseoutSession:
             'schema_version': 'research_closeout_session_v1',
             'new_authority_not_previous_remaining_budget': True,
             'authorization_sha256': self.authorization_sha256,
-            'historical_http': 169, 'actual_new_http': len(self.calls), 'historical_plus_new_http': 169 + len(self.calls),
+            'historical_http': self.historical_http, 'actual_new_http': len(self.calls), 'historical_plus_new_http': self.historical_http + len(self.calls),
             'provider_seconds': self.provider_seconds,
             'observed_provider_seconds': sum(c.get('elapsed_seconds', 0.) for c in self.calls),
             'model_index': self.model_index, 'current_model': self.current_model,
             'research_compute_limits': {k: self.authorization[k] for k in
                 ('campaign_fit_max', 'refit_per_version_max', 'session_fit_max')},
             'compute': self.compute, 'charged_fit_calls': self.charged_fit_calls,
-            'model_generation_policy': model_generation_policy(),
+            'model_generation_policy': self.model_generation_policy(),
             'stopped': self.stopped, 'stop_reason': self.stop_reason,
             'versions': self.versions, 'calls': self.calls, 'cost': None,
 })
@@ -278,7 +297,7 @@ class ResearchCloseoutSession:
             if self.versions and not self.versions[-1]['sealed']:
                 raise PermissionError('seal previous version before repair; never resume active version')
             self._verify_previous_evidence()
-            if len(self.versions) >= self.authorization['max_versions']:
+            if self.authorization['max_versions'] is not None and len(self.versions) >= self.authorization['max_versions']:
                 raise PermissionError('source-version cap exhausted')
             repo = Path(repo or Path.cwd()).resolve()
             if repo not in self.root.parents:
@@ -297,11 +316,11 @@ class ResearchCloseoutSession:
             if not isinstance(upstream_clients, dict):
                 raise PermissionError('per-model original clients/contracts required before any send')
             clients = dict(upstream_clients)
-            if set(clients) != set(MODELS):
+            if set(clients) != set(self.model_order):
                 raise PermissionError('clients must cover exact approved models')
             client_contracts = {model: copy.deepcopy(client.contract()) for model, client in clients.items()}
             for model, actual_contract in client_contracts.items():
-                _validate_client_contract(actual_contract, model)
+                self.validate_client_contract(actual_contract, model)
             contract = copy.deepcopy(contract if contract is not None else client_contracts[self.current_model])
             if contract != client_contracts[self.current_model]:
                 raise PermissionError('declared worker contract differs from actual current client')
@@ -327,7 +346,7 @@ class ResearchCloseoutSession:
                        'worker_model': self.current_model, 'contract': contract, 'sealed': False,
                        'worker_relay_contract': relay,
                        'logical_requests': 0,
-                       'client_contracts': client_contracts, 'model_generation_policy': model_generation_policy()}
+                       'client_contracts': client_contracts, 'model_generation_policy': self.model_generation_policy()}
             claim = self.root / f'VERSION-{version["number"]:02d}.claimed.json'
             try:
                 with claim.open('x', encoding='utf-8') as handle:
@@ -369,7 +388,7 @@ class ResearchCloseoutVersionGuard:
         atomic_json(self.root / 'HTTP_LEDGER.json', {'version': self.version['number'], 'calls': self.calls,
             'actual_upstream_http': len(self.calls), 'session_actual_upstream_http': len(self.session.calls),
             'logical_requests': self.logical_count,
-            'historical_http': 169, 'historical_plus_new_http': 169 + len(self.session.calls),
+            'historical_http': self.session.historical_http, 'historical_plus_new_http': self.session.historical_http + len(self.session.calls),
             'provider_seconds': sum(c.get('charged_provider_seconds', 180.) for c in self.calls),
             'compute': [r for r in self.session.compute if r['version'] == self.version['number']],
             'session_charged_fit_calls': self.session.charged_fit_calls,
@@ -388,7 +407,7 @@ class ResearchCloseoutVersionGuard:
                    (row['label'] == label or (kind == 'refit' and row['kind'] == 'refit'))
                    for row in self.session.compute):
                 raise PermissionError('compute label/refit already reserved; no free retry')
-            if self.session.charged_fit_calls + maximum > self.session.authorization['session_fit_max']:
+            if self.session.fit_reserve_exceeds_limit(self.version['number'], maximum):
                 raise PermissionError('session compute reserve exhausted')
             reservation = {'id': f'compute-{len(self.session.compute) + 1:03d}',
                            'version': self.version['number'], 'kind': kind, 'label': label,
@@ -492,6 +511,15 @@ class ResearchCloseoutVersionGuard:
             self.session._stop('frozen_identity_drift')
             raise
 
+    def _response_format(self, packet, model):
+        from finance_forecast_agent.llm_adapters import decision_response_format
+        content = packet['messages'][0]['content']
+        if content.startswith(('You are extracting schema ', 'You are planning controlled evidence research; ')):
+            content = content.partition('\n\n')[2]
+        prompt = json.loads(content)
+        return decision_response_format(prompt,model=model,endpoint=ENDPOINT,
+            thinking=self.session.model_generation_policy()[model]['enable_thinking'])
+
     def exchange_relay(self, wire):
         """Bind declared local transport metadata only; no answer/science rewriting."""
         with self.session.lock:
@@ -503,11 +531,11 @@ class ResearchCloseoutVersionGuard:
                     or 'response_format' in packet):
                 raise PermissionError('logical worker wire differs from frozen legacy loopback contract')
             bound = dict(packet, model=self.version['worker_model'],
-                         enable_thinking=MODEL_THINKING[self.version['worker_model']],
-                         response_format={'type': 'json_object'})
+                         enable_thinking=self.session.model_generation_policy()[self.version['worker_model']]['enable_thinking'],
+                         response_format=self._response_format(packet,self.version['worker_model']), temperature=self.version['contract']['temperature'])
             binding = {'incoming_wire_sha256': hashlib.sha256(wire.encode()).hexdigest(),
                 'worker_relay_contract': relay,
-                'transport_fields_only': ['model', 'enable_thinking', 'response_format'],
+                'transport_fields_only': ['model', 'enable_thinking', 'response_format', 'temperature'],
                 'binding_source': 'VERSION_START.json: frozen actual native upstream contract',
                 'logical_worker_is_not_native_provider_capability': True}
             return self.exchange(json.dumps(bound, ensure_ascii=False, separators=(',', ':')),
@@ -521,16 +549,16 @@ class ResearchCloseoutVersionGuard:
                 raise PermissionError('unapproved wire fields')
             messages = packet.get('messages', [])
             if (len(messages) != 1 or messages[0].get('role') != 'user'
-                    or packet.get('model') != self.version['worker_model'] or packet.get('max_tokens') != 4096
-                    or packet.get('temperature') != 0 or packet.get('stream', False)
-                    or packet.get('response_format') != {'type': 'json_object'}):
+                    or packet.get('model') != self.version['worker_model'] or packet.get('max_tokens') != self.session.authorization['output_token_max']
+                    or packet.get('temperature') != self.version['contract']['temperature'] or packet.get('stream', False)
+                    or packet.get('response_format') != self._response_format(packet,self.version['worker_model'])):
                 raise PermissionError('wire differs from frozen generation contract')
-            if packet.get('enable_thinking') is not MODEL_THINKING[self.version['worker_model']]:
+            if packet.get('enable_thinking') is not self.session.model_generation_policy()[self.version['worker_model']]['enable_thinking']:
                 raise PermissionError('worker thinking flag differs from frozen per-model policy')
             content = messages[0]['content']
             if content.startswith(('You are extracting schema ', 'You are planning controlled evidence research; ')) and '\n\n' in content:
                 content = content.split('\n\n', 1)[1]
-            audit = inspect_send(json.loads(content))
+            audit = self.session.audit_version_send(self.version['number'], json.loads(content))
             incoming_hash = hashlib.sha256(wire.encode()).hexdigest()
             if incoming_hash in self._logical_requests:
                 raise PermissionError('same-version logical request retry is forbidden')
@@ -541,15 +569,21 @@ class ResearchCloseoutVersionGuard:
             logical_start = time.monotonic()
             while True:
                 self._verify()
-                if not native_json_registered(self.session.current_model):
+                if not self.session.native_json_registered(self.session.current_model):
                     self.session._stop('native_json_capability_blocked')
                     raise PermissionError('native JSON capability blocked; never skip to a later model')
-                if len(self.session.calls) >= self.session.authorization['http_max']:
+                http_cap = self.session.authorization['http_max']
+                if http_cap is not None and len(self.session.calls) >= http_cap:
                     self.session._stop('global_http_cap')
                     raise PermissionError('global actual HTTP cap exhausted')
                 if len(self.calls) >= self.session.authorization['per_version_http_max']:
                     raise PermissionError('per-version actual HTTP cap exhausted')
-                if self.session.provider_seconds + 180. > self.session.authorization['provider_seconds_max']:
+                seconds = self.session.authorization['provider_seconds_max']
+                if seconds is None:
+                    exceeded = sum(c.get('charged_provider_seconds', 180.) for c in self.calls) + 180. > self.session.authorization['per_version_provider_seconds_max']
+                else:
+                    exceeded = self.session.provider_seconds + 180. > seconds
+                if exceeded:
                     self.session._stop('global_provider_reserve_cap')
                     raise PermissionError('global Provider activity reserve exhausted')
                 remaining = 180. - (time.monotonic() - logical_start)
@@ -557,10 +591,12 @@ class ResearchCloseoutVersionGuard:
                     self.session._stop('logical_deadline_exhausted')
                     raise PermissionError('shared logical request deadline exhausted')
                 routed = dict(packet, model=self.session.current_model)
-                routed['enable_thinking'] = MODEL_THINKING[self.session.current_model]
+                routed['enable_thinking'] = self.session.model_generation_policy()[self.session.current_model]['enable_thinking']
+                routed['response_format'] = self._response_format(packet,self.session.current_model)
+                routed['temperature'] = self.version['client_contracts'][self.session.current_model]['temperature']
                 routed_wire = (wire if routed['model'] == packet['model'] else
                                json.dumps(routed, ensure_ascii=False, separators=(',', ':')))
-                override_fields = [k for k in ('model', 'enable_thinking')
+                override_fields = [k for k in ('model', 'enable_thinking', 'temperature', 'response_format')
                     if (k in routed) != (k in packet) or routed.get(k) != packet.get(k)]
                 number = len(self.calls) + 1
                 call = {'number': number, 'session_attempt': len(self.session.calls) + 1,
@@ -602,7 +638,7 @@ class ResearchCloseoutVersionGuard:
                     if result.get('transport_error') or not result.get('status'):
                         call['state'] = 'unknown'
                         self.session._stop('unknown_delivery')
-                    elif not 200 <= result['status'] < 300 and not is_grouped_free_quota(result):
+                    elif not 200 <= result['status'] < 300 and not self.session.should_advance(result):
                         self.session._stop('nonquota_http_failure')
                 except BaseException as exc:
                     # This is a transport receipt, never a synthesized model answer.
@@ -619,14 +655,14 @@ class ResearchCloseoutVersionGuard:
                     if call['state'] == 'response_received':
                         call['charged_provider_seconds'] = call['elapsed_seconds']
                     self.save()
-                if self.stopped or not is_grouped_free_quota(result):
+                if self.stopped or not self.session.should_advance(result):
                     return result
-                if self.session.model_index + 1 == len(MODELS):
+                if self.session.model_index + 1 == len(self.session.model_order):
                     self.session._stop('free_model_list_exhausted')
                     return result
                 self.session.model_index += 1
                 self.save()
-                if not native_json_registered(self.session.current_model):
+                if not self.session.native_json_registered(self.session.current_model):
                     atomic_json(self.root / 'CAPABILITY_BLOCKED.json', {
                         'model': self.session.current_model,
                         'contract': self.version['client_contracts'][self.session.current_model],

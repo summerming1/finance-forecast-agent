@@ -1,5 +1,65 @@
 # Focused / Mission Research Architecture
 
+## 定向比较与来源选择
+
+表单 12 复用 numeric_facts 的方向及已见测量索引，Adapter 投影事实/实验、槽内理由、方法差与显式复核。原编译器保存命题版本和执行计划，绑定记录保存引用子视图、对象及意图。
+
+
+## 按命题判断选择行动
+
+显式表单 11 将重复的受测版本、直接事实与实验来源归入行动的 use 映射。原命题判断可以携带一个后继声明；后继的证据责任单独校验。编译到现有研究状态和执行器，版本化请求选择和原子拒绝继续生效。
+
+
+## 直接检验表单
+
+新请求选择 evidence_decision_v7_direct_tests，直接受测版本与观察动机分别绑定。所选来源的事实、直接事实与各命题待办经原办理门禁核验。
+
+
+## 从科学判断绑定实验
+
+显式选择 evidence_decision_v7_intent 的新研究以精确假设版本归组评定，行动单独引用转向动机与实际检验目标。程序从冻结方法和测量选择计算操作说明并写入决策绑定。一条旧证据可启发新实验；写入新命题的支持或反证仍需独立的显式评定。
+
+V7 冻结请求内的 `decision_guidance_version` 记录作者看到的说明修订。新请求用一个根对象表达计划，模型在同一答复中决定哪些可见事实影响当前行动；已有反证与所选实验的依据按原精确关系办理。恢复时按原请求读取同一套执行合同。验收工具以逐笔上游回执核对完成状态、归属与调用成本。
+
+V7 复用现有 Controller、训练、状态归约和交付链。冻结请求内的短编号指向特定版本的假设。作者在一处声明新命题，可引用同一规划槽的事前预测；判断记录可以显式声明供哪项行动使用。程序将这些关联投影到原实验依赖和可见出处，核对多来源、原有待办及反证。V6 与较早的已接受研究按各自原请求恢复。[实施合同](EVIDENCE_RESEARCH_LOOP.md)
+
+## 同一研究的事实判断与实验选择
+
+三轴自适应证据研究的新草稿使用 `evidence_decision_v6`。问题或假设发生创建、主张修订、活动状态变化时，模型提交对应的增量操作。已有假设可以直接接受新证据评估。每个父方法可删的生成特征、删除后可复用的候选及预计拟合次数来自冻结上下文。恢复与续接按父研究冻结的接口执行。
+
+新请求的 `measurement_reading_version` 绑定当时已展示的损失统计及适用范围。对超过容量的重复表示，按请求内字段表和共享文本还原，保留原 64,000 字符上限。操作标识绑定已核对的可见映射；读取旧 V6 记录时，还原出的完整建议和操作必须与原始收据及计划完全一致。
+
+v6 沿用 `evidence_decision_v5` 的全局证据评估。每项由模型撰写的判断绑定冻结事实和精确假设版本。每项行动另选其检验的版本及依据，引用 E 时只填写冻结编号。旧命题可收到评估而无需参加新行动。解析器校验版本、可见来源、评价与依赖，再交给原状态归约、Controller、工具与推荐政策。真实反馈能否改变下一步，见 [当前实现](CURRENT_IMPLEMENTATION.md) 的实际测试。
+
+## 三轴自适应研究的反证办理
+
+新的 `evidence_decision_v4` 请求绑定 `grouped_decision_contract_v4`。就地评估与显式评估都展开成原有的“已接受事实、假设 ID、版本、模型原答”关系。归约和接受仍归原研究状态与 Controller。用一条返回事实支持后继版本时，系统回查该事实的已登记原版本、可见性和处理状态。原始比较方向、方法及结果从原批准计划、执行记录和工作视图取得。科学上是否答对，依真实原答及实验所测量的量单独验收。
+
+## 三工具研究的规划输入（2026-11-19）
+
+新三工具研究的 J 规划从本 Campaign 及其显式继承的父快照生成有界工作视图。当前活跃假设的精确版本保留已记录的反证、尚待办理关系、最新未决判断及其可见来源。完整历史仍可由原批计划和研究包核对。工作视图的归档版本决定恢复时使用的规则。
+
+分组请求将合法实验依据的短编号 E 关联到可见事实 F。接受计划时继续核对精确 F × 假设 × 版本，对需要隐藏证据的行动按原约束拒绝。可训练 control 来自已接受结果，特征说明派生自实际 AST，成本来自当前折数及原编译／运行收据。冻结推荐仍由原数值政策产生。工作视图、模型原答和执行结果分别归档，便于区分事实可见、模型理解和行动真正执行。
+
+## 2026-11-16 已批准的固定模型工具扩展（联合验收中）
+
+本轮延续原 ER，不增加 Controller、Queue、Evaluator、认识状态库或反思 Agent。新显式 `change_scope=feature_window_model` 对应 `spy_feature_window_model_v1`／`focused_candidate_v5`；旧 `feature_window`／V4、原数学、wire、fixture、hash 和历史包保留各自冻结语义，不按字段形状迁移。下方旧日期的“RF 条件未来”只描述当时范围，本轮仅批准以下有限替换域。
+
+| 注册模型 | 固定有效参数 | 实际流水线与执行约束 |
+|---|---|---|
+| `ridge_regression` | `alpha=1.0` | StandardScaler → Ridge；seed 随完整方法继承 |
+| `random_forest_regressor` | `n_estimators=80`、`max_depth=4`、`min_samples_leaf=5`、`max_features=1.0` | StandardScaler → RandomForestRegressor；继承冻结 seed，`n_jobs=1` |
+
+目录由 `focused_methods.model_method_capability`／`registered_model_params` 定义，`candidate_method_capability` 按显式候选版本分派；未登记参数明确拒绝，不把旧 Ridge alpha=10 静默转换为新起点。目标入口新 profile 从登记 Ridge 起步，受支持 supplied start 可使用登记 RF。保留 Scaler 是本版执行合同，不是宣称 RF 必须标准化或必然改善。
+
+原编译器从指定已接受、已完成的完整 control 复制方法，模型轴只替换登记 estimator；特征轴保留窗口与模型，窗口轴保留全部特征与模型。差成绩或未推荐 control 仍可用于有理由的条件研究，同批未来候选不得引用。生成特征含继承最多两条；expanding／rolling504／rolling756、uniform、内置组、处理顺序与预算保持冻结。504／756 是有限支持域，不是最佳窗口结论。
+
+实际模型、Scaler 与训练侧统计均用每折成熟合格 eligible 行按窗口选出的 selected 行；合法历史仍可参与确定性滚动特征构造，公共 comparison/calibration scope 和完整评价目标不随候选改变。每折一次 fit；运行入口核对真实 estimator 参数、列序与训练回执。新 profile 的完整方法和 seed 进入方法缓存身份，观察的 control、方向、分母与形成时点仍单独保存。V5 的 `actual_changed_axes`／`axis_change_type` 只是原字段 diff 的投影，不改变旧 `change_type` 或授予执行权限。
+
+显式 refit 继承最终模型、完整特征与窗口，在明确 training_asof 下选择成熟训练行并保留同一流水线；可信包核对版本、编译源码、参数及回执，无标签推理不隐式重训。旧包仍需匹配运行时，不改 hash 或重训替代旧 B。
+
+联合验收尚在执行；截至本节写入，本轮外部 HTTP=0，当前免费保护待确认。真实 LLM、研究选择价值、独立金融预测、真人 G6 均不得从工程实现推定通过。实际收据只在 [Current](CURRENT_IMPLEMENTATION.md) 与[原 ER](EVIDENCE_RESEARCH_LOOP.md)更新；裁剪、权重、HPO、其它模型和任意代码未随本轮开放。
+
 ## 2026-10-30 真实研究闭环收口：最终实际结果
 
 实际状态唯一入口为[Current](CURRENT_IMPLEMENTATION.md)与原[ER](EVIDENCE_RESEARCH_LOOP.md)：A=PASS_BOUNDED，B=NO-GO，C/D未验，E/G6开放。本批已到6版本硬上限，真实调用封存；不能凭旧余额继续。精确源码/命令/exit、1205回归节点与6条独立串行浏览器、原始失败及7次HTTP账见`.research-closeout-20261030/final-report4/REPORT.html`及同目录FINAL_REPORT.json。工程限定通过不代表真实研究闭环、金融或真人验收通过；下方旧日期状态保留为历史。

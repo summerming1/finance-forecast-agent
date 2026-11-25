@@ -1,5 +1,49 @@
 # AGENTS.md — Finance Forecast Agent development contract
 
+11 月 19 日独立批次已在第 21 次 HTTP 发生投递未知后封存，历史累计 270。旧批次与本批分别保留原件。本地修补继续使用现有 ER 与验收入口，封存批不接受追加请求。工程及真实状态以 [Current](docs/CURRENT_IMPLEMENTATION.md) 为准。
+
+## 11 月 19 日独立新批
+
+用户在获知此前投递未知后批准独立新批，在同一天的免费硬保护、原资源和停止条件下运行。实际授权、模型与累计账保存在 `.decision-next-20261119`。已封存的 `.decision-loop-20261119` 不再投递。独立批首版的父研究、六题和配对已有真实原答，实际结论见 [Current](docs/CURRENT_IMPLEMENTATION.md)，后续修补及同源验收沿用 [ER](docs/EVIDENCE_RESEARCH_LOOP.md)。
+
+## 2026-11-19 第二版真实结果及离线修补
+
+`.decision-loop-20261119` 的两版合计 18 次 HTTP，第二版最后一次投递未知，整批封存。原始结果见 [Current](docs/CURRENT_IMPLEMENTATION.md)。后续本地任务复现父研究第二轮容量、冻结操作还原、部分执行取证及科学判断问题，按 [ER](docs/EVIDENCE_RESEARCH_LOOP.md) 检查。旧批不接受任何追加投递。新的隔离批次须有适用的专门授权、当日免费保护及独立登记。
+
+## 2026-11-19 连续修补与真实决策验收
+
+用户已授权基于实际失败进行对抗审查、修改并在冻结新版本上继续验收。唯一合同为 [ER 本轮条款](docs/EVIDENCE_RESEARCH_LOOP.md)。新批次 `.decision-loop-20261119` 复用三款模型的当日免费用尽即停确认、白名单合成材料、单向顺延和原安全停止条件。每一版独立保留真实失败、工程收据与行为判定；同一累计账核对所有版本。已封存批次保持原状。通过、停止与未验项只从 [Current](docs/CURRENT_IMPLEMENTATION.md) 读取。
+
+## 2026-11-19 反证与实验选择新批次
+
+用户批准按复审稿实施并验收。执行唯一合同见 [ER 首节](docs/EVIDENCE_RESEARCH_LOOP.md)，新会话为 `.counter-evidence-20261119`，一版、12 次逻辑／14 实际 HTTP、最多 65 次 Live fit。11 月 19 日免费保护已有当日用户确认；旧批保留封存。请从 [Current](docs/CURRENT_IMPLEMENTATION.md) 读取实际工程与真实行为结论。
+
+## 2026-11-19 当前反证决策增量
+
+本轮实施按 [ER 的 11 月 19 日条款](docs/EVIDENCE_RESEARCH_LOOP.md) 执行。新隔离目录为 `.core-decision-20261119`。免费保护当日已由用户确认，新批次限制为两版本、32 实际 HTTP、5,760 秒、130 charged fit，沿用原全局停止规则。历史批次保持封存。真实原答、运行与最终判定以 [Current](docs/CURRENT_IMPLEMENTATION.md) 及本轮证据为准。科学判断、停止、未决事项和正式推荐各按原职责处理。
+
+
+## 2026-11-17 真实联合验收结果指针
+
+当前结果见Current/原ER及 `docs/validation/core_research_20261117_delivery.json`：工程1320通过/2平台跳过、7串行浏览器通过；B仍NO-GO。免费保护已获用户本日确认，不再写当前待确认；旧日期状态为历史。3版本23HTTP后SSLError未知投递，整批封存，不续剩余25HTTP/第4版本。未完成真实研究闭环，不能签研究试用准入。保持既有核心收口→真实行为验收→所有者复核/小范围试用方向；本指针不改变范围、里程碑或后续权限。
+
+
+## 2026-11-17 当前免费保护已确认，继续原联合验收
+
+用户在本对话确认 qwen4-max、kimi-k3、kimi-k3.1-pro 均已开启免费额度用尽即停（回答原禁止转付费确认问题）。沿11月16日同一隔离批次、名单顺序与四版本/48HTTP等共同上限继续，不续旧余额、不新增范围；原未调用状态为历史。确认原文见 `.core-research-20261116/FREE_PROTECTION_CONFIRMED_20261117.json`。修正验收guard把确认日写死构建日的缺陷，使用北京时间当前日期核验，旧日/未来/缺失仍拒绝。实际结果待本轮原答与收据，不能提前标通过。
+
+## 2026-11-16 实际工程收口：Live尚未开始
+
+Current/原ER是实际状态与唯一合同入口。最终源码map `82f71f4fcf0c86c794adb21e264f4bb2f54dcaa9a6161b8ab676767ede91a847` 的1307节点为1305通过/2原平台跳过，七条串行Chromium通过，精确exit/源码/依赖/输入见 `docs/validation/core_research_20261116_delivery.json`。A=PASS_BOUNDED；B=NOT_RUN（当前新三模型免费保护待确认，实际上游HTTP0，Live源版本0）；C/D未验，E/G6保持已尝试待本人复核。整体联合验收不签通过。
+
+本轮工程已完成窗口/生成特征/登记RF三工具；后续先做原授权有界真实行为验收，不重启已完成工程或续旧封存余额。`final-freeze5`只是工程快照编号，不是第5次Live。下一真实调用需当前免费保护确认，不能自签；原四版本/48HTTP等共同上限仍为agent保守封顶，未来能力不自动施工。代码工作区未提交/推送，原A/B/hash/47目标负确认保持。
+
+
+## 2026-11-16 当前批准增量（优先于下方历史范围）
+
+用户已批准核心闭环收口与固定RF三工具联合验收，唯一增量合同见[ER本日节](docs/EVIDENCE_RESEARCH_LOOP.md)。新profile允许features/window/model单轴、固定Ridge/RF及完整StandardScaler，不新增claim_scope或因果平台；旧两轴及所有历史hash/失败不迁移。真实LLM名单仅qwen4-max -> kimi-k3 -> kimi-k3.1-pro，允许确认输出/配置不适配换模，禁止拼金融赢家。新隔离会话.core-research-20261116，免费硬保护待本轮确认，确认前HTTP0，工程继续；最多4冻结功能候选/48HTTP/8640秒/4096token/180秒/一次attempt，每Campaign32总fit、每源码1Live refit、Live总fit195共同受限。这些数字为agent保守上限，不是旧预算续用。无付费/原A/B/真实行情外发/封存标签/push/CI。实际完成只见Current；下文10月30日及更早是历史。
+
+
 ## 2026-10-30 真实研究闭环收口：最终实际结果
 
 实际状态唯一入口为[Current](docs/CURRENT_IMPLEMENTATION.md)与原[ER](docs/EVIDENCE_RESEARCH_LOOP.md)：A=PASS_BOUNDED，B=NO-GO，C/D未验，E/G6开放。本批已到6版本硬上限，真实调用封存；不能凭旧余额继续。精确源码/命令/exit、1205回归节点与6条独立串行浏览器、原始失败及7次HTTP账见`.research-closeout-20261030/final-report4/REPORT.html`及同目录FINAL_REPORT.json。工程限定通过不代表真实研究闭环、金融或真人验收通过；下方旧日期状态保留为历史。

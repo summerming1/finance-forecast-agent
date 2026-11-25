@@ -7,6 +7,7 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
+from .evidence_output_contract import advisor_response_wire
 from .focused_identity import canonical_json, identity
 from .focused_state import atomic_json
 from .task_queue import LocalTaskQueue, TaskRecord
@@ -18,10 +19,16 @@ def validate_advisor_wire_options(options: dict) -> None:
     Missing/None retains the historical wire and never changes a frozen request.
     A new wire cannot silently opt an old profile into new response semantics.
     """
-    wire = options.get('advisor_wire_version')
-    if wire is not None and (wire not in {'evidence_decision_v2', 'evidence_decision_v3'}
+    wire = advisor_response_wire(options.get('advisor_wire_version'))
+    if wire in {'evidence_decision_v4', 'evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}:
+        strategy = options.get('feature_strategy') or {}
+        if (options.get('change_scope') != 'feature_window_model' or not isinstance(strategy, dict)
+                or strategy.get('arm', 'adaptive_batch') != 'adaptive_batch'
+                or strategy.get('decision_support', 'J') != 'J' or strategy.get('feedback_support') == 'reference'):
+            raise ValueError('Revision wire requires three-axis adaptive evidence research')
+    if wire is not None and (wire not in {'evidence_decision_v2', 'evidence_decision_v3', 'evidence_decision_v4', 'evidence_decision_v5', 'evidence_decision_v6', 'evidence_decision_v7'}
             or options.get('research_protocol_id') != 'evidence_research_v1'
-            or options.get('change_scope') != 'feature_window'):
+            or options.get('change_scope') not in {'feature_window','feature_window_model'}):
         raise ValueError('Unsupported advisor wire/protocol/profile pair')
 
 

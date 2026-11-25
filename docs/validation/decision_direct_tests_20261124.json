@@ -1,0 +1,222 @@
+{
+  "source": "20f1a6949bdd62255024e319db2fc0c66d15b0fabe87fa691ce0cf3e087301b3",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "date": "2026-11-24",
+  "same_source_engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1628,
+        "skipped": 2
+      },
+      "path": ".decision-direct-tests-20261124\\dt3\\regression\\END.json",
+      "sha256": "5dfdc2977ade8449f25bf090316270096e04b0a7c4363d5da53183da55a8453c",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-direct-tests-20261124\\dt3\\browser\\END.json",
+      "sha256": "e7114216aa9d517c72a59a28e774de7caafe4ab4589e2b9d30ed3e35b8b79084",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "calls": [
+    {
+      "number": 1,
+      "case": "parent",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "4b22133b9889356a9f0e4c456240ec815e7095fe6b94e0b7898ff5cc93f7e542"
+    },
+    {
+      "number": 2,
+      "case": "case-retest-2026112400",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "737553b18a6f2d712801aa0d6a43bf1e63c4527c32ea5e9904afbcf80a38c677"
+    },
+    {
+      "number": 3,
+      "case": "case-retest-2026112401",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "a98921128512c5c20bf1dd511c13612fcab415ffd31c53ccdd57bab67c1e60ba"
+    },
+    {
+      "number": 4,
+      "case": "case-862751",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "e4f8ee5ac746c659dd651626785f6536b63db28ef48cc4c8a402d5096068b441"
+    },
+    {
+      "number": 5,
+      "case": "case-retest-2026112403",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "3c1262a07fa2d370268f2aa63d388f0c80583eabe37867ea775c67429e5c8692"
+    },
+    {
+      "number": 6,
+      "case": "case-retest-2026112404",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "1352b6babf43076199df5a7d069dbc66bfd8bb9abd882341254f5ccbcd572648"
+    },
+    {
+      "number": 7,
+      "case": "case-retest-2026112405",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "c4066561c6e494caa7cc4bb52d39a0827ad8baf039dd0d5e668c72a6e9a3bf01"
+    },
+    {
+      "number": 8,
+      "case": "case-8f7b1001c1063cbe1e71",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "632d4fca6da11811143fd7a91903f13b5d94f70dbf2501bb52eb13413ba5e3d7"
+    },
+    {
+      "number": 9,
+      "case": "case-4579e764721396c181a6",
+      "model": "qwen4-max",
+      "state": "response_received",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "raw_envelope_sha256": "e1ba7be295f3cdcafbd6aa52348f4e47640d709984fe10e62ba393e6a0e4b619"
+    }
+  ],
+  "prior_batch_http": 9,
+  "this_batch_http": 9,
+  "cumulative_http": 387,
+  "charged_fit": 16,
+  "stop_reason": null,
+  "unattempted": [],
+  "worker": [
+    {
+      "role": "parent",
+      "campaign_id": "persistent-e934213463d464a9add12f0d",
+      "execution_status": "partial",
+      "fit_calls": 16,
+      "stop_reason": "proposal_invalid",
+      "task_status": "completed"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "case-retest-2026112400",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-retest-2026112401",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "cited result requires an assessment or explicit deferral for its original hypothesis version"
+    },
+    {
+      "case_id": "case-862751",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-retest-2026112403",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "A1: @h1 requires assessment or explicit deferral for F1"
+    },
+    {
+      "case_id": "case-retest-2026112404",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "delivery": "model_text_received",
+      "error": null
+    },
+    {
+      "case_id": "case-retest-2026112405",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "cited result requires an assessment or explicit deferral for its original hypothesis version"
+    },
+    {
+      "case_id": "case-8f7b1001c1063cbe1e71",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "grouped response field $.hypothesis_updates.0: oneOf"
+    },
+    {
+      "case_id": "case-4579e764721396c181a6",
+      "status": "failed_or_invalid",
+      "delivery": "model_text_received",
+      "error": "A1: @h1 requires assessment or explicit deferral for F2"
+    }
+  ],
+  "review": {
+    "engineering": "PASS_BOUNDED",
+    "real_decision": "NO_GO",
+    "parent": "16起点及固定对照fit，0研究候选。A1仅检验@h1，选择E8[F2]，却只评F1/F4/F5；原子拒绝。诊断槽未执行。",
+    "cases": [
+      "高相关题严格通过。区分描述性相关与开发损失，用单轴删项测效果。",
+      "删除后变差题原答识别总体恶化和反向折，却只评修订版本，遗漏结果针对原命题的办理；分组差也不能唯一确认机制。",
+      "删后改善题严格通过，承认有限开发比较，保留机制未决。",
+      "非线性题识别已知平方构造，但给旧H1办理F1，所测新版@h1缺F1。",
+      "单折题严格通过并保留其余折未知；把未来消融改善写成支持因果部分过强，不能算全面科学通过。",
+      "内置特征题未越权删除，选模型轴及诊断；遗漏针对原版本的结果办理。"
+    ],
+    "pair": "两侧均返回完整原答；总体方向、反向折使判断相应变化，但两侧均被拒。恶化侧把新别名@h1/@h2放到旧版本键位置；改善侧给旧H1评F2但直接检验的新版本@h1缺F2。分组可定位，不能单独识别去冗余与收缩机制。",
+    "strict_cases": "3/6",
+    "strict_pair": "0/2",
+    "live_feedback_child_refit_inference": "NOT_REACHED",
+    "research_selection_value": "NOT_RUN",
+    "financial_prediction": "NOT_RUN",
+    "G6": "已尝试，待所有者复核",
+    "prior_failures": [
+      "离线压力初版64038字符超上限，删减重复指导后冻结样本63988。",
+      "早期定向 worker 在隔离环境等待 Provider/ConnectionError；后续最终冻结源码上的本机回环 worker 通过。",
+      "dt1启动参数含不存在的输入，未进入验收；dt2导入排序静态检查exit1，dt3修正后重新冻结运行。"
+    ]
+  },
+  "process_exit": {
+    "exit": 0,
+    "seconds": 258.2193872999633
+  },
+  "artifacts": {
+    ".decision-direct-tests-20261124\\dt3\\END.json": "2f64788c0e3604d60065932712298133ccdc3f28b2ebdf1f53ccd0ff3b413e99",
+    ".decision-direct-tests-20261124\\bindings-check.json": "ddeb511f7b8c23cdfa07d09ad69c61f91aaaa36e3e0939729fd1d47d6c4870d5",
+    ".decision-direct-tests-20261124\\replay-last.json": "2941cad8515cb623c6cc74a7ef5e0566148f1bd2e10263453e7b727564ebc86e",
+    ".decision-direct-tests-20261124\\replay.json": "ac438abf694fb91dd27d78d292d01f5744fcefc711dd67ec48d1dff0a2f8f773",
+    ".decision-direct-tests-20261124\\OWNER.json": "79097f271b539876d4658a32f562d995301e4e2e25a5be970fe16393c678ee3e",
+    ".decision-direct-tests-20261124\\trial.py": "ee347e4d47eb01de5ebc382834a24f594d23c647caa011b224487ad38a0796d5",
+    ".decision-direct-tests-20261124\\renew_materials.py": "3f5d1d99f020fe8437db5707cd8f1901bdfff8bf520ee3125d1c11bb4313aacf",
+    ".decision-direct-tests-20261124\\AUTHORIZATION.json": "c7c719bfc6228d89f884060ab864843ef956d64a1f05fe0958d4d91e01645a91",
+    ".decision-direct-tests-20261124\\PREFLIGHT-v1.json": "3e85c19e315d0c39314ceeed4d4d1221ad0e666fdb0e90c3515513a5c3743970",
+    ".decision-direct-tests-20261124\\PAIR-v1.json": "8bbc7887570cf87dfb18b85c7a13a9aba497ecf0f28d959bd20d012cb4255e7f",
+    ".decision-direct-tests-20261124\\v1\\OUTCOME.json": "12dba2c96ee850bcab21b9c563b08a0d9cd63995478031d3d5b4fafacd42e522",
+    ".decision-direct-tests-20261124\\v1\\MATCHED_PAIR.json": "a07fb3e7611b3753d1705ceaf4745ee8187023e4a9543aaa39efcaccfb806794",
+    ".decision-direct-tests-20261124\\SESSION_LEDGER.json": "2b162dc712a14cc48521bdc5c521b9cff209c0ac5cf9441f14c3628148b3c817",
+    ".decision-direct-tests-20261124\\SESSION_SEAL.json": "88ba377a1b17293a20e51c9231af33f2ac99eb88c436d9797319d4eb1b490c4f",
+    ".decision-direct-tests-20261124\\live.exit.json": "2a711796766158eb429d474c4762e6cf730176cd43f1ae728f87bd58fcb3bbb9",
+    ".decision-direct-tests-20261124\\behavior-review.json": "efe915cc4e32233dfbe3766a1014273a04fab96eb159fa2fc53cf2e8d48d185b"
+  }
+}

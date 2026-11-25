@@ -14,6 +14,8 @@ from .focused_identity import identity
 
 METHOD_SCHEMA = 'focused_candidate_v4'
 METHOD_SCOPE = 'feature_window'
+MODEL_METHOD_SCHEMA = 'focused_candidate_v5'
+MODEL_METHOD_SCOPE = 'feature_window_model'
 
 
 def method_capability():
@@ -22,6 +24,36 @@ def method_capability():
         'fit_frequency':'once_per_development_fold','update_text_budget':1200,
         'update_field_chars':240,'update_items':2,'update_refs':4}
     return {**body,'profile_hash':identity(body,domain='method-capability-v1')}
+
+
+def model_method_capability():
+    """A finite estimator replacement package; old two-axis capability is unchanged."""
+    body={**{k:v for k,v in method_capability().items() if k!='profile_hash'},
+        'profile_id':'spy_feature_window_model_v1','axes':['features','training_window','model'],
+        'preprocessing':['StandardScaler'],
+        'models':{'ridge_regression':{'alpha':1.0},
+            'random_forest_regressor':{'n_estimators':80,'max_depth':4,
+                'min_samples_leaf':5,'max_features':1.0}},
+        'rf_n_jobs':1,'seed_policy':'inherit_campaign_seed'}
+    return {**body,'profile_hash':identity(body,domain='model-method-capability-v1')}
+
+
+def candidate_method_capability(candidate):
+    schema=candidate.get('schema_version') if isinstance(candidate,dict) else candidate.schema_version
+    return model_method_capability() if schema==MODEL_METHOD_SCHEMA else method_capability()
+
+
+def registered_model_params(family):
+    """Return one fixed configuration, never an implicit fallback or parameter search."""
+    models=model_method_capability()['models']
+    if family not in models:raise ValueError('unsupported registered research model')
+    return deepcopy(models[family])
+
+
+def validate_registered_model(family,params):
+    from .focused_research import effective_model_params
+    if effective_model_params(family,params)!=registered_model_params(family):
+        raise ValueError('model research requires the exact registered effective parameters')
 
 
 @dataclass(frozen=True)
@@ -161,7 +193,7 @@ def training_scopes(frame,policy,splits):
     return out
 
 
-def fit_method(model,x,y,scope,columns,*,expected_family=None):
+def fit_method(model,x,y,scope,columns,*,expected_family=None,model_research=False,expected_seed=None):
     """Capture the actual DataFrame entering trusted fit, then verify consumption."""
     import pandas as pd
     from sklearn.linear_model import Ridge
@@ -174,6 +206,31 @@ def fit_method(model,x,y,scope,columns,*,expected_family=None):
             or list(model.named_steps)!=['standardscaler','ridge']
             or not isinstance(model.named_steps['ridge'],Ridge)):
         raise ValueError('method profile requires the frozen StandardScaler + Ridge algorithm')
+    if model_research:
+        from sklearn.ensemble import RandomForestRegressor
+        expected_step='ridge' if expected_family=='ridge_regression' else 'randomforestregressor'
+        if (expected_family not in model_method_capability()['models']
+                or not isinstance(scaler,StandardScaler)
+                or scaler.get_params()!=StandardScaler().get_params()
+                or list(getattr(model,'named_steps',{}))!=['standardscaler',expected_step]):
+            raise ValueError('registered model research must retain the StandardScaler pipeline')
+        estimator=model.named_steps[expected_step]
+        if ((expected_family=='ridge_regression' and not isinstance(estimator,Ridge))
+                or (expected_family=='random_forest_regressor' and not isinstance(estimator,RandomForestRegressor))):
+            raise ValueError('actual estimator differs from the registered family')
+        actual=estimator.get_params(deep=False)
+        if any(actual[k]!=v for k,v in registered_model_params(expected_family).items()):
+            raise ValueError('actual estimator differs from the registered parameters')
+        if expected_family=='random_forest_regressor':
+            if (isinstance(expected_seed,bool) or not isinstance(expected_seed,int)
+                    or not 0<=expected_seed<=2**32-1):
+                raise ValueError('actual registered RF fit requires its declared seed')
+            expected=RandomForestRegressor(random_state=expected_seed,n_jobs=1,
+                **registered_model_params(expected_family)).get_params(deep=False)
+        else:
+            expected=Ridge(**registered_model_params(expected_family)).get_params(deep=False)
+        if actual!=expected:
+            raise ValueError('actual estimator settings differ from the frozen registered algorithm')
     selected=np.asarray(scope['selected_train'],dtype=int)
     data=pd.DataFrame(x[selected].copy(),index=selected,columns=columns)
     actual_rows=data.index.to_list();actual_columns=data.columns.to_list()
@@ -187,6 +244,8 @@ def fit_method(model,x,y,scope,columns,*,expected_family=None):
         'effective_params':_effective_estimator_params(model),
         'preprocessing':None if scaler is None else {'algorithm':'StandardScaler','params':scaler.get_params()},
         'input_matrix_hash':identity(data.to_numpy().tolist(),domain='actual-method-fit-matrix-v1')}
+    if model_research:
+        receipt['actual_estimator_params']=deepcopy(actual)
     if scaler is not None:
         if (int(scaler.n_samples_seen_)!=len(actual_rows) or
                 not np.allclose(scaler.mean_,np.mean(data.to_numpy(),axis=0),rtol=1e-12,atol=1e-15)):
@@ -303,7 +362,7 @@ def project_method_references(prompt):
 
 def restore_method_references(prompt):
     """Inspectable inverse for audit/tests; no new numeric/state authority."""
-    if prompt.get('evidence_context_refs'):
+    if 'decision_context_tables' in prompt or prompt.get('evidence_context_refs'):
         from .research_state import restore_evidence_references
         prompt=restore_evidence_references(prompt)
     body=deepcopy(prompt);refs=body.pop('method_context_refs',None)
@@ -334,7 +393,7 @@ def restore_method_references(prompt):
 def project_method_prompt(prompt,feedback_support):
     """Extend the original bounded projection; facts are not a second store."""
     from .focused_diagnostics import default_design
-    prompt['method_policy']={**method_capability(),'feedback_support':feedback_support}
+    prompt['method_policy']={**candidate_method_capability(prompt['fixed_model']),'feedback_support':feedback_support}
     prompt['proposal_contract_version']='method_research_advice_v1'
     if 'improve' in prompt.get('action_contracts',{}):
         prompt['action_contracts']['improve']='Complete accepted control; declare features with full feature_program OR training_window with training_policy, inheriting the other axis.'
@@ -352,6 +411,11 @@ def project_method_prompt(prompt,feedback_support):
         'Update is semantic, never numeric/causal authority. <=2 items, <=4 refs/item, text<=240 chars/field, all strings<=1200. '
         'assessment=local_support|expectation_not_supported|not_distinguished|unchanged|execution_incomplete. No third call.')
     ]
+    if prompt['method_policy']['profile_id']=='spy_feature_window_model_v1':
+        prompt['allowed_models']=sorted(prompt['method_policy']['models'])
+        prompt['rules']=[r for r in prompt['rules'] if not r.startswith('METHOD:')]
+        prompt['rules'].append('METHOD: copy one accepted complete control and change exactly one of features, training_window, model. Model replacement selects one registered family with its fixed parameters; retain StandardScaler, seed, builtin groups, feature_program, training_policy and uniform weights. Feature/window changes retain the actual parent model. No joint changes, HPO, new preprocessing or hidden model proxy.')
+        prompt['action_contracts']['improve']='One accepted complete control; declare features, training_window OR model. model_family selects its fixed registered configuration; inherit every other component.'
     first=deepcopy(prompt['response_schema']['hypotheses'][0])
     first.update(declared_axis='features',control_candidate_id=prompt['research_start_candidate_id'])
     if 'research_design' not in first:first['research_design']=default_design('RCP-01')

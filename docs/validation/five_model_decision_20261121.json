@@ -1,0 +1,247 @@
+{
+  "source_identity": "6658e76cb44c5fe39482368b2a124db4f33b9e934b7590e26b8d7ac3e711b01d",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "test_models": [
+    "qwen4-max",
+    "qwen3.8-flash",
+    "kimi-k3.1-pro",
+    "qwen3.8-max-0902",
+    "deepseek-v4.1-flash-1017"
+  ],
+  "switch": "explicit_free_quota_only",
+  "thinking": false,
+  "source_dependencies_inputs_matched": true,
+  "entry_exit": {
+    "exit": 0,
+    "seconds": 347.3000022000051
+  },
+  "history": 320,
+  "new_http": 9,
+  "cumulative": 329,
+  "calls_by_model": {
+    "qwen4-max": 9
+  },
+  "calls": [
+    {
+      "number": 1,
+      "model": "qwen4-max",
+      "case": "parent",
+      "http_status": 200,
+      "state": "response_received",
+      "finish_reason": "stop",
+      "thinking_observed": false
+    },
+    {
+      "number": 2,
+      "model": "qwen4-max",
+      "case": "case-2026112100",
+      "http_status": 200,
+      "state": "response_received",
+      "finish_reason": "stop",
+      "thinking_observed": false
+    },
+    {
+      "number": 3,
+      "model": "qwen4-max",
+      "case": "case-593024",
+      "http_status": 200,
+      "state": "response_received",
+      "finish_reason": "stop",
+      "thinking_observed": false
+    },
+    {
+      "number": 4,
+      "model": "qwen4-max",
+      "case": "case-862751",
+      "http_status": 200,
+      "state": "response_received",
+      "finish_reason": "stop",
+      "thinking_observed": false
+    },
+    {
+      "number": 5,
+      "model": "qwen4-max",
+      "case": "case-318406",
+      "http_status": 200,
+      "state": "response_received",
+      "finish_reason": "stop",
+      "thinking_observed": false
+    },
+    {
+      "number": 6,
+      "model": "qwen4-max",
+      "case": "case-2026112104",
+      "http_status": 200,
+      "state": "response_received",
+      "finish_reason": "stop",
+      "thinking_observed": false
+    },
+    {
+      "number": 7,
+      "model": "qwen4-max",
+      "case": "case-2026112105",
+      "http_status": 200,
+      "state": "response_received",
+      "finish_reason": "stop",
+      "thinking_observed": false
+    },
+    {
+      "number": 8,
+      "model": "qwen4-max",
+      "case": "case-da3d50f3a0c891306ca6",
+      "http_status": 200,
+      "state": "response_received",
+      "finish_reason": "stop",
+      "thinking_observed": false
+    },
+    {
+      "number": 9,
+      "model": "qwen4-max",
+      "case": "case-1f8b2b120894e3c29db2",
+      "http_status": 200,
+      "state": "response_received",
+      "finish_reason": "stop",
+      "thinking_observed": false
+    }
+  ],
+  "trajectory": {
+    "actual_research_candidates": 0,
+    "records": [
+      {
+        "actual_research_training": [],
+        "campaign_id": "persistent-6365b2bb3fb92a632be5e944",
+        "execution_status": "partial",
+        "fit_calls": 16,
+        "package": {
+          "additional_fit": 0,
+          "additional_http": 0,
+          "members": 32,
+          "path": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-x77kq73z\\project\\focused_campaigns\\persistent-6365b2bb3fb92a632be5e944\\research_package\\persistent-6365b2bb3fb92a632be5e944.research-package.zip",
+          "read_only_campaign_unchanged": true,
+          "sha256": "1653ed36bc074b5cad24888193ea5477e5b5ec481709e1696cd1da1a397300c8"
+        },
+        "proposal_error": {
+          "error_category": "invalid_output",
+          "operation": "",
+          "phase": "proposal_validation",
+          "reason": "incomplete_or_invalid_json",
+          "retryable": false,
+          "usage_known": true
+        },
+        "role": "parent",
+        "root": "C:\\Users\\13716\\AppData\\Local\\Temp\\ffrenew-x77kq73z\\project\\focused_campaigns\\persistent-6365b2bb3fb92a632be5e944",
+        "stop_reason": "proposal_invalid",
+        "task_status": "completed"
+      }
+    ],
+    "viable_not_semantic_pass": false
+  },
+  "semantic_results": [
+    {
+      "case_id": "case-2026112100",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.actions.0.tests: oneOf",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-593024",
+      "status": "failed_or_invalid",
+      "error": "cited result requires an assessment or explicit deferral for its original hypothesis version",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-862751",
+      "status": "failed_or_invalid",
+      "error": "invalid_output",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-318406",
+      "status": "failed_or_invalid",
+      "error": "action judgment requires an existing row for a tested hypothesis",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112104",
+      "status": "failed_or_invalid",
+      "error": "action judgment requires an existing row for a tested hypothesis",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-2026112105",
+      "status": "failed_or_invalid",
+      "error": "grouped response field $.hypothesis_updates.0: oneOf",
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-da3d50f3a0c891306ca6",
+      "status": "strictly_valid_REQUIRES_SEMANTIC_REVIEW",
+      "error": null,
+      "delivery": "model_text_received"
+    },
+    {
+      "case_id": "case-1f8b2b120894e3c29db2",
+      "status": "failed_or_invalid",
+      "error": "action judgment requires an existing row for a tested hypothesis",
+      "delivery": "model_text_received"
+    }
+  ],
+  "unattempted": [],
+  "guard_stop_reason": null,
+  "charged_fit": 16,
+  "batch_files": {
+    ".decision-five-live-20261121/OWNER.json": "1b3c61c60899ea004e5b0bc07d0aabaa3f4ff80ebac4a691052eded68b84c87f",
+    ".decision-five-live-20261121/PAIR-v1.json": "20c5637c10d6731c73b8d6b8a37942fbc54c2c7b67d1da10c19cae40582edb26",
+    ".decision-five-live-20261121/PREFLIGHT-v1.json": "76ea664eba9ee0458db6b57c7a89351a802f382903098893db7fbf00cac067ab",
+    ".decision-five-live-20261121/AUTHORIZATION.json": "49ecb7b72ae9ba84e92b8f95eb1e7b4c31b9f0ab3c6c82e6f745376f7900be80",
+    ".decision-five-live-20261121/SESSION_LEDGER.json": "f1d280ea2fc91da10d100fa4a6e11364077f6e745139b31aedcdaa293228308d",
+    ".decision-five-live-20261121/SESSION_SEAL.json": "150c4a06cdecb2c40785fb3a6a641cad73f52e407016243070526f57abd6610e",
+    ".decision-five-live-20261121/live.argv.json": "d259e7bcd4eac699e7a74cc8cbf167e37ce67f43245a9d9cd0b6f0115dfb34a2",
+    ".decision-five-live-20261121/live.exit.json": "a81fad51657ab8cc37754887adef2a23c66c8ebf88480a9264367f4287c7867b",
+    ".decision-five-live-20261121/v1/FROZEN_PROVIDER.json": "77f4bab6481945cf242aa274e7c921bbaa7874cfedd46c6bc4c1b7660bfec9aa",
+    ".decision-five-live-20261121/v1/VERSION_END.json": "714e7f3836af49ed65d27b980fbbb71081503f0078c239c3c352d440971d2bfd",
+    ".decision-five-live-20261121/v1/OUTCOME.json": "7a4c7a14c4d50e784cfd4fef2c4498c6bdb8a117a2439317d8c87232878c0094",
+    ".decision-five-live-20261121/v1/MATCHED_PAIR.json": "81882aadc99699ef4bf4fb9ba7d116bc18ee6b52d4816ed518f86cf425e50a86",
+    ".decision-five-live-20261121/v1/HTTP_LEDGER.json": "de486426218c9bcff5b024564e3433bce35ee910edf6b6d0d5698a5207a1bee9",
+    ".decision-five-live-20261121/v1/semantic-results.json": "4de2651034d23a4f3eab41aafbbccd58b7b2279d7d971728bfb25cda1c1c3bdb",
+    ".decision-five-live-20261121/v1/call-01.raw-envelope.json": "9032c1057aa07fac53a37300b83878f6949ff2c0d77d6d7b7208db47e8891df5",
+    ".decision-five-live-20261121/v1/call-01.prompt.json": "755da14db4d0fef670e9a47bf7f4416b5d98adcfe09e0009ecc6254aa9b9c0b1",
+    ".decision-five-live-20261121/v1/call-02.raw-envelope.json": "2e368b7b7a171ef280af1c6406f43eadda22309a612a3a64d31b96c6c87941a5",
+    ".decision-five-live-20261121/v1/call-02.prompt.json": "bffd21f02a21fd2c503dade14f1672bd5e5b19808e703884308e87509f49b106",
+    ".decision-five-live-20261121/v1/call-03.raw-envelope.json": "c01366529f05344d572c02657350424ea1203b0abb618315014b002bfb15cf19",
+    ".decision-five-live-20261121/v1/call-03.prompt.json": "b384842030f09d148c1902fbe07396c75ba9dcccd75b13b95df85f977ca786bf",
+    ".decision-five-live-20261121/v1/call-04.raw-envelope.json": "c1589c9b5bc0b46836c8923f9b6068dab6858efbc53ea1e0afc83ccdd2a5f290",
+    ".decision-five-live-20261121/v1/call-04.prompt.json": "83ea74e8071d275c6f71ae638dadd6f5df7d3735cb0627cc436f2f8836e5ce9c",
+    ".decision-five-live-20261121/v1/call-05.raw-envelope.json": "29ccd7457a0974070adb6c06fd72a29b253fab7d64cbdaf7772967dd77942a99",
+    ".decision-five-live-20261121/v1/call-05.prompt.json": "7f83e758b0591296916193d81eff8837ac0d4316827b948a87cef02f0e108109",
+    ".decision-five-live-20261121/v1/call-06.raw-envelope.json": "58b040ec050c6e281c92ee1ff528bca18042879e6b71867809be4b193415d0ff",
+    ".decision-five-live-20261121/v1/call-06.prompt.json": "3008d940539c676720abdcd158a2029ec2aca6eeffcbb89618a1c0aa1da781f6",
+    ".decision-five-live-20261121/v1/call-07.raw-envelope.json": "7c3cd62506f82355ff772a1b2e7a67c3fe6861b7397172b20355438bd01e0392",
+    ".decision-five-live-20261121/v1/call-07.prompt.json": "4967ce50252e2b06f23be7e4831bcaccc9f1dd8e9bca2dea659dd34707a14acb",
+    ".decision-five-live-20261121/v1/call-08.raw-envelope.json": "614842391519e2f8e5a5d258417ed5f372cf8b7fb5d13335f381e925bc5a51ed",
+    ".decision-five-live-20261121/v1/call-08.prompt.json": "e517738ff8c7de8632fa74cbe5ff84e6244e26082bedf5773e8714255fe1889a",
+    ".decision-five-live-20261121/v1/call-09.raw-envelope.json": "a2865e41bead552174209d7ccb450b33d9a3df19b48f610d471104f6739d8a2d",
+    ".decision-five-live-20261121/v1/call-09.prompt.json": "437c647def54c5d5edd2e05d4e15f89c926c5382cb8f6ae27b5c353723a5ff59"
+  },
+  "review": {
+    "real_decision_acceptance": "NO-GO",
+    "dev_strict": [
+      0,
+      6
+    ],
+    "paired_strict": [
+      1,
+      2
+    ],
+    "accepted_pair_member": "negative window effect read correctly; choice_reason reverses subject/reference and suggests paired loss across two windows can directly measure the unchanged generated feature contribution. Semantic criterion failed.",
+    "pair_formal_comparison": "incomplete",
+    "actual_research_candidates": 0,
+    "child_refit": "NOT_RUN",
+    "preflight_before_confirmation": {
+      "http": 0,
+      "exit": 1
+    },
+    "engineering": "prior source-matched receipt reused",
+    "financial_selection_human": "no new evidence"
+  }
+}

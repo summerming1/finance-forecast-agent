@@ -1,0 +1,351 @@
+{
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "branch": "feat/mission-research-v2",
+  "source": "6658e76cb44c5fe39482368b2a124db4f33b9e934b7590e26b8d7ac3e711b01d",
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1595,
+        "skipped": 2
+      },
+      "path": ".decision-glm-20261121\\glm21b\\regression\\END.json",
+      "sha256": "df6ef65e11f6e31c2a0e84d27c38549cb4f637e9ef69015fe419b9707d274eb8",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-glm-20261121\\glm21b\\browser\\END.json",
+      "sha256": "2e848e29869c38a23d18c2437f13f428eac6215d5ff742b2718d6f3d8ecad431",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "commands": {
+    "bind": {
+      "command": {
+        "argv": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\trial.py",
+          "bind"
+        ],
+        "cwd": "D:\\AI Agent\\finance_forecast_agent_v1"
+      },
+      "result": {
+        "exit": 0,
+        "seconds": 1.9161550999851897
+      }
+    },
+    "live": {
+      "command": {
+        "argv": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\trial.py",
+          "live"
+        ],
+        "cwd": "D:\\AI Agent\\finance_forecast_agent_v1"
+      },
+      "result": {
+        "exit": 0,
+        "seconds": 212.11368040001253
+      }
+    },
+    "static": {
+      "command": {
+        "cwd": "D:\\AI Agent\\finance_forecast_agent_v1",
+        "argv": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.counter-evidence-20261119\\run_static_checks.py",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\glm21b\\static.json"
+        ]
+      },
+      "result": {
+        "exit": 0,
+        "seconds": 3.346165700000711
+      }
+    },
+    "collect": {
+      "command": {
+        "cwd": "D:\\AI Agent\\finance_forecast_agent_v1",
+        "argv": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\run_final_checks.py",
+          "--mode",
+          "collect",
+          "--out",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\glm21b\\collect",
+          "--extra-file",
+          "tests/test_action_method_contrasts.py",
+          "--extra-file",
+          "tests/test_core_c3_worker.py",
+          "--extra-file",
+          "tests/test_core_decision_history.py",
+          "--extra-file",
+          "tests/test_core_decision_materials.py",
+          "--extra-file",
+          "tests/test_core_decision_session.py",
+          "--extra-file",
+          "tests/test_core_joint_capacity.py",
+          "--extra-file",
+          "tests/test_core_live_driver.py",
+          "--extra-file",
+          "tests/test_core_package_startup.py",
+          "--extra-file",
+          "tests/test_core_provider_models.py",
+          "--extra-file",
+          "tests/test_core_research_session.py",
+          "--extra-file",
+          "tests/test_core_rf_controller.py",
+          "--extra-file",
+          "tests/test_core_rf_delivery.py",
+          "--extra-file",
+          "tests/test_core_rf_methods.py",
+          "--extra-file",
+          "tests/test_core_table_send_guard.py",
+          "--extra-file",
+          "tests/test_core_workspace_profile.py",
+          "--extra-file",
+          "tests/test_counter_evidence_trial.py",
+          "--extra-file",
+          "tests/test_counter_evidence_worker.py",
+          "--extra-file",
+          "tests/test_decision_action_basis.py",
+          "--extra-file",
+          "tests/test_decision_action_prediction.py",
+          "--extra-file",
+          "tests/test_decision_authoring_form.py",
+          "--extra-file",
+          "tests/test_decision_context_tables.py",
+          "--extra-file",
+          "tests/test_decision_direct_basis.py",
+          "--extra-file",
+          "tests/test_decision_direct_selector_ui.py",
+          "--extra-file",
+          "tests/test_decision_fact_scopes.py",
+          "--extra-file",
+          "tests/test_decision_fact_tables.py",
+          "--extra-file",
+          "tests/test_decision_fold_reading.py",
+          "--extra-file",
+          "tests/test_decision_linked_hypotheses.py",
+          "--extra-file",
+          "tests/test_decision_loop_trial.py",
+          "--extra-file",
+          "tests/test_decision_measurement_index.py",
+          "--extra-file",
+          "tests/test_decision_operation_restore.py",
+          "--extra-file",
+          "tests/test_decision_operations.py",
+          "--extra-file",
+          "tests/test_decision_partial_trajectory.py",
+          "--extra-file",
+          "tests/test_decision_source_choice.py",
+          "--extra-file",
+          "tests/test_decision_source_selection.py",
+          "--extra-file",
+          "tests/test_decision_v5_wire.py",
+          "--extra-file",
+          "tests/test_decision_v6_wire.py",
+          "--extra-file",
+          "tests/test_decision_window_facts.py",
+          "--extra-file",
+          "tests/test_diagnostic_measurements.py",
+          "--extra-file",
+          "tests/test_direct_basis_worker.py",
+          "--extra-file",
+          "tests/test_evidence_v5_worker.py",
+          "--extra-file",
+          "tests/test_evidence_v6_worker.py",
+          "--extra-file",
+          "tests/test_evidence_v7_routing.py",
+          "--extra-file",
+          "tests/test_focused_retry_budget.py",
+          "--extra-file",
+          "tests/test_grouped_schema_projection.py",
+          "--extra-file",
+          "tests/test_linked_decision_guidance.py",
+          "--extra-file",
+          "tests/test_method_measurement_readings.py",
+          "--extra-file",
+          "tests/test_research_action_context.py",
+          "--extra-file",
+          "tests/test_research_closeout_adversarial.py",
+          "--extra-file",
+          "tests/test_research_closeout_capacity.py",
+          "--extra-file",
+          "tests/test_research_closeout_contract.py",
+          "--extra-file",
+          "tests/test_research_closeout_display.py",
+          "--extra-file",
+          "tests/test_research_closeout_driver.py",
+          "--extra-file",
+          "tests/test_research_closeout_materials.py",
+          "--extra-file",
+          "tests/test_research_closeout_schema_style.py",
+          "--extra-file",
+          "tests/test_research_closeout_session.py",
+          "--extra-file",
+          "tests/test_revision_decision_wire.py",
+          "--extra-file",
+          "tests/test_revision_result_handling.py",
+          "--extra-file",
+          "tests/test_semantic_relay_settlement.py",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\AGENTS.md",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\docs\\EVIDENCE_RESEARCH_LOOP.md",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\docs\\FOCUSED_ACCEPTANCE_TEST_PLAN.md",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\docs\\FOCUSED_ARCHITECTURE.md",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\docs\\validation\\independent_decision_20261119_v3.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-poststop-20261119\\check_offline.py",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-next-20261119\\run_final_checks.py",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\run_final_checks.py",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-operational-20261120\\ops1\\collect\\COLLECTION.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-operational-20261120\\ops1\\regression\\END.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-operational-20261120\\ops1\\browser\\END.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-next-20261119\\SESSION_SEAL.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-next-20261119\\SESSION_LEDGER.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-next-20261119\\v3\\B_VERDICT.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-next-20261119\\v3\\call-01.prompt.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-next-20261119\\v3\\call-01.raw-envelope.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\pyproject.toml",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.counter-evidence-20261119\\run_static_checks.py",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\PAIR-v1.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\replay.json",
+          "--input",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\renew_materials.py"
+        ]
+      },
+      "result": {
+        "exit": 0,
+        "seconds": 14.520938700006809
+      }
+    },
+    "regression": {
+      "command": {
+        "cwd": "D:\\AI Agent\\finance_forecast_agent_v1",
+        "argv": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\run_final_checks.py",
+          "--mode",
+          "regression",
+          "--collection",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\glm21b\\collect\\COLLECTION.json",
+          "--out",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\glm21b\\regression",
+          "--temp-name",
+          "d19rglm21b"
+        ]
+      },
+      "result": {
+        "exit": 0,
+        "seconds": 1367.0677254999755
+      }
+    },
+    "browser": {
+      "command": {
+        "cwd": "D:\\AI Agent\\finance_forecast_agent_v1",
+        "argv": [
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.venv\\Scripts\\python.exe",
+          "-X",
+          "utf8",
+          "-B",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\run_final_checks.py",
+          "--mode",
+          "browser",
+          "--collection",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\glm21b\\collect\\COLLECTION.json",
+          "--out",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\glm21b\\browser",
+          "--temp-name",
+          "d19bglm21b",
+          "--regression-proof",
+          "D:\\AI Agent\\finance_forecast_agent_v1\\.decision-glm-20261121\\glm21b\\regression\\END.json"
+        ]
+      },
+      "result": {
+        "exit": 0,
+        "seconds": 325.9334129000199
+      }
+    }
+  },
+  "actual_calls": {
+    "before": 315,
+    "capability_probe": 1,
+    "probe_status": 400,
+    "formal": 1,
+    "total": 317
+  },
+  "actual_stop": "unknown_delivery",
+  "charged_fits": 32,
+  "semantic": [],
+  "unattempted": [
+    "case-741308",
+    "case-593024",
+    "case-862751",
+    "case-318406",
+    "case-926175",
+    "case-450692",
+    "case-e157c780e1f91ce6d0d6",
+    "case-123079a301414e198522"
+  ],
+  "review": "REVIEW.md",
+  "artifacts": {
+    ".decision-glm-20261121/glm21b/END.json": "0124e3f0e64a73fe07f57227e86e6a188ae948db837a9a38e154442bc2d1a0b8",
+    ".decision-glm-20261121/glm21b/START.json": "7b8fe4ae30b87522a4c04f0f1db8bc160aac6320b36a4682b25980726d754579",
+    ".decision-glm-20261121/glm21b/regression/END.json": "df6ef65e11f6e31c2a0e84d27c38549cb4f637e9ef69015fe419b9707d274eb8",
+    ".decision-glm-20261121/glm21b/browser/END.json": "2e848e29869c38a23d18c2437f13f428eac6215d5ff742b2718d6f3d8ecad431",
+    ".decision-glm-20261121/glm21b/collect/COLLECTION.json": "3be3ff5ca5511d3966b2f3a55128acb188ec4cc7488c4f4b6dc28a8845395379",
+    ".decision-glm-20261121/glm21b/static.json": "77dc902f1c1a037baf459cf677889880d1fa9dbb81e2e3357d5a548139ffe09e",
+    ".decision-glm-20261121/native-preflight.json": "b2ecd70909fb49e7ffe425658f209e38578936c64f425afc24d9b9b5c0adc8b9",
+    ".decision-glm-20261121/probe-request.json": "0759d7d097600f9fd9b49ed9940d5faa3cde0cd84e17c67060acc8b2d6770eba",
+    ".decision-glm-20261121/probe-response.json": "f821a7cd8def8fb2e1155b1360aaaaf4572337b848591a6dcf1b97737aacbc22",
+    ".decision-glm-20261121/OWNER.json": "13c548adaee11c29f63ea7daec4e90e1df8971c3ca18a4c3a558f5720b675a73",
+    ".decision-glm-20261121/AUTHORIZATION.json": "b85ead05602d64d743f8aa3a699ad63c5a06a9d136aa3ec150ce914befa37338",
+    ".decision-glm-20261121/PAIR-v1.json": "e19850bf586a72dca0066e7d08cee54f8253fbccb6401fc38bdf90c79fbfaa01",
+    ".decision-glm-20261121/replay.json": "376ca03610c0afc065db188cbf46d3476a535a9e7c894bcbe41c80c4329e35fe",
+    ".decision-glm-20261121/contrasts.json": "cb907f715b50458062e9f6bac6cf90503e74178c3bf0a4af32cc166909ba38c7",
+    ".decision-glm-20261121/SESSION_SEAL.json": "d78b132e6f5c7ecc6d736d05d8186b756e1daa223daddab3410f3a89a6d1a9db",
+    ".decision-glm-20261121/SESSION_LEDGER.json": "73dc8c0294460e9c6b08d4c35d5e8c78bf5c714e3f7fce535f9a3b6e48adf163",
+    ".decision-glm-20261121/v1/HTTP_LEDGER.json": "2895cd7cd8e17519524748039b287955f041c282ef1e01c67ad78258b27b59e9",
+    ".decision-glm-20261121/v1/OUTCOME.json": "913acc134cd3040fdc43d5fa007b157e58f21afaa364e177f134e2a4ba7c2704",
+    ".decision-glm-20261121/REVIEW.md": "dff1db3a78f412236d349ce77da503055086426514a1788da92f5e3c54acfebe",
+    ".decision-glm-20261121/v1/call-01.prompt.json": "00ae319ad4373e87cb4729d420b2526b9b72c2a63336daa953533142ce0b6f95",
+    ".decision-glm-20261121/v1/call-01.raw-envelope.json": "7cd250cb1ca85c0ab80ccd3bbb72b2e6744f91f38d66f705f3db211791f1ce6b"
+  }
+}

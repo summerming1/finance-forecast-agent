@@ -41,7 +41,57 @@ BAILIAN_JSON_OBJECT_CAPABILITIES = frozenset({
     # flash-0731 is hybrid; Kimi-k3 is thinking-only. JSON Object is not Schema.
     ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','deepseek-v4-flash-0731',False),
     ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','kimi-k3',True),
+    # Nov16 official Qwen/Kimi + structured-output docs; legacy tuples above stay.
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','qwen4-max',False),
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','kimi-k3',False),
+    ('https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','kimi-k3.1-pro',False),
 })
+
+
+BAILIAN_STRICT_DECISION_MODELS = frozenset({'qwen4-max', 'qwen3.8-flash', 'qwen3.8-max-0902', 'deepseek-v4.1-flash-1017'})
+
+
+def decision_response_format(prompt, *, model, endpoint, thinking):
+    contract = prompt.get('compact_decision_contract', {})
+    if (contract.get('authoring_form_version') not in (5, 6, 7, 8, 9, 10, 11, 12) or model not in BAILIAN_STRICT_DECISION_MODELS
+            or endpoint.rstrip('/') != 'https://dashscope.aliyuncs.com/compatible-mode/v1' or thinking is not False):
+        return {'type':'json_object'}
+    # The provider compiles this small envelope. The original per-request
+    # contract stays in the prompt and is fully validated before execution.
+    schema = contract['output_schema']
+
+    def outer_type(node):
+        if '$ref' in node:
+            name = node['$ref'].removeprefix('#/$defs/').removeprefix('#')
+            node = schema['$defs'][name]
+        if 'type' in node:
+            return {'type': node['type']}
+        if isinstance(node.get('const'), str):
+            return {'type': 'string'}
+        choices = node.get('oneOf') or node.get('anyOf') or []
+        if choices and all(branch.get('type') == 'object' for branch in choices):
+            return {'type': 'object'}
+        return {}
+
+    properties = {}
+    for name, node in schema['properties'].items():
+        field = outer_type(node)
+        if field.get('type') == 'array':
+            field['items'] = outer_type(node['items'])
+        properties[name] = field
+    required = schema.get('required')
+    if required is None:
+        # The compact authoring schema encodes "all listed fields required"
+        # by cardinality on a closed object. Only reverse that exact encoding.
+        minimum = schema.get('minProperties')
+        if (schema.get('type') != 'object' or schema.get('additionalProperties') is not False
+                or schema.get('patternProperties') or type(minimum) is not int or minimum != len(properties)):
+            raise ValueError('unsupported compact decision schema required-field encoding')
+        required = list(properties)
+    envelope = {'type': 'object', 'properties': properties, 'required': required,
+                'additionalProperties': schema['additionalProperties']}
+    return {'type': 'json_schema', 'json_schema': {'name': 'research_decision', 'strict': True,
+                                                 'schema': envelope}}
 
 
 def serialize_prompt_payload(payload: dict[str, Any]) -> str:
@@ -127,7 +177,8 @@ class OpenAIJsonClient:
     def __init__(self, *, model: str | None = None, api_key: str | None = None,
                  base_url: str | None = None, timeout: int | None = None,
                  policy: ProviderPolicy | None = None, observer=None, cancel_check=None,
-                 enable_thinking: bool | None = None, response_format: str | None = None):
+                 enable_thinking: bool | None = None, response_format: str | None = None,
+                 temperature: float | None = None):
         self.provider = _normalize_provider(os.getenv('LLM_PROVIDER') or os.getenv('TEACHER_PROVIDER') or 'openai_compatible')
         self.model=model or os.getenv('OPENAI_MODEL') or os.getenv('TEACHER_MODEL') or 'gpt-4.1-mini'
         self.base_url=_normalize_base_url(base_url or os.getenv('OPENAI_BASE_URL') or os.getenv('TEACHER_BASE_URL')
@@ -157,12 +208,21 @@ class OpenAIJsonClient:
         if enable_thinking is not None and not isinstance(enable_thinking,bool):
             raise ValueError('enable_thinking must be a bool')
         self.enable_thinking=enable_thinking
+        # A new model's documented fixed sampling is not a silent retry policy.
+        # Existing models retain literal temperature=0 and historical wire bytes.
+        self.temperature = (1.0 if self.model == 'kimi-k3.1-pro' else 0) if temperature is None else temperature
+        if (isinstance(self.temperature, bool) or not isinstance(self.temperature, (int, float))
+                or not math.isfinite(self.temperature) or not 0 <= self.temperature < 2):
+            raise ValueError('temperature must be finite in [0,2)')
+        if self.model == 'kimi-k3.1-pro' and self.temperature != 1.0:
+            raise ValueError('kimi-k3.1-pro requires its documented fixed temperature=1.0')
         selected_format=self._selected_response_format()
         if (enable_thinking is not None
                 and (self.provider not in BAILIAN_PROVIDERS or self.model not in BAILIAN_THINKING_MODELS)
                 and not (self._response_format_mode=='json_object' and selected_format=='json_object')):
             raise ValueError('enable_thinking is not registered for this provider/model')
         self.observer,self.cancel_check=observer,cancel_check
+        self.retry_budget_available = None
         self.last_call_metadata: dict[str,Any]={}
         if not self.api_key:
             raise RuntimeError('OPENAI_API_KEY or DASHSCOPE_API_KEY is required for OpenAIJsonClient')
@@ -181,7 +241,7 @@ class OpenAIJsonClient:
     def contract(self):
         from .replay_llm import sanitized_endpoint
         contract={'provider':self.provider,'model':self.model,'base_url':sanitized_endpoint(self.base_url),
-                'max_tokens':self.max_tokens,'temperature':0,'http_retries':self.retries,
+                'max_tokens':self.max_tokens,'temperature':self.temperature,'http_retries':self.retries,
                 'provider_policy':self.policy.to_dict(),'stream':False,
                 'response_format':self._selected_response_format(),
                 'pricing_status':'unknown','model_revision':'alias_unresolved'}
@@ -271,11 +331,48 @@ class OpenAIJsonClient:
                     raise ProviderFailure('transport_cleanup_failed',delivery_status='unknown',usage_known=False)
 
     def complete_json(self, *, prompt_payload: dict[str,Any], schema_name: str) -> dict[str,Any]:
+        from .decision_context_tables import FIELD, STYLES
+
         selected_format=self._selected_response_format()
         prompt=(f'You are extracting schema {schema_name}. Return only valid JSON. '
                 'Use unknowns instead of guessing. Preserve evidence spans.\n\n'+serialize_prompt_payload(prompt_payload))
-        if (prompt_payload.get('advisor_wire_version')=='evidence_decision_v3'
-                and prompt_payload.get('compact_decision_contract',{}).get('schema_version')=='grouped_decision_contract_v3'
+        contract = prompt_payload.get('compact_decision_contract')
+        table_style = (isinstance(contract, dict) and contract.get('schema_style') in STYLES and FIELD in prompt_payload
+                       and type(contract.get('measurement_reading_version')) is int
+                       and contract['measurement_reading_version'] == 1)
+        if (prompt_payload.get('advisor_wire_version') == 'evidence_decision_v7'
+                and isinstance(contract, dict) and contract.get('schema_version') == 'grouped_decision_contract_v7'
+                and type(contract.get('measurement_reading_version')) is int and contract['measurement_reading_version'] == 1
+                and (contract.get('schema_style') in {'full', 'shared'} or table_style)):
+            prompt = ('You are planning controlled evidence research; use compact_decision_contract.output_schema. '
+                      'State the scientific reasoning in Chinese. Relate each judgment to the exact claim and observation. '
+                      'Choose a feasible action that tests a specific prediction or explain why to stop. '
+                      'Handle counterevidence and distinguish a measured effect from its cause.\n\n'
+                      + serialize_prompt_payload(prompt_payload))
+        elif (prompt_payload.get('advisor_wire_version') == 'evidence_decision_v6'
+                and isinstance(contract, dict) and contract.get('schema_version') == 'grouped_decision_contract_v6'
+                and (contract.get('schema_style') in {'full', 'shared'} or table_style)):
+            prompt = ('You are planning controlled evidence research; return the JSON decision in '
+                      'compact_decision_contract.output_schema. Write short scientific judgments in Chinese. '
+                      'Existing questions and claims need no update operation to receive assessments or be used by actions. '
+                      'Explain which prior prediction the observation changes. Choose an answerable next action '
+                      'using the actual control, cost and available measures, or explain a stop. '
+                      'Use the signed loss and its reference denominator. A feature ablation measures conditional '
+                      'method performance; mechanism and recommendation require separate evidence.\n\n'
+                      + serialize_prompt_payload(prompt_payload))
+        elif (prompt_payload.get('advisor_wire_version') == 'evidence_decision_v5'
+                and prompt_payload.get('compact_decision_contract', {}).get('schema_version') == 'grouped_decision_contract_v5'
+                and prompt_payload.get('compact_decision_contract', {}).get('schema_style') in {'full', 'shared'}):
+            prompt = ('You are planning controlled evidence research; return the JSON decision in '
+                      'compact_decision_contract.output_schema. Keep scientific judgments concise in Chinese. '
+                      'Compare the actual result with the exact old prediction. State what it weakens or leaves open. '
+                      'Write each assessment once in assessments. An action names the hypotheses it actually tests. '
+                      'Choose a feasible measurement or single change that adds information, or stop with a reason. '
+                      'Separate evidence about a method from evidence about a mechanism and from the adoption threshold. '
+                      'Check what the measurement returns, the actual control, inherited components, available cache and fit cost. '
+                      'Use only listed E strings in experiment_refs.\n\n' + serialize_prompt_payload(prompt_payload))
+        elif ((prompt_payload.get('advisor_wire_version'), prompt_payload.get('compact_decision_contract',{}).get('schema_version')) in {
+                ('evidence_decision_v3','grouped_decision_contract_v3'), ('evidence_decision_v4','grouped_decision_contract_v4')}
                 and prompt_payload.get('compact_decision_contract',{}).get('schema_style') in {'full','shared'}):
             prompt=('You are planning controlled evidence research; return only the JSON decision. '
                 'Do not optimize for winning this batch. The goal is an informative, falsifiable local test, not the strongest-looking candidate. '
@@ -302,15 +399,15 @@ class OpenAIJsonClient:
                 'Use concise Chinese for prose, preserve exact IDs/versions/enums and state uncertainty. '
                 'Do not invent results, fill every slot, or claim causes from correlation.\n\n'+serialize_prompt_payload(prompt_payload))
         payload={'model':self.model,'messages':[{'role':'user','content':prompt}],
-                 'temperature':0,'max_tokens':self.max_tokens}
-        generation={'temperature':0,'max_tokens':self.max_tokens}
+                 'temperature':self.temperature,'max_tokens':self.max_tokens}
+        generation={'temperature':self.temperature,'max_tokens':self.max_tokens}
         if self.enable_thinking is not None:
             payload['enable_thinking']=self.enable_thinking
             generation['enable_thinking']=self.enable_thinking
         if selected_format=='json_object':
-            payload['response_format']={'type':'json_object'}
+            payload['response_format']=decision_response_format(prompt_payload,model=self.model,endpoint=self.base_url,thinking=self.enable_thinking)
             if self._response_format_mode is not None:
-                generation['response_format']={'type':'json_object'}
+                generation['response_format']=payload['response_format']
         wire=json.dumps(payload,ensure_ascii=False,sort_keys=True,allow_nan=False)
         started=time.monotonic()
         self.last_call_metadata={'generation_parameters':generation,
@@ -382,14 +479,23 @@ class OpenAIJsonClient:
                        retry_after=wait,delivery_status='error_response',usage_known=False)
             except ProviderFailure as exc:
                 attempt.update(state='failed',error=exc.details)
+                received_error = attempt.get('response_received') and exc.details.get('delivery_status') == 'error_response'
+                if received_error:
+                    attempt['delivery_status'] = 'error_response'
                 if not exc.details['retryable'] or number==self.policy.max_http_attempts:
                     raise
                 wait=exc.details.get('retry_after')
                 if wait is None:
                     wait=min(self.policy.max_backoff_seconds,self.policy.backoff_seconds*2**(number-1))*random.uniform(.8,1.2)
                 left=self.policy.deadline_seconds-(time.monotonic()-started)
+                if left > 0 and received_error and self.retry_budget_available is not None:
+                    available = self.retry_budget_available()
+                    left = self.policy.deadline_seconds - (time.monotonic() - started)
+                    if left > 0 and not available:
+                        raise ProviderFailure('http_budget_exhausted', delivery_status='error_response',
+                                              usage_known=False, blocked_by=exc.details['error_category']) from exc
                 if wait>=left:
-                    raise ProviderFailure('call_deadline',retryable=False,delivery_status='error_response',
+                    raise ProviderFailure('call_deadline',retryable=False,delivery_status=exc.details.get('delivery_status', 'unknown'),
                                           usage_known=False,blocked_by=exc.details['error_category']) from exc
                 end=time.monotonic()+wait
                 while time.monotonic()<end:

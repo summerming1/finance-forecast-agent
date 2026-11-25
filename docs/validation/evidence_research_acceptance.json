@@ -15088,5 +15088,263 @@
       1,
       2
     ]
+  },
+  "core_research_20261116": {
+    "base_head": "079362ceb02551fdbc881a52126c5161deb7c766",
+    "source_identity": "82f71f4fcf0c86c794adb21e264f4bb2f54dcaa9a6161b8ab676767ede91a847",
+    "A": {
+      "status": "PASS_BOUNDED",
+      "regression": {
+        "passed": 1305,
+        "skipped": 2
+      },
+      "unique_nodes": 1307,
+      "browser": {
+        "passed": 7
+      },
+      "browser_nodes": 7,
+      "actual_pytest_exit": [
+        0,
+        0
+      ],
+      "wrapper_exit": [
+        0,
+        0
+      ]
+    },
+    "B": {
+      "status": "NOT_RUN",
+      "blocker": "current free-only protection confirmation pending",
+      "actual_upstream_http": 0,
+      "live_source_versions_entered": 0,
+      "models": [
+        "qwen4-max",
+        "kimi-k3",
+        "kimi-k3.1-pro"
+      ],
+      "semantic_cases": 6,
+      "profile": "feature_window_model",
+      "no_authority_self_signed": true
+    },
+    "C": {
+      "status": "NOT_RUN",
+      "scope": "equal-budget research-selection value; simple reference has not been expanded to a full model-search domain"
+    },
+    "D": {
+      "status": "NOT_RUN",
+      "scope": "independent financial prediction; no real-market or sealed-label trial"
+    },
+    "E_G6": {
+      "status": "OPEN",
+      "scope": "owner previously attempted use and reported issues; owner recheck remains open"
+    },
+    "overall": "ENGINEERING_COMPLETE_JOINT_LIVE_ACCEPTANCE_NOT_COMPLETE",
+    "receipts": {
+      "final-freeze5/COLLECTION.json": {
+        "path": ".core-research-20261116/final-freeze5/COLLECTION.json",
+        "sha256": "1ee5540763df250686e58e638e90b0c9a2213dd18fc923b737e74a8a6a9eba1c"
+      },
+      "final-regression4/START.json": {
+        "path": ".core-research-20261116/final-regression4/START.json",
+        "sha256": "9d9073a432fa9f76c95b4b65d659c16758fab02f4b07c9d527afa3d44787e756"
+      },
+      "final-regression4/END.json": {
+        "path": ".core-research-20261116/final-regression4/END.json",
+        "sha256": "76315404d5850c7eed365ebc85221fa76a6591924dbb9fdfc65162ef1570dbe2"
+      },
+      "final-regression4/regression.command.json": {
+        "path": ".core-research-20261116/final-regression4/regression.command.json",
+        "sha256": "537ca8bba83350b53e6882ae28c6d954617a200d7b3abcfb9baab2586962ca1f"
+      },
+      "final-regression4/regression.exit.json": {
+        "path": ".core-research-20261116/final-regression4/regression.exit.json",
+        "sha256": "675efc649dc5e66f3e09906aa3f34159baef4a03f359bc1116f0433ae601834f"
+      },
+      "final-browser1/START.json": {
+        "path": ".core-research-20261116/final-browser1/START.json",
+        "sha256": "5c4dcf164a36875d3ed5d8e77cc3ed676e2d846103f2a922ac85c948691c0ebe"
+      },
+      "final-browser1/END.json": {
+        "path": ".core-research-20261116/final-browser1/END.json",
+        "sha256": "0f693df00586af3885f399769c2598c5bcca7070c44d4da91610a115b5d1ca4f"
+      },
+      "final-browser1/browser.command.json": {
+        "path": ".core-research-20261116/final-browser1/browser.command.json",
+        "sha256": "441cdf046c1fb5df9fa1efd19c1a3b6446e3d6456d6f7ca1525e3593b8f0fb1f"
+      },
+      "FINAL_STATIC4.json": {
+        "path": ".core-research-20261116/FINAL_STATIC4.json",
+        "sha256": "29f3ca22a4cc26625966c4b36fb2dc8ccb051c30701c60b2b1e69726bc9aa7ec"
+      },
+      "FINAL_SOURCE_ARCHIVE2.json": {
+        "path": ".core-research-20261116/FINAL_SOURCE_ARCHIVE2.json",
+        "sha256": "c2d0fb0672dc4de9a158099b524091c3fda02238e398ce7ca724ff9b2f9e22c4"
+      },
+      "ENGINEERING_C3_FINAL.json": {
+        "path": ".core-research-20261116/ENGINEERING_C3_FINAL.json",
+        "sha256": "b697866e6658186e7fcce359103ed67fd6bcac2bf230e6aad656a321d33f8173"
+      },
+      "FINAL_SKIP_REASONS.json": {
+        "path": ".core-research-20261116/FINAL_SKIP_REASONS.json",
+        "sha256": "ffbc4c64836115e0a7fd1009a823d1f693147ff30da4714015306d1c5a62969a"
+      }
+    },
+    "known_boundaries": [
+      "bounded synthetic engineering, not whole repository/native/Linux acceptance",
+      "new-profile starting configs are the registered packs; alpha10 remains supported in the old profile",
+      "long contexts remain subject to the unchanged 64000-character gate; no promise of unbounded history",
+      "legacy trusted models still require their original matching source/dependencies; no re-sign or retraining substitute",
+      "six semantic materials are authored conditional scenarios; actual model behavior has not been exercised",
+      "deterministic demo/reference need not select RF; no research advantage claim"
+    ]
+  },
+  "core_research_20261117": {
+    "schema_version": "core_research_20261117_delivery_v1",
+    "contract": "docs/EVIDENCE_RESEARCH_LOOP.md",
+    "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+    "branch": "feat/mission-research-v2",
+    "source_identity": "d18e1f0c0c64173fe8b010173377ec0b97a77e243a0762017ae6c60d3bf6393e",
+    "source_identity_domain": "research-closeout-final-source-v1",
+    "source_identity_is_not_git_commit": true,
+    "source_files": 358,
+    "final_source_equals_v3_live": true,
+    "A": {
+      "status": "PASS_BOUNDED",
+      "counts": {
+        "passed": 1320,
+        "skipped": 2
+      },
+      "unique_nodes": 1322,
+      "old1307_preserved": true,
+      "new_nodes": 15,
+      "browser_passed": 7,
+      "browser_runtime_unchanged": true,
+      "pytest_and_wrapper_exits": [
+        0,
+        0
+      ]
+    },
+    "B": {
+      "status": "NO-GO",
+      "actual_http": 23,
+      "known_http_responses": 22,
+      "quota_refusal_without_answer": 1,
+      "unknown_delivery": 1,
+      "source_versions": 3,
+      "charged_fit": 52,
+      "research_candidate_fit": 4,
+      "refits": 0,
+      "final_v3_candidate_fit": 0,
+      "final_semantic_known_answers": 4,
+      "final_semantic_strict": 3,
+      "final_semantic_has_material_issues": true,
+      "final_semantic_unknown": 1,
+      "final_semantic_not_run": 1,
+      "remaining25_http_not_authority": true,
+      "no_post_live_functional_patch": true
+    },
+    "C": "NOT_RUN",
+    "D": "NOT_RUN",
+    "E_G6": "OPEN_prior_use_attempt_and_issues_no_AI_signoff",
+    "overall": "NO_GO_REAL_RESEARCH_LOOP_NOT_ACCEPTED",
+    "provider_seconds": {
+      "charged": 624.0236593000008,
+      "observed": 449.56208770000046,
+      "unknown_reserve": 180
+    },
+    "receipts": {
+      "final-freeze17/COLLECTION.json": {
+        "path": ".core-research-20261116/final-freeze17/COLLECTION.json",
+        "sha256": "bc63a1d0d9415f26eec7ca054ef9396315156ecc759dae62143e2c9709754b41"
+      },
+      "final-regression17b/START.json": {
+        "path": ".core-research-20261116/final-regression17b/START.json",
+        "sha256": "5f212b50b29e3d6fc3671858e38492579d78b191ff17a74e0f64273bde9a3333"
+      },
+      "final-regression17b/END.json": {
+        "path": ".core-research-20261116/final-regression17b/END.json",
+        "sha256": "fc6c34ebcbcca6e3b6b97f3c850301bbd99d1cdf3d9b3d40a538105af0663d20"
+      },
+      "final-regression17b/regression.command.json": {
+        "path": ".core-research-20261116/final-regression17b/regression.command.json",
+        "sha256": "ef64d3bf64a4c318b2c255b6527baa28af961c56b5de0f2152a4324de8bf8e43"
+      },
+      "final-regression17b/regression.exit.json": {
+        "path": ".core-research-20261116/final-regression17b/regression.exit.json",
+        "sha256": "b6d154797de45abfc7240866c6c254c25f49831de804a1bb48174a0a84fd7d73"
+      },
+      "final-browser17b/START.json": {
+        "path": ".core-research-20261116/final-browser17b/START.json",
+        "sha256": "ad26bae6e8f7db92700241548cd6beaa001b8fc31dc9e8369f432f1aa2aa4570"
+      },
+      "final-browser17b/END.json": {
+        "path": ".core-research-20261116/final-browser17b/END.json",
+        "sha256": "0971d63e8229821f306b8248a41a34041104d076843882efe7827fddf6186cb8"
+      },
+      "final-browser17b/browser.command.json": {
+        "path": ".core-research-20261116/final-browser17b/browser.command.json",
+        "sha256": "ba9c3cee5e65eded3e7c1cb2d05eda433b19a6383eeac305bc24fe328c9f6859"
+      },
+      "FINAL_STATIC17.json": {
+        "path": ".core-research-20261116/FINAL_STATIC17.json",
+        "sha256": "e39b15f5ad4cf87f58b06dfff58e6fa848121df92dd5908482556bba8a635419"
+      },
+      "FINAL_SOURCE17_ARCHIVE.json": {
+        "path": ".core-research-20261116/FINAL_SOURCE17_ARCHIVE.json",
+        "sha256": "d3595f3086b5ee458ae0b1dedfd5e747df6a830fbb34cb6c3234d8f7c86eb5b6"
+      },
+      "FINAL_LIVE17_AUDIT.json": {
+        "path": ".core-research-20261116/FINAL_LIVE17_AUDIT.json",
+        "sha256": "de3e68acb17ceda722dddb76a4d05b238aa22a94b4f2d71ca91b81902f5e1ccb"
+      },
+      "V1_B_REVIEW.json": {
+        "path": ".core-research-20261116/V1_B_REVIEW.json",
+        "sha256": "50612de077f1fe016426bdd04553928d146578db92df256c4a18daa8648d4500"
+      },
+      "V2_B_REVIEW.json": {
+        "path": ".core-research-20261116/V2_B_REVIEW.json",
+        "sha256": "2a1ad552c1e031f038f7d2f273759fa2553696bd05abe885f14414c9d9d066ef"
+      },
+      "V3_B_REVIEW.json": {
+        "path": ".core-research-20261116/V3_B_REVIEW.json",
+        "sha256": "1a24a7f164da87bbb1a4a2c4aac12ed3735e4b431a3b1b7aef570597de7f9bad"
+      },
+      "SESSION_SEAL.json": {
+        "path": ".core-research-20261116/SESSION_SEAL.json",
+        "sha256": "11d497ccb0f9cff072b19647f2e33c1db3602e57625ec3bf023f2dbb57664ce5"
+      },
+      "HISTORICAL_PROTECTED17.json": {
+        "path": ".core-research-20261116/HISTORICAL_PROTECTED17.json",
+        "sha256": "40031ceba08d80243b7a3653cabbd467e14edc706f2439d5d55a140903cbb6f6"
+      },
+      "ENGINEERING_C3_17.json": {
+        "path": ".core-research-20261116/ENGINEERING_C3_17.json",
+        "sha256": "434a18174855686edfc39af98da193ca9dc1d4e2af00f3b3c6c49bf794ca6f92"
+      },
+      "final-browser17/END.json": {
+        "path": ".core-research-20261116/final-browser17/END.json",
+        "sha256": "d900bb1a76207d032f9709ca274d2fd6e05812a4ce963cace59e0561ef484fdd"
+      },
+      "BROWSER17B_RUNTIME.json": {
+        "path": ".core-research-20261116/BROWSER17B_RUNTIME.json",
+        "sha256": "f4795441d6fbf237a1bc8e661940327717ee60eaa187cda7ba6728535b04871b"
+      }
+    },
+    "archive": {
+      "path": ".core-research-20261116/FINAL_SOURCE17.zip",
+      "sha256": "58e7b3c4c7b351aa601b1713f8c67022ee4560aecb4f6517728fc771ccdc56b2",
+      "env_bytes": false
+    },
+    "not_tested": [
+      "real market",
+      "sealed labels",
+      "independent financial confirmation",
+      "equal-domain/equal-budget selection value",
+      "Linux/native",
+      "remote CI",
+      "production migration",
+      "human owner signoff"
+    ],
+    "git": "no new commits or push"
   }
 }

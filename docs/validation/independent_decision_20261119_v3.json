@@ -1,0 +1,114 @@
+{
+  "schema": "independent_decision_source_review_v1",
+  "trial": ".decision-next-20261119",
+  "version": 3,
+  "branch": "feat/mission-research-v2",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "source_map_identity": "703012ad09ee5d487d954f562ebb090895af22a9bb40498ede5147e272a63f20",
+  "source_entries": 389,
+  "snapshot_sources_unchanged": true,
+  "synthetic_raw_sha256": "75e55a5fb4c7c8b27152b9114bef99ed09b9f1fc8b40fe2daf1eb671567a7779",
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1513,
+        "skipped": 2
+      },
+      "pytest_exit": 0,
+      "wrapper_exit": 0,
+      "receipt": ".decision-next-20261119/engineering-g91/regression/END.json"
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "pytest_exit": 0,
+      "wrapper_exit": 0,
+      "receipt": ".decision-next-20261119/engineering-g91/browser/END.json"
+    }
+  },
+  "verdict": {
+    "B": "NO_GO",
+    "source_version": 3,
+    "outcome_sha256": "491f846e699263ca2748c61c1e9cf12442456bdb566a8979cc1149744266961d",
+    "analysis_sha256": {
+      "TRACE.md": "b2070fd5314af8aa70786269213fe2c8bcfcacb4d70d1019af78d5219b53c40c",
+      "SEMANTICS.md": "10b8ab2ac172a12b4f3c1d3863cf49e5691f82c667555c2967c71c9e2124629f",
+      "PAIR_REVIEW.md": "5c9342541c3c9b448431a8ec5b4be4e0536f76d7fa76a3ac229f6c96b83bfca5"
+    },
+    "logical_requests": 1,
+    "http": 3,
+    "unknown_deliveries": 1,
+    "global_stop": true,
+    "source_and_inputs_unchanged": true,
+    "parent_charged_fits": 32,
+    "parent_observed_fits": 16,
+    "research_candidate_fits": 0,
+    "refits": 0,
+    "parent": "first planning incomplete; no accepted proposal",
+    "continuation": "NOT_RUN",
+    "development": {
+      "planned": 6,
+      "upstream_attempts": 0,
+      "scorable_answers": 0,
+      "scientific_pass_rate": null,
+      "status": "NOT_RUN"
+    },
+    "pair": {
+      "planned": 2,
+      "upstream_attempts": 0,
+      "scorable_answers": 0,
+      "status": "NOT_RUN"
+    },
+    "parent_provider": [
+      "qwen4-max: HTTP200, 4096 output tokens, incomplete JSON with array root",
+      "kimi-k3: HTTP403, AllocationQuota.FreeTierOnly",
+      "kimi-k3.1-pro: unknown delivery, session stopped"
+    ],
+    "independent_batch_all_versions": {
+      "http": 21,
+      "observed_fits": 52,
+      "charged_fits": 80,
+      "refits": 0,
+      "including_history_http": 270,
+      "ledger_sha256": "caa1b65bfa5e49b54edeb24c30db88207b9ea1a271e2d75b032d347034f9b9e5",
+      "seal_sha256": "eba0ebd37b60f557840beb1d26ac78bc16583c4ca08a6c8521056027032bd66d"
+    }
+  },
+  "standalone_trajectory_and_challenges": true,
+  "independent_financial_and_selection_value": "NOT_RUN",
+  "owner_recheck": "OPEN",
+  "evidence": {
+    ".decision-next-20261119/PREFLIGHT-v3.json": "d55be17b9455f1ae0037e7cc49d9213393fdae50c9e146c311d71813b2f3391d",
+    ".decision-next-20261119/PAIR-v3.json": "3121fffe76404fdf2dce1726ea657e26d47c84b2dae574315c21e99b2a62e8f8",
+    ".decision-next-20261119/live-v3.argv.json": "aaf68e7547da4cdc558ad0e898abdeead4bae95526a8c0a630c4889cd0f96569",
+    ".decision-next-20261119/live-v3.exit.json": "59191d9fada391f674a48999ed9af8b3450f30ffb1150469fe5d32efa5d06264",
+    ".decision-next-20261119/OWNER_AUTHORIZATION.json": "9ee15f4de5fb1c819f1ec498094ab8e7c380ee6a32829a024096fac813a0e0d4",
+    ".decision-next-20261119/B_RUBRIC_PRELIVE.json": "3287eea2db48a0343651ca5fda040a2d6b7e9075807cba4a9d6c9019a71af3b8",
+    ".decision-next-20261119/v3/B_VERDICT.json": "5cd9add429af724be72624f68836fe1bbf3f8bf114a5021d7d9a88154d0887a7",
+    ".decision-next-20261119/v3/TRACE.md": "b2070fd5314af8aa70786269213fe2c8bcfcacb4d70d1019af78d5219b53c40c",
+    ".decision-next-20261119/v3/SEMANTICS.md": "10b8ab2ac172a12b4f3c1d3863cf49e5691f82c667555c2967c71c9e2124629f",
+    ".decision-next-20261119/v3/PAIR_REVIEW.md": "5c9342541c3c9b448431a8ec5b4be4e0536f76d7fa76a3ac229f6c96b83bfca5",
+    ".decision-next-20261119/v3/OUTCOME.json": "491f846e699263ca2748c61c1e9cf12442456bdb566a8979cc1149744266961d",
+    ".decision-next-20261119/v3/VERSION_START.json": "b1bbe61dea8e605a1c0b5c08b2a20e3708396fe28e606838a556afa284351ad3",
+    ".decision-next-20261119/v3/VERSION_END.json": "446eb728f96795187cdc91bd3aa301059e51441fd1bf015373bd6b7d7f0d805d",
+    ".decision-next-20261119/v3/MATCHED_PAIR.json": "a07fb3e7611b3753d1705ceaf4745ee8187023e4a9543aaa39efcaccfb806794",
+    ".decision-next-20261119/v3/DELIVERIES.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    ".decision-next-20261119/v3/trajectory.json": "08f4381fda3bbe07b2d824d7acc96bcd477a299d5fd549a2769fec841b0be567",
+    ".decision-next-20261119/v3/source.zip": "452ed9d96b7ad788d5d26ab6bcff7dbcee888a4078fedd6b7f40f4a6d9c0064e",
+    ".decision-next-20261119/v3/HTTP_LEDGER.json": "df0fe1810b1d98792bbd0b839bf75ccfae8a292d47f887af86422400a65fef8e",
+    ".decision-next-20261119/v3/FROZEN_PROVIDER.json": "a2791bc75de52a7a8c78ca190b1d8c67009c17c5a54a64a9c8423dda42631419",
+    ".decision-next-20261119/v3/synthetic-source.json": "52f838be9e4fa0ca04d297b5f02fe32b55b567c5d0e37a43a101061a92f1b528",
+    ".decision-next-20261119/v3/semantic-results.json": "dfacd3f8a0cf1215a0dbb2e9133426fc49c2fd015389de900a8439424aebb06a",
+    ".decision-next-20261119/v3/worker-terminal-check.json": "bc1cf9dac4a944096cacf37d960a3107ed8be3df8d1e14255c5057060f8ebd44",
+    ".decision-next-20261119/engineering-g91/regression/END.json": "6df3910372ee77d963ba349e3e9aaceaca0325062a4d6cd1f1bbece46a8b8ac1",
+    ".decision-next-20261119/engineering-g91/browser/END.json": "6a400311b9d36061645d15b95138fec744cd815f8622c4a7e30c7b612192c8a9",
+    ".decision-next-20261119/v3/call-01.prompt.json": "3c1ee717595a151ed5ec978cef97da7ff081b5db59765a96f930a9a69bd708e1",
+    ".decision-next-20261119/v3/call-01.raw-envelope.json": "133bef4cd90282bd30e6a7f798e809632b3ecb29b792b1895ecd5283772b8e76",
+    ".decision-next-20261119/v3/call-02.prompt.json": "3c1ee717595a151ed5ec978cef97da7ff081b5db59765a96f930a9a69bd708e1",
+    ".decision-next-20261119/v3/call-02.raw-envelope.json": "d1c31b98508532474fcc8a75f2364376195fb1d357bcb86713f91a543dfda811",
+    ".decision-next-20261119/v3/call-03.prompt.json": "3c1ee717595a151ed5ec978cef97da7ff081b5db59765a96f930a9a69bd708e1",
+    ".decision-next-20261119/v3/call-03.raw-envelope.json": "7cd250cb1ca85c0ab80ccd3bbb72b2e6744f91f38d66f705f3db211791f1ce6b",
+    ".decision-next-20261119/v3/parent-actual-partial.json": "17964407dd252e887b3bb015df0a4c49d1dd88d743fd6ba3ecf301c251ae9528"
+  }
+}

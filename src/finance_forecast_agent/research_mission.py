@@ -254,7 +254,7 @@ def workspace_queue(state_path):
 def load_workspace_input(raw_path, source_metadata, options, *, include_raw_history=False):
     from .focused_byo import ExternalDatasetContract, load_external_focused_dataset
     from .focused_data import build_spy_daily_research_frame, build_spy_feature_research_frame
-    if options.get('change_scope') in {'price_features','feature_window'}:
+    if options.get('change_scope') in {'price_features','feature_window','feature_window_model'}:
         if options.get('input_contract'):
             raise ValueError('price feature research requires raw adjusted-price history, not external feature data')
         frame, snapshot, raw = build_spy_feature_research_frame(raw_path, source_metadata_path=source_metadata)
@@ -286,7 +286,7 @@ def submit_workspace_mission(state_path, project_id, *, raw_path, source_metadat
     if not isinstance(options,dict) or set(options)-allowed_options:
         raise ValueError('unsupported workspace options')
     validate_advisor_wire_options(options)
-    if options.get('change_scope') == 'feature_window':
+    if options.get('change_scope') in {'feature_window','feature_window_model'}:
         options.setdefault('diagnostic_mode', 'on')
     evidence_input = options.get('reviewed_evidence') or []
     if not isinstance(evidence_input,list) or len(evidence_input)>3 or any(not isinstance(e,dict) or e.get('evidence_type') not in {'paper_claim','domain_hypothesis'} for e in evidence_input):

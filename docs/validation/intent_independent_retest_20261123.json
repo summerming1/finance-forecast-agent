@@ -1,0 +1,107 @@
+{
+  "trial_date_beijing": "2026-11-23",
+  "head": "079362ceb02551fdbc881a52126c5161deb7c766",
+  "branch": "feat/mission-research-v2",
+  "core_source_identity": "48097446a2405a2345fda972e7eec8a5dcb1219133a5faed0f2dde172ddcca92",
+  "unchanged": {
+    "source_unchanged": true,
+    "inputs_unchanged": true,
+    "dependencies_unchanged": true
+  },
+  "engineering": {
+    "regression": {
+      "counts": {
+        "passed": 1599,
+        "skipped": 2
+      },
+      "path": ".decision-intent-repair-20261121\\gate3\\regression\\END.json",
+      "sha256": "a66fd67e7487ca68e0a4d8f5122cb8e7c785d1265a4de1ac9ed3cd2d7a7d7653",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    },
+    "browser": {
+      "counts": {
+        "passed": 7
+      },
+      "path": ".decision-intent-repair-20261121\\gate3\\browser\\END.json",
+      "sha256": "892c23cb09ec69fe7046ff2856cb1dd0c95093efb6e853148babbdc13856ca9b",
+      "pytest_exit": 0,
+      "wrapper_exit": 0
+    }
+  },
+  "process_exit": {
+    "exit": 0,
+    "seconds": 27.08024750003824
+  },
+  "approval": "one independent retest, both batches up to 14 actual HTTP",
+  "model_order": [
+    "qwen4-max",
+    "qwen3.8-flash",
+    "kimi-k3.1-pro",
+    "qwen3.8-max-0902",
+    "deepseek-v4.1-flash-1017"
+  ],
+  "actual_calls": 1,
+  "combined_actual_http": 2,
+  "historical_plus_new_http": 331,
+  "request_audit": {
+    "reported_error": {
+      "code": "invalid_parameter_error",
+      "message": "An error occurred in model serving, error message is: [Invalid request parameters.]",
+      "param": null,
+      "type": "invalid_request_error"
+    },
+    "status": 400,
+    "transport_matches_frozen_prompt": true,
+    "previously_rejected_array_keywords_present": false,
+    "local_schema_valid": true,
+    "native_format": "json_schema",
+    "strict": true,
+    "schema_nodes": 152,
+    "schema_bytes_compact": 7382,
+    "defs": 10,
+    "model": "qwen4-max",
+    "max_tokens": 4096,
+    "enable_thinking": false,
+    "fresh_task_and_pair": true,
+    "cause_of_generic_400": "undetermined",
+    "raw_response_sha256": "828558fcd45a139f737bd90d982ff9e073102d2e7d7505fa4562d5a8e1cbc463",
+    "extra_external_http": 0
+  },
+  "stop": "nonquota_http_failure",
+  "completed_parent_fits": 16,
+  "conservative_charged_fits": 32,
+  "research_candidates": 0,
+  "answers": 0,
+  "unattempted_semantic_inputs": [
+    "case-2026112100",
+    "case-593024",
+    "case-862751",
+    "case-318406",
+    "case-2026112104",
+    "case-2026112105",
+    "case-1a319e1ffdd20175cced",
+    "case-eb5b60e5a20af31f3c73"
+  ],
+  "behavior": "NO_GO_NO_MODEL_RESPONSE",
+  "references": {
+    ".decision-intent-repair-20261121/OWNER.json": "046aff4357eff23168ad5f6b29666c6070e77a51eec089fa8c4995caf9cf4676",
+    ".decision-intent-repair-20261121/AUTHORIZATION.json": "ac465d11cc89d9dd2210392d116dfc033c57b7102622772cfb5cb15eb11165fa",
+    ".decision-intent-repair-20261121/PAIR-v1.json": "9451e1784fa903b05c43933e61917bea83be4562a25174bada0140090606d4f2",
+    ".decision-intent-repair-20261121/gate3/END.json": "3cfe8d708c7c4c763c07ad67583613246102bc49be5aa46dce13d064c12d027b",
+    ".decision-intent-repair-20261121/PREFLIGHT-v1.json": "2402d23132b0ec40dad13e3e5b186844db14b23144f9e43442341f0d0a37a7fb",
+    ".decision-intent-repair-20261121/bind.argv.json": "d7301f6044f9730a46d58938070115d0d04cc8b74d1fc299bbfe11f5a74723cd",
+    ".decision-intent-repair-20261121/bind.exit.json": "5d7bf3ad8ebb41d3f40635224bda1cabb897909e8f4359e75d53a7d561df27bd",
+    ".decision-intent-repair-20261121/live.argv.json": "2e8583a080f4100cc4c4e06882db7c3d783b7039ebf6c87d1b0ced7a1b81ace9",
+    ".decision-intent-repair-20261121/live.exit.json": "b0e1f4405a513f97872aebf960c19f220a9bd4a8e47389a71fae7acea5691696",
+    ".decision-intent-repair-20261121/SESSION_LEDGER.json": "2cd145033aa2ce5f10af69188cdff5c8e6712eab649afc66cab55ce4b4a76d1a",
+    ".decision-intent-repair-20261121/SESSION_SEAL.json": "94b2d0614667ba345f8d0a063f209b9298536de53e22a136d1fbe99340b5f62b",
+    ".decision-intent-repair-20261121/v1/OUTCOME.json": "90b3d3987a80f205f69cb8aaea94f6e522a75327f413c0c221fa7864b0e820d3",
+    ".decision-intent-repair-20261121/v1/parent-actual-partial.json": "792d15461c4a21f604f131aae778e2f2a7978b3ad6138857df0fe1a1e3fdd859",
+    ".decision-intent-repair-20261121/v1/call-01.raw-envelope.json": "828558fcd45a139f737bd90d982ff9e073102d2e7d7505fa4562d5a8e1cbc463",
+    ".decision-intent-repair-20261121/request-audit-20261123.json": "0f064f1e462cc6c27ef67f8f5059bd8c11f1b1bddc76d3e5743f854bd856194d",
+    ".decision-intent-repair-20261121/REVIEW.md": "c3c566b9fe9b466a9768bad9c42e9418220ffea33fddde90543e444cc818d901",
+    ".decision-intent-20261121/SESSION_SEAL.json": "11136d6f06eca584571b83fcde8ad56f2982672fc8d3c8e3d1af0e503e76e627",
+    "docs/validation/intent_provider_subset_offline_20261121.json": "00e376c5a97b0c2cd90910c7e47f5abbc21c9372a3f346d416b9ae604e3d78d0"
+  }
+}
